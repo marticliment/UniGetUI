@@ -10,9 +10,11 @@
     xmlns:local="using:UniGetUI.Interface"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:pkgClasses="using:UniGetUI.PackageEngine.PackageClasses"
+    xmlns:ui="using:CommunityToolkit.WinUI"
     xmlns:widgets="using:UniGetUI.Interface.Widgets"
     Name="ABSTRACT_PAGE"
     NavigationCacheMode="Required"
+    SizeChanged="ABSTRACT_PAGE_SizeChanged"
     mc:Ignorable="d">
     <!--  PreviewKeyDown="{x:Bind PackageList_PreviewKeyDown}"  -->
 
@@ -29,624 +31,7 @@
 
 
     <Page.Resources>
-        <Style TargetType="AppBarButton">
-            <Setter Property="Background" Value="{ThemeResource AppBarButtonBackground}" />
-            <Setter Property="Foreground" Value="{ThemeResource AppBarButtonForeground}" />
-            <Setter Property="BorderBrush" Value="{ThemeResource AppBarButtonBorderBrush}" />
-            <Setter Property="HorizontalAlignment" Value="Left" />
-            <Setter Property="VerticalAlignment" Value="Top" />
-            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
-            <Setter Property="FontWeight" Value="Normal" />
-            <Setter Property="Width" Value="48" />
-            <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
-            <Setter Property="FocusVisualMargin" Value="-3" />
-            <Setter Property="AllowFocusOnInteraction" Value="False" />
-            <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
-            <Setter Property="KeyboardAcceleratorPlacementMode" Value="Hidden" />
-            <Setter Property="BackgroundSizing" Value="InnerBorderEdge" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="AppBarButton">
-                        <Grid
-                            x:Name="Root"
-                            MinWidth="{TemplateBinding MinWidth}"
-                            MaxWidth="{TemplateBinding MaxWidth}"
-                            Background="Transparent">
-                            <Border
-                                x:Name="AppBarButtonInnerBorder"
-                                Margin="{ThemeResource AppBarButtonInnerBorderMargin}"
-                                Background="{TemplateBinding Background}"
-                                BackgroundSizing="{TemplateBinding BackgroundSizing}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                Control.IsTemplateFocusTarget="True"
-                                CornerRadius="{TemplateBinding CornerRadius}">
-                                <Border.BackgroundTransition>
-                                    <BrushTransition Duration="0:0:0.083" />
-                                </Border.BackgroundTransition>
-                            </Border>
-                            <Grid x:Name="ContentRoot" MinHeight="{ThemeResource AppBarThemeMinHeight}">
-
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-
-                                <Viewbox
-                                    x:Name="ContentViewbox"
-                                    Height="24"
-                                    Margin="0,12,0,12"
-                                    HorizontalAlignment="Stretch"
-                                    AutomationProperties.AccessibilityView="Raw">
-                                    <ContentPresenter
-                                        x:Name="Content"
-                                        Content="{TemplateBinding Icon}"
-                                        Foreground="{TemplateBinding Foreground}"
-                                        ToolTipService.ToolTip="{TemplateBinding Label}" />
-                                </Viewbox>
-                                <TextBlock
-                                    x:Name="TextLabel"
-                                    Grid.Row="1"
-                                    Margin="0,0,0,0"
-                                    AutomationProperties.AccessibilityView="Raw"
-                                    FontFamily="{TemplateBinding FontFamily}"
-                                    FontSize="12"
-                                    Foreground="{TemplateBinding Foreground}"
-                                    Text="{TemplateBinding Label}"
-                                    TextAlignment="Center"
-                                    TextWrapping="Wrap" />
-                                <TextBlock
-                                    x:Name="OverflowTextLabel"
-                                    Margin="12,0,12,0"
-                                    Padding="{ThemeResource AppBarButtonOverflowTextLabelPadding}"
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Center"
-                                    AutomationProperties.AccessibilityView="Raw"
-                                    FontFamily="{TemplateBinding FontFamily}"
-                                    FontSize="{ThemeResource ControlContentThemeFontSize}"
-                                    Foreground="{TemplateBinding Foreground}"
-                                    Text="{TemplateBinding Label}"
-                                    TextAlignment="Left"
-                                    TextTrimming="Clip"
-                                    TextWrapping="NoWrap"
-                                    Visibility="Collapsed" />
-                                <TextBlock
-                                    x:Name="KeyboardAcceleratorTextLabel"
-                                    Grid.Column="1"
-                                    MinWidth="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.KeyboardAcceleratorTextMinWidth}"
-                                    Margin="24,0,12,0"
-                                    HorizontalAlignment="Right"
-                                    VerticalAlignment="Center"
-                                    AutomationProperties.AccessibilityView="Raw"
-                                    Foreground="{ThemeResource AppBarButtonKeyboardAcceleratorTextForeground}"
-                                    Style="{ThemeResource CaptionTextBlockStyle}"
-                                    Text="{TemplateBinding KeyboardAcceleratorTextOverride}"
-                                    Visibility="Collapsed" />
-                                <Grid
-                                    x:Name="SubItemChevronPanel"
-                                    Grid.Column="2"
-                                    Visibility="Collapsed">
-                                    <FontIcon
-                                        x:Name="SubItemChevron"
-                                        Margin="{ThemeResource AppBarButtonSubItemChevronMargin}"
-                                        VerticalAlignment="Top"
-                                        AutomationProperties.AccessibilityView="Raw"
-                                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                        FontSize="{ThemeResource AppBarButtonSubItemChevronFontSize}"
-                                        Foreground="{ThemeResource AppBarButtonSubItemChevronForeground}"
-                                        Glyph="{ThemeResource AppBarButtonFlyoutGlyph}"
-                                        MirroredWhenRightToLeft="True" />
-                                    <FontIcon
-                                        x:Name="OverflowSubItemChevron"
-                                        Margin="{ThemeResource AppBarButtonSecondarySubItemChevronMargin}"
-                                        VerticalAlignment="Center"
-                                        AutomationProperties.AccessibilityView="Raw"
-                                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                        FontSize="{ThemeResource AppBarButtonSecondarySubItemChevronFontSize}"
-                                        Foreground="{ThemeResource AppBarButtonSubItemChevronForeground}"
-                                        Glyph="{ThemeResource AppBarButtonOverflowFlyoutGlyph}"
-                                        MirroredWhenRightToLeft="True"
-                                        Visibility="Collapsed" />
-                                </Grid>
-
-                            </Grid>
-
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="ApplicationViewStates">
-                                    <VisualState x:Name="FullSize" />
-                                    <VisualState x:Name="Compact">
-                                        <VisualState.Setters>
-                                            <Setter Target="AppBarButtonInnerBorder.Margin" Value="{StaticResource AppBarButtonInnerBorderCompactMargin}" />
-
-                                        </VisualState.Setters>
-
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TextLabel" Storyboard.TargetProperty="Visibility">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="LabelOnRight">
-
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentViewbox" Storyboard.TargetProperty="Margin">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="12,12,0,12" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentRoot" Storyboard.TargetProperty="MinHeight">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AppBarThemeCompactHeight}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TextLabel" Storyboard.TargetProperty="(Grid.Row)">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="0" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TextLabel" Storyboard.TargetProperty="(Grid.Column)">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="1" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TextLabel" Storyboard.TargetProperty="TextAlignment">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Left" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TextLabel" Storyboard.TargetProperty="Margin">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource AppBarButtonTextLabelOnRightMargin}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SubItemChevron" Storyboard.TargetProperty="Margin">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AppBarButtonSubItemChevronLabelOnRightMargin}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="LabelCollapsed">
-
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentRoot" Storyboard.TargetProperty="MinHeight">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AppBarThemeCompactHeight}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TextLabel" Storyboard.TargetProperty="Visibility">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Overflow">
-                                        <VisualState.Setters>
-                                            <Setter Target="ContentRoot.MinHeight" Value="0" />
-                                            <Setter Target="AppBarButtonInnerBorder.Margin" Value="{StaticResource AppBarButtonInnerBorderOverflowMargin}" />
-                                            <Setter Target="ContentViewbox.Visibility" Value="Collapsed" />
-                                            <Setter Target="TextLabel.Visibility" Value="Collapsed" />
-                                            <Setter Target="OverflowTextLabel.Visibility" Value="Visible" />
-
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="OverflowWithToggleButtons">
-                                        <VisualState.Setters>
-                                            <Setter Target="ContentRoot.MinHeight" Value="0" />
-                                            <Setter Target="AppBarButtonInnerBorder.Margin" Value="{StaticResource AppBarButtonInnerBorderOverflowMargin}" />
-                                            <Setter Target="ContentViewbox.Visibility" Value="Collapsed" />
-                                            <Setter Target="TextLabel.Visibility" Value="Collapsed" />
-                                            <Setter Target="OverflowTextLabel.Visibility" Value="Visible" />
-                                            <Setter Target="OverflowTextLabel.Margin" Value="38,0,12,0" />
-
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="OverflowWithMenuIcons">
-                                        <VisualState.Setters>
-                                            <Setter Target="ContentRoot.MinHeight" Value="0" />
-                                            <Setter Target="AppBarButtonInnerBorder.Margin" Value="{StaticResource AppBarButtonInnerBorderOverflowMargin}" />
-                                            <Setter Target="ContentViewbox.HorizontalAlignment" Value="Left" />
-                                            <Setter Target="ContentViewbox.VerticalAlignment" Value="Center" />
-                                            <Setter Target="ContentViewbox.Width" Value="24" />
-                                            <Setter Target="ContentViewbox.Height" Value="24" />
-                                            <Setter Target="ContentViewbox.Margin" Value="12,0,8,0" />
-                                            <Setter Target="TextLabel.Visibility" Value="Collapsed" />
-                                            <Setter Target="OverflowTextLabel.Visibility" Value="Visible" />
-                                            <Setter Target="OverflowTextLabel.Margin" Value="38,0,12,0" />
-
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="OverflowWithToggleButtonsAndMenuIcons">
-                                        <VisualState.Setters>
-                                            <Setter Target="ContentRoot.MinHeight" Value="0" />
-                                            <Setter Target="AppBarButtonInnerBorder.Margin" Value="{StaticResource AppBarButtonInnerBorderOverflowMargin}" />
-                                            <Setter Target="ContentViewbox.HorizontalAlignment" Value="Left" />
-                                            <Setter Target="ContentViewbox.VerticalAlignment" Value="Center" />
-                                            <Setter Target="ContentViewbox.Width" Value="24" />
-                                            <Setter Target="ContentViewbox.Height" Value="24" />
-                                            <Setter Target="ContentViewbox.Margin" Value="34,0,8,0" />
-                                            <Setter Target="TextLabel.Visibility" Value="Collapsed" />
-                                            <Setter Target="OverflowTextLabel.Visibility" Value="Visible" />
-                                            <Setter Target="OverflowTextLabel.Margin" Value="76,0,12,0" />
-
-                                        </VisualState.Setters>
-                                    </VisualState>
-
-                                </VisualStateGroup>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualState x:Name="Normal" />
-
-                                    <VisualState x:Name="PointerOver">
-                                        <VisualState.Setters>
-                                            <Setter Target="AppBarButtonInnerBorder.Background" Value="{ThemeResource AppBarButtonBackgroundPointerOver}" />
-                                            <Setter Target="AppBarButtonInnerBorder.BorderBrush" Value="{ThemeResource AppBarButtonBorderBrushPointerOver}" />
-                                            <Setter Target="Content.Foreground" Value="{ThemeResource AppBarButtonForegroundPointerOver}" />
-                                            <Setter Target="TextLabel.Foreground" Value="{ThemeResource AppBarButtonForegroundPointerOver}" />
-                                            <Setter Target="OverflowTextLabel.Foreground" Value="{ThemeResource AppBarButtonForegroundPointerOver}" />
-                                            <Setter Target="SubItemChevron.Foreground" Value="{ThemeResource AppBarButtonSubItemChevronForegroundPointerOver}" />
-                                            <Setter Target="KeyboardAcceleratorTextLabel.Foreground" Value="{ThemeResource AppBarButtonKeyboardAcceleratorTextForegroundPointerOver}" />
-
-                                        </VisualState.Setters>
-                                    </VisualState>
-
-                                    <VisualState x:Name="Pressed">
-                                        <VisualState.Setters>
-                                            <Setter Target="AppBarButtonInnerBorder.Background" Value="{ThemeResource AppBarButtonBackgroundPressed}" />
-                                            <Setter Target="AppBarButtonInnerBorder.BorderBrush" Value="{ThemeResource AppBarButtonBorderBrushPressed}" />
-                                            <Setter Target="Content.Foreground" Value="{ThemeResource AppBarButtonForegroundPressed}" />
-                                            <Setter Target="TextLabel.Foreground" Value="{ThemeResource AppBarButtonForegroundPressed}" />
-                                            <Setter Target="OverflowTextLabel.Foreground" Value="{ThemeResource AppBarButtonForegroundPressed}" />
-                                            <Setter Target="SubItemChevron.Foreground" Value="{ThemeResource AppBarButtonSubItemChevronForegroundPressed}" />
-                                            <Setter Target="KeyboardAcceleratorTextLabel.Foreground" Value="{ThemeResource AppBarButtonKeyboardAcceleratorTextForegroundPressed}" />
-
-                                        </VisualState.Setters>
-                                    </VisualState>
-
-                                    <VisualState x:Name="Disabled">
-                                        <VisualState.Setters>
-                                            <Setter Target="AppBarButtonInnerBorder.Background" Value="{ThemeResource AppBarButtonBackgroundDisabled}" />
-                                            <Setter Target="AppBarButtonInnerBorder.BorderBrush" Value="{ThemeResource AppBarButtonBorderBrushDisabled}" />
-                                            <Setter Target="Content.Foreground" Value="{ThemeResource AppBarButtonForegroundDisabled}" />
-                                            <Setter Target="TextLabel.Foreground" Value="{ThemeResource AppBarButtonForegroundDisabled}" />
-                                            <Setter Target="OverflowTextLabel.Foreground" Value="{ThemeResource AppBarButtonForegroundDisabled}" />
-                                            <Setter Target="SubItemChevron.Foreground" Value="{ThemeResource AppBarButtonSubItemChevronForegroundDisabled}" />
-                                            <Setter Target="KeyboardAcceleratorTextLabel.Foreground" Value="{ThemeResource AppBarButtonKeyboardAcceleratorTextForegroundDisabled}" />
-
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="OverflowNormal">
-                                        <VisualState.Setters>
-                                            <Setter Target="SubItemChevron.Visibility" Value="Collapsed" />
-                                            <Setter Target="OverflowSubItemChevron.Visibility" Value="Visible" />
-
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="OverflowPointerOver">
-                                        <VisualState.Setters>
-                                            <Setter Target="AppBarButtonInnerBorder.Background" Value="{ThemeResource AppBarButtonBackgroundPointerOver}" />
-                                            <Setter Target="AppBarButtonInnerBorder.BorderBrush" Value="{ThemeResource AppBarButtonBorderBrushPointerOver}" />
-                                            <Setter Target="Content.Foreground" Value="{ThemeResource AppBarButtonForegroundPointerOver}" />
-                                            <Setter Target="TextLabel.Foreground" Value="{ThemeResource AppBarButtonForegroundPointerOver}" />
-                                            <Setter Target="OverflowTextLabel.Foreground" Value="{ThemeResource AppBarButtonForegroundPointerOver}" />
-                                            <Setter Target="KeyboardAcceleratorTextLabel.Foreground" Value="{ThemeResource AppBarButtonKeyboardAcceleratorTextForegroundPointerOver}" />
-                                            <Setter Target="SubItemChevron.Foreground" Value="{ThemeResource AppBarButtonSubItemChevronForegroundPointerOver}" />
-                                            <Setter Target="SubItemChevron.Visibility" Value="Collapsed" />
-                                            <Setter Target="OverflowSubItemChevron.Visibility" Value="Visible" />
-
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="OverflowPressed">
-                                        <VisualState.Setters>
-                                            <Setter Target="AppBarButtonInnerBorder.Background" Value="{ThemeResource AppBarButtonBackgroundPressed}" />
-                                            <Setter Target="AppBarButtonInnerBorder.BorderBrush" Value="{ThemeResource AppBarButtonBorderBrushPressed}" />
-                                            <Setter Target="Content.Foreground" Value="{ThemeResource AppBarButtonForegroundPressed}" />
-                                            <Setter Target="TextLabel.Foreground" Value="{ThemeResource AppBarButtonForegroundPressed}" />
-                                            <Setter Target="OverflowTextLabel.Foreground" Value="{ThemeResource AppBarButtonForegroundPressed}" />
-                                            <Setter Target="KeyboardAcceleratorTextLabel.Foreground" Value="{ThemeResource AppBarButtonKeyboardAcceleratorTextForegroundPressed}" />
-                                            <Setter Target="SubItemChevron.Foreground" Value="{ThemeResource AppBarButtonSubItemChevronForegroundPressed}" />
-                                            <Setter Target="SubItemChevron.Visibility" Value="Collapsed" />
-                                            <Setter Target="OverflowSubItemChevron.Visibility" Value="Visible" />
-
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="OverflowSubMenuOpened">
-                                        <VisualState.Setters>
-                                            <Setter Target="AppBarButtonInnerBorder.Background" Value="{ThemeResource AppBarButtonBackgroundSubMenuOpened}" />
-                                            <Setter Target="AppBarButtonInnerBorder.BorderBrush" Value="{ThemeResource AppBarButtonBorderBrushSubMenuOpened}" />
-                                            <Setter Target="Content.Foreground" Value="{ThemeResource AppBarButtonForegroundSubMenuOpened}" />
-                                            <Setter Target="TextLabel.Foreground" Value="{ThemeResource AppBarButtonForegroundSubMenuOpened}" />
-                                            <Setter Target="OverflowTextLabel.Foreground" Value="{ThemeResource AppBarButtonForegroundSubMenuOpened}" />
-                                            <Setter Target="KeyboardAcceleratorTextLabel.Foreground" Value="{ThemeResource AppBarButtonKeyboardAcceleratorTextForegroundSubMenuOpened}" />
-                                            <Setter Target="SubItemChevron.Foreground" Value="{ThemeResource AppBarButtonSubItemChevronForegroundSubMenuOpened}" />
-                                            <Setter Target="SubItemChevron.Visibility" Value="Collapsed" />
-                                            <Setter Target="OverflowSubItemChevron.Visibility" Value="Visible" />
-
-                                        </VisualState.Setters>
-                                    </VisualState>
-
-                                </VisualStateGroup>
-                                <VisualStateGroup x:Name="InputModeStates">
-                                    <VisualState x:Name="InputModeDefault" />
-                                    <VisualState x:Name="TouchInputMode">
-                                        <VisualState.Setters>
-                                            <Setter Target="OverflowTextLabel.Padding" Value="{ThemeResource AppBarButtonOverflowTextTouchMargin}" />
-
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="GameControllerInputMode">
-                                        <VisualState.Setters>
-                                            <Setter Target="OverflowTextLabel.Padding" Value="{ThemeResource AppBarButtonOverflowTextTouchMargin}" />
-
-                                        </VisualState.Setters>
-                                    </VisualState>
-
-                                </VisualStateGroup>
-                                <VisualStateGroup x:Name="KeyboardAcceleratorTextVisibility">
-                                    <VisualState x:Name="KeyboardAcceleratorTextCollapsed" />
-                                    <VisualState x:Name="KeyboardAcceleratorTextVisible">
-                                        <VisualState.Setters>
-                                            <Setter Target="KeyboardAcceleratorTextLabel.Visibility" Value="Visible" />
-
-                                        </VisualState.Setters>
-                                    </VisualState>
-
-                                </VisualStateGroup>
-                                <VisualStateGroup x:Name="FlyoutStates">
-                                    <VisualState x:Name="NoFlyout" />
-                                    <VisualState x:Name="HasFlyout">
-                                        <VisualState.Setters>
-                                            <Setter Target="SubItemChevronPanel.Visibility" Value="{ThemeResource AppBarButtonHasFlyoutChevronVisibility}" />
-
-                                        </VisualState.Setters>
-                                    </VisualState>
-
-                                </VisualStateGroup>
-
-                            </VisualStateManager.VisualStateGroups>
-                        </Grid>
-
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <Style BasedOn="{StaticResource DefaultListViewItemStyle}" TargetType="TreeViewItem">
-            <Setter Property="Padding" Value="0" />
-            <Setter Property="Background" Value="{ThemeResource TreeViewItemBackground}" />
-            <Setter Property="BorderBrush" Value="{ThemeResource TreeViewItemBorderBrush}" />
-            <Setter Property="BorderThickness" Value="{ThemeResource TreeViewItemBorderThemeThickness}" />
-            <Setter Property="GlyphBrush" Value="{ThemeResource TreeViewItemForeground}" />
-            <Setter Property="MinHeight" Value="{ThemeResource TreeViewItemMinHeight}" />
-            <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
-            <Setter Property="FocusVisualMargin" Value="0,-1,0,-1" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="TreeViewItem">
-                        <Grid
-                            x:Name="ContentPresenterGrid"
-                            Margin="{ThemeResource TreeViewItemPresenterMargin}"
-                            Padding="{ThemeResource TreeViewItemPresenterPadding}"
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="{TemplateBinding CornerRadius}">
-                            <Rectangle
-                                x:Name="SelectionIndicator"
-                                Width="3"
-                                Height="16"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                Fill="{ThemeResource TreeViewItemSelectionIndicatorForeground}"
-                                Opacity="0"
-                                RadiusX="2"
-                                RadiusY="2" />
-                            <Grid
-                                x:Name="MultiSelectGrid"
-                                Margin="{ThemeResource TreeViewItemMultiSelectSelectedItemBorderMargin}"
-                                Padding="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TreeViewItemTemplateSettings.Indentation}"
-                                BorderBrush="Transparent"
-                                BorderThickness="{ThemeResource TreeViewItemBorderThemeThickness}"
-                                CornerRadius="{ThemeResource ControlCornerRadius}">
-
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition />
-                                </Grid.ColumnDefinitions>
-                                <Grid Grid.Column="0">
-                                    <CheckBox
-                                        x:Name="MultiSelectCheckBox"
-                                        Width="24"
-                                        MinWidth="24"
-                                        MinHeight="{ThemeResource TreeViewItemMultiSelectCheckBoxMinHeight}"
-                                        Margin="10,0,0,0"
-                                        VerticalAlignment="Center"
-                                        AutomationProperties.AccessibilityView="Raw"
-                                        IsTabStop="False"
-                                        Visibility="Collapsed" />
-                                    <Border
-                                        x:Name="MultiArrangeOverlayTextBorder"
-                                        Height="20"
-                                        MinWidth="20"
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center"
-                                        Background="{ThemeResource SystemControlBackgroundAccentBrush}"
-                                        BorderBrush="{ThemeResource SystemControlBackgroundChromeWhiteBrush}"
-                                        BorderThickness="1"
-                                        CornerRadius="{ThemeResource ControlCornerRadius}"
-                                        IsHitTestVisible="False"
-                                        Visibility="Collapsed">
-                                        <TextBlock
-                                            x:Name="MultiArrangeOverlayText"
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center"
-                                            AutomationProperties.AccessibilityView="Raw"
-                                            Foreground="{ThemeResource SystemControlForegroundChromeWhiteBrush}"
-                                            IsHitTestVisible="False"
-                                            Style="{ThemeResource CaptionTextBlockStyle}"
-                                            Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TreeViewItemTemplateSettings.DragItemsCount}" />
-                                    </Border>
-                                </Grid>
-                                <Grid
-                                    x:Name="ExpandCollapseChevron"
-                                    Grid.Column="1"
-                                    Width="20"
-                                    Padding="0,0,0,0"
-                                    Background="Transparent"
-                                    Opacity="{TemplateBinding GlyphOpacity}">
-                                    <TextBlock
-                                        x:Name="CollapsedGlyph"
-                                        Width="12"
-                                        Height="12"
-                                        Padding="2"
-                                        VerticalAlignment="Center"
-                                        AutomationProperties.AccessibilityView="Raw"
-                                        FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                        FontSize="{TemplateBinding GlyphSize}"
-                                        Foreground="{TemplateBinding GlyphBrush}"
-                                        IsHitTestVisible="False"
-                                        IsTextScaleFactorEnabled="False"
-                                        Text="{TemplateBinding CollapsedGlyph}"
-                                        Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TreeViewItemTemplateSettings.CollapsedGlyphVisibility}" />
-                                    <TextBlock
-                                        x:Name="ExpandedGlyph"
-                                        Width="12"
-                                        Height="12"
-                                        Padding="2"
-                                        VerticalAlignment="Center"
-                                        AutomationProperties.AccessibilityView="Raw"
-                                        FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                        FontSize="{TemplateBinding GlyphSize}"
-                                        Foreground="{TemplateBinding GlyphBrush}"
-                                        IsHitTestVisible="False"
-                                        IsTextScaleFactorEnabled="False"
-                                        Text="{TemplateBinding ExpandedGlyph}"
-                                        Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TreeViewItemTemplateSettings.ExpandedGlyphVisibility}" />
-                                </Grid>
-                                <ContentPresenter
-                                    x:Name="ContentPresenter"
-                                    Grid.Column="2"
-                                    MinHeight="{ThemeResource TreeViewItemContentHeight}"
-                                    Margin="{TemplateBinding Padding}"
-                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                    Content="{TemplateBinding Content}"
-                                    ContentTemplate="{TemplateBinding ContentTemplate}"
-                                    ContentTransitions="{TemplateBinding ContentTransitions}" />
-
-                            </Grid>
-
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualState x:Name="Normal" />
-
-                                    <VisualState x:Name="PointerOver">
-                                        <VisualState.Setters>
-                                            <Setter Target="ContentPresenterGrid.Background" Value="{ThemeResource TreeViewItemBackgroundPointerOver}" />
-                                            <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource TreeViewItemForegroundPointerOver}" />
-                                            <Setter Target="SelectionIndicator.Fill" Value="{ThemeResource TreeViewItemSelectionIndicatorForegroundPointerOver}" />
-                                            <Setter Target="CollapsedGlyph.Foreground" Value="{ThemeResource TreeViewItemForegroundPointerOver}" />
-                                            <Setter Target="ExpandedGlyph.Foreground" Value="{ThemeResource TreeViewItemForegroundPointerOver}" />
-                                            <Setter Target="ContentPresenterGrid.BorderBrush" Value="{ThemeResource TreeViewItemBorderBrushPointerOver}" />
-                                            <Setter Target="SelectionIndicator.Opacity" Value="0" />
-
-                                        </VisualState.Setters>
-                                    </VisualState>
-
-                                    <VisualState x:Name="Pressed">
-                                        <VisualState.Setters>
-                                            <Setter Target="ContentPresenterGrid.Background" Value="{ThemeResource TreeViewItemBackgroundPressed}" />
-                                            <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource TreeViewItemForegroundPressed}" />
-                                            <Setter Target="SelectionIndicator.Fill" Value="{ThemeResource TreeViewItemSelectionIndicatorForegroundPressed}" />
-                                            <Setter Target="CollapsedGlyph.Foreground" Value="{ThemeResource TreeViewItemForegroundPressed}" />
-                                            <Setter Target="ExpandedGlyph.Foreground" Value="{ThemeResource TreeViewItemForegroundPressed}" />
-                                            <Setter Target="ContentPresenterGrid.BorderBrush" Value="{ThemeResource TreeViewItemBorderBrushPressed}" />
-                                            <Setter Target="SelectionIndicator.Opacity" Value="0" />
-
-                                        </VisualState.Setters>
-                                    </VisualState>
-
-                                    <VisualState x:Name="Selected">
-                                        <VisualState.Setters>
-                                            <Setter Target="ContentPresenterGrid.Background" Value="{ThemeResource TreeViewItemBackgroundSelected}" />
-                                            <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource TreeViewItemForegroundSelected}" />
-                                            <Setter Target="SelectionIndicator.Fill" Value="{ThemeResource TreeViewItemSelectionIndicatorForeground}" />
-                                            <Setter Target="CollapsedGlyph.Foreground" Value="{ThemeResource TreeViewItemForegroundSelected}" />
-                                            <Setter Target="ExpandedGlyph.Foreground" Value="{ThemeResource TreeViewItemForegroundSelected}" />
-                                            <Setter Target="ContentPresenterGrid.BorderBrush" Value="{ThemeResource TreeViewItemBorderBrushSelected}" />
-                                            <Setter Target="SelectionIndicator.Opacity" Value="1" />
-
-                                        </VisualState.Setters>
-                                    </VisualState>
-
-                                    <VisualState x:Name="PointerOverSelected">
-                                        <VisualState.Setters>
-                                            <Setter Target="ContentPresenterGrid.Background" Value="{ThemeResource TreeViewItemBackgroundSelectedPointerOver}" />
-                                            <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource TreeViewItemForegroundSelectedPointerOver}" />
-                                            <Setter Target="SelectionIndicator.Fill" Value="{ThemeResource TreeViewItemSelectionIndicatorForegroundPointerOver}" />
-                                            <Setter Target="CollapsedGlyph.Foreground" Value="{ThemeResource TreeViewItemForegroundSelectedPointerOver}" />
-                                            <Setter Target="ExpandedGlyph.Foreground" Value="{ThemeResource TreeViewItemForegroundSelectedPointerOver}" />
-                                            <Setter Target="ContentPresenterGrid.BorderBrush" Value="{ThemeResource TreeViewItemBorderBrushSelectedPointerOver}" />
-                                            <Setter Target="SelectionIndicator.Opacity" Value="1" />
-
-                                        </VisualState.Setters>
-                                    </VisualState>
-
-                                    <VisualState x:Name="PressedSelected">
-                                        <VisualState.Setters>
-                                            <Setter Target="ContentPresenterGrid.Background" Value="{ThemeResource TreeViewItemBackgroundSelectedPressed}" />
-                                            <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource TreeViewItemForegroundSelectedPressed}" />
-                                            <Setter Target="SelectionIndicator.Fill" Value="{ThemeResource TreeViewItemSelectionIndicatorForegroundPressed}" />
-                                            <Setter Target="CollapsedGlyph.Foreground" Value="{ThemeResource TreeViewItemForegroundSelectedPressed}" />
-                                            <Setter Target="ExpandedGlyph.Foreground" Value="{ThemeResource TreeViewItemForegroundSelectedPressed}" />
-                                            <Setter Target="ContentPresenterGrid.BorderBrush" Value="{ThemeResource TreeViewItemBorderBrushSelectedPressed}" />
-                                            <Setter Target="SelectionIndicator.Opacity" Value="1" />
-
-                                        </VisualState.Setters>
-                                    </VisualState>
-
-                                    <VisualState x:Name="ReorderedPlaceholder">
-
-                                        <Storyboard>
-                                            <FadeOutThemeAnimation TargetName="MultiSelectGrid" />
-                                        </Storyboard>
-                                    </VisualState>
-
-                                </VisualStateGroup>
-                                <VisualStateGroup x:Name="TreeViewMultiSelectStates">
-                                    <VisualState x:Name="TreeViewMultiSelectDisabled" />
-                                    <VisualState x:Name="TreeViewMultiSelectEnabledUnselected">
-                                        <VisualState.Setters>
-                                            <Setter Target="MultiSelectCheckBox.Visibility" Value="Visible" />
-                                            <Setter Target="ExpandCollapseChevron.Padding" Value="0,0,0,0" />
-                                            <Setter Target="ContentPresenterGrid.Padding" Value="0" />
-
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="TreeViewMultiSelectEnabledSelected">
-                                        <VisualState.Setters>
-                                            <Setter Target="MultiSelectCheckBox.Visibility" Value="Visible" />
-                                            <Setter Target="MultiSelectGrid.Background" Value="{ThemeResource TreeViewItemBackground}" />
-                                            <Setter Target="MultiSelectGrid.BorderBrush" Value="{ThemeResource TreeViewItemMultiSelectBorderBrushSelected}" />
-                                            <Setter Target="ExpandCollapseChevron.Padding" Value="0,0,0,0" />
-                                            <Setter Target="ContentPresenterGrid.Padding" Value="0" />
-
-                                        </VisualState.Setters>
-                                    </VisualState>
-
-                                </VisualStateGroup>
-
-                                <VisualStateGroup x:Name="DragStates">
-                                    <VisualState x:Name="NotDragging" />
-
-                                    <VisualState x:Name="MultipleDraggingPrimary">
-                                        <VisualState.Setters>
-                                            <Setter Target="MultiSelectCheckBox.Opacity" Value="0" />
-                                            <Setter Target="MultiArrangeOverlayTextBorder.Visibility" Value="Visible" />
-
-                                        </VisualState.Setters>
-                                    </VisualState>
-
-                                </VisualStateGroup>
-
-                            </VisualStateManager.VisualStateGroups>
-                        </Grid>
-
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <DataTemplate x:Key="PackageTemplate" x:DataType="pkgClasses:PackageWrapper">
+        <DataTemplate x:Key="PackageTemplate_List" x:DataType="pkgClasses:PackageWrapper">
             <widgets:PackageItemContainer
                 AutomationProperties.Name="{x:Bind Package.AutomationName}"
                 CornerRadius="4"
@@ -658,23 +43,18 @@
 
                 <Grid
                     Padding="12,3,8,3"
-                    ColumnSpacing="5"
+                    ColumnSpacing="4"
                     Opacity="{x:Bind ListedOpacity, Mode=OneWay}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="30" />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="24" />
-                        <ColumnDefinition Width="24" />
-                        <ColumnDefinition Width="*" MinWidth="100" />
-                        <ColumnDefinition Width="24" />
-                        <ColumnDefinition Width="*" MinWidth="100" />
-                        <ColumnDefinition Width="24" />
-                        <ColumnDefinition Width="*" MaxWidth="125" />
-                        <ColumnDefinition Width="24" MaxWidth="{x:Bind NewVersionIconWidth}" />
-                        <ColumnDefinition Width="*" MaxWidth="{x:Bind NewVersionLabelWidth}" />
-                        <ColumnDefinition Width="24" />
+                        <ColumnDefinition Width="*" MinWidth="125" />
+                        <ColumnDefinition Width="*" MinWidth="125" />
                         <ColumnDefinition Width="*" MaxWidth="150" />
+                        <ColumnDefinition Width="*" MaxWidth="{x:Bind NewVersionLabelWidth}" />
+                        <ColumnDefinition Width="*" MaxWidth="175" />
                     </Grid.ColumnDefinitions>
                     <CheckBox
                         Grid.Row="0"
@@ -683,129 +63,401 @@
                         IsChecked="{x:Bind IsChecked, Mode=TwoWay}" />
 
                     <!--  Regular or package icon  -->
-                    <widgets:LocalIcon
+                    <TextBlock
                         Grid.Row="0"
                         Grid.Column="1"
+                        Width="24"
+                        HorizontalAlignment="Left"
                         VerticalAlignment="Center"
+                        widgets:IconBuilder.Icon="Package"
                         FontSize="24"
                         FontWeight="ExtraLight"
-                        Icon="Package"
                         ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
                         Visibility="{x:Bind ShowDefaultPackageIcon, Mode=OneWay}" />
+
                     <Image
                         Grid.Row="0"
                         Grid.Column="1"
+                        Width="24"
+                        HorizontalAlignment="Left"
                         VerticalAlignment="Center"
                         Source="{x:Bind MainIconSource, Mode=OneWay}"
                         ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
                         Visibility="{x:Bind ShowCustomPackageIcon, Mode=OneWay}" />
 
                     <!--  Package tag icon  -->
-                    <widgets:LocalIcon
+                    <TextBlock
                         Grid.Row="0"
                         Grid.Column="1"
                         Width="20"
                         Height="20"
-                        Margin="0,0,-4,-2"
-                        HorizontalAlignment="Right"
+                        Margin="8,0,-4,-2"
+                        HorizontalAlignment="Left"
                         VerticalAlignment="Bottom"
+                        widgets:IconBuilder.Icon="{x:Bind AlternateIconId, Mode=OneWay}"
                         FontSize="20"
                         FontWeight="ExtraLight"
                         Foreground="{ThemeResource AccentAAFillColorTertiaryBrush}"
-                        Icon="{x:Bind AlternateIconId, Mode=OneWay}"
-                        ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
-                        Visibility="{x:Bind AlternateIdIconVisible, Mode=OneWay}" />
-                    <widgets:LocalIcon
-                        Grid.Row="0"
-                        Grid.Column="1"
-                        Width="20"
-                        Height="20"
-                        Margin="0,0,-4,-2"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Bottom"
-                        FontSize="20"
-                        FontWeight="ExtraLight"
-                        Icon="{x:Bind MainIconId, Mode=OneWay}"
                         ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
                         Visibility="{x:Bind AlternateIdIconVisible, Mode=OneWay}" />
 
                     <TextBlock
                         Grid.Row="0"
-                        Grid.Column="2"
+                        Grid.Column="1"
+                        Width="20"
+                        Height="20"
+                        Margin="8,0,-4,-2"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Bottom"
+                        widgets:IconBuilder.Icon="{x:Bind MainIconId, Mode=OneWay}"
+                        FontSize="20"
+                        FontWeight="ExtraLight"
+                        ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
+                        Visibility="{x:Bind AlternateIdIconVisible, Mode=OneWay}" />
+
+                    <TextBlock
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        Margin="28,-2,0,0"
                         VerticalAlignment="Center"
-                        FontFamily="Segoe UI Variable Text"
                         FontSize="13"
                         Text="{x:Bind Package.Name}"
                         ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}" />
-                    <widgets:LocalIcon
-                        Grid.Row="0"
-                        Grid.Column="3"
-                        VerticalAlignment="Center"
-                        FontSize="24"
-                        FontWeight="ExtraLight"
-                        Icon="Id"
-                        ToolTipService.ToolTip="{x:Bind Package.Id}" />
+
                     <TextBlock
                         Grid.Row="0"
-                        Grid.Column="4"
+                        Grid.Column="2"
+                        HorizontalAlignment="Left"
                         VerticalAlignment="Center"
-                        FontFamily="Segoe UI Variable Text"
+                        widgets:IconBuilder.Icon="Id"
+                        FontSize="24"
+                        FontWeight="ExtraLight"
+                        ToolTipService.ToolTip="{x:Bind Package.Id}" />
+
+                    <TextBlock
+                        Grid.Row="0"
+                        Grid.Column="2"
+                        Margin="28,-2,0,0"
+                        VerticalAlignment="Center"
                         FontSize="13"
                         Text="{x:Bind Package.Id}"
                         ToolTipService.ToolTip="{x:Bind Package.Id}" />
-                    <widgets:LocalIcon
-                        Grid.Row="0"
-                        Grid.Column="5"
-                        VerticalAlignment="Center"
-                        FontSize="24"
-                        FontWeight="ExtraLight"
-                        Icon="version"
-                        ToolTipService.ToolTip="{x:Bind Package.VersionString}" />
+
                     <TextBlock
                         Grid.Row="0"
-                        Grid.Column="6"
+                        Grid.Column="3"
+                        HorizontalAlignment="Left"
                         VerticalAlignment="Center"
-                        FontFamily="Segoe UI Variable Text"
+                        widgets:IconBuilder.Icon="version"
+                        FontSize="24"
+                        FontWeight="ExtraLight"
+                        ToolTipService.ToolTip="{x:Bind Package.VersionString}" />
+
+                    <TextBlock
+                        Grid.Row="0"
+                        Grid.Column="3"
+                        Margin="28,-2,0,0"
+                        VerticalAlignment="Center"
                         FontSize="13"
                         Text="{x:Bind Package.VersionString, Mode=OneWay}"
                         ToolTipService.ToolTip="{x:Bind Package.VersionString}" />
-                    <widgets:LocalIcon
-                        Grid.Row="0"
-                        Grid.Column="7"
-                        VerticalAlignment="Center"
-                        FontSize="24"
-                        FontWeight="ExtraLight"
-                        Icon="download"
-                        ToolTipService.ToolTip="{x:Bind Package.NewVersionString}"
-                        Visibility="{x:Bind Package.IsUpgradable}" />
+
                     <TextBlock
                         Grid.Row="0"
-                        Grid.Column="8"
+                        Grid.Column="4"
+                        HorizontalAlignment="Left"
                         VerticalAlignment="Center"
-                        FontFamily="Segoe UI Variable Text"
+                        widgets:IconBuilder.Icon="download"
+                        FontSize="24"
+                        FontWeight="ExtraLight"
+                        ToolTipService.ToolTip="{x:Bind Package.NewVersionString}"
+                        Visibility="{x:Bind Package.IsUpgradable}" />
+
+                    <TextBlock
+                        Grid.Row="0"
+                        Grid.Column="4"
+                        Margin="28,-2,0,0"
+                        VerticalAlignment="Center"
                         FontSize="13"
                         Text="{x:Bind Package.NewVersionString}"
                         ToolTipService.ToolTip="{x:Bind Package.NewVersionString}"
                         Visibility="{x:Bind Package.IsUpgradable}" />
-                    <widgets:LocalIcon
-                        Grid.Row="0"
-                        Grid.Column="9"
-                        VerticalAlignment="Center"
-                        FontSize="24"
-                        FontWeight="ExtraLight"
-                        Icon="{x:Bind Package.Source.IconId}"
-                        ToolTipService.ToolTip="{x:Bind Package.Source.AsString_DisplayName}" />
+
                     <TextBlock
                         Grid.Row="0"
-                        Grid.Column="10"
+                        Grid.Column="5"
+                        HorizontalAlignment="Left"
                         VerticalAlignment="Center"
-                        FontFamily="Segoe UI Variable Text"
+                        widgets:IconBuilder.Icon="{x:Bind Package.Source.IconId}"
+                        FontSize="24"
+                        FontWeight="ExtraLight"
+                        ToolTipService.ToolTip="{x:Bind Package.Source.AsString_DisplayName}" />
+
+                    <TextBlock
+                        Grid.Row="0"
+                        Grid.Column="5"
+                        Margin="28,-2,0,0"
+                        VerticalAlignment="Center"
                         FontSize="13"
                         Text="{x:Bind Package.Source.AsString_DisplayName}"
                         ToolTipService.ToolTip="{x:Bind Package.Source.AsString_DisplayName}" />
                 </Grid>
             </widgets:PackageItemContainer>
         </DataTemplate>
+
+        <DataTemplate x:Key="PackageTemplate_Grid" x:DataType="pkgClasses:PackageWrapper">
+            <widgets:PackageItemContainer
+                AutomationProperties.Name="{x:Bind Package.AutomationName}"
+                Background="{ThemeResource ControlFillColorDefaultBrush}"
+                CornerRadius="4"
+                DoubleTapped="PackageItemContainer_DoubleTapped"
+                Package="{x:Bind Package}"
+                PreviewKeyDown="PackageItemContainer_PreviewKeyDown"
+                RightTapped="PackageItemContainer_RightTapped"
+                Wrapper="{x:Bind Self}">
+
+                <Grid
+                    Padding="4,4,4,4"
+                    HorizontalAlignment="Stretch"
+                    ColumnSpacing="4"
+                    Opacity="{x:Bind ListedOpacity, Mode=OneWay}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="48" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="48" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="22" />
+                    </Grid.ColumnDefinitions>
+
+                    <!--  Regular or package icon  -->
+                    <TextBlock
+                        Grid.Column="0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        widgets:IconBuilder.Icon="Package"
+                        FontSize="48"
+                        FontWeight="ExtraLight"
+                        ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
+                        Visibility="{x:Bind ShowDefaultPackageIcon, Mode=OneWay}" />
+
+                    <Image
+                        Grid.Column="0"
+                        Width="44"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Source="{x:Bind MainIconSource, Mode=OneWay}"
+                        ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
+                        Visibility="{x:Bind ShowCustomPackageIcon, Mode=OneWay}" />
+
+                    <TextBlock
+                        Grid.Column="0"
+                        Margin="0,0,-4,-2"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom"
+                        widgets:IconBuilder.Icon="{x:Bind AlternateIconId, Mode=OneWay}"
+                        FontSize="30"
+                        FontWeight="ExtraLight"
+                        Foreground="{ThemeResource AccentAAFillColorTertiaryBrush}"
+                        ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
+                        Visibility="{x:Bind AlternateIdIconVisible, Mode=OneWay}" />
+
+                    <TextBlock
+                        Grid.Column="0"
+                        Margin="0,0,-4,-2"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom"
+                        widgets:IconBuilder.Icon="{x:Bind MainIconId, Mode=OneWay}"
+                        FontSize="30"
+                        FontWeight="ExtraLight"
+                        ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
+                        Visibility="{x:Bind AlternateIdIconVisible, Mode=OneWay}" />
+
+                    <CheckBox
+                        Grid.Column="2"
+                        Margin="1,-4,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        IsChecked="{x:Bind IsChecked, Mode=TwoWay}" />
+
+                    <Button
+                        Grid.Column="2"
+                        Width="22"
+                        Height="22"
+                        Padding="0"
+                        VerticalAlignment="Bottom"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Click="{x:Bind RightClick}"
+                        Tapped="ContextMenuButton_Tapped">
+                        <TextBlock widgets:IconBuilder.Glyph="&#xE712;" FontSize="18" />
+                    </Button>
+
+                    <TextBlock
+                        Grid.Column="1"
+                        VerticalAlignment="Top"
+                        FontFamily="Segoe UI Variable Text"
+                        FontSize="14"
+                        FontWeight="SemiBold"
+                        Text="{x:Bind Package.Name}"
+                        ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}" />
+
+                    <TextBlock
+                        Grid.Column="1"
+                        VerticalAlignment="Center"
+                        FontFamily="Segoe UI Variable Text"
+                        FontSize="11"
+                        Opacity="0.8"
+                        Text="{x:Bind Package.Id}"
+                        ToolTipService.ToolTip="{x:Bind Package.Id}" />
+
+                    <TextBlock
+                        Grid.Column="1"
+                        VerticalAlignment="Bottom"
+                        FontFamily="Segoe UI Variable Text"
+                        FontSize="11"
+                        Opacity="0.5"
+                        Text="{x:Bind VersionComboString, Mode=OneWay}"
+                        ToolTipService.ToolTip="{x:Bind Package.VersionString}" />
+                </Grid>
+            </widgets:PackageItemContainer>
+        </DataTemplate>
+
+        <DataTemplate x:Key="PackageTemplate_Icons" x:DataType="pkgClasses:PackageWrapper">
+            <widgets:PackageItemContainer
+                AutomationProperties.Name="{x:Bind Package.AutomationName}"
+                Background="{ThemeResource ControlFillColorDefaultBrush}"
+                CornerRadius="4"
+                DoubleTapped="PackageItemContainer_DoubleTapped"
+                Package="{x:Bind Package}"
+                PreviewKeyDown="PackageItemContainer_PreviewKeyDown"
+                RightTapped="PackageItemContainer_RightTapped"
+                Wrapper="{x:Bind Self}">
+
+                <Grid
+                    Padding="4,4,4,4"
+                    HorizontalAlignment="Stretch"
+                    Opacity="{x:Bind ListedOpacity, Mode=OneWay}"
+                    RowSpacing="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="22" />
+                        <RowDefinition Height="60" />
+                        <RowDefinition Height="30" />
+                        <RowDefinition Height="15" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="120" />
+                    </Grid.ColumnDefinitions>
+
+                    <!--  Regular or package icon  -->
+                    <TextBlock
+                        Grid.Row="1"
+                        Height="64"
+                        Margin="0,-8,0,4"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        widgets:IconBuilder.Icon="Package"
+                        FontSize="74"
+                        FontWeight="ExtraLight"
+                        ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
+                        Visibility="{x:Bind ShowDefaultPackageIcon, Mode=OneWay}" />
+
+                    <Image
+                        Grid.Row="1"
+                        Width="64"
+                        Height="64"
+                        Margin="0,-8,0,4"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Source="{x:Bind MainIconSource, Mode=OneWay}"
+                        ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
+                        Visibility="{x:Bind ShowCustomPackageIcon, Mode=OneWay}" />
+
+                    <TextBlock
+                        Grid.Row="1"
+                        Margin="0,0,20,-2"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom"
+                        widgets:IconBuilder.Icon="{x:Bind AlternateIconId, Mode=OneWay}"
+                        FontSize="40"
+                        FontWeight="ExtraLight"
+                        Foreground="{ThemeResource AccentAAFillColorTertiaryBrush}"
+                        ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
+                        Visibility="{x:Bind AlternateIdIconVisible, Mode=OneWay}" />
+
+                    <TextBlock
+                        Grid.Row="1"
+                        Margin="0,0,20,-2"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom"
+                        widgets:IconBuilder.Icon="{x:Bind MainIconId, Mode=OneWay}"
+                        FontSize="40"
+                        FontWeight="ExtraLight"
+                        ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
+                        Visibility="{x:Bind AlternateIdIconVisible, Mode=OneWay}" />
+
+                    <CheckBox
+                        Grid.Row="0"
+                        Margin="1,-4,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        IsChecked="{x:Bind IsChecked, Mode=TwoWay}" />
+                    <Button
+                        Grid.Row="0"
+                        Width="22"
+                        Height="22"
+                        Padding="0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Click="{x:Bind RightClick}"
+                        Tapped="ContextMenuButton_Tapped">
+                        <TextBlock widgets:IconBuilder.Glyph="&#xE712;" FontSize="18" />
+                    </Button>
+
+                    <TextBlock
+                        Grid.Row="2"
+                        MaxWidth="120"
+                        MaxHeight="30"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontFamily="Segoe UI Variable Text"
+                        FontSize="12"
+                        FontWeight="SemiBold"
+                        HorizontalTextAlignment="Left"
+                        Text="{x:Bind Package.Name}"
+                        TextWrapping="Wrap"
+                        ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}" />
+
+                    <TextBlock
+                        Grid.Row="3"
+                        HorizontalAlignment="Center"
+                        FontFamily="Segoe UI Variable Text"
+                        FontSize="11"
+                        Opacity="0.5"
+                        Text="{x:Bind VersionComboString, Mode=OneWay}"
+                        ToolTipService.ToolTip="{x:Bind Package.VersionString}" />
+                </Grid>
+            </widgets:PackageItemContainer>
+        </DataTemplate>
+
+        <UniformGridLayout
+            x:Key="Layout_Grid"
+            ItemsStretch="Fill"
+            MinColumnSpacing="8"
+            MinItemHeight="56"
+            MinItemWidth="275"
+            MinRowSpacing="8" />
+
+        <UniformGridLayout
+            x:Key="Layout_Icons"
+            ItemsJustification="Start"
+            MinColumnSpacing="8"
+            MinRowSpacing="8" />
+
+        <StackLayout x:Key="Layout_List" Spacing="3" />
+
     </Page.Resources>
 
     <Grid Padding="0" BorderThickness="0">
@@ -827,98 +479,143 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="80" />
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" MaxWidth="390" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" MinHeight="16" />
-                <RowDefinition Height="Auto" MinHeight="24" />
-                <RowDefinition Height="Auto" MinHeight="24" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <FontIcon
                 x:Name="HeaderIcon"
                 Grid.Row="0"
-                Grid.RowSpan="3"
                 Grid.Column="0"
                 Width="60"
                 MinHeight="60"
                 FontSize="50"
                 FontWeight="Normal" />
-            <TextBlock
-                x:Name="MainTitle"
-                Grid.Row="0"
-                Grid.RowSpan="2"
+
+            <StackPanel
                 Grid.Column="1"
-                MinHeight="48"
-                HorizontalAlignment="Left"
-                x:FieldModifier="protected"
-                FontFamily="Segoe UI Variable Display"
-                FontSize="30"
-                FontWeight="Bold"
-                TextWrapping="Wrap" />
-            <TextBlock
-                x:Name="MainSubtitle"
-                Grid.Row="2"
-                Grid.Column="1"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top"
-                x:FieldModifier="protected"
-                FontSize="11"
-                FontWeight="Normal"
-                Foreground="{ThemeResource AppBarItemDisabledForegroundThemeBrush}"
-                TextWrapping="Wrap" />
-            <Grid
+                VerticalAlignment="Center"
+                Orientation="Vertical"
+                Spacing="0">
+                <TextBlock
+                    x:Name="MainTitle"
+                    HorizontalAlignment="Left"
+                    x:FieldModifier="protected"
+                    FontFamily="Segoe UI Variable Display"
+                    FontSize="30"
+                    FontWeight="Bold"
+                    TextWrapping="Wrap" />
+                <TextBlock
+                    x:Name="MainSubtitle"
+                    HorizontalAlignment="Left"
+                    x:FieldModifier="protected"
+                    FontSize="11"
+                    FontWeight="Normal"
+                    Foreground="{ThemeResource AppBarItemDisabledForegroundThemeBrush}"
+                    TextWrapping="Wrap" />
+            </StackPanel>
+
+            <StackPanel
                 Grid.Row="0"
-                Grid.RowSpan="3"
                 Grid.Column="2"
-                HorizontalAlignment="Stretch">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
+                Margin="0,0,4,0"
+                HorizontalAlignment="Stretch"
+                Orientation="Vertical"
+                Spacing="8">
 
-                <TextBox
-                    x:Name="QueryBlock"
-                    Grid.Column="1"
-                    Height="30"
-                    Padding="7,5,5,5"
-                    VerticalContentAlignment="Center"
-                    x:FieldModifier="protected"
-                    CornerRadius="4,0,0,4" />
+                <Grid HorizontalAlignment="Stretch">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
 
-                <Button
-                    x:Name="FindButton"
-                    Grid.Column="2"
-                    Width="32"
-                    Height="32"
-                    Padding="4"
-                    x:FieldModifier="protected"
-                    AutomationProperties.HelpText="Search"
-                    CornerRadius="0,4,4,0">
-                    <AnimatedIcon>
-                        <AnimatedIcon.Source>
-                            <animatedvisuals:AnimatedFindVisualSource />
-                        </AnimatedIcon.Source>
-                        <AnimatedIcon.FallbackIconSource>
-                            <SymbolIconSource Symbol="Find" />
-                        </AnimatedIcon.FallbackIconSource>
-                    </AnimatedIcon>
-                </Button>
-                <Button
-                    x:Name="ReloadButton"
-                    Grid.Column="3"
-                    Width="32"
-                    Height="32"
-                    Margin="6,0,4,0"
-                    Padding="0"
-                    x:FieldModifier="protected"
-                    AutomationProperties.HelpText="Reload packages"
-                    CornerRadius="4">
-                    <FontIcon FontSize="16" Glyph="&#xE72C;" />
-                </Button>
-            </Grid>
+
+                    <TextBox
+                        x:Name="QueryBlock"
+                        Grid.Column="0"
+                        Height="30"
+                        Padding="7,5,5,5"
+                        VerticalContentAlignment="Center"
+                        x:FieldModifier="protected"
+                        CornerRadius="4,0,0,4" />
+
+                    <Button
+                        x:Name="FindButton"
+                        Grid.Column="1"
+                        Width="32"
+                        Height="32"
+                        Padding="4"
+                        x:FieldModifier="protected"
+                        AutomationProperties.HelpText="Search"
+                        CornerRadius="0,4,4,0">
+                        <AnimatedIcon>
+                            <AnimatedIcon.Source>
+                                <animatedvisuals:AnimatedFindVisualSource />
+                            </AnimatedIcon.Source>
+                            <AnimatedIcon.FallbackIconSource>
+                                <SymbolIconSource Symbol="Find" />
+                            </AnimatedIcon.FallbackIconSource>
+                        </AnimatedIcon>
+                    </Button>
+
+                    <Button
+                        x:Name="ReloadButton"
+                        Grid.Column="2"
+                        Width="32"
+                        Height="32"
+                        Margin="6,0,0,0"
+                        Padding="0"
+                        x:FieldModifier="protected"
+                        AutomationProperties.HelpText="Reload packages"
+                        CornerRadius="4">
+                        <FontIcon FontSize="16" Glyph="&#xE72C;" />
+                    </Button>
+                </Grid>
+
+
+                <StackPanel
+                    Name="SearchBoxPanel"
+                    HorizontalAlignment="Right"
+                    Orientation="Vertical"
+                    Spacing="8">
+
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                        <widgets:TranslatedTextBlock VerticalAlignment="Center" Text="Order by:" />
+                        <DropDownButton x:Name="OrderByButton">
+                            <DropDownButton.Flyout>
+                                <widgets:BetterMenu Placement="Bottom">
+                                    <widgets:BetterToggleMenuItem x:Name="OrderByName_Menu" Text="Name" />
+                                    <widgets:BetterToggleMenuItem x:Name="OrderById_Menu" Text="Id" />
+                                    <widgets:BetterToggleMenuItem x:Name="OrderByVer_Menu" Text="Version" />
+                                    <widgets:BetterToggleMenuItem
+                                        x:Name="OrderByNewVer_Menu"
+                                        Text="New version"
+                                        Visibility="{x:Bind RoleIsUpdateLike}" />
+                                    <widgets:BetterToggleMenuItem x:Name="OrderBySrc_Menu" Text="Source" />
+                                    <MenuFlyoutSeparator />
+                                    <widgets:BetterToggleMenuItem x:Name="OrderAsc_Menu" Text="Ascendant" />
+                                    <widgets:BetterToggleMenuItem x:Name="OrderDesc_Menu" Text="Descendant" />
+                                </widgets:BetterMenu>
+                            </DropDownButton.Flyout>
+                        </DropDownButton>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+
+                        <widgets:TranslatedTextBlock VerticalAlignment="Center" Text="View mode:" />
+                        <Toolkit:Segmented
+                            x:Name="ViewModeSelector"
+                            SelectionChanged="ViewModeSelector_SelectionChanged"
+                            SelectionMode="Single">
+                            <Toolkit:SegmentedItem Icon="{ui:FontIcon Glyph=&#xE8FD;}" ToolTipService.ToolTip="List" />
+                            <Toolkit:SegmentedItem Icon="{ui:FontIcon Glyph=&#xF168;}" ToolTipService.ToolTip="Grid" />
+                            <Toolkit:SegmentedItem Icon="{ui:FontIcon Glyph=&#xF0E2;}" ToolTipService.ToolTip="Icons" />
+                        </Toolkit:Segmented>
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
 
             <Grid
                 Grid.Row="3"
@@ -1280,6 +977,7 @@
                             Grid.Column="3"
                             Grid.ColumnSpan="1"
                             HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
                             BorderThickness="0"
                             CornerRadius="0" />
                         <Button
@@ -1287,6 +985,7 @@
                             Grid.Column="4"
                             Grid.ColumnSpan="2"
                             HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
                             BorderThickness="0"
                             CornerRadius="0" />
                         <Button
@@ -1294,6 +993,7 @@
                             Grid.Column="6"
                             Grid.ColumnSpan="2"
                             HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
                             BorderThickness="0"
                             CornerRadius="0" />
                         <Button
@@ -1301,6 +1001,7 @@
                             Grid.Column="8"
                             Grid.ColumnSpan="2"
                             HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
                             BorderThickness="0"
                             CornerRadius="0"
                             Visibility="{x:Bind RoleIsUpdateLike}" />
@@ -1309,25 +1010,58 @@
                             Grid.Column="10"
                             Grid.ColumnSpan="3"
                             HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
                             BorderThickness="0"
                             CornerRadius="0,4,4,0" />
                     </Grid>
 
-                    <ItemsView
-                        x:Name="PackageList"
+                    <Toolkit:SwitchPresenter
                         Grid.Row="1"
-                        Padding="4,0,4,0"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
-                        x:FieldModifier="protected"
-                        CanBeScrollAnchor="False"
-                        CharacterReceived="{x:Bind PackageList_CharacterReceived}"
-                        ItemTemplate="{StaticResource PackageTemplate}"
-                        ItemsSource="{x:Bind FilteredPackages, Mode=OneWay}">
-                        <ItemsView.Layout>
-                            <StackLayout Spacing="3" />
-                        </ItemsView.Layout>
-                    </ItemsView>
+                        TargetType="x:Int32"
+                        Value="{x:Bind ViewModeSelector.SelectedIndex, Mode=OneWay}">
+                        <Toolkit:Case IsDefault="True" Value="0">
+                            <ItemsView
+                                x:Name="PackageList_List"
+                                Padding="4,0"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                x:FieldModifier="protected"
+                                CanBeScrollAnchor="False"
+                                CharacterReceived="PackageList_CharacterReceived"
+                                ItemTemplate="{StaticResource PackageTemplate_List}"
+                                ItemsSource="{x:Bind FilteredPackages}"
+                                Layout="{StaticResource Layout_List}" />
+                        </Toolkit:Case>
+                        <Toolkit:Case Value="1">
+                            <ItemsView
+                                x:Name="PackageList_Grid"
+                                Padding="4,0"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                x:FieldModifier="protected"
+                                CanBeScrollAnchor="False"
+                                CharacterReceived="PackageList_CharacterReceived"
+                                ItemTemplate="{StaticResource PackageTemplate_Grid}"
+                                ItemsSource="{x:Bind FilteredPackages}"
+                                Layout="{StaticResource Layout_Grid}" />
+                        </Toolkit:Case>
+                        <Toolkit:Case Value="2">
+                            <ItemsView
+                                x:Name="PackageList_Icons"
+                                Padding="4,0"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                x:FieldModifier="protected"
+                                CanBeScrollAnchor="False"
+                                CharacterReceived="PackageList_CharacterReceived"
+                                ItemTemplate="{StaticResource PackageTemplate_Icons}"
+                                ItemsSource="{x:Bind FilteredPackages}"
+                                Layout="{StaticResource Layout_Icons}" />
+                        </Toolkit:Case>
+                    </Toolkit:SwitchPresenter>
+
 
                     <Grid Grid.Row="1">
                         <Grid.RowDefinitions>

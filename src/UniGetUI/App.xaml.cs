@@ -18,6 +18,8 @@ using Microsoft.Windows.AppNotifications;
 using UniGetUI.Interface.Telemetry;
 using UniGetUI.PackageEngine.Interfaces;
 using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
+using UniGetUI.Pages.DialogPages;
+using UniGetUI.Interface.Enums;
 
 namespace UniGetUI
 {
@@ -227,23 +229,22 @@ namespace UniGetUI
 
                     BackgroundApi.OnShowSharedPackage += (_, package) => MainWindow.DispatcherQueue.TryEnqueue(() =>
                     {
-                        MainWindow?.NavigationPage?.DiscoverPage.ShowSharedPackage_ThreadSafe(package.Key, package.Value);
-                        MainWindow?.Activate();
+                        DialogHelper.ShowSharedPackage_ThreadSafe(package.Key, package.Value);
                     });
 
                     BackgroundApi.OnUpgradeAll += (_, _) => MainWindow.DispatcherQueue.TryEnqueue(() =>
                     {
-                        MainWindow?.NavigationPage?.UpdatesPage.UpdateAll();
+                        Operations.UpdateAll();
                     });
 
-                    BackgroundApi.OnUpgradeAllForManager += (_, manager) => MainWindow.DispatcherQueue.TryEnqueue(() =>
+                    BackgroundApi.OnUpgradeAllForManager += (_, managerName) => MainWindow.DispatcherQueue.TryEnqueue(async () =>
                     {
-                        MainWindow?.NavigationPage?.UpdatesPage.UpdateAllPackagesForManager(manager);
+                        Operations.UpdateAllForManager(managerName);
                     });
 
-                    BackgroundApi.OnUpgradePackage += (_, package) => MainWindow.DispatcherQueue.TryEnqueue(() =>
+                    BackgroundApi.OnUpgradePackage += (_, packageId) => MainWindow.DispatcherQueue.TryEnqueue(() =>
                     {
-                        MainWindow?.NavigationPage?.UpdatesPage.UpdatePackageForId(package);
+                        Operations.UpdateForId(packageId);
                     });
 
                     _ = BackgroundApi.Start();

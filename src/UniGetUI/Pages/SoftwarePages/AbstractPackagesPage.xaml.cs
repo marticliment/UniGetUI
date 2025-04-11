@@ -21,7 +21,7 @@ using DispatcherQueuePriority = Microsoft.UI.Dispatching.DispatcherQueuePriority
 using Microsoft.UI;
 using Microsoft.UI.Xaml.Media;
 using Windows.UI;
-using Windows.Graphics.Printing.PrintSupport;
+using Microsoft.UI.Xaml.Controls.Primitives;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -73,7 +73,17 @@ namespace UniGetUI.Interface
 
         protected IPackage? SelectedItem
         {
-            get => (PackageList.SelectedItem as PackageWrapper)?.Package;
+            get => (CurrentPackageList.SelectedItem as PackageWrapper)?.Package;
+        }
+
+        protected ItemsView CurrentPackageList
+        {
+            get => (ViewModeSelector.SelectedIndex switch
+            {
+                1 => PackageList_Grid,
+                2 => PackageList_Icons,
+                _ => PackageList_List
+            });
         }
 
         protected AbstractPackageLoader Loader;
@@ -100,8 +110,6 @@ namespace UniGetUI.Interface
         protected readonly string NoPackages_SubtitleText_Base;
         protected readonly string NoMatches_BackgroundText;
 
-        private bool PaneIsAnimated;
-
         protected Func<int, int, string> FoundPackages_SubtitleText_Base = (a, b) => CoreTools.Translate("{0} packages were found, {1} of which match the specified filters.", a, b);
 
         protected string NoPackages_SubtitleText
@@ -122,10 +130,8 @@ namespace UniGetUI.Interface
 
         protected AbstractPackagesPage(PackagesPageData data)
         {
-            InitializeComponent();
-
-            Loader = data.Loader;
-
+            // Load page attributes
+            PAGE_NAME = data.PageName;
             DISABLE_AUTOMATIC_PACKAGE_LOAD_ON_START = data.DisableAutomaticPackageLoadOnStart;
             DISABLE_FILTER_ON_QUERY_CHANGE = data.DisableFilterOnQueryChange;
             MEGA_QUERY_BOX_ENABLED = data.MegaQueryBlockEnabled;
@@ -136,19 +142,24 @@ namespace UniGetUI.Interface
             NewVersionLabelWidth = RoleIsUpdateLike ? 125 : 0;
             NewVersionIconWidth = RoleIsUpdateLike ? 24 : 0;
 
-            Loader = data.Loader;
-
-            PAGE_NAME = data.PageName;
-
-            MainTitle.Text = data.PageTitle;
-            HeaderIcon.Glyph = data.Glyph;
-
             NoPackages_BackgroundText = data.NoPackages_BackgroundText;
             NoPackages_SourcesText = data.NoPackages_SourcesText;
             NoPackages_SubtitleText_Base = data.NoPackages_SubtitleText_Base;
             MainSubtitle_StillLoading = data.MainSubtitle_StillLoading;
 
             NoMatches_BackgroundText = data.NoMatches_BackgroundText;
+            Loader = data.Loader;
+
+            // Load UI
+            InitializeComponent();
+
+            // Selection of grid view mode
+            int viewMode = Settings.GetDictionaryItem<string, int>("PackageListViewMode", PAGE_NAME);
+            if (viewMode < 0 || viewMode >= ViewModeSelector.Items.Count) viewMode = 0;
+            ViewModeSelector.SelectedIndex = viewMode;
+
+            MainTitle.Text = data.PageTitle;
+            HeaderIcon.Glyph = data.Glyph;
 
             SelectAllCheckBox.IsChecked = data.PackagesAreCheckedByDefault;
             QuerySimilarResultsRadio.IsEnabled = !data.DisableSuggestedResultsRadio;
@@ -301,10 +312,24 @@ namespace UniGetUI.Interface
             NewVersionHeader.Click += (_, _) => SortPackagesBy(ObservablePackageCollection.Sorter.NewVersion);
             SourceHeader.Click += (_, _) => SortPackagesBy(ObservablePackageCollection.Sorter.Source);
 
+            OrderByName_Menu.Click += (_, _) => SortPackagesBy(ObservablePackageCollection.Sorter.Name);
+            OrderById_Menu.Click += (_, _) => SortPackagesBy(ObservablePackageCollection.Sorter.Id);
+            OrderByVer_Menu.Click += (_, _) => SortPackagesBy(ObservablePackageCollection.Sorter.Version);
+            OrderByNewVer_Menu.Click += (_, _) => SortPackagesBy(ObservablePackageCollection.Sorter.NewVersion);
+            OrderBySrc_Menu.Click += (_, _) => SortPackagesBy(ObservablePackageCollection.Sorter.Source);
+
+            OrderAsc_Menu.Click += (_, _) => SortPackagesBy(ascendent: true);
+            OrderDesc_Menu.Click += (_, _) => SortPackagesBy(ascendent: false);
+
             GenerateToolBar();
-            PackageList.ContextFlyout = GenerateContextMenu();
+            var menu = GenerateContextMenu();
+
+            PackageList_List.ContextFlyout = menu;
+            PackageList_Grid.ContextFlyout = menu;
+            PackageList_Icons.ContextFlyout = menu;
 
             Loaded += (_, _) => ChangeFilteringPaneLayout();
+            UpdateSortingMenu();
         }
 
         private void Loader_PackagesChanged(object? sender, EventArgs e)
@@ -332,6 +357,7 @@ namespace UniGetUI.Interface
             if (!Settings.Get("DisableIconsOnPackageLists"))
                 _ = LoadIconsForNewPackages();
         }
+
 
         private void Loader_FinishedLoading(object? sender, EventArgs e)
         {
@@ -484,18 +510,18 @@ namespace UniGetUI.Interface
             if (index < 0 || index >= FilteredPackages.Count)
                 return;
 
-            PackageList.Select(index);
+            CurrentPackageList.Select(index);
 
-            if (PackageList.ScrollView?.VerticalOffset > index * 39)
+            if (CurrentPackageList.ScrollView?.VerticalOffset > index * 39)
             {
-                PackageList.ScrollView.ScrollTo(0, index * 39, new ScrollingScrollOptions(
+                CurrentPackageList.ScrollView.ScrollTo(0, index * 39, new ScrollingScrollOptions(
                     ScrollingAnimationMode.Disabled,
                     ScrollingSnapPointsMode.Ignore
                 ));
             }
-            else if (PackageList.ScrollView?.VerticalOffset + PackageList.ScrollView?.ViewportHeight < (index + 1) * 39)
+            else if (CurrentPackageList.ScrollView?.VerticalOffset + CurrentPackageList.ScrollView?.ViewportHeight < (index + 1) * 39)
             {
-                PackageList.ScrollView?.ScrollTo(0, (index + 1) * 39 - PackageList.ScrollView.ViewportHeight, new ScrollingScrollOptions(
+                CurrentPackageList.ScrollView?.ScrollTo(0, (index + 1) * 39 - CurrentPackageList.ScrollView.ViewportHeight, new ScrollingScrollOptions(
                     ScrollingAnimationMode.Disabled,
                     ScrollingSnapPointsMode.Ignore
                 ));
@@ -514,7 +540,7 @@ namespace UniGetUI.Interface
                 DispatcherQueuePriority.Low,
                 () =>
                 {
-                    PackageItemContainer? containerToFocus = PackageList.FindDescendant<PackageItemContainer>(c => c.Package?.Equals(packageToFocus) == true);
+                    PackageItemContainer? containerToFocus = CurrentPackageList.FindDescendant<PackageItemContainer>(c => c.Package?.Equals(packageToFocus) == true);
                     if (containerToFocus == null)
                     {
                         Focus(packageToFocus, ++retryCount);
@@ -523,7 +549,7 @@ namespace UniGetUI.Interface
 
                     if (!containerToFocus.IsSelected)
                     {
-                        PackageItemContainer? selectedContainer = PackageList.FindDescendant<PackageItemContainer>(c => c.IsSelected);
+                        PackageItemContainer? selectedContainer = CurrentPackageList.FindDescendant<PackageItemContainer>(c => c.IsSelected);
                         if (selectedContainer?.Package?.Equals(packageToFocus) == true)
                             containerToFocus = selectedContainer;
                         else
@@ -629,7 +655,7 @@ namespace UniGetUI.Interface
         /// </summary>
         public void FilterPackages()
         {
-            PackageWrapper? previousSelection = PackageList.SelectedItem as PackageWrapper;
+            PackageWrapper? previousSelection = CurrentPackageList.SelectedItem as PackageWrapper;
             FilteredPackages.Clear();
 
             List<IManagerSource> VisibleSources = [];
@@ -729,7 +755,7 @@ namespace UniGetUI.Interface
             {
                 if (VisibleSources.Contains(match.Source) || (!match.Manager.Capabilities.SupportsCustomSources && VisibleManagers.Contains(match.Manager)))
                 {
-                    FilteredPackages.Add(match);
+                    FilteredPackages.Add(match, this);
                 }
             }
             FilteredPackages.BlockSorting = false;
@@ -808,9 +834,39 @@ namespace UniGetUI.Interface
         /// <param name="sorter">The information with which to sort the packages</param>
         public void SortPackagesBy(ObservablePackageCollection.Sorter sorter)
         {
-            FilteredPackages.Descending = !FilteredPackages.Descending;
+            if(sorter == FilteredPackages.CurrentSorter) FilteredPackages.Descending = !FilteredPackages.Descending;
             FilteredPackages.SetSorter(sorter);
             FilteredPackages.Sort();
+            UpdateSortingMenu();
+        }
+
+        public void SortPackagesBy(bool ascendent)
+        {
+            FilteredPackages.Descending = !ascendent;
+            FilteredPackages.Sort();
+            UpdateSortingMenu();
+        }
+
+        private void UpdateSortingMenu()
+        {
+            OrderByName_Menu.IsChecked = FilteredPackages.CurrentSorter is ObservablePackageCollection.Sorter.Name;
+            OrderById_Menu.IsChecked = FilteredPackages.CurrentSorter is ObservablePackageCollection.Sorter.Id;
+            OrderByVer_Menu.IsChecked = FilteredPackages.CurrentSorter is ObservablePackageCollection.Sorter.Version;
+            OrderByNewVer_Menu.IsChecked = FilteredPackages.CurrentSorter is ObservablePackageCollection.Sorter.NewVersion;
+            OrderBySrc_Menu.IsChecked = FilteredPackages.CurrentSorter is ObservablePackageCollection.Sorter.Source;
+
+            OrderAsc_Menu.IsChecked = !FilteredPackages.Descending;
+            OrderDesc_Menu.IsChecked = FilteredPackages.Descending;
+
+            OrderByButton.Content = FilteredPackages.CurrentSorter switch
+            {
+                ObservablePackageCollection.Sorter.Name => CoreTools.Translate("Name"),
+                ObservablePackageCollection.Sorter.Id => CoreTools.Translate("Id"),
+                ObservablePackageCollection.Sorter.Version => CoreTools.Translate("Version"),
+                ObservablePackageCollection.Sorter.NewVersion => CoreTools.Translate("New version"),
+                ObservablePackageCollection.Sorter.Source => CoreTools.Translate("Source"),
+                _ => throw new InvalidDataException()
+            };
         }
 
         protected void SelectAllSourcesButton_Click(object sender, RoutedEventArgs e)
@@ -873,10 +929,6 @@ namespace UniGetUI.Interface
 
         private void SidepanelWidth_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (PaneIsAnimated)
-                return;
-
-
             if ((int)e.NewSize.Width == (int)(e.NewSize.Width / 10) || (int)e.NewSize.Width == 25)
             {
                 return;
@@ -915,13 +967,23 @@ namespace UniGetUI.Interface
         }
 
         public void FocusPackageList()
-        { PackageList.Focus(FocusState.Programmatic); }
+        { CurrentPackageList.Focus(FocusState.Programmatic); }
+
+
+        public async Task ShowContextMenu(PackageWrapper wrapper)
+        {
+            CurrentPackageList.Select(wrapper.Index);
+            await Task.Delay(20);
+            if(_lastContextMenuButtonTapped is not null)
+                (CurrentPackageList.ContextFlyout as BetterMenu)?.ShowAt(_lastContextMenuButtonTapped, new FlyoutShowOptions { Placement = FlyoutPlacementMode.RightEdgeAlignedTop });
+            WhenShowingContextMenu(wrapper.Package);
+        }
 
         private void PackageItemContainer_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
             if (sender is PackageItemContainer container && container.Package is not null)
             {
-                PackageList.Select(container.Wrapper.Index);
+                CurrentPackageList.Select(container.Wrapper.Index);
                 container.Focus(FocusState.Keyboard);
                 WhenShowingContextMenu(container.Package);
             }
@@ -931,7 +993,7 @@ namespace UniGetUI.Interface
         {
             if (sender is PackageItemContainer container && container.Package is not null)
             {
-                PackageList.Select(container.Wrapper.Index);
+                CurrentPackageList.Select(container.Wrapper.Index);
                 container.Focus(FocusState.Keyboard);
 
                 TEL_InstallReferral referral = TEL_InstallReferral.ALREADY_INSTALLED;
@@ -955,11 +1017,11 @@ namespace UniGetUI.Interface
 
         private async void ForceRedrawByScroll()
         {
-            if (PackageList is not null)
+            if (CurrentPackageList is not null)
             {
-                PackageList.ScrollView?.ScrollBy(0, 1);
+                CurrentPackageList.ScrollView?.ScrollBy(0, 1);
                 await Task.Delay(10);
-                PackageList.ScrollView?.ScrollBy(0, -1);
+                CurrentPackageList.ScrollView?.ScrollBy(0, -1);
             }
         }
 
@@ -1206,6 +1268,38 @@ namespace UniGetUI.Interface
         private void FilteringPanel_PaneClosing(SplitView sender, SplitViewPaneClosingEventArgs args)
         {
             ToggleFiltersButton.IsChecked = false;
+        }
+        private void ViewModeSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Settings.SetDictionaryItem("PackageListViewMode", PAGE_NAME, ViewModeSelector.SelectedIndex);
+        }
+
+        FrameworkElement _lastContextMenuButtonTapped = null!;
+        private void ContextMenuButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            if (sender is FrameworkElement el)
+                _lastContextMenuButtonTapped = el;
+        }
+
+        private bool? _pageIsWide; 
+        private void ABSTRACT_PAGE_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if(ActualWidth < 700)
+            {
+                if (_pageIsWide != false)
+                {
+                    SearchBoxPanel.Orientation = Orientation.Vertical;
+                    _pageIsWide = false;
+                }
+            }
+            else
+            {
+                if (_pageIsWide != true)
+                {
+                    SearchBoxPanel.Orientation = Orientation.Horizontal;
+                    _pageIsWide = true;
+                }
+            }
         }
     }
 }

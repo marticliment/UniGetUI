@@ -265,7 +265,7 @@ namespace UniGetUI.Interface
 
             if (action == NotificationArguments.UpdateAllPackages)
             {
-                NavigationPage.UpdatesPage.UpdateAll();
+                MainApp.Operations.UpdateAll();
             }
             else if (action == NotificationArguments.ShowOnUpdatesTab)
             {
@@ -360,11 +360,11 @@ namespace UniGetUI.Interface
                 if (Id != "" && CombinedManagerName != "" && ManagerName == "" && SourceName == "")
                 {
                     Logger.Warn($"URI {link} follows old scheme");
-                    NavigationPage.DiscoverPage.ShowSharedPackage_ThreadSafe(Id, CombinedManagerName);
+                    DialogHelper.ShowSharedPackage_ThreadSafe(Id, CombinedManagerName);
                 }
                 else if (Id != "" && ManagerName != "" && SourceName != "")
                 {
-                    NavigationPage.DiscoverPage.ShowSharedPackage_ThreadSafe(Id, ManagerName, SourceName);
+                    DialogHelper.ShowSharedPackage_ThreadSafe(Id, ManagerName, SourceName);
                 }
                 else
                 {
@@ -437,8 +437,7 @@ namespace UniGetUI.Interface
                     {
                         // Handle potential JSON files
                         Logger.ImportantInfo("Begin attempt to open the package bundle " + param);
-                        NavigationPage.NavigateTo(PageType.Bundles);
-                        _ = NavigationPage.BundlesPage.OpenFromFile(param);
+                        NavigationPage.LoadBundleFile(param);
                     }
                     else if (param.EndsWith("UniGetUI.exe") || param.EndsWith("UniGetUI.dll"))
                     {

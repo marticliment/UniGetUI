@@ -17,7 +17,7 @@ namespace UniGetUI.Interface.SoftwarePages
 {
     public partial class InstalledPackagesPage : AbstractPackagesPage
     {
-        private bool HasDoneBackup;
+        private static bool HasDoneBackup;
 
         private BetterMenuItem? MenuAsAdmin;
         private BetterMenuItem? MenuInteractive;
@@ -361,14 +361,14 @@ namespace UniGetUI.Interface.SoftwarePages
 
         }
 
-        public async Task BackupPackages()
+        public static async Task BackupPackages()
         {
 
             try
             {
                 Logger.Debug("Starting package backup");
                 List<IPackage> packagesToExport = [];
-                foreach (IPackage package in Loader.Packages)
+                foreach (IPackage package in PEInterface.InstalledPackagesLoader.Packages)
                 {
                     packagesToExport.Add(package);
                 }
@@ -448,10 +448,8 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private void MenuShare_Invoked(object sender, RoutedEventArgs args)
         {
-            if (PackageList.SelectedItem is null)
-            {
+            if (SelectedItem is null)
                 return;
-            }
 
             MainApp.Instance.MainWindow.SharePackage(SelectedItem);
         }

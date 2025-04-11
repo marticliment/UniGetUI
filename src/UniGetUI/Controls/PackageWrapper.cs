@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using UniGetUI.Core.Classes;
 using UniGetUI.Core.Tools;
+using UniGetUI.Interface;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 
@@ -32,6 +33,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public bool AlternateIdIconVisible;
         public bool ShowCustomPackageIcon;
         public bool ShowDefaultPackageIcon = true;
+        public string VersionComboString;
         public IconType MainIconId = IconType.Id;
         public IconType AlternateIconId = IconType.Id;
         public ImageSource? MainIconSource;
@@ -57,13 +59,22 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public IPackage Package { get; private set; }
         public PackageWrapper Self { get; private set; }
 
-        public PackageWrapper(IPackage package)
+        private readonly AbstractPackagesPage _page;
+
+        public PackageWrapper(IPackage package, AbstractPackagesPage page)
         {
             Package = package;
             Self = this;
+            _page = page;
             WhenTagHasChanged();
             Package.PropertyChanged += Package_PropertyChanged;
             UpdatePackageIcon();
+            VersionComboString = package.IsUpgradable ? $"{package.VersionString} -> {package.NewVersionString}" : package.VersionString;
+        }
+
+        public async void RightClick()
+        {
+            await _page.ShowContextMenu(this);
         }
 
         public void Package_PropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -167,7 +178,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 MainIconSource = new BitmapImage
                 {
                     UriSource = icon,
-                    DecodePixelWidth = 24,
+                    DecodePixelWidth = 64,
                     DecodePixelType = DecodePixelType.Logical,
                 };
                 ShowCustomPackageIcon = true;
