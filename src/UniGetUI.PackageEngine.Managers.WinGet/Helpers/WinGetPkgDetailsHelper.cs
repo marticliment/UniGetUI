@@ -244,18 +244,38 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         private static CacheableIcon? GetAPPXPackageIcon(IPackage package)
         {
             string appxId = package.Id.Replace("MSIX\\", "");
-            string globalPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "WindowsApps", appxId, "Assets");
-            if (Directory.Exists(globalPath))
+
+            string globalPath;
+            var progsPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "WindowsApps", appxId);
+            if(Directory.Exists(progsPath))
             {
-                string[] logoFiles = Directory.GetFiles(globalPath, "*StoreLogo*.png", SearchOption.TopDirectoryOnly);
-                if (logoFiles.Length > 0)
-                {
-                    return new CacheableIcon(logoFiles[0]);
-                } else
-                {
-                    return null;
-                }
+                globalPath = Path.Join(progsPath, "Assets");
+                if(!Directory.Exists(globalPath)) globalPath = Path.Join(progsPath, "Images");
+                if(!Directory.Exists(globalPath)) globalPath = progsPath;
             }
+            else
+            {
+                progsPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "SystemApps", appxId);
+                globalPath = Path.Join(progsPath, "Assets");
+                if (!Directory.Exists(globalPath)) globalPath = Path.Join(progsPath, "Images");
+                if (!Directory.Exists(globalPath)) globalPath = progsPath;
+            }
+
+            if (!Directory.Exists(globalPath))
+                return null;
+
+            string[] logoFiles = Directory.GetFiles(globalPath, "*StoreLogo*.png", SearchOption.TopDirectoryOnly);
+            if (logoFiles.Length > 0)
+                return new CacheableIcon(logoFiles[^1]);
+
+            logoFiles = Directory.GetFiles(globalPath, "*Splash*.png", SearchOption.TopDirectoryOnly);
+            if (logoFiles.Length > 0)
+                return new CacheableIcon(logoFiles[^1]);
+
+            logoFiles = Directory.GetFiles(globalPath, "*.png", SearchOption.TopDirectoryOnly);
+            if (logoFiles.Length > 0)
+                return new CacheableIcon(logoFiles[^1]);
+
             return null;
         }
     }
