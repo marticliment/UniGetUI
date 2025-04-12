@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Net;
+using System.Runtime.Serialization.Formatters;
 using System.Text.RegularExpressions;
 using Microsoft.Management.Deployment;
 using UniGetUI.Core.IconEngine;
@@ -28,7 +29,13 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         protected override CacheableIcon? GetIcon_UnSafe(IPackage package)
         {
             if (package.Source.IsVirtualManager)
+            {
+                if(package.Source.Name == "Microsoft Store")
+                {
+                    return GetAPPXPackageIcon(package);
+                }
                 return null;
+            }
 
             if (package.Source.Name == "msstore")
                 return GetMicrosoftStoreIcon(package);
@@ -230,6 +237,25 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             }
 
             // Logger.Debug($"Native WinGet icon for Package={package.Id} on catalog={package.Source.Name} was not found :(");
+            return null;
+        }
+
+
+        private static CacheableIcon? GetAPPXPackageIcon(IPackage package)
+        {
+            string appxId = package.Id.Replace("MSIX\\", "");
+            string globalPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "WindowsApps", appxId, "Assets");
+            if (Directory.Exists(globalPath))
+            {
+                string[] logoFiles = Directory.GetFiles(globalPath, "*StoreLogo*.png", SearchOption.TopDirectoryOnly);
+                if (logoFiles.Length > 0)
+                {
+                    return new CacheableIcon(logoFiles[0]);
+                } else
+                {
+                    return null;
+                }
+            }
             return null;
         }
     }
