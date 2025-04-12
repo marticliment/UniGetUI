@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Linq.Expressions;
 using Microsoft.Management.Deployment;
 using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.Enums;
@@ -50,17 +51,29 @@ public static class NativePackageHandler
     //
     //private static CatalogPackageMetadata? _getDetails(IPackage package)
     {
-        if (__nativeDetails.TryGetValue(package.GetHash(), out CatalogPackageMetadata? metadata))
+        try
+        {
+            if (__nativeDetails.TryGetValue(package.GetHash(), out CatalogPackageMetadata? metadata))
+                return metadata;
+
+            CatalogPackage? catalogPackage = GetPackage(package);
+            if (catalogPackage is null) return null;
+
+            var availableVersions = catalogPackage.AvailableVersions?.ToArray() ?? [];
+            if (availableVersions.Length > 0)
+            {
+                metadata = catalogPackage.GetPackageVersionInfo(availableVersions[0]).GetCatalogPackageMetadata();
+            }
+
+            if (metadata is not null)
+                __nativeDetails[package.GetHash()] = metadata;
+
             return metadata;
-
-        CatalogPackage? catalogPackage = GetPackage(package);
-        metadata = catalogPackage?.DefaultInstallVersion?.GetCatalogPackageMetadata();
-        metadata ??= catalogPackage?.InstalledVersion?.GetCatalogPackageMetadata();
-
-        if (metadata is not null)
-            __nativeDetails[package.GetHash()] = metadata;
-
-        return metadata;
+        }
+        catch (Exception ex)
+        {
+            throw;
+        }
     }
 
     /// <summary>

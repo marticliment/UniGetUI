@@ -197,7 +197,8 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
             var availableVersions = nativePackage.AvailableVersions?.ToArray() ?? [];
             if (availableVersions.Length > 0)
             {
-                 source = Manager.SourcesHelper.Factory.GetSourceOrDefault(nativePackage.InstalledVersion.PackageCatalog.Info.Name);
+                var installPackage = nativePackage.GetPackageVersionInfo(availableVersions[0]);
+                source = Manager.SourcesHelper.Factory.GetSourceOrDefault(installPackage.PackageCatalog.Info.Name);
             }
             else
             {
