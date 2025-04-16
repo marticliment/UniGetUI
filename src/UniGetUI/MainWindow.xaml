@@ -177,5 +177,12 @@
                     Visibility="Visible" />
             </Grid>
         </Frame>
+
+        <TeachingTip
+            x:Name="DismissableNotification"
+            x:FieldModifier="public"
+            PlacementMargin="20"
+            PreferredPlacement="Auto" />
+
     </Grid>
 </Window>

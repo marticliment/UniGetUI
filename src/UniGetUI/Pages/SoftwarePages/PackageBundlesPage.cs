@@ -249,7 +249,18 @@ namespace UniGetUI.Interface.SoftwarePages
 
             PackageDetails.Click += (_, _) =>
             {
-                if (SelectedItem is null) return;
+                if (SelectedItem is null)
+                    return;
+
+                if (SelectedItem.Source.IsVirtualManager || SelectedItem is InvalidImportedPackage)
+                {
+                    DialogHelper.ShowDismissableBalloon(
+                        CoreTools.Translate("Something went wrong"),
+                        CoreTools.Translate("\"{0}\" is a local package and can't be shared", SelectedItem.Name)
+                    );
+                    return;
+                }
+
                 DialogHelper.ShowPackageDetails(SelectedItem, OperationType.None, TEL_InstallReferral.FROM_BUNDLE);
             };
 

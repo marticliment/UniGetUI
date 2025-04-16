@@ -882,8 +882,15 @@ namespace UniGetUI.Interface
 
         protected void ShowDetailsForPackage(IPackage? package, TEL_InstallReferral referral)
         {
-            if (package is null || package.Source.IsVirtualManager || package is InvalidImportedPackage)
+            if (package is null)
+                return;
+
+            if(package.Source.IsVirtualManager || package is InvalidImportedPackage)
             {
+                DialogHelper.ShowDismissableBalloon(
+                    CoreTools.Translate("Something went wrong"),
+                    CoreTools.Translate("{0} is a local package and does not have available details", package.Name)
+                );
                 return;
             }
 
@@ -903,21 +910,25 @@ namespace UniGetUI.Interface
                 });
         }
 
-
         protected void SharePackage(IPackage? package)
         {
             if (package is null)
-            {
                 return;
-            }
 
             MainApp.Instance.MainWindow.SharePackage(package);
         }
 
         protected async void ShowInstallationOptionsForPackage(IPackage? package)
         {
-            if (package is null || package.Source.IsVirtualManager || package is InvalidImportedPackage)
+            if (package is null)
+                return;
+
+            if (package.Source.IsVirtualManager || package is InvalidImportedPackage)
             {
+                DialogHelper.ShowDismissableBalloon(
+                    CoreTools.Translate("Something went wrong"),
+                    CoreTools.Translate("{0} a local package and is not compatible with this feature", package.Name)
+                );
                 return;
             }
 
@@ -1165,11 +1176,8 @@ namespace UniGetUI.Interface
             {
                 if (IS_ALT_PRESSED)
                 {
-                    if (!package.Source.IsVirtualManager && package is not InvalidImportedPackage)
-                    {
-                        ShowInstallationOptionsForPackage(package);
-                        e.Handled = true;
-                    }
+                    ShowInstallationOptionsForPackage(package);
+                    e.Handled = true;
                 }
                 else if (IS_CONTROL_PRESSED)
                 {
@@ -1181,14 +1189,11 @@ namespace UniGetUI.Interface
                 }
                 else
                 {
-                    if (!package.Source.IsVirtualManager && package is not InvalidImportedPackage)
-                    {
-                        TEL_InstallReferral referral = TEL_InstallReferral.ALREADY_INSTALLED;
-                        if (PAGE_NAME == "Bundles") referral = TEL_InstallReferral.FROM_BUNDLE;
-                        if (PAGE_NAME == "Discover") referral = TEL_InstallReferral.DIRECT_SEARCH;
-                        ShowDetailsForPackage(package, referral);
-                        e.Handled = true;
-                    }
+                    TEL_InstallReferral referral = TEL_InstallReferral.ALREADY_INSTALLED;
+                    if (PAGE_NAME == "Bundles") referral = TEL_InstallReferral.FROM_BUNDLE;
+                    if (PAGE_NAME == "Discover") referral = TEL_InstallReferral.DIRECT_SEARCH;
+                    ShowDetailsForPackage(package, referral);
+                    e.Handled = true;
                 }
             }
             else if (e.Key == VirtualKey.Space && package is not null)

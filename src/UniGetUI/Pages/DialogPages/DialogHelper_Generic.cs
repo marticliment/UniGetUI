@@ -618,4 +618,11 @@ public static partial class DialogHelper
         if(result is ContentDialogResult.Primary) Window.NavigationPage.NavigateTo(PageType.Discover);
         else if(result is ContentDialogResult.Secondary) Window.NavigationPage.NavigateTo(PageType.Installed);
     }
+
+    public static void ShowDismissableBalloon(string title, string message)
+    {
+        Window.DismissableNotification.Title = title;
+        Window.DismissableNotification.Content = new TextBlock() { Text = message, TextWrapping = TextWrapping.Wrap };
+        Window.DismissableNotification.IsOpen = true;
+    }
 }

@@ -53,6 +53,7 @@ namespace UniGetUI.Interface
             DialogHelper.Window = this;
 
             InitializeComponent();
+            DismissableNotification.CloseButtonContent = CoreTools.Translate("Close");
 
             ExtendsContentIntoTitleBar = true;
             try
@@ -750,8 +751,15 @@ namespace UniGetUI.Interface
 
         public void SharePackage(IPackage? package)
         {
-            if (package is null || package.Source.IsVirtualManager || package is InvalidImportedPackage)
+            if (package is null)
+                return;
+
+            if (package.Source.IsVirtualManager || package is InvalidImportedPackage)
             {
+                DialogHelper.ShowDismissableBalloon(
+                    CoreTools.Translate("Something went wrong"),
+                    CoreTools.Translate("\"{0}\" is a local package and can't be shared", package.Name)
+                );
                 return;
             }
 

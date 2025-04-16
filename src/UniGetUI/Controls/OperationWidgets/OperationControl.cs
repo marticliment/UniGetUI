@@ -573,6 +573,7 @@ public partial class OperationControl: INotifyPropertyChanged
             var details = new BetterMenuItem {
                 Text = CoreTools.Translate("Package details"),
                 IconName = IconType.Info_Round,
+                IsEnabled = !packageOp.Package.Source.IsVirtualManager
             };
             details.Click += (_, _) =>
             {
@@ -580,9 +581,12 @@ public partial class OperationControl: INotifyPropertyChanged
             };
             optionsMenu.Add(details);
 
-            var installationSettings = new BetterMenuItem {
+
+            var installationSettings = new BetterMenuItem
+            {
                 Text = CoreTools.Translate("Installation options"),
                 IconName = IconType.Options,
+                IsEnabled = !packageOp.Package.Source.IsVirtualManager
             };
             installationSettings.Click += (_, _) =>
             {
