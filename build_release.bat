@@ -3,9 +3,9 @@
 rem update resources
 python scripts/apply_versions.py
 
-pushd scripts
-python download_translations.py
-popd ..
+rem pushd scripts
+rem python download_translations.py
+rem popd ..
 
 rem clean old builds
 taskkill /im wingetui.exe /f
@@ -51,7 +51,7 @@ popd
 set INSTALLATOR="%SYSTEMDRIVE%\Program Files (x86)\Inno Setup 6\ISCC.exe"
 if exist %INSTALLATOR% (
     %INSTALLATOR% "UniGetUI.iss"
-    %signcommand% "UniGetUI Installer.exe"
+    rem %signcommand% "UniGetUI Installer.exe"
     del "WingetUI Installer.exe"
     copy "UniGetUI Installer.exe" "WingetUI Installer.exe" 
     pause

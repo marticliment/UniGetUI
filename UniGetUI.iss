@@ -34,7 +34,9 @@ CloseApplications=no
 PrivilegesRequiredOverridesAllowed=dialog
 OutputBaseFilename=UniGetUI Installer
 OutputDir=.     
-; SignTool=azsign
+; Comment line below to disable digital signature of installer
+SignTool=azsign
+
 SignedUninstaller=yes
 SignedUninstallerDir=InstallerExtras\
 MinVersion=10.0
