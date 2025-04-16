@@ -238,7 +238,7 @@
                         widgets:IconBuilder.Icon="Package"
                         FontSize="48"
                         FontWeight="ExtraLight"
-                        ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
+                        ToolTipService.ToolTip="{x:Bind ExtendedTooltip, Mode=OneTime}"
                         Visibility="{x:Bind ShowDefaultPackageIcon, Mode=OneWay}" />
 
                     <Image
@@ -247,7 +247,7 @@
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Source="{x:Bind MainIconSource, Mode=OneWay}"
-                        ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
+                        ToolTipService.ToolTip="{x:Bind ExtendedTooltip, Mode=OneTime}"
                         Visibility="{x:Bind ShowCustomPackageIcon, Mode=OneWay}" />
 
                     <TextBlock
@@ -359,7 +359,7 @@
                         widgets:IconBuilder.Icon="Package"
                         FontSize="74"
                         FontWeight="ExtraLight"
-                        ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
+                        ToolTipService.ToolTip="{x:Bind ExtendedTooltip, Mode=OneTime}"
                         Visibility="{x:Bind ShowDefaultPackageIcon, Mode=OneWay}" />
 
                     <Image
@@ -370,7 +370,7 @@
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Source="{x:Bind MainIconSource, Mode=OneWay}"
-                        ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
+                        ToolTipService.ToolTip="{x:Bind ExtendedTooltip, Mode=OneTime}"
                         Visibility="{x:Bind ShowCustomPackageIcon, Mode=OneWay}" />
 
                     <TextBlock

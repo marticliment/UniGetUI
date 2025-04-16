@@ -48,6 +48,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         }
 
         public string ListedNameTooltip = "";
+        public readonly string ExtendedTooltip = "";
         public float ListedOpacity = 1.0f;
 
         public int NewVersionLabelWidth { get => Package.IsUpgradable ? 125 : 0; }
@@ -70,6 +71,11 @@ namespace UniGetUI.PackageEngine.PackageClasses
             Package.PropertyChanged += Package_PropertyChanged;
             UpdatePackageIcon();
             VersionComboString = package.IsUpgradable ? $"{package.VersionString} -> {package.NewVersionString}" : package.VersionString;
+
+            if(package.Name.ToLower() != package.Id.ToLower())
+                ExtendedTooltip = $"{package.Name} ({package.Id} from {package.Source.AsString_DisplayName})";
+            else
+                ExtendedTooltip = $"{package.Name} (from {package.Source.AsString_DisplayName})";
         }
 
         public async void RightClick()
