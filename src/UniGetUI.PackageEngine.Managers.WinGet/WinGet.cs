@@ -81,12 +81,12 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             DetailsHelper = new WinGetPkgDetailsHelper(this);
             OperationHelper = new WinGetPkgOperationHelper(this);
 
-            LocalPcSource = new LocalWinGetSource(this, CoreTools.Translate("Local PC"), IconType.LocalPc);
-            AndroidSubsystemSource = new(this, CoreTools.Translate("Android Subsystem"), IconType.Android);
-            SteamSource = new(this, "Steam", IconType.Steam);
-            UbisoftConnectSource = new(this, "Ubisoft Connect", IconType.UPlay);
-            GOGSource = new(this, "GOG", IconType.GOG);
-            MicrosoftStoreSource = new(this, "Microsoft Store", IconType.MsStore);
+            LocalPcSource = new LocalWinGetSource(this, CoreTools.Translate("Local PC"), IconType.LocalPc, LocalWinGetSource.Type_t.LocalPC);
+            AndroidSubsystemSource = new(this, CoreTools.Translate("Android Subsystem"), IconType.Android, LocalWinGetSource.Type_t.Android);
+            SteamSource = new(this, "Steam", IconType.Steam, LocalWinGetSource.Type_t.Steam);
+            UbisoftConnectSource = new(this, "Ubisoft Connect", IconType.UPlay, LocalWinGetSource.Type_t.Ubisoft);
+            GOGSource = new(this, "GOG", IconType.GOG, LocalWinGetSource.Type_t.GOG);
+            MicrosoftStoreSource = new(this, "Microsoft Store", IconType.MsStore, LocalWinGetSource.Type_t.MicrosftStore);
         }
 
         public static string GetProxyArgument()
@@ -379,13 +379,25 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
     public class LocalWinGetSource : ManagerSource
     {
+        public enum Type_t
+        {
+            LocalPC,
+            MicrosftStore,
+            Steam,
+            GOG,
+            Android,
+            Ubisoft
+        }
+
+        public readonly Type_t Type;   
         private readonly string name;
         private readonly IconType __icon_id;
         public override IconType IconId { get => __icon_id; }
 
-        public LocalWinGetSource(WinGet manager, string name, IconType iconId)
+        public LocalWinGetSource(WinGet manager, string name, IconType iconId, Type_t type)
             : base(manager, name, new Uri("https://microsoft.com/local-pc-source"), isVirtualManager: true)
         {
+            Type = type;
             this.name = name;
             __icon_id = iconId;
             AsString = Name;

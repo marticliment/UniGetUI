@@ -1,4 +1,3 @@
-using System.Diagnostics.Tracing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
@@ -11,7 +10,6 @@ using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.Serializable;
-using Windows.ApplicationModel;
 
 namespace UniGetUI.Pages.DialogPages;
 
