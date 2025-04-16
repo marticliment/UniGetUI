@@ -37,7 +37,11 @@ namespace UniGetUI.PackageEngine.PackageLoader
                 IgnoredPackages[package.Id] = package;
                 return false;
             }
-            if ((await InstallationOptions.FromPackageAsync(package)).SkipMinorUpdates && package.IsUpdateMinor()) return false;
+            if ((await InstallationOptions.FromPackageAsync(package)).SkipMinorUpdates && package.IsUpdateMinor())
+            {
+                Logger.Info($"Ignoring package {package.Id} because it is a minor update ({package.VersionString} -> {package.NewVersionString}) and SkipMinorUpdates is set to true.");
+                return false;
+            }
             if (package.NewerVersionIsInstalled()) return false;
             return true;
         }
