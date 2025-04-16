@@ -19,7 +19,6 @@ using UniGetUI.Interface.Telemetry;
 using UniGetUI.PackageEngine.Interfaces;
 using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
 using UniGetUI.Pages.DialogPages;
-using UniGetUI.Interface.Enums;
 
 namespace UniGetUI
 {

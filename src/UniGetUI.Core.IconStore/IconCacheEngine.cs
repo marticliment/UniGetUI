@@ -24,6 +24,8 @@ namespace UniGetUI.Core.IconEngine
         public readonly string Version = "";
         public readonly long Size = -1;
         private readonly int _hashCode = -1;
+        public readonly bool IsLocalPath = false;
+        public readonly string LocalPath = "";
         public readonly IconValidationMethod ValidationMethod;
 
         /// <summary>
@@ -76,6 +78,13 @@ namespace UniGetUI.Core.IconEngine
             _hashCode = uri.ToString().GetHashCode();
         }
 
+        public CacheableIcon(string path)
+        {
+            IsLocalPath = true;
+            LocalPath = path;
+            Url = new Uri(path);
+        }
+
         public override int GetHashCode()
         {
             return _hashCode;
@@ -101,6 +110,10 @@ namespace UniGetUI.Core.IconEngine
                 return null;
 
             var icon = _icon.Value;
+
+            if(icon.IsLocalPath)
+                return icon.LocalPath;
+
             string iconLocation = Path.Join(CoreData.UniGetUICacheDirectory_Icons, ManagerName, PackageId);
             if (!Directory.Exists(iconLocation)) Directory.CreateDirectory(iconLocation);
             string iconVersionFile = Path.Join(iconLocation, $"icon.version");
