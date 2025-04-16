@@ -36,8 +36,8 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 return null;
             }
 
-            // if (package.Source.Name == "msstore")
-            //     return WinGetIconsHelper.GetMicrosoftStoreIcon(package);
+            if (package.Source.Name == "msstore")
+                return WinGetIconsHelper.GetMicrosoftStoreIcon(package);
 
             return WinGetIconsHelper.GetWinGetPackageIcon(package);
         }
