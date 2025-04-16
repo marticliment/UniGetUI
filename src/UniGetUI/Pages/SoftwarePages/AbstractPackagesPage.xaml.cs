@@ -889,7 +889,7 @@ namespace UniGetUI.Interface
             {
                 DialogHelper.ShowDismissableBalloon(
                     CoreTools.Translate("Something went wrong"),
-                    CoreTools.Translate("{0} is a local package and does not have available details", package.Name)
+                    CoreTools.Translate("\"{0}\" is a local package and does not have available details", package.Name)
                 );
                 return;
             }
@@ -927,7 +927,7 @@ namespace UniGetUI.Interface
             {
                 DialogHelper.ShowDismissableBalloon(
                     CoreTools.Translate("Something went wrong"),
-                    CoreTools.Translate("{0} a local package and is not compatible with this feature", package.Name)
+                    CoreTools.Translate("\"{0}\" is a local package and is not compatible with this feature", package.Name)
                 );
                 return;
             }
@@ -1286,7 +1286,7 @@ namespace UniGetUI.Interface
                 _lastContextMenuButtonTapped = el;
         }
 
-        private bool? _pageIsWide; 
+        private bool? _pageIsWide;
         private void ABSTRACT_PAGE_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if(ActualWidth < 700)
