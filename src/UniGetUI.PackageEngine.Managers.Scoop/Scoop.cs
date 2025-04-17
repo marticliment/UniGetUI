@@ -59,7 +59,9 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 {
                     KnowsPackageCount = true,
                     KnowsUpdateDate = true
-                }
+                },
+                SupportsProxy = ProxySupport.No,
+                SupportsProxyAuth = false
             };
 
             Properties = new ManagerProperties

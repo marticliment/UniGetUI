@@ -29,7 +29,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
             {
                 FileName = Manager.WinGetBundledPath,
                 Arguments = Manager.Properties.ExecutableCallArgs +
-                            " update --include-unknown  --accept-source-agreements",
+                            " update --include-unknown  --accept-source-agreements " + WinGet.GetProxyArgument(),
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,
@@ -140,7 +140,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
             StartInfo = new()
             {
                 FileName = Manager.WinGetBundledPath,
-                Arguments = Manager.Properties.ExecutableCallArgs + " list  --accept-source-agreements",
+                Arguments = Manager.Properties.ExecutableCallArgs + " list  --accept-source-agreements " + WinGet.GetProxyArgument(),
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,
@@ -240,7 +240,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
             {
                 FileName = Manager.WinGetBundledPath,
                 Arguments = Manager.Properties.ExecutableCallArgs + " search \"" + query +
-                            "\"  --accept-source-agreements",
+                            "\"  --accept-source-agreements " + WinGet.GetProxyArgument(),
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,
@@ -339,7 +339,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
             FileName = Manager.WinGetBundledPath,
             Arguments = Manager.Properties.ExecutableCallArgs + " show " + WinGetPkgOperationHelper.GetIdNamePiece(details.Package) +
                         " --disable-interactivity --accept-source-agreements --locale " +
-                        System.Globalization.CultureInfo.CurrentCulture,
+                        System.Globalization.CultureInfo.CurrentCulture + " " + WinGet.GetProxyArgument(),
             RedirectStandardOutput = true,
             RedirectStandardError = true,
             RedirectStandardInput = true,
@@ -379,14 +379,14 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         {
             output.Clear();
             Logger.Info("Winget could not found culture data for package Id=" + details.Package.Id + " and Culture=" +
-                        System.Globalization.CultureInfo.CurrentCulture.ToString() + ". Trying to get data for en-US");
+                        System.Globalization.CultureInfo.CurrentCulture + ". Trying to get data for en-US");
             process = new Process();
             LocaleFound = true;
             startInfo = new()
             {
                 FileName = Manager.WinGetBundledPath,
                 Arguments = Manager.Properties.ExecutableCallArgs + " show " + WinGetPkgOperationHelper.GetIdNamePiece(details.Package) +
-                            " --disable-interactivity --accept-source-agreements --locale en-US",
+                            " --disable-interactivity --accept-source-agreements --locale en-US " + " " + WinGet.GetProxyArgument(),
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 RedirectStandardInput = true,
@@ -430,7 +430,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
             {
                 FileName = Manager.WinGetBundledPath,
                 Arguments = Manager.Properties.ExecutableCallArgs + " show " + WinGetPkgOperationHelper.GetIdNamePiece(details.Package) +
-                            " --disable-interactivity --accept-source-agreements",
+                            " --disable-interactivity --accept-source-agreements " + " " + WinGet.GetProxyArgument(),
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 RedirectStandardInput = true,
@@ -575,7 +575,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
             {
                 FileName = Manager.WinGetBundledPath,
                 Arguments = Manager.Properties.ExecutableCallArgs + " show " + WinGetPkgOperationHelper.GetIdNamePiece(package) +
-                            $" --versions --accept-source-agreements",
+                            $" --versions --accept-source-agreements " + " " + WinGet.GetProxyArgument(),
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
@@ -629,7 +629,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
             StartInfo = new()
             {
                 FileName = Manager.Status.ExecutablePath,
-                Arguments = Manager.Properties.ExecutableCallArgs + " source list",
+                Arguments = Manager.Properties.ExecutableCallArgs + " source list " + WinGet.GetProxyArgument(),
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 RedirectStandardInput = true,

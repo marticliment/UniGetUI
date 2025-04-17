@@ -1,6 +1,7 @@
 using CommunityToolkit.WinUI.Controls;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
@@ -11,11 +12,11 @@ using Windows.UI.Text;
 
 namespace UniGetUI.Interface.Widgets
 {
-    public sealed class CheckboxButtonCard : SettingsCard
+    public sealed partial class CheckboxButtonCard : SettingsCard
     {
         public ToggleSwitch _checkbox;
         public TextBlock _textblock;
-        public Button Button;
+        public ButtonBase Button;
         private bool IS_INVERTED;
 
         private string setting_name = "";
@@ -61,36 +62,29 @@ namespace UniGetUI.Interface.Widgets
 
         public CheckboxButtonCard()
         {
-            Button = new Button();
+            Button = new Button()
+            {
+                Margin = new Thickness(0, 8, 0, 0)
+
+            };
             _checkbox = new ToggleSwitch()
             {
-                Margin = new Thickness(-8, 0, 0, 0)
+                 Margin = new Thickness(0, 0, 8, 0)
             };
             _textblock = new TextBlock()
             {
+                Margin = new Thickness(2,0,0,0),
                 VerticalAlignment = VerticalAlignment.Center,
-                Margin = new(12, 0, 8, 0),
                 TextWrapping = TextWrapping.Wrap,
                 Style = (Style)Application.Current.Resources["BaseTextBlockStyle"],
                 FontWeight = new FontWeight(450),
                 Foreground = (SolidColorBrush)Application.Current.Resources["ButtonForeground"]
             };
             IS_INVERTED = false;
-            _checkbox.OnContent = _checkbox.OffContent = "";
 
-            //ContentAlignment = ContentAlignment.Left;
-            //HorizontalAlignment = HorizontalAlignment.Stretch;
-
-            Grid g = new Grid();
-            g.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto });
-            g.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-            g.Children.Add(_checkbox);
-            g.Children.Add(_textblock);
-            Grid.SetColumn(_textblock, 1);
-
-            Description = g;
-            Content = Button;
-            g.HorizontalAlignment = HorizontalAlignment.Stretch;
+            Content = _checkbox;
+            Header = _textblock;
+            Description = Button;
             _checkbox.Toggled += (_, _) =>
             {
                 Settings.Set(setting_name, _checkbox.IsOn ^ IS_INVERTED ^ ForceInversion);
@@ -99,8 +93,6 @@ namespace UniGetUI.Interface.Widgets
                 _textblock.Opacity = _checkbox.IsOn ? 1 : 0.7;
             };
 
-
-            Button.MinWidth = 200;
             Button.Click += (s, e) => Click?.Invoke(s, e);
         }
     }

@@ -1,11 +1,11 @@
-﻿using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 
 namespace UniGetUI.Interface.Pages.LogPage
 {
-    public sealed class UniGetUILogPage : BaseLogPage
+    public sealed partial class UniGetUILogPage : BaseLogPage
     {
         public UniGetUILogPage() : base(true)
         {

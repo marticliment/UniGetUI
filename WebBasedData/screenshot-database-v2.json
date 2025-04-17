@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11803,
-        "done": 5273,
-        "packages_with_icon": 5273,
-        "packages_with_screenshot": 626,
-        "total_screenshots": 1961
+        "total": 11805,
+        "done": 5275,
+        "packages_with_icon": 5275,
+        "packages_with_screenshot": 633,
+        "total_screenshots": 1977
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -8242,8 +8242,13 @@
             "images": []
         },
         "compactgui": {
-            "icon": "https://postimg.cc/23Nn3b75",
-            "images": []
+            "icon": "https://i.imgur.com/NHhZtxp.png",
+            "images": [
+                "https://i.imgur.com/VsswHJ2.png",
+                "https://i.imgur.com/9CcHxub.png",
+                "https://i.imgur.com/HavsEnA.png",
+                "https://i.imgur.com/a5epFFP.png"
+            ]
         },
         "compactor": {
             "icon": "https://community.chocolatey.org/content/packageimages/compactor.0.10.1.png",
@@ -20255,7 +20260,7 @@
             "images": []
         },
         "itunes": {
-            "icon": "https://www.apple.com/v/itunes/home/k/images/overview/itunes_logo__dwjkvx332d0m_large.png",
+            "icon": "https://zv915ylvcs.ufs.sh/f/fYIgEizARqiSf4d1j8PzARqiSTo3v8UBHIdlOwWsVeK71Y5Z",
             "images": []
         },
         "itunesfusion": {
@@ -21198,7 +21203,10 @@
         },
         "kawaii-player": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://zv915ylvcs.ufs.sh/f/fYIgEizARqiSG47vnNlXuI0GKjDFqPw9kgdCraEfzZe1lLOt",
+                "https://zv915ylvcs.ufs.sh/f/fYIgEizARqiSFQrW9cVtiaGEPnZIjVfXlJQO9vd1k64UbFDe"
+            ]
         },
         "kawanime": {
             "icon": "https://community.chocolatey.org/content/packageimages/kawanime.0.4.3.png",
@@ -26993,7 +27001,9 @@
         },
         "neofetch": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://zv915ylvcs.ufs.sh/f/fYIgEizARqiSu7FpAit2c9F5IJV04zYrBXaySm7AGhM1vkEU"
+            ]
         },
         "neoload": {
             "icon": "",
@@ -27217,7 +27227,9 @@
         },
         "netextender": {
             "icon": "https://postimg.cc/qtZcPS5b",
-            "images": []
+            "images": [
+                "https://postimg.cc/8sJsMDBD"
+            ]
         },
         "netfoxdetective": {
             "icon": "",
@@ -36304,7 +36316,10 @@
         },
         "screentogif": {
             "icon": "https://community.chocolatey.org/content/packageimages/screentogif.2.41.0.png",
-            "images": []
+            "images": [
+                "https://www.screentogif.com/img/Startup.81fa6bd3.png",
+                "https://camo.githubusercontent.com/192d4a63fa660bdeaee93bf4d0832cd2d8b01c7edad9c0f625a652c464a6e4f8/68747470733a2f2f7777772e73637265656e746f6769662e636f6d2f6d656469612f5265636f726465722e706e67"
+            ]
         },
         "screenview": {
             "icon": "",
@@ -49805,6 +49820,22 @@
         "orcaslicer": {
             "icon": "https://cdn.meowcat285.com/unigeticons/OrcaSlicer.png",
             "images": []
+        },
+        "sonicwall-netextender\n": {
+            "icon": "https://paulstsmith.github.io/images/netextender-icon.png",
+            "images": [
+                "https://paulstsmith.github.io/images/netextender-screenshot-connected.png",
+                "https://paulstsmith.github.io/images/netextender-screenShot-disconnected.png"
+            ]
+        },
+        "ScooterSoftware-BeyondCompare-5": {
+            "icon": "https://www.scootersoftware.com/bc_icon.png",
+            "images": [
+                "https://www.scootersoftware.com/shot_FolderCompare_Dark.png",
+                "https://www.scootersoftware.com/shot_TextCompare_Dark.png",
+                "https://www.scootersoftware.com/shot_FolderMerge_Dark.png",
+                "https://www.scootersoftware.com/shot_TextMerge_Dark.png"
+            ]
         }
     }
 }

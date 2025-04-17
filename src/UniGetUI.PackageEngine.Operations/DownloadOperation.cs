@@ -59,7 +59,7 @@ public class DownloadOperation : AbstractOperation
                 return OperationVeredict.Failure;
             }
 
-            using var httpClient = new HttpClient();
+            using var httpClient = new HttpClient(CoreTools.HttpClientConfig);
             using var response = await httpClient.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead);
 
             response.EnsureSuccessStatusCode();

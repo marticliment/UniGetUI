@@ -1,16 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
-    <RuntimeIdentifier>win-$(Platform)</RuntimeIdentifier>
-    <Platforms>ARM64;x64</Platforms>
-    <TargetFramework>net8.0-windows10.0.26100.0</TargetFramework>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <Configurations>Debug;Release</Configurations>
     <OutputType>WinExe</OutputType>
     <RootNamespace>UniGetUI</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <Platforms>x64</Platforms>
     <UseWinUI>true</UseWinUI>
     <EnableMsixTooling>true</EnableMsixTooling>
     <StartupObject>UniGetUI.EntryPoint</StartupObject>
@@ -18,14 +11,12 @@
     <ApplicationIcon>icon.ico</ApplicationIcon>
 
     <!-- .NET & AppSdk publish options -->
-    <PublishSelfContained>true</PublishSelfContained>
-    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
     <WindowsAppSDKWinUI>true</WindowsAppSDKWinUI>
     <WindowsPackageType>None</WindowsPackageType>
-    <!--WindowsSdkPackageVersion>10.0.26100.56</WindowsSdkPackageVersion-->
 
-    <PublishTrimmed>false</PublishTrimmed>
-    <!--TrimMode>partial</TrimMode-->
+    <!--PublishAot>true</PublishAot-->
+    <PublishTrimmed>true</PublishTrimmed>
+    <TrimMode>partial</TrimMode>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
   </PropertyGroup>
 
@@ -63,6 +54,7 @@
     <None Remove="Interface\Widgets\NavButton.xaml" />
     <None Remove="MainWindow.xaml" />
     <None Remove="PackageEngine\OperationControl.xaml" />
+    <None Remove="Pages\DialogPages\OperationFailedDialog.xaml" />
     <None Remove="Pages\SettingsPages\GeneralPages\Administrator.xaml" />
     <None Remove="Pages\SettingsPages\GeneralPages\Backup.xaml" />
     <None Remove="Pages\SettingsPages\GeneralPages\Experimental.xaml" />
@@ -70,26 +62,27 @@
     <None Remove="Pages\SettingsPages\GeneralPages\Notifications.xaml" />
     <None Remove="Pages\SettingsPages\GeneralPages\Operations.xaml" />
     <None Remove="Pages\SettingsPages\GeneralPages\PackageManager.xaml" />
-    <None Remove="Pages\SettingsPages\GeneralPages\Startup.xaml" />
     <None Remove="Pages\SettingsPages\SettingsHomepage.xaml" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Common" Version="8.4.0" />
-    <PackageReference Include="CommunityToolkit.WinUI.Animations" Version="8.1.240916" />
-    <PackageReference Include="CommunityToolkit.WinUI.Controls.Primitives" Version="8.1.240916" />
-    <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.1.240916" />
-    <PackageReference Include="CommunityToolkit.WinUI.Controls.Sizers" Version="8.1.240916" />
-    <PackageReference Include="CommunityToolkit.WinUI.Converters" Version="8.1.240916" />
-    <PackageReference Include="H.NotifyIcon.WinUI" Version="2.2.0" />
+    <PackageReference Include="CommunityToolkit.WinUI.Animations" Version="8.2.250402" />
+    <PackageReference Include="CommunityToolkit.WinUI.Controls.Primitives" Version="8.2.250402" />
+    <PackageReference Include="CommunityToolkit.WinUI.Controls.Segmented" Version="8.2.250402" />
+    <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.2.250402" />
+    <PackageReference Include="CommunityToolkit.WinUI.Controls.Sizers" Version="8.2.250402" />
+    <PackageReference Include="CommunityToolkit.WinUI.Converters" Version="8.2.250402" />
+    <PackageReference Include="H.NotifyIcon.WinUI" Version="2.3.0" />
     <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.2.0" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.250205002" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.250401001" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1742" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="PhotoSauce.MagicScaler" Version="0.15.0" />
+      <PackageReference Include="System.Drawing.Common" Version="9.0.4" Aliases="DrawingCommon" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
     <PackageReference Include="System.Private.Uri" Version="4.3.2" />
     <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
+    <PackageReference Include="WinUIEx" Version="2.5.1" />
     <PackageReference Include="YamlDotNet" Version="16.3.0" />
 
     <Manifest Include="$(ApplicationManifest)" />
@@ -112,6 +105,9 @@
     </Page>
     <Page Update="Interface\SoftwareUpdates.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Pages\SettingsPages\GeneralPages\Internet.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="SettingsTab\Widgets\SourceManager.xaml">
@@ -181,6 +177,12 @@
     <None Update="Assets\Utilities\uninstall_scoop.cmd">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="Pages\DialogPages\OperationFailedDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Pages\DialogPages\OperationLiveLogPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Pages\SettingsPages\GeneralPages\PackageManager.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -196,7 +198,7 @@
     <Page Update="Pages\SettingsPages\GeneralPages\Backup.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Update="Pages\SettingsPages\GeneralPages\Startup.xaml">
+    <Page Update="Pages\SettingsPages\GeneralPages\Updates.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="Pages\SettingsPages\GeneralPages\Notifications.xaml">
@@ -289,9 +291,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
       <Content Update="Assets\Utilities\getfilesiginforedist.dll">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Update="Assets\Utilities\gsudo.exe">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
     <Content Update="Assets\Utilities\install_scoop.cmd">

@@ -1,21 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0-windows10.0.26100.0</TargetFramework>
-    <RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
-    <RuntimeIdentifier>win-$(Platform)</RuntimeIdentifier>
-    <Platforms>x64</Platforms>
-    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
-    <PublishSelfContained>true</PublishSelfContained>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-  </PropertyGroup>
+
 
   <ItemGroup>
     <PackageReference Include="Nancy" Version="2.0.0" />
     <PackageReference Include="Nancy.Hosting.Self" Version="2.0.0">
       <NoWarn>NU1701</NoWarn>
     </PackageReference>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="PhotoSauce.MagicScaler" Version="0.15.0" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
     <PackageReference Include="System.Private.Uri" Version="4.3.2" />

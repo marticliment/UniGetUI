@@ -41,7 +41,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders
                 if (Manager.Capabilities.SupportsCustomVersions)
                 {
                     var result = GetInstallableVersions_UnSafe(package);
-                    Logger.Debug($"Found {result.Count()} versions for package Id={package.Id} on manager {Manager.Name}");
+                    Logger.Debug($"Found {result.Count} versions for package Id={package.Id} on manager {Manager.Name}");
                     return result;
                 }
 
@@ -110,7 +110,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders
                     URIs = UriList;
                 }
 
-                Logger.Info($"Found {URIs.Count()} screenshots for package Id={package.Id}");
+                Logger.Info($"Found {URIs.Count} screenshots for package Id={package.Id}");
                 return URIs;
             }
             catch (Exception e)

@@ -31,7 +31,8 @@ namespace UniGetUI.Pages.SettingsPages
         public void Interface(object s, RoutedEventArgs e) => NavigationRequested?.Invoke(this, typeof(Interface_P));
         public void Notifications(object s, RoutedEventArgs e) => NavigationRequested?.Invoke(this, typeof(Notifications));
         public void Operations(object s, RoutedEventArgs e) => NavigationRequested?.Invoke(this, typeof(Operations));
-        public void Startup(object s, RoutedEventArgs e) => NavigationRequested?.Invoke(this, typeof(Startup));
+        public void Startup(object s, RoutedEventArgs e) => NavigationRequested?.Invoke(this, typeof(Updates));
+        private void Internet(object sender, RoutedEventArgs e) => NavigationRequested?.Invoke(this, typeof(Internet));
 
     }
 }

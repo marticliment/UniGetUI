@@ -40,6 +40,8 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             {
                 CanRunAsAdmin = true,
                 SupportsCustomSources = true,
+                SupportsProxy = ProxySupport.No,
+                SupportsProxyAuth = false,
             };
 
             string DefaultTriplet = GetDefaultTriplet();

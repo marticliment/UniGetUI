@@ -173,8 +173,7 @@ namespace UniGetUI.Core.SettingsEngine.Tests
             Assert.Equal("this is now a test case", Settings.GetListItem<string>(SettingName, 3));
             Assert.Null(Settings.GetListItem<string>(SettingName, 4));
 
-            Assert.Equal(Settings.GetListItem<string>(SettingName, 0), JsonSerializer.Deserialize<List<string>>(File.ReadAllText(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, $"{SettingName}.json")))[0]);
-
+            Assert.Equal(Settings.GetListItem<string>(SettingName, 0), JsonSerializer.Deserialize<List<string>>(File.ReadAllText(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, $"{SettingName}.json")), CoreData.SerializingOptions)[0]);
             Settings.ClearList(SettingName);
             Assert.Empty(Settings.GetList<object>(SettingName) ?? ["this shouldn't be null; something's wrong"]);
 
@@ -227,7 +226,7 @@ namespace UniGetUI.Core.SettingsEngine.Tests
             Settings.SetDictionaryItem(randStr, "key", 12);
             Assert.Equal(12, Settings.GetDictionaryItem<string, int>(randStr, "key"));
             Settings.SetDictionary(SettingName, test);
-            Assert.Equal(JsonSerializer.Serialize(test), File.ReadAllLines(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, $"{SettingName}.json"))[0]);
+            Assert.Equal(JsonSerializer.Serialize(test, CoreData.SerializingOptions), File.ReadAllText(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, $"{SettingName}.json")));
             Assert.Equal(test[keyArray[0]]?.sub.count, Settings.GetDictionary<string, SerializableTest?>(SettingName)?[keyArray[0]]?.sub.count);
             Assert.Equal(test[keyArray[1]]?.sub.count, Settings.GetDictionaryItem<string, SerializableTest?>(SettingName, keyArray[1])?.sub.count);
             Settings.SetDictionaryItem(SettingName, keyArray[0], test[keyArray[1]]);
@@ -258,8 +257,8 @@ namespace UniGetUI.Core.SettingsEngine.Tests
             Assert.True(Settings.DictionaryContainsValue<string, SerializableTest?>(SettingName, test[keyArray[2]]));
 
             Assert.Equal(
-                JsonSerializer.Serialize(Settings.GetDictionary<string, SerializableTest>(SettingName)),
-                File.ReadAllLines(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, $"{SettingName}.json"))[0]
+                JsonSerializer.Serialize(Settings.GetDictionary<string, SerializableTest>(SettingName), CoreData.SerializingOptions),
+                File.ReadAllText(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, $"{SettingName}.json"))
             );
 
             Settings.ClearDictionary(SettingName); // Cleanup

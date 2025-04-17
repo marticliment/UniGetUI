@@ -5,7 +5,7 @@ using UniGetUI.Interface.Enums;
 
 namespace UniGetUI.Interface.Widgets
 {
-    public class LocalIcon : FontIcon
+    public partial class LocalIcon : FontIcon
     {
         public static FontFamily font = (FontFamily)Application.Current.Resources["SymbolFont"];
 
@@ -25,7 +25,39 @@ namespace UniGetUI.Interface.Widgets
         }
     }
 
-    public class LocalIconSource : FontIconSource
+    public static class IconBuilder
+    {
+        private static FontFamily customFont = null!;
+        private static FontFamily symbolFont = null!;
+
+        public static IconType SetIcon(this TextBlock block, IconType icon)
+        {
+            customFont ??= (FontFamily)Application.Current.Resources["SymbolFont"];
+            block.Text = $"{(char)icon}";
+            block.FontFamily = customFont;
+            return icon;
+        }
+
+        public static IconType GetIcon(this TextBlock block)
+        {
+            return IconType.Help;
+        }
+
+        public static string SetGlyph(this TextBlock block, string glyph)
+        {
+            symbolFont ??= new FontFamily("Segoe Fluent Icons");
+            block.Text = glyph;
+            block.FontFamily = symbolFont;
+            return glyph;
+        }
+
+        public static string GetGlyph(this TextBlock block)
+        {
+            return block.Text;
+        }
+    }
+
+    public partial class LocalIconSource : FontIconSource
     {
         public static FontFamily font = (FontFamily)Application.Current.Resources["SymbolFont"];
 

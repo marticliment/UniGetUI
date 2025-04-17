@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Manager;
@@ -49,6 +50,8 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 SupportsCustomScopes = true,
                 CanDownloadInstaller = true,
                 SupportsPreRelease = true,
+                SupportsProxy = ProxySupport.Yes,
+                SupportsProxyAuth = true
             };
 
             Properties = new ManagerProperties
@@ -71,6 +74,23 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             OperationHelper = new PipPkgOperationHelper(this);
         }
 
+        public static string GetProxyArgument()
+        {
+            if (!Settings.Get("EnableProxy")) return "";
+            var proxyUri = Settings.GetProxyUrl();
+            if (proxyUri is null) return "";
+
+            if (Settings.Get("EnableProxyAuth") is false)
+                return $"--proxy {proxyUri.ToString()}";
+
+            var creds = Settings.GetProxyCredentials();
+            if(creds is null)
+                return $"--proxy {proxyUri.ToString()}";
+
+            return $"--proxy {proxyUri.Scheme}://{Uri.EscapeDataString(creds.UserName)}:{Uri.EscapeDataString(creds.Password)}" +
+                   $"@{proxyUri.AbsoluteUri.Replace($"{proxyUri.Scheme}://", "")}";
+        }
+
         protected override IReadOnlyList<Package> FindPackages_UnSafe(string query)
         {
             List<Package> Packages = [];
@@ -83,7 +103,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                     StartInfo = new ProcessStartInfo
                     {
                         FileName = Status.ExecutablePath,
-                        Arguments = Properties.ExecutableCallArgs + " install parse_pip_search",
+                        Arguments = Properties.ExecutableCallArgs + " install parse_pip_search " + GetProxyArgument(),
                         UseShellExecute = false,
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,
@@ -106,7 +126,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = path,
-                    Arguments = "\"" + query + "\"",
+                    Arguments = "\"" + query + "\" " + GetProxyArgument(),
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
@@ -166,7 +186,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " list --outdated",
+                    Arguments = Properties.ExecutableCallArgs + " list --outdated " + GetProxyArgument(),
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
@@ -228,7 +248,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " list",
+                    Arguments = Properties.ExecutableCallArgs + " list " + GetProxyArgument(),
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
@@ -300,7 +320,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " --version",
+                    Arguments = Properties.ExecutableCallArgs + " --version " + GetProxyArgument(),
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,

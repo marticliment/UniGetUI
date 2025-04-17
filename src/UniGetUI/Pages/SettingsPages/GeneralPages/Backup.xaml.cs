@@ -5,6 +5,7 @@ using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Data;
 using System.Diagnostics;
 using UniGetUI.Pages.DialogPages;
+using UniGetUI.Interface.SoftwarePages;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -99,7 +100,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         private async void DoBackup_Click(object sender, EventArgs e)
         {
             DialogHelper.ShowLoadingDialog(CoreTools.Translate("Performing backup, please wait..."));
-            await MainApp.Instance.MainWindow.NavigationPage.InstalledPage.BackupPackages();
+            await InstalledPackagesPage.BackupPackages();
             DialogHelper.HideLoadingDialog();
         }
     }

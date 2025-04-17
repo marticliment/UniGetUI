@@ -20,6 +20,7 @@
         HorizontalContentAlignment="Center"
         VerticalContentAlignment="Center">
         <StackPanel Orientation="Vertical">
+
             <widgets:CheckboxCard_Dict
                 x:Name="EnableManager"
                 CornerRadius="8"
@@ -27,7 +28,10 @@
                 FontSize="18"
                 FontWeight="SemiBold" />
 
-            <UserControl Height="16" />
+            <widgets:TranslatedTextBlock
+                x:Name="StatusTitle"
+                Margin="4,32,4,8"
+                FontWeight="SemiBold" />
 
             <!--  STATUS INFO BAR  -->
             <InfoBar
@@ -74,7 +78,10 @@
                 </controls:SettingsCard.Description>
             </controls:SettingsCard>
 
-            <UserControl Height="16" />
+            <widgets:TranslatedTextBlock
+                x:Name="SettingsTitle"
+                Margin="4,32,4,8"
+                FontWeight="SemiBold" />
 
             <UserControl
                 HorizontalAlignment="Stretch"
@@ -86,11 +93,13 @@
                     VerticalAlignment="Stretch"
                     Orientation="Vertical" />
             </UserControl>
-
-            <UserControl Height="16" />
+            <widgets:TranslatedTextBlock
+                Margin="4,32,4,8"
+                FontWeight="SemiBold"
+                Text="Related settings" />
 
             <controls:SettingsCard
-                Name="ManagerLogs"
+                x:Name="ManagerLogs"
                 Click="ManagerLogs_Click"
                 CornerRadius="8"
                 IsClickEnabled="True">
@@ -100,7 +109,7 @@
 
                 <controls:SettingsCard.Description>
                     <TextBlock
-                        Name="ManagerLogsLabel"
+                        x:Name="ManagerLogsLabel"
                         FontFamily="Consolas"
                         FontSize="14"
                         TextWrapping="Wrap" />

@@ -1,17 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0-windows10.0.26100.0</TargetFramework>
-    <RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
-    <RuntimeIdentifier>win-$(Platform)</RuntimeIdentifier>
-    <Platforms>x64</Platforms>
-    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
-    <PublishSelfContained>true</PublishSelfContained>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <Configurations>Debug;Release</Configurations>
-  </PropertyGroup>
-
-  <ItemGroup>
+    <ItemGroup>
     <ProjectReference Include="..\UniGetUI.Core.Data\UniGetUI.Core.Data.csproj" />
     <ProjectReference Include="..\UniGetUI.Core.Logger\UniGetUI.Core.Logging.csproj" />
     <ProjectReference Include="..\UniGetUI.Core.Settings\UniGetUI.Core.Settings.csproj" />
@@ -24,6 +13,7 @@
 
   <ItemGroup>
     <PackageReference Include="PhotoSauce.MagicScaler" Version="0.15.0" />
-    <PackageReference Include="System.Drawing.Common" Version="9.0.2" />
+    <PackageReference Include="System.Drawing.Common" Version="9.0.4" Aliases="DrawingCommon" />
+
   </ItemGroup>
 </Project>

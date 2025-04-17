@@ -23,6 +23,8 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 CanDownloadInstaller = true,
                 SupportsCustomScopes = true,
                 SupportsPreRelease = true,
+                SupportsProxy = ProxySupport.No,
+                SupportsProxyAuth = false
             };
 
             Properties = new ManagerProperties

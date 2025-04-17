@@ -33,23 +33,15 @@ public static partial class DialogHelper
             };
             return dialog;
         }
-        public static ContentDialog Create(int maxWidth, int maxHeight)
-        {
-            var dialog = Create();
-            // dialog.Margin = new Thickness(0, 30, 0, 0);
-            dialog.Resources["ContentDialogMaxWidth"] = maxWidth;
-            dialog.Resources["ContentDialogMaxHeight"] = maxHeight;
-            return dialog;
-        }
 
-        public static ContentDialog Create_AsWindow(bool hasTitle)
+        public static ContentDialog Create_AsWindow(bool hasTitle, bool hasButtons = false)
         {
             var dialog = Create();
             dialog.Resources["ContentDialogMaxWidth"] = 8192;
             dialog.Resources["ContentDialogMaxHeight"] = 4096;
             dialog.SizeChanged += (_, _) =>
             {
-                if (dialog.Content is Page page)
+                if (dialog.Content is FrameworkElement page)
                 {
                     double maxW, maxH;
                     int tresholdW = 1300, tresholdH = 1300;
@@ -57,9 +49,9 @@ public static partial class DialogHelper
                     else if (Window.NavigationPage.ActualWidth >= tresholdW + 200) maxW = 300;
                     else maxW = Window.NavigationPage.ActualWidth - (tresholdW - 100);
 
-                    if (Window.NavigationPage.ActualHeight < tresholdH) maxH = (hasTitle? 120: 80);
-                    else if (Window.NavigationPage.ActualHeight >= tresholdH + 200) maxH = (hasTitle ? 320 : 280);
-                    else maxH = Window.NavigationPage.ActualHeight - (tresholdH - (hasTitle ? 120 : 80));
+                    if (Window.NavigationPage.ActualHeight < tresholdH) maxH = (hasTitle? 104: 64) + (hasButtons? 80: 0);
+                    else if (Window.NavigationPage.ActualHeight >= tresholdH + 200) maxH = (hasTitle ? 320 : 280) + (hasButtons ? 80 : 0);
+                    else maxH = Window.NavigationPage.ActualHeight - (tresholdH - (hasTitle ? 120 : 80)) + (hasButtons ? 80 : 0);
 
                     page.Width = Math.Min(Math.Abs(Window.NavigationPage.ActualWidth - maxW), 8192);
                     page.Height = Math.Min(Math.Abs(Window.NavigationPage.ActualHeight - maxH), 4096);
@@ -271,10 +263,8 @@ public static partial class DialogHelper
 
     public static async Task ManageIgnoredUpdates()
     {
-        ContentDialog dialog = DialogFactory.Create(1400, 1000);
+        ContentDialog dialog = DialogFactory.Create_AsWindow(true);
 
-        dialog.SecondaryButtonText = CoreTools.Translate("Close");
-        dialog.DefaultButton = ContentDialogButton.None;
         dialog.Title = CoreTools.Translate("Manage ignored updates");
 
         IgnoredUpdatesManager IgnoredUpdatesPage = new();
@@ -283,18 +273,16 @@ public static partial class DialogHelper
         await Window.ShowDialogAsync(dialog);
     }
 
-    public static async Task ManageDesktopShortcuts(List<string>? NewShortucts = null)
+    public static async Task ManageDesktopShortcuts(IReadOnlyList<string>? NewShortucts  = null)
     {
-        ContentDialog dialog = DialogFactory.Create(1400, 1000);
+        ContentDialog dialog = DialogFactory.Create_AsWindow(true);
 
-        DesktopShortcutsManager DesktopShortcutsPage = new(NewShortucts);
+        DesktopShortcutsManager DesktopShortcutsPage = new();
+        DesktopShortcutsPage.LoadShortcuts(NewShortucts ?? DesktopShortcutsDatabase.GetAllShortcuts());
         DesktopShortcutsPage.Close += (_, _) => dialog.Hide();
 
         dialog.Title = CoreTools.Translate("Automatic desktop shortcut remover");
         dialog.Content = DesktopShortcutsPage;
-        dialog.SecondaryButtonText = CoreTools.Translate("Save and close");
-        dialog.DefaultButton = ContentDialogButton.None;
-        dialog.SecondaryButtonClick += (_, _) => DesktopShortcutsPage.SaveChangesAndClose();
 
         await Window.ShowDialogAsync(dialog);
     }
@@ -378,10 +366,9 @@ public static partial class DialogHelper
 
     public static async Task ShowAboutUniGetUI()
     {
-        ContentDialog AboutDialog = DialogFactory.Create(1200, 1000);
+        ContentDialog AboutDialog = DialogFactory.Create_AsWindow(false, false);
         AboutUniGetUI AboutPage = new();
         AboutDialog.Content = AboutPage;
-        AboutDialog.PrimaryButtonText = CoreTools.Translate("Close");
         AboutPage.Close += (_, _) => AboutDialog.Hide();
 
         await Window.ShowDialogAsync(AboutDialog);
@@ -391,7 +378,6 @@ public static partial class DialogHelper
     {
         ContentDialog NotesDialog = DialogFactory.Create_AsWindow(true);
 
-        // NotesDialog.CloseButtonText = CoreTools.Translate("Close");
         NotesDialog.Title = CoreTools.Translate("Release notes");
         ReleaseNotes notes = new();
         notes.Close += (_, _) => NotesDialog.Hide();
@@ -588,13 +574,55 @@ public static partial class DialogHelper
 
     }
 
-    public static async Task NoDesktopShortcutsFound()
+    public static async Task ConfirmSetDeleteAllShortcutsSetting()
+    {
+        var dialog = DialogFactory.Create();
+        dialog.Title = CoreTools.Translate("Are you sure you want to delete all shortcuts?");
+        dialog.Content = CoreTools.Translate("Any new shorcuts created during an install or an update operation will be deleted automatically, instead of showing a confirmation prompt the first time they are detected.")
+                            + " " + CoreTools.Translate("Any shorcuts created or modified outside of UniGetUI will be ignored. You will be able to add them via the {0} button.", $"\"{CoreTools.Translate("Manual scan")}\"")
+                        + " " + CoreTools.Translate("Are you really sure you want to enable this feature?");
+        dialog.PrimaryButtonText = CoreTools.Translate("Yes");
+        dialog.CloseButtonText = CoreTools.Translate("No");
+        dialog.DefaultButton = ContentDialogButton.Close;
+        if (await Window.ShowDialogAsync(dialog) is ContentDialogResult.Primary)
+        {
+            Settings.Set("RemoveAllDesktopShortcuts", true);
+        }
+        _ = DialogHelper.ManageDesktopShortcuts();
+    }
+
+    /*public static async Task ManualScanDidNotFoundNewShortcuts()
     {
         var dialog = DialogFactory.Create();
         dialog.Title = CoreTools.Translate("Manual scan");
         dialog.Content = CoreTools.Translate("No new shortcuts were found during the scan.");
-        dialog.CloseButtonText = CoreTools.Translate("Close");
+        dialog.PrimaryButtonText = CoreTools.Translate("Ok");
+        dialog.DefaultButton = ContentDialogButton.Primary;
         await Window.ShowDialogAsync(dialog);
+    }*/
+
+    public static async Task HowToAddPackagesToBundle()
+    {
+        var dialog = DialogFactory.Create();
+        dialog.Title = CoreTools.Translate("How to add packages to a bundle");
+        dialog.Content = CoreTools.Translate("In order to add packages to a bundle, you will need to: ")
+                         + "\n   " + CoreTools.Translate("1. Navigate to the \"{0}\" or \"{1}\" page.", CoreTools.Translate("Discover packages"), CoreTools.Translate("Installed packages"))
+                         + "\n   " + CoreTools.Translate("2. Locate the package(s) you want to add to the bundle, and select their leftmost checkbox.")
+                         + "\n   " + CoreTools.Translate("3. When the packages you want to add to the bundle are selected, find and click the option \"{0}\" on the toolbar.", CoreTools.Translate("Add selection to bundle"))
+                         + "\n   " + CoreTools.Translate("4. Your packages will have been added to the bundle. You can continue adding packages, or export the bundle.");
+        dialog.PrimaryButtonText = CoreTools.Translate("Discover packages");
+        dialog.SecondaryButtonText = CoreTools.Translate("Installed packages");
+        dialog.CloseButtonText = CoreTools.Translate("Close");
+        dialog.DefaultButton = ContentDialogButton.None;
+        var result = await Window.ShowDialogAsync(dialog);
+        if(result is ContentDialogResult.Primary) Window.NavigationPage.NavigateTo(PageType.Discover);
+        else if(result is ContentDialogResult.Secondary) Window.NavigationPage.NavigateTo(PageType.Installed);
+    }
+
+    public static void ShowDismissableBalloon(string title, string message)
+    {
+        Window.DismissableNotification.Title = title;
+        Window.DismissableNotification.Content = new TextBlock() { Text = message, TextWrapping = TextWrapping.Wrap };
+        Window.DismissableNotification.IsOpen = true;
     }
 }
-

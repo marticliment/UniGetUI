@@ -40,7 +40,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 StartInfo = new()
                 {
                     FileName = Manager.Status.ExecutablePath,
-                    Arguments = Manager.Properties.ExecutableCallArgs + " source list",
+                    Arguments = Manager.Properties.ExecutableCallArgs + " source list " + Chocolatey.GetProxyArgument(),
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     RedirectStandardInput = true,

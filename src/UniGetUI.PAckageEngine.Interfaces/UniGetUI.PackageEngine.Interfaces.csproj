@@ -1,19 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net8.0-windows10.0.26100.0</TargetFramework>
-		<RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
-		<RuntimeIdentifier>win-$(Platform)</RuntimeIdentifier>
-		<Platforms>x64</Platforms>
+
+
+
+
 		<SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
-		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
-		<PublishSelfContained>true</PublishSelfContained>
+
+
 		<FileVersion>3.1.0.0</FileVersion>
 		<InformationalVersion>3.1.0-beta0</InformationalVersion>
 		<Product>UniGetUI</Product>
 		<ApplicationVersion>3.1.0-beta0</ApplicationVersion>
 		<Copyright>2025, Martí Climent</Copyright>
-		<Configurations>Debug;Release</Configurations>
+
 	</PropertyGroup>
 
 	<ItemGroup>

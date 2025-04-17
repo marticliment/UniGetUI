@@ -1,5 +1,6 @@
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
+using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Managers.PowerShellManager;
 
@@ -45,7 +46,7 @@ namespace UniGetUI.PackageEngine.Managers.Generic.NuGet.Internal
 
             try
             {
-                using (HttpClient client = new(CoreData.GenericHttpClientParameters))
+                using (HttpClient client = new(CoreTools.GenericHttpClientParameters))
                 {
                     client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
                     HttpResponseMessage response = client.GetAsync(PackageManifestUrl).GetAwaiter().GetResult();

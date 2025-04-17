@@ -19,7 +19,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             INativeTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.LoadPackageDetails);
 
             string JsonString;
-            HttpClient client = new(CoreData.GenericHttpClientParameters);
+            HttpClient client = new(CoreTools.GenericHttpClientParameters);
             client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
             JsonString = client.GetStringAsync($"https://pypi.org/pypi/{details.Package.Id}/json").GetAwaiter().GetResult();
 
@@ -101,7 +101,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Manager.Status.ExecutablePath,
-                    Arguments = Manager.Properties.ExecutableCallArgs + " index versions " + package.Id,
+                    Arguments = Manager.Properties.ExecutableCallArgs + " index versions " + package.Id + " " + Pip.GetProxyArgument(),
                     RedirectStandardOutput = true,
                     RedirectStandardInput = true,
                     RedirectStandardError = true,

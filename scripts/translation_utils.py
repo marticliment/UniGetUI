@@ -53,13 +53,14 @@ def get_all_strings():
         r'<[a-zA-Z0-9]+:CheckboxButtonCard' + MAIN_WILDCARD + r'+CheckboxText=["\'].+["\']' + MAIN_WILDCARD + r'*\/?>': lambda match: match.split(" CheckboxText=\"")[1].split("\"")[0].encode('raw_unicode_escape').decode('unicode_escape'),
         r'<[a-zA-Z0-9]+:CheckboxButtonCard' + MAIN_WILDCARD + r'+ButtonText=["\'].+["\']' + MAIN_WILDCARD + r'*\/?>': lambda match: match.split(" ButtonText=\"")[1].split("\"")[0].encode('raw_unicode_escape').decode('unicode_escape'),
         r'<[a-zA-Z0-9]+:ComboboxCard' + MAIN_WILDCARD + r'+Text=["\'].+["\']' + MAIN_WILDCARD + r'*\/?>': lambda match: match.split(" Text=\"")[1].split("\"")[0].encode('raw_unicode_escape').decode('unicode_escape'),
+        r'<[a-zA-Z0-9]+:SettingsPageButton' + MAIN_WILDCARD + r'+Text=["\'].+["\']' + MAIN_WILDCARD + r'*\/?>': lambda match: match.split(" Text=\"")[1].split("\"")[0].encode('raw_unicode_escape').decode('unicode_escape'),
+        r'<[a-zA-Z0-9]+:SettingsPageButton' + MAIN_WILDCARD + r'+UnderText=["\'].+["\']' + MAIN_WILDCARD + r'*\/?>': lambda match: match.split(" UnderText=\"")[1].split("\"")[0].encode('raw_unicode_escape').decode('unicode_escape'),
         r'<[a-zA-Z0-9]+:BetterMenuItem' + MAIN_WILDCARD + r'+Text=["\'].+["\']' + MAIN_WILDCARD + r'*\/?>': lambda match: match.split(" Text=\"")[1].split("\"")[0].encode('raw_unicode_escape').decode('unicode_escape'),
-        r'<[a-zA-Z0-9]+:NavButton' + MAIN_WILDCARD + r'+Text=["\'].+["\']' + MAIN_WILDCARD + r'*\/?>': lambda match: match.split(" Text=\"")[1].split("\"")[0].encode('raw_unicode_escape').decode('unicode_escape'),
-        r'<[a-zA-Z0-9]+:SettingsEntry' + MAIN_WILDCARD + r'+Text=["\'].+["\']' + MAIN_WILDCARD + r'*\/?>': lambda match: match.split(" Text=\"")[1].split("\"")[0].encode('raw_unicode_escape').decode('unicode_escape'),
-        r'<[a-zA-Z0-9]+:SettingsEntry' + MAIN_WILDCARD + r'+UnderText=["\'].+["\']' + MAIN_WILDCARD + r'*\/?>': lambda match: match.split(" UnderText=\"")[1].split("\"")[0].encode('raw_unicode_escape').decode('unicode_escape'),
+        r'<[a-zA-Z0-9]+:BetterToggleMenuItem' + MAIN_WILDCARD + r'+Text=["\'].+["\']' + MAIN_WILDCARD + r'*\/?>': lambda match: match.split(" Text=\"")[1].split("\"")[0].encode('raw_unicode_escape').decode('unicode_escape'),
         r'<[a-zA-Z0-9]+:SourceManager' + MAIN_WILDCARD + r'+Text=["\'].+["\']' + MAIN_WILDCARD + r'*\/?>': lambda match: match.split(" Text=\"")[1].split("\"")[0].encode('raw_unicode_escape').decode('unicode_escape'),
         r'<[a-zA-Z0-9]+:TextboxCard' + MAIN_WILDCARD + r'+Text=["\'].+["\']' + MAIN_WILDCARD + r'*\/?>': lambda match: match.split(" Text=\"")[1].split("\"")[0].encode('raw_unicode_escape').decode('unicode_escape'),
         r'<[a-zA-Z0-9]+:TextboxCard' + MAIN_WILDCARD + r'+Placeholder=["\'].+["\']' + MAIN_WILDCARD + r'*\/?>': lambda match: match.split(" Placeholder=\"")[1].split("\"")[0].encode('raw_unicode_escape').decode('unicode_escape'),
+        r'<[a-zA-Z0-9]+:CustomNavViewItem' + MAIN_WILDCARD + r'+Text=["\'].+["\']' + MAIN_WILDCARD + r'*\/?>': lambda match: match.split(" Text=\"")[1].split("\"")[0].encode('raw_unicode_escape').decode('unicode_escape'),
     }
 
     for regex in regex_data.keys():

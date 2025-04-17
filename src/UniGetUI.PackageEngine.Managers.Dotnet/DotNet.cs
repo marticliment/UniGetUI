@@ -33,6 +33,8 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                 SupportsCustomLocations = true,
                 SupportsCustomPackageIcons = true,
                 SupportsCustomVersions = true,
+                SupportsProxy = ProxySupport.Partially,
+                SupportsProxyAuth = true
             };
 
             Properties = new ManagerProperties

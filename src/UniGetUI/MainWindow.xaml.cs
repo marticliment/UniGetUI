@@ -1,3 +1,4 @@
+extern alias DrawingCommon;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -7,13 +8,11 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.Win32;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
-using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.Interfaces;
@@ -46,7 +45,6 @@ namespace UniGetUI.Interface
         public int LoadingDialogCount;
 
         public List<ContentDialog> DialogQueue = [];
-        public List<NavButton> NavButtonList = [];
 
         public static readonly ObservableQueue<string> ParametersToProcess = new();
 
@@ -55,6 +53,7 @@ namespace UniGetUI.Interface
             DialogHelper.Window = this;
 
             InitializeComponent();
+            DismissableNotification.CloseButtonContent = CoreTools.Translate("Close");
 
             ExtendsContentIntoTitleBar = true;
             try
@@ -85,6 +84,8 @@ namespace UniGetUI.Interface
 #if DEBUG
             AddToSubtitle(CoreTools.Translate("DEBUG BUILD"));
 #endif
+
+            ApplyProxyVariableToProcess();
 
             var panel = new StackPanel
             {
@@ -160,17 +161,48 @@ namespace UniGetUI.Interface
             }
         }
 
+        public static void ApplyProxyVariableToProcess()
+        {
+            var proxyUri = Settings.GetProxyUrl();
+            if (proxyUri is null || !Settings.Get("EnableProxy"))
+            {
+                Environment.SetEnvironmentVariable("HTTP_PROXY", "", EnvironmentVariableTarget.Process);
+                return;
+            }
+
+            string content;
+            if (Settings.Get("EnableProxyAuth") is false)
+            {
+                content = proxyUri.ToString();
+            }
+            else
+            {
+                var creds = Settings.GetProxyCredentials();
+                if (creds is null)
+                {
+                    content = $"--proxy {proxyUri.ToString()}";
+                }
+                else
+                {
+                    content = $"{proxyUri.Scheme}://{Uri.EscapeDataString(creds.UserName)}" +
+                              $":{Uri.EscapeDataString(creds.Password)}" +
+                              $"@{proxyUri.AbsoluteUri.Replace($"{proxyUri.Scheme}://", "")}";
+                }
+            }
+            Environment.SetEnvironmentVariable("HTTP_PROXY", content, EnvironmentVariableTarget.Process);
+        }
+
         private void AddToSubtitle(string line)
         {
-            if (AppSubTitle.Text.Length > 0)
-                AppSubTitle.Text += " - ";
-            AppSubTitle.Text += line;
-            Title = "UniGetUI - " + AppSubTitle.Text;
+            if (TitleBar.Subtitle.Length > 0)
+                TitleBar.Subtitle += " - ";
+            TitleBar.Subtitle += line;
+            Title = "UniGetUI - " + TitleBar.Subtitle;
         }
 
         private void ClearSubtitle()
         {
-            AppSubTitle.Text = "";
+            TitleBar.Subtitle = "";
             Title = "UniGetUI";
         }
 
@@ -234,7 +266,7 @@ namespace UniGetUI.Interface
 
             if (action == NotificationArguments.UpdateAllPackages)
             {
-                NavigationPage.UpdatesPage.UpdateAll();
+                MainApp.Operations.UpdateAll();
             }
             else if (action == NotificationArguments.ShowOnUpdatesTab)
             {
@@ -329,11 +361,11 @@ namespace UniGetUI.Interface
                 if (Id != "" && CombinedManagerName != "" && ManagerName == "" && SourceName == "")
                 {
                     Logger.Warn($"URI {link} follows old scheme");
-                    NavigationPage.DiscoverPage.ShowSharedPackage_ThreadSafe(Id, CombinedManagerName);
+                    DialogHelper.ShowSharedPackage_ThreadSafe(Id, CombinedManagerName);
                 }
                 else if (Id != "" && ManagerName != "" && SourceName != "")
                 {
-                    NavigationPage.DiscoverPage.ShowSharedPackage_ThreadSafe(Id, ManagerName, SourceName);
+                    DialogHelper.ShowSharedPackage_ThreadSafe(Id, ManagerName, SourceName);
                 }
                 else
                 {
@@ -406,8 +438,7 @@ namespace UniGetUI.Interface
                     {
                         // Handle potential JSON files
                         Logger.ImportantInfo("Begin attempt to open the package bundle " + param);
-                        NavigationPage.NavigateTo(PageType.Bundles);
-                        _ = NavigationPage.BundlesPage.OpenFromFile(param);
+                        NavigationPage.LoadBundleFile(param);
                     }
                     else if (param.EndsWith("UniGetUI.exe") || param.EndsWith("UniGetUI.dll"))
                     {
@@ -626,7 +657,7 @@ namespace UniGetUI.Interface
                     LastTrayIcon = FullIconPath;
                     if (File.Exists(FullIconPath))
                     {
-                        TrayIcon.SetValue(TaskbarIcon.IconSourceProperty, new BitmapImage { UriSource = new Uri(FullIconPath) });
+                        TrayIcon.Icon = new DrawingCommon.System.Drawing.Icon(FullIconPath, 32, 32);
                     }
                 }
 
@@ -649,10 +680,11 @@ namespace UniGetUI.Interface
 
         public void SwitchToInterface()
         {
-            __app_titlebar.Visibility = Visibility.Visible;
-            SetTitleBar(__app_titlebar);
+            TitleBar.Visibility = Visibility.Visible;
+            SetTitleBar(TitleBar);
 
             NavigationPage = new MainView();
+
 
             object? control = MainContentFrame.Content as Grid;
             if (control is Grid loadingWindow)
@@ -671,7 +703,6 @@ namespace UniGetUI.Interface
                 if(e.WindowActivationState is WindowActivationState.CodeActivated or WindowActivationState.PointerActivated)
                     MainContentFrame.Content = NavigationPage;
             };
-
         }
 
         public void ApplyTheme()
@@ -720,8 +751,15 @@ namespace UniGetUI.Interface
 
         public void SharePackage(IPackage? package)
         {
-            if (package is null || package.Source.IsVirtualManager || package is InvalidImportedPackage)
+            if (package is null)
+                return;
+
+            if (package.Source.IsVirtualManager || package is InvalidImportedPackage)
             {
+                DialogHelper.ShowDismissableBalloon(
+                    CoreTools.Translate("Something went wrong"),
+                    CoreTools.Translate("\"{0}\" is a local package and can't be shared", package.Name)
+                );
                 return;
             }
 
@@ -799,7 +837,7 @@ namespace UniGetUI.Interface
         public async Task HandleMissingDependencies(IReadOnlyList<ManagerDependency> dependencies)
         {
             int current = 1;
-            int total = dependencies.Count();
+            int total = dependencies.Count;
             foreach (ManagerDependency dependency in dependencies)
             {
                 await DialogHelper.ShowMissingDependency(dependency.Name, dependency.InstallFileName,
@@ -956,6 +994,17 @@ namespace UniGetUI.Interface
             return true;
         }
 
+        private void TitleBar_PaneToggleRequested(WinUIEx.TitleBar sender, object args)
+        {
+            if (NavigationPage is not null)
+            {
+                if(this.AppWindow.Size.Width >= 1600)
+                {
+                    Settings.Set("CollapseNavMenuOnWideScreen", NavigationPage.NavView.IsPaneOpen);
+                }
+                NavigationPage.NavView.IsPaneOpen = !NavigationPage.NavView.IsPaneOpen;
+            }
+        }
     }
 
     public static class NativeHelpers

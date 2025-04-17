@@ -21,6 +21,32 @@ namespace UniGetUI.Core.Tools
             AutomaticDecompression = DecompressionMethods.All
         };
 
+        public static HttpClientHandler GenericHttpClientParameters
+        {
+            get
+            {
+                Uri? proxyUri = null;
+                IWebProxy? proxy = null;
+                ICredentials? creds = null;
+
+                if (Settings.Get("EnableProxy")) proxyUri = Settings.GetProxyUrl();
+                if (Settings.Get("EnableProxyAuth")) creds = Settings.GetProxyCredentials();
+                if (proxyUri is not null) proxy = new WebProxy()
+                {
+                    Address = proxyUri,
+                    Credentials = creds
+                };
+
+                return new()
+                {
+                    AutomaticDecompression = DecompressionMethods.All,
+                    AllowAutoRedirect = true,
+                    UseProxy = (proxy is not null),
+                    Proxy = proxy,
+                };
+            }
+        }
+
         private static LanguageEngine LanguageEngine = new();
 
         /// <summary>
@@ -703,6 +729,25 @@ Crash Traceback:
             }
 
             return $"{number} Bytes";
+        }
+
+        public static async void ShowFileOnExplorer(string path)
+        {
+            if (!File.Exists(path)) throw new FileNotFoundException($"The file {path} was not found");
+
+            Process p = new()
+            {
+                StartInfo = new()
+                {
+                    FileName = "explorer.exe",
+                    Arguments = $"/select, \"{path}\"",
+                    UseShellExecute = true,
+                    CreateNoWindow = true,
+                }
+            };
+            p.Start();
+            await p.WaitForExitAsync();
+            p.Dispose();
         }
     }
 }

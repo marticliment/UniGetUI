@@ -152,7 +152,7 @@ public class AutoUpdater
     {
         Logger.Debug($"Begin check for updates on endpoint {endpoint}");
         string[] UpdateResponse;
-        using (HttpClient client = new(CoreData.GenericHttpClientParameters))
+        using (HttpClient client = new(CoreTools.GenericHttpClientParameters))
         {
             client.Timeout = TimeSpan.FromSeconds(600);
             client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
@@ -197,7 +197,7 @@ public class AutoUpdater
     private static async Task DownloadInstaller(string downloadUrl, string installerLocation)
     {
         Logger.Debug($"Downloading installer from {downloadUrl} to {installerLocation}");
-        using (HttpClient client = new(CoreData.GenericHttpClientParameters))
+        using (HttpClient client = new(CoreTools.GenericHttpClientParameters))
         {
             client.Timeout = TimeSpan.FromSeconds(600);
             client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);

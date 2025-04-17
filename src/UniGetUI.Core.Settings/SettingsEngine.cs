@@ -94,40 +94,5 @@ namespace UniGetUI.Core.SettingsEngine
                 Logger.Error(e);
             }
         }
-
-        /*
-         *
-         *
-         */
-
-        public static bool AreNotificationsDisabled()
-        {
-            return Get("DisableSystemTray") || Get("DisableNotifications");
-        }
-
-        public static bool AreUpdatesNotificationsDisabled()
-        {
-            return AreNotificationsDisabled() || Get("DisableUpdatesNotifications");
-        }
-
-        /*public static bool AreShortcutsNotificationsDisabled()
-        {
-            return AreNotificationsDisabled() || Get("DisableShortcutNotifications");
-        }*/
-
-        public static bool AreErrorNotificationsDisabled()
-        {
-            return AreNotificationsDisabled() || Get("DisableErrorNotifications");
-        }
-
-        public static bool AreSuccessNotificationsDisabled()
-        {
-            return AreNotificationsDisabled() || Get("DisableSuccessNotifications");
-        }
-
-        public static bool AreProgressNotificationsDisabled()
-        {
-            return AreNotificationsDisabled() || Get("DisableProgressNotifications");
-        }
     }
 }

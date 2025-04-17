@@ -18,6 +18,7 @@ using Microsoft.Windows.AppNotifications;
 using UniGetUI.Interface.Telemetry;
 using UniGetUI.PackageEngine.Interfaces;
 using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
+using UniGetUI.Pages.DialogPages;
 
 namespace UniGetUI
 {
@@ -94,34 +95,12 @@ namespace UniGetUI
         private static async void LoadGSudo()
         {
 #if DEBUG
-            bool DEBUG = true;
+            Logger.Warn($"Using bundled GSudo at {CoreData.ElevatorPath} since UniGetUI Elevator is not available!");
+            CoreData.ElevatorPath = (await CoreTools.WhichAsync("gsudo.exe")).Item2;
 #else
-            bool DEBUG = false;
+            CoreData.ElevatorPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "UniGetUI Elevator.exe");
+            Logger.Debug($"Using built-in UniGetUI Elevator at {CoreData.ElevatorPath}");
 #endif
-            if (!DEBUG && !Settings.Get("DisableUniGetUIElevator"))
-            {
-                Logger.ImportantInfo("Using built-in UniGetUI Elevator");
-                CoreData.ElevatorPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "UniGetUI Elevator.exe");
-            }
-            else if (Settings.Get("UseUserGSudo"))
-            {
-                var(found, gsudo_path) = await CoreTools.WhichAsync("gsudo.exe");
-                if (found)
-                {
-                    Logger.Info($"Using System GSudo at {gsudo_path}");
-                    CoreData.ElevatorPath = gsudo_path;
-                }
-                else
-                {
-                    Logger.Error("System GSudo enabled but not found!");
-                    CoreData.ElevatorPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "gsudo.exe");
-                }
-            }
-            else
-            {
-                Logger.Warn($"Using bundled GSudo at {CoreData.ElevatorPath} since UniGetUI Elevator is not available!");
-                CoreData.ElevatorPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "gsudo.exe");
-            }
         }
 
         private void RegisterErrorHandling()
@@ -249,23 +228,22 @@ namespace UniGetUI
 
                     BackgroundApi.OnShowSharedPackage += (_, package) => MainWindow.DispatcherQueue.TryEnqueue(() =>
                     {
-                        MainWindow?.NavigationPage?.DiscoverPage.ShowSharedPackage_ThreadSafe(package.Key, package.Value);
-                        MainWindow?.Activate();
+                        DialogHelper.ShowSharedPackage_ThreadSafe(package.Key, package.Value);
                     });
 
                     BackgroundApi.OnUpgradeAll += (_, _) => MainWindow.DispatcherQueue.TryEnqueue(() =>
                     {
-                        MainWindow?.NavigationPage?.UpdatesPage.UpdateAll();
+                        Operations.UpdateAll();
                     });
 
-                    BackgroundApi.OnUpgradeAllForManager += (_, manager) => MainWindow.DispatcherQueue.TryEnqueue(() =>
+                    BackgroundApi.OnUpgradeAllForManager += (_, managerName) => MainWindow.DispatcherQueue.TryEnqueue(async () =>
                     {
-                        MainWindow?.NavigationPage?.UpdatesPage.UpdateAllPackagesForManager(manager);
+                        Operations.UpdateAllForManager(managerName);
                     });
 
-                    BackgroundApi.OnUpgradePackage += (_, package) => MainWindow.DispatcherQueue.TryEnqueue(() =>
+                    BackgroundApi.OnUpgradePackage += (_, packageId) => MainWindow.DispatcherQueue.TryEnqueue(() =>
                     {
-                        MainWindow?.NavigationPage?.UpdatesPage.UpdatePackageForId(package);
+                        Operations.UpdateForId(packageId);
                     });
 
                     _ = BackgroundApi.Start();

@@ -48,6 +48,8 @@ public partial class Cargo : PackageManager
             CanSkipIntegrityChecks = true,
             SupportsCustomVersions = true,
             SupportsCustomLocations = true,
+            SupportsProxy = ProxySupport.Partially,
+            SupportsProxyAuth = true
         };
 
         var cratesIo = new ManagerSource(this, "crates.io", new Uri("https://index.crates.io/"));

@@ -1,4 +1,5 @@
 using UniGetUI.Core.Classes;
+using UniGetUI.Interface;
 using UniGetUI.PackageEngine.Interfaces;
 
 namespace UniGetUI.PackageEngine.PackageClasses
@@ -6,7 +7,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
     /// <summary>
     /// A special ObservableCollection designed to work with Package objects
     /// </summary>
-    public class ObservablePackageCollection : SortableObservableCollection<PackageWrapper>
+    public partial class ObservablePackageCollection : SortableObservableCollection<PackageWrapper>
     {
         public enum Sorter
         {
@@ -17,26 +18,30 @@ namespace UniGetUI.PackageEngine.PackageClasses
             NewVersion,
             Source,
         }
+        public Sorter CurrentSorter { get; private set; }
 
         public ObservablePackageCollection()
         {
+            CurrentSorter = Sorter.Name;
             SortingSelector = x => x.Package.Name;
         }
 
         /// <summary>
         /// Add a package to the collection
         /// </summary>
-        public void Add(IPackage p)
+        public void Add(IPackage p, AbstractPackagesPage page)
         {
-            base.Add(new PackageWrapper(p));
+            base.Add(new PackageWrapper(p, page));
         }
 
         /// <summary>
         /// Sets the property with which to filter the package and sorts the collection
         /// </summary>
         /// <param name="field">The field with which to sort the collection</param>
+        ///
         public void SetSorter(Sorter field)
         {
+            CurrentSorter = field;
             switch (field)
             {
                 case Sorter.Checked:

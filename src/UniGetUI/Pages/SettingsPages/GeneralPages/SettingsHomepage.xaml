@@ -49,20 +49,22 @@
 
             <widgets:SettingsPageButton
                 x:Name="NotificationSettingsEntry"
-                BorderThickness="1,0"
+                BorderThickness="1,0,1,1"
                 Click="Notifications"
-                CornerRadius="0"
+                CornerRadius="0,0,8,8"
                 Icon="megaphone"
                 Text="Notification preferences"
                 UnderText="Show notifications on different events" />
 
+            <UserControl Height="16" />
+
             <widgets:SettingsPageButton
-                x:Name="StartupOptionsExpander"
-                Click="Startup"
-                CornerRadius="0,0,8,8"
-                Icon="launch"
-                Text="Startup options"
-                UnderText="WingetUI autostart behaviour, application launch settings" />
+                x:Name="BackupOptionsExpander"
+                Click="Backup"
+                CornerRadius="8"
+                Icon="disk"
+                Text="Package backup"
+                UnderText="Automatically save a list of all your installed packages to easily restore them." />
 
             <UserControl Height="16" />
 
@@ -70,18 +72,18 @@
                 x:Name="UpdatesOptionsExpander"
                 Click="Operations"
                 CornerRadius="8,8,0,0"
-                Icon="update"
-                Text="Install and update preferences"
-                UnderText="Change how UniGetUI installs packages, and checks and installs available updates" />
+                Icon="Package"
+                Text="Package operation preferences"
+                UnderText="Change how UniGetUI handles install, update and uninstall operations." />
 
             <widgets:SettingsPageButton
-                x:Name="BackupOptionsExpander"
+                x:Name="StartupOptionsExpander"
                 BorderThickness="1,0,1,1"
-                Click="Backup"
+                Click="Startup"
                 CornerRadius="0,0,8,8"
-                Icon="disk"
-                Text="Package backup"
-                UnderText="Automatically save a list of all your installed packages to easily restore them." />
+                Icon="update"
+                Text="Package update preferences"
+                UnderText="Update check frequency, automatically install updates, etc." />
 
             <UserControl Height="16" />
 
@@ -92,6 +94,19 @@
                 Icon="uac"
                 Text="Administrator privileges preferences"
                 UnderText="Ask once or always for administrator rights, elevate installations by default" />
+            <UserControl Height="16" />
+
+            <widgets:SettingsPageButton
+                x:Name="InternetSettings"
+                Click="Internet"
+                CornerRadius="8"
+                Icon="Search"
+                Text="Internet connection settings"
+                UnderText="Proxy settings, etc." >
+                <widgets:SettingsPageButton.HeaderIcon>
+                    <FontIcon Glyph="&#xE839;" FontSize="12"/>
+                </widgets:SettingsPageButton.HeaderIcon>
+            </widgets:SettingsPageButton>
 
             <UserControl Height="16" />
 

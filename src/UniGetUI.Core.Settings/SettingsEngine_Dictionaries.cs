@@ -42,7 +42,8 @@ namespace UniGetUI.Core.SettingsEngine
                     {
                         if (result != "")
                         {
-                            Dictionary<K, V?>? item = JsonSerializer.Deserialize<Dictionary<K, V?>>(result);
+
+                            Dictionary<K, V?>? item = JsonSerializer.Deserialize<Dictionary<K, V?>>(result, CoreData.SerializingOptions);
                             if (item is not null)
                             {
                                 value = item;
@@ -88,7 +89,8 @@ namespace UniGetUI.Core.SettingsEngine
             var file = Path.Join(CoreData.UniGetUIUserConfigurationDirectory, $"{setting}.json");
             try
             {
-                if (value.Count != 0) File.WriteAllText(file, JsonSerializer.Serialize(value));
+
+                if (value.Count != 0) File.WriteAllText(file, JsonSerializer.Serialize(value, CoreData.SerializingOptions));
                 else if (File.Exists(file)) File.Delete(file);
             }
             catch (Exception e)

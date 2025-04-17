@@ -14,7 +14,7 @@ using UniGetUI.Pages.DialogPages;
 
 namespace UniGetUI.Interface.SoftwarePages
 {
-    public class DiscoverSoftwarePage : AbstractPackagesPage
+    public partial class DiscoverSoftwarePage : AbstractPackagesPage
     {
         private BetterMenuItem? MenuAsAdmin;
         private BetterMenuItem? MenuInteractive;
@@ -186,7 +186,9 @@ namespace UniGetUI.Interface.SoftwarePages
                     toolButton.LabelPosition = CommandBarLabelPosition.Collapsed;
                 }
 
-                toolButton.Label = Labels[toolButton].Trim();
+                string text = Labels[toolButton].Trim();
+                toolButton.Label = text;
+                ToolTipService.SetToolTip(toolButton, text);
             }
 
             Dictionary<AppBarButton, IconType> Icons = new()
@@ -275,10 +277,8 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private void MenuShare_Invoked(object sender, RoutedEventArgs e)
         {
-            if (PackageList.SelectedItem is null)
-            {
+            if (SelectedItem is null)
                 return;
-            }
 
             MainApp.Instance.MainWindow.SharePackage(SelectedItem);
         }
@@ -298,102 +298,5 @@ namespace UniGetUI.Interface.SoftwarePages
         private void MenuInstallSettings_Invoked(object sender, RoutedEventArgs e)
             => ShowInstallationOptionsForPackage(SelectedItem);
 
-        public void ShowSharedPackage_ThreadSafe(string id, string combinedSourceName)
-        {
-            var contents = combinedSourceName.Split(':');
-            string managerName = contents[0];
-            string sourceName = "";
-            if (contents.Length > 1) sourceName = contents[1];
-            _showSharedPackage(id, managerName, sourceName, "LEGACY_COMBINEDSOURCE");
-        }
-
-        public void ShowSharedPackage_ThreadSafe(string id, string managerName, string sourceName)
-        {
-            MainApp.Instance.MainWindow.DispatcherQueue.TryEnqueue(() =>
-            {
-                _showSharedPackage(id, managerName, sourceName, "DEFAULT");
-            });
-        }
-
-        private async void _showSharedPackage(string id, string manager, string source, string eventSource)
-        {
-            IPackage? package = await GetPackageFromIdAndManager(id, manager, source);
-            if (package is not null)
-            {
-                TelemetryHandler.SharedPackage(package, eventSource);
-                ShowDetailsForPackage(package, TEL_InstallReferral.FROM_WEB_SHARE);
-            }
-        }
-
-        private static async Task<IPackage?> GetPackageFromIdAndManager(string id, string managerName, string sourceName)
-        {
-            try
-            {
-                Logger.Info($"Showing shared package with pId={id} and pSource={managerName}: ´{sourceName} ...");
-                MainApp.Instance.MainWindow.Activate();
-                DialogHelper.ShowLoadingDialog(CoreTools.Translate("Please wait...", id));
-
-                IPackageManager? manager = null;
-
-                foreach (var candidate in PEInterface.Managers)
-                {
-                    if (candidate.Name == managerName || candidate.DisplayName == managerName)
-                    {
-                        manager = candidate;
-                        break;
-                    }
-                }
-
-                if (manager is null)
-                {
-                    throw new ArgumentException(CoreTools.Translate("The package manager \"{0}\" was not found", managerName));
-                }
-
-                if (!manager.IsEnabled())
-                    throw new ArgumentException(CoreTools.Translate("The package manager \"{0}\" is disabled", manager.DisplayName));
-
-                if (!manager.Status.Found)
-                    throw new ArgumentException(CoreTools.Translate("There is an error with the configuration of the package manager \"{0}\"", manager.DisplayName));
-
-                var results = await Task.Run(() => manager.FindPackages(id));
-                var candidates = results.Where(p => p.Id == id).ToArray();
-
-                if (candidates.Length == 0)
-                {
-                    throw new ArgumentException(CoreTools.Translate("The package \"{0}\" was not found on the package manager \"{1}\"", id, manager.DisplayName));
-                }
-
-                IPackage package = candidates[0];
-
-                // Get package from best source
-                if (candidates.Length >= 1 && manager.Capabilities.SupportsCustomSources)
-                    foreach (var candidate in candidates)
-                    {
-                        if (candidate.Source.Name == sourceName)
-                            package = candidate;
-                    }
-
-                Logger.ImportantInfo($"Found package {package.Id} on manager {package.Manager.Name}, showing it...");
-                DialogHelper.HideLoadingDialog();
-                return package;
-            }
-            catch (Exception ex)
-            {
-                Logger.Error($"An error occurred while attempting to show the package with id {id}");
-                Logger.Error(ex);
-                var warningDialog = new ContentDialog
-                {
-                    Title = CoreTools.Translate("Package not found"),
-                    Content = CoreTools.Translate("An error occurred when attempting to show the package with Id {0}", id) + ":\n" + ex.Message,
-                    CloseButtonText = CoreTools.Translate("Ok"),
-                    DefaultButton = ContentDialogButton.Close,
-                    XamlRoot = MainApp.Instance.MainWindow.Content.XamlRoot // Ensure the dialog is shown in the correct context
-                };
-
-                DialogHelper.HideLoadingDialog();
-                await MainApp.Instance.MainWindow.ShowDialogAsync(warningDialog);
-                return null;
-            }
-        }
     }
 }

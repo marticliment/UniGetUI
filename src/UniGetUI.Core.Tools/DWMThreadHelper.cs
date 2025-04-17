@@ -52,7 +52,7 @@ public class DWMThreadHelper
             Logger.Debug("DWM Thread was already running"); return;
         }
 
-        DWMThreadAdress ??= GetTargetFunctionAddress("dwmcorei.dll", 0x54F70);
+        DWMThreadAdress ??= GetTargetFunctionAddress("dwmcorei.dll", 0x36170);
         if (DWMThreadAdress is null)
         {
             Logger.Error("Failed to resolve DWM thread start adress."); return;
@@ -76,7 +76,7 @@ public class DWMThreadHelper
 
         // The reported offset on ProcessExplorer seems to be missing a part somehow.
         // To find the real adress, set offset to 0, and then get the offset from the Debugger.Break at ChangeState()
-        XAMLThreadAdress ??= GetTargetFunctionAddress("Microsoft.UI.Xaml.dll", 0x5b320);
+        XAMLThreadAdress ??= GetTargetFunctionAddress("Microsoft.UI.Xaml.dll", 0x2771A0);
         if (XAMLThreadAdress is null)
         {
             Logger.Error("Failed to resolve XAML thread start adress."); return;
@@ -125,7 +125,7 @@ public class DWMThreadHelper
         if (threadId is null)
         {
             Logger.Error($"No thread matching {loggerName} with start adress {expectedAdress:X} was found. " +
-                         $"Best guess was {minId} with adress offset {LastDiff}");
+                         $"Best guess was {minId} with adress offset {LastDiff:X}");
             if(Debugger.IsAttached) Debugger.Break();
             return;
         }

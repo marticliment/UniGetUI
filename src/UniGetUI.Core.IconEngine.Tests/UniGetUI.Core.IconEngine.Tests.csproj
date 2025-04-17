@@ -1,15 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0-windows10.0.26100.0</TargetFramework>
-    <RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
-    <RuntimeIdentifier>win-$(Platform)</RuntimeIdentifier>
-    <Platforms>x64</Platforms>
-    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
-    <PublishSelfContained>true</PublishSelfContained>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <Configurations>Debug;Release</Configurations>
-  </PropertyGroup>
+
 
   <PropertyGroup>
     <IsPackable>false</IsPackable>
@@ -24,7 +15,7 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
     <PackageReference Include="PhotoSauce.MagicScaler" Version="0.15.0" />
     <PackageReference Include="xunit" Version="2.9.3" />
-    <PackageReference Include="xunit.analyzers" Version="1.20.0">
+    <PackageReference Include="xunit.analyzers" Version="1.21.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

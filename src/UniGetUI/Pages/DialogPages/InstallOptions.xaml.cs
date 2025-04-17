@@ -5,6 +5,7 @@ using UniGetUI.Core.Language;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.Serializable;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -22,6 +23,7 @@ namespace UniGetUI.Interface.Dialogs
         public event EventHandler? Close;
         private readonly OperationType Operation;
         private readonly string packageInstallLocation;
+        private bool _uiLoaded;
 
         public InstallOptionsPage(IPackage package, SerializableInstallationOptions_v1 options) : this(package, OperationType.None, options) { }
         public InstallOptionsPage(IPackage package, OperationType operation, SerializableInstallationOptions_v1 options)
@@ -126,6 +128,8 @@ namespace UniGetUI.Interface.Dialogs
                 CustomParameters.Text = string.Join(' ', Options.CustomParameters);
             }
 
+            _uiLoaded = true;
+            GenerateCommand();
             LoadIgnoredUpdates();
         }
 
@@ -157,7 +161,7 @@ namespace UniGetUI.Interface.Dialogs
             VersionProgress.Visibility = Visibility.Collapsed;
         }
 
-        public async Task<SerializableInstallationOptions_v1> GetUpdatedOptions()
+        public async Task<SerializableInstallationOptions_v1> GetUpdatedOptions(bool updateIgnoredUpdates = true)
         {
             Options.RunAsAdministrator = AdminCheckBox?.IsChecked ?? false;
             Options.InteractiveInstallation = InteractiveCheckBox?.IsChecked ?? false;
@@ -197,15 +201,18 @@ namespace UniGetUI.Interface.Dialogs
             }
             Options.SkipMinorUpdates = SkipMinorUpdatesCheckbox?.IsChecked ?? false;
 
-            if (IgnoreUpdatesCheckbox?.IsChecked ?? false)
+            if (updateIgnoredUpdates)
             {
-                await Package.AddToIgnoredUpdatesAsync(version: "*");
-            }
-            else
-            {
-                if (await Package.GetIgnoredUpdatesVersionAsync() == "*")
+                if (IgnoreUpdatesCheckbox?.IsChecked ?? false)
                 {
-                    await Package.RemoveFromIgnoredUpdatesAsync();
+                    await Package.AddToIgnoredUpdatesAsync(version: "*");
+                }
+                else
+                {
+                    if (await Package.GetIgnoredUpdatesVersionAsync() == "*")
+                    {
+                        await Package.RemoveFromIgnoredUpdatesAsync();
+                    }
                 }
             }
             return Options;
@@ -219,16 +226,42 @@ namespace UniGetUI.Interface.Dialogs
             {
                 CustomInstallLocation.Text = folder;
             }
+            GenerateCommand();
         }
 
         private void ResetDir_Click(object sender, RoutedEventArgs e)
         {
             CustomInstallLocation.Text = packageInstallLocation;
+            GenerateCommand();
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             Close?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void CustomParameters_TextChanged(object sender, TextChangedEventArgs e) => GenerateCommand();
+        private void ScopeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e) => GenerateCommand();
+        private void VersionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e) => GenerateCommand();
+        private void AdminCheckBox_Click(object sender, RoutedEventArgs e) => GenerateCommand();
+        private void InteractiveCheckBox_Click(object sender, RoutedEventArgs e) => GenerateCommand();
+        private void HashCheckbox_Click(object sender, RoutedEventArgs e) => GenerateCommand();
+        private void ArchitectureComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e) => GenerateCommand();
+
+
+        private async void GenerateCommand()
+        {
+            if (!_uiLoaded) return;
+            InstallationOptions io = InstallationOptions.FromSerialized(await GetUpdatedOptions(updateIgnoredUpdates: false), Package);
+            var op = Operation;
+            if (op is OperationType.None) op = OperationType.Install;
+            var commandline = await Task.Run(() => Package.Manager.OperationHelper.GetParameters(Package, io, op));
+            CommandBox.Text = Package.Manager.Properties.ExecutableFriendlyName + " " + string.Join(" ", commandline);
+        }
+
+        private void LayoutGrid_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if(LayoutGrid.ActualSize.Y > 1 && LayoutGrid.ActualSize.Y < double.PositiveInfinity) MaxHeight = LayoutGrid.ActualSize.Y;
         }
     }
 }

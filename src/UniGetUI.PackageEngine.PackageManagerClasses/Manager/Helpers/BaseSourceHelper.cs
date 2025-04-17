@@ -66,7 +66,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager.Providers
                     Factory.AddSource(source);
                 }
 
-                Logger.Debug($"Loaded {sources.Count()} sources for manager {Manager.Name}");
+                Logger.Debug($"Loaded {sources.Count} sources for manager {Manager.Name}");
                 return sources;
             }
             catch (Exception e)

@@ -1,9 +1,11 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Dialogs;
 using UniGetUI.Interface.Telemetry;
+using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.PackageClasses;
@@ -55,7 +57,7 @@ public static partial class DialogHelper
     {
         InstallOptionsPage OptionsPage = new(package, operation, options);
 
-        ContentDialog OptionsDialog = DialogFactory.Create(1200, 1000);
+        ContentDialog OptionsDialog = DialogFactory.Create_AsWindow(true, true);
 
         OptionsDialog.SecondaryButtonText = operation switch
         {
@@ -105,9 +107,9 @@ public static partial class DialogHelper
             return false;
         }
 
-        if (packages.Count() == 1)
+        if (packages.Count == 1)
         {
-            return await ConfirmUninstallation(packages.First());
+            return await ConfirmUninstallation(packages[0]);
         }
 
         ContentDialog dialog = DialogFactory.Create();
@@ -121,7 +123,7 @@ public static partial class DialogHelper
         p.Children.Add(new TextBlock
         {
             Text = CoreTools.Translate("Do you really want to uninstall the following {0} packages?",
-                packages.Count()),
+                packages.Count),
             Margin = new Thickness(0, 0, 0, 5)
         });
 
@@ -138,5 +140,57 @@ public static partial class DialogHelper
         dialog.Content = p;
 
         return await Window.ShowDialogAsync(dialog) is ContentDialogResult.Primary;
+    }
+
+    public static void ShowSharedPackage_ThreadSafe(string id, string combinedSourceName)
+    {
+        var contents = combinedSourceName.Split(':');
+        string managerName = contents[0];
+        string sourceName = "";
+        if (contents.Length > 1) sourceName = contents[1];
+        GetPackageFromIdAndManager(id, managerName, sourceName, "LEGACY_COMBINEDSOURCE");
+    }
+
+    public static void ShowSharedPackage_ThreadSafe(string id, string managerName, string sourceName)
+    {
+        MainApp.Instance.MainWindow.DispatcherQueue.TryEnqueue(() =>
+        {
+            GetPackageFromIdAndManager(id, managerName, sourceName, "DEFAULT");
+        });
+    }
+
+    private static async void GetPackageFromIdAndManager(string id, string managerName, string sourceName, string eventSource)
+    {
+        try
+        {
+            Window.Activate();
+            ShowLoadingDialog(CoreTools.Translate("Please wait..."));
+
+            var findResult = await Task.Run(() => PEInterface.DiscoveredPackagesLoader.GetPackageFromIdAndManager(id, managerName, sourceName));
+
+            HideLoadingDialog();
+
+            if (findResult.Item1 is null) throw new KeyNotFoundException(findResult.Item2 ?? "Unknown error");
+
+            TelemetryHandler.SharedPackage(findResult.Item1, eventSource);
+            ShowPackageDetails(findResult.Item1, OperationType.Install, TEL_InstallReferral.FROM_WEB_SHARE);
+
+        }
+        catch (Exception ex)
+        {
+            Logger.Error($"An error occurred while attempting to show the package with id {id}");
+            var warningDialog = new ContentDialog
+            {
+                Title = CoreTools.Translate("Package not found"),
+                Content = CoreTools.Translate("An error occurred when attempting to show the package with Id {0}", id) + ":\n" + ex.Message,
+                CloseButtonText = CoreTools.Translate("Ok"),
+                DefaultButton = ContentDialogButton.Close,
+                XamlRoot = MainApp.Instance.MainWindow.Content.XamlRoot // Ensure the dialog is shown in the correct context
+            };
+
+            HideLoadingDialog();
+            await Window.ShowDialogAsync(warningDialog);
+
+        }
     }
 }

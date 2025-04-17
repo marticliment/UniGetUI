@@ -1,7 +1,9 @@
+using Windows.Networking.Connectivity;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Windows.AppNotifications;
 using Microsoft.Windows.AppNotifications.Builder;
+using Microsoft.Windows.System.Power;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
@@ -17,7 +19,7 @@ using UniGetUI.Pages.DialogPages;
 
 namespace UniGetUI.Interface.SoftwarePages
 {
-    public class SoftwareUpdatesPage : AbstractPackagesPage
+    public partial class SoftwareUpdatesPage : AbstractPackagesPage
     {
         private BetterMenuItem? MenuAsAdmin;
         private BetterMenuItem? MenuInteractive;
@@ -273,7 +275,9 @@ namespace UniGetUI.Interface.SoftwarePages
                     toolButton.LabelPosition = CommandBarLabelPosition.Collapsed;
                 }
 
-                toolButton.Label = Labels[toolButton].Trim();
+                string text = Labels[toolButton].Trim();
+                toolButton.Label = text;
+                ToolTipService.SetToolTip(toolButton, text);
             }
 
             Dictionary<AppBarButton, IconType> Icons = new()
@@ -321,15 +325,6 @@ namespace UniGetUI.Interface.SoftwarePages
             MainApp.Tooltip.AvailableUpdates = Loader.Count();
         }
 
-        public void UpdateAll()
-        {
-            foreach (IPackage package in Loader.Packages)
-            {
-                if (package.Tag is not PackageTag.BeingProcessed and not PackageTag.OnQueue)
-                    _ = MainApp.Operations.Update(package);
-            }
-        }
-
         protected override void WhenPackagesLoaded(ReloadReason reason)
         {
             List<IPackage> upgradablePackages = [];
@@ -345,15 +340,39 @@ namespace UniGetUI.Interface.SoftwarePages
                     return;
 
                 bool EnableAutoUpdate = Settings.Get("AutomaticallyUpdatePackages");
-                EnableAutoUpdate |= Environment.GetCommandLineArgs().Contains("--updateapps");
 
                 if (EnableAutoUpdate)
-                    UpdateAll();
+                {
+                    var connectionCost = NetworkInformation.GetInternetConnectionProfile()?.GetConnectionCost().NetworkCostType;
+                    if (connectionCost is NetworkCostType.Fixed or NetworkCostType.Variable && Settings.Get("DisableAUPOnMeteredConnections"))
+                    {
+                        Logger.Warn("Updates will not be installed automatically because the current internet connection is metered.");
+                        EnableAutoUpdate = false;
+                    }
+
+                    if (PowerManager.EnergySaverStatus is EnergySaverStatus.On && Settings.Get("DisableAUPOnBatterySaver"))
+                    {
+                        Logger.Warn("Updates will not be installed automatically because battery saver is enabled.");
+                        EnableAutoUpdate = false;
+                    }
+                }
+
+                if (Environment.GetCommandLineArgs().Contains("--updateapps"))
+                {
+                    Logger.Warn("Automatic install of updates has been enabled via Command Line (user settings have been overriden)");
+                    EnableAutoUpdate = true;
+                }
+
+
+                if(EnableAutoUpdate)
+                {
+                    MainApp.Operations.UpdateAll();
+                }
 
                 if (Settings.AreUpdatesNotificationsDisabled())
                     return;
 
-                AppNotificationManager.Default.RemoveByTagAsync(CoreData.UpdatesAvailableNotificationTag.ToString());
+                _ = AppNotificationManager.Default.RemoveByTagAsync(CoreData.UpdatesAvailableNotificationTag.ToString());
 
                 AppNotification notification;
                 if (upgradablePackages.Count == 1)
@@ -510,29 +529,17 @@ namespace UniGetUI.Interface.SoftwarePages
             PEInterface.UpgradablePackagesLoader.IgnoredPackages[package.Id] = package;
         }
 
+
+        public void UpdateAll()
+        {
+        }
+
         public void UpdatePackageForId(string id)
         {
-            foreach (IPackage package in Loader.Packages)
-            {
-                if (package.Id == id)
-                {
-                    _ = MainApp.Operations.Update(package);
-                    Logger.Info($"[WIDGETS] Updating package with id {id}");
-                    break;
-                }
-            }
-
-            Logger.Warn($"[WIDGETS] No package with id={id} was found");
         }
 
         public async void UpdateAllPackagesForManager(string manager)
         {
-            foreach (IPackage package in Loader.Packages)
-            {
-                if (package.Tag is not PackageTag.OnQueue and not PackageTag.BeingProcessed)
-                    if (package.Manager.Name == manager || package.Manager.DisplayName == manager)
-                        await MainApp.Operations.Update(package);
-            }
         }
     }
 }

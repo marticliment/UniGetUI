@@ -15,6 +15,8 @@ using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageOperations;
 using UniGetUI.Pages.DialogPages;
+using UniGetUI.Interface.Enums;
+using UniGetUI.PackageEngine;
 
 namespace UniGetUI;
 
@@ -99,6 +101,7 @@ public partial class MainApp
                     op.OperationSucceeded += (_, _) => TelemetryHandler.DownloadPackage(package, TEL_OP_RESULT.SUCCESS, referral);
                     op.OperationFailed += (_, _) => TelemetryHandler.DownloadPackage(package, TEL_OP_RESULT.FAILED, referral);
                     Add(op);
+                    Instance.MainWindow.UpdateSystemTrayStatus();
                     return op;
                 }
 
@@ -123,9 +126,10 @@ public partial class MainApp
 
             var options = await InstallationOptions.FromPackageAsync(package, elevated, interactive, no_integrity);
             var op = new InstallPackageOperation(package, options, ignoreParallel, req);
-            Add(op);
             op.OperationSucceeded += (_, _) => TelemetryHandler.InstallPackage(package, TEL_OP_RESULT.SUCCESS, referral);
             op.OperationFailed += (_, _) => TelemetryHandler.InstallPackage(package, TEL_OP_RESULT.FAILED, referral);
+            Add(op);
+            Instance.MainWindow.UpdateSystemTrayStatus();
             return op;
         }
 
@@ -146,9 +150,10 @@ public partial class MainApp
 
             var options = await InstallationOptions.FromPackageAsync(package, elevated, interactive, no_integrity);
             var op = new UpdatePackageOperation(package, options, ignoreParallel, req);
-            Add(op);
             op.OperationSucceeded += (_, _) => TelemetryHandler.UpdatePackage(package, TEL_OP_RESULT.SUCCESS);
             op.OperationFailed += (_, _) => TelemetryHandler.UpdatePackage(package, TEL_OP_RESULT.FAILED);
+            Add(op);
+            Instance.MainWindow.UpdateSystemTrayStatus();
             return op;
         }
 
@@ -158,6 +163,38 @@ public partial class MainApp
             {
                 _ = Update(package, elevated, interactive, no_integrity);
             }
+        }
+
+        public static async void UpdateAll()
+        {
+            foreach (IPackage package in PEInterface.UpgradablePackagesLoader.Packages)
+                if (package.Tag is not PackageTag.BeingProcessed and not PackageTag.OnQueue)
+                    await Update(package);
+        }
+
+        public static async void UpdateAllForManager(string managerName)
+        {
+            foreach (IPackage package in PEInterface.UpgradablePackagesLoader.Packages)
+            {
+                if (package.Tag is not PackageTag.OnQueue and not PackageTag.BeingProcessed
+                    && package.Manager.Name == managerName || package.Manager.DisplayName == managerName)
+                    await Update(package);
+            }
+        }
+
+        public static async void UpdateForId(string packageId)
+        {
+            foreach (IPackage package in PEInterface.UpgradablePackagesLoader.Packages)
+            {
+                if (package.Id == packageId)
+                {
+                    await Update(package);
+                    Logger.Info($"[WIDGETS] Updating package with id {packageId}");
+                    return;
+                }
+            }
+
+            Logger.Warn($"[WIDGETS] No package with id={packageId} was found");
         }
 
         /*
@@ -186,9 +223,10 @@ public partial class MainApp
 
             var options = await InstallationOptions.FromPackageAsync(package, elevated, interactive, remove_data: remove_data);
             var op = new UninstallPackageOperation(package, options, ignoreParallel, req);
-            Add(op);
             op.OperationSucceeded += (_, _) => TelemetryHandler.UninstallPackage(package, TEL_OP_RESULT.SUCCESS);
             op.OperationFailed += (_, _) => TelemetryHandler.UninstallPackage(package, TEL_OP_RESULT.FAILED);
+            Add(op);
+            Instance.MainWindow.UpdateSystemTrayStatus();
             return op;
         }
 

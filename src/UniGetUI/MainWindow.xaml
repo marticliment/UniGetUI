@@ -8,6 +8,7 @@
     xmlns:local="using:UniGetUI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:widgets="using:UniGetUI.Interface.Widgets"
+    xmlns:winex="using:WinUIEx"
     Title="UniGetUI"
     mc:Ignorable="d">
 
@@ -26,46 +27,26 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Border
-            x:Name="__app_titlebar"
+
+        <winex:TitleBar
+            x:Name="TitleBar"
+            Title="UniGetUI"
             Grid.Row="0"
-            Height="36"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Stretch"
+            IsPaneToggleButtonVisible="True"
+            PaneToggleRequested="TitleBar_PaneToggleRequested"
             Visibility="Collapsed">
-            <StackPanel
-                Margin="12,8,12,8"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Top"
-                Orientation="Horizontal"
-                Spacing="10">
-                <Image
-                    Width="16"
-                    Height="16"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Stretch">
-                    <Image.Source>
-                        <BitmapImage DecodePixelHeight="16" UriSource="ms-appx:///Assets/Images/icon.png" />
-                    </Image.Source>
-                </Image>
-                <TextBlock
-                    x:Name="AppTitle"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Stretch"
-                    FontSize="12"
-                    Text="UniGetUI" />
-                <TextBlock
-                    x:Name="AppSubTitle"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch"
-                    FontSize="12"
-                    Opacity="0.8" />
-            </StackPanel>
-        </Border>
+            <winex:TitleBar.IconSource>
+                <ImageIconSource ImageSource="ms-appx:///Assets/Images/icon.png" />
+            </winex:TitleBar.IconSource>
+            <winex:TitleBar.Content>
+                <UserControl Height="10" />
+            </winex:TitleBar.Content>
+        </winex:TitleBar>
         <StackPanel
             Grid.Row="1"
-            Margin="0,-4,0,0"
+            Margin="0"
             Padding="0"
+            BorderThickness="0"
             Spacing="0">
             <InfoBar
                 Name="UpdatesBanner"
@@ -100,7 +81,8 @@
                 BorderThickness="0,1,0,1"
                 CornerRadius="0"
                 IsOpen="False"
-                Severity="Informational" />
+                Severity="Informational"
+                Visibility="Collapsed" />
         </StackPanel>
         <Frame Name="MainContentFrame" Grid.Row="2">
             <Grid Background="{StaticResource ProgressBarBorderThemeBrush}" Visibility="Visible">
@@ -139,21 +121,17 @@
                                     To="0,0"
                                     Duration="0:0:0.7" />
                             </animations:AnimationSet>
-                            <animations:AnimationSet x:Name="OutAnimation_Border">
-                                <animations:TranslationAnimation
-                                    EasingMode="EaseIn"
-                                    From="0,0"
-                                    To="225,0"
-                                    Duration="0:0:0.4" />
-                            </animations:AnimationSet>
                         </animations:Explicit.Animations>
-                        <Image Width="87">
+                        <Image Width="96">
                             <Image.Source>
                                 <BitmapImage UriSource="ms-appx:///Assets/Images/icon_unsquare.png" />
                             </Image.Source>
                         </Image>
                     </Border>
-                    <Border Margin="0,0,0,0" HorizontalAlignment="Right">
+                    <Border
+                        Margin="0"
+                        Padding="0,10"
+                        HorizontalAlignment="Right">
                         <animations:Explicit.Animations>
                             <animations:AnimationSet x:Name="InAnimation_Text">
                                 <animations:TranslationAnimation
@@ -167,24 +145,11 @@
                                     To="1"
                                     Duration="0:0:0.7" />
                             </animations:AnimationSet>
-                            <animations:AnimationSet x:Name="OutAnimation_Text">
-                                <animations:TranslationAnimation
-                                    EasingMode="EaseIn"
-                                    From="0,0"
-                                    To="-250,0"
-                                    Duration="0:0:0.4" />
-                                <animations:OpacityAnimation
-                                    EasingMode="EaseIn"
-                                    From="1"
-                                    To="0"
-                                    Duration="0:0:0.4" />
-                            </animations:AnimationSet>
                         </animations:Explicit.Animations>
-
-                        <Grid>
+                        <StackPanel VerticalAlignment="Center" Orientation="Vertical">
                             <TextBlock
                                 Name="UniGetUITitle"
-                                Padding="0,0,0,10"
+                                Margin="0,-10,0,-20"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
                                 FontFamily="Segoe UI Variable Display"
@@ -195,10 +160,10 @@
                             <widgets:TranslatedTextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Bottom"
-                                FontFamily="Segoe UI Variable Text"
+                                FontFamily="Segoe UI Variable"
                                 FontSize="20"
-                                Text="Formerly known as WingetUI" />
-                        </Grid>
+                                Text="Package management made easy" />
+                        </StackPanel>
                     </Border>
                 </StackPanel>
                 <ProgressBar
@@ -209,8 +174,15 @@
                     VerticalAlignment="Bottom"
                     Foreground="#08a9c3"
                     IsIndeterminate="True"
-                    Visibility="Collapsed" />
+                    Visibility="Visible" />
             </Grid>
         </Frame>
+
+        <TeachingTip
+            x:Name="DismissableNotification"
+            x:FieldModifier="public"
+            PlacementMargin="20"
+            PreferredPlacement="Auto" />
+
     </Grid>
 </Window>

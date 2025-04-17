@@ -44,6 +44,7 @@ internal sealed class ChocolateyPkgOperationHelper : PackagePkgOperationHelper
                 parameters.AddRange([$"--version={options.Version}", "--allow-downgrade"]);
         }
 
+        parameters.Add(Chocolatey.GetProxyArgument());
         return parameters;
     }
 

@@ -1,3 +1,4 @@
+extern alias DrawingCommon;
 using System.Collections.ObjectModel;
 using System.Security.Cryptography;
 using PhotoSauce.MagicScaler;
@@ -23,6 +24,8 @@ namespace UniGetUI.Core.IconEngine
         public readonly string Version = "";
         public readonly long Size = -1;
         private readonly int _hashCode = -1;
+        public readonly bool IsLocalPath = false;
+        public readonly string LocalPath = "";
         public readonly IconValidationMethod ValidationMethod;
 
         /// <summary>
@@ -75,6 +78,13 @@ namespace UniGetUI.Core.IconEngine
             _hashCode = uri.ToString().GetHashCode();
         }
 
+        public CacheableIcon(string path)
+        {
+            IsLocalPath = true;
+            LocalPath = path;
+            Url = new Uri(path);
+        }
+
         public override int GetHashCode()
         {
             return _hashCode;
@@ -100,6 +110,10 @@ namespace UniGetUI.Core.IconEngine
                 return null;
 
             var icon = _icon.Value;
+
+            if(icon.IsLocalPath)
+                return icon.LocalPath;
+
             string iconLocation = Path.Join(CoreData.UniGetUICacheDirectory_Icons, ManagerName, PackageId);
             if (!Directory.Exists(iconLocation)) Directory.CreateDirectory(iconLocation);
             string iconVersionFile = Path.Join(iconLocation, $"icon.version");
@@ -168,7 +182,7 @@ namespace UniGetUI.Core.IconEngine
             DeteteCachedFiles(iconLocation);
 
             // After discarding the cache, regenerate it
-            using HttpClient client = new(CoreData.GenericHttpClientParameters);
+            using HttpClient client = new(CoreTools.GenericHttpClientParameters);
             client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
             HttpResponseMessage response = client.GetAsync(icon.Url).GetAwaiter().GetResult();
             if (!response.IsSuccessStatusCode)
@@ -238,7 +252,7 @@ namespace UniGetUI.Core.IconEngine
                 int width, height;
 
                 using (var fileStream = new FileStream(cachedIconFile, FileMode.Open, FileAccess.Read, FileShare.Read))
-                using (var image = System.Drawing.Image.FromStream(fileStream, false, false))
+                using (var image = DrawingCommon.System.Drawing.Image.FromStream(fileStream, false, false))
                 {
                     height = image.Height;
                     width = image.Width;

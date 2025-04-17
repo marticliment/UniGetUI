@@ -151,7 +151,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 
             List<string> results = [];
 
-            HttpClient client = new(CoreData.GenericHttpClientParameters);
+            HttpClient client = new(CoreTools.GenericHttpClientParameters);
             client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
 
             HttpResponseMessage response = client.GetAsync(SearchUrl).GetAwaiter().GetResult();

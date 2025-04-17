@@ -103,6 +103,12 @@ namespace UniGetUI.PackageEngine.PackageClasses
             return instance;
         }
 
+        public static InstallationOptions CreateEmpty(IPackage package)
+        {
+            InstallationOptions instance = new(package);
+            return instance;
+        }
+
         /// <summary>
         /// Loads and applies the options from the given SerializableInstallationOptions_v1 object to the current object.
         /// </summary>

@@ -42,6 +42,7 @@ internal sealed class PipPkgOperationHelper : PackagePkgOperationHelper
                 parameters.Add("--user");
         }
 
+        parameters.Add(Pip.GetProxyArgument());
         return parameters;
     }
 

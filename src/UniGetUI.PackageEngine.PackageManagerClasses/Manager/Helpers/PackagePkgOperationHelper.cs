@@ -45,7 +45,7 @@ public abstract class PackagePkgOperationHelper : IPackageOperationHelper
         int returnCode)
     {
 
-        if (returnCode is 999 && (!processOutput.Any() || processOutput.Last() == "Error: The operation was canceled by the user."))
+        if (returnCode is 999 && (!processOutput.Any() || processOutput[processOutput.Count - 1] == "Error: The operation was canceled by the user."))
         {
             Logger.Warn("Elevator [or GSudo] UAC prompt was canceled, not showing error message...");
             return OperationVeredict.Canceled;

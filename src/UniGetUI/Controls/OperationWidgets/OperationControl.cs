@@ -24,13 +24,13 @@ using UniGetUI.PackageEngine;
 
 namespace UniGetUI.Controls.OperationWidgets;
 
-public class OperationControl: INotifyPropertyChanged
+public partial class OperationControl: INotifyPropertyChanged
 {
     public AbstractOperation Operation;
-    private bool ErrorTooltipShown;
     public BetterMenu OpMenu;
     public OperationStatus? MenuStateOnLoaded;
     public ObservableCollection<OperationBadge> Badges = [];
+    private int _errorCount = 0;
 
     public OperationControl(AbstractOperation operation)
     {
@@ -87,7 +87,7 @@ public class OperationControl: INotifyPropertyChanged
         };
 
         _title = Operation.Metadata.Title;
-        _liveLine = operation.GetOutput().Any()? operation.GetOutput().Last().Item1 : CoreTools.Translate("Please wait...");
+        _liveLine = operation.GetOutput().Any()? operation.GetOutput()[operation.GetOutput().Count - 1].Item1 : CoreTools.Translate("Please wait...");
         _buttonText = "";
         OnOperationStatusChanged(this, operation.Status);
         LoadIcon();
@@ -122,6 +122,18 @@ public class OperationControl: INotifyPropertyChanged
     {
         // Remove progress notification (if any)
         AppNotificationManager.Default.RemoveByTagAsync(Operation.Metadata.Identifier + "progress");
+
+        if (Operation.Status is OperationStatus.Failed)
+        {
+            _errorCount++;
+            MainApp.Tooltip.ErrorsOccurred++;
+        }
+        else
+        {
+            MainApp.Tooltip.ErrorsOccurred -= _errorCount;
+            _errorCount = 0;
+        }
+        MainApp.Instance.MainWindow.UpdateSystemTrayStatus();
 
         // Generate process output
         List<string> rawOutput =
@@ -207,18 +219,6 @@ public class OperationControl: INotifyPropertyChanged
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(newStatus), newStatus, null);
-        }
-
-        // Handle error tooltip counter
-        if (!ErrorTooltipShown && newStatus is OperationStatus.Failed)
-        {
-            MainApp.Tooltip.ErrorsOccurred++;
-            ErrorTooltipShown = true;
-        }
-        else if (ErrorTooltipShown && newStatus is not OperationStatus.Failed)
-        {
-            MainApp.Tooltip.ErrorsOccurred--;
-            ErrorTooltipShown = false;
         }
     }
 
@@ -321,11 +321,9 @@ public class OperationControl: INotifyPropertyChanged
 
     public void Close()
     {
-        if (ErrorTooltipShown && Operation.Status is OperationStatus.Failed)
-        {
-            MainApp.Tooltip.ErrorsOccurred--;
-            ErrorTooltipShown = false;
-        }
+        MainApp.Tooltip.ErrorsOccurred -= _errorCount;
+        _errorCount = 0;
+        MainApp.Instance.MainWindow.UpdateSystemTrayStatus();
 
         MainApp.Operations._operationList.Remove(this);
         while(AbstractOperation.OperationQueue.Remove(Operation));
@@ -575,6 +573,7 @@ public class OperationControl: INotifyPropertyChanged
             var details = new BetterMenuItem {
                 Text = CoreTools.Translate("Package details"),
                 IconName = IconType.Info_Round,
+                IsEnabled = !packageOp.Package.Source.IsVirtualManager
             };
             details.Click += (_, _) =>
             {
@@ -582,9 +581,12 @@ public class OperationControl: INotifyPropertyChanged
             };
             optionsMenu.Add(details);
 
-            var installationSettings = new BetterMenuItem {
+
+            var installationSettings = new BetterMenuItem
+            {
                 Text = CoreTools.Translate("Installation options"),
                 IconName = IconType.Options,
+                IsEnabled = !packageOp.Package.Source.IsVirtualManager
             };
             installationSettings.Click += (_, _) =>
             {
