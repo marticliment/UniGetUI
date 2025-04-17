@@ -294,7 +294,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             }
             else
             {
-                status.ExecutablePath = Path.Join(CoreData.UniGetUIExecutableDirectory, "choco-cli\\choco.exe");
+                status.ExecutablePath = Path.Join(CoreData.UniGetUIDataDirectory, "Chocolatey", "choco.exe");
             }
 
             status.Found = File.Exists(status.ExecutablePath);
