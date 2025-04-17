@@ -534,8 +534,32 @@ public partial class OperationControl: INotifyPropertyChanged
                 retryOptionsMenu.Add(skiphashButton);
             }
 
-            if (packageOp is UpdatePackageOperation && packageOp.Status is OperationStatus.Failed or OperationStatus.Canceled)
+            if (packageOp is UpdatePackageOperation &&
+                packageOp.Status is OperationStatus.Failed or OperationStatus.Canceled)
             {
+                retryOptionsMenu.Add(new MenuFlyoutSeparator());
+
+                var reinstall = new BetterMenuItem() { Text = CoreTools.Translate("Reinstall package") };
+                reinstall.IconName = IconType.Download;
+                reinstall.Click += async (_, _) =>
+                {
+                    callback();
+                    this.Close();
+                    _ = MainApp.Operations.Install(packageOp.Package, TEL_InstallReferral.ALREADY_INSTALLED, ignoreParallel: true);
+                };
+                retryOptionsMenu.Add(reinstall);
+
+                var uninstallReinstall = new BetterMenuItem() { Text = CoreTools.Translate("Uninstall package, then reinstall it") };
+                uninstallReinstall.IconName = IconType.Undelete;
+                uninstallReinstall.Click += async (_, _) =>
+                {
+                    callback();
+                    this.Close();
+                    var op = await MainApp.Operations.Uninstall(packageOp.Package, ignoreParallel: true);
+                    _ = MainApp.Operations.Install(packageOp.Package, TEL_InstallReferral.ALREADY_INSTALLED, ignoreParallel: true, req: op);
+                };
+                retryOptionsMenu.Add(uninstallReinstall);
+
                 retryOptionsMenu.Add(new MenuFlyoutSeparator());
 
                 var skipThisVersion = new BetterMenuItem() { Text = CoreTools.Translate("Skip this version") };
