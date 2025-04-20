@@ -249,7 +249,7 @@
   "Finish": "Lopeta",
   "Follow system color scheme": "Seuraa järjestelmän värimaailmaa",
   "Force ARM compiled winget version (ONLY FOR ARM64 SYSTEMS)": "Force ARM:n käännetty winget-versio (VAIN ARM64-JÄRJESTELMIÄ)",
-  "Formerly known as WingetUI": "Tunnettiin aiemmin nimellä WingetUI",
+  "Formerly known as WingetUI": "Tunnettiin aiemmin nimellä WinGetUI",
   "Found": "Löytyi",
   "Found packages: ": "Löytyi paketteja:",
   "Found packages: {0}": "Löytyi paketteja: {0}",
