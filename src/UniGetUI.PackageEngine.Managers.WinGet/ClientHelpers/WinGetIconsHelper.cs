@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.Management.Deployment;
@@ -117,40 +118,32 @@ internal static class WinGetIconsHelper
         return null;
     }
 
-    public static CacheableIcon? GetAPPXPackageIcon(IPackage package)
+    public static CacheableIcon? GetAppxPackageIcon(IPackage package)
     {
         string appxId = package.Id.Replace("MSIX\\", "");
+        string globalPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "WindowsApps", appxId);
 
-        string globalPath;
-        var progsPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "WindowsApps", appxId);
-        if (Directory.Exists(progsPath))
-        {
-            globalPath = Path.Join(progsPath, "Assets");
-            if (!Directory.Exists(globalPath)) globalPath = Path.Join(progsPath, "Images");
-            if (!Directory.Exists(globalPath)) globalPath = progsPath;
-        }
-        else
-        {
-            progsPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "SystemApps", appxId);
-            globalPath = Path.Join(progsPath, "Assets");
-            if (!Directory.Exists(globalPath)) globalPath = Path.Join(progsPath, "Images");
-            if (!Directory.Exists(globalPath)) globalPath = progsPath;
-        }
+        if (!Directory.Exists(globalPath))
+            globalPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "SystemApps", appxId);
 
         if (!Directory.Exists(globalPath))
             return null;
 
-        string[] logoFiles = Directory.GetFiles(globalPath, "*StoreLogo*.png", SearchOption.TopDirectoryOnly);
-        if (logoFiles.Length > 0)
-            return new CacheableIcon(logoFiles[^1]);
+        string content = File.ReadAllText(Path.Join(globalPath, "AppxManifest.xml"));
+        Match? match = Regex.Match(content, "Square44x44Logo\\s*=\\s*[\"']([^\"']+)[\"']");
+        if (!match.Success)
+        {
+            // There is no icon on the manifest
+            return null;
+        }
 
-        logoFiles = Directory.GetFiles(globalPath, "*Splash*.png", SearchOption.TopDirectoryOnly);
-        if (logoFiles.Length > 0)
-            return new CacheableIcon(logoFiles[^1]);
-
-        logoFiles = Directory.GetFiles(globalPath, "*.png", SearchOption.TopDirectoryOnly);
-        if (logoFiles.Length > 0)
-            return new CacheableIcon(logoFiles[^1]);
+        string path = string.Join('.', Path.Join(globalPath, match.Groups[1].ToString()).Split('.')[..^1]);
+        foreach (string ending in new[] { ".png", ".scale-100.png", ".scale-125.png", ".scale-150.png",
+                     ".scale-175.png", ".scale-200.png" })
+            if (Path.Exists(path + ending))
+            {
+                return new CacheableIcon(path + ending);
+            }
 
         return null;
     }
