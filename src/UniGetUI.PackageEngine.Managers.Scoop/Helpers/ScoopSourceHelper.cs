@@ -86,7 +86,16 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                                 elements[1] = Regex.Replace(elements[1], @"^(.*)\.git$", "$1");
                             }
 
-                            sources.Add(new ManagerSource(Manager, elements[0].Trim(), new Uri(elements[1]), int.Parse(elements[4].Trim()), elements[2].Trim() + " " + elements[3].Trim()));
+                            try
+                            {
+                                sources.Add(new ManagerSource(Manager, elements[0].Trim(), new Uri(elements[1]),
+                                    int.Parse(elements[4].Trim()), elements[2].Trim() + " " + elements[3].Trim()));
+                            }
+                            catch (Exception ex)
+                            {
+                                logger.AddToStdErr(ex.ToString());
+                                sources.Add(new ManagerSource(Manager, elements[0].Trim(), new Uri(elements[1]), -1, "1/1/1970"));
+                            }
                         }
                     }
                 }
