@@ -71,6 +71,11 @@ namespace UniGetUI.Interface
             LoadTrayMenu();
             ApplyTheme();
 
+            if (Settings.Get("ShowVersionNumberOnTitlebar"))
+            {
+                AddToSubtitle(CoreTools.Translate("version {0} (build number: {1})", CoreData.VersionName, CoreData.BuildNumber));
+            }
+
             if (CoreTools.IsAdministrator())
             {
                 AddToSubtitle(CoreTools.Translate("[RAN AS ADMINISTRATOR]"));
