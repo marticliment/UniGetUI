@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using UniGetUI.Core.Classes;
@@ -78,7 +79,17 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 ExtendedTooltip = $"{package.Name} (from {package.Source.AsString_DisplayName})";
         }
 
-        public async void RightClick()
+        public void PackageItemContainer_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+            => _page.PackageItemContainer_DoubleTapped(sender, e);
+
+        public void PackageItemContainer_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
+            => _page.PackageItemContainer_PreviewKeyDown(sender, e);
+
+        public void PackageItemContainer_RightTapped(object sender, RightTappedRoutedEventArgs e)
+            => _page.PackageItemContainer_RightTapped(sender, e);
+
+
+        public async Task RightClick()
         {
             await _page.ShowContextMenu(this);
         }

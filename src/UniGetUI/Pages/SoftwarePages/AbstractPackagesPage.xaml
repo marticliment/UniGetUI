@@ -35,11 +35,12 @@
             <widgets:PackageItemContainer
                 AutomationProperties.Name="{x:Bind Package.AutomationName}"
                 CornerRadius="4"
-                DoubleTapped="PackageItemContainer_DoubleTapped"
-                Package="{x:Bind Package}"
-                PreviewKeyDown="PackageItemContainer_PreviewKeyDown"
-                RightTapped="PackageItemContainer_RightTapped"
-                Wrapper="{x:Bind Self}">
+                DoubleTapped="{x:Bind PackageItemContainer_DoubleTapped}"
+                PreviewKeyDown="{x:Bind PackageItemContainer_PreviewKeyDown}"
+                RightTapped="{x:Bind PackageItemContainer_RightTapped}"
+
+                Wrapper="{x:Bind Self}"
+                Package="{x:Bind Package}">
 
                 <Grid
                     Padding="12,3,8,3"
@@ -210,10 +211,11 @@
                 AutomationProperties.Name="{x:Bind Package.AutomationName}"
                 Background="{ThemeResource ControlFillColorDefaultBrush}"
                 CornerRadius="4"
-                DoubleTapped="PackageItemContainer_DoubleTapped"
+                DoubleTapped="{x:Bind PackageItemContainer_DoubleTapped}"
+                PreviewKeyDown="{x:Bind PackageItemContainer_PreviewKeyDown}"
+                RightTapped="{x:Bind PackageItemContainer_RightTapped}"
+
                 Package="{x:Bind Package}"
-                PreviewKeyDown="PackageItemContainer_PreviewKeyDown"
-                RightTapped="PackageItemContainer_RightTapped"
                 Wrapper="{x:Bind Self}">
 
                 <Grid
@@ -328,10 +330,11 @@
                 AutomationProperties.Name="{x:Bind Package.AutomationName}"
                 Background="{ThemeResource ControlFillColorDefaultBrush}"
                 CornerRadius="4"
-                DoubleTapped="PackageItemContainer_DoubleTapped"
+                DoubleTapped="{x:Bind PackageItemContainer_DoubleTapped}"
+                PreviewKeyDown="{x:Bind PackageItemContainer_PreviewKeyDown}"
+                RightTapped="{x:Bind PackageItemContainer_RightTapped}"
+
                 Package="{x:Bind Package}"
-                PreviewKeyDown="PackageItemContainer_PreviewKeyDown"
-                RightTapped="PackageItemContainer_RightTapped"
                 Wrapper="{x:Bind Self}">
 
                 <Grid

@@ -978,7 +978,7 @@ namespace UniGetUI.Interface
         }
 
         public void FocusPackageList()
-        { CurrentPackageList.Focus(FocusState.Programmatic); }
+            => CurrentPackageList.Focus(FocusState.Programmatic);
 
 
         public async Task ShowContextMenu(PackageWrapper wrapper)
@@ -990,7 +990,7 @@ namespace UniGetUI.Interface
             WhenShowingContextMenu(wrapper.Package);
         }
 
-        private void PackageItemContainer_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        public void PackageItemContainer_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
             if (sender is PackageItemContainer container && container.Package is not null)
             {
@@ -1000,7 +1000,7 @@ namespace UniGetUI.Interface
             }
         }
 
-        private void PackageItemContainer_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+        public void PackageItemContainer_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {
             if (sender is PackageItemContainer container && container.Package is not null)
             {
@@ -1138,7 +1138,7 @@ namespace UniGetUI.Interface
             IsEnabled = false;
         }
 
-        private void PackageItemContainer_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
+        public void PackageItemContainer_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
         {
             if (e.Key is not (VirtualKey.Up or VirtualKey.Down or VirtualKey.Home or VirtualKey.End or VirtualKey.Enter or VirtualKey.Space) ||
                 sender is not PackageItemContainer packageItemContainer)
