@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11805,
-        "done": 5275,
-        "packages_with_icon": 5275,
-        "packages_with_screenshot": 633,
-        "total_screenshots": 1977
+        "total": 11812,
+        "done": 5284,
+        "packages_with_icon": 5284,
+        "packages_with_screenshot": 635,
+        "total_screenshots": 1980
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -9002,8 +9002,11 @@
             "images": []
         },
         "cryptomator": {
-            "icon": "https://community.chocolatey.org/content/packageimages/cryptomator.1.6.17.png",
-            "images": []
+            "icon": "https://cryptomator.org/presskit/cryptomator-logo.png",
+            "images": [
+                "https://cryptomator.org/presskit/win-screenshot-1.png",
+                "https://cryptomator.org/presskit/win-screenshot-2.png"
+            ]
         },
         "cryptool1": {
             "icon": "",
@@ -10552,6 +10555,12 @@
                 "https://i.ibb.co/5M0bd2N/discord-1.png",
                 "https://i.ibb.co/hcBnn6x/discord-2.png",
                 "https://i.ibb.co/GFdRfcy/discord-3.png"
+            ]
+        },
+        "discord.py": {
+            "icon": "https://zv915ylvcs.ufs.sh/f/fYIgEizARqiSbhS0cIEZnSK3rQ5xwzjGJg7BXpaCtml9EW2s",
+            "images": [
+                "https://raw.githubusercontent.com/Rapptz/discord.py/refs/heads/master/docs/images/commands/positional3.png"
             ]
         },
         "discord-canary": {
@@ -26003,11 +26012,11 @@
             "images": []
         },
         "mpv-easy-player": {
-            "icon": "",
+            "icon": "https://raw.githubusercontent.com/mpv-player/mpv.io/master/source/images/mpv-logo-128.png",
             "images": []
         },
         "mpv-git": {
-            "icon": "",
+            "icon": "https://raw.githubusercontent.com/mpv-player/mpv.io/master/source/images/mpv-logo-128.png",
             "images": []
         },
         "mpv-net": {
@@ -29916,6 +29925,10 @@
             "icon": "https://community.chocolatey.org/content/packageimages/pandabank.3.0.2.0.png",
             "images": []
         },
+        "pandas": {
+            "icon": "",
+            "images": []
+        },
         "pandafreeantivirus": {
             "icon": "https://community.chocolatey.org/content/packageimages/PandaFreeAntivirus.18.07.04.20200620.png",
             "images": []
@@ -32960,6 +32973,10 @@
         },
         "pypy3": {
             "icon": "https://community.chocolatey.org/content/packageimages/pypy3.7.3.4.20210425.png",
+            "images": []
+        },
+        "pytest": {
+            "icon": "https://raw.githubusercontent.com/pytest-dev/pytest/refs/heads/main/doc/en/_static/pytest1.png",
             "images": []
         },
         "pyqt4": {
@@ -43686,8 +43703,12 @@
             "icon": "",
             "images": []
         },
+        "vercel": {
+            "icon": "https://zv915ylvcs.ufs.sh/f/fYIgEizARqiSKv03FUtUaGqDZpvIXcO2YTyfjCHRkoFNAmxn",
+            "images": []
+        },
         "valorant": {
-            "icon": "https://community.chocolatey.org/content/packageimages/valorant.62.0.4.4878570.png",
+            "icon": "https://zv915ylvcs.ufs.sh/f/fYIgEizARqiSm9QzvKbv3WNIoXHVpASdBFORtzZ6JCYTeDnh",
             "images": []
         },
         "valorant-ap": {
@@ -46781,11 +46802,15 @@
             "images": []
         },
         "whatsapp": {
-            "icon": "https://i.imgur.com/sGkly3m.png",
+            "icon": "https://zv915ylvcs.ufs.sh/f/fYIgEizARqiSOW3E8jXwucg28hCEesJXjktpBP0U35QGyzm6",
             "images": []
         },
         "whatsapp-beta": {
-            "icon": "",
+            "icon": "https://zv915ylvcs.ufs.sh/f/fYIgEizARqiSOW3E8jXwucg28hCEesJXjktpBP0U35QGyzm6",
+            "images": []
+        },
+        "whatsappdesktop": {
+            "icon": "https://zv915ylvcs.ufs.sh/f/fYIgEizARqiSOW3E8jXwucg28hCEesJXjktpBP0U35QGyzm6",
             "images": []
         },
         "whatsapptray": {
@@ -47294,6 +47319,10 @@
         },
         "windowsazurepowershell": {
             "icon": "",
+            "images": []
+        },
+        "windowscalculator": {
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/5/55/Windows_Calculator_icon.png",
             "images": []
         },
         "windowscamera": {
@@ -49836,6 +49865,10 @@
                 "https://www.scootersoftware.com/shot_FolderMerge_Dark.png",
                 "https://www.scootersoftware.com/shot_TextMerge_Dark.png"
             ]
+        },
+        "XPFFTQ032PTPHF": {
+            "icon": "https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/icon.png",
+            "images": []
         }
     }
 }
