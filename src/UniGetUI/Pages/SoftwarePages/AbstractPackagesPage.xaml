@@ -457,7 +457,7 @@
             x:Key="Layout_Icons"
             ItemsJustification="Start"
             MinItemWidth="128"
-            MinItemHeight="128"
+            MinItemHeight="134"
             MinColumnSpacing="8"
             MinRowSpacing="8"/>
 
