@@ -1,5 +1,5 @@
 {
-  "\"{0}\" is a local package and can't be shared": null,
+  "\"{0}\" is a local package and can't be shared": "\"{0}\" ay isang lokal na package at hindi pwedeng ibahagi",
   "\"{0}\" is a local package and does not have available details": null,
   "\"{0}\" is a local package and is not compatible with this feature": null,
   "(Last checked: {0})": null,
