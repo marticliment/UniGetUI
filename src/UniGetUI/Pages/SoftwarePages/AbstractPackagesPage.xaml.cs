@@ -21,7 +21,6 @@ using DispatcherQueuePriority = Microsoft.UI.Dispatching.DispatcherQueuePriority
 using Microsoft.UI;
 using Microsoft.UI.Xaml.Media;
 using Windows.UI;
-using ABI.Windows.Media.PlayTo;
 using Microsoft.UI.Xaml.Controls.Primitives;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -514,29 +513,33 @@ namespace UniGetUI.Interface
             CurrentPackageList.Select(index);
 
             double position;
-            if (CurrentPackageList.Layout is StackLayout sl)
+            if (CurrentPackageList.Layout is StackLayout)
             {
                 position = index * 39;
             }
             else if (CurrentPackageList.Layout is UniformGridLayout gl)
             {
                 int columnCount = (int)((CurrentPackageList.ActualWidth - 8) / (gl.MinItemWidth + 8));
-                int row = index / columnCount;
+                int row = index / Math.Max(columnCount, 1);
                 position = Math.Max(row - 1, 0) * (gl.MinItemHeight + 8);
-                Debug.WriteLine($"pos: {position}, colCount:{columnCount}, {index / columnCount}");
+                Debug.WriteLine($"pos: {position}, colCount:{columnCount}, {row}");
             }
             else
             {
                 throw new InvalidCastException("The layout was not recognized");
             }
 
-            CurrentPackageList.ScrollView.ScrollTo(0, position, new ScrollingScrollOptions(
-                ScrollingAnimationMode.Disabled,
-                ScrollingSnapPointsMode.Ignore
-            ));
 
-            if (focus)
-                Focus(FilteredPackages[index].Package);
+            if (position < CurrentPackageList.ScrollView.VerticalOffset || position >
+                CurrentPackageList.ScrollView.VerticalOffset + CurrentPackageList.ScrollView.ActualHeight)
+            {
+                CurrentPackageList.ScrollView.ScrollTo(0, position, new ScrollingScrollOptions(
+                    ScrollingAnimationMode.Disabled,
+                    ScrollingSnapPointsMode.Ignore
+                ));
+            }
+
+            if (focus) Focus(FilteredPackages[index].Package);
         }
 
         private void Focus(IPackage packageToFocus, int retryCount = 0)
