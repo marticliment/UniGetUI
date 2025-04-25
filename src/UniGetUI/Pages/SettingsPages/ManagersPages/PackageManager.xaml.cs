@@ -121,7 +121,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
 
                 ButtonCard WinGet_ResetWindowsIPackageManager = new()
                 {
-                    Text = CoreTools.AutoTranslated("Reset WinGet") +
+                    Text = CoreTools.Translate("Reset WinGet") +
                            $" ({CoreTools.Translate("This may help if no packages are listed")})",
                     ButtonText = CoreTools.AutoTranslated("Reset"),
                     CornerRadius = new CornerRadius(0)
