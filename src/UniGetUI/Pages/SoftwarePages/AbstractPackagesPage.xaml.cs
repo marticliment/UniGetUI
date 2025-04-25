@@ -21,6 +21,7 @@ using DispatcherQueuePriority = Microsoft.UI.Dispatching.DispatcherQueuePriority
 using Microsoft.UI;
 using Microsoft.UI.Xaml.Media;
 using Windows.UI;
+using ABI.Windows.Media.PlayTo;
 using Microsoft.UI.Xaml.Controls.Primitives;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -512,20 +513,27 @@ namespace UniGetUI.Interface
 
             CurrentPackageList.Select(index);
 
-            if (CurrentPackageList.ScrollView?.VerticalOffset > index * 39)
+            double position;
+            if (CurrentPackageList.Layout is StackLayout sl)
             {
-                CurrentPackageList.ScrollView.ScrollTo(0, index * 39, new ScrollingScrollOptions(
-                    ScrollingAnimationMode.Disabled,
-                    ScrollingSnapPointsMode.Ignore
-                ));
+                position = index * 39;
             }
-            else if (CurrentPackageList.ScrollView?.VerticalOffset + CurrentPackageList.ScrollView?.ViewportHeight < (index + 1) * 39)
+            else if (CurrentPackageList.Layout is UniformGridLayout gl)
             {
-                CurrentPackageList.ScrollView?.ScrollTo(0, (index + 1) * 39 - CurrentPackageList.ScrollView.ViewportHeight, new ScrollingScrollOptions(
-                    ScrollingAnimationMode.Disabled,
-                    ScrollingSnapPointsMode.Ignore
-                ));
+                int columnCount = (int)((CurrentPackageList.ActualWidth - 8) / (gl.MinItemWidth + 8));
+                int row = index / columnCount;
+                position = Math.Max(row - 1, 0) * (gl.MinItemHeight + 8);
+                Debug.WriteLine($"pos: {position}, colCount:{columnCount}, {index / columnCount}");
             }
+            else
+            {
+                throw new InvalidCastException("The layout was not recognized");
+            }
+
+            CurrentPackageList.ScrollView.ScrollTo(0, position, new ScrollingScrollOptions(
+                ScrollingAnimationMode.Disabled,
+                ScrollingSnapPointsMode.Ignore
+            ));
 
             if (focus)
                 Focus(FilteredPackages[index].Package);

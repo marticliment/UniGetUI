@@ -456,8 +456,10 @@
         <UniformGridLayout
             x:Key="Layout_Icons"
             ItemsJustification="Start"
+            MinItemWidth="128"
+            MinItemHeight="128"
             MinColumnSpacing="8"
-            MinRowSpacing="8" />
+            MinRowSpacing="8"/>
 
         <StackLayout x:Key="Layout_List" Spacing="3" />
 
