@@ -155,7 +155,7 @@ namespace UniGetUI.Interface
         protected ConcurrentDictionary<IPackageManager, List<IManagerSource>> UsedSourcesForManager = [];
         protected ConcurrentDictionary<IPackageManager, TreeViewNode> RootNodeForManager = [];
         protected ConcurrentDictionary<IManagerSource, TreeViewNode> NodesForSources = [];
-        private readonly TreeViewNode LocalPackagesNode;
+        private readonly TreeViewNode LocalPackagesNode = new();
 
         public readonly int NewVersionLabelWidth;
         public readonly int NewVersionIconWidth;
@@ -249,11 +249,8 @@ namespace UniGetUI.Interface
             Loader_PackagesChanged(this, new(false, [], []));
 
             LastPackageLoadTime = DateTime.Now;
-            LocalPackagesNode = new TreeViewNode
-            {
-                Content = CoreTools.Translate("Local"),
-                IsExpanded = false
-            };
+            LocalPackagesNode.Content = CoreTools.Translate("Local");
+            LocalPackagesNode.IsExpanded = false;
 
             ReloadButton.Click += async (_, _) => await LoadPackages();
 
@@ -456,7 +453,6 @@ namespace UniGetUI.Interface
             LoadingProgressBar.Visibility = Visibility.Collapsed;
             LastPackageLoadTime = DateTime.Now;
             WhenPackagesLoaded(ReloadReason.External);
-            FilterPackages();
         }
 
         private void Loader_StartedLoading(object? sender, EventArgs e)
@@ -554,7 +550,7 @@ namespace UniGetUI.Interface
                 return;
             }
 
-            FilterPackages();
+            FilterPackages(true);
         }
 
         private void InstantSearchValueChanged(object sender, RoutedEventArgs e)
@@ -568,11 +564,11 @@ namespace UniGetUI.Interface
 
         protected void ClearSourcesList()
         {
-            UsedManagers?.Clear();
+            UsedManagers.Clear();
             SourcesTreeView?.RootNodes?.Clear();
-            UsedSourcesForManager?.Clear();
-            RootNodeForManager?.Clear();
-            NodesForSources?.Clear();
+            UsedSourcesForManager.Clear();
+            RootNodeForManager.Clear();
+            NodesForSources.Clear();
             LocalPackagesNode?.Children?.Clear();
         }
 
@@ -768,17 +764,17 @@ namespace UniGetUI.Interface
                     {
                         IPackageManager manager = RootNodeForManager.First(x => x.Value == node).Key;
                         visibleManagers.Add(manager);
-                        if (manager.Capabilities.SupportsCustomSources)
-                        {
-                            foreach (IManagerSource source in manager.SourcesHelper.Factory.GetAvailableSources())
-                            {
-                                if (!visibleSources.Contains(source)) visibleSources.Add(source);
-                            }
-                        }
+                        if (!manager.Capabilities.SupportsCustomSources)
+                            continue;
+
+                        foreach (IManagerSource source in manager.SourcesHelper.Factory.GetAvailableSources())
+                            if (!visibleSources.Contains(source))
+                                visibleSources.Add(source);
                     }
                 }
             }
 
+            // Filter only by query when needed
             if (forceQueryUpdate || LastQueryResult is null)
             {
                 // Load applied filters and prepare query
@@ -811,7 +807,7 @@ namespace UniGetUI.Interface
 
             foreach (var match in LastQueryResult)
             {
-                if (visibleSources.Contains(match.Package.Source) ||
+               if (visibleSources.Contains(match.Package.Source) ||
                     (!match.Package.Manager.Capabilities.SupportsCustomSources &&
                      visibleManagers.Contains(match.Package.Manager)))
                 {
