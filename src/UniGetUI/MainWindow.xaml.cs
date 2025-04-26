@@ -23,6 +23,7 @@ using UniGetUI.Core.Classes;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.Pages.DialogPages;
+using TitleBar = WinUIEx.TitleBar;
 
 namespace UniGetUI.Interface
 {
@@ -73,7 +74,7 @@ namespace UniGetUI.Interface
 
             if (Settings.Get("ShowVersionNumberOnTitlebar"))
             {
-                AddToSubtitle(CoreTools.Translate("version {0} (build number: {1})", CoreData.VersionName, CoreData.BuildNumber));
+                AddToSubtitle(CoreTools.Translate("version {0}", CoreData.VersionName));
             }
 
             if (CoreTools.IsAdministrator())
@@ -689,7 +690,7 @@ namespace UniGetUI.Interface
             SetTitleBar(TitleBar);
 
             NavigationPage = new MainView();
-
+            NavigationPage.CanGoBackChanged += (_, can) => TitleBar.IsBackButtonVisible = can;
 
             object? control = MainContentFrame.Content as Grid;
             if (control is Grid loadingWindow)
@@ -1001,14 +1002,19 @@ namespace UniGetUI.Interface
 
         private void TitleBar_PaneToggleRequested(WinUIEx.TitleBar sender, object args)
         {
-            if (NavigationPage is not null)
+            if (NavigationPage is null)
+                return;
+
+            if(this.AppWindow.Size.Width >= 1600)
             {
-                if(this.AppWindow.Size.Width >= 1600)
-                {
-                    Settings.Set("CollapseNavMenuOnWideScreen", NavigationPage.NavView.IsPaneOpen);
-                }
-                NavigationPage.NavView.IsPaneOpen = !NavigationPage.NavView.IsPaneOpen;
+                Settings.Set("CollapseNavMenuOnWideScreen", NavigationPage.NavView.IsPaneOpen);
             }
+            NavigationPage.NavView.IsPaneOpen = !NavigationPage.NavView.IsPaneOpen;
+        }
+
+        private void TitleBar_OnBackRequested(WinUIEx.TitleBar sender, object args)
+        {
+            NavigationPage?.NavigateBack();
         }
     }
 

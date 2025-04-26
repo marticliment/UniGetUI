@@ -34,6 +34,8 @@
             Grid.Row="0"
             IsPaneToggleButtonVisible="True"
             PaneToggleRequested="TitleBar_PaneToggleRequested"
+            IsBackButtonVisible="False"
+            BackRequested="TitleBar_OnBackRequested"
             Visibility="Collapsed">
             <winex:TitleBar.IconSource>
                 <ImageIconSource ImageSource="ms-appx:///Assets/Images/icon.png" />
