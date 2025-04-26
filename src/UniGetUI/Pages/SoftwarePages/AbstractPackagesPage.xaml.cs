@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Runtime.Serialization;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -220,6 +221,10 @@ namespace UniGetUI.Interface
             int viewMode = Settings.GetDictionaryItem<string, int>("PackageListViewMode", PAGE_NAME);
             if (viewMode < 0 || viewMode >= ViewModeSelector.Items.Count) viewMode = 0;
             ViewModeSelector.SelectedIndex = viewMode;
+
+            ToolTipService.SetToolTip(Selector_List, CoreTools.Translate("List"));
+            ToolTipService.SetToolTip(Selector_Grid, CoreTools.Translate("Grid"));
+            ToolTipService.SetToolTip(Selector_Icons, CoreTools.Translate("Icons"));
 
             MainTitle.Text = data.PageTitle;
             HeaderIcon.Glyph = data.Glyph;

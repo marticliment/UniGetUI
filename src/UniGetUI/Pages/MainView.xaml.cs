@@ -55,6 +55,9 @@ namespace UniGetUI.Interface
 
         private PageType OldPage_t = PageType.Null;
         private PageType CurrentPage_t = PageType.Null;
+        private List<PageType> NavigationHistory = new();
+
+        public event EventHandler<bool>? CanGoBackChanged;
 
         public MainView()
         {
@@ -237,8 +240,10 @@ namespace UniGetUI.Interface
         private void ManagersNavButton_Click(object sender, EventArgs e)
             => NavigateTo(PageType.Managers);
 
+        private bool _lastNavItemSelectionWasAuto;
         private void SelectNavButtonForPage(PageType page)
         {
+            _lastNavItemSelectionWasAuto = true;
             NavView.SelectedItem = page switch
             {
                 PageType.Discover => DiscoverNavBtn,
@@ -249,6 +254,7 @@ namespace UniGetUI.Interface
                 PageType.Managers => ManagersNavBtn,
                 _ => MoreNavBtn,
             };
+            _lastNavItemSelectionWasAuto = false;
         }
 
         private async void AboutNavButton_Click(object sender, RoutedEventArgs e)
@@ -258,13 +264,13 @@ namespace UniGetUI.Interface
             SelectNavButtonForPage(CurrentPage_t);
         }
 
-        public void NavigateTo(PageType NewPage_t)
+        public void NavigateTo(PageType NewPage_t, bool toHistory = true)
         {
             SelectNavButtonForPage(NewPage_t);
-            if (CurrentPage_t == NewPage_t) return;
+            if (CurrentPage_t == NewPage_t)
+                return;
 
             Page NewPage = GetPageForType(NewPage_t);
-
             Page? oldPage = ContentFrame.Content as Page;
             ContentFrame.Content = NewPage;
 
@@ -272,10 +278,31 @@ namespace UniGetUI.Interface
             CurrentPage_t = NewPage_t;
 
             (oldPage as IEnterLeaveListener)?.OnLeave();
+            if (toHistory && OldPage_t is not PageType.Null)
+            {
+                NavigationHistory.Add(OldPage_t);
+                CanGoBackChanged?.Invoke(this, true);
+            }
 
             (NewPage as AbstractPackagesPage)?.FocusPackageList();
             (NewPage as AbstractPackagesPage)?.FilterPackages();
             (NewPage as IEnterLeaveListener)?.OnEnter();
+        }
+
+        public void NavigateBack()
+        {
+            if (ContentFrame.Content is IInnerNavigationPage navPage && navPage.CanGoBack())
+            {
+                navPage.GoBack();
+            }
+            else
+            {
+                NavigateTo(NavigationHistory.Last(), toHistory: false);
+                NavigationHistory.RemoveAt(NavigationHistory.Count-1);
+                CanGoBackChanged?.Invoke(
+                    this,
+                    NavigationHistory.Any() || ((ContentFrame.Content as IInnerNavigationPage)?.CanGoBack() ?? false));
+            }
         }
 
         private void ReleaseNotesMenu_Click(object sender, RoutedEventArgs e)
@@ -414,15 +441,12 @@ namespace UniGetUI.Interface
 
         private void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
-            if(args.SelectedItem is CustomNavViewItem item)
+            if (_lastNavItemSelectionWasAuto)
+                return;
+
+            if(args.SelectedItem is CustomNavViewItem item && item.Tag is not PageType.Null)
             {
-                if(item.Tag is PageType.Null)
-                {
-                }
-                else
-                {
-                    NavigateTo(item.Tag);
-                }
+                NavigateTo(item.Tag);
             }
         }
 
