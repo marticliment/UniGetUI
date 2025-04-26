@@ -8,6 +8,8 @@ public static class CLIHandler
     public const string HELP = "--help";
     public const string DAEMON = "--daemon";
     public const string MIGRATE_WINGETUI_TO_UNIGETUI = "--migrate-wingetui-to-unigetui";
+    public const string UNINSTALL_WINGETUI = "--uninstall-wingetui";
+    public const string UNINSTALL_UNIGETUI = "--uninstall-unigetui";
 
     public const string IMPORT_SETTINGS = "--import-settings";
     public const string EXPORT_SETTINGS = "--export-settings";
@@ -220,5 +222,11 @@ public static class CLIHandler
             Logger.Error(ex);
             return ex.HResult;
         }
+    }
+
+    public static int UninstallUniGetUI()
+    {
+        // There is currently no uninstall logic. However, this needs to be maintained, or otherwhise UniGetUI will launch on uninstall
+        return 0;
     }
 }
