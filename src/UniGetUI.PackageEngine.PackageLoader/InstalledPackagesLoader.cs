@@ -82,7 +82,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
                                     await WhenAddingPackage(package);
                                 }
                             }
-                            InvokePackagesChangedEvent();
+                            InvokePackagesChangedEvent(true, task.Result.ToArray(), []);
                         }
                         tasks.Remove(task);
                     }

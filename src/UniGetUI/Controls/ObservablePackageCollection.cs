@@ -1,5 +1,4 @@
 using UniGetUI.Core.Classes;
-using UniGetUI.Interface;
 using UniGetUI.PackageEngine.Interfaces;
 
 namespace UniGetUI.PackageEngine.PackageClasses
@@ -26,13 +25,21 @@ namespace UniGetUI.PackageEngine.PackageClasses
             SortingSelector = x => x.Package.Name;
         }
 
-        /// <summary>
-        /// Add a package to the collection
-        /// </summary>
-        public void Add(IPackage p, AbstractPackagesPage page)
+        public void FromRange(IReadOnlyList<PackageWrapper> packages)
         {
-            base.Add(new PackageWrapper(p, page));
+            BlockSorting = true;
+
+            // Clear the list
+            Clear();
+
+            // Add all packages
+            foreach (var w in packages)
+                Add(w);
+
+            BlockSorting = false;
+            Sort();
         }
+
 
         /// <summary>
         /// Sets the property with which to filter the package and sorts the collection
@@ -120,7 +127,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         {
             foreach (PackageWrapper wrapper in this)
             {
-                wrapper.Package.IsChecked = true;
+                wrapper.IsChecked = true;
             }
         }
 
@@ -131,7 +138,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         {
             foreach (PackageWrapper wrapper in this)
             {
-                wrapper.Package.IsChecked = false;
+                wrapper.IsChecked = false;
             }
         }
     }

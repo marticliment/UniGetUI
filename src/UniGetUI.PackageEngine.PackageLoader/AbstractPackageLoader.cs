@@ -4,6 +4,20 @@ using UniGetUI.PackageEngine.Interfaces;
 
 namespace UniGetUI.PackageEngine.PackageLoader
 {
+    public class PackagesChangedEvent
+    {
+        public PackagesChangedEvent(bool proceduralChange, IReadOnlyList<IPackage> addedPackages, IReadOnlyList<IPackage> removedPackages)
+        {
+            ProceduralChange = proceduralChange;
+            AddedPackages = addedPackages;
+            RemovedPackages = removedPackages;
+        }
+
+        public readonly bool ProceduralChange;
+        public readonly IReadOnlyList<IPackage> AddedPackages;
+        public readonly IReadOnlyList<IPackage> RemovedPackages;
+    }
+
     public abstract class AbstractPackageLoader
     {
         /// <summary>
@@ -34,7 +48,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// <summary>
         /// Fires when a block of packages (one package or more) is added or removed to the loader
         /// </summary>
-        public event EventHandler<EventArgs>? PackagesChanged;
+        public event EventHandler<PackagesChangedEvent>? PackagesChanged;
 
         /// <summary>
         /// Fires when the loader finishes fetching packages
@@ -85,9 +99,9 @@ namespace UniGetUI.PackageEngine.PackageLoader
             if (emitFinishSignal) InvokeFinishedLoadingEvent();
         }
 
-        protected void InvokePackagesChangedEvent()
+        protected void InvokePackagesChangedEvent(bool proceduralChange, IReadOnlyList<IPackage> toAdd, IReadOnlyList<IPackage> toRemove)
         {
-            PackagesChanged?.Invoke(this, EventArgs.Empty);
+            PackagesChanged?.Invoke(this, new(proceduralChange, toAdd, toRemove));
         }
 
         protected void InvokeStartedLoadingEvent()
@@ -107,7 +121,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
         {
             if (DISABLE_RELOAD)
             {
-                InvokePackagesChangedEvent();
+                InvokePackagesChangedEvent(false, [], []);
                 return;
             }
 
@@ -156,7 +170,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
                                 AddPackage(package);
                                 await WhenAddingPackage(package);
                             }
-                            InvokePackagesChangedEvent();
+                            InvokePackagesChangedEvent(true, task.Result.ToArray(), []);
                         }
                         tasks.Remove(task);
                     }
@@ -180,7 +194,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
             PackageReference.Clear();
             IsLoaded = false;
             IsLoading = false;
-            InvokePackagesChangedEvent();
+            InvokePackagesChangedEvent(false, [], []);
         }
 
         /// <summary>
@@ -245,7 +259,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
             }
 
             AddPackage(package);
-            InvokePackagesChangedEvent();
+            InvokePackagesChangedEvent(true, [package], []);
         }
 
         /// <summary>
@@ -264,7 +278,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
             }
 
             PackageReference.Remove(HashPackage(package), out IPackage? _);
-            InvokePackagesChangedEvent();
+            InvokePackagesChangedEvent(true, [], [package]);
         }
 
         /// <summary>

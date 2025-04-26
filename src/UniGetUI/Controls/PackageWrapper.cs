@@ -27,7 +27,11 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public bool IsChecked
         {
             get => Package.IsChecked;
-            set => Package.IsChecked = value;
+            set
+            {
+                Package.IsChecked = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsChecked)));
+            }
         }
 
         public bool IconWasLoaded;

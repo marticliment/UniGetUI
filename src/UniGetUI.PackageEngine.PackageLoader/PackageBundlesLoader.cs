@@ -73,7 +73,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
                 }
                 if (package is not null && !Contains(package)) AddPackage(package);
             }
-            InvokePackagesChangedEvent();
+            InvokePackagesChangedEvent(true, foreign_packages, []);
         }
 
         public void RemoveRange(IReadOnlyList<IPackage> packages)
@@ -83,7 +83,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
                 if (!Contains(package)) continue;
                 PackageReference.Remove(HashPackage(package), out IPackage? _);
             }
-            InvokePackagesChangedEvent();
+            InvokePackagesChangedEvent(true, [], packages);
         }
     }
 }

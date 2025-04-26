@@ -209,6 +209,7 @@ namespace UniGetUI.Core.Tools
 
         public static void ReportFatalException(Exception e)
         {
+            Debugger.Break();
             string LangName = "Unknown";
             try
             {
