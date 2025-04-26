@@ -24,6 +24,11 @@ namespace UniGetUI
                     int ret = CLIHandler.WingetUIToUniGetUIMigrator();
                     Environment.Exit(ret);
                 }
+                else if (args.Contains(CLIHandler.UNINSTALL_UNIGETUI) || args.Contains(CLIHandler.UNINSTALL_WINGETUI))
+                {
+                    int ret = CLIHandler.UninstallUniGetUI();
+                    Environment.Exit(ret);
+                }
                 else if (args.Contains(CLIHandler.IMPORT_SETTINGS))
                 {
                     int ret = CLIHandler.ImportSettings();

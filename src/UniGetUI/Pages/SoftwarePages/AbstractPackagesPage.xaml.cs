@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
@@ -62,6 +63,63 @@ namespace UniGetUI.Interface
             External
         }
 
+        static class FilterHelpers
+        {
+            public static string NormalizeCase(string input)
+                => input.ToLower();
+
+            public static string NormalizeSpecialCharacters(string input)
+            {
+                input = input.Replace("-", "").Replace("_", "").Replace(" ", "").Replace("@", "").Replace("\t", "").Replace(".", "").Replace(",", "").Replace(":", "");
+                foreach (KeyValuePair<char, string> entry in new Dictionary<char, string>
+                         {
+                             {'a', "àáäâ"},
+                             {'e', "èéëê"},
+                             {'i', "ìíïî"},
+                             {'o', "òóöô"},
+                             {'u', "ùúüû"},
+                             {'y', "ýÿ"},
+                             {'c', "ç"},
+                             {'ñ', "n"},
+                         })
+                {
+                    foreach (char InvalidChar in entry.Value)
+                    {
+                        input = input.Replace(InvalidChar, entry.Key);
+                    }
+                }
+                return input;
+            }
+
+            public static bool NameContains(IPackage pkg, string query, List<Func<string, string>> filters)
+            {
+                string treatedName = pkg.Name;
+                foreach (var filter in filters) treatedName = filter(treatedName);
+                return treatedName.Contains(query);
+            }
+
+            public static bool IdContains(IPackage pkg, string query, List<Func<string, string>> filters)
+            {
+                string treatedId = pkg.Id;
+                foreach (var filter in filters) treatedId = filter(treatedId);
+                return treatedId.Contains(query);
+            }
+
+            public static bool NameOrIdContains(IPackage pkg, string query, List<Func<string, string>> filters)
+                => NameContains(pkg, query, filters) || IdContains(pkg, query, filters);
+
+            public static bool NameOrIdExactMatch(IPackage pkg, string query, List<Func<string, string>> filters)
+            {
+                string treatedId = pkg.Id;
+                foreach (var filter in filters) treatedId = filter(treatedId);
+                if (query == treatedId) return true;
+
+                string treatedName = pkg.Name;
+                foreach (var filter in filters) treatedName = filter(treatedName);
+                return query == treatedName;
+            }
+        }
+
         protected readonly bool DISABLE_AUTOMATIC_PACKAGE_LOAD_ON_START;
         protected readonly bool MEGA_QUERY_BOX_ENABLED;
         protected readonly bool SHOW_LAST_CHECKED_TIME;
@@ -87,12 +145,17 @@ namespace UniGetUI.Interface
         }
 
         protected AbstractPackageLoader Loader;
-        public ObservablePackageCollection FilteredPackages = [];
+
+        public readonly ObservablePackageCollection FilteredPackages = [];
+        private readonly ObservableCollection<PackageWrapper> WrappedPackages = [];
+        private IEnumerable<PackageWrapper>? LastQueryResult;
+
+
         protected List<IPackageManager> UsedManagers = [];
         protected ConcurrentDictionary<IPackageManager, List<IManagerSource>> UsedSourcesForManager = [];
         protected ConcurrentDictionary<IPackageManager, TreeViewNode> RootNodeForManager = [];
         protected ConcurrentDictionary<IManagerSource, TreeViewNode> NodesForSources = [];
-        private readonly TreeViewNode LocalPackagesNode;
+        private readonly TreeViewNode LocalPackagesNode = new();
 
         public readonly int NewVersionLabelWidth;
         public readonly int NewVersionIconWidth;
@@ -171,6 +234,9 @@ namespace UniGetUI.Interface
             Loader.FinishedLoading += Loader_FinishedLoading;
             Loader.PackagesChanged += Loader_PackagesChanged;
 
+            // Clear cached filtering result
+            WrappedPackages.CollectionChanged += (_, _) => LastQueryResult = null;
+
             if (Loader.IsLoading)
             {
                 Loader_StartedLoading(this, EventArgs.Empty);
@@ -180,13 +246,11 @@ namespace UniGetUI.Interface
                 Loader_FinishedLoading(this, EventArgs.Empty);
                 FilterPackages();
             }
+            Loader_PackagesChanged(this, new(false, [], []));
 
             LastPackageLoadTime = DateTime.Now;
-            LocalPackagesNode = new TreeViewNode
-            {
-                Content = CoreTools.Translate("Local"),
-                IsExpanded = false
-            };
+            LocalPackagesNode.Content = CoreTools.Translate("Local");
+            LocalPackagesNode.IsExpanded = false;
 
             ReloadButton.Click += async (_, _) => await LoadPackages();
 
@@ -194,7 +258,7 @@ namespace UniGetUI.Interface
             FindButton.Click += (_, _) =>
             {
                 MegaQueryBlockGrid.Visibility = Visibility.Collapsed;
-                FilterPackages();
+                FilterPackages(true);
             };
 
             // Handle Enter pressed on the QueryBlock
@@ -207,7 +271,7 @@ namespace UniGetUI.Interface
 
                 MegaQueryBlockGrid.Visibility = Visibility.Collapsed;
                 if (!DISABLE_FILTER_ON_QUERY_CHANGE)
-                    FilterPackages();
+                    FilterPackages(true);
             };
 
             // Handle showing the MegaQueryBlock
@@ -216,7 +280,7 @@ namespace UniGetUI.Interface
                 if (InstantSearchCheckbox.IsChecked == true)
                 {
                     if (!DISABLE_FILTER_ON_QUERY_CHANGE)
-                        FilterPackages();
+                        FilterPackages(true);
                 }
 
                 if (MEGA_QUERY_BOX_ENABLED && QueryBlock.Text.Trim() == "")
@@ -224,8 +288,9 @@ namespace UniGetUI.Interface
                     MegaQueryBlockGrid.Visibility = Visibility.Visible;
                     Loader.StopLoading();
                     BackgroundText.Visibility = Visibility.Collapsed;
-                    ClearPackageList();
-                    UpdatePackageCount();
+                    ClearSourcesList();
+                    WrappedPackages.Clear();
+                    FilterPackages(true);
                     MegaQueryBlock.Focus(FocusState.Programmatic);
                     MegaQueryBlock.Text = "";
                 }
@@ -242,7 +307,7 @@ namespace UniGetUI.Interface
                 MegaQueryBlockGrid.Visibility = Visibility.Collapsed;
                 QueryBlock.Text = MegaQueryBlock.Text.Trim();
                 if (!DISABLE_FILTER_ON_QUERY_CHANGE)
-                    FilterPackages();
+                    FilterPackages(true);
             };
 
             // Hande the MegaQueryBlock search button click
@@ -250,7 +315,7 @@ namespace UniGetUI.Interface
             {
                 MegaQueryBlockGrid.Visibility = Visibility.Collapsed;
                 QueryBlock.Text = MegaQueryBlock.Text.Trim();
-                FilterPackages();
+                FilterPackages(true);
             };
 
             // Handle when a source is clicked
@@ -332,30 +397,47 @@ namespace UniGetUI.Interface
             UpdateSortingMenu();
         }
 
-        private void Loader_PackagesChanged(object? sender, EventArgs e)
+        private void Loader_PackagesChanged(object? sender, PackagesChangedEvent packagesChangedEvent)
         {
             // Ensure we are in the UI thread
             if (Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread() is null)
             {
-                DispatcherQueue.TryEnqueue(() => Loader_PackagesChanged(sender, e));
+                DispatcherQueue.TryEnqueue(() => Loader_PackagesChanged(sender, packagesChangedEvent));
                 return;
             }
 
-
-            if (Loader.Count() == 0)
+            // Procedural package upgrade
+            if (packagesChangedEvent.ProceduralChange)
             {
-                ClearPackageList();
+                // Add added packages
+                foreach (var package in packagesChangedEvent.AddedPackages)
+                {
+                    if (WrappedPackages.Where(w => w.Package.Equals(package)).Any())
+                        continue;
+
+                    WrappedPackages.Add(new PackageWrapper(package, this));
+                    AddPackageToSourcesList(package);
+                }
+
+                // Remove removed packages
+                foreach (var package in packagesChangedEvent.RemovedPackages)
+                    foreach (var match in WrappedPackages.Where(w => w.Package.Equals(package)))
+                    {
+                        WrappedPackages.Remove(match);
+                    }
             }
             else
             {
-                foreach (IPackage package in Loader.Packages)
+                // Reset internal package cache, and update from loader
+                WrappedPackages.Clear();
+                ClearSourcesList();
+                foreach (var package in Loader.Packages)
                 {
+                    WrappedPackages.Add(new PackageWrapper(package, this));
                     AddPackageToSourcesList(package);
                 }
             }
             FilterPackages();
-            if (!Settings.Get("DisableIconsOnPackageLists"))
-                _ = LoadIconsForNewPackages();
         }
 
 
@@ -371,7 +453,6 @@ namespace UniGetUI.Interface
             LoadingProgressBar.Visibility = Visibility.Collapsed;
             LastPackageLoadTime = DateTime.Now;
             WhenPackagesLoaded(ReloadReason.External);
-            FilterPackages();
         }
 
         private void Loader_StartedLoading(object? sender, EventArgs e)
@@ -469,26 +550,26 @@ namespace UniGetUI.Interface
                 return;
             }
 
-            FilterPackages();
+            FilterPackages(true);
         }
 
         private void InstantSearchValueChanged(object sender, RoutedEventArgs e)
-        { Settings.SetDictionaryItem("DisableInstantSearch", PAGE_NAME, !InstantSearchCheckbox.IsChecked); }
+            => Settings.SetDictionaryItem("DisableInstantSearch", PAGE_NAME, !InstantSearchCheckbox.IsChecked);
+
         private void SourcesTreeView_SelectionChanged(TreeView sender, TreeViewSelectionChangedEventArgs args)
-        { FilterPackages(); }
+            => FilterPackages();
 
         public virtual async Task LoadPackages()
-        { await LoadPackages(ReloadReason.External); }
+            => await LoadPackages(ReloadReason.External);
 
-        protected void ClearPackageList()
+        protected void ClearSourcesList()
         {
-            FilteredPackages.Clear();
             UsedManagers.Clear();
-            SourcesTreeView.RootNodes.Clear();
+            SourcesTreeView?.RootNodes?.Clear();
             UsedSourcesForManager.Clear();
             RootNodeForManager.Clear();
             NodesForSources.Clear();
-            LocalPackagesNode.Children.Clear();
+            LocalPackagesNode?.Children?.Clear();
         }
 
         /// <summary>
@@ -502,7 +583,6 @@ namespace UniGetUI.Interface
                 Loader.ClearPackages(emitFinishSignal: false);
                 await Loader.ReloadPackages();
             }
-            Loader_PackagesChanged(this, EventArgs.Empty);
         }
 
         private void SelectAndScrollTo(int index, bool focus)
@@ -664,13 +744,13 @@ namespace UniGetUI.Interface
         /// Will filter the packages with the query on QueryBlock.Text and put the
         /// resulting packages on the ItemsView
         /// </summary>
-        public void FilterPackages()
-        {
-            PackageWrapper? previousSelection = CurrentPackageList.SelectedItem as PackageWrapper;
-            FilteredPackages.Clear();
 
-            List<IManagerSource> VisibleSources = [];
-            List<IPackageManager> VisibleManagers = [];
+        public void FilterPackages(bool forceQueryUpdate = false)
+        {
+            var previousSelection = CurrentPackageList.SelectedItem as PackageWrapper;
+
+            List<IManagerSource> visibleSources = [];
+            List<IPackageManager> visibleManagers = [];
 
             if (SourcesTreeView.SelectedNodes.Count > 0)
             {
@@ -678,99 +758,64 @@ namespace UniGetUI.Interface
                 {
                     if (NodesForSources.Values.Contains(node))
                     {
-                        VisibleSources.Add(NodesForSources.First(x => x.Value == node).Key);
+                        visibleSources.Add(NodesForSources.First(x => x.Value == node).Key);
                     }
                     else if (RootNodeForManager.Values.Contains(node))
                     {
                         IPackageManager manager = RootNodeForManager.First(x => x.Value == node).Key;
-                        VisibleManagers.Add(manager);
-                        if (manager.Capabilities.SupportsCustomSources)
-                        {
-                            foreach (IManagerSource source in manager.SourcesHelper.Factory.GetAvailableSources())
-                            {
-                                if (!VisibleSources.Contains(source)) VisibleSources.Add(source);
-                            }
-                        }
+                        visibleManagers.Add(manager);
+                        if (!manager.Capabilities.SupportsCustomSources)
+                            continue;
+
+                        foreach (IManagerSource source in manager.SourcesHelper.Factory.GetAvailableSources())
+                            if (!visibleSources.Contains(source))
+                                visibleSources.Add(source);
                     }
                 }
             }
 
-            Func<string, string> CaseFunc;
-            if (UpperLowerCaseCheckbox.IsChecked == true)
+            // Filter only by query when needed
+            if (forceQueryUpdate || LastQueryResult is null)
             {
-                CaseFunc = (x) => { return x; };
-            }
-            else
-            {
-                CaseFunc = (x) => { return x.ToLower(); };
+                // Load applied filters and prepare query
+                List<Func<string, string>> appliedFilters = [];
+                if (UpperLowerCaseCheckbox.IsChecked is false) appliedFilters.Add(FilterHelpers.NormalizeCase);
+                if (IgnoreSpecialCharsCheckbox.IsChecked is true)
+                    appliedFilters.Add(FilterHelpers.NormalizeSpecialCharacters);
+
+                string treatedQuery = QueryBlock.Text.Trim();
+                foreach (var filter in appliedFilters) treatedQuery = filter(treatedQuery);
+                // treatedQuery now has the appropiate content
+
+                if (QueryIdRadio.IsChecked is true)
+                    LastQueryResult = WrappedPackages.Where(wrapper =>
+                        FilterHelpers.NameContains(wrapper.Package, treatedQuery, appliedFilters));
+                else if (QueryNameRadio.IsChecked is true)
+                    LastQueryResult = WrappedPackages.Where(wrapper =>
+                        FilterHelpers.IdContains(wrapper.Package, treatedQuery, appliedFilters));
+                else if (QueryBothRadio.IsChecked is true)
+                    LastQueryResult = WrappedPackages.Where(wrapper =>
+                        FilterHelpers.NameOrIdContains(wrapper.Package, treatedQuery, appliedFilters));
+                else if (QueryExactMatch.IsChecked == true)
+                    LastQueryResult = WrappedPackages.Where(wrapper =>
+                        FilterHelpers.NameOrIdExactMatch(wrapper.Package, treatedQuery, appliedFilters));
+                else // QuerySimilarResultsRadio == true
+                    LastQueryResult = WrappedPackages;
             }
 
-            Func<string, string> CharsFunc;
-            if (IgnoreSpecialCharsCheckbox.IsChecked == true)
+            List<PackageWrapper> matchingList_selectedSources = [];
+
+            foreach (var match in LastQueryResult)
             {
-                CharsFunc = (x) =>
+               if (visibleSources.Contains(match.Package.Source) ||
+                    (!match.Package.Manager.Capabilities.SupportsCustomSources &&
+                     visibleManagers.Contains(match.Package.Manager)))
                 {
-                    string temp_x = CaseFunc(x).Replace("-", "").Replace("_", "").Replace(" ", "").Replace("@", "").Replace("\t", "").Replace(".", "").Replace(",", "").Replace(":", "");
-                    foreach (KeyValuePair<char, string> entry in new Dictionary<char, string>
-                        {
-                            {'a', "àáäâ"},
-                            {'e', "èéëê"},
-                            {'i', "ìíïî"},
-                            {'o', "òóöô"},
-                            {'u', "ùúüû"},
-                            {'y', "ýÿ"},
-                            {'c', "ç"},
-                            {'ñ', "n"},
-                        })
-                    {
-                        foreach (char InvalidChar in entry.Value)
-                        {
-                            x = x.Replace(InvalidChar, entry.Key);
-                        }
-                    }
-                    return temp_x;
-                };
-            }
-            else
-            {
-                CharsFunc = (x) => { return CaseFunc(x); };
-            }
-
-            string treatedQuery = CharsFunc(QueryBlock.Text.Trim());
-            IEnumerable<IPackage> MatchingList;
-
-            if (QueryIdRadio.IsChecked == true)
-            {
-                MatchingList = Loader.Packages.Where(x => CharsFunc(x.Name).Contains(treatedQuery));
-            }
-            else if (QueryNameRadio.IsChecked == true)
-            {
-                MatchingList = Loader.Packages.Where(x => CharsFunc(x.Id).Contains(treatedQuery));
-            }
-            else if (QueryBothRadio.IsChecked == true)
-            {
-                MatchingList = Loader.Packages.Where(x => CharsFunc(x.Name).Contains(treatedQuery) | CharsFunc(x.Id).Contains(treatedQuery));
-            }
-            else if (QueryExactMatch.IsChecked == true)
-            {
-                MatchingList = Loader.Packages.Where(x => CharsFunc(x.Name) == treatedQuery | CharsFunc(x.Id) == treatedQuery);
-            }
-            else // QuerySimilarResultsRadio == true
-            {
-                MatchingList = Loader.Packages;
-            }
-
-            FilteredPackages.BlockSorting = true;
-
-            foreach (IPackage match in MatchingList)
-            {
-                if (VisibleSources.Contains(match.Source) || (!match.Manager.Capabilities.SupportsCustomSources && VisibleManagers.Contains(match.Manager)))
-                {
-                    FilteredPackages.Add(match, this);
+                    matchingList_selectedSources.Add(match);
                 }
             }
-            FilteredPackages.BlockSorting = false;
-            FilteredPackages.Sort();
+
+            FilteredPackages.FromRange(matchingList_selectedSources);
             UpdatePackageCount();
 
             if (previousSelection is not null)
@@ -789,6 +834,8 @@ namespace UniGetUI.Interface
                 ForceRedrawByScroll();
             }
 
+            if (!Settings.Get("DisableIconsOnPackageLists"))
+                _ = LoadIconsForNewPackages();
         }
 
         /// <summary>
@@ -1133,8 +1180,6 @@ namespace UniGetUI.Interface
                 var icon = await Task.Run(wrapper.Package.GetIconUrlIfAny);
                 if (icon is not null) wrapper.PackageIcon = icon;
             }
-
-            FilterPackages();
         }
 
         public void OnEnter()
@@ -1213,7 +1258,6 @@ namespace UniGetUI.Interface
                 e.Handled = true;
             }
         }
-
 
         private async void SetFilterMode_Overlay()
         {
