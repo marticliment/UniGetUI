@@ -121,8 +121,7 @@ namespace UniGetUI
                 // example on single-instance apps using unpackaged AppSdk + WinUI3
                 bool isRedirect = false;
 
-                var keyInstance = AppInstance.FindOrRegisterForKey("MartiCliment.UniGetUI.MainInterface");
-
+                var keyInstance = AppInstance.FindOrRegisterForKey(CoreData.MainWindowIdentifier);
                 if (keyInstance.IsCurrent)
                 {
                     keyInstance.Activated += async (_, e) =>

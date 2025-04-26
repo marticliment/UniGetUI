@@ -14,6 +14,9 @@ namespace UniGetUI.Core.Data
 
         public const string UserAgentString = $"UniGetUI/{VersionName} (https://marticliment.com/unigetui/; contact@marticliment.com)";
 
+        public const string AppIdentifier = "MartiCliment.UniGetUI";
+        public const string MainWindowIdentifier = "MartiCliment.UniGetUI.MainInterface";
+
         private static bool? IS_PORTABLE;
         private static string? PORTABLE_PATH;
         public static bool IsPortable { get => IS_PORTABLE ?? false; }
