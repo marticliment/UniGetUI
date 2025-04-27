@@ -213,41 +213,7 @@ namespace UniGetUI
                 IconDatabase.InitializeInstance();
                 IconDatabase.Instance.LoadIconAndScreenshotsDatabase();
 
-                // Bind the background api to the main interface
-
-                if (!Settings.Get("DisableApi"))
-                {
-
-                    BackgroundApi.OnOpenWindow += (_, _) => MainWindow.DispatcherQueue.TryEnqueue(() => MainWindow.Activate());
-
-                    BackgroundApi.OnOpenUpdatesPage += (_, _) => MainWindow.DispatcherQueue.TryEnqueue(() =>
-                    {
-                        MainWindow?.NavigationPage?.NavigateTo(PageType.Updates);
-                        MainWindow?.Activate();
-                    });
-
-                    BackgroundApi.OnShowSharedPackage += (_, package) => MainWindow.DispatcherQueue.TryEnqueue(() =>
-                    {
-                        DialogHelper.ShowSharedPackage_ThreadSafe(package.Key, package.Value);
-                    });
-
-                    BackgroundApi.OnUpgradeAll += (_, _) => MainWindow.DispatcherQueue.TryEnqueue(() =>
-                    {
-                        Operations.UpdateAll();
-                    });
-
-                    BackgroundApi.OnUpgradeAllForManager += (_, managerName) => MainWindow.DispatcherQueue.TryEnqueue(async () =>
-                    {
-                        Operations.UpdateAllForManager(managerName);
-                    });
-
-                    BackgroundApi.OnUpgradePackage += (_, packageId) => MainWindow.DispatcherQueue.TryEnqueue(() =>
-                    {
-                        Operations.UpdateForId(packageId);
-                    });
-
-                    _ = BackgroundApi.Start();
-                }
+                await InitializeBackgroundAPI();
 
                 _ = MainWindow.DoEntryTextAnimationAsync();
 
@@ -270,6 +236,53 @@ namespace UniGetUI
             catch (Exception e)
             {
                 CoreTools.ReportFatalException(e);
+            }
+        }
+
+        private async Task InitializeBackgroundAPI()
+        {
+            // Bind the background api to the main interface
+            if (!Settings.Get("DisableApi"))
+            {
+                try
+                {
+                    BackgroundApi.OnOpenWindow += (_, _) =>
+                        MainWindow.DispatcherQueue.TryEnqueue(() => MainWindow.Activate());
+
+                    BackgroundApi.OnOpenUpdatesPage += (_, _) => MainWindow.DispatcherQueue.TryEnqueue(() =>
+                    {
+                        MainWindow?.NavigationPage?.NavigateTo(PageType.Updates);
+                        MainWindow?.Activate();
+                    });
+
+                    BackgroundApi.OnShowSharedPackage += (_, package) => MainWindow.DispatcherQueue.TryEnqueue(() =>
+                    {
+                        DialogHelper.ShowSharedPackage_ThreadSafe(package.Key, package.Value);
+                    });
+
+                    BackgroundApi.OnUpgradeAll += (_, _) => MainWindow.DispatcherQueue.TryEnqueue(() =>
+                    {
+                        Operations.UpdateAll();
+                    });
+
+                    BackgroundApi.OnUpgradeAllForManager += (_, managerName) =>
+                        MainWindow.DispatcherQueue.TryEnqueue(async () =>
+                        {
+                            Operations.UpdateAllForManager(managerName);
+                        });
+
+                    BackgroundApi.OnUpgradePackage += (_, packageId) => MainWindow.DispatcherQueue.TryEnqueue(() =>
+                    {
+                        Operations.UpdateForId(packageId);
+                    });
+
+                    await BackgroundApi.Start();
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error("Could not initialize Background API:");
+                    Logger.Error(ex);
+                }
             }
         }
 
