@@ -1,12 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-
-
+    
   <ItemGroup>
-    <PackageReference Include="Nancy" Version="2.0.0" />
-    <PackageReference Include="Nancy.Hosting.Self" Version="2.0.0">
-      <NoWarn>NU1701</NoWarn>
-    </PackageReference>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="PhotoSauce.MagicScaler" Version="0.15.0" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
     <PackageReference Include="System.Private.Uri" Version="4.3.2" />
