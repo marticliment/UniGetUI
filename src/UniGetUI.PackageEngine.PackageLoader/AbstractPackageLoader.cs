@@ -160,6 +160,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
                     {
                         if (LoadOperationIdentifier == current_identifier && task.IsCompletedSuccessfully)
                         {
+                            var toAdd = new List<IPackage>();
                             foreach (IPackage package in task.Result)
                             {
                                 if (Contains(package) || !await IsPackageValid(package))
@@ -167,10 +168,11 @@ namespace UniGetUI.PackageEngine.PackageLoader
                                     continue;
                                 }
 
+                                toAdd.Add(package);
                                 AddPackage(package);
                                 await WhenAddingPackage(package);
                             }
-                            InvokePackagesChangedEvent(true, task.Result.ToArray(), []);
+                            InvokePackagesChangedEvent(true, toAdd, []);
                         }
                         tasks.Remove(task);
                     }
