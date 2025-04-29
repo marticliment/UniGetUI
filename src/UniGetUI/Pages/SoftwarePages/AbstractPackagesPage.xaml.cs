@@ -425,15 +425,23 @@ namespace UniGetUI.Interface
                 }
 
                 // Remove removed packages
+                var toRemove = new List<PackageWrapper>();
                 foreach (var package in packagesChangedEvent.RemovedPackages)
                     foreach (var match in WrappedPackages.Where(w => w.Package.Equals(package)))
                     {
-                        WrappedPackages.Remove(match);
+                        toRemove.Add(match);
                     }
+
+                foreach (var wrapper in toRemove)
+                {
+                    wrapper.Dispose();
+                    WrappedPackages.Remove(wrapper);
+                }
             }
             else
             {
                 // Reset internal package cache, and update from loader
+                foreach(var wrapper in WrappedPackages) wrapper.Dispose();
                 WrappedPackages.Clear();
                 ClearSourcesList();
                 foreach (var package in Loader.Packages)

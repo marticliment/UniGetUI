@@ -438,7 +438,9 @@ namespace UniGetUI.Interface.SoftwarePages
             if (package is null) return;
 
             if (await package.HasUpdatesIgnoredAsync())
+            {
                 await package.RemoveFromIgnoredUpdatesAsync();
+            }
             else
             {
                 await package.AddToIgnoredUpdatesAsync();

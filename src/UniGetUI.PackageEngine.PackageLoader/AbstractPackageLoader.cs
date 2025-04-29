@@ -279,7 +279,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
                 return;
             }
 
-            PackageReference.Remove(HashPackage(package), out IPackage? _);
+            PackageReference.Remove(HashPackage(package), out IPackage? pkg);
             InvokePackagesChangedEvent(true, [], [package]);
         }
 

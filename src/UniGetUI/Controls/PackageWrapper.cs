@@ -119,7 +119,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 {
                     PropertyChanged?.Invoke(this, e);
                 }
-            } catch (COMException)
+            }
+            catch (COMException)
             {
                 // ignore
             }

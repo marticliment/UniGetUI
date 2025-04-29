@@ -78,19 +78,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
         }
 
         /// <summary>
-        /// Clears the collection, deleting the wrapper objects in the process
-        /// </summary>
-        public new void Clear()
-        {
-            foreach (PackageWrapper wrapper in this)
-            {
-                wrapper.Dispose();
-            }
-            base.Clear();
-            GC.Collect();
-        }
-
-        /// <summary>
         /// Returns a list containing the packages in this collection
         /// </summary>
         public List<IPackage> GetPackages()
