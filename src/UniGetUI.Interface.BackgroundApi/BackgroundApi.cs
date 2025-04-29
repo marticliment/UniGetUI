@@ -61,6 +61,9 @@ namespace UniGetUI.Interface
             builder.ConfigureWebHostDefaults(webBuilder =>
             {
                 webBuilder.UseKestrel();
+#if !DEBUG
+                webBuilder.SuppressStatusMessages(true);
+#endif
                 webBuilder.Configure(app =>
                     {
                         // Enable CORS
