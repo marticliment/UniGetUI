@@ -254,7 +254,12 @@
       "link": "https://github.com/simakuutio"
     }
   ],
-  "fil": [],
+  "fil": [
+    {
+      "name": "infyProductions",
+      "link": "https://github.com/infyProductions"
+    }
+  ],
   "fr": [
     {
       "name": "BreatFR",
@@ -416,6 +421,10 @@
     {
       "name": "shblue21",
       "link": "https://github.com/shblue21"
+    },
+    {
+      "name": "thejjw",
+      "link": "https://github.com/thejjw"
     },
     {
       "name": "VenusGirl",
