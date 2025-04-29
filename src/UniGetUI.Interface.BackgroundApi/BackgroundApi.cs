@@ -54,8 +54,6 @@ namespace UniGetUI.Interface
             Settings.SetValue("CurrentSessionToken", ApiTokenHolder.Token);
             Logger.Info("Randomly-generated background API auth token: " + ApiTokenHolder.Token);
 
-            _running = true;
-
             var builder = Host.CreateDefaultBuilder();
             builder.ConfigureServices(services => services.AddCors());
             builder.ConfigureWebHostDefaults(webBuilder =>
@@ -66,7 +64,6 @@ namespace UniGetUI.Interface
 #endif
                 webBuilder.Configure(app =>
                     {
-                        // Enable CORS
                         app.UseCors(policy => policy
                             .AllowAnyOrigin()
                             .AllowAnyMethod()
@@ -95,6 +92,7 @@ namespace UniGetUI.Interface
                 webBuilder.UseUrls("http://localhost:7058");
             });
             _host = builder.Build();
+            _running = true;
             await _host.StartAsync();
             Logger.Info("Api running on http://localhost:7058");
         }
