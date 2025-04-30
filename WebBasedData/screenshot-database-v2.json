@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11812,
-        "done": 5284,
-        "packages_with_icon": 5284,
-        "packages_with_screenshot": 635,
-        "total_screenshots": 1980
+        "total": 11813,
+        "done": 5286,
+        "packages_with_icon": 5286,
+        "packages_with_screenshot": 636,
+        "total_screenshots": 1981
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -19822,7 +19822,7 @@
             "images": []
         },
         "intellijidea": {
-            "icon": "",
+            "icon": "https://resources.jetbrains.com/storage/products/company/brand/logos/IntelliJ_IDEA_icon.png",
             "images": []
         },
         "intellijidea-community": {
@@ -19838,7 +19838,7 @@
             "images": []
         },
         "intellijidea-ultimate": {
-            "icon": "https://resources.jetbrains.com/storage/products/intellij-idea/img/meta/intellij-idea_logo_300x300.png",
+            "icon": "https://resources.jetbrains.com/storage/products/company/brand/logos/IntelliJ_IDEA_icon.png",
             "images": []
         },
         "intellijidea-ultimate-eap": {
@@ -49869,6 +49869,12 @@
         "XPFFTQ032PTPHF": {
             "icon": "https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/icon.png",
             "images": []
+        },
+        "IntelliJIDEA.Ultimate": {
+            "icon": "https://resources.jetbrains.com/storage/products/company/brand/logos/IntelliJ_IDEA_icon.png",
+            "images": [
+                "https://www.jetbrains.com/idea/img/overview-heading-screenshot.png"
+            ]
         }
     }
 }
