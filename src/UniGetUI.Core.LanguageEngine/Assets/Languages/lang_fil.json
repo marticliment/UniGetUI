@@ -1,6 +1,6 @@
 {
   "\"{0}\" is a local package and can't be shared": "\"{0}\" ay isang lokal na package at hindi pwedeng ibahagi",
-  "\"{0}\" is a local package and does not have available details": "\"{0}\" ay isang lokal na package at walang magagamit na mga detalye",
+  "\"{0}\" is a local package and does not have available details": "\"{0}\" ay isang lokal na package at ay walang magagamit na mga detalye",
   "\"{0}\" is a local package and is not compatible with this feature": "\"{0}\" ay isang lokal na package at hindi compatible sa feature na ito",
   "(Last checked: {0})": "(Huling sinuri: {0})",
   "(Number {0} in the queue)": "(Numero {0} sa queue)",
