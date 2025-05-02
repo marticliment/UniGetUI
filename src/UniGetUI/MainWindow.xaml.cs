@@ -169,33 +169,42 @@ namespace UniGetUI.Interface
 
         public static void ApplyProxyVariableToProcess()
         {
-            var proxyUri = Settings.GetProxyUrl();
-            if (proxyUri is null || !Settings.Get("EnableProxy"))
+            try
             {
-                Environment.SetEnvironmentVariable("HTTP_PROXY", "", EnvironmentVariableTarget.Process);
-                return;
-            }
-
-            string content;
-            if (Settings.Get("EnableProxyAuth") is false)
-            {
-                content = proxyUri.ToString();
-            }
-            else
-            {
-                var creds = Settings.GetProxyCredentials();
-                if (creds is null)
+                var proxyUri = Settings.GetProxyUrl();
+                if (proxyUri is null || !Settings.Get("EnableProxy"))
                 {
-                    content = $"--proxy {proxyUri.ToString()}";
+                    Environment.SetEnvironmentVariable("HTTP_PROXY", "", EnvironmentVariableTarget.Process);
+                    return;
+                }
+
+                string content;
+                if (Settings.Get("EnableProxyAuth") is false)
+                {
+                    content = proxyUri.ToString();
                 }
                 else
                 {
-                    content = $"{proxyUri.Scheme}://{Uri.EscapeDataString(creds.UserName)}" +
-                              $":{Uri.EscapeDataString(creds.Password)}" +
-                              $"@{proxyUri.AbsoluteUri.Replace($"{proxyUri.Scheme}://", "")}";
+                    var creds = Settings.GetProxyCredentials();
+                    if (creds is null)
+                    {
+                        content = $"--proxy {proxyUri.ToString()}";
+                    }
+                    else
+                    {
+                        content = $"{proxyUri.Scheme}://{Uri.EscapeDataString(creds.UserName)}" +
+                                  $":{Uri.EscapeDataString(creds.Password)}" +
+                                  $"@{proxyUri.AbsoluteUri.Replace($"{proxyUri.Scheme}://", "")}";
+                    }
                 }
+
+                Environment.SetEnvironmentVariable("HTTP_PROXY", content, EnvironmentVariableTarget.Process);
             }
-            Environment.SetEnvironmentVariable("HTTP_PROXY", content, EnvironmentVariableTarget.Process);
+            catch (Exception ex)
+            {
+                Logger.Error("Failed to apply proxy settings:");
+                Logger.Error(ex);
+            }
         }
 
         private void AddToSubtitle(string line)
