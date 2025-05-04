@@ -668,7 +668,7 @@
   "This is the <b>default choice</b>.": "ეს არის <b>ნაგულისხმევი არჩევანი</b>.",
   "This may help if WinGet packages are not shown": "ამან შესაძლოა გამოასწოროს თუ WinGet-ის პაკეტები არ ჩანს",
   "This may help if no packages are listed": "ეს შეიძლება დაგეხმაროთ, თუ პაკეტები არ არის ჩამოთვლილი",
-  "This may take a minute or two": "ამას ერთი ან როი წუთი დაჭირდება",
+  "This may take a minute or two": "ამას ერთი-ორი წუთი დაჭირდება",
   "This operation is running interactively.": "ეს ოპერაცია ინტერაქტიულად ეშვება.",
   "This operation is running with administrator privileges.": "ეს ოპერაცია ადმინისტრატორის პრივილეგიებით ეშვება.",
   "This package can be updated": "შესაძლებელია ამ პაკეტის განახლება",
