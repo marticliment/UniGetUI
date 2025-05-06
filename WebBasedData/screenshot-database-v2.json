@@ -4,7 +4,7 @@
         "done": 5286,
         "packages_with_icon": 5286,
         "packages_with_screenshot": 636,
-        "total_screenshots": 1981
+        "total_screenshots": 1983
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -47747,9 +47747,9 @@
             "images": []
         },
         "winrar": {
-            "icon": "https://www.francescoressa.it/blog/files/winrar.png",
+            "icon": "https://i.postimg.cc/mrqHDZxJ/winrar.png",
             "images": [
-                "https://upload.wikimedia.org/wikipedia/it/8/86/WinRAR-screenshot.PNG"
+                "https://i.postimg.cc/QtTWWLht/WinRAR1.png"
             ]
         },
         "winrar-helper": {
@@ -47761,11 +47761,13 @@
             "images": []
         },
         "winscp": {
-            "icon": "https://upload.wikimedia.org/wikipedia/commons/4/4f/WinSCP_6_Logo.png",
+            "icon": "https://i.postimg.cc/3xtGsCtK/icon.png",
             "images": [
-                "https://winscp-static-746341.c.cdn77.org/data/media/screenshots/commander.png?v=7006",
-                "https://winscp-static-746341.c.cdn77.org/data/media/screenshots/explorer.png?v=7006",
-                "https://winscp-static-746341.c.cdn77.org/data/media/screenshots/login.png?v=7006"
+                "https://i.postimg.cc/j2yNmpF9/1.png",
+                "https://i.postimg.cc/ncYBkt79/2.png",
+                "https://i.postimg.cc/7Pzg5zZV/3.png",
+                "https://i.postimg.cc/zX1TKfL1/4.png",
+                "https://i.postimg.cc/y819prXQ/5.png"
             ]
         },
         "winscp-rc": {
