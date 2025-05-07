@@ -35,22 +35,30 @@ namespace UniGetUI.Core.Language
         /// <param name="lang">the language code</param>
         public void LoadLanguage(string lang)
         {
-            Locale = "en";
-            if (LanguageData.LanguageReference.ContainsKey(lang))
+            try
             {
-                Locale = lang;
+                Locale = "en";
+                if (LanguageData.LanguageReference.ContainsKey(lang))
+                {
+                    Locale = lang;
+                }
+                else if (LanguageData.LanguageReference.ContainsKey(lang[0..2].Replace("uk", "ua")))
+                {
+                    Locale = lang[0..2].Replace("uk", "ua");
+                }
+
+                MainLangDict = LoadLanguageFile(Locale);
+                Formatter = new() { Locale = Locale.Replace('_', '-') };
+
+                LoadStaticTranslation();
+                SelectedLocale = Locale;
+                Logger.Info("Loaded language locale: " + Locale);
             }
-            else if (LanguageData.LanguageReference.ContainsKey(lang[0..2].Replace("uk", "ua")))
+            catch (Exception ex)
             {
-                Locale = lang[0..2].Replace("uk", "ua");
+                Logger.Error($"Could not load language file \"{lang}\"");
+                Logger.Error(ex);
             }
-
-            MainLangDict = LoadLanguageFile(Locale);
-            Formatter = new() { Locale = Locale.Replace('_', '-') };
-
-            LoadStaticTranslation();
-            SelectedLocale = Locale;
-            Logger.Info("Loaded language locale: " + Locale);
         }
 
         public Dictionary<string, string> LoadLanguageFile(string LangKey)
