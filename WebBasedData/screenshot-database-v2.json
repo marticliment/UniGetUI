@@ -1,10 +1,10 @@
 {
     "package_count": {
         "total": 11813,
-        "done": 5286,
-        "packages_with_icon": 5286,
+        "done": 5287,
+        "packages_with_icon": 5287,
         "packages_with_screenshot": 636,
-        "total_screenshots": 1983
+        "total_screenshots": 1985
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -2082,7 +2082,9 @@
         "amethyst": {
             "icon": "https://i.imgur.com/bbjCj4v.png",
             "images": [
-                "https://user-images.githubusercontent.com/34042825/193412269-fa665a95-bc3a-43bc-b730-b6734bc22765.png"
+                "https://private-user-images.githubusercontent.com/43046474/440988353-91798ae7-96b7-4986-8c3b-ca5d5b4cec7d.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NDY2MjExODksIm5iZiI6MTc0NjYyMDg4OSwicGF0aCI6Ii80MzA0NjQ3NC80NDA5ODgzNTMtOTE3OThhZTctOTZiNy00OTg2LThjM2ItY2E1ZDViNGNlYzdkLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNTA1MDclMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjUwNTA3VDEyMjgwOVomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTAyNDEwNTY0NzM1ZDc2YjJmODQ2MGVlMGMwYzgyMDcwNjRlMWUwOWEyNTA0YjI3YjEyM2VmYTYwOWYzZDc4MTYmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.PvUfJaVITt_qiEWLfbLFeRAOwV-W-LFGWIIaAfQCGE4",
+                "https://private-user-images.githubusercontent.com/43046474/440988448-ea1dacbf-ab7e-4fda-af27-1db9e04d4e21.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NDY2MjExODksIm5iZiI6MTc0NjYyMDg4OSwicGF0aCI6Ii80MzA0NjQ3NC80NDA5ODg0NDgtZWExZGFjYmYtYWI3ZS00ZmRhLWFmMjctMWRiOWUwNGQ0ZTIxLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNTA1MDclMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjUwNTA3VDEyMjgwOVomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTQ4NjViMGZiY2NmMTM3ZmJjZGE5NTlhZjFmZGVkNDY2OTEwODY5M2FkOGExYWQ0ZjY2MGQ1ZjNhZDFkZTg2ZmYmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.PXt3XldsbHxNGF8Lzj8ZN23XMk-uX0rr9w8_FWU2H4E",
+                "https://private-user-images.githubusercontent.com/43046474/440988403-e56e953d-7851-4722-b721-ec30e5630054.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NDY2MjExODksIm5iZiI6MTc0NjYyMDg4OSwicGF0aCI6Ii80MzA0NjQ3NC80NDA5ODg0MDMtZTU2ZTk1M2QtNzg1MS00NzIyLWI3MjEtZWMzMGU1NjMwMDU0LnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNTA1MDclMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjUwNTA3VDEyMjgwOVomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTIyYTkxYzQxMGFlNDM2N2NmMDMzZGJiNTI2NDc5NTdjOWFiYzFmMmNjY2YyYzJiZjJiYmIyYWM5MTA2Yzk2NGYmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.L09gRou7hMPcaYh7b4_ejAv822Yh1FvTezABsn_0vU4"
             ]
         },
         "amfora": {
@@ -46402,7 +46404,7 @@
             "images": []
         },
         "wavelink": {
-            "icon": "",
+            "icon": "https://windows-cdn.softpedia.com/screenshots/ico/Elgato-Wave-Link.png",
             "images": []
         },
         "wavescentral": {
