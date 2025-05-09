@@ -1,10 +1,10 @@
 {
     "package_count": {
         "total": 11813,
-        "done": 5287,
-        "packages_with_icon": 5287,
-        "packages_with_screenshot": 636,
-        "total_screenshots": 1985
+        "done": 5288,
+        "packages_with_icon": 5288,
+        "packages_with_screenshot": 637,
+        "total_screenshots": 1988
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -38032,8 +38032,12 @@
             "images": []
         },
         "sogouinput": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/vBjg3mgd/sogou.png",
+            "images": [
+                "https://i.postimg.cc/NFRv6q83/sogou1.png",
+                "https://i.postimg.cc/xTj6yVPL/sogou2.png",
+                "https://i.postimg.cc/9f2RZCdh/sogou3.png"
+            ]
         },
         "sogouinputskineditor": {
             "icon": "",
