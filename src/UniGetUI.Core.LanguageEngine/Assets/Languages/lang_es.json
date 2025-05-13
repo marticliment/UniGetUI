@@ -618,7 +618,7 @@
   "Text file": "Archivo de texto",
   "Thank you ❤": "Gracias ❤️",
   "Thank you \uD83D\uDE09": "Gracias \uD83D\uDE09",
-  "The Rust package manager.<br>Contains: <b>Rust libraries and programs written in Rust</b>": "El administrador de paquetes Rust. <br> Contiene: <b>Librerías de Rust y programas escritos en Rust</b>",
+  "The Rust package manager.<br>Contains: <b>Rust libraries and programs written in Rust</b>": "El administrador de paquetes de Rust. <br> Contiene: <b>Librerías de Rust y programas escritos en Rust</b>",
   "The backup will NOT include any binary file nor any program's saved data.": "El respaldo NO incluirá ningún archivo binario ni los datos guardados de ningún programa.",
   "The backup will be performed after login.": "El respaldo se llevará a cabo después de iniciar sesión.",
   "The backup will include the complete list of the installed packages and their installation options. Ignored updates and skipped versions will also be saved.": "El respaldo incluirá la lista completa de los paquetes instalados y sus opciones de instalación. Las actualizaciones ignoradas y salteadas también se salvarán.",

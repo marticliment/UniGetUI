@@ -173,7 +173,7 @@
   "Custom arguments:": "Mukautetut argumentit:",
   "Custom command-line arguments:": "Mukautetut komentorivi argumentit:",
   "Customize WingetUI - for hackers and advanced users only": "Mukauta UniGetUI - vain hakkereille ja kokeneille käyttäjille",
-  "DEBUG BUILD": null,
+  "DEBUG BUILD": "DEBUG VERSIO",
   "DISCLAIMER: WE ARE NOT RESPONSIBLE FOR THE DOWNLOADED PACKAGES. PLEASE MAKE SURE TO INSTALL ONLY TRUSTED SOFTWARE.": "VASTUUVAPAUSLAUSEKE: EMME OLE VASTUUSSA LADATUISTA PAKETTEISTA. VARMISTA, ETTÄ ASENNAT VAIN LUOTETTAVIA OHJELMISTOJA.",
   "Dark": "Tumma",
   "Decline": "Hylkää",
