@@ -448,7 +448,7 @@
   "Please click on \"Continue\" to continue": "Por favor clique em \"Continuar\" para continuar",
   "Please enter at least 3 characters": "Por favor introduza pelo menos 3 caracteres",
   "Please note that certain packages might not be installable, due to the package managers that are enabled on this machine.": "Note que alguns pacotes podem não ser instaláveis devido aos gestores de pacotes ativos neste sistema.",
-  "Please note that not all package managers may fully support this feature": "Por favor observe que nem todos os gestores de pacotes conseguem suportar na totalidade esta funcionalidade",
+  "Please note that not all package managers may fully support this feature": "Por favor tenha em conta que nem todos os gestores de pacotes conseguem suportar totalmente esta funcionalidade ",
   "Please note that packages from certain sources may be not exportable. They have been greyed out and won't be exported.": "Note que pacotes de certas origens podem não ser exportáveis. Eles estão escurecidos e não serão exportados.",
   "Please run UniGetUI as a regular user and try again.": "Execute o UniGetUI como um utilizador padrão e tente novamente.",
   "Please see the Command-line Output or refer to the Operation History for further information about the issue.": "Por fovar, verifique o output da linha de comando ou o Histórico de Operações para obter mais informações sobre o problema.",
