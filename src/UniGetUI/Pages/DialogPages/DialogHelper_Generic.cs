@@ -383,6 +383,7 @@ public static partial class DialogHelper
         notes.Close += (_, _) => NotesDialog.Hide();
         NotesDialog.Content = notes;
         await Window.ShowDialogAsync(NotesDialog);
+        notes.Dispose();
     }
 
     public static async void HandleBrokenWinGet()
