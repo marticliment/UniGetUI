@@ -45,7 +45,7 @@ namespace UniGetUI.Interface.Widgets
 
         public static string SetGlyph(this TextBlock block, string glyph)
         {
-            symbolFont ??= new FontFamily("Segoe Fluent Icons");
+            symbolFont ??= new FontFamily("Segoe Fluent Icons,Segoe MDL2 Assets");
             block.Text = glyph;
             block.FontFamily = symbolFont;
             return glyph;

@@ -88,8 +88,6 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             UbisoftConnectSource = new(this, "Ubisoft Connect", IconType.UPlay, LocalWinGetSource.Type_t.Ubisoft);
             GOGSource = new(this, "GOG", IconType.GOG, LocalWinGetSource.Type_t.GOG);
             MicrosoftStoreSource = new(this, "Microsoft Store", IconType.MsStore, LocalWinGetSource.Type_t.MicrosftStore);
-
-            throw new WarningException("");
         }
 
         public static string GetProxyArgument()
