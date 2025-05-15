@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Security.AccessControl;
@@ -87,6 +88,8 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             UbisoftConnectSource = new(this, "Ubisoft Connect", IconType.UPlay, LocalWinGetSource.Type_t.Ubisoft);
             GOGSource = new(this, "GOG", IconType.GOG, LocalWinGetSource.Type_t.GOG);
             MicrosoftStoreSource = new(this, "Microsoft Store", IconType.MsStore, LocalWinGetSource.Type_t.MicrosftStore);
+
+            throw new WarningException("");
         }
 
         public static string GetProxyArgument()
@@ -389,7 +392,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             Ubisoft
         }
 
-        public readonly Type_t Type;   
+        public readonly Type_t Type;
         private readonly string name;
         private readonly IconType __icon_id;
         public override IconType IconId { get => __icon_id; }

@@ -63,18 +63,22 @@ public static class CrashHandler
             // ignored
         }
 
-        string Error_String = $@"
-       Windows version: {Environment.OSVersion.VersionString}
-              Language: {LangName}
-           APP Version: {CoreData.VersionName}
-      APP Build number: {CoreData.BuildNumber}
-            Executable: {Environment.ProcessPath}
+        string Error_String = $$"""
+            Environment details:
+                    Windows version: {{Environment.OSVersion.VersionString}}
+                    Language: {{LangName}}
+                    APP Version: {{CoreData.VersionName}}
+                    APP Build number: {{CoreData.BuildNumber}}
+                    Executable: {{Environment.ProcessPath}}
+                    Command-line arguments: {{Environment.CommandLine}}
 
-Crash HResult: 0x{(uint)e.HResult:X} ({(uint)e.HResult}, {e.HResult})
-Crash Message: {e.Message}
+            Exception details:
+                Crash HResult: 0x{{(uint)e.HResult:X}} ({{(uint)e.HResult}}, {{e.HResult}})
+                Crash Message: {{e.Message}}
 
-Crash Traceback:
-{e.StackTrace}";
+                Crash Trace:
+                    {{e.StackTrace?.Replace("\n", "\n        ")}}
+            """;
 
         try
         {
@@ -83,16 +87,15 @@ Crash Traceback:
             {
                 i++;
                 e = e.InnerException;
-                Error_String += $@"
+                Error_String += "\n\n\n\n" + $$"""
+                    ———————————————————————————————————————————————————————————
+                    Inner exception details (depth level: {{i}})
+                        Crash HResult: 0x{{(uint)e.HResult:X}} ({{(uint)e.HResult}}, {{e.HResult}})
+                        Crash Message: {{e.Message}}
 
-
----------------------
-Inner exception ({i}):
-Crash HResult: 0x{(uint)e.HResult:X} ({(uint)e.HResult}, {e.HResult})
-Crash Message: {e.Message}
-
-Crash Traceback:
-{e.StackTrace}";
+                        Crash Traceback:
+                            {{e.StackTrace?.Replace("\n", "\n        ")}}
+                    """;
             }
 
             if (i == 0)
@@ -106,21 +109,18 @@ Crash Traceback:
 
         Console.WriteLine(Error_String);
 
-        string ErrorBody = "https://www.marticliment.com/error-report/?appName=UniGetUI^&errorBody=" +
-                           Uri.EscapeDataString(Error_String.Replace("\n", "{l}"));
+        string ErrorUrl = $"https://www.marticliment.com/error-report/" +
+              $"?appName=UniGetUI" +
+              $"&appVersion={Uri.EscapeDataString(CoreData.VersionName)}" +
+              $"&buildNumber={Uri.EscapeDataString(CoreData.BuildNumber.ToString())}" +
+              $"&errorBody={Uri.EscapeDataString(Error_String)}";
+        Console.WriteLine(ErrorUrl);
 
-        Console.WriteLine(ErrorBody);
-
-        using Process cmd = new();
-        cmd.StartInfo.FileName = "cmd.exe";
-        cmd.StartInfo.RedirectStandardInput = true;
-        cmd.StartInfo.RedirectStandardOutput = true;
-        cmd.StartInfo.CreateNoWindow = true;
-        cmd.StartInfo.UseShellExecute = false;
-        cmd.Start();
-        cmd.StandardInput.WriteLine("start " + ErrorBody);
-        cmd.StandardInput.WriteLine("exit");
-        cmd.WaitForExit();
+        using Process p = new();
+        p.StartInfo.FileName = ErrorUrl;
+        p.StartInfo.CreateNoWindow = true;
+        p.StartInfo.UseShellExecute = true;
+        p.Start();
         Environment.Exit(1);
     }
 }
