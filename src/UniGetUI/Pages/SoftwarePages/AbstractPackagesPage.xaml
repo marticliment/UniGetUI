@@ -35,11 +35,12 @@
             <widgets:PackageItemContainer
                 AutomationProperties.Name="{x:Bind Package.AutomationName}"
                 CornerRadius="4"
-                DoubleTapped="PackageItemContainer_DoubleTapped"
-                Package="{x:Bind Package}"
-                PreviewKeyDown="PackageItemContainer_PreviewKeyDown"
-                RightTapped="PackageItemContainer_RightTapped"
-                Wrapper="{x:Bind Self}">
+                DoubleTapped="{x:Bind PackageItemContainer_DoubleTapped}"
+                PreviewKeyDown="{x:Bind PackageItemContainer_PreviewKeyDown}"
+                RightTapped="{x:Bind PackageItemContainer_RightTapped}"
+
+                Wrapper="{x:Bind Self}"
+                Package="{x:Bind Package}">
 
                 <Grid
                     Padding="12,3,8,3"
@@ -210,10 +211,11 @@
                 AutomationProperties.Name="{x:Bind Package.AutomationName}"
                 Background="{ThemeResource ControlFillColorDefaultBrush}"
                 CornerRadius="4"
-                DoubleTapped="PackageItemContainer_DoubleTapped"
+                DoubleTapped="{x:Bind PackageItemContainer_DoubleTapped}"
+                PreviewKeyDown="{x:Bind PackageItemContainer_PreviewKeyDown}"
+                RightTapped="{x:Bind PackageItemContainer_RightTapped}"
+
                 Package="{x:Bind Package}"
-                PreviewKeyDown="PackageItemContainer_PreviewKeyDown"
-                RightTapped="PackageItemContainer_RightTapped"
                 Wrapper="{x:Bind Self}">
 
                 <Grid
@@ -238,7 +240,7 @@
                         widgets:IconBuilder.Icon="Package"
                         FontSize="48"
                         FontWeight="ExtraLight"
-                        ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
+                        ToolTipService.ToolTip="{x:Bind ExtendedTooltip, Mode=OneTime}"
                         Visibility="{x:Bind ShowDefaultPackageIcon, Mode=OneWay}" />
 
                     <Image
@@ -247,7 +249,7 @@
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Source="{x:Bind MainIconSource, Mode=OneWay}"
-                        ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
+                        ToolTipService.ToolTip="{x:Bind ExtendedTooltip, Mode=OneTime}"
                         Visibility="{x:Bind ShowCustomPackageIcon, Mode=OneWay}" />
 
                     <TextBlock
@@ -328,10 +330,11 @@
                 AutomationProperties.Name="{x:Bind Package.AutomationName}"
                 Background="{ThemeResource ControlFillColorDefaultBrush}"
                 CornerRadius="4"
-                DoubleTapped="PackageItemContainer_DoubleTapped"
+                DoubleTapped="{x:Bind PackageItemContainer_DoubleTapped}"
+                PreviewKeyDown="{x:Bind PackageItemContainer_PreviewKeyDown}"
+                RightTapped="{x:Bind PackageItemContainer_RightTapped}"
+
                 Package="{x:Bind Package}"
-                PreviewKeyDown="PackageItemContainer_PreviewKeyDown"
-                RightTapped="PackageItemContainer_RightTapped"
                 Wrapper="{x:Bind Self}">
 
                 <Grid
@@ -359,7 +362,7 @@
                         widgets:IconBuilder.Icon="Package"
                         FontSize="74"
                         FontWeight="ExtraLight"
-                        ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
+                        ToolTipService.ToolTip="{x:Bind ExtendedTooltip, Mode=OneTime}"
                         Visibility="{x:Bind ShowDefaultPackageIcon, Mode=OneWay}" />
 
                     <Image
@@ -370,7 +373,7 @@
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Source="{x:Bind MainIconSource, Mode=OneWay}"
-                        ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
+                        ToolTipService.ToolTip="{x:Bind ExtendedTooltip, Mode=OneTime}"
                         Visibility="{x:Bind ShowCustomPackageIcon, Mode=OneWay}" />
 
                     <TextBlock
@@ -453,8 +456,10 @@
         <UniformGridLayout
             x:Key="Layout_Icons"
             ItemsJustification="Start"
+            MinItemWidth="128"
+            MinItemHeight="134"
             MinColumnSpacing="8"
-            MinRowSpacing="8" />
+            MinRowSpacing="8"/>
 
         <StackLayout x:Key="Layout_List" Spacing="3" />
 
@@ -609,9 +614,9 @@
                             x:Name="ViewModeSelector"
                             SelectionChanged="ViewModeSelector_SelectionChanged"
                             SelectionMode="Single">
-                            <Toolkit:SegmentedItem Icon="{ui:FontIcon Glyph=&#xE8FD;}" ToolTipService.ToolTip="List" />
-                            <Toolkit:SegmentedItem Icon="{ui:FontIcon Glyph=&#xF168;}" ToolTipService.ToolTip="Grid" />
-                            <Toolkit:SegmentedItem Icon="{ui:FontIcon Glyph=&#xF0E2;}" ToolTipService.ToolTip="Icons" />
+                            <Toolkit:SegmentedItem Icon="{ui:FontIcon Glyph=&#xE8FD;}" x:Name="Selector_List" />
+                            <Toolkit:SegmentedItem Icon="{ui:FontIcon Glyph=&#xF168;}" x:Name="Selector_Grid" />
+                            <Toolkit:SegmentedItem Icon="{ui:FontIcon Glyph=&#xF0E2;}" x:Name="Selector_Icons" />
                         </Toolkit:Segmented>
                     </StackPanel>
                 </StackPanel>

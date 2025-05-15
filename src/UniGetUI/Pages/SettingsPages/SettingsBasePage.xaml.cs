@@ -15,7 +15,7 @@ namespace UniGetUI.Pages.SettingsPages
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class SettingsBasePage : Page, IEnterLeaveListener
+    public sealed partial class SettingsBasePage : Page, IEnterLeaveListener, IInnerNavigationPage
     {
         bool IsManagers;
         public SettingsBasePage(bool isManagers)
@@ -93,13 +93,14 @@ namespace UniGetUI.Pages.SettingsPages
         }
 
         public void OnEnter()
-        {
-            MainNavigationFrame.Navigate(IsManagers ? typeof(ManagersHomepage) : typeof(SettingsHomepage), null, new DrillInNavigationTransitionInfo());
-        }
+            => MainNavigationFrame.Navigate(IsManagers ? typeof(ManagersHomepage) : typeof(SettingsHomepage), null, new DrillInNavigationTransitionInfo());
 
-        public void OnLeave()
-        {
+        public void OnLeave() { }
 
-        }
+        public bool CanGoBack()
+            => MainNavigationFrame.CanGoBack && MainNavigationFrame.Content is not SettingsHomepage && MainNavigationFrame.Content is not ManagersHomepage;
+
+        public void GoBack()
+            => MainNavigationFrame.GoBack();
     }
 }

@@ -14,22 +14,21 @@ namespace UniGetUI.Core.Classes
 
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
         {
-            if (!BlockSorting)
-            {
-                base.OnCollectionChanged(e);
-                if (SortingSelector is null
-                    || e.Action == NotifyCollectionChangedAction.Remove
-                    || e.Action == NotifyCollectionChangedAction.Reset)
-                {
-                    return;
-                }
+            if (BlockSorting)
+                return;
 
-                Sort();
-            }
+            base.OnCollectionChanged(e);
+            if (SortingSelector is null || e.Action is NotifyCollectionChangedAction.Remove or NotifyCollectionChangedAction.Reset)
+                return;
+
+            Sort();
         }
 
         public void Sort()
         {
+            if (BlockSorting)
+                return;
+
             BlockSorting = true;
 
             if (SortingSelector is null)
@@ -45,7 +44,7 @@ namespace UniGetUI.Core.Classes
 
             for (int i = 0; i < Count; i++)
             {
-                this[i].Index = i;
+                this.ElementAt(i).Index = i;
             }
 
             BlockSorting = false;

@@ -9,10 +9,13 @@ namespace UniGetUI.Core.Data
     {
         private static int? __code_page;
         public static int CODE_PAGE { get => __code_page ??= GetCodePage(); }
-        public const string VersionName = "3.2.0-beta1"; // Do not modify this line, use file scripts/apply_versions.py
-        public const int BuildNumber = 85; // Do not modify this line, use file scripts/apply_versions.py
+        public const string VersionName = "3.2.0"; // Do not modify this line, use file scripts/apply_versions.py
+        public const int BuildNumber = 90; // Do not modify this line, use file scripts/apply_versions.py
 
         public const string UserAgentString = $"UniGetUI/{VersionName} (https://marticliment.com/unigetui/; contact@marticliment.com)";
+
+        public const string AppIdentifier = "MartiCliment.UniGetUI";
+        public const string MainWindowIdentifier = "MartiCliment.UniGetUI.MainInterface";
 
         private static bool? IS_PORTABLE;
         private static string? PORTABLE_PATH;

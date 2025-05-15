@@ -24,6 +24,11 @@ namespace UniGetUI
                     int ret = CLIHandler.WingetUIToUniGetUIMigrator();
                     Environment.Exit(ret);
                 }
+                else if (args.Contains(CLIHandler.UNINSTALL_UNIGETUI) || args.Contains(CLIHandler.UNINSTALL_WINGETUI))
+                {
+                    int ret = CLIHandler.UninstallUniGetUI();
+                    Environment.Exit(ret);
+                }
                 else if (args.Contains(CLIHandler.IMPORT_SETTINGS))
                 {
                     int ret = CLIHandler.ImportSettings();
@@ -116,8 +121,7 @@ namespace UniGetUI
                 // example on single-instance apps using unpackaged AppSdk + WinUI3
                 bool isRedirect = false;
 
-                var keyInstance = AppInstance.FindOrRegisterForKey("MartiCliment.UniGetUI.MainInterface");
-
+                var keyInstance = AppInstance.FindOrRegisterForKey(CoreData.MainWindowIdentifier);
                 if (keyInstance.IsCurrent)
                 {
                     keyInstance.Activated += async (_, e) =>

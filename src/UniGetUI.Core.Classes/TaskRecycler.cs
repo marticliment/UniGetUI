@@ -121,7 +121,7 @@ public static class TaskRecycler<ReturnT>
         await task;
 
         // Schedule the task for removal after the cache time expires
-        _removeFromCache(hash, cacheTimeSecsSecs);
+        _removeFromCache_VOID(hash, cacheTimeSecsSecs);
     }
 
     /// <summary>
@@ -165,6 +165,14 @@ public static class TaskRecycler<ReturnT>
             await Task.Delay(cacheTimeSecsSecs * 1000);
 
         _tasks.Remove(hash, out _);
+    }
+
+    private static async void _removeFromCache_VOID(int hash, int cacheTimeSecsSecs)
+    {
+        if (cacheTimeSecsSecs > 0)
+            await Task.Delay(cacheTimeSecsSecs * 1000);
+
+        _tasks_VOID.Remove(hash, out _);
     }
 }
 

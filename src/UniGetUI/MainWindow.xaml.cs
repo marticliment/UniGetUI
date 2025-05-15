@@ -23,6 +23,7 @@ using UniGetUI.Core.Classes;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.Pages.DialogPages;
+using TitleBar = WinUIEx.TitleBar;
 
 namespace UniGetUI.Interface
 {
@@ -53,6 +54,7 @@ namespace UniGetUI.Interface
             DialogHelper.Window = this;
 
             InitializeComponent();
+            DismissableNotification.CloseButtonContent = CoreTools.Translate("Close");
 
             ExtendsContentIntoTitleBar = true;
             try
@@ -69,6 +71,11 @@ namespace UniGetUI.Interface
 
             LoadTrayMenu();
             ApplyTheme();
+
+            if (Settings.Get("ShowVersionNumberOnTitlebar"))
+            {
+                AddToSubtitle(CoreTools.Translate("version {0}", CoreData.VersionName));
+            }
 
             if (CoreTools.IsAdministrator())
             {
@@ -162,33 +169,42 @@ namespace UniGetUI.Interface
 
         public static void ApplyProxyVariableToProcess()
         {
-            var proxyUri = Settings.GetProxyUrl();
-            if (proxyUri is null || !Settings.Get("EnableProxy"))
+            try
             {
-                Environment.SetEnvironmentVariable("HTTP_PROXY", "", EnvironmentVariableTarget.Process);
-                return;
-            }
-
-            string content;
-            if (Settings.Get("EnableProxyAuth") is false)
-            {
-                content = proxyUri.ToString();
-            }
-            else
-            {
-                var creds = Settings.GetProxyCredentials();
-                if (creds is null)
+                var proxyUri = Settings.GetProxyUrl();
+                if (proxyUri is null || !Settings.Get("EnableProxy"))
                 {
-                    content = $"--proxy {proxyUri.ToString()}";
+                    Environment.SetEnvironmentVariable("HTTP_PROXY", "", EnvironmentVariableTarget.Process);
+                    return;
+                }
+
+                string content;
+                if (Settings.Get("EnableProxyAuth") is false)
+                {
+                    content = proxyUri.ToString();
                 }
                 else
                 {
-                    content = $"{proxyUri.Scheme}://{Uri.EscapeDataString(creds.UserName)}" +
-                              $":{Uri.EscapeDataString(creds.Password)}" +
-                              $"@{proxyUri.AbsoluteUri.Replace($"{proxyUri.Scheme}://", "")}";
+                    var creds = Settings.GetProxyCredentials();
+                    if (creds is null)
+                    {
+                        content = $"--proxy {proxyUri.ToString()}";
+                    }
+                    else
+                    {
+                        content = $"{proxyUri.Scheme}://{Uri.EscapeDataString(creds.UserName)}" +
+                                  $":{Uri.EscapeDataString(creds.Password)}" +
+                                  $"@{proxyUri.AbsoluteUri.Replace($"{proxyUri.Scheme}://", "")}";
+                    }
                 }
+
+                Environment.SetEnvironmentVariable("HTTP_PROXY", content, EnvironmentVariableTarget.Process);
             }
-            Environment.SetEnvironmentVariable("HTTP_PROXY", content, EnvironmentVariableTarget.Process);
+            catch (Exception ex)
+            {
+                Logger.Error("Failed to apply proxy settings:");
+                Logger.Error(ex);
+            }
         }
 
         private void AddToSubtitle(string line)
@@ -683,7 +699,7 @@ namespace UniGetUI.Interface
             SetTitleBar(TitleBar);
 
             NavigationPage = new MainView();
-
+            NavigationPage.CanGoBackChanged += (_, can) => TitleBar.IsBackButtonVisible = can;
 
             object? control = MainContentFrame.Content as Grid;
             if (control is Grid loadingWindow)
@@ -750,8 +766,15 @@ namespace UniGetUI.Interface
 
         public void SharePackage(IPackage? package)
         {
-            if (package is null || package.Source.IsVirtualManager || package is InvalidImportedPackage)
+            if (package is null)
+                return;
+
+            if (package.Source.IsVirtualManager || package is InvalidImportedPackage)
             {
+                DialogHelper.ShowDismissableBalloon(
+                    CoreTools.Translate("Something went wrong"),
+                    CoreTools.Translate("\"{0}\" is a local package and can't be shared", package.Name)
+                );
                 return;
             }
 
@@ -988,14 +1011,19 @@ namespace UniGetUI.Interface
 
         private void TitleBar_PaneToggleRequested(WinUIEx.TitleBar sender, object args)
         {
-            if (NavigationPage is not null)
+            if (NavigationPage is null)
+                return;
+
+            if(this.AppWindow.Size.Width >= 1600)
             {
-                if(this.AppWindow.Size.Width >= 1600)
-                {
-                    Settings.Set("CollapseNavMenuOnWideScreen", NavigationPage.NavView.IsPaneOpen);
-                }
-                NavigationPage.NavView.IsPaneOpen = !NavigationPage.NavView.IsPaneOpen;
+                Settings.Set("CollapseNavMenuOnWideScreen", NavigationPage.NavView.IsPaneOpen);
             }
+            NavigationPage.NavView.IsPaneOpen = !NavigationPage.NavView.IsPaneOpen;
+        }
+
+        private void TitleBar_OnBackRequested(WinUIEx.TitleBar sender, object args)
+        {
+            NavigationPage?.NavigateBack();
         }
     }
 

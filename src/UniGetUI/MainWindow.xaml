@@ -32,15 +32,18 @@
             x:Name="TitleBar"
             Title="UniGetUI"
             Grid.Row="0"
+            Margin="0,4"
             IsPaneToggleButtonVisible="True"
             PaneToggleRequested="TitleBar_PaneToggleRequested"
+            IsBackButtonVisible="False"
+            BackRequested="TitleBar_OnBackRequested"
             Visibility="Collapsed">
             <winex:TitleBar.IconSource>
                 <ImageIconSource ImageSource="ms-appx:///Assets/Images/icon.png" />
             </winex:TitleBar.IconSource>
-            <winex:TitleBar.Content>
+            <!--winex:TitleBar.Content>
                 <UserControl Height="10" />
-            </winex:TitleBar.Content>
+            </winex:TitleBar.Content-->
         </winex:TitleBar>
         <StackPanel
             Grid.Row="1"
@@ -177,5 +180,12 @@
                     Visibility="Visible" />
             </Grid>
         </Frame>
+
+        <TeachingTip
+            x:Name="DismissableNotification"
+            x:FieldModifier="public"
+            PlacementMargin="20"
+            PreferredPlacement="Auto" />
+
     </Grid>
 </Window>

@@ -264,7 +264,7 @@ public class AutoUpdater
         {
             Logger.Debug("Waiting for mainWindow to be closed or for user to trigger the update from the notification...");
             while (
-                !ReleaseLockForAutoupdate_Window &&
+                !(ReleaseLockForAutoupdate_Window && !ManualCheck) &&
                 !ReleaseLockForAutoupdate_Notification &&
                 !ReleaseLockForAutoupdate_UpdateBanner)
             {

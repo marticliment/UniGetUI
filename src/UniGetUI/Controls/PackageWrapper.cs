@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using UniGetUI.Core.Classes;
@@ -26,7 +27,11 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public bool IsChecked
         {
             get => Package.IsChecked;
-            set => Package.IsChecked = value;
+            set
+            {
+                Package.IsChecked = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsChecked)));
+            }
         }
 
         public bool IconWasLoaded;
@@ -48,6 +53,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         }
 
         public string ListedNameTooltip = "";
+        public readonly string ExtendedTooltip = "";
         public float ListedOpacity = 1.0f;
 
         public int NewVersionLabelWidth { get => Package.IsUpgradable ? 125 : 0; }
@@ -70,9 +76,24 @@ namespace UniGetUI.PackageEngine.PackageClasses
             Package.PropertyChanged += Package_PropertyChanged;
             UpdatePackageIcon();
             VersionComboString = package.IsUpgradable ? $"{package.VersionString} -> {package.NewVersionString}" : package.VersionString;
+
+            if(package.Name.ToLower() != package.Id.ToLower())
+                ExtendedTooltip = $"{package.Name} ({package.Id} from {package.Source.AsString_DisplayName})";
+            else
+                ExtendedTooltip = $"{package.Name} (from {package.Source.AsString_DisplayName})";
         }
 
-        public async void RightClick()
+        public void PackageItemContainer_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+            => _page.PackageItemContainer_DoubleTapped(sender, e);
+
+        public void PackageItemContainer_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
+            => _page.PackageItemContainer_PreviewKeyDown(sender, e);
+
+        public void PackageItemContainer_RightTapped(object sender, RightTappedRoutedEventArgs e)
+            => _page.PackageItemContainer_RightTapped(sender, e);
+
+
+        public async Task RightClick()
         {
             await _page.ShowContextMenu(this);
         }
@@ -98,7 +119,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 {
                     PropertyChanged?.Invoke(this, e);
                 }
-            } catch (COMException)
+            }
+            catch (COMException)
             {
                 // ignore
             }

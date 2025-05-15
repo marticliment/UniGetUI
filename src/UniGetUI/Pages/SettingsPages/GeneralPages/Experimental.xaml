@@ -21,6 +21,15 @@
         <StackPanel Orientation="Vertical">
 
             <widgets:CheckboxCard
+                x:Name="ShowVersionNumberOnTitlebar"
+                CornerRadius="8"
+                SettingName="ShowVersionNumberOnTitlebar"
+                StateChanged="ShowRestartBanner"
+                Text="Show UniGetUI's version and build number on the titlebar." />
+
+            <UserControl Height="16" />
+
+            <widgets:CheckboxCard
                 x:Name="DisableWidgetsApi"
                 BorderThickness="1,1,1,0"
                 CornerRadius="8,8,0,0"
@@ -35,8 +44,6 @@
                 StateChanged="ShowRestartBanner"
                 Text="Wait for the device to be connected to the internet before attempting to do tasks that require internet connectivity." />
 
-            <UserControl Height="16" />
-
             <widgets:CheckboxCard
                 CornerRadius="8"
                 ForceInversion="True"
@@ -48,7 +55,7 @@
             <widgets:CheckboxCard
                 x:Name="DisableUniGetUIElevatorToggle"
                 BorderThickness="1,1,1,0"
-                CornerRadius="8,8,0,0"
+                CornerRadius="8"
                 SettingName="DisableUniGetUIElevator"
                 StateChanged="ShowRestartBanner"
                 Text="Enable the new UniGetUI-Branded UAC Elevator" />

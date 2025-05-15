@@ -15,7 +15,7 @@ internal sealed class PowerShellPkgOperationHelper : PackagePkgOperationHelper
             OperationType.Uninstall => Manager.Properties.UninstallVerb,
             _ => throw new InvalidDataException("Invalid package operation")
         }];
-        parameters.AddRange(["-NonInteractive","-Name", package.Id, "-Confirm:$false", "-Force"]);
+        parameters.AddRange(["-Name", package.Id, "-Confirm:$false", "-Force"]);
 
         if (options.CustomParameters is not null)
             parameters.AddRange(options.CustomParameters);

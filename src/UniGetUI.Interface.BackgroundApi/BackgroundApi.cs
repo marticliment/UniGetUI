@@ -1,7 +1,9 @@
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Hosting;
 using System.Text;
-using System.Web;
-using Nancy;
-using Nancy.Hosting.Self;
+using Microsoft.Extensions.DependencyInjection;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
@@ -27,317 +29,256 @@ namespace UniGetUI.Interface
         public event EventHandler<string>? OnUpgradeAllForManager;
         public event EventHandler<string>? OnUpgradePackage;
 
-        private bool __running;
+        private IHost? _host;
+        private bool _running;
 
         public BackgroundApiRunner()
         {
-            BackgroundApi.OnOpenWindow += (s, e) => OnOpenWindow?.Invoke(s, e);
-            BackgroundApi.OnOpenUpdatesPage += (s, e) => OnOpenUpdatesPage?.Invoke(s, e);
-            BackgroundApi.OnShowSharedPackage += (s, e) => OnShowSharedPackage?.Invoke(s, e);
-            BackgroundApi.OnUpgradeAll += (s, e) => OnUpgradeAll?.Invoke(s, e);
-            BackgroundApi.OnUpgradeAllForManager += (s, e) => OnUpgradeAllForManager?.Invoke(s, e);
-            BackgroundApi.OnUpgradePackage += (s, e) => OnUpgradePackage?.Invoke(s, e);
         }
 
-        public static bool AuthenticateToken(string token)
+        public static bool AuthenticateToken(string? token)
         {
             return token == ApiTokenHolder.Token;
         }
 
-        /// <summary>
-        /// Run the background api and wait for it for being stopped with the Stop() method
-        /// </summary>
         public async Task Start()
         {
-            try
+
+            if (Settings.Get("DisableWidgetsApi"))
             {
-
-                if (Settings.Get("DisableWidgetsApi"))
-                {
-                    Logger.Warn("Widgets API is disabled");
-                    return;
-                }
-
-                ApiTokenHolder.Token = CoreTools.RandomString(64);
-
-                __running = true;
-                NancyHost host;
-                try
-                {
-                    host = new NancyHost(new HostConfiguration { RewriteLocalhost = false, }, new Uri("http://localhost:7058/"));
-                    host.Start();
-                }
-                catch
-                {
-                    host = new NancyHost(new Uri("http://localhost:7058/"));
-                    host.Start();
-                }
-
-                Settings.SetValue("CurrentSessionToken", ApiTokenHolder.Token);
-                Logger.Info("Randomly-generated background API auth token for the current session: " + ApiTokenHolder.Token);
-
-                Logger.Info("Api running on http://localhost:7058");
-
-                while (__running)
-                {
-                    await Task.Delay(100);
-                }
-                host.Stop();
-                Logger.Info("Api was shut down");
+                Logger.Warn("Widgets API is disabled");
+                return;
             }
-            catch (Exception e)
+
+            ApiTokenHolder.Token = CoreTools.RandomString(64);
+            Settings.SetValue("CurrentSessionToken", ApiTokenHolder.Token);
+            Logger.Info("Randomly-generated background API auth token: " + ApiTokenHolder.Token);
+
+            var builder = Host.CreateDefaultBuilder();
+            builder.ConfigureServices(services => services.AddCors());
+            builder.ConfigureWebHostDefaults(webBuilder =>
             {
-                Logger.Error("An error occurred while initializing the API");
-                Logger.Error(e);
+                webBuilder.UseKestrel();
+#if !DEBUG
+                webBuilder.SuppressStatusMessages(true);
+#endif
+                webBuilder.Configure(app =>
+                    {
+                        app.UseCors(policy => policy
+                            .AllowAnyOrigin()
+                            .AllowAnyMethod()
+                            .AllowAnyHeader()
+                        );
+
+                        app.UseRouting();
+                        app.UseEndpoints(endpoints =>
+                        {
+                            // Share endpoints
+                            endpoints.MapGet("/v2/show-package", V2_ShowPackage);
+                            endpoints.MapGet("/is-running", API_IsRunning);
+                            // Widgets v1 API
+                            endpoints.MapGet("/widgets/v1/get_wingetui_version", WIDGETS_V1_GetUniGetUIVersion);
+                            endpoints.MapGet("/widgets/v1/get_updates", WIDGETS_V1_GetUpdates);
+                            endpoints.MapGet("/widgets/v1/open_wingetui", WIDGETS_V1_OpenUniGetUI);
+                            endpoints.MapGet("/widgets/v1/view_on_wingetui", WIDGETS_V1_ViewOnUniGetUI);
+                            endpoints.MapGet("/widgets/v1/update_package", WIDGETS_V1_UpdatePackage);
+                            endpoints.MapGet("/widgets/v1/update_all_packages", WIDGETS_V1_UpdateAllPackages);
+                            endpoints.MapGet("/widgets/v1/update_all_packages_for_source",
+                                WIDGETS_V1_UpdateAllPackagesForSource);
+                            // Widgets v2 API
+                            endpoints.MapGet("/widgets/v2/get_icon_for_package", WIDGETS_V2_GetIconForPackage);
+                        });
+                    });
+                webBuilder.UseUrls("http://localhost:7058");
+            });
+            _host = builder.Build();
+            _running = true;
+            await _host.StartAsync();
+            Logger.Info("Api running on http://localhost:7058");
+        }
+
+    private async Task V2_ShowPackage(HttpContext context)
+        {
+            var query = context.Request.Query;
+            if (string.IsNullOrEmpty(query["pid"]) || string.IsNullOrEmpty(query["psource"]))
+            {
+                context.Response.StatusCode = 400;
+                return;
             }
+
+            OnShowSharedPackage?.Invoke(null, new KeyValuePair<string, string>(query["pid"], query["psource"]));
+
+            await context.Response.WriteAsync("{\"status\": \"success\"}");
         }
 
-        /// <summary>
-        /// Stop the background api
-        /// </summary>
-        public void Stop()
+        private async Task API_IsRunning(HttpContext context)
         {
-            __running = false;
-        }
-    }
-
-    /// <summary>
-    /// The background api builder
-    /// </summary>
-    public class BackgroundApi : NancyModule
-    {
-        public static event EventHandler<EventArgs>? OnOpenWindow;
-        public static event EventHandler<EventArgs>? OnOpenUpdatesPage;
-        public static event EventHandler<KeyValuePair<string, string>>? OnShowSharedPackage;
-        public static event EventHandler<EventArgs>? OnUpgradeAll;
-        public static event EventHandler<string>? OnUpgradeAllForManager;
-        public static event EventHandler<string>? OnUpgradePackage;
-
-        public BackgroundApi()
-        {
-            // Enable CORS
-            After.AddItemToEndOfPipeline((ctx) =>
-            {
-                ctx.Response.WithHeader("Access-Control-Allow-Origin", "*")
-                    .WithHeader("Access-Control-Allow-Methods", "POST,GET,OPTIONS")
-                    .WithHeader("Access-Control-Allow-Headers", "Authorization");
-            });
-            BuildShareApi();
-            BuildV1WidgetsApi();
+            await context.Response.WriteAsync("{\"status\": \"success\"}");
         }
 
-        /// <summary>
-        /// Build the endpoints required for the Share Interface
-        /// </summary>
-        public void BuildShareApi()
+        private async Task WIDGETS_V1_GetUniGetUIVersion(HttpContext context)
         {
-            // Show package from https://marticliment.com/unigetui/share
-            Get("/v2/show-package", (_) =>
+            if (!AuthenticateToken(context.Request.Query["token"]))
             {
-                try
-                {
-                    if (Request.Query.@pid == "" || Request.Query.@psource == "")
-                    {
-                        return 400;
-                    }
+                context.Response.StatusCode = 401;
+                return;
+            }
 
-                    OnShowSharedPackage?.Invoke(this, new KeyValuePair<string, string>(Request.Query.@pid.ToString(), Request.Query.@psource.ToString()));
-
-                    return "{\"status\": \"success\"}";
-                }
-                catch (Exception e)
-                {
-                    Logger.Error(e);
-                    return 500;
-                }
-            });
-
-            // Basic entrypoint to know if UniGetUI is running
-            Get("/is-running", (_) =>
-            {
-                return "{\"status\": \"success\"}";
-            });
+            await context.Response.WriteAsync(CoreData.BuildNumber.ToString());
         }
 
-        /// <summary>
-        /// Build the endpoints required for the /widgets/v1 endpoint. All of these
-        /// endpoints are authenticated with MainApp.Instance.AuthenticateToken
-        /// </summary>
-        public void BuildV1WidgetsApi()
+        private async Task WIDGETS_V1_GetUpdates(HttpContext context)
         {
-            // Basic version check
-            Get("/widgets/v1/get_wingetui_version", (_) =>
+            if (!AuthenticateToken(context.Request.Query["token"]))
             {
-                if (!BackgroundApiRunner.AuthenticateToken(Request.Query.@token))
-                {
-                    return 401;
-                }
+                context.Response.StatusCode = 401;
+                return;
+            }
 
-                return CoreData.BuildNumber.ToString();
-            });
-
-            // Return found updates
-            Get("/widgets/v1/get_updates", async (parameters) =>
+            if (!PEInterface.UpgradablePackagesLoader.IsLoaded && !PEInterface.UpgradablePackagesLoader.IsLoading)
             {
-                if (!BackgroundApiRunner.AuthenticateToken(Request.Query.@token))
-                {
-                    return 401;
-                }
+                _ = PEInterface.UpgradablePackagesLoader.ReloadPackages();
+            }
 
-                if (!PEInterface.UpgradablePackagesLoader.IsLoaded && !PEInterface.UpgradablePackagesLoader.IsLoading)
-                {
-                    _ = PEInterface.UpgradablePackagesLoader.ReloadPackages(); // Actually begin loading the updates if not loaded or loading
-                }
-
-                while (PEInterface.UpgradablePackagesLoader.IsLoading)
-                {
-                    await Task.Delay(100); // Wait for the updates to be reported before showing anything
-                }
-
-                StringBuilder packages = new();
-                foreach (IPackage package in PEInterface.UpgradablePackagesLoader.Packages)
-                {
-                    if (package.Tag is PackageTag.OnQueue or PackageTag.BeingProcessed)
-                        continue; // Do not show already processed packages on queue
-
-                    string icon = $"http://localhost:7058/widgets/v2/get_icon_for_package?packageId={HttpUtility.UrlEncode(package.Id)}&packageSource={HttpUtility.UrlEncode(package.Source.Name)}&token={ApiTokenHolder.Token}";
-                    packages.Append($"{package.Name.Replace('|', '-')}|{package.Id}|{package.VersionString}|{package.NewVersionString}|{package.Source.AsString_DisplayName}|{package.Manager.Name}|{icon}&&");
-                }
-
-                string pkgs_ = packages.ToString();
-
-                if (pkgs_.Length > 2)
-                {
-                    pkgs_ = pkgs_[..(pkgs_.Length - 2)];
-                }
-
-                return pkgs_;
-            });
-
-            // Open UniGetUI (as it was)
-            Get("/widgets/v1/open_wingetui", (_) =>
+            while (PEInterface.UpgradablePackagesLoader.IsLoading)
             {
-                if (!BackgroundApiRunner.AuthenticateToken(Request.Query.@token))
-                {
-                    return 401;
-                }
+                await Task.Delay(100);
+            }
 
-                OnOpenWindow?.Invoke(this, EventArgs.Empty);
-                return 200;
-            });
-
-            // Open UniGetUI with the Updates page shown
-            Get("/widgets/v1/view_on_wingetui", (_) =>
+            StringBuilder packages = new();
+            foreach (IPackage package in PEInterface.UpgradablePackagesLoader.Packages)
             {
-                if (!BackgroundApiRunner.AuthenticateToken(Request.Query.@token))
-                {
-                    return 401;
-                }
+                if (package.Tag is PackageTag.OnQueue or PackageTag.BeingProcessed) continue;
 
-                OnOpenUpdatesPage?.Invoke(this, EventArgs.Empty);
-                return 200;
-            });
+                string icon = $"http://localhost:7058/widgets/v2/get_icon_for_package?packageId={Uri.EscapeDataString(package.Id)}&packageSource={Uri.EscapeDataString(package.Source.Name)}&token={ApiTokenHolder.Token}";
+                packages.Append($"{package.Name.Replace('|', '-')}" + $"|{package.Id}" + $"|{package.VersionString}" + $"|{package.NewVersionString}" + $"|{package.Source.AsString_DisplayName}" + $"|{package.Manager.Name}" + $"|{icon}&&");
+            }
 
-            // Update a specific package given its Id
-            Get("/widgets/v1/update_package", (_) =>
+            string result = packages.ToString();
+            if (result.Length > 2) result = result[..(result.Length - 2)];
+
+            await context.Response.WriteAsync(result);
+        }
+
+        private async Task WIDGETS_V1_OpenUniGetUI(HttpContext context)
+        {
+            if (!AuthenticateToken(context.Request.Query["token"]))
             {
-                if (!BackgroundApiRunner.AuthenticateToken(Request.Query.@token))
-                {
-                    return 401;
-                }
+                context.Response.StatusCode = 401;
+                return;
+            }
 
-                if (Request.Query.@id == "")
-                {
-                    return 400;
-                }
+            OnOpenWindow?.Invoke(null, EventArgs.Empty);
+            context.Response.StatusCode = 200;
+        }
 
-                OnUpgradePackage?.Invoke(this, Request.Query.@id);
-                return 200;
-            });
-
-            // Update all packages
-            Get("/widgets/v1/update_all_packages", (_) =>
+        private async Task WIDGETS_V1_ViewOnUniGetUI(HttpContext context)
+        {
+            if (!AuthenticateToken(context.Request.Query["token"]))
             {
-                if (!BackgroundApiRunner.AuthenticateToken(Request.Query.@token))
-                {
-                    return 401;
-                }
+                context.Response.StatusCode = 401;
+                return;
+            }
 
-                Logger.Info("[WIDGETS] Updating all packages");
-                OnUpgradeAll?.Invoke(this, EventArgs.Empty);
-                return 200;
-            });
+            OnOpenUpdatesPage?.Invoke(null, EventArgs.Empty);
+            context.Response.StatusCode = 200;
+        }
 
-            // Update all packages for a specific manager
-            Get("/widgets/v1/update_all_packages_for_source", (_) =>
+        private async Task WIDGETS_V1_UpdatePackage(HttpContext context)
+        {
+            if (!AuthenticateToken(context.Request.Query["token"]))
             {
-                if (!BackgroundApiRunner.AuthenticateToken(Request.Query.@token))
-                {
-                    return 401;
-                }
+                context.Response.StatusCode = 401;
+                return;
+            }
 
-                if (Request.Query.@source == "")
-                {
-                    return 400;
-                }
-
-                Logger.Info($"[WIDGETS] Updating all packages for manager {Request.Query.@source}");
-                OnUpgradeAllForManager?.Invoke(this, Request.Query.@source);
-                return 200;
-            });
-
-            // Update all packages for a specific manager
-            Get("/widgets/v2/get_icon_for_package", async (_) =>
+            var id = context.Request.Query["id"];
+            if (string.IsNullOrEmpty(id))
             {
-                if (!BackgroundApiRunner.AuthenticateToken(Request.Query.@token))
-                {
-                    return 401;
-                }
+                context.Response.StatusCode = 400;
+                return;
+            }
 
-                if (Request.Query.@packageId == "" || Request.Query.@packageSource == "")
-                {
-                    return 400;
-                }
+            OnUpgradePackage?.Invoke(null, id);
+            context.Response.StatusCode = 200;
+        }
 
-                string iconPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Images", "package_color.png");
-                IPackage? package = PEInterface.UpgradablePackagesLoader.GetPackageForId(Request.Query.@packageId, Request.Query.@packageSource);
-                if (package is not null)
-                {
-                    Uri iconUrl = await Task.Run(package.GetIconUrl);
-                    if (iconUrl.ToString() != "ms-appx:///Assets/Images/package_color.png")
-                    {
-                        string mimePath = Path.Join(CoreData.UniGetUICacheDirectory_Icons, package.Manager.Name,
-                            package.Id, "icon.mime");
-                        iconPath = Path.Join(CoreData.UniGetUICacheDirectory_Icons, package.Manager.Name, package.Id,
-                            $"icon.{IconCacheEngine.MimeToExtension[await File.ReadAllTextAsync(mimePath)]}");
-                    }
-                    // else, the iconPath will be the preloaded one (package_color.png)
-                }
-                else
-                {
-                    Logger.Warn($"[API] Package id={Request.Query.@packageId} with sourceName={Request.Query.@packageSource} was not found!");
-                }
+        private async Task WIDGETS_V1_UpdateAllPackages(HttpContext context)
+        {
+            if (!AuthenticateToken(context.Request.Query["token"]))
+            {
+                context.Response.StatusCode = 401;
+                return;
+            }
 
-                byte[] fileContents = await File.ReadAllBytesAsync(iconPath);
-                return new Response
-                {
-                    ContentType = IconCacheEngine.ExtensionToMime[iconPath.Split('.')[^1]],
-                    Contents = (stream) =>
-                    {
-                        try
-                        {
-                            stream.Write(fileContents, 0, fileContents.Length);
-                        }
-                        catch (Exception ex)
-                        {
-                            Logger.Warn($"Unable to load icon to path {iconPath}");
-                            Logger.Warn(ex);
-                        }
-                    }
-                };
+            Logger.Info("[WIDGETS] Updating all packages");
+            OnUpgradeAll?.Invoke(null, EventArgs.Empty);
+            context.Response.StatusCode = 200;
+        }
 
-            });
+        private async Task WIDGETS_V1_UpdateAllPackagesForSource(HttpContext context)
+        {
+            if (!AuthenticateToken(context.Request.Query["token"]))
+            {
+                context.Response.StatusCode = 401;
+                return;
+            }
+
+            var source = context.Request.Query["source"];
+            if (string.IsNullOrEmpty(source))
+            {
+                context.Response.StatusCode = 400;
+                return;
+            }
+
+            Logger.Info($"[WIDGETS] Updating all packages for manager {source}");
+            OnUpgradeAllForManager?.Invoke(null, source);
+            context.Response.StatusCode = 200;
+        }
+
+        private async Task WIDGETS_V2_GetIconForPackage(HttpContext context)
+        {
+            if (!AuthenticateToken(context.Request.Query["token"]))
+            {
+                context.Response.StatusCode = 401;
+                return;
+            }
+
+            var packageId = context.Request.Query["packageId"];
+            var packageSource = context.Request.Query["packageSource"];
+            if (string.IsNullOrEmpty(packageId) || string.IsNullOrEmpty(packageSource))
+            {
+                context.Response.StatusCode = 400;
+                return;
+            }
+
+            string iconPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Images", "package_color.png");
+
+            IPackage? package = PEInterface.UpgradablePackagesLoader.GetPackageForId(packageId, packageSource);
+            if (package != null)
+            {
+                var iconUrl = await Task.Run(package.GetIconUrl);
+                if (iconUrl.ToString() != "ms-appx:///Assets/Images/package_color.png")
+                {
+                    string mimePath = Path.Join(CoreData.UniGetUICacheDirectory_Icons, package.Manager.Name, package.Id, "icon.mime");
+                    iconPath = Path.Join(CoreData.UniGetUICacheDirectory_Icons, package.Manager.Name, package.Id, $"icon.{IconCacheEngine.MimeToExtension[await File.ReadAllTextAsync(mimePath)]}");
+                }
+            }
+            else
+            {
+                Logger.Warn($"[API] Package id={packageId} with source={packageSource} not found!");
+            }
+
+            var bytes = await File.ReadAllBytesAsync(iconPath);
+            var ext = Path.GetExtension(iconPath).TrimStart('.').ToLower();
+            context.Response.ContentType = IconCacheEngine.ExtensionToMime.GetValueOrDefault(ext, "image/png");
+            await context.Response.Body.WriteAsync(bytes, 0, bytes.Length);
+        }
+
+        public async void Stop()
+        {
+            await _host.StopAsync();
+            Logger.Info("Api was shut down");
         }
     }
 }
-

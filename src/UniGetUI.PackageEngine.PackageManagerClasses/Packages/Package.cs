@@ -296,18 +296,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public virtual bool IsUpdateMinor()
         {
             if (!IsUpgradable) return false;
-            string[] VersionSplit = VersionString.Split(".");
-            string[] NewVersionSplit = NewVersionString.Split(".");
 
-            // When in doubt, return false
-            if (VersionSplit.Length < 3 || NewVersionSplit.Length < 3) return false;
-
-            if (
-                VersionSplit[0] != NewVersionSplit[0] ||
-                VersionSplit[1] != NewVersionSplit[1]
-            ) return false; // Major update
-
-            return VersionSplit[2].CompareTo(NewVersionSplit[2]) < 0;
+            return NormalizedVersion.Major == NormalizedNewVersion.Major && NormalizedVersion.Minor == NormalizedNewVersion.Minor &&
+                   (NormalizedVersion.Patch != NormalizedNewVersion.Patch || NormalizedVersion.Remainder != NormalizedNewVersion.Remainder);
         }
 
         public virtual SerializablePackage_v1 AsSerializable()
