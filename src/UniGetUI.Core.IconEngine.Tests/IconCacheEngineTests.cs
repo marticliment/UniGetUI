@@ -7,8 +7,8 @@ namespace UniGetUI.Core.IconEngine.Tests
         [Fact]
         public static void TestCacheEngineForSha256()
         {
-            Uri ICON_1 = new Uri("https://marticliment.com/resources/wingetui.png");
-            byte[] HASH_1 = [0x24, 0x4e, 0x42, 0xb6, 0xbe, 0x44, 0x04, 0x66, 0xc8, 0x77, 0xf7, 0x68, 0x8a, 0xe0, 0xa9, 0x45, 0xfb, 0x2e, 0x66, 0x8c, 0x41, 0x84, 0x1f, 0x2d, 0x10, 0xcf, 0x92, 0xd4, 0x0d, 0x8c, 0xbb, 0xf6];
+            Uri ICON_1 = new Uri("https://marticliment.com/resources/unigetui.png");
+            byte[] HASH_1 = [0xB7, 0x41, 0xC3, 0x18, 0xBF, 0x2B, 0x07, 0xAA, 0x92, 0xB2, 0x7A, 0x1B, 0x4D, 0xC5, 0xEE, 0xC4, 0xD1, 0x9B, 0x22, 0xD4, 0x0A, 0x13, 0x26, 0xA7, 0x45, 0xA4, 0xA7, 0xF5, 0x81, 0x8E, 0xAF, 0xFF];
             Uri ICON_2 = new Uri("https://marticliment.com/resources/elevenclock.png");
             byte[] HASH_2 = [0x9E, 0xB8, 0x7A, 0x5A, 0x64, 0xCA, 0x6D, 0x8D, 0x0A, 0x7B, 0x98, 0xC5, 0x4F, 0x6A, 0x58, 0x72, 0xFD, 0x94, 0xC9, 0xA6, 0x82, 0xB3, 0x2B, 0x90, 0x70, 0x66, 0x66, 0x1C, 0xBF, 0x81, 0x97, 0x97];
 
@@ -61,7 +61,7 @@ namespace UniGetUI.Core.IconEngine.Tests
         [Fact]
         public static void TestCacheEngineForPackageVersion()
         {
-            Uri URI = new Uri("https://marticliment.com/resources/wingetui.png");
+            Uri URI = new Uri("https://marticliment.com/resources/unigetui.png");
             string VERSION = "v3.01";
             string MANAGER_NAME = "TestManager";
             string PACKAGE_ID = "Package2";
@@ -106,7 +106,7 @@ namespace UniGetUI.Core.IconEngine.Tests
         [Fact]
         public static void TestCacheEngineForIconUri()
         {
-            Uri URI_1 = new Uri("https://marticliment.com/resources/wingetui.png");
+            Uri URI_1 = new Uri("https://marticliment.com/resources/unigetui.png");
             Uri URI_2 = new Uri("https://marticliment.com/resources/elevenclock.png");
             string managerName = "TestManager";
             string packageId = "Package12";
@@ -151,8 +151,8 @@ namespace UniGetUI.Core.IconEngine.Tests
         [Fact]
         public static void TestCacheEngineForPackageSize()
         {
-            Uri ICON_1 = new Uri("https://marticliment.com/resources/wingetui.png");
-            int ICON_1_SIZE = 47903;
+            Uri ICON_1 = new Uri("https://marticliment.com/resources/unigetui.png");
+            int ICON_1_SIZE = 19788;
             Uri ICON_2 = new Uri("https://marticliment.com/resources/elevenclock.png");
             int ICON_2_SIZE = 19747;
             string managerName = "TestManager";
