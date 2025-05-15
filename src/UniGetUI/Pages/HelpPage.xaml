@@ -95,9 +95,10 @@
         <Border
             Grid.Row="1"
             Grid.Column="0"
+            x:Name="WebViewBorder"
             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
             CornerRadius="6">
-            <controls:WebView2 Name="WebView" Source="https://www.google.com/" />
+            <!--controls:WebView2 Name="WebView" Source="https://www.google.com/" /-->
         </Border>
         <ProgressBar
             Name="ProgressBar"
