@@ -207,80 +207,6 @@ namespace UniGetUI.Core.Tools
             return new string(chars.ToArray());
         }
 
-        public static void ReportFatalException(Exception e)
-        {
-            Debugger.Break();
-            string LangName = "Unknown";
-            try
-            {
-                LangName = LanguageEngine.Locale;
-            }
-            catch
-            {
-                // ignored
-            }
-
-            string Error_String = $@"
-           Windows version: {Environment.OSVersion.VersionString}
-                  Language: {LangName}
-               APP Version: {CoreData.VersionName}
-          APP Build number: {CoreData.BuildNumber}
-                Executable: {Environment.ProcessPath}
-
-Crash HResult: 0x{(uint)e.HResult:X} ({(uint)e.HResult}, {e.HResult})
-Crash Message: {e.Message}
-
-Crash Traceback:
-{e.StackTrace}";
-
-            try
-            {
-                int i = 0;
-                while (e.InnerException is not null)
-                {
-                    i++;
-                    e = e.InnerException;
-                    Error_String += $@"
-
-
----------------------
-Inner exception ({i}):
-Crash HResult: 0x{(uint)e.HResult:X} ({(uint)e.HResult}, {e.HResult})
-Crash Message: {e.Message}
-
-Crash Traceback:
-{e.StackTrace}";
-                }
-
-                if (i == 0)
-                {
-                    Error_String += $"\n\n\nNo inner exceptions found";
-                }
-            } catch
-            {
-                // ignore
-            }
-
-            Console.WriteLine(Error_String);
-
-            string ErrorBody = "https://www.marticliment.com/error-report/?appName=UniGetUI^&errorBody=" +
-                               Uri.EscapeDataString(Error_String.Replace("\n", "{l}"));
-
-            Console.WriteLine(ErrorBody);
-
-            using Process cmd = new();
-            cmd.StartInfo.FileName = "cmd.exe";
-            cmd.StartInfo.RedirectStandardInput = true;
-            cmd.StartInfo.RedirectStandardOutput = true;
-            cmd.StartInfo.CreateNoWindow = true;
-            cmd.StartInfo.UseShellExecute = false;
-            cmd.Start();
-            cmd.StandardInput.WriteLine("start " + ErrorBody);
-            cmd.StandardInput.WriteLine("exit");
-            cmd.WaitForExit();
-            Environment.Exit(1);
-        }
-
         /// <summary>
         /// Launches a .bat or .cmd file for the given filename
         /// </summary>
@@ -749,6 +675,11 @@ Crash Traceback:
             p.Start();
             await p.WaitForExitAsync();
             p.Dispose();
+        }
+
+        public static string GetCurrentLocale()
+        {
+            return LanguageEngine?.Locale ?? "Unset/Unknown";
         }
     }
 }

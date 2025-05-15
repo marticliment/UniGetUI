@@ -88,7 +88,7 @@ namespace UniGetUI
             }
             catch (Exception e)
             {
-                CoreTools.ReportFatalException(e);
+                CrashHandler.ReportFatalException(e);
             }
         }
 
@@ -119,7 +119,7 @@ namespace UniGetUI
                 Logger.Error(" -");
                 if (Environment.GetCommandLineArgs().Contains("--report-all-errors") || RaiseExceptionAsFatal || MainWindow is null)
                 {
-                    CoreTools.ReportFatalException(e.Exception);
+                    CrashHandler.ReportFatalException(e.Exception);
                 }
                 else
                 {
@@ -235,7 +235,7 @@ namespace UniGetUI
             }
             catch (Exception e)
             {
-                CoreTools.ReportFatalException(e);
+                CrashHandler.ReportFatalException(e);
             }
         }
 

@@ -15,6 +15,7 @@
 | `--enable-setting key` | Enables the boolean setting _key_* | 3.2.0+ |
 | `--disable-setting key` |  Disables the boolean setting _key_* | 3.2.0+ |
 | `--set-setting-value key value` | Sets the value _value_ to the non-boolean setting _key_. To clear a non-boolean setting, `--disable-setting` can be used* | 3.2.0+ |
+| `--no-corrupt-dialog` | Will show a verbose error message (the error report) instead of a simplified message dialog | 3.2.1+ |
 
 
 \*After modifying the settings, you must ensure that any running instance of UniGetUI is restarted for the changes to take effect

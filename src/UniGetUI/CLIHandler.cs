@@ -10,6 +10,7 @@ public static class CLIHandler
     public const string MIGRATE_WINGETUI_TO_UNIGETUI = "--migrate-wingetui-to-unigetui";
     public const string UNINSTALL_WINGETUI = "--uninstall-wingetui";
     public const string UNINSTALL_UNIGETUI = "--uninstall-unigetui";
+    public const string NO_CORRUPT_DIALOG = "--no-corrupt-dialog";
 
     public const string IMPORT_SETTINGS = "--import-settings";
     public const string EXPORT_SETTINGS = "--export-settings";
