@@ -86,7 +86,7 @@ public partial class Settings
         }
     }
 
-    private static JsonSerializerOptions SerializationOptions = new()
+    public static JsonSerializerOptions SerializationOptions = new()
     {
         TypeInfoResolver = new DefaultJsonTypeInfoResolver(),
         AllowTrailingCommas = true,
