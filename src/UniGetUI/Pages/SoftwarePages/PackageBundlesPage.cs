@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Text.Json;
+using System.Xml;
 using System.Xml.Serialization;
 using ExternalLibraries.Pickers;
 using Microsoft.UI.Text;
@@ -607,7 +608,7 @@ namespace UniGetUI.Interface.SoftwarePages
             if (formatType is BundleFormatType.JSON or BundleFormatType.UBUNDLE)
                 ExportableData = JsonSerializer.Serialize(
                     exportable,
-                    CoreData.SerializingOptions);
+                    SerializationHelpers.SerializingOptions);
 
             else if (formatType is BundleFormatType.YAML)
             {
@@ -639,29 +640,19 @@ namespace UniGetUI.Interface.SoftwarePages
             if (format is BundleFormatType.YAML)
             {
                 // Dynamic convert to JSON
-                format = BundleFormatType.JSON;
-                var yamlObject = new YamlDotNet.Serialization.Deserializer().Deserialize(content);
-                content = new YamlDotNet.Serialization.SerializerBuilder()
-                    .JsonCompatible()
-                    .Build()
-                    .Serialize(yamlObject);
+                content = await SerializationHelpers.YAML_to_JSON(content);
                 Logger.ImportantInfo("YAML bundle was converted to JSON before deserialization");
             }
 
-            if (format is BundleFormatType.JSON or BundleFormatType.UBUNDLE)
+            if (format is BundleFormatType.XML)
             {
-                DeserializedData = await Task.Run(() => JsonSerializer.Deserialize<SerializableBundle_v1>(content, CoreData.SerializingOptions));
+                // Dynamic convert to JSON
+                content = await SerializationHelpers.XML_to_JSON(content);
+                Logger.ImportantInfo("XML payload was converted to JSON dynamically before deserialization");
             }
-            else
-            {
-                string tempfile = Path.GetTempFileName();
-                await File.WriteAllTextAsync(tempfile, content);
-                StreamReader reader = new(tempfile);
-                XmlSerializer serializer = new(typeof(SerializableBundle_v1));
-                DeserializedData = await Task.Run(() => serializer.Deserialize(reader) as SerializableBundle_v1);
-                reader.Close();
-                File.Delete(tempfile);
-            }
+
+            DeserializedData = await Task.Run(() => JsonSerializer.Deserialize<SerializableBundle_v1>(content, SerializationHelpers.SerializingOptions));
+
 
             if (DeserializedData is null || DeserializedData.export_version is -1)
             {

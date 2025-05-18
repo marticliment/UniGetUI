@@ -358,38 +358,6 @@ namespace UniGetUI.Core.Data
             }
         }
 
-
-        private class FlexibleBooleanConverter : JsonConverter<bool>
-        {
-            public override bool Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-            {
-                return reader.TokenType switch
-                {
-                    JsonTokenType.True => true,
-                    JsonTokenType.False => false,
-                    JsonTokenType.String => bool.TryParse(reader.GetString(), out var b) ? b :
-                        int.TryParse(reader.GetString(), out var i) ? i != 0 :
-                        throw new JsonException("Invalid string for boolean."),
-                    JsonTokenType.Number => reader.TryGetInt32(out var i2) ? i2 != 0 :
-                        throw new JsonException("Invalid number for boolean."),
-                    _ => throw new JsonException("Invalid token for boolean.")
-                };
-            }
-
-            public override void Write(Utf8JsonWriter writer, bool value, JsonSerializerOptions options)
-            {
-                writer.WriteBooleanValue(value);
-            }
-        }
-
-        public static JsonSerializerOptions SerializingOptions = new()
-        {
-            NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals | JsonNumberHandling.AllowReadingFromString,
-            AllowTrailingCommas = true,
-            WriteIndented = true,
-            Converters = { new FlexibleBooleanConverter() }
-        };
-
         private static int GetCodePage()
         {
             try
