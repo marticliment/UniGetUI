@@ -226,7 +226,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
                 var rawData = File.ReadAllText(optionsFile.FullName);
                 JsonNode? jsonData = JsonNode.Parse(rawData);
-                if (jsonData is null) return;
+                if (jsonData is null)
+                    return;
+
                 var serializedOptions = SerializableInstallationOptions_v1.FromJsonString(jsonData);
                 FromSerializable(serializedOptions);
             }
@@ -256,7 +258,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
                    $"InstallationScope={InstallationScope};" +
                    $"InstallationScope={CustomInstallLocation};" +
                    $"CustomParameters={customparams};" +
-                   $"RemoveDataOnUninstall={RemoveDataOnUninstall}>";
+                   $"RemoveDataOnUninstall={RemoveDataOnUninstall};" +
+                   $"PreRelease={PreRelease}>";
         }
     }
 }
