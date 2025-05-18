@@ -17,10 +17,10 @@ public class MetaTests
             var lines = File.ReadAllLines(file);
             var jsonSerCount = lines.Count(x => x.Contains("JsonSerializer.Serialize"));
             var jsonDeserCount = lines.Count(x => x.Contains("JsonSerializer.Deserialize"));
-            var serialOptionsCount = lines.Count(x => x.Contains("CoreData.SerializingOptions"));
+            var serialOptionsCount = lines.Count(x => x.Contains("CoreData.DefaultOptions"));
             Assert.True((jsonSerCount + jsonDeserCount) <= serialOptionsCount,
                 $"Failing on {file}. The specified file does not serialize and/or deserialize JSON with" +
-                $" the proper CoreData.SerializingOptions set");
+                $" the proper CoreData.DefaultOptions set");
         }
     }
 

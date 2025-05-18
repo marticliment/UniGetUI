@@ -608,7 +608,7 @@ namespace UniGetUI.Interface.SoftwarePages
             if (formatType is BundleFormatType.JSON or BundleFormatType.UBUNDLE)
                 ExportableData = JsonSerializer.Serialize(
                     exportable,
-                    SerializationHelpers.SerializingOptions);
+                    SerializationHelpers.DefaultOptions);
 
             else if (formatType is BundleFormatType.YAML)
             {
@@ -651,7 +651,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 Logger.ImportantInfo("XML payload was converted to JSON dynamically before deserialization");
             }
 
-            DeserializedData = await Task.Run(() => JsonSerializer.Deserialize<SerializableBundle_v1>(content, SerializationHelpers.SerializingOptions));
+            DeserializedData = await Task.Run(() => JsonSerializer.Deserialize<SerializableBundle_v1>(content, SerializationHelpers.ImportBundleOptions));
 
 
             if (DeserializedData is null || DeserializedData.export_version is -1)

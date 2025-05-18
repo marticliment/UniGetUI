@@ -91,7 +91,7 @@ namespace UniGetUI.Core.IconEngine
             {
                 IconScreenshotDatabase_v2 JsonData = JsonSerializer.Deserialize<IconScreenshotDatabase_v2>(
                     await File.ReadAllTextAsync(IconsAndScreenshotsFile),
-                    SerializationHelpers.SerializingOptions
+                    SerializationHelpers.DefaultOptions
                     );
                 if (JsonData.icons_and_screenshots is not null)
                 {

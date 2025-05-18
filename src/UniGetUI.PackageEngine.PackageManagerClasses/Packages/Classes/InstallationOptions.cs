@@ -201,7 +201,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
                 string fileContents = JsonSerializer.Serialize(
                     AsSerializable(),
-                    SerializationHelpers.SerializingOptions
+                    SerializationHelpers.DefaultOptions
                 );
                 File.WriteAllText(optionsFile.FullName, fileContents);
             }
@@ -227,7 +227,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
                 using FileStream inputStream = optionsFile.OpenRead();
                 SerializableInstallationOptions_v1? options = JsonSerializer.Deserialize<SerializableInstallationOptions_v1>(
-                    inputStream, SerializationHelpers.SerializingOptions);
+                    inputStream, SerializationHelpers.DefaultOptions);
 
                 if (options is null)
                 {

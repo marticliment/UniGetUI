@@ -28,7 +28,7 @@ public static class SerializationHelpers
         var doc = new XmlDocument();
         doc.LoadXml(XML);
         if (doc.DocumentElement is null) return "{'message': 'XmlDocument.DocumentElement was null'}";
-        return JsonSerializer.Serialize(_convertXmlNode(doc.DocumentElement), SerializingOptions);
+        return JsonSerializer.Serialize(_convertXmlNode(doc.DocumentElement), DefaultOptions);
     }
 
     private static object? _convertXmlNode(XmlNode node)
@@ -78,16 +78,32 @@ public static class SerializationHelpers
         return dict;
     }
 
-    public static JsonSerializerOptions SerializingOptions = new()
+    public static JsonSerializerOptions DefaultOptions = new()
     {
         TypeInfoResolver = new DefaultJsonTypeInfoResolver(),
-        NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals | JsonNumberHandling.AllowReadingFromString,
         AllowTrailingCommas = true,
         WriteIndented = true,
-        Converters = { new FlexibleBooleanConverter(), new FlexibleStringConverter(), new FlexibleListStringConverter() }
     };
 
-    private class FlexibleBooleanConverter : JsonConverter<bool>
+    public static JsonSerializerOptions ImportBundleOptions = new()
+    {
+        TypeInfoResolver = new DefaultJsonTypeInfoResolver(),
+        NumberHandling =
+            JsonNumberHandling.AllowNamedFloatingPointLiterals | JsonNumberHandling.AllowReadingFromString,
+        AllowTrailingCommas = true,
+        WriteIndented = true,
+        Converters =
+        {
+            new Converters.FlexibleBooleanConverter(),
+            new Converters.FlexibleStringConverter(),
+            new Converters.FlexibleListStringConverter()
+        }
+    };
+}
+
+internal class Converters
+{
+    public class FlexibleBooleanConverter : JsonConverter<bool>
     {
         public override bool Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
@@ -110,7 +126,7 @@ public static class SerializationHelpers
         }
     }
 
-    private class FlexibleStringConverter : JsonConverter<string>
+    public class FlexibleStringConverter : JsonConverter<string>
     {
         public override string Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
@@ -128,7 +144,7 @@ public static class SerializationHelpers
         }
     }
 
-    private class FlexibleListStringConverter : JsonConverter<List<string>>
+    public class FlexibleListStringConverter : JsonConverter<List<string>>
     {
         public override List<string> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
