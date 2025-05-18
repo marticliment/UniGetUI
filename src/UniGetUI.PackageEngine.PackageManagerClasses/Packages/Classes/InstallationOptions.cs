@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.Runtime.InteropServices;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Language;
 using UniGetUI.Core.Logging;
@@ -221,20 +222,13 @@ namespace UniGetUI.PackageEngine.PackageClasses
             try
             {
                 if (!optionsFile.Exists)
-                {
                     return;
-                }
 
-                using FileStream inputStream = optionsFile.OpenRead();
-                SerializableInstallationOptions_v1? options = JsonSerializer.Deserialize<SerializableInstallationOptions_v1>(
-                    inputStream, SerializationHelpers.DefaultOptions);
-
-                if (options is null)
-                {
-                    throw new InvalidOperationException("Deserialized options cannot be null!");
-                }
-
-                FromSerializable(options);
+                var rawData = File.ReadAllText(optionsFile.FullName);
+                JsonNode? jsonData = JsonNode.Parse(rawData);
+                if (jsonData is null) return;
+                var serializedOptions = SerializableInstallationOptions_v1.FromJsonString(jsonData);
+                FromSerializable(serializedOptions);
             }
             catch (JsonException)
             {
