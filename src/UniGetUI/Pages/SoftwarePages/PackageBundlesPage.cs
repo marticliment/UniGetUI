@@ -635,17 +635,22 @@ namespace UniGetUI.Interface.SoftwarePages
         {
             // Deserialize data
             SerializableBundle_v1? DeserializedData;
+
+            if (format is BundleFormatType.YAML)
+            {
+                // Dynamic convert to JSON
+                format = BundleFormatType.JSON;
+                var yamlObject = new YamlDotNet.Serialization.Deserializer().Deserialize(content);
+                content = new YamlDotNet.Serialization.SerializerBuilder()
+                    .JsonCompatible()
+                    .Build()
+                    .Serialize(yamlObject);
+                Logger.ImportantInfo("YAML bundle was converted to JSON before deserialization");
+            }
+
             if (format is BundleFormatType.JSON or BundleFormatType.UBUNDLE)
             {
                 DeserializedData = await Task.Run(() => JsonSerializer.Deserialize<SerializableBundle_v1>(content, CoreData.SerializingOptions));
-            }
-            else if (format is BundleFormatType.YAML)
-            {
-                IDeserializer deserializer =
-                    new DeserializerBuilder()
-                        .IgnoreUnmatchedProperties()
-                        .Build();
-                DeserializedData = await Task.Run(() => deserializer.Deserialize<SerializableBundle_v1>(content));
             }
             else
             {
