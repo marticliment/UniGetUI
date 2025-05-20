@@ -50,26 +50,33 @@ public class TestSerializablePackage
     }
 
     [Theory]
-    [InlineData("{}", "", "", "", "", "")]
+    [InlineData("{}", "", "", "", "", "", false, "")]
     [InlineData("""
                 {
                   "Name": "name",
-                  "Id": "true"
+                  "Id": "true",
+                  "Updates" : {
+                    "IgnoredVersion": "Hey"
+                  }
                 }
-                """, "true", "name", "", "", "")]
+                """, "true", "name", "", "", "", false, "Hey")]
 
     [InlineData("""
-                {
-                  "Version": "false",
-                  "Source": "lol",
-                  "PackageManager": "Rodolfo Chikilicuatre",
-                  "UNKNOWN_VAL1": true,
-                  "UNKNOWN_VAL2": null,
-                  "UNKNOWN_VAL3": 22,
-                  "UNKNOWN_VAL4": "hehe"
+                 {
+                    "Version": "false",
+                    "Source": "lol",
+                    "ManagerName": "Rodolfo Chikilicuatre",
+                    "UNKNOWN_VAL1": true,
+                    "UNKNOWN_VAL2": null,
+                    "UNKNOWN_VAL3": 22,
+                    "UNKNOWN_VAL4": "hehe",
+                    "InstallationOptions" : {
+                        "SkipHashCheck": true
+                    }
                 }
-                """, "", "", "false", "Rodolfo Chikilicuatre", "lol")]
-    public void FromJson(string JSON, string id, string name, string version, string manager, string source)
+                """, "", "", "false", "Rodolfo Chikilicuatre", "lol", true, "")]
+
+    public void FromJson(string JSON, string id, string name, string version, string manager, string source, bool skipHash, string ignoredVer)
     {
         Assert.NotEmpty(JSON);
         var jsonContent = JsonNode.Parse(JSON);
@@ -78,9 +85,11 @@ public class TestSerializablePackage
 
         Assert.Equal(name, o2.Name);
         Assert.Equal(id, o2.Id);
-        Assert.Equal(manager, o2.Source);
+        Assert.Equal(manager, o2.ManagerName);
+        Assert.Equal(source, o2.Source);
         Assert.Equal(version, o2.Version);
-
+        TestSerializableInstallationOptions.AreEqual(new() { SkipHashCheck = skipHash }, o2.InstallationOptions);
+        TestSerializableUpdatesOptions.AreEqual(new(){IgnoredVersion = ignoredVer}, o2.Updates);
     }
 
     private static void AreEqual(SerializablePackage o1, SerializablePackage o2)
