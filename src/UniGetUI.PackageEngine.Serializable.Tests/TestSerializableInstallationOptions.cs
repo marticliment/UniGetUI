@@ -33,12 +33,13 @@ public class TestSerializableInstallationOptions
         var jsonContent = JsonNode.Parse(contents);
         Assert.NotNull(jsonContent);
         object2.LoadFromJson(jsonContent);
-
         AreEqual(originalObject1, object2);
 
         var object3 = new SerializableInstallationOptions(originalObject1.AsJsonNode());
-
         AreEqual(originalObject1, object3);
+
+        var object4 = originalObject1.Copy();
+        AreEqual(originalObject1, object4);
     }
 
     [Theory]

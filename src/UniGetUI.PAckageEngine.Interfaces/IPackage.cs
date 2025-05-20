@@ -151,6 +151,6 @@ namespace UniGetUI.PackageEngine.Interfaces
 
         public SerializablePackage_v1 AsSerializable();
 
-        public SerializableIncompatiblePackage_v1 AsSerializable_Incompatible();
+        public SerializableIncompatiblePackage AsSerializable_Incompatible();
     }
 }

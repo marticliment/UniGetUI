@@ -55,7 +55,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public InvalidImportedPackage(SerializableIncompatiblePackage_v1 data, IManagerSource source)
+        public InvalidImportedPackage(SerializableIncompatiblePackage data, IManagerSource source)
         {
             Name = data.Name;
             Id = data.Id.Split('\\')[^1];
@@ -80,9 +80,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
             throw new NotImplementedException();
         }
 
-        public SerializableIncompatiblePackage_v1 AsSerializable_Incompatible()
+        public SerializableIncompatiblePackage AsSerializable_Incompatible()
         {
-            return new SerializableIncompatiblePackage_v1
+            return new SerializableIncompatiblePackage
             {
                 Name = Name,
                 Id = Id,

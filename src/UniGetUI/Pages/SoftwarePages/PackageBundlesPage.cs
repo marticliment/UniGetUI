@@ -666,7 +666,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 packages.Add(PackageFromSerializable(DeserializedPackage));
             }
 
-            foreach (SerializableIncompatiblePackage_v1 DeserializedPackage in DeserializedData
+            foreach (SerializableIncompatiblePackage DeserializedPackage in DeserializedData
                          .incompatible_packages)
             {
                 packages.Add(InvalidPackageFromSerializable(DeserializedPackage, NullSource.Instance));
@@ -706,7 +706,7 @@ namespace UniGetUI.Interface.SoftwarePages
             return new ImportedPackage(raw_package, manager, source);
         }
 
-        public static IPackage InvalidPackageFromSerializable(SerializableIncompatiblePackage_v1 raw_package, IManagerSource source)
+        public static IPackage InvalidPackageFromSerializable(SerializableIncompatiblePackage raw_package, IManagerSource source)
         {
             return new InvalidImportedPackage(raw_package, source);
         }

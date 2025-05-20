@@ -43,9 +43,9 @@ namespace UniGetUI.PackageEngine.Classes.Serializable
         /// Returns an equivalent copy of the current package as an Invalid Serializable Package.
         /// The reverse operation is not possible, since data is lost.
         /// </summary>
-        public SerializableIncompatiblePackage_v1 GetInvalidEquivalent()
+        public SerializableIncompatiblePackage GetInvalidEquivalent()
         {
-            return new SerializableIncompatiblePackage_v1
+            return new SerializableIncompatiblePackage
             {
                 Id = Id,
                 Name = Name,

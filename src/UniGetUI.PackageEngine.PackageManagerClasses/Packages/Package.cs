@@ -319,9 +319,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
             };
         }
 
-        public SerializableIncompatiblePackage_v1 AsSerializable_Incompatible()
+        public SerializableIncompatiblePackage AsSerializable_Incompatible()
         {
-            return new SerializableIncompatiblePackage_v1
+            return new SerializableIncompatiblePackage
             {
                 Id = Id,
                 Name = Name,
