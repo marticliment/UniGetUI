@@ -10,7 +10,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <summary>
         /// Construct an invalid package with a given name, id, version, source and manager, and an optional scope.
         /// </summary>
-        public SerializableUpdatesOptions_v1 updates_options;
+        public SerializableUpdatesOptions updates_options;
         public SerializableInstallationOptions installation_options;
 
         private readonly string _version;

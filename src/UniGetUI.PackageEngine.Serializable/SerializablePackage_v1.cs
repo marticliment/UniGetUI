@@ -37,7 +37,7 @@ namespace UniGetUI.PackageEngine.Classes.Serializable
         /// <summary>
         /// The Updates preferences associated to this package
         /// </summary>
-        public SerializableUpdatesOptions_v1 Updates { get; set; } = new();
+        public SerializableUpdatesOptions Updates { get; set; } = new();
 
         /// <summary>
         /// Returns an equivalent copy of the current package as an Invalid Serializable Package.

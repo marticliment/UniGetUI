@@ -311,7 +311,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 Source = Source.Name,
                 ManagerName = Manager.Name,
                 InstallationOptions = InstallationOptions.FromPackage(this).AsSerializable(),
-                Updates = new SerializableUpdatesOptions_v1
+                Updates = new SerializableUpdatesOptions
                 {
                     IgnoredVersion = GetIgnoredUpdatesVersionAsync().GetAwaiter().GetResult(),
                     UpdatesIgnored = HasUpdatesIgnoredAsync().GetAwaiter().GetResult(),
