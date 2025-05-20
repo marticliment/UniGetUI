@@ -579,7 +579,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         public static async Task<string> CreateBundle(IReadOnlyList<IPackage> unsorted_packages, BundleFormatType formatType = BundleFormatType.UBUNDLE)
         {
-            SerializableBundle_v1 exportable = new()
+            SerializableBundle exportable = new()
             {
                 export_version = 2.1,
             };
@@ -620,7 +620,7 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 string tempfile = Path.GetTempFileName();
                 StreamWriter writer = new(tempfile);
-                XmlSerializer serializer = new(typeof(SerializableBundle_v1));
+                XmlSerializer serializer = new(typeof(SerializableBundle));
                 serializer.Serialize(writer, exportable);
                 writer.Close();
                 ExportableData = await File.ReadAllTextAsync(tempfile);
@@ -635,7 +635,7 @@ namespace UniGetUI.Interface.SoftwarePages
         public async Task<double> AddFromBundle(string content, BundleFormatType format)
         {
             // Deserialize data
-            SerializableBundle_v1? DeserializedData;
+            SerializableBundle? DeserializedData;
 
             if (format is BundleFormatType.YAML)
             {
@@ -651,7 +651,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 Logger.ImportantInfo("XML payload was converted to JSON dynamically before deserialization");
             }
 
-            DeserializedData = await Task.Run(() => JsonSerializer.Deserialize<SerializableBundle_v1>(content, SerializationHelpers.ImportBundleOptions));
+            DeserializedData = await Task.Run(() => JsonSerializer.Deserialize<SerializableBundle>(content, SerializationHelpers.ImportBundleOptions));
 
 
             if (DeserializedData is null || DeserializedData.export_version is -1)

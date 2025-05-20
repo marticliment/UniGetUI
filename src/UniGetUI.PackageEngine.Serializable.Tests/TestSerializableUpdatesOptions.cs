@@ -61,7 +61,7 @@ public class TestSerializableUpdatesOptions
         Assert.Equal(ver, o2.IgnoredVersion);
     }
 
-    public static void AreEqual(SerializableUpdatesOptions o1, SerializableUpdatesOptions o2)
+    internal static void AreEqual(SerializableUpdatesOptions o1, SerializableUpdatesOptions o2)
     {
         Assert.Equal(o1.IgnoredVersion, o2.IgnoredVersion);
         Assert.Equal(o1.UpdatesIgnored, o2.UpdatesIgnored);

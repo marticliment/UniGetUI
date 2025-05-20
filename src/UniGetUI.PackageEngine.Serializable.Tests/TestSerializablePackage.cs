@@ -92,7 +92,7 @@ public class TestSerializablePackage
         TestSerializableUpdatesOptions.AreEqual(new(){IgnoredVersion = ignoredVer}, o2.Updates);
     }
 
-    private static void AreEqual(SerializablePackage o1, SerializablePackage o2)
+    internal static void AreEqual(SerializablePackage o1, SerializablePackage o2)
     {
         Assert.Equal(o1.Name, o2.Name);
         Assert.Equal(o1.Id, o2.Id);

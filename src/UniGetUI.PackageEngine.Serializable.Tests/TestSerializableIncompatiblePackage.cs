@@ -3,7 +3,7 @@ using UniGetUI.PackageEngine.Classes.Serializable;
 
 namespace UniGetUI.PackageEngine.Serializable.Tests;
 
-public class TestIncompatiblePackage
+public class TestSerializableIncompatiblePackage
 {
     [Theory]
     [InlineData("", "", "", "")]
@@ -67,7 +67,7 @@ public class TestIncompatiblePackage
 
     }
 
-    private static void AreEqual(SerializableIncompatiblePackage o1, SerializableIncompatiblePackage o2)
+    internal static void AreEqual(SerializableIncompatiblePackage o1, SerializableIncompatiblePackage o2)
     {
         Assert.Equal(o1.Name, o2.Name);
         Assert.Equal(o1.Id, o2.Id);
