@@ -2,7 +2,7 @@ using System.Text.Json.Nodes;
 
 namespace UniGetUI.PackageEngine.Serializable
 {
-    public class SerializableInstallationOptions_v1
+    public class SerializableInstallationOptions: SerializableComponent
     {
         public bool SkipHashCheck { get; set; }
         public bool InteractiveInstallation { get; set; }
@@ -15,7 +15,7 @@ namespace UniGetUI.PackageEngine.Serializable
         public string Version { get; set; } = "";
         public bool SkipMinorUpdates { get; set; }
 
-        public SerializableInstallationOptions_v1 Copy()
+        public override SerializableInstallationOptions Copy()
         {
             return new()
             {
@@ -32,24 +32,22 @@ namespace UniGetUI.PackageEngine.Serializable
             };
         }
 
-        public static SerializableInstallationOptions_v1 FromJsonString(JsonNode data)
+        public override void LoadFromJson(JsonNode data)
         {
-            var options = new SerializableInstallationOptions_v1();
-            options.SkipHashCheck = data[nameof(SkipHashCheck)]?.GetValue<bool>() ?? false;
-            options.InteractiveInstallation = data[nameof(InteractiveInstallation)]?.GetValue<bool>() ?? false;
-            options.RunAsAdministrator = data[nameof(RunAsAdministrator)]?.GetValue<bool>() ?? false;
-            options.Architecture = data[nameof(Architecture)]?.GetValue<string>() ?? "";
-            options.InstallationScope = data[nameof(InstallationScope)]?.GetValue<string>() ?? "";
+            this.SkipHashCheck = data[nameof(SkipHashCheck)]?.GetValue<bool>() ?? false;
+            this.InteractiveInstallation = data[nameof(InteractiveInstallation)]?.GetValue<bool>() ?? false;
+            this.RunAsAdministrator = data[nameof(RunAsAdministrator)]?.GetValue<bool>() ?? false;
+            this.Architecture = data[nameof(Architecture)]?.GetValue<string>() ?? "";
+            this.InstallationScope = data[nameof(InstallationScope)]?.GetValue<string>() ?? "";
 
-            options.CustomParameters = new List<string>();
+            this.CustomParameters = new List<string>();
             foreach(var element in data[nameof(CustomParameters)]?.AsArray() ?? [])
-                if (element is not null) options.CustomParameters.Add(element.GetValue<string>());
+                if (element is not null) this.CustomParameters.Add(element.GetValue<string>());
 
-            options.PreRelease = data[nameof(PreRelease)]?.GetValue<bool>() ?? false;
-            options.CustomInstallLocation = data[nameof(CustomInstallLocation)]?.GetValue<string>() ?? "";
-            options.Version = data[nameof(Version)]?.GetValue<string>() ?? "";
-            options.SkipMinorUpdates = data[nameof(SkipMinorUpdates)]?.GetValue<bool>() ?? false;
-            return options;
+            this.PreRelease = data[nameof(PreRelease)]?.GetValue<bool>() ?? false;
+            this.CustomInstallLocation = data[nameof(CustomInstallLocation)]?.GetValue<string>() ?? "";
+            this.Version = data[nameof(Version)]?.GetValue<string>() ?? "";
+            this.SkipMinorUpdates = data[nameof(SkipMinorUpdates)]?.GetValue<bool>() ?? false;
         }
     }
 }

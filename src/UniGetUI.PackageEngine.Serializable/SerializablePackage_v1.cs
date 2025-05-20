@@ -32,7 +32,7 @@ namespace UniGetUI.PackageEngine.Classes.Serializable
         /// <summary>
         /// The InstallationOptions associated to this package
         /// </summary>
-        public SerializableInstallationOptions_v1 InstallationOptions { get; set; } = new();
+        public SerializableInstallationOptions InstallationOptions { get; set; } = new();
 
         /// <summary>
         /// The Updates preferences associated to this package

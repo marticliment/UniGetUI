@@ -18,15 +18,15 @@ namespace UniGetUI.Interface.Dialogs
     /// </summary>
     public sealed partial class InstallOptionsPage : Page
     {
-        public SerializableInstallationOptions_v1 Options;
+        public SerializableInstallationOptions Options;
         public IPackage Package;
         public event EventHandler? Close;
         private readonly OperationType Operation;
         private readonly string packageInstallLocation;
         private bool _uiLoaded;
 
-        public InstallOptionsPage(IPackage package, SerializableInstallationOptions_v1 options) : this(package, OperationType.None, options) { }
-        public InstallOptionsPage(IPackage package, OperationType operation, SerializableInstallationOptions_v1 options)
+        public InstallOptionsPage(IPackage package, SerializableInstallationOptions options) : this(package, OperationType.None, options) { }
+        public InstallOptionsPage(IPackage package, OperationType operation, SerializableInstallationOptions options)
         {
             Package = package;
             InitializeComponent();
@@ -161,7 +161,7 @@ namespace UniGetUI.Interface.Dialogs
             VersionProgress.Visibility = Visibility.Collapsed;
         }
 
-        public async Task<SerializableInstallationOptions_v1> GetUpdatedOptions(bool updateIgnoredUpdates = true)
+        public async Task<SerializableInstallationOptions> GetUpdatedOptions(bool updateIgnoredUpdates = true)
         {
             Options.RunAsAdministrator = AdminCheckBox?.IsChecked ?? false;
             Options.InteractiveInstallation = InteractiveCheckBox?.IsChecked ?? false;

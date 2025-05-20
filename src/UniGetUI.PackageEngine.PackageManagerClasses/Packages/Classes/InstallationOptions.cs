@@ -95,9 +95,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
         }
 
         /// <summary>
-        /// Returns a new InstallationOptions object from a given SerializableInstallationOptions_v1 and a package.
+        /// Returns a new InstallationOptions object from a given SerializableInstallationOptions and a package.
         /// </summary>
-        public static InstallationOptions FromSerialized(SerializableInstallationOptions_v1 options, IPackage package)
+        public static InstallationOptions FromSerialized(SerializableInstallationOptions options, IPackage package)
         {
             InstallationOptions instance = new(package);
             instance.FromSerializable(options);
@@ -111,9 +111,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
         }
 
         /// <summary>
-        /// Loads and applies the options from the given SerializableInstallationOptions_v1 object to the current object.
+        /// Loads and applies the options from the given SerializableInstallationOptions object to the current object.
         /// </summary>
-        public void FromSerializable(SerializableInstallationOptions_v1 options)
+        public void FromSerializable(SerializableInstallationOptions options)
         {
             SkipHashCheck = options.SkipHashCheck;
             InteractiveInstallation = options.InteractiveInstallation;
@@ -145,11 +145,11 @@ namespace UniGetUI.PackageEngine.PackageClasses
         }
 
         /// <summary>
-        /// Returns a SerializableInstallationOptions_v1 object containing the options of the current instance.
+        /// Returns a SerializableInstallationOptions object containing the options of the current instance.
         /// </summary>
-        public SerializableInstallationOptions_v1 AsSerializable()
+        public SerializableInstallationOptions AsSerializable()
         {
-            SerializableInstallationOptions_v1 options = new()
+            SerializableInstallationOptions options = new()
             {
                 SkipHashCheck = SkipHashCheck,
                 InteractiveInstallation = InteractiveInstallation,
@@ -229,7 +229,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 if (jsonData is null)
                     return;
 
-                var serializedOptions = SerializableInstallationOptions_v1.FromJsonString(jsonData);
+                var serializedOptions = SerializableInstallationOptions.FromJsonString(jsonData);
                 FromSerializable(serializedOptions);
             }
             catch (JsonException)

@@ -20,14 +20,14 @@ namespace UniGetUI.PackageEngine.Interfaces
         public IPackage Package { get; }
 
         /// <summary>
-        /// Loads and applies the options from the given SerializableInstallationOptions_v1 object to the current object.
+        /// Loads and applies the options from the given SerializableInstallationOptions object to the current object.
         /// </summary>
-        public void FromSerializable(SerializableInstallationOptions_v1 options);
+        public void FromSerializable(SerializableInstallationOptions options);
 
         /// <summary>
-        /// Returns a SerializableInstallationOptions_v1 object containing the options of the current instance.
+        /// Returns a SerializableInstallationOptions object containing the options of the current instance.
         /// </summary>
-        public SerializableInstallationOptions_v1 AsSerializable();
+        public SerializableInstallationOptions AsSerializable();
 
         /// <summary>
         /// Saves the current options to disk, asynchronously.
