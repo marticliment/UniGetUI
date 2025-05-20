@@ -91,7 +91,7 @@ public class TestSerializableInstallationOptions
         Assert.Equal(ver, o2.Version);
     }
 
-    private static void AreEqual(SerializableInstallationOptions o1, SerializableInstallationOptions o2)
+    public static void AreEqual(SerializableInstallationOptions o1, SerializableInstallationOptions o2)
     {
         Assert.Equal(o1.SkipHashCheck, o2.SkipHashCheck);
         Assert.Equal(o1.Architecture, o2.Architecture);

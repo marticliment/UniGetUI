@@ -301,9 +301,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
                    (NormalizedVersion.Patch != NormalizedNewVersion.Patch || NormalizedVersion.Remainder != NormalizedNewVersion.Remainder);
         }
 
-        public virtual SerializablePackage_v1 AsSerializable()
+        public virtual SerializablePackage AsSerializable()
         {
-            return new SerializablePackage_v1
+            return new SerializablePackage
             {
                 Id = Id,
                 Name = Name,

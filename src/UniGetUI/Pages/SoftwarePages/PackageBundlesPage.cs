@@ -661,7 +661,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             List<IPackage> packages = [];
 
-            foreach (SerializablePackage_v1 DeserializedPackage in DeserializedData.packages)
+            foreach (SerializablePackage DeserializedPackage in DeserializedData.packages)
             {
                 packages.Add(PackageFromSerializable(DeserializedPackage));
             }
@@ -677,7 +677,7 @@ namespace UniGetUI.Interface.SoftwarePages
             return DeserializedData.export_version;
         }
 
-        public static IPackage PackageFromSerializable(SerializablePackage_v1 raw_package)
+        public static IPackage PackageFromSerializable(SerializablePackage raw_package)
         {
             IPackageManager? manager = null;
             IManagerSource? source;

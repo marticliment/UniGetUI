@@ -75,7 +75,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             return Task.CompletedTask;
         }
 
-        public SerializablePackage_v1 AsSerializable()
+        public SerializablePackage AsSerializable()
         {
             throw new NotImplementedException();
         }
