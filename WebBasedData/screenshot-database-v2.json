@@ -3,8 +3,8 @@
         "total": 11813,
         "done": 5288,
         "packages_with_icon": 5288,
-        "packages_with_screenshot": 637,
-        "total_screenshots": 1988
+        "packages_with_screenshot": 638,
+        "total_screenshots": 1991
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -42006,7 +42006,11 @@
         },
         "tortoisegit": {
             "icon": "https://cdn.meowcat285.com/unigeticons/tortoisegit.png",
-            "images": []
+            "images": [
+                "https://i.imgur.com/r43Qy8M.png",
+                "https://i.imgur.com/yJlUype.png",
+                "https://i.imgur.com/xSqb72j.png"
+            ]
         },
         "tortoisegit-latest": {
             "icon": "https://community.chocolatey.org/content/packageimages/TortoiseGit.latest.1.7.15.png",

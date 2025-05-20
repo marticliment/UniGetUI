@@ -459,7 +459,7 @@
   "Please wait while {0} is being installed. A black window may show up. Please wait until it closes.": "Odota, kun {0} asennetaan. Näkyviin saattaa tulla musta ikkuna. Odota, kunnes se sulkeutuu.",
   "Please wait...": "Ole hyvä ja odota...",
   "Portable": "Itsenäinen",
-  "Portable mode": null,
+  "Portable mode": "Itsenäinen tila",
   "PowerShell's package manager. Find libraries and scripts to expand PowerShell capabilities<br>Contains: <b>Modules, Scripts, Cmdlets</b>": "PowerShellin paketinhallinta. Etsi kirjastoja ja komentosarjoja laajentaaksesi PowerShell-ominaisuuksia.<br>Sisältää: <b>Moduulit, Komentosarjat, Cmdletit</b>",
   "PreRelease": "Esijulkaisu",
   "Preparing packages, please wait...": "Valmistellaan paketteja, odota hetki...",
