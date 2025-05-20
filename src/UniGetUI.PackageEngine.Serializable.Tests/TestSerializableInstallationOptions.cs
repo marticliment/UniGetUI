@@ -41,6 +41,55 @@ public class TestSerializableInstallationOptions
         AreEqual(originalObject1, object3);
     }
 
+    [Theory]
+    [InlineData("{}", false, false, "", "", "", "", "", "", false, false, false, "")]
+    [InlineData("""
+                {
+                  "SkipHashCheck": true,
+                  "InteractiveInstallation": true,
+                  "RunAsAdministrator": false,
+                  "Architecture": "lol",
+                  "InstallationScope": "",
+                  "CustomParameters": [
+                    "a"
+                  ]
+                }
+                """, true, true, "", "a", "", "", "", "lol", false, false, false, "")]
+
+    [InlineData("""
+                {
+                  "PreRelease": false,
+                  "CustomInstallLocation": "",
+                  "Version": "heyheyhey",
+                  "SkipMinorUpdates": true,
+                  "UNKNOWN_VAL1": true,
+                  "UNKNOWN_VAL2": null,
+                  "UNKNOWN_VAL3": 22,
+                  "UNKNOWN_VAL4": "hehe"
+                }
+                """, false, false, "", "", "", "",
+        "", "", false, false, true, "heyheyhey")]
+    public void FromJson(string JSON, bool hash, bool inter, string installLoc, string arg1, string arg2, string arg3, string scope, string arch, bool pre, bool admin, bool skipMin, string ver)
+    {
+        Assert.NotEmpty(JSON);
+        var jsonContent = JsonNode.Parse(JSON);
+        Assert.NotNull(jsonContent);
+        var o2 = new SerializableInstallationOptions(jsonContent);
+
+        var list = new List<string>() { arg1, arg2, arg3 }.Where(x => x.Any());
+
+        Assert.Equal(hash, o2.SkipHashCheck);
+        Assert.Equal(arch, o2.Architecture);
+        Assert.Equal(installLoc, o2.CustomInstallLocation);
+        Assert.Equal(list, o2.CustomParameters);
+        Assert.Equal(scope, o2.InstallationScope);
+        Assert.Equal(inter, o2.InteractiveInstallation);
+        Assert.Equal(pre, o2.PreRelease);
+        Assert.Equal(admin, o2.RunAsAdministrator);
+        Assert.Equal(skipMin, o2.SkipMinorUpdates);
+        Assert.Equal(ver, o2.Version);
+    }
+
     private static void AreEqual(SerializableInstallationOptions o1, SerializableInstallationOptions o2)
     {
         Assert.Equal(o1.SkipHashCheck, o2.SkipHashCheck);
