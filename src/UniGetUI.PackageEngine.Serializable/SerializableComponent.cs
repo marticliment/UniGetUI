@@ -4,13 +4,13 @@ using UniGetUI.Core.Data;
 
 namespace UniGetUI.PackageEngine.Serializable;
 
-public abstract class SerializableComponent
+public abstract class SerializableComponent<T> where T: class
 {
     /// <summary>
     /// Creates a deep copy of the object
     /// </summary>
     /// <returns>A memory-independend copy of this</returns>
-    public abstract SerializableComponent Copy();
+    public abstract T Copy();
 
     /// <summary>
     /// Loads data for this object from a JsonNode object
@@ -24,7 +24,7 @@ public abstract class SerializableComponent
     /// <returns>A pretty-formatted JSON string representing the current data</returns>
     public string AsJsonString()
     {
-        return JsonSerializer.Serialize(this, SerializationHelpers.DefaultOptions);
+        return JsonSerializer.Serialize<T>(this as T ?? throw new InvalidCastException("Invalid type"), SerializationHelpers.DefaultOptions);
     }
 
     /// <summary>
@@ -39,7 +39,9 @@ public abstract class SerializableComponent
     /// <summary>
     /// Creates an instance of this object with the default data
     /// </summary>
-    public SerializableComponent() {}
+    public SerializableComponent()
+    {
+    }
 
     /// <summary>
     /// Creates an instance of this object, and loads the data from the given JsonNode object

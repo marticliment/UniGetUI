@@ -229,7 +229,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 if (jsonData is null)
                     return;
 
-                var serializedOptions = SerializableInstallationOptions.FromJsonString(jsonData);
+                var serializedOptions = new SerializableInstallationOptions(jsonData);
                 FromSerializable(serializedOptions);
             }
             catch (JsonException)

@@ -2,7 +2,7 @@ using System.Text.Json.Nodes;
 
 namespace UniGetUI.PackageEngine.Serializable
 {
-    public class SerializableInstallationOptions: SerializableComponent
+    public class SerializableInstallationOptions: SerializableComponent<SerializableInstallationOptions>
     {
         public bool SkipHashCheck { get; set; }
         public bool InteractiveInstallation { get; set; }
@@ -48,6 +48,14 @@ namespace UniGetUI.PackageEngine.Serializable
             this.CustomInstallLocation = data[nameof(CustomInstallLocation)]?.GetValue<string>() ?? "";
             this.Version = data[nameof(Version)]?.GetValue<string>() ?? "";
             this.SkipMinorUpdates = data[nameof(SkipMinorUpdates)]?.GetValue<bool>() ?? false;
+        }
+
+        public SerializableInstallationOptions() : base()
+        {
+        }
+
+        public SerializableInstallationOptions(JsonNode data) : base(data)
+        {
         }
     }
 }
