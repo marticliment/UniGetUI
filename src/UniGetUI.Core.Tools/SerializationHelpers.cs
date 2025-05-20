@@ -1,4 +1,6 @@
+using System.Globalization;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
 using System.Xml;
@@ -84,104 +86,50 @@ public static class SerializationHelpers
         AllowTrailingCommas = true,
         WriteIndented = true,
     };
-
-    public static JsonSerializerOptions ImportBundleOptions = new()
-    {
-        TypeInfoResolver = new DefaultJsonTypeInfoResolver(),
-        NumberHandling =
-            JsonNumberHandling.AllowNamedFloatingPointLiterals | JsonNumberHandling.AllowReadingFromString,
-        AllowTrailingCommas = true,
-        WriteIndented = true,
-        Converters =
-        {
-            new Converters.FlexibleBooleanConverter(),
-            new Converters.FlexibleStringConverter(),
-            new Converters.FlexibleListStringConverter()
-        }
-    };
 }
 
-internal class Converters
+public static class JsonNodeExtensions
 {
-    public class FlexibleBooleanConverter : JsonConverter<bool>
+    /// <summary>
+    /// Safely gets a child node by key, returning null if the key does not exist.
+    /// </summary>
+    public static T GetVal<T>(this JsonNode node)
     {
-        public override bool Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        if (typeof(T) == typeof(double) && node.GetValueKind() is JsonValueKind.String)
+            return (T)(object)double.Parse(node.GetValue<string>(), CultureInfo.InvariantCulture);
+
+        if (typeof(T) == typeof(int) && node.GetValueKind() is JsonValueKind.String)
+            return (T)(object)int.Parse(node.GetValue<string>());
+
+        if (typeof(T) == typeof(bool) && node.GetValueKind() is JsonValueKind.String)
+            return (T)(object)bool.Parse(node.GetValue<string>());
+
+        if (typeof(T) == typeof(string) && node.GetValueKind() is JsonValueKind.Object)
         {
-            return reader.TokenType switch
-            {
-                JsonTokenType.True => true,
-                JsonTokenType.False => false,
-                JsonTokenType.String => bool.TryParse(reader.GetString(), out var b) ? b :
-                    int.TryParse(reader.GetString(), out var i) ? i != 0 :
-                    throw new JsonException("Invalid string for boolean."),
-                JsonTokenType.Number => reader.TryGetInt32(out var i2) ? i2 != 0 :
-                    throw new JsonException("Invalid number for boolean."),
-                _ => throw new JsonException("Invalid token for boolean.")
-            };
+            return (T)(object)"";
         }
 
-        public override void Write(Utf8JsonWriter writer, bool value, JsonSerializerOptions options)
-        {
-            writer.WriteBooleanValue(value);
-        }
+        return node.GetValue<T>();
     }
 
-    public class FlexibleStringConverter : JsonConverter<string>
+    /// <summary>
+    /// The same as JsonNode.AsArray, but can convert objects whose keys are integers to arrays
+    /// </summary>
+    /// <param name="node"></param>
+    /// <returns></returns>
+    public static JsonArray AsArray2(this JsonNode node)
     {
-        public override string Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        if (node is JsonValue val)
         {
-            if (reader.TokenType == JsonTokenType.StartObject)
-            {
-                using var doc = JsonDocument.ParseValue(ref reader);
-                return "";
-            }
-            return reader.GetString() ?? "";
+            JsonArray result = new();
+            result.Add(val.DeepClone());
+            return result;
+        }
+        else if (node is JsonObject obj && !obj.Any())
+        {
+            return new JsonArray();
         }
 
-        public override void Write(Utf8JsonWriter writer, string value, JsonSerializerOptions options)
-        {
-            writer.WriteStringValue(value);
-        }
-    }
-
-    public class FlexibleListStringConverter : JsonConverter<List<string>>
-    {
-        public override List<string> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-        {
-            if (reader.TokenType == JsonTokenType.StartObject)
-            {
-                using var doc = JsonDocument.ParseValue(ref reader);
-                return [];
-            }
-            if (reader.TokenType == JsonTokenType.String)
-            {
-                return [reader.GetString() ?? ""];
-            }
-            if (reader.TokenType == JsonTokenType.StartArray)
-            {
-                var list = new List<string>();
-                while (reader.Read())
-                {
-                    if (reader.TokenType == JsonTokenType.EndArray)
-                        break;
-                    if (reader.TokenType == JsonTokenType.String)
-                        list.Add(reader.GetString() ?? string.Empty);
-                }
-                return list;
-            }
-            throw new JsonException($"Unexpected token {reader.TokenType} when reading List<string>.");
-        }
-
-        public override void Write(Utf8JsonWriter writer, List<string> value, JsonSerializerOptions options)
-        {
-            writer.WriteStartArray();
-            foreach (var str in value)
-            {
-                writer.WriteStringValue(str);
-            }
-            writer.WriteEndArray();
-        }
+        return node.AsArray();
     }
 }
-
-

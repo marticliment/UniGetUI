@@ -1,4 +1,5 @@
 using System.Text.Json.Nodes;
+using UniGetUI.Core.Data;
 
 namespace UniGetUI.PackageEngine.Serializable
 {
@@ -34,20 +35,20 @@ namespace UniGetUI.PackageEngine.Serializable
 
         public override void LoadFromJson(JsonNode data)
         {
-            this.SkipHashCheck = data[nameof(SkipHashCheck)]?.GetValue<bool>() ?? false;
-            this.InteractiveInstallation = data[nameof(InteractiveInstallation)]?.GetValue<bool>() ?? false;
-            this.RunAsAdministrator = data[nameof(RunAsAdministrator)]?.GetValue<bool>() ?? false;
-            this.Architecture = data[nameof(Architecture)]?.GetValue<string>() ?? "";
-            this.InstallationScope = data[nameof(InstallationScope)]?.GetValue<string>() ?? "";
+            this.SkipHashCheck = data[nameof(SkipHashCheck)]?.GetVal<bool>() ?? false;
+            this.InteractiveInstallation = data[nameof(InteractiveInstallation)]?.GetVal<bool>() ?? false;
+            this.RunAsAdministrator = data[nameof(RunAsAdministrator)]?.GetVal<bool>() ?? false;
+            this.Architecture = data[nameof(Architecture)]?.GetVal<string>() ?? "";
+            this.InstallationScope = data[nameof(InstallationScope)]?.GetVal<string>() ?? "";
 
             this.CustomParameters = new List<string>();
-            foreach(var element in data[nameof(CustomParameters)]?.AsArray() ?? [])
-                if (element is not null) this.CustomParameters.Add(element.GetValue<string>());
+            foreach(var element in data[nameof(CustomParameters)]?.AsArray2() ?? [])
+                if (element is not null) this.CustomParameters.Add(element.GetVal<string>());
 
-            this.PreRelease = data[nameof(PreRelease)]?.GetValue<bool>() ?? false;
-            this.CustomInstallLocation = data[nameof(CustomInstallLocation)]?.GetValue<string>() ?? "";
-            this.Version = data[nameof(Version)]?.GetValue<string>() ?? "";
-            this.SkipMinorUpdates = data[nameof(SkipMinorUpdates)]?.GetValue<bool>() ?? false;
+            this.PreRelease = data[nameof(PreRelease)]?.GetVal<bool>() ?? false;
+            this.CustomInstallLocation = data[nameof(CustomInstallLocation)]?.GetVal<string>() ?? "";
+            this.Version = data[nameof(Version)]?.GetVal<string>() ?? "";
+            this.SkipMinorUpdates = data[nameof(SkipMinorUpdates)]?.GetVal<bool>() ?? false;
         }
 
         public SerializableInstallationOptions() : base()

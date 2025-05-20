@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Xml;
 using System.Xml.Serialization;
 using ExternalLibraries.Pickers;
@@ -489,10 +490,10 @@ namespace UniGetUI.Interface.SoftwarePages
 
                 DialogHelper.HideLoadingDialog();
 
-                if ((int)(open_version*10) != (int)(SerializableBundle_Data.ExpectedVersion*10))
+                if ((int)(open_version*10) != (int)(SerializableBundle.ExpectedVersion*10))
                 {   // Check only up to first decimal digit, prevent floating point precision error.
                     Logger.Warn($"The loaded bundle \"{file}\" is based on schema version {open_version}, " +
-                                $"while this UniGetUI build expects version {SerializableBundle_Data.ExpectedVersion}." +
+                                $"while this UniGetUI build expects version {SerializableBundle.ExpectedVersion}." +
                                 $"\nThis should not be a problem if packages show up, but be careful");
                 }
             }
@@ -579,10 +580,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         public static async Task<string> CreateBundle(IReadOnlyList<IPackage> unsorted_packages, BundleFormatType formatType = BundleFormatType.UBUNDLE)
         {
-            SerializableBundle exportable = new()
-            {
-                export_version = 2.1,
-            };
+            SerializableBundle exportable = new();
 
             List<IPackage> packages = unsorted_packages.ToList();
             packages.Sort(Comparison);
@@ -651,33 +649,24 @@ namespace UniGetUI.Interface.SoftwarePages
                 Logger.ImportantInfo("XML payload was converted to JSON dynamically before deserialization");
             }
 
-            DeserializedData = await Task.Run(() => JsonSerializer.Deserialize<SerializableBundle>(content, SerializationHelpers.ImportBundleOptions));
-
-
-            if (DeserializedData is null || DeserializedData.export_version is -1)
+            DeserializedData = await Task.Run(() =>
             {
-                throw new ArgumentException("DeserializedData was null");
-            }
+                return new SerializableBundle(JsonNode.Parse(content) ?? throw new Exception("Could not parse JSON object"));
+            });
 
             List<IPackage> packages = [];
 
-            foreach (SerializablePackage DeserializedPackage in DeserializedData.packages)
-            {
-                packages.Add(PackageFromSerializable(DeserializedPackage));
-            }
+            foreach (var pkg in DeserializedData.packages)
+                packages.Add(DeserializePackage(pkg));
 
-            foreach (SerializableIncompatiblePackage DeserializedPackage in DeserializedData
-                         .incompatible_packages)
-            {
-                packages.Add(InvalidPackageFromSerializable(DeserializedPackage, NullSource.Instance));
-            }
+            foreach (var pkg in DeserializedData.incompatible_packages)
+                packages.Add(DeserializeIncompatiblePackage(pkg, NullSource.Instance));
 
             await PEInterface.PackageBundlesLoader.AddPackagesAsync(packages);
-
             return DeserializedData.export_version;
         }
 
-        public static IPackage PackageFromSerializable(SerializablePackage raw_package)
+        public static IPackage DeserializePackage(SerializablePackage raw_package)
         {
             IPackageManager? manager = null;
             IManagerSource? source;
@@ -700,13 +689,13 @@ namespace UniGetUI.Interface.SoftwarePages
 
             if (manager is null || source is null)
             {
-                return InvalidPackageFromSerializable(raw_package.GetInvalidEquivalent(), NullSource.Instance);
+                return DeserializeIncompatiblePackage(raw_package.GetInvalidEquivalent(), NullSource.Instance);
             }
 
             return new ImportedPackage(raw_package, manager, source);
         }
 
-        public static IPackage InvalidPackageFromSerializable(SerializableIncompatiblePackage raw_package, IManagerSource source)
+        public static IPackage DeserializeIncompatiblePackage(SerializableIncompatiblePackage raw_package, IManagerSource source)
         {
             return new InvalidImportedPackage(raw_package, source);
         }

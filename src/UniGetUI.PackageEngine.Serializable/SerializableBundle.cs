@@ -1,5 +1,6 @@
 using System.Text.Json.Nodes;
 using UniGetUI.PackageEngine.Serializable;
+using UniGetUI.Core.Data;
 
 namespace UniGetUI.PackageEngine.Classes.Serializable
 {
@@ -39,18 +40,20 @@ namespace UniGetUI.PackageEngine.Classes.Serializable
 
         public override void LoadFromJson(JsonNode data)
         {
-            this.export_version = data[nameof(export_version)]?.GetValue<double>() ?? 0;
-            this.incompatible_packages_info = data[nameof(incompatible_packages_info)]?.GetValue<string>() ?? IncompatMessage;
+            this.export_version = data[nameof(export_version)]?.GetVal<double>() ?? 0;
+            this.incompatible_packages_info = data[nameof(incompatible_packages_info)]?.GetVal<string>() ?? IncompatMessage;
             this.packages = new List<SerializablePackage>();
             this.incompatible_packages = new List<SerializableIncompatiblePackage>();
 
-            foreach (JsonNode pkg in data[nameof(packages)] as JsonArray ?? [])
+            foreach (JsonNode? pkg in data[nameof(packages)]?.AsArray2() ?? new())
             {
+                if (pkg is null) throw new InvalidDataException("JsonNode? pkg was null, when it shouldn't");
                 packages.Add(new SerializablePackage(pkg));
             }
 
-            foreach (JsonNode inc_pkg in data[nameof(incompatible_packages)] as JsonArray ?? [])
+            foreach (JsonNode? inc_pkg in data[nameof(incompatible_packages)]?.AsArray2() ?? new())
             {
+                if (inc_pkg is null) throw new InvalidDataException("JsonNode? inc_pkg was null, when it shouldn't");
                 incompatible_packages.Add(new SerializableIncompatiblePackage(inc_pkg));
             }
         }

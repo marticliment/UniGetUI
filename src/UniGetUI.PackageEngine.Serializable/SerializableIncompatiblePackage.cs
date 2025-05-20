@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Nodes;
+using UniGetUI.Core.Data;
 using UniGetUI.PackageEngine.Serializable;
 
 namespace UniGetUI.PackageEngine.Classes.Serializable
@@ -20,10 +21,10 @@ namespace UniGetUI.PackageEngine.Classes.Serializable
 
         public override void LoadFromJson(JsonNode data)
         {
-            this.Id = data[nameof(Id)]?.GetValue<string>() ?? "";
-            this.Name = data[nameof(Name)]?.GetValue<string>() ?? "";
-            this.Version = data[nameof(Version)]?.GetValue<string>() ?? "";
-            this.Source = data[nameof(Source)]?.GetValue<string>() ?? "";
+            this.Id = data[nameof(Id)]?.GetVal<string>() ?? "";
+            this.Name = data[nameof(Name)]?.GetVal<string>() ?? "";
+            this.Version = data[nameof(Version)]?.GetVal<string>() ?? "";
+            this.Source = data[nameof(Source)]?.GetVal<string>() ?? "";
         }
 
         public SerializableIncompatiblePackage(JsonNode data) : base(data)

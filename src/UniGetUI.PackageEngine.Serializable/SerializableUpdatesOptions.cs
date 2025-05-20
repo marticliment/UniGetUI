@@ -1,4 +1,5 @@
 using System.Text.Json.Nodes;
+using UniGetUI.Core.Data;
 using UniGetUI.PackageEngine.Serializable;
 
 namespace UniGetUI.PackageEngine.Classes.Serializable
@@ -15,8 +16,8 @@ namespace UniGetUI.PackageEngine.Classes.Serializable
 
         public override void LoadFromJson(JsonNode data)
         {
-            this.UpdatesIgnored = data[nameof(UpdatesIgnored)]?.GetValue<bool>() ?? false;
-            this.IgnoredVersion = data[nameof(IgnoredVersion)]?.GetValue<string>() ?? "";
+            this.UpdatesIgnored = data[nameof(UpdatesIgnored)]?.GetVal<bool>() ?? false;
+            this.IgnoredVersion = data[nameof(IgnoredVersion)]?.GetVal<string>() ?? "";
         }
 
         public SerializableUpdatesOptions() : base()

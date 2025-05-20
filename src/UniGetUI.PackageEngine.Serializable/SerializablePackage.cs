@@ -1,4 +1,5 @@
 using System.Text.Json.Nodes;
+using UniGetUI.Core.Data;
 using UniGetUI.PackageEngine.Serializable;
 
 namespace UniGetUI.PackageEngine.Classes.Serializable
@@ -30,11 +31,11 @@ namespace UniGetUI.PackageEngine.Classes.Serializable
 
         public override void LoadFromJson(JsonNode data)
         {
-            this.Name = data[nameof(Name)]?.GetValue<string>() ?? "";
-            this.Id = data[nameof(Id)]?.GetValue<string>() ?? "";
-            this.Version = data[nameof(Version)]?.GetValue<string>() ?? "";
-            this.Source = data[nameof(Source)]?.GetValue<string>() ?? "";
-            this.ManagerName = data[nameof(ManagerName)]?.GetValue<string>() ?? "";
+            this.Name = data[nameof(Name)]?.GetVal<string>() ?? "";
+            this.Id = data[nameof(Id)]?.GetVal<string>() ?? "";
+            this.Version = data[nameof(Version)]?.GetVal<string>() ?? "";
+            this.Source = data[nameof(Source)]?.GetVal<string>() ?? "";
+            this.ManagerName = data[nameof(ManagerName)]?.GetVal<string>() ?? "";
 
             this.InstallationOptions = new(data[nameof(InstallationOptions)] ?? new JsonObject());
             this.Updates = new(data[nameof(Updates)] ?? new JsonObject());
