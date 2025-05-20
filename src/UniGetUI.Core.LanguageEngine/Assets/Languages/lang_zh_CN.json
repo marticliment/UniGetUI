@@ -1,6 +1,6 @@
 {
   "\"{0}\" is a local package and can't be shared": "“{0}”是本地软件包，无法共享",
-  "\"{0}\" is a local package and does not have available details": "“{0}”是本地软件包，没有详情",
+  "\"{0}\" is a local package and does not have available details": "“{0}”是缺乏详细信息的本地软件包",
   "\"{0}\" is a local package and is not compatible with this feature": "“{0}”是本地软件包，与此功能不兼容",
   "(Last checked: {0})": "（上一次检查的时间：{0}）",
   "(Number {0} in the queue)": "（队伍中的第{0}个）",
