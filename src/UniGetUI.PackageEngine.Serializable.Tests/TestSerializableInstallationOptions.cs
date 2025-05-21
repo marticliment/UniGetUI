@@ -27,6 +27,8 @@ public class TestSerializableInstallationOptions
             Version = l
         };
 
+        Assert.Equal(a, originalObject1.DiffersFromDefault());
+
         var object2 = new SerializableInstallationOptions();
         string contents = originalObject1.AsJsonString();
         Assert.NotEmpty(contents);
