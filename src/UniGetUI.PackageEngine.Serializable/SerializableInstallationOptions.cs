@@ -59,7 +59,7 @@ namespace UniGetUI.PackageEngine.Serializable
                 data[nameof(OverrideNextLevelPrefs)]?.GetValue<bool>() ?? DiffersFromDefault();
         }
 
-        private bool DiffersFromDefault()
+        public bool DiffersFromDefault()
         {
             return SkipHashCheck is not false ||
                    InteractiveInstallation is not false ||
