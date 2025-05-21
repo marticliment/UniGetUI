@@ -301,9 +301,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
                    (NormalizedVersion.Patch != NormalizedNewVersion.Patch || NormalizedVersion.Remainder != NormalizedNewVersion.Remainder);
         }
 
-        public virtual SerializablePackage_v1 AsSerializable()
+        public virtual SerializablePackage AsSerializable()
         {
-            return new SerializablePackage_v1
+            return new SerializablePackage
             {
                 Id = Id,
                 Name = Name,
@@ -311,7 +311,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 Source = Source.Name,
                 ManagerName = Manager.Name,
                 InstallationOptions = InstallationOptions.FromPackage(this).AsSerializable(),
-                Updates = new SerializableUpdatesOptions_v1
+                Updates = new SerializableUpdatesOptions
                 {
                     IgnoredVersion = GetIgnoredUpdatesVersionAsync().GetAwaiter().GetResult(),
                     UpdatesIgnored = HasUpdatesIgnoredAsync().GetAwaiter().GetResult(),
@@ -319,9 +319,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
             };
         }
 
-        public SerializableIncompatiblePackage_v1 AsSerializable_Incompatible()
+        public SerializableIncompatiblePackage AsSerializable_Incompatible()
         {
-            return new SerializableIncompatiblePackage_v1
+            return new SerializableIncompatiblePackage
             {
                 Id = Id,
                 Name = Name,

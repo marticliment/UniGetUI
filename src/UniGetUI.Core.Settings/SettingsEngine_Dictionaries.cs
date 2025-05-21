@@ -43,7 +43,7 @@ namespace UniGetUI.Core.SettingsEngine
                         if (result != "")
                         {
 
-                            Dictionary<K, V?>? item = JsonSerializer.Deserialize<Dictionary<K, V?>>(result, CoreData.SerializingOptions);
+                            Dictionary<K, V?>? item = JsonSerializer.Deserialize<Dictionary<K, V?>>(result, SerializationOptions);
                             if (item is not null)
                             {
                                 value = item;
@@ -90,7 +90,7 @@ namespace UniGetUI.Core.SettingsEngine
             try
             {
 
-                if (value.Count != 0) File.WriteAllText(file, JsonSerializer.Serialize(value, CoreData.SerializingOptions));
+                if (value.Count != 0) File.WriteAllText(file, JsonSerializer.Serialize(value, SerializationOptions));
                 else if (File.Exists(file)) File.Delete(file);
             }
             catch (Exception e)

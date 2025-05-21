@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.Runtime.InteropServices;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Language;
 using UniGetUI.Core.Logging;
@@ -94,9 +95,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
         }
 
         /// <summary>
-        /// Returns a new InstallationOptions object from a given SerializableInstallationOptions_v1 and a package.
+        /// Returns a new InstallationOptions object from a given SerializableInstallationOptions and a package.
         /// </summary>
-        public static InstallationOptions FromSerialized(SerializableInstallationOptions_v1 options, IPackage package)
+        public static InstallationOptions FromSerialized(SerializableInstallationOptions options, IPackage package)
         {
             InstallationOptions instance = new(package);
             instance.FromSerializable(options);
@@ -110,9 +111,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
         }
 
         /// <summary>
-        /// Loads and applies the options from the given SerializableInstallationOptions_v1 object to the current object.
+        /// Loads and applies the options from the given SerializableInstallationOptions object to the current object.
         /// </summary>
-        public void FromSerializable(SerializableInstallationOptions_v1 options)
+        public void FromSerializable(SerializableInstallationOptions options)
         {
             SkipHashCheck = options.SkipHashCheck;
             InteractiveInstallation = options.InteractiveInstallation;
@@ -144,11 +145,11 @@ namespace UniGetUI.PackageEngine.PackageClasses
         }
 
         /// <summary>
-        /// Returns a SerializableInstallationOptions_v1 object containing the options of the current instance.
+        /// Returns a SerializableInstallationOptions object containing the options of the current instance.
         /// </summary>
-        public SerializableInstallationOptions_v1 AsSerializable()
+        public SerializableInstallationOptions AsSerializable()
         {
-            SerializableInstallationOptions_v1 options = new()
+            SerializableInstallationOptions options = new()
             {
                 SkipHashCheck = SkipHashCheck,
                 InteractiveInstallation = InteractiveInstallation,
@@ -201,7 +202,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
                 string fileContents = JsonSerializer.Serialize(
                     AsSerializable(),
-                    CoreData.SerializingOptions
+                    SerializationHelpers.DefaultOptions
                 );
                 File.WriteAllText(optionsFile.FullName, fileContents);
             }
@@ -221,20 +222,15 @@ namespace UniGetUI.PackageEngine.PackageClasses
             try
             {
                 if (!optionsFile.Exists)
-                {
                     return;
-                }
 
-                using FileStream inputStream = optionsFile.OpenRead();
-                SerializableInstallationOptions_v1? options = JsonSerializer.Deserialize<SerializableInstallationOptions_v1>(
-                    inputStream, CoreData.SerializingOptions);
+                var rawData = File.ReadAllText(optionsFile.FullName);
+                JsonNode? jsonData = JsonNode.Parse(rawData);
+                if (jsonData is null)
+                    return;
 
-                if (options is null)
-                {
-                    throw new InvalidOperationException("Deserialized options cannot be null!");
-                }
-
-                FromSerializable(options);
+                var serializedOptions = new SerializableInstallationOptions(jsonData);
+                FromSerializable(serializedOptions);
             }
             catch (JsonException)
             {
@@ -262,7 +258,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
                    $"InstallationScope={InstallationScope};" +
                    $"InstallationScope={CustomInstallLocation};" +
                    $"CustomParameters={customparams};" +
-                   $"RemoveDataOnUninstall={RemoveDataOnUninstall}>";
+                   $"RemoveDataOnUninstall={RemoveDataOnUninstall};" +
+                   $"PreRelease={PreRelease}>";
         }
     }
 }

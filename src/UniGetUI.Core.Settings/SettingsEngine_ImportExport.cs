@@ -17,7 +17,7 @@ public partial class Settings
             settings.Add(Path.GetFileName(entry), File.ReadAllText(entry));
         }
 
-        File.WriteAllText(path, JsonSerializer.Serialize(settings, CoreData.SerializingOptions));
+        File.WriteAllText(path, JsonSerializer.Serialize(settings, SerializationOptions));
     }
 
     public static void ImportFromJSON(string path)
@@ -31,7 +31,7 @@ public partial class Settings
         }
 
         ResetSettings();
-        Dictionary<string, string> settings = JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllText(path), CoreData.SerializingOptions) ?? [];
+        Dictionary<string, string> settings = JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllText(path), SerializationOptions) ?? [];
         foreach (KeyValuePair<string, string> entry in settings)
         {
             if(new[] {"OperationHistory", "WinGetAlreadyUpgradedPackages.json", "TelemetryClientToken", "CurrentSessionToken"}.Contains(entry.Key))
