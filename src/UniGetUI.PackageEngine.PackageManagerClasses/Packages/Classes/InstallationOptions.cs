@@ -30,9 +30,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public bool RemoveDataOnUninstall { get; set; }
         public bool PreRelease { get; set; }
         public string CustomInstallLocation { get; set; } = "";
+        public bool OverridesNextLevelOpts { get; set; }
 
         public IPackage Package { get; }
-
         private readonly string __save_filename;
 
         private InstallationOptions(IPackage package)
@@ -122,23 +122,20 @@ namespace UniGetUI.PackageEngine.PackageClasses
             Version = options.Version;
             SkipMinorUpdates = options.SkipMinorUpdates;
             PreRelease = options.PreRelease;
+            OverridesNextLevelOpts = options.OverridesNextLevelOpts;
 
-            if (options.Architecture != "" && CommonTranslations.InvertedArchNames.TryGetValue(options.Architecture, out var name))
+            Architecture = null;
+            if (options.Architecture.Any() &&
+                CommonTranslations.InvertedArchNames.TryGetValue(options.Architecture, out var name))
             {
                 Architecture = name;
             }
-            else
-            {
-                Architecture = null;
-            }
 
-            if (options.InstallationScope != "" && CommonTranslations.InvertedScopeNames_NonLang.TryGetValue(options.InstallationScope, out var value))
+            InstallationScope = null;
+            if (options.InstallationScope.Any() &&
+                CommonTranslations.InvertedScopeNames_NonLang.TryGetValue(options.InstallationScope, out var value))
             {
                 InstallationScope = value;
-            }
-            else
-            {
-                InstallationScope = null;
             }
 
             CustomParameters = options.CustomParameters;
@@ -157,17 +154,15 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 CustomInstallLocation = CustomInstallLocation,
                 PreRelease = PreRelease,
                 Version = Version,
-                SkipMinorUpdates = SkipMinorUpdates
+                SkipMinorUpdates = SkipMinorUpdates,
+                OverridesNextLevelOpts = OverridesNextLevelOpts
             };
+
             if (Architecture is not null)
-            {
                 options.Architecture = CommonTranslations.ArchNames[Architecture.Value];
-            }
 
             if (InstallationScope is not null)
-            {
                 options.InstallationScope = CommonTranslations.ScopeNames_NonLang[InstallationScope.Value];
-            }
 
             options.CustomParameters = CustomParameters;
             return options;

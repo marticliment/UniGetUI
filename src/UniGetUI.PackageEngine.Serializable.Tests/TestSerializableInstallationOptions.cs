@@ -81,7 +81,7 @@ public class TestSerializableInstallationOptions
 
         var list = new List<string>() { arg1, arg2, arg3 }.Where(x => x.Any());
 
-        Assert.Equal(mod, o2.OverrideNextLevelPrefs);
+        Assert.Equal(mod, o2.OverridesNextLevelOpts);
         Assert.Equal(mod, o2.DiffersFromDefault());
         Assert.Equal(hash, o2.SkipHashCheck);
         Assert.Equal(arch, o2.Architecture);

@@ -15,7 +15,7 @@ namespace UniGetUI.PackageEngine.Serializable
         public string CustomInstallLocation { get; set; } = "";
         public string Version { get; set; } = "";
         public bool SkipMinorUpdates { get; set; }
-        public bool OverrideNextLevelPrefs { get; set; }
+        public bool OverridesNextLevelOpts { get; set; }
 
         public override SerializableInstallationOptions Copy()
         {
@@ -31,7 +31,7 @@ namespace UniGetUI.PackageEngine.Serializable
                 RunAsAdministrator = RunAsAdministrator,
                 Version = Version,
                 SkipMinorUpdates = SkipMinorUpdates,
-                OverrideNextLevelPrefs = OverrideNextLevelPrefs,
+                OverridesNextLevelOpts = OverridesNextLevelOpts,
             };
         }
 
@@ -52,11 +52,11 @@ namespace UniGetUI.PackageEngine.Serializable
             this.Version = data[nameof(Version)]?.GetVal<string>() ?? "";
             this.SkipMinorUpdates = data[nameof(SkipMinorUpdates)]?.GetVal<bool>() ?? false;
 
-            // if OverrideNextLevelPrefs is not found on the JSON, set it to true or false depending
+            // if OverridesNextLevelOpts is not found on the JSON, set it to true or false depending
             // on whether the current settings instances are different from the default values.
             // This entry shall be checked the last one, to ensure all other properties are set
-            this.OverrideNextLevelPrefs =
-                data[nameof(OverrideNextLevelPrefs)]?.GetValue<bool>() ?? DiffersFromDefault();
+            this.OverridesNextLevelOpts =
+                data[nameof(OverridesNextLevelOpts)]?.GetValue<bool>() ?? DiffersFromDefault();
         }
 
         public bool DiffersFromDefault()
@@ -71,7 +71,7 @@ namespace UniGetUI.PackageEngine.Serializable
                    CustomParameters.Where(x => x != "").Any() ||
                    CustomInstallLocation.Any() ||
                    Version.Any();
-            // OverrideNextLevelPrefs does not need to be checked here, since
+            // OverridesNextLevelOpts does not need to be checked here, since
             // this method is invoked before this property has been set
         }
 
