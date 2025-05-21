@@ -51,6 +51,20 @@ namespace UniGetUI.PackageEngine.Serializable
             this.SkipMinorUpdates = data[nameof(SkipMinorUpdates)]?.GetVal<bool>() ?? false;
         }
 
+        public bool DiffersFromDefault()
+        {
+            return SkipHashCheck is not false ||
+                   InteractiveInstallation is not false ||
+                   RunAsAdministrator is not false ||
+                   PreRelease is not false ||
+                   SkipMinorUpdates is not false ||
+                   Architecture.Any() ||
+                   InstallationScope.Any() ||
+                   CustomParameters.Where(x => x != "").Any() ||
+                   CustomInstallLocation.Any() ||
+                   Version.Any();
+        }
+
         public SerializableInstallationOptions() : base()
         {
         }
