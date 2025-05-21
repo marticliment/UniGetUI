@@ -1,4 +1,6 @@
 using System.Net;
+using System.Text.Json;
+using System.Text.Json.Serialization.Metadata;
 using Windows.Security.Credentials;
 using UniGetUI.Core.Logging;
 
@@ -83,4 +85,11 @@ public partial class Settings
             Logger.Error(ex);
         }
     }
+
+    public static JsonSerializerOptions SerializationOptions = new()
+    {
+        TypeInfoResolver = new DefaultJsonTypeInfoResolver(),
+        AllowTrailingCommas = true,
+        WriteIndented = true,
+    };
 }

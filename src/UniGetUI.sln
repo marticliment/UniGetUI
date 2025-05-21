@@ -101,6 +101,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniGetUI.PackageEngine.Oper
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniGetUI.Interface.Telemetry", "UniGetUI.Interface.Telemetry\UniGetUI.Interface.Telemetry.csproj", "{3C8BF564-B4B5-44A7-9D8C-102C2F820EAF}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{015B44EE-32AE-4105-9016-49140743CAF9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniGetUI.PackageEngine.Serializable.Tests", "UniGetUI.PackageEngine.Serializable.Tests\UniGetUI.PackageEngine.Serializable.Tests.csproj", "{F1610A61-5444-4C11-9447-13CCA327887E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -263,6 +267,10 @@ Global
 		{3C8BF564-B4B5-44A7-9D8C-102C2F820EAF}.Debug|x64.Build.0 = Debug|x64
 		{3C8BF564-B4B5-44A7-9D8C-102C2F820EAF}.Release|x64.ActiveCfg = Release|x64
 		{3C8BF564-B4B5-44A7-9D8C-102C2F820EAF}.Release|x64.Build.0 = Release|x64
+		{F1610A61-5444-4C11-9447-13CCA327887E}.Debug|x64.ActiveCfg = Debug|x64
+		{F1610A61-5444-4C11-9447-13CCA327887E}.Debug|x64.Build.0 = Debug|x64
+		{F1610A61-5444-4C11-9447-13CCA327887E}.Release|x64.ActiveCfg = Release|x64
+		{F1610A61-5444-4C11-9447-13CCA327887E}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -309,6 +317,8 @@ Global
 		{E337A71E-3C30-4315-B8F1-57CBC5CF50A6} = {95168D0B-1B2C-4295-B6D4-D5BAF781B9FA}
 		{727866B8-BBD5-43B9-933A-78199F65429C} = {7940E867-EEBA-4AFD-9904-1536F003239C}
 		{3C8BF564-B4B5-44A7-9D8C-102C2F820EAF} = {8CF74C87-534F-4017-A4ED-F2918025E31A}
+		{015B44EE-32AE-4105-9016-49140743CAF9} = {7940E867-EEBA-4AFD-9904-1536F003239C}
+		{F1610A61-5444-4C11-9447-13CCA327887E} = {015B44EE-32AE-4105-9016-49140743CAF9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D044BB14-0B37-47E5-A579-8B30FCBA1F9F}

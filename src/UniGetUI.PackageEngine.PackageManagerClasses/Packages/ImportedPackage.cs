@@ -10,8 +10,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <summary>
         /// Construct an invalid package with a given name, id, version, source and manager, and an optional scope.
         /// </summary>
-        public SerializableUpdatesOptions_v1 updates_options;
-        public SerializableInstallationOptions_v1 installation_options;
+        public SerializableUpdatesOptions updates_options;
+        public SerializableInstallationOptions installation_options;
 
         private readonly string _version;
 
@@ -27,7 +27,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             }
         }
 
-        public ImportedPackage(SerializablePackage_v1 raw_data, IPackageManager manager, IManagerSource source)
+        public ImportedPackage(SerializablePackage raw_data, IPackageManager manager, IManagerSource source)
             : base(raw_data.Name, raw_data.Id, raw_data.Version, source, manager)
         {
             _version = raw_data.Version;
@@ -49,9 +49,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
             return new Package(Name, Id, _version, Source, Manager);
         }
 
-        public override SerializablePackage_v1 AsSerializable()
+        public override SerializablePackage AsSerializable()
         {
-            return new SerializablePackage_v1
+            return new SerializablePackage
             {
                 Id = Id,
                 Name = Name,
