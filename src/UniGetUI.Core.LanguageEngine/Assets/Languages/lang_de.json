@@ -772,7 +772,7 @@
   "View mode:": "Ansicht:",
   "View on UniGetUI": "Auf UniGetUI ansehen",
   "View page on browser": "Seite im Browser öffnen",
-  "View {0} logs": "{0} Protokolle anzeigen",
+  "View {0} logs": "{0}-Protokolle anzeigen",
   "Wait for the device to be connected to the internet before attempting to do tasks that require internet connectivity.": "Mit der Ausführung von Aufgaben, die eine Internetverbindung erfordern, warten, bis das Gerät mit dem Internet verbunden ist.",
   "Waiting for other installations to finish...": "Warte auf die Fertigstellung anderer Installationen …",
   "Waiting for {0} to complete...": "Auf die Fertigstellung von {0} warten …",
@@ -914,6 +914,6 @@
   "{pm} is enabled and ready to go": "{pm} ist aktiviert und bereit",
   "{pm} package manager specific preferences": "{pm} Paketmanager-spezifische Einstellungen",
   "{pm} preferences": "{pm}-Einstellungen",
-  "{pm} version:": "{pm} Version:",
+  "{pm} version:": "{pm}-Version:",
   "{pm} was not found!": "{pm} wurde nicht gefunden"
 }
