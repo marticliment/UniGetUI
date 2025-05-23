@@ -68,7 +68,7 @@ public static partial class DialogHelper
         };
         OptionsDialog.PrimaryButtonText = CoreTools.Translate("Save and close");
         OptionsDialog.DefaultButton = ContentDialogButton.Secondary;
-        OptionsDialog.Title = CoreTools.Translate("{0} installation options", package.Name);
+        // OptionsDialog.Title = CoreTools.Translate("{0} installation options", package.Name);
         OptionsDialog.Content = OptionsPage;
 
         OptionsPage.Close += (_, _) => { OptionsDialog.Hide(); };
