@@ -1,6 +1,9 @@
+using System.Data;
 using System.Runtime.InteropServices;
+using Microsoft.Extensions.Options;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Imaging;
 using UniGetUI.Core.Language;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Enums;
@@ -33,18 +36,54 @@ namespace UniGetUI.Interface.Dialogs
             Operation = operation;
             Options = options;
 
+            ProfileComboBox.Items.Add(CoreTools.Translate("Install"));
+            ProfileComboBox.Items.Add(CoreTools.Translate("Update"));
+            ProfileComboBox.Items.Add(CoreTools.Translate("Uninstall"));
+            ProfileComboBox.SelectedIndex = operation switch { OperationType.Update => 1, OperationType.Uninstall => 2, _ => 0 };
+            ProfileComboBox.SelectionChanged += (_, _) =>
+            {
+                EnableDisableControls(ProfileComboBox.SelectedIndex switch
+                {
+                    1 => OperationType.Update,
+                    2 => OperationType.Uninstall,
+                    _ => OperationType.Install,
+                });
+            };
+
+            FollowGlobalOptionsSwitch.IsOn = !options.OverridesNextLevelOpts;
+            FollowGlobalOptionsSwitch.Toggled += (_, _) =>
+            {
+                EnableDisableControls(ProfileComboBox.SelectedIndex switch
+                {
+                    1 => OperationType.Update,
+                    2 => OperationType.Uninstall,
+                    _ => OperationType.Install,
+                });
+            };
+
+            var iconSource = new BitmapImage()
+            {
+                UriSource = package.GetIconUrl(),
+                DecodePixelHeight = 32,
+                DecodePixelWidth = 32,
+                DecodePixelType =
+                DecodePixelType.Logical
+            };
+
+            PackageIcon.Source = iconSource;
+            async Task LoadImage()
+            {
+                iconSource.UriSource = await Task.Run(package.GetIconUrl);
+            }
+            _ = LoadImage();
+            DialogTitle.Text = CoreTools.Translate("{0} installation options", package.Name);
+
             packageInstallLocation = Package.Manager.DetailsHelper.GetInstallLocation(package) ?? CoreTools.Translate("Unset or unknown");
 
             AdminCheckBox.IsChecked = Options.RunAsAdministrator;
-            AdminCheckBox.IsEnabled = Package.Manager.Capabilities.CanRunAsAdmin;
-
             InteractiveCheckBox.IsChecked = Options.InteractiveInstallation;
-            InteractiveCheckBox.IsEnabled = Package.Manager.Capabilities.CanRunInteractively;
-
             HashCheckbox.IsChecked = Options.SkipHashCheck;
-            HashCheckbox.IsEnabled = operation != OperationType.Uninstall && Package.Manager.Capabilities.CanSkipIntegrityChecks;
 
-            ArchitectureComboBox.IsEnabled = operation != OperationType.Uninstall && Package.Manager.Capabilities.SupportsCustomArchitectures;
             ArchitectureComboBox.Items.Add(CoreTools.Translate("Default"));
             ArchitectureComboBox.SelectedIndex = 0;
 
@@ -59,12 +98,6 @@ namespace UniGetUI.Interface.Dialogs
                     }
                 }
             }
-
-            VersionComboBox.IsEnabled =
-                (operation == OperationType.Install
-                    || operation == OperationType.None)
-                && (Package.Manager.Capabilities.SupportsCustomVersions
-                    || Package.Manager.Capabilities.SupportsPreRelease);
 
             VersionComboBox.SelectionChanged += (_, _) =>
             {
@@ -99,7 +132,6 @@ namespace UniGetUI.Interface.Dialogs
                 VersionProgress.Visibility = Visibility.Collapsed;
             }
 
-            ScopeCombo.IsEnabled = Package.Manager.Capabilities.SupportsCustomScopes;
             ScopeCombo.Items.Add(CoreTools.Translate("Default"));
             ScopeCombo.SelectedIndex = 0;
             if (package.Manager.Capabilities.SupportsCustomScopes)
@@ -117,8 +149,6 @@ namespace UniGetUI.Interface.Dialogs
                 }
             }
 
-            ResetDir.IsEnabled = Package.Manager.Capabilities.SupportsCustomLocations;
-            SelectDir.IsEnabled = Package.Manager.Capabilities.SupportsCustomLocations;
 
             if (Options.CustomInstallLocation == "") CustomInstallLocation.Text = packageInstallLocation;
             else CustomInstallLocation.Text = Options.CustomInstallLocation;
@@ -129,8 +159,42 @@ namespace UniGetUI.Interface.Dialogs
             }
 
             _uiLoaded = true;
-            GenerateCommand();
+            EnableDisableControls(operation);
             LoadIgnoredUpdates();
+        }
+
+        private void EnableDisableControls(OperationType operation)
+        {
+            if(FollowGlobalOptionsSwitch.IsOn)
+            {
+                OptionsPanel0.Opacity = 0.6;
+                OptionsPanel1.Opacity = 0.6;
+                OptionsPanel2.Opacity = 0.6;
+                OptionsPanelBase.IsEnabled = false;
+                PlaceholderBanner.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                OptionsPanel0.Opacity = 1;
+                OptionsPanel1.Opacity = 1;
+                OptionsPanel2.Opacity = 1;
+                OptionsPanelBase.IsEnabled = true;
+                PlaceholderBanner.Visibility = Visibility.Collapsed;
+
+                AdminCheckBox.IsEnabled = Package.Manager.Capabilities.CanRunAsAdmin;
+                InteractiveCheckBox.IsEnabled = Package.Manager.Capabilities.CanRunInteractively;
+                HashCheckbox.IsEnabled = operation != OperationType.Uninstall && Package.Manager.Capabilities.CanSkipIntegrityChecks;
+                ArchitectureComboBox.IsEnabled = operation != OperationType.Uninstall && Package.Manager.Capabilities.SupportsCustomArchitectures;
+                VersionComboBox.IsEnabled =
+                    (operation == OperationType.Install
+                        || operation == OperationType.None)
+                    && (Package.Manager.Capabilities.SupportsCustomVersions
+                        || Package.Manager.Capabilities.SupportsPreRelease);
+                ScopeCombo.IsEnabled = Package.Manager.Capabilities.SupportsCustomScopes;
+                ResetDir.IsEnabled = Package.Manager.Capabilities.SupportsCustomLocations;
+                SelectDir.IsEnabled = Package.Manager.Capabilities.SupportsCustomLocations;
+            }
+            GenerateCommand();
         }
 
         private async void LoadIgnoredUpdates()
@@ -166,6 +230,7 @@ namespace UniGetUI.Interface.Dialogs
             Options.RunAsAdministrator = AdminCheckBox?.IsChecked ?? false;
             Options.InteractiveInstallation = InteractiveCheckBox?.IsChecked ?? false;
             Options.SkipHashCheck = HashCheckbox?.IsChecked ?? false;
+            Options.OverridesNextLevelOpts = !FollowGlobalOptionsSwitch.IsOn;
 
             if (CommonTranslations.InvertedArchNames.ContainsKey(ArchitectureComboBox.SelectedValue.ToString() ?? ""))
             {
@@ -253,8 +318,12 @@ namespace UniGetUI.Interface.Dialogs
         {
             if (!_uiLoaded) return;
             InstallationOptions io = InstallationOptions.FromSerialized(await GetUpdatedOptions(updateIgnoredUpdates: false), Package);
-            var op = Operation;
-            if (op is OperationType.None) op = OperationType.Install;
+            var op = ProfileComboBox.SelectedIndex switch
+            {
+                1 => OperationType.Update,
+                2 => OperationType.Uninstall,
+                _ => OperationType.Install,
+            };
             var commandline = await Task.Run(() => Package.Manager.OperationHelper.GetParameters(Package, io, op));
             CommandBox.Text = Package.Manager.Properties.ExecutableFriendlyName + " " + string.Join(" ", commandline);
         }
@@ -262,6 +331,11 @@ namespace UniGetUI.Interface.Dialogs
         private void LayoutGrid_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if(LayoutGrid.ActualSize.Y > 1 && LayoutGrid.ActualSize.Y < double.PositiveInfinity) MaxHeight = LayoutGrid.ActualSize.Y;
+        }
+
+        private void ProfileComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 }
