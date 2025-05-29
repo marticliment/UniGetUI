@@ -1,5 +1,9 @@
 name: Tolgee CI
 
+permissions:
+  contents: read
+  pull-requests: write
+
 on:
   schedule:
     - cron: 0 0 * * *
