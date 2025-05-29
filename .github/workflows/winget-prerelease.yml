@@ -1,5 +1,8 @@
 name: Publish prereleases to WinGet
 
+permissions:
+  contents: read
+
 on:
   release:
     types: [published]  # Trigger on published release (includes prereleases)
