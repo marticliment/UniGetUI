@@ -125,10 +125,33 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
 
         protected Tuple<bool, string> GetManagerExecutablePath()
         {
-            // TODO
             HashSet<string> AvailablePaths = LoadAvailablePaths();
-            Logger.Debug(Name + " found paths: " + string.Join(", ", AvailablePaths));
-            return new Tuple<bool, string>(false, AvailablePaths.ElementAt(0));
+            string? Path = Settings.GetDictionaryItem<string, string>("ManagerPaths", Name);
+
+            if (AvailablePaths.Count == 0)
+            {
+                Logger.Warn("No available paths found for manager " + Name);
+
+                if (File.Exists(Path) && Path != null) Logger.Info("Using stored path " + Path);
+                else Logger.Error("Stored path " + Path + " is invalid");
+                return new Tuple<bool, string>(File.Exists(Path) && Path != null, Path ?? "");
+            }
+            else if (Path == null && File.Exists(AvailablePaths.ElementAt(0)))
+            {
+                Logger.Info("Stored path for " + Name + " is missing, using AvailablePaths[0]: " + AvailablePaths.ElementAt(0));
+                return new Tuple<bool, string>(true, AvailablePaths.ElementAt(0));
+            }
+            else
+            {
+                if (File.Exists(Path) && Path != null)
+                {
+                    Logger.Info("Using stored path " + Path);
+                    return new Tuple<bool, string>(true, Path);
+                }
+            }
+
+            Logger.Info("No suitable path found for " + Name);
+            return new Tuple<bool, string>(false, "");
         }
 
         /// <summary>
