@@ -121,9 +121,9 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// For example, if you have three Pythons installed on your system, this would return those three Pythons.
         /// </summary>
         /// <returns>A tuple containing: a boolean that represents whether the path was found or not; the path to the file if found.</returns>
-        protected abstract HashSet<string> LoadAvailablePaths();
+        public abstract HashSet<string> LoadAvailablePaths();
 
-        protected Tuple<bool, string> GetManagerExecutablePath()
+        public Tuple<bool, string> GetManagerExecutablePath()
         {
             HashSet<string> AvailablePaths = LoadAvailablePaths();
             string? Path = Settings.GetDictionaryItem<string, string>("ManagerPaths", Name);

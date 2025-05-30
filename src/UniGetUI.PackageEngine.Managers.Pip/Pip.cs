@@ -302,7 +302,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             return Packages;
         }
 
-        protected override HashSet<string> LoadAvailablePaths()
+        public override HashSet<string> LoadAvailablePaths()
         {
             var (Found, FoundPaths) = CoreTools.WhichMultiple("python");
             HashSet<string> Paths = [];

@@ -125,7 +125,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
             return Packages;
         }
 
-        protected override HashSet<string> LoadAvailablePaths()
+        public override HashSet<string> LoadAvailablePaths()
         {
             return [.. CoreTools.WhichMultiple("dotnet").Item2];
         }

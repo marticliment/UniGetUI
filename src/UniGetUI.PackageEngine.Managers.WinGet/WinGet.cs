@@ -174,7 +174,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             return LocalPcSource;
         }
 
-        protected override HashSet<string> LoadAvailablePaths()
+        public override HashSet<string> LoadAvailablePaths()
         {
             return [.. CoreTools.WhichMultiple("winget").Item2];
         }

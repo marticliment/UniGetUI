@@ -116,7 +116,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
             return Packages;
         }
 
-        protected override HashSet<string> LoadAvailablePaths()
+        public override HashSet<string> LoadAvailablePaths()
         {
             return [.. CoreTools.WhichMultiple("pwsh").Item2];
         }

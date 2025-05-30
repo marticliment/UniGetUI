@@ -187,7 +187,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             return Packages;
         }
 
-        protected override HashSet<string> LoadAvailablePaths()
+        public override HashSet<string> LoadAvailablePaths()
         {
             return [.. CoreTools.WhichMultiple("npm").Item2];
         }

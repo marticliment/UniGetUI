@@ -287,7 +287,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             return Packages;
         }
 
-        protected override HashSet<string> LoadAvailablePaths()
+        public override HashSet<string> LoadAvailablePaths()
         {
             var (Found, FoundPaths) = CoreTools.WhichMultiple("vcpkg");
             HashSet<string> Paths = [];
