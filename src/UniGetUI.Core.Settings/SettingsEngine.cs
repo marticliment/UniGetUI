@@ -11,6 +11,8 @@ namespace UniGetUI.Core.SettingsEngine
 
         public static bool Get(string setting, bool invert = false)
         {
+            if (setting == "") return false;
+
             if (booleanSettings.TryGetValue(setting, out bool result))
             {   // If the setting was cached
                 return result ^ invert;
@@ -24,6 +26,8 @@ namespace UniGetUI.Core.SettingsEngine
 
         public static void Set(string setting, bool value)
         {
+            if (setting == "") return;
+
             try
             {
                 // Cache that setting's new value
@@ -54,6 +58,8 @@ namespace UniGetUI.Core.SettingsEngine
 
         public static string GetValue(string setting)
         {
+            if (setting == "") return "";
+
             if (valueSettings.TryGetValue(setting, out string? value))
             {   // If the setting was cached
                 return value;
@@ -73,6 +79,8 @@ namespace UniGetUI.Core.SettingsEngine
 
         public static void SetValue(string setting, string value)
         {
+            if (setting == "") return;
+
             try
             {
                 if (value == String.Empty)
