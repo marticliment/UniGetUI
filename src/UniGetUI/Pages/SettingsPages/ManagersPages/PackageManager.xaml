@@ -57,8 +57,7 @@
                 Text="Select which manager executable to use:"
                 Padding="24,0,24,0"
                 BorderThickness="1,0,1,1"
-                CornerRadius="0,0,0,0"
-                ValueChanged="ManagerExecutableSelection_OnValueChanged" />
+                CornerRadius="0,0,0,0" />
             <controls:SettingsCard
                 x:Name="ManagerPath"
                 Padding="24,0,0,0"

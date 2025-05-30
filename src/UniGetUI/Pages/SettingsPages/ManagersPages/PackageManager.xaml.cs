@@ -104,6 +104,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             }
             ManagerExecutable.ShowAddedItems();
             ManagerExecutable.SelectIndex(CurrentlyExists ? Paths.ToList().IndexOf(CurrentPath) : 0);
+            ManagerExecutable.ValueChanged += ManagerExecutableSelection_OnValueChanged;
 
             // ----------------------- SOURCES CONTROL -------------------
 
