@@ -52,6 +52,12 @@
                         Visibility="Collapsed" />
                 </InfoBar.Content>
             </InfoBar>
+            <widgets:ComboboxCard
+                x:Name="ManagerExecutable"
+                Text="Select which manager executable to use:"
+                Padding="24,0,24,0"
+                BorderThickness="1,0,1,1"
+                CornerRadius="0,0,0,0" />
             <controls:SettingsCard
                 x:Name="ManagerPath"
                 Padding="24,0,0,0"
@@ -110,6 +116,24 @@
                 <controls:SettingsCard.Description>
                     <TextBlock
                         x:Name="ManagerLogsLabel"
+                        FontFamily="Consolas"
+                        FontSize="14"
+                        TextWrapping="Wrap" />
+                </controls:SettingsCard.Description>
+            </controls:SettingsCard>
+
+            <controls:SettingsCard
+                x:Name="AppExecutionAliasWarning"
+                BorderThickness="1,0,1,1"
+                CornerRadius="0,0,8,8"
+                IsClickEnabled="False">
+                <controls:SettingsCard.HeaderIcon>
+                    <widgets:LocalIcon Icon="Settings" />
+                </controls:SettingsCard.HeaderIcon>
+
+                <controls:SettingsCard.Description>
+                    <TextBlock
+                        x:Name="AppExecutionAliasWarningLabel"
                         FontFamily="Consolas"
                         FontSize="14"
                         TextWrapping="Wrap" />
