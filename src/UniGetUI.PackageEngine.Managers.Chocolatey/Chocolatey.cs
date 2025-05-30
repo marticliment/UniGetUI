@@ -190,17 +190,23 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             return Packages;
         }
 
+        private static string old_choco_path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs\\WingetUI\\choco-cli");
+        private static string new_choco_path = Path.Join(CoreData.UniGetUIDataDirectory, "Chocolatey");
+
         public override HashSet<string> LoadAvailablePaths()
         {
-            return [.. CoreTools.WhichMultiple("choco").Item2];
+            HashSet<string> ChocoPaths = [];
+
+            var (SystemFound, SystemPaths) = CoreTools.WhichMultiple("choco");
+            if (SystemFound) foreach (var Path in SystemPaths) ChocoPaths.Add(Path);
+            if (File.Exists(Path.Join(new_choco_path, "choco.exe"))) ChocoPaths.Add(Path.Join(new_choco_path, "choco.exe"));
+
+            return ChocoPaths;
         }
 
         protected override ManagerStatus LoadManager()
         {
             ManagerStatus status = new();
-
-            string old_choco_path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs\\WingetUI\\choco-cli");
-            string new_choco_path = Path.Join(CoreData.UniGetUIDataDirectory, "Chocolatey");
 
             if (!Directory.Exists(old_choco_path))
             {
@@ -289,26 +295,22 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 }
             }
 
-            if (Settings.Get("UseSystemChocolatey"))
-            {
-                status.ExecutablePath = CoreTools.Which("choco.exe").Item2;
-            }
-            else if (File.Exists(Path.Join(new_choco_path, "choco.exe")))
-            {
-                status.ExecutablePath = Path.Join(new_choco_path, "choco.exe");
-            }
-            else
-            {
-                status.ExecutablePath = Path.Join(CoreData.UniGetUIDataDirectory, "Chocolatey", "choco.exe");
-                if (!File.Exists(status.ExecutablePath)) status.ExecutablePath = "";
-            }
+            (status.Found, status.ExecutablePath) = GetManagerExecutablePath();
 
-            status.Found = File.Exists(status.ExecutablePath);
+            if (Settings.Get("UseSystemChocolatey") && !Settings.Get("TransferredSystemChocolatey"))
+            {
+                var (SystemFound, SystemPaths) = CoreTools.WhichMultiple("choco");
+                if (SystemFound && SystemPaths.Count > 0)
+                {
+                    Settings.SetDictionaryItem("ManagerPaths", "Chocolatey", SystemPaths.ElementAt(0));
+                    Settings.Set("TransferredSystemChocolatey", true);
+                }
+            }
 
             if (!status.Found)
-            {
-                return status;
-            }
+                {
+                    return status;
+                }
 
             Process process = new()
             {
