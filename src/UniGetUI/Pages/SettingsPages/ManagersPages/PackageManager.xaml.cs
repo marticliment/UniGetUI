@@ -239,6 +239,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 };
                 ExtraControls.Children.Add(Scoop_CleanupOnStart);
             }
+
             // ----------------------------- CHOCO EXTRA SETTINGS ------------------------------
 
             else if (Manager is Chocolatey)
@@ -345,7 +346,18 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 ExtraControls.Children.Add(DisableNotifsCard);
             }
 
-                base.OnNavigatedTo(e);
+            // Hide the AppExecutionAliasWarning element if Manager is not Pip
+            if (Manager is Pip)
+            {
+                ManagerLogs.CornerRadius = new CornerRadius(8, 8, 0, 0);
+                AppExecutionAliasWarningLabel.Text = "If Python cannot be found or is not listing packages but is installed on the system, you may need to disable the \"python.exe\" App Execution Alias in the settings.";
+            }
+            else
+            {
+                AppExecutionAliasWarning.Visibility = Visibility.Collapsed;
+            }
+
+            base.OnNavigatedTo(e);
         }
 
         private void ShowVersionHyperlink_Click(object sender, RoutedEventArgs e)

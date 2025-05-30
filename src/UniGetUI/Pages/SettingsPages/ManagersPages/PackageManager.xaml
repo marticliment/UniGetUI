@@ -115,6 +115,24 @@
                         TextWrapping="Wrap" />
                 </controls:SettingsCard.Description>
             </controls:SettingsCard>
+
+            <controls:SettingsCard
+                x:Name="AppExecutionAliasWarning"
+                BorderThickness="1,0,1,1"
+                CornerRadius="0,0,8,8"
+                IsClickEnabled="False">
+                <controls:SettingsCard.HeaderIcon>
+                    <widgets:LocalIcon Icon="Settings" />
+                </controls:SettingsCard.HeaderIcon>
+
+                <controls:SettingsCard.Description>
+                    <TextBlock
+                        x:Name="AppExecutionAliasWarningLabel"
+                        FontFamily="Consolas"
+                        FontSize="14"
+                        TextWrapping="Wrap" />
+                </controls:SettingsCard.Description>
+            </controls:SettingsCard>
         </StackPanel>
     </ScrollViewer>
 </Page>
