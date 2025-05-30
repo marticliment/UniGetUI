@@ -174,13 +174,18 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             return LocalPcSource;
         }
 
+        protected override HashSet<string> LoadAvailablePaths()
+        {
+            return [.. CoreTools.WhichMultiple("winget").Item2];
+        }
+
         protected override ManagerStatus LoadManager()
         {
             ManagerStatus status = new();
 
             bool FORCE_BUNDLED = Settings.Get("ForceLegacyBundledWinGet");
 
-            var (found, path) = CoreTools.Which("winget.exe");
+            var (found, path) = GetManagerExecutablePath();
             status.ExecutablePath = path;
             status.Found = found;
 

@@ -115,9 +115,15 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
 
             return Packages;
         }
+
+        protected override HashSet<string> LoadAvailablePaths()
+        {
+            return [.. CoreTools.WhichMultiple("pwsh").Item2];
+        }
+
         protected override ManagerStatus LoadManager()
         {
-            var (found, path) = CoreTools.Which("pwsh.exe");
+            var (found, path) = GetManagerExecutablePath();
 
             ManagerStatus status = new()
             {

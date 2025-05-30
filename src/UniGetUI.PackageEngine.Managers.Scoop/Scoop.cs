@@ -372,6 +372,12 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             logger.Close(p.ExitCode);
         }
 
+        protected override HashSet<string> LoadAvailablePaths()
+        {
+            return [.. CoreTools.WhichMultiple("scoop").Item2];
+        }
+
+
         protected override ManagerStatus LoadManager()
         {
             ManagerStatus status = new()

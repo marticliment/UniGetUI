@@ -116,6 +116,12 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             return Packages;
         }
 
+        protected override HashSet<string> LoadAvailablePaths()
+        {
+            // TODO: Search correctly
+            return [.. CoreTools.WhichMultiple("powershell").Item2];
+        }
+
         protected override ManagerStatus LoadManager()
         {
             ManagerStatus status = new()

@@ -287,9 +287,27 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             return Packages;
         }
 
+        protected override HashSet<string> LoadAvailablePaths()
+        {
+            var (Found, FoundPaths) = CoreTools.WhichMultiple("vcpkg");
+            HashSet<string> Paths = [];
+
+            if (Found) foreach (var Path in FoundPaths) Paths.Add(Path);
+
+            var (VcpkgRootFound, VcpkgRoot) = GetVcpkgRoot();
+            if (VcpkgRootFound)
+            {
+                string VcpkgLocation = Path.Join(VcpkgRoot, "vcpkg.exe");
+
+                if (File.Exists(VcpkgLocation)) Paths.Add(VcpkgLocation);
+            }
+
+            return Paths;
+        }
+
         protected override ManagerStatus LoadManager()
         {
-            var (exeFound, exePath) = GetVcpkgPath();
+            var (exeFound, exePath) = GetManagerExecutablePath();
             var (rootFound, rootPath) = GetVcpkgRoot();
 
             if (!exeFound)
@@ -343,7 +361,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
 
         public override void RefreshPackageIndexes()
         {
-            var (found, _) = GetVcpkgPath();
+            var (found, _) = GetManagerExecutablePath();
             var (vcpkgRootFound, vcpkgRoot) = GetVcpkgRoot();
             var (gitFound, gitPath) = CoreTools.Which("git");
 
@@ -403,28 +421,6 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             }
         }
 
-        public static Tuple<bool, string> GetVcpkgPath()
-        {
-            var (found, path) = CoreTools.Which("vcpkg");
-            if (found)
-            {
-                return Tuple.Create(found, path);
-            }
-
-            var (vcpkgRootFound, vcpkgRoot) = GetVcpkgRoot();
-            if (vcpkgRootFound)
-            {
-                string vcpkgLocation = Path.Join(vcpkgRoot, "vcpkg.exe");
-
-                if (File.Exists(vcpkgLocation))
-                {
-                    return Tuple.Create(true, vcpkgLocation);
-                }
-            }
-
-            return Tuple.Create(false, "");
-        }
-
         public static Tuple<bool, string> GetVcpkgRoot()
         {
             string? vcpkgRoot = Settings.GetValue("CustomVcpkgRoot");
@@ -435,8 +431,8 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
 
             if (vcpkgRoot == null)
             {
-                // Unfortunately, we can't use `GetVcpkgPath` for this
-                // as it would become a bunch of functions calling each other
+                // Unfortunately, we can't use `GetVcpkgPath` or `GetManagerExecutablePath`
+                // for this as it would become a bunch of functions calling each other
                 var (found, path) = CoreTools.Which("vcpkg");
                 path = Path.GetDirectoryName(path);
                 // Make sure the root is a valid root not just a random directory

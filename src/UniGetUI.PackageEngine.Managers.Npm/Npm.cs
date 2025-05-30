@@ -187,6 +187,11 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             return Packages;
         }
 
+        protected override HashSet<string> LoadAvailablePaths()
+        {
+            return [.. CoreTools.WhichMultiple("npm").Item2];
+        }
+
         protected override ManagerStatus LoadManager()
         {
             ManagerStatus status = new()

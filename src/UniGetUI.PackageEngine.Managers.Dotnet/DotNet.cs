@@ -125,11 +125,16 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
             return Packages;
         }
 
+        protected override HashSet<string> LoadAvailablePaths()
+        {
+            return [.. CoreTools.WhichMultiple("dotnet").Item2];
+        }
+
         protected override ManagerStatus LoadManager()
         {
             ManagerStatus status = new();
 
-            var (found, path) = CoreTools.Which("dotnet.exe");
+            var (found, path) = GetManagerExecutablePath();
             status.ExecutablePath = path;
             status.Found = found;
 

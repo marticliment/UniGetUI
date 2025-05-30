@@ -190,6 +190,11 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             return Packages;
         }
 
+        protected override HashSet<string> LoadAvailablePaths()
+        {
+            return [.. CoreTools.WhichMultiple("choco").Item2];
+        }
+
         protected override ManagerStatus LoadManager()
         {
             ManagerStatus status = new();

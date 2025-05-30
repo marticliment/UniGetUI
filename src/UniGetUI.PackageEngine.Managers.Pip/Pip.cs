@@ -302,11 +302,44 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             return Packages;
         }
 
+        protected override HashSet<string> LoadAvailablePaths()
+        {
+            var (Found, FoundPaths) = CoreTools.WhichMultiple("python");
+            HashSet<string> Paths = [];
+
+            if (Found) foreach (var Path in FoundPaths) Paths.Add(Path);
+
+            try
+            {
+                List<string> DirsToSearch = [];
+                string ProgramFiles = @"C:\Program Files";
+                string? UserPythonInstallDir = null;
+                string? AppData = Environment.GetEnvironmentVariable("APPDATA");
+
+                if (AppData != null)
+                    UserPythonInstallDir = Path.Combine(AppData, "Programs", "Python");
+
+                if (Directory.Exists(ProgramFiles)) DirsToSearch.Add(ProgramFiles);
+                if (Directory.Exists(UserPythonInstallDir)) DirsToSearch.Add(UserPythonInstallDir);
+
+                foreach (var Dir in DirsToSearch)
+                {
+                    string DirName = Path.GetFileName(Dir);
+                    string PythonPath = Path.Join(Dir, "python.exe");
+                    if (DirName.StartsWith("Python") && File.Exists(PythonPath))
+                        Paths.Add(PythonPath);
+                }
+            }
+            catch (Exception) { }
+
+            return Paths;
+        }
+
         protected override ManagerStatus LoadManager()
         {
             ManagerStatus status = new();
 
-            var (found, path) = CoreTools.Which("python.exe");
+            var (found, path) = GetManagerExecutablePath();
             status.ExecutablePath = path;
             status.Found = found;
 

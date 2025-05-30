@@ -59,7 +59,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             // END integrity check
 
             Properties.DefaultSource.RefreshSourceNames();
-            foreach(var source in Properties.KnownSources)
+            foreach (var source in Properties.KnownSources)
             {
                 source.RefreshSourceNames();
             }
@@ -114,6 +114,21 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                 Logger.Error("Could not initialize Package Manager " + Name);
                 Logger.Error(e);
             }
+        }
+
+        /// <summary>
+        /// Returns a list of paths that could be used for this package manager.
+        /// For example, if you have three Pythons installed on your system, this would return those three Pythons.
+        /// </summary>
+        /// <returns>A tuple containing: a boolean that represents whether the path was found or not; the path to the file if found.</returns>
+        protected abstract HashSet<string> LoadAvailablePaths();
+
+        protected Tuple<bool, string> GetManagerExecutablePath()
+        {
+            // TODO
+            HashSet<string> AvailablePaths = LoadAvailablePaths();
+            Logger.Debug(Name + " found paths: " + string.Join(", ", AvailablePaths));
+            return new Tuple<bool, string>(false, AvailablePaths.ElementAt(0));
         }
 
         /// <summary>

@@ -136,9 +136,14 @@ public partial class Cargo : PackageManager
         return GetPackages(LoggableTaskType.ListInstalledPackages);
     }
 
+    protected override HashSet<string> LoadAvailablePaths()
+    {
+        return [.. CoreTools.WhichMultiple("cargo").Item2];
+    }
+
     protected override ManagerStatus LoadManager()
     {
-        var (found, executablePath) = CoreTools.Which("cargo");
+        var (found, executablePath) = GetManagerExecutablePath();
         if (!found)
         {
             return new(){ ExecutablePath = executablePath, Found = false, Version = ""};
