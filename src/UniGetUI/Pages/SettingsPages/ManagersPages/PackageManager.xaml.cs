@@ -21,6 +21,8 @@ using UniGetUI.Interface.Widgets;
 using UniGetUI.Core.Data;
 using UniGetUI.Pages.DialogPages;
 using UniGetUI.Core.SettingsEngine;
+using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using UniGetUI.Core.Logging;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -37,7 +39,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         public event EventHandler<Type>? NavigationRequested;
         public event EventHandler? ReapplyProperties;
         public bool CanGoBack => true;
-        public string ShortTitle => Manager is null? "": CoreTools.Translate("{0} settings", Manager.DisplayName);
+        public string ShortTitle => Manager is null ? "" : CoreTools.Translate("{0} settings", Manager.DisplayName);
 
         public PackageManagerPage()
         {
@@ -80,8 +82,8 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 Text = CoreTools.Translate("Always run {pm} operations with administrator rights").Replace("{pm}", Manager.DisplayName),
                 DictionaryName = "AlwaysElevate",
                 SettingName = Manager.Name,
-                CornerRadius = new CornerRadius(8,8,0,0),
-                BorderThickness = new Thickness(1,1,1,0),
+                CornerRadius = new CornerRadius(8, 8, 0, 0),
+                BorderThickness = new Thickness(1, 1, 1, 0),
             };
 
             var DisableNotifsCard = new CheckboxCard_Dict()
@@ -94,16 +96,26 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
 
             ManagerLogsLabel.Text = CoreTools.Translate("View {0} logs", Manager.DisplayName);
 
+            HashSet<string> Paths = ((PackageManager)Manager).LoadAvailablePaths();
+            var (CurrentlyExists, CurrentPath) = ((PackageManager)Manager).GetManagerExecutablePath();
+            foreach (string Path in Paths)
+            {
+                ManagerExecutable.AddItem(Path, Path);
+            }
+            ManagerExecutable.ShowAddedItems();
+            ManagerExecutable.SelectIndex(CurrentlyExists ? Paths.ToList().IndexOf(CurrentPath) : 0);
+
             // ----------------------- SOURCES CONTROL -------------------
 
             ExtraControls.Children.Clear();
 
-            if(Manager.Capabilities.SupportsCustomSources && Manager is not Vcpkg)
+            if (Manager.Capabilities.SupportsCustomSources && Manager is not Vcpkg)
             {
-                SettingsCard SourceManagerCard = new() {
+                SettingsCard SourceManagerCard = new()
+                {
                     Resources = { ["SettingsCardLeftIndention"] = 10 },
                     CornerRadius = new CornerRadius(8),
-                    Margin = new Thickness(0,0,0,16)
+                    Margin = new Thickness(0, 0, 0, 16)
                 };
                 var man = new SourceManager(Manager);
                 SourceManagerCard.Description = man;
@@ -376,7 +388,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 if (!Manager.Status.Version.Contains('\n'))
                 {
                     ManagerStatusBar.Message =
-                        CoreTools.Translate("{pm} version:", new Dictionary<string, object?> {{ "pm", Manager.DisplayName }}) + $" {Manager.Status.Version}";
+                        CoreTools.Translate("{pm} version:", new Dictionary<string, object?> { { "pm", Manager.DisplayName } }) + $" {Manager.Status.Version}";
                 }
                 else if (ShowVersion)
                 {
@@ -420,6 +432,12 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         private void ManagerLogs_Click(object sender, RoutedEventArgs e)
         {
             MainApp.Instance.MainWindow.NavigationPage.OpenManagerLogs(Manager as IPackageManager);
+        }
+
+        public void ManagerExecutableSelection_OnValueChanged(object sender, EventArgs e)
+        {
+            Settings.SetDictionaryItem("ManagerPaths", Manager.Name, ManagerExecutable.SelectedValue());
+            RestartRequired?.Invoke(this, EventArgs.Empty);
         }
     }
 }
