@@ -302,15 +302,21 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 var (SystemFound, SystemPaths) = CoreTools.WhichMultiple("choco");
                 if (SystemFound && SystemPaths.Count > 0)
                 {
-                    Settings.SetDictionaryItem("ManagerPaths", "Chocolatey", SystemPaths.ElementAt(0));
+                    string SysPath = SystemPaths.ElementAt(0);
+                    for (int idx = 1; idx < SystemPaths.Count; idx++)
+                    {
+                        if (!SystemPaths.ElementAt(idx).Contains("UniGetUI"))
+                            SysPath = SystemPaths.ElementAt(idx);
+                    }
+                    Settings.SetDictionaryItem("ManagerPaths", "Chocolatey", SysPath);
                     Settings.Set("TransferredSystemChocolatey", true);
                 }
             }
 
             if (!status.Found)
-                {
-                    return status;
-                }
+            {
+                return status;
+            }
 
             Process process = new()
             {
