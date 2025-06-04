@@ -2,7 +2,7 @@ blank_issues_enabled: false
 
 contact_links:
   - name: 🔒 Security issue or vulnerability
-    url: https://whitehub.net/programs/UniGetUI
+    url: https://whitehub.net/programs/unigetui/
     about: Found a security issue? Please report it via our disclosure program
   - name: 📧 Contact me privately by email
     url: https://marticliment.com/contact
