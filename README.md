@@ -18,7 +18,7 @@ Check out the [Supported Package Managers Table](#supported-package-managers) fo
 > **The OFFICIAL website for UniGetUI is [https://www.marticliment.com/unigetui/](https://www.marticliment.com/unigetui/)**<br>
 > **Any other website should be considered unofficial, despite what they may say.**
 
-
+🔒 Found a security issue? Please report it via [our disclosure program](https://whitehub.net/programs/UniGetUI)
 
 ## Support the developer
 
