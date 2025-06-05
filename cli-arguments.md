@@ -35,7 +35,7 @@ On a system where UniGetUI 3.1.2+ is installed, the following deep links can be 
 <br><br>
 
 # Installer command-line parameters 
-The installer is inno-setup based. It supports all Inno Setup command-line parameters as well as the following:
+The installer is inno-setup based. It supports [all Inno Setup command-line parameters](https://jrsoftware.org/ishelp/index.php?topic=setupcmdline), as well as the following custom ones:
 
 | Parameter                                           | Description |
 | --------------------------------------------------- | ---------- |

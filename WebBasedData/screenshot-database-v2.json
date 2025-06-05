@@ -1,8 +1,8 @@
 {
     "package_count": {
         "total": 11813,
-        "done": 5288,
-        "packages_with_icon": 5288,
+        "done": 5289,
+        "packages_with_icon": 5289,
         "packages_with_screenshot": 638,
         "total_screenshots": 1991
     },
@@ -20940,7 +20940,9 @@
         },
         "julia": {
             "icon": "https://community.chocolatey.org/content/packageimages/Julia.1.8.5.png",
-            "images": []
+            "images": [
+                "https://i.imgur.com/d80DTBP.png"
+            ]
         },
         "julia-lts": {
             "icon": "",
@@ -46304,11 +46306,9 @@
             "icon": "",
             "images": []
         },
-        "warp": {
-            "icon": "",
-            "images": [
-                "https://i.postimg.cc/C11Zh6mj/warp.png"
-            ]
+        "warp-terminal": {
+            "icon": "https://community.chocolatey.org/content/packageimages/warp-terminal.2025.5.21.png",
+            "images": []
         },
         "warthunder": {
             "icon": "https://cdn2.steamgriddb.com/icon_thumb/3fdc6213681ba98cb5a95150380e0e04.png",
