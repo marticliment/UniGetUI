@@ -3,7 +3,7 @@ using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 
 namespace UniGetUI.PackageEngine.Managers.VcpkgManager;
-internal sealed class VcpkgPkgOperationHelper : PackagePkgOperationHelper
+internal sealed class VcpkgPkgOperationHelper : BasePkgOperationHelper
 {
     public VcpkgPkgOperationHelper(Vcpkg manager) : base(manager) { }
 

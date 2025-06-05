@@ -9,7 +9,7 @@ using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 
 namespace UniGetUI.PackageEngine.Managers.WingetManager;
-internal sealed class WinGetPkgOperationHelper : PackagePkgOperationHelper
+internal sealed class WinGetPkgOperationHelper : BasePkgOperationHelper
 {
     public static string GetIdNamePiece(IPackage package)
     {

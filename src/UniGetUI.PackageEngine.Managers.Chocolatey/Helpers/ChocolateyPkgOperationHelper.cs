@@ -4,7 +4,7 @@ using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 
 namespace UniGetUI.PackageEngine.Managers.ChocolateyManager;
-internal sealed class ChocolateyPkgOperationHelper : PackagePkgOperationHelper
+internal sealed class ChocolateyPkgOperationHelper : BasePkgOperationHelper
 {
     public ChocolateyPkgOperationHelper(Chocolatey manager) : base(manager) { }
 
