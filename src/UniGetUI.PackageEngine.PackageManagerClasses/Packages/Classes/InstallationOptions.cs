@@ -17,7 +17,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
     /// </summary>
     public class InstallationOptions : IInstallationOptions
     {
-        private static readonly ConcurrentDictionary<long, InstallationOptions?> OptionsCache = [];
+        // private static readonly ConcurrentDictionary<long, InstallationOptions?> OptionsCache = [];
 
         public bool SkipHashCheck { get; set; }
         public bool InteractiveInstallation { get; set; }
@@ -32,88 +32,103 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public string CustomInstallLocation { get; set; } = "";
         public bool OverridesNextLevelOpts { get; set; }
 
-        public IPackage Package { get; }
         private readonly string __save_filename;
 
-        private InstallationOptions(IPackage package)
+        private InstallationOptions(string filename)
         {
-            Package = package;
-            __save_filename = package.Manager.Name.Replace(" ", "").Replace(".", "") + "." + package.Id;
+            __save_filename = Path.Join(CoreData.UniGetUIInstallationOptionsDirectory, filename);
         }
 
-        /// <summary>
-        /// Returns the InstallationOptions object associated with the given package.
-        /// </summary>
-        /// <returns>The package's InstallationOptions instance</returns>
-        public static InstallationOptions FromPackage(IPackage package, bool? elevated = null, bool?
-            interactive = null, bool? no_integrity = null, bool? remove_data = null)
+        private static class StoragePath
         {
-            InstallationOptions instance;
-            if (OptionsCache.TryGetValue(package.GetHash(), out InstallationOptions? cached_instance) && cached_instance is not null)
-            {
-                instance = cached_instance;
-            }
-            else
-            {
-                instance = new(package);
-                instance.LoadFromDisk();
-                OptionsCache.TryAdd(package.GetHash(), instance);
-            }
+            public static string Get(IPackageManager manager)
+                => "GlobalValues." + manager.Name.Replace(" ", "").Replace(".", "");
 
-            if (elevated is not null)
-            {
-                instance.RunAsAdministrator = (bool)elevated;
-            }
-
-            if (interactive is not null)
-            {
-                instance.InteractiveInstallation = (bool)interactive;
-            }
-
-            if (no_integrity is not null)
-            {
-                instance.SkipHashCheck = (bool)no_integrity;
-            }
-
-            if (remove_data is not null)
-            {
-                instance.RemoveDataOnUninstall = (bool)remove_data;
-            }
-
-            return instance;
-        }
-
-        /// <summary>
-        /// Returns the InstallationOptions object associated with the given package.
-        /// </summary>
-        /// <param name="package">The package from which to load the InstallationOptions</param>
-        /// <returns>The package's InstallationOptions instance</returns>
-        public static async Task<InstallationOptions> FromPackageAsync(IPackage package, bool? elevated = null,
-            bool? interactive = null, bool? no_integrity = null, bool? remove_data = null)
-        {
-            return await Task.Run(() => FromPackage(package, elevated, interactive, no_integrity, remove_data));
-        }
-
-        /// <summary>
-        /// Returns a new InstallationOptions object from a given SerializableInstallationOptions and a package.
-        /// </summary>
-        public static InstallationOptions FromSerialized(SerializableInstallationOptions options, IPackage package)
-        {
-            InstallationOptions instance = new(package);
-            instance.FromSerializable(options);
-            return instance;
+            public static string Get(IPackage package)
+                => package.Manager.Name.Replace(" ", "").Replace(".", "") + "." + package.Id;
         }
 
         public static InstallationOptions CreateEmpty(IPackage package)
         {
-            InstallationOptions instance = new(package);
+            var pkg_path = StoragePath.Get(package);
+            return new(pkg_path);
+        }
+
+        public static InstallationOptions CreateEmpty(IPackageManager manager)
+        {
+            var mgr_path = StoragePath.Get(manager);
+            return new(mgr_path);
+        }
+
+        public static InstallationOptions FromSerialized(SerializableInstallationOptions options, IPackage package)
+        {
+            var instance = CreateEmpty(package);
+            instance.GetValuesFromSerializable(options);
             return instance;
         }
+
+        public static InstallationOptions FromSerialized(SerializableInstallationOptions options, IPackageManager manager)
+        {
+            var instance = CreateEmpty(manager);
+            instance.GetValuesFromSerializable(options);
+            return instance;
+        }
+
+        public static InstallationOptions LoadForPackage(IPackage package)
+        {
+            InstallationOptions instance = CreateEmpty(package);
+            instance.LoadFromDisk();
+            return instance;
+        }
+
+        public static async Task<InstallationOptions> LoadForPackageAsync(IPackage package)
+        {
+            InstallationOptions instance = CreateEmpty(package);
+            await Task.Run(instance.LoadFromDisk);
+            return instance;
+        }
+
+        public static InstallationOptions LoadForManager(IPackageManager manager)
+        {
+            InstallationOptions instance = CreateEmpty(manager);
+            instance.LoadFromDisk();
+            return instance;
+        }
+
+        public static InstallationOptions LoadApplicable(
+            IPackage package,
+            bool? elevated = null,
+            bool? interactive = null,
+            bool? no_integrity = null,
+            bool? remove_data = null)
+        {
+            InstallationOptions instance = LoadForPackage(package);
+            if (!instance.OverridesNextLevelOpts)
+            {
+                instance = LoadForManager(package.Manager);
+                Logger.Debug($"Package {package.Id} does not override options, will use package manager's default...");
+            }
+
+            if (elevated is not null) instance.RunAsAdministrator = (bool)elevated;
+            if (interactive is not null) instance.InteractiveInstallation = (bool)interactive;
+            if (no_integrity is not null) instance.SkipHashCheck = (bool)no_integrity;
+            if (remove_data is not null) instance.RemoveDataOnUninstall = (bool)remove_data;
+
+            return instance;
+        }
+
+        public static Task<InstallationOptions> LoadApplicableAsync(
+            IPackage package,
+            bool? elevated = null,
+            bool? interactive = null,
+            bool? no_integrity = null,
+            bool? remove_data = null)
+            => Task.Run(() => LoadApplicable(package, elevated, interactive, no_integrity, remove_data));
 
         /// <summary>
         /// Loads and applies the options from the given SerializableInstallationOptions object to the current object.
         /// </summary>
-        public void FromSerializable(SerializableInstallationOptions options)
+        public void GetValuesFromSerializable(SerializableInstallationOptions options)
         {
             SkipHashCheck = options.SkipHashCheck;
             InteractiveInstallation = options.InteractiveInstallation;
@@ -144,7 +159,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <summary>
         /// Returns a SerializableInstallationOptions object containing the options of the current instance.
         /// </summary>
-        public SerializableInstallationOptions AsSerializable()
+        public SerializableInstallationOptions ToSerializable()
         {
             SerializableInstallationOptions options = new()
             {
@@ -168,20 +183,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
             return options;
         }
 
-        private FileInfo GetPackageOptionsFile()
-        {
-            string optionsFileName = Package.Manager.Name + "." + Package.Id.Split(":")[0] + ".json";
-            return new FileInfo(Path.Join(CoreData.UniGetUIInstallationOptionsDirectory, optionsFileName));
-        }
-
-        /// <summary>
-        /// Saves the current options to disk, asynchronously.
-        /// </summary>
-        public async Task SaveToDiskAsync()
-        {
-            await Task.Run(SaveToDisk);
-        }
-
         /// <summary>
         /// Saves the current options to disk.
         /// </summary>
@@ -189,52 +190,55 @@ namespace UniGetUI.PackageEngine.PackageClasses
         {
             try
             {
-                FileInfo optionsFile = GetPackageOptionsFile();
-                if (optionsFile.Directory?.Exists == false)
+                var dir = Path.GetDirectoryName(__save_filename);
+                ArgumentException.ThrowIfNullOrEmpty(dir);
+                if (!Directory.Exists(dir))
                 {
-                    optionsFile.Directory.Create();
+                    Directory.CreateDirectory(dir);
                 }
 
                 string fileContents = JsonSerializer.Serialize(
-                    AsSerializable(),
+                    ToSerializable(),
                     SerializationHelpers.DefaultOptions
                 );
-                File.WriteAllText(optionsFile.FullName, fileContents);
+                File.WriteAllText(__save_filename, fileContents);
             }
             catch (Exception ex)
             {
-                Logger.Error($"Could not save {Package.Id} options to disk");
+                Logger.Error($"Could not save {__save_filename} options to disk");
                 Logger.Error(ex);
             }
         }
 
         /// <summary>
+        /// Saves the current options to disk.
+        /// </summary>
+        public Task SaveToDiskAsync() => Task.Run(SaveToDisk);
+
+        /// <summary>
         /// Loads the options from disk.
         /// </summary>
-        public void LoadFromDisk()
+        private void LoadFromDisk()
         {
-            FileInfo optionsFile = GetPackageOptionsFile();
             try
             {
-                if (!optionsFile.Exists)
+                if (!File.Exists(__save_filename))
                     return;
 
-                var rawData = File.ReadAllText(optionsFile.FullName);
+                var rawData = File.ReadAllText(__save_filename);
                 JsonNode? jsonData = JsonNode.Parse(rawData);
-                if (jsonData is null)
-                    return;
-
+                ArgumentNullException.ThrowIfNull(jsonData);
                 var serializedOptions = new SerializableInstallationOptions(jsonData);
-                FromSerializable(serializedOptions);
+                GetValuesFromSerializable(serializedOptions);
             }
             catch (JsonException)
             {
-                Logger.Warn("An error occurred while parsing package " + optionsFile + ". The file will be overwritten");
-                File.WriteAllText(optionsFile.FullName, "{}");
+                Logger.Warn("An error occurred while parsing package " + __save_filename + ". The file will be overwritten");
+                File.WriteAllText(__save_filename, "{}");
             }
             catch (Exception e)
             {
-                Logger.Error("Loading installation options for file " + optionsFile + " have failed: ");
+                Logger.Error("Loading installation options for file " + __save_filename + " have failed: ");
                 Logger.Error(e);
             }
         }
@@ -244,7 +248,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// </summary>
         public override string ToString()
         {
-            string customparams = CustomParameters is not null ? string.Join(",", CustomParameters) : "[]";
+            string customparams = CustomParameters.Any() ? string.Join(",", CustomParameters) : "[]";
             return $"<InstallationOptions: SkipHashCheck={SkipHashCheck};" +
                    $"InteractiveInstallation={InteractiveInstallation};" +
                    $"RunAsAdministrator={RunAsAdministrator};" +
