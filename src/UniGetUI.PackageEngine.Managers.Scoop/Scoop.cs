@@ -78,7 +78,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 KnownSources = [new ManagerSource(this, "main", new Uri("https://github.com/ScoopInstaller/Main")),
                                 new ManagerSource(this, "extras", new Uri("https://github.com/ScoopInstaller/Extras")),
                                 new ManagerSource(this, "versions", new Uri("https://github.com/ScoopInstaller/Versions")),
-                                new ManagerSource(this, "nirsoft", new Uri("https://github.com/kodybrown/scoop-nirsoft")),
+                                new ManagerSource(this, "nirsoft", new Uri("https://github.com/ScoopInstaller/Nirsoft")),
                                 new ManagerSource(this, "sysinternals", new Uri("https://github.com/niheaven/scoop-sysinternals")),
                                 new ManagerSource(this, "php", new Uri("https://github.com/ScoopInstaller/PHP")),
                                 new ManagerSource(this, "nerd-fonts", new Uri("https://github.com/matthewjberger/scoop-nerd-fonts")),
