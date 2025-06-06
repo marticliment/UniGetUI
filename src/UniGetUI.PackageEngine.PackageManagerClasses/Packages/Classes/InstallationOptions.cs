@@ -183,6 +183,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
             return options;
         }
 
+
+        private static ConcurrentDictionary<string, SerializableInstallationOptions> _optionsCache = new();
         /// <summary>
         /// Saves the current options to disk.
         /// </summary>
@@ -197,8 +199,11 @@ namespace UniGetUI.PackageEngine.PackageClasses
                     Directory.CreateDirectory(dir);
                 }
 
+                var serialized = ToSerializable();
+                _optionsCache[__save_filename] = serialized;
+
                 string fileContents = JsonSerializer.Serialize(
-                    ToSerializable(),
+                    serialized,
                     SerializationHelpers.DefaultOptions
                 );
                 File.WriteAllText(__save_filename, fileContents);
@@ -222,13 +227,21 @@ namespace UniGetUI.PackageEngine.PackageClasses
         {
             try
             {
-                if (!File.Exists(__save_filename))
-                    return;
+                SerializableInstallationOptions serializedOptions;
+                if (_optionsCache.TryGetValue(__save_filename, out var cached))
+                {
+                    serializedOptions = cached;
+                }
+                else
+                {
+                    if (!File.Exists(__save_filename)) return;
 
-                var rawData = File.ReadAllText(__save_filename);
-                JsonNode? jsonData = JsonNode.Parse(rawData);
-                ArgumentNullException.ThrowIfNull(jsonData);
-                var serializedOptions = new SerializableInstallationOptions(jsonData);
+                    var rawData = File.ReadAllText(__save_filename);
+                    JsonNode? jsonData = JsonNode.Parse(rawData);
+                    ArgumentNullException.ThrowIfNull(jsonData);
+                    serializedOptions = new SerializableInstallationOptions(jsonData);
+                    _optionsCache[__save_filename] = serializedOptions;
+                }
                 GetValuesFromSerializable(serializedOptions);
             }
             catch (JsonException)
