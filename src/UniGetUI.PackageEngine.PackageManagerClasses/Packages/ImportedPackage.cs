@@ -37,9 +37,10 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         public async Task<Package> RegisterAndGetPackageAsync()
         {
-            var options = await InstallationOptions.FromPackageAsync(this);
-            options.FromSerializable(installation_options);
-            await options.SaveToDiskAsync();
+            await Task.Run(() =>
+            {
+                InstallationOptions.FromSerialized(installation_options, this).SaveToDisk();
+            });
 
             if (updates_options.UpdatesIgnored)
             {

@@ -3,7 +3,7 @@ using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 
 namespace UniGetUI.PackageEngine.Managers.NpmManager;
-internal sealed class NpmPkgOperationHelper : PackagePkgOperationHelper
+internal sealed class NpmPkgOperationHelper : BasePkgOperationHelper
 {
     public NpmPkgOperationHelper(Npm manager) : base(manager) { }
 
