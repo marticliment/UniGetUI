@@ -59,9 +59,18 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 sources = [ Properties.DefaultSource ];
             }
 
+            bool canPrerelease = InstallationOptions.LoadForManager(this).PreRelease;
+
             foreach(IManagerSource source in sources)
             {
-                Uri? SearchUrl = new($"{source.Url}/Search()?$filter=IsLatestVersion&$orderby=Id&searchTerm='{HttpUtility.UrlEncode(query)}'&targetFramework=''&includePrerelease=false&$skip=0&$top=50&semVerLevel=2.0.0");
+                Uri? SearchUrl = new($"{source.Url}/Search()" +
+                    $"?$filter=IsLatestVersion" +
+                    $"&$orderby=Id&searchTerm='{HttpUtility.UrlEncode(query)}'" +
+                    $"&targetFramework=''" +
+                    $"&includePrerelease={(canPrerelease? "true": "false")}" +
+                    $"&$skip=0" +
+                    $"&$top=50" +
+                    $"&semVerLevel=2.0.0");
                 // Uri SearchUrl = new($"{source.Url}/Search()?$filter=IsLatestVersion&searchTerm=%27{HttpUtility.UrlEncode(query)}%27&targetFramework=%27%27&includePrerelease=false");
                 logger.Log($"Begin package search with url={SearchUrl} on manager {Name}");
                 Dictionary<string, SearchResult> AlreadyProcessedPackages = [];
@@ -145,6 +154,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 if (!sourceMapping.ContainsKey(uri)) sourceMapping[uri] = new();
                 sourceMapping[uri].Add(package);
             }
+            bool canPrerelease = InstallationOptions.LoadForManager(this).PreRelease;
 
             foreach (var pair in sourceMapping)
             {
@@ -161,7 +171,8 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 var SearchUrl = $"{pair.Key.Url.ToString().Trim('/')}/GetUpdates()" +
                                 $"?packageIds=%27{HttpUtility.UrlEncode(packageIds.ToString().Trim('|'))}%27" +
                                 $"&versions=%27{HttpUtility.UrlEncode(packageVers.ToString().Trim('|'))}%27" +
-                                $"&includePrerelease=0&includeAllVersions=0";
+                                $"&includePrerelease={(canPrerelease ? "true" : "false")}" +
+                                $"&includeAllVersions=0";
 
                 using HttpClient client = new(CoreTools.GenericHttpClientParameters);
                 client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
