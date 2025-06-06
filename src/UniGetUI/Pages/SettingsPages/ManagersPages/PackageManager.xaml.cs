@@ -108,7 +108,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
 
             if (Manager is WinGet)
             {
-                DisableNotifsCard.CornerRadius = new CornerRadius(0);
+                DisableNotifsCard.CornerRadius = new CornerRadius(8, 8, 0, 0);
                 DisableNotifsCard.BorderThickness = new Thickness(1, 1, 1, 0);
                 ExtraControls.Children.Add(DisableNotifsCard);
 
@@ -173,7 +173,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
 
             else if (Manager is Scoop)
             {
-                DisableNotifsCard.CornerRadius = new CornerRadius(0);
+                DisableNotifsCard.CornerRadius = new CornerRadius(8,8,0,0);
                 DisableNotifsCard.BorderThickness = new Thickness(1, 1, 1, 0);
                 ExtraControls.Children.Add(DisableNotifsCard);
 
@@ -235,7 +235,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
 
             else if (Manager is Chocolatey)
             {
-                DisableNotifsCard.CornerRadius = new CornerRadius(0);
+                DisableNotifsCard.CornerRadius = new CornerRadius(8,8,0,0);
                 DisableNotifsCard.BorderThickness = new Thickness(1, 1, 1, 0);
                 ExtraControls.Children.Add(DisableNotifsCard);
 
@@ -253,7 +253,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
 
             else if (Manager is Vcpkg)
             {
-                DisableNotifsCard.CornerRadius = new CornerRadius(0);
+                DisableNotifsCard.CornerRadius = new CornerRadius(8,8,0,0);
                 DisableNotifsCard.BorderThickness = new Thickness(1, 1, 1, 0);
                 ExtraControls.Children.Add(DisableNotifsCard);
 
@@ -329,7 +329,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             // -------------------------------- DEFAULT EXTRA SETTINGS --------------------------------------
             else
             {
-                DisableNotifsCard.CornerRadius = new CornerRadius(0, 0, 8, 8);
+                DisableNotifsCard.CornerRadius = new CornerRadius(8);
                 DisableNotifsCard.BorderThickness = new Thickness(1, 1, 1, 1);
                 ExtraControls.Children.Add(DisableNotifsCard);
             }
