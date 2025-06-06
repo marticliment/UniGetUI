@@ -16,6 +16,9 @@
     <None Update="Package.appxmanifest">
       <SubType>Designer</SubType>
     </None>
+    <Page Update="Pages\DialogPages\InstallOptions_Manager.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Pages\DialogPages\OperationFailedDialog.xaml">
       <SubType>Designer</SubType>
     </Page>

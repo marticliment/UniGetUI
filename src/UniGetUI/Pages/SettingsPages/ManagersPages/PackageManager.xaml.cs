@@ -71,6 +71,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             if (LocationLabel.Text == "") LocationLabel.Text = CoreTools.Translate("The executable file for {0} was not found", Manager.DisplayName);
             EnableManager.SettingName = Manager.Name;
             EnableManager.Text = CoreTools.Translate("Enable {pm}").Replace("{pm}", Manager.DisplayName);
+            InstallOptionsTitle.Text = CoreTools.Translate("Default installation options for {0} packages", Manager.DisplayName);
 
             SettingsTitle.Text = CoreTools.Translate("{0} settings", Manager.DisplayName);
             StatusTitle.Text = CoreTools.Translate("{0} status", Manager.DisplayName);
@@ -93,6 +94,8 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             };
 
             ManagerLogsLabel.Text = CoreTools.Translate("View {0} logs", Manager.DisplayName);
+
+            InstallOptionsPanel.Description = new InstallOptions_Manager(Manager);
 
             // ----------------------- SOURCES CONTROL -------------------
 

@@ -79,6 +79,16 @@
             </controls:SettingsCard>
 
             <widgets:TranslatedTextBlock
+                x:Name="InstallOptionsTitle"
+                Margin="4,32,4,8"
+                FontWeight="SemiBold" />
+
+            <controls:SettingsCard
+                x:Name="InstallOptionsPanel"
+                HorizontalContentAlignment="Stretch"
+                CornerRadius="8" />
+
+            <widgets:TranslatedTextBlock
                 x:Name="SettingsTitle"
                 Margin="4,32,4,8"
                 FontWeight="SemiBold" />

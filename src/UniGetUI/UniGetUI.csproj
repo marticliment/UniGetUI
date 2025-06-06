@@ -54,6 +54,7 @@
     <None Remove="Interface\Widgets\NavButton.xaml" />
     <None Remove="MainWindow.xaml" />
     <None Remove="PackageEngine\OperationControl.xaml" />
+    <None Remove="Pages\DialogPages\InstallOptions_Manager.xaml" />
     <None Remove="Pages\DialogPages\OperationFailedDialog.xaml" />
     <None Remove="Pages\SettingsPages\GeneralPages\Administrator.xaml" />
     <None Remove="Pages\SettingsPages\GeneralPages\Backup.xaml" />
@@ -178,6 +179,9 @@
     <None Update="Assets\Utilities\uninstall_scoop.cmd">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="Pages\DialogPages\InstallOptions_Manager.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Pages\DialogPages\OperationFailedDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
