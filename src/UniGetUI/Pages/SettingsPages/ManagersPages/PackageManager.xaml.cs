@@ -76,15 +76,6 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             SettingsTitle.Text = CoreTools.Translate("{0} settings", Manager.DisplayName);
             StatusTitle.Text = CoreTools.Translate("{0} status", Manager.DisplayName);
 
-            var AlwaysElevateManagerOP = new CheckboxCard_Dict()
-            {
-                Text = CoreTools.Translate("Always run {pm} operations with administrator rights").Replace("{pm}", Manager.DisplayName),
-                DictionaryName = "AlwaysElevate",
-                SettingName = Manager.Name,
-                CornerRadius = new CornerRadius(8,8,0,0),
-                BorderThickness = new Thickness(1,1,1,0),
-            };
-
             var DisableNotifsCard = new CheckboxCard_Dict()
             {
                 Text = CoreTools.Translate("Ignore packages from {pm} when showing a notification about updates").Replace("{pm}", Manager.DisplayName),
@@ -119,7 +110,6 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             {
                 DisableNotifsCard.CornerRadius = new CornerRadius(0);
                 DisableNotifsCard.BorderThickness = new Thickness(1, 1, 1, 0);
-                ExtraControls.Children.Add(AlwaysElevateManagerOP);
                 ExtraControls.Children.Add(DisableNotifsCard);
 
                 ButtonCard WinGet_ResetWindowsIPackageManager = new()
@@ -185,7 +175,6 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             {
                 DisableNotifsCard.CornerRadius = new CornerRadius(0);
                 DisableNotifsCard.BorderThickness = new Thickness(1, 1, 1, 0);
-                ExtraControls.Children.Add(AlwaysElevateManagerOP);
                 ExtraControls.Children.Add(DisableNotifsCard);
 
                 ButtonCard Scoop_Install = new()
@@ -248,7 +237,6 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             {
                 DisableNotifsCard.CornerRadius = new CornerRadius(0);
                 DisableNotifsCard.BorderThickness = new Thickness(1, 1, 1, 0);
-                ExtraControls.Children.Add(AlwaysElevateManagerOP);
                 ExtraControls.Children.Add(DisableNotifsCard);
 
                 CheckboxCard Chocolatey_SystemChoco = new()
@@ -267,7 +255,6 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             {
                 DisableNotifsCard.CornerRadius = new CornerRadius(0);
                 DisableNotifsCard.BorderThickness = new Thickness(1, 1, 1, 0);
-                ExtraControls.Children.Add(AlwaysElevateManagerOP);
                 ExtraControls.Children.Add(DisableNotifsCard);
 
                 Settings.SetValue("DefaultVcpkgTriplet", Vcpkg.GetDefaultTriplet());
@@ -344,7 +331,6 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             {
                 DisableNotifsCard.CornerRadius = new CornerRadius(0, 0, 8, 8);
                 DisableNotifsCard.BorderThickness = new Thickness(1, 1, 1, 1);
-                ExtraControls.Children.Add(AlwaysElevateManagerOP);
                 ExtraControls.Children.Add(DisableNotifsCard);
             }
 
