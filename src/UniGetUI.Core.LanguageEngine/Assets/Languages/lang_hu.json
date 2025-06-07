@@ -441,6 +441,7 @@
   "Partially": "Részben",
   "Password": "Jelszó",
   "Paste a valid URL to the database": "Érvényes URL beillesztése az adatbázisba",
+  "Pause updates for": null,
   "Perform a backup now": "Biztonsági mentés végrehajtása most",
   "Performing backup, please wait...": "Biztonsági mentés végrehajtása, kis türelmet...",
   "Periodically perform a backup of the installed packages": "Rendszeresen készítsen biztonsági mentést a telepített csomagokról",

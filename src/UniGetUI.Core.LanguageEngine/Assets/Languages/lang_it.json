@@ -441,6 +441,7 @@
   "Partially": "Parzialmente",
   "Password": "Password",
   "Paste a valid URL to the database": "Incolla un URL valido nel database",
+  "Pause updates for": null,
   "Perform a backup now": "Esegui subito un backup",
   "Performing backup, please wait...": "Esecuzione del backup, attendi...",
   "Periodically perform a backup of the installed packages": "Esegui periodicamente un backup dei pacchetti installati",

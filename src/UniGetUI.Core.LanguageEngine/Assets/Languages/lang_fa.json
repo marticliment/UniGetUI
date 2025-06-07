@@ -441,6 +441,7 @@
   "Partially": "تا حدی",
   "Password": "رمز عبور",
   "Paste a valid URL to the database": "یک URL معتبر در پایگاه داده بچسبانید",
+  "Pause updates for": null,
   "Perform a backup now": "اکنون یک نسخه بک آپ تهیه کنید",
   "Performing backup, please wait...": "در حال انجام بک آپ گیری، لطفاً صبر کنید...",
   "Periodically perform a backup of the installed packages": "به صورت دوره ای از بسته های نصب شده یک نسخه بک آپ تهیه کنید",

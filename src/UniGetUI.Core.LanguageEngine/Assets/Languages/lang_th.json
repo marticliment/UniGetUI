@@ -441,6 +441,7 @@
   "Partially": null,
   "Password": null,
   "Paste a valid URL to the database": "วาง URL ที่ถูกต้องไปยังฐานข้อมูล",
+  "Pause updates for": null,
   "Perform a backup now": "สำรองข้อมูลเดี๋ยวนี้",
   "Performing backup, please wait...": "กำลังสำรองข้อมูล โปรดรอสักครู่...",
   "Periodically perform a backup of the installed packages": "สำรองข้อมูลแพ็กเกจที่ติดตั้งแล้วเป็นระยะ",
