@@ -441,6 +441,7 @@
   "Partially": "Частково",
   "Password": "Пароль",
   "Paste a valid URL to the database": "Вставте дійсний URL до бази даних",
+  "Pause updates for": null,
   "Perform a backup now": "Виконати резервне копіювання зараз",
   "Performing backup, please wait...": "Створюється резервна копія, зачекайте, будь ласка…",
   "Periodically perform a backup of the installed packages": "Періодично виконувати резервне копіювання встановлених пакетів",

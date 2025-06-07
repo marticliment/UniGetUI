@@ -441,6 +441,7 @@
   "Partially": null,
   "Password": null,
   "Paste a valid URL to the database": "Залепите исправан URL у базу података",
+  "Pause updates for": null,
   "Perform a backup now": "Одмах направи резервну копију",
   "Performing backup, please wait...": "Прављење резервне копије, молимо сачекајте...",
   "Periodically perform a backup of the installed packages": "Повремено направи резервну копију инсталираних пакета",

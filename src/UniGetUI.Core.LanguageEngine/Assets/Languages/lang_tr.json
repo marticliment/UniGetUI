@@ -441,6 +441,7 @@
   "Partially": "Kısmen",
   "Password": "Şifre",
   "Paste a valid URL to the database": "Veritabanına geçerli bir URL yapıştırın",
+  "Pause updates for": null,
   "Perform a backup now": "Şimdi bir yedekleme yapın",
   "Performing backup, please wait...": "Yedekleme gerçekleştiriliyor, lütfen bekleyin...",
   "Periodically perform a backup of the installed packages": "Yüklü paketlerin periyodik olarak yedeğini alın",

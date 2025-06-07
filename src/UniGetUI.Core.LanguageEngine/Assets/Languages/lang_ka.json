@@ -441,6 +441,7 @@
   "Partially": "ნაწილობრივ",
   "Password": "პაროლი",
   "Paste a valid URL to the database": "ჩასვით მონაცემთა ბაზის ვალიდური URL ",
+  "Pause updates for": null,
   "Perform a backup now": "ბექაფის შექმნა ახლა",
   "Performing backup, please wait...": "ბექაფის შექმნა, გთხოვთ მოიცადოთ...",
   "Periodically perform a backup of the installed packages": "პერიოდულად შექმენი დაყენებული პაკეტების ბექაფი",
