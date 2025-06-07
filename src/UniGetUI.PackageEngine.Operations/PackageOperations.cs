@@ -8,6 +8,7 @@ using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Managers.WingetManager;
 using UniGetUI.PackageEngine.PackageLoader;
+using UniGetUI.PackageEngine.Serializable;
 using UniGetUI.PackageOperations;
 
 namespace UniGetUI.PackageEngine.Operations
@@ -17,7 +18,7 @@ namespace UniGetUI.PackageEngine.Operations
         protected List<string> DesktopShortcutsBeforeStart = [];
 
         public readonly IPackage Package;
-        public readonly IInstallationOptions Options;
+        public readonly SerializableInstallationOptions Options;
         public readonly OperationType Role;
 
         protected abstract Task HandleSuccess();
@@ -26,7 +27,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         public PackageOperation(
             IPackage package,
-            IInstallationOptions options,
+            SerializableInstallationOptions options,
             OperationType role,
             bool IgnoreParallelInstalls = false,
             AbstractOperation? req = null)
@@ -134,7 +135,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         public InstallPackageOperation(
             IPackage package,
-            IInstallationOptions options,
+            SerializableInstallationOptions options,
             bool IgnoreParallelInstalls = false,
             AbstractOperation? req = null)
             : base(package, options, OperationType.Install, IgnoreParallelInstalls, req)
@@ -183,7 +184,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         public UpdatePackageOperation(
             IPackage package,
-            IInstallationOptions options,
+            SerializableInstallationOptions options,
             bool IgnoreParallelInstalls = false,
             AbstractOperation? req = null)
             : base(package, options, OperationType.Update, IgnoreParallelInstalls, req)
@@ -237,7 +238,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         public UninstallPackageOperation(
             IPackage package,
-            IInstallationOptions options,
+            SerializableInstallationOptions options,
             bool IgnoreParallelInstalls = false,
             AbstractOperation? req = null)
             : base(package, options, OperationType.Uninstall, IgnoreParallelInstalls, req)

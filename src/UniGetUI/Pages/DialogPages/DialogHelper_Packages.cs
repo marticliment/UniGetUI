@@ -20,17 +20,20 @@ public static partial class DialogHelper
     /// </summary>
     public static async Task<bool> ShowInstallatOptions_Continue(IPackage package, OperationType operation)
     {
-        var options = (await InstallationOptions.LoadForPackageAsync(package)).ToSerializable();
+        var options = await InstallOptionsFactory.LoadForPackageAsync(package);
         var (dialogOptions, dialogResult) = await ShowInstallOptions(package, operation, options);
 
-        if (dialogResult != ContentDialogResult.None)
+        if (dialogResult is not ContentDialogResult.None)
         {
-            InstallationOptions newOptions = await InstallationOptions.LoadForPackageAsync(package);
-            newOptions.GetValuesFromSerializable(dialogOptions);
-            await newOptions.SaveToDiskAsync();
+            Logger.Debug($"Saving updated options for package {package.Id}");
+            await InstallOptionsFactory.SaveForPackageAsync(dialogOptions, package);
+        }
+        else
+        {
+            Logger.Debug($"Install options dialog for {package.Id} was canceled, no changes will be saved");
         }
 
-        return dialogResult == ContentDialogResult.Secondary;
+        return dialogResult is ContentDialogResult.Secondary;
     }
 
     /// <summary>

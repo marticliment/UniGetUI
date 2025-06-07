@@ -28,7 +28,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         public bool CanDownloadInstaller = false;
         public bool SupportsCustomVersions = false;
         public bool SupportsCustomArchitectures = false;
-        public Architecture[] SupportedCustomArchitectures = [];
+        public string[] SupportedCustomArchitectures = [];
         public bool SupportsCustomScopes = false;
         public bool SupportsPreRelease = false;
         public bool SupportsCustomLocations = false;

@@ -1,15 +1,15 @@
 using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.Serializable;
 
 namespace UniGetUI.PackageEngine.Managers.PipManager;
 internal sealed class PipPkgOperationHelper : BasePkgOperationHelper
 {
     public PipPkgOperationHelper(Pip manager) : base(manager) { }
 
-    protected override IReadOnlyList<string> _getOperationParameters(
-        IPackage package,
-        IInstallationOptions options,
+    protected override IReadOnlyList<string> _getOperationParameters(IPackage package,
+        SerializableInstallationOptions options,
         OperationType operation)
     {
         List<string> parameters = [operation switch {

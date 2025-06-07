@@ -47,7 +47,7 @@ public sealed partial class InstallOptions_Manager : UserControl
     private async Task LoadOptions()
     {
         LoadingIndicator.Visibility = Visibility.Visible;
-        var options = await Task.Run(() => InstallationOptions.LoadForManager(Manager).ToSerializable());
+        var options = await InstallOptionsFactory.LoadForManagerAsync(Manager);
 
         // This delay allows the spinner to show,
         // and give the user the sensation that things have worked
@@ -85,7 +85,7 @@ public sealed partial class InstallOptions_Manager : UserControl
         if (Manager.Capabilities.SupportsCustomArchitectures)
         {
             ArchitectureCombo.IsEnabled = true;
-            foreach (Architecture arch in Manager.Capabilities.SupportedCustomArchitectures)
+            foreach (string arch in Manager.Capabilities.SupportedCustomArchitectures)
             {
                 ArchitectureCombo.Items.Add(CommonTranslations.ArchNames[arch]);
                 if (options.Architecture == CommonTranslations.ArchNames[arch])
@@ -168,7 +168,7 @@ public sealed partial class InstallOptions_Manager : UserControl
         // Scope
         options.InstallationScope = "";
         candidateValue = ScopeCombo.SelectedValue.ToString() ?? "";
-        if (CommonTranslations.InvertedScopeNames.TryGetValue(candidateValue, out PackageScope result))
+        if (CommonTranslations.InvertedScopeNames.TryGetValue(candidateValue, out string? result))
         {
             options.InstallationScope = CommonTranslations.ScopeNames_NonLang[result];
         }
@@ -183,8 +183,7 @@ public sealed partial class InstallOptions_Manager : UserControl
         // Command-line parameters
         options.CustomParameters = CustomParameters.Text.Split(' ').Where(x => x.Any()).ToList();
 
-        var temp = InstallationOptions.FromSerialized(options, Manager);
-        await temp.SaveToDiskAsync();
+        await InstallOptionsFactory.SaveForManagerAsync(options, Manager);
         await LoadOptions();
     }
 
@@ -193,8 +192,7 @@ public sealed partial class InstallOptions_Manager : UserControl
         LoadingIndicator.Visibility = Visibility.Visible;
         DisableAllInput();
 
-        var opts = InstallationOptions.CreateEmpty(Manager);
-        await opts.SaveToDiskAsync();
+        await InstallOptionsFactory.SaveForManagerAsync(new(), Manager);
         await LoadOptions();
     }
 

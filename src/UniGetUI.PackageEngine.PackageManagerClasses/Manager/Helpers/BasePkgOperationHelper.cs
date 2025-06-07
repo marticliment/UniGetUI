@@ -2,6 +2,7 @@ using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Interfaces.ManagerProviders;
+using UniGetUI.PackageEngine.Serializable;
 
 namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
 
@@ -14,9 +15,8 @@ public abstract class BasePkgOperationHelper : IPackageOperationHelper
         Manager = manager;
     }
 
-    protected abstract IReadOnlyList<string> _getOperationParameters(
-        IPackage package,
-        IInstallationOptions options,
+    protected abstract IReadOnlyList<string> _getOperationParameters(IPackage package,
+        SerializableInstallationOptions options,
         OperationType operation);
 
     protected abstract OperationVeredict _getOperationResult(
@@ -25,9 +25,8 @@ public abstract class BasePkgOperationHelper : IPackageOperationHelper
         IReadOnlyList<string> processOutput,
         int returnCode);
 
-    public IReadOnlyList<string> GetParameters(
-        IPackage package,
-        IInstallationOptions options,
+    public IReadOnlyList<string> GetParameters(IPackage package,
+        SerializableInstallationOptions options,
         OperationType operation)
     {
         var parameters = _getOperationParameters(package, options, operation).ToArray();

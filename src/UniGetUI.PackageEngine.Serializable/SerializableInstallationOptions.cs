@@ -16,6 +16,7 @@ namespace UniGetUI.PackageEngine.Serializable
         public string Version { get; set; } = "";
         public bool SkipMinorUpdates { get; set; }
         public bool OverridesNextLevelOpts { get; set; }
+        public bool RemoveDataOnUninstall { get; set; }
 
         public override SerializableInstallationOptions Copy()
         {
@@ -32,11 +33,14 @@ namespace UniGetUI.PackageEngine.Serializable
                 Version = Version,
                 SkipMinorUpdates = SkipMinorUpdates,
                 OverridesNextLevelOpts = OverridesNextLevelOpts,
+                RemoveDataOnUninstall = RemoveDataOnUninstall,
             };
         }
 
         public override void LoadFromJson(JsonNode data)
         {
+            // RemoveDataOnUninstall is not stored on disk
+
             this.SkipHashCheck = data[nameof(SkipHashCheck)]?.GetVal<bool>() ?? false;
             this.InteractiveInstallation = data[nameof(InteractiveInstallation)]?.GetVal<bool>() ?? false;
             this.RunAsAdministrator = data[nameof(RunAsAdministrator)]?.GetVal<bool>() ?? false;
@@ -70,6 +74,7 @@ namespace UniGetUI.PackageEngine.Serializable
                    InstallationScope.Any() ||
                    CustomParameters.Where(x => x != "").Any() ||
                    CustomInstallLocation.Any() ||
+                   RemoveDataOnUninstall is not false ||
                    Version.Any();
             // OverridesNextLevelOpts does not need to be checked here, since
             // this method is invoked before this property has been set
@@ -81,6 +86,21 @@ namespace UniGetUI.PackageEngine.Serializable
 
         public SerializableInstallationOptions(JsonNode data) : base(data)
         {
+        }
+
+        public override string ToString()
+        {
+            string customparams = CustomParameters.Any() ? string.Join(",", CustomParameters) : "[]";
+            return $"<SerializableInstallationOptions: SkipHashCheck={SkipHashCheck};" +
+                   $"InteractiveInstallation={InteractiveInstallation};" +
+                   $"RunAsAdministrator={RunAsAdministrator};" +
+                   $"Version={Version};" +
+                   $"Architecture={Architecture};" +
+                   $"InstallationScope={InstallationScope};" +
+                   $"InstallationScope={CustomInstallLocation};" +
+                   $"CustomParameters={customparams};" +
+                   $"RemoveDataOnUninstall={RemoveDataOnUninstall};" +
+                   $"PreRelease={PreRelease}>";
         }
     }
 }

@@ -4,6 +4,7 @@ using Microsoft.Management.Deployment;
 using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.Serializable;
 
 namespace UniGetUI.PackageEngine.Managers.WingetManager;
 
@@ -79,7 +80,7 @@ public static class NativePackageHandler
     /// <summary>
     /// Get (cached or load) the native installer for the given package, if any. The operation type determines wether
     /// </summary>
-    public static PackageInstallerInfo? GetInstallationOptions(IPackage package, IInstallationOptions unigetuiOptions, OperationType operation)
+    public static PackageInstallerInfo? GetInstallationOptions(IPackage package, SerializableInstallationOptions unigetuiOptions, OperationType operation)
     //    =>  TaskRecycler<PackageInstallerInfo?>.RunOrAttach(_getInstallationOptions, package, operation);
     //
     //private static PackageInstallerInfo? _getInstallationOptions(IPackage package, OperationType operation)
@@ -105,7 +106,7 @@ public static class NativePackageHandler
     }
 
     private static PackageInstallerInfo? _getInstallationOptionsOnDict(IPackage package,
-        ref ConcurrentDictionary<long, PackageInstallerInfo> source, bool installed, IInstallationOptions unigetuiOptions)
+        ref ConcurrentDictionary<long, PackageInstallerInfo> source, bool installed, SerializableInstallationOptions unigetuiOptions)
     {
         if (source.TryGetValue(package.GetHash(), out PackageInstallerInfo? installerInfo))
             return installerInfo;

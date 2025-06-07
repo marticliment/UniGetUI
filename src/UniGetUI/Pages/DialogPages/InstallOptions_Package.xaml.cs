@@ -89,7 +89,7 @@ namespace UniGetUI.Interface.Dialogs
 
             if (Package.Manager.Capabilities.SupportsCustomArchitectures)
             {
-                foreach (Architecture arch in Package.Manager.Capabilities.SupportedCustomArchitectures)
+                foreach (string arch in Package.Manager.Capabilities.SupportedCustomArchitectures)
                 {
                     ArchitectureComboBox.Items.Add(CommonTranslations.ArchNames[arch]);
                     if (Options.Architecture == CommonTranslations.ArchNames[arch])
@@ -317,7 +317,7 @@ namespace UniGetUI.Interface.Dialogs
         private async void GenerateCommand()
         {
             if (!_uiLoaded) return;
-            InstallationOptions io = InstallationOptions.FromSerialized(await GetUpdatedOptions(updateIgnoredUpdates: false), Package);
+            var io = await GetUpdatedOptions(updateIgnoredUpdates: false);
             var op = ProfileComboBox.SelectedIndex switch
             {
                 1 => OperationType.Update,

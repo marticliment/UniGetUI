@@ -149,7 +149,7 @@ namespace UniGetUI.PackageEngine.Interfaces
         /// <returns>False if the update is a major update or the update doesn't exist, true if it's a minor update</returns>
         public bool IsUpdateMinor();
 
-        public SerializablePackage AsSerializable();
+        public Task<SerializablePackage> AsSerializableAsync();
 
         public SerializableIncompatiblePackage AsSerializable_Incompatible();
     }

@@ -301,7 +301,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
                    (NormalizedVersion.Patch != NormalizedNewVersion.Patch || NormalizedVersion.Remainder != NormalizedNewVersion.Remainder);
         }
 
-        public virtual SerializablePackage AsSerializable()
+        public virtual async Task<SerializablePackage> AsSerializableAsync()
         {
             return new SerializablePackage
             {
@@ -310,11 +310,11 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 Version = VersionString,
                 Source = Source.Name,
                 ManagerName = Manager.Name,
-                InstallationOptions = InstallationOptions.LoadForPackage(this).ToSerializable(),
+                InstallationOptions = await InstallOptionsFactory.LoadForPackageAsync(this),
                 Updates = new SerializableUpdatesOptions
                 {
-                    IgnoredVersion = GetIgnoredUpdatesVersionAsync().GetAwaiter().GetResult(),
-                    UpdatesIgnored = HasUpdatesIgnoredAsync().GetAwaiter().GetResult(),
+                    IgnoredVersion = await GetIgnoredUpdatesVersionAsync(),
+                    UpdatesIgnored = await HasUpdatesIgnoredAsync(),
                 }
             };
         }

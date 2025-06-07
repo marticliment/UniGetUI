@@ -2,15 +2,16 @@ using System.Runtime.InteropServices;
 using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.Serializable;
+using Architecture = UniGetUI.PackageEngine.Enums.Architecture;
 
 namespace UniGetUI.PackageEngine.Managers.DotNetManager;
 internal sealed class DotNetPkgOperationHelper : BasePkgOperationHelper
 {
     public DotNetPkgOperationHelper(DotNet manager) : base(manager) { }
 
-    protected override IReadOnlyList<string> _getOperationParameters(
-        IPackage package,
-        IInstallationOptions options,
+    protected override IReadOnlyList<string> _getOperationParameters(IPackage package,
+        SerializableInstallationOptions options,
         OperationType operation)
     {
         List<string> parameters =
