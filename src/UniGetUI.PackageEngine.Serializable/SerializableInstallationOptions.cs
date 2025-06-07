@@ -48,8 +48,9 @@ namespace UniGetUI.PackageEngine.Serializable
             this.InstallationScope = data[nameof(InstallationScope)]?.GetVal<string>() ?? "";
 
             this.CustomParameters = new List<string>();
-            foreach(var element in data[nameof(CustomParameters)]?.AsArray2() ?? [])
-                if (element is not null) this.CustomParameters.Add(element.GetVal<string>());
+            foreach (var element in data[nameof(CustomParameters)]?.AsArray2() ?? [])
+                if (element is not null)
+                    this.CustomParameters.Add(element.GetVal<string>());
 
             this.PreRelease = data[nameof(PreRelease)]?.GetVal<bool>() ?? false;
             this.CustomInstallLocation = data[nameof(CustomInstallLocation)]?.GetVal<string>() ?? "";
@@ -61,6 +62,22 @@ namespace UniGetUI.PackageEngine.Serializable
             // This entry shall be checked the last one, to ensure all other properties are set
             this.OverridesNextLevelOpts =
                 data[nameof(OverridesNextLevelOpts)]?.GetValue<bool>() ?? DiffersFromDefault();
+
+            SanitizeOptions();
+        }
+
+        private void SanitizeOptions()
+        {
+            for (int i = 0; i < this.CustomParameters.Count; i++)
+            {
+                this.CustomParameters[i] = this.CustomParameters[i]
+                    .Replace("&", "")
+                    .Replace("|", "")
+                    .Replace(";", "")
+                    .Replace("<", "")
+                    .Replace(">", "")
+                    .Replace("\n", "");
+            }
         }
 
         public bool DiffersFromDefault()

@@ -29,19 +29,7 @@ public abstract class BasePkgOperationHelper : IPackageOperationHelper
         SerializableInstallationOptions options,
         OperationType operation)
     {
-        var parameters = _getOperationParameters(package, options, operation).ToArray();
-
-        for (int i = 0; i < parameters.Length; i++)
-        {
-            parameters[i] = parameters[i]
-                .Replace("&", "")
-                .Replace("|", "")
-                .Replace(";", "")
-                .Replace("<", "")
-                .Replace(">", "")
-                .Replace("\n", "");
-        }
-
+        var parameters = _getOperationParameters(package, options, operation);
         Logger.Info($"Loaded operation parameters for package id={package.Id} on manager {Manager.Name} and operation {operation}: " +
                     string.Join(' ', parameters));
         return parameters.Where(x => x.Any()).ToArray();
