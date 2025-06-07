@@ -317,11 +317,12 @@ namespace UniGetUI.Interface.Dialogs
         private async void GenerateCommand()
         {
             if (!_uiLoaded) return;
-            SerializableInstallationOptions options;
-            if (FollowGlobalOptionsSwitch.IsOn)
-                options = await InstallOptionsFactory.LoadForManagerAsync(Package.Manager);
-            else
-                options = await GetUpdatedOptions(updateIgnoredUpdates: false);
+            SerializableInstallationOptions options = await GetUpdatedOptions(updateIgnoredUpdates: false);
+            if (!options.OverridesNextLevelOpts)
+            {
+                options = await InstallOptionsFactory.LoadApplicableAsync(this.Package, overridePackageOptions: options);
+            }
+
             var op = ProfileComboBox.SelectedIndex switch
             {
                 1 => OperationType.Update,

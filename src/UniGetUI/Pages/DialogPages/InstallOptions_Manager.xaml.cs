@@ -229,7 +229,7 @@ public sealed partial class InstallOptions_Manager : UserControl
         string folder = openPicker.Show();
         if (folder != string.Empty)
         {
-            CustomInstallLocation.Text = folder;
+            CustomInstallLocation.Text = folder.TrimEnd('\\') + "\\%PACKAGE%";
             ResetDir.IsEnabled = true;
             ApplyButton.Style = (Style)Application.Current.Resources["AccentButtonStyle"];
         }

@@ -6,6 +6,7 @@ using ABI.Windows.UI.Text.Core;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Language;
 using UniGetUI.Core.Logging;
+using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Serializable;
@@ -39,7 +40,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             => _loadFromDisk(StoragePath.Get(manager));
 
         public static Task<SerializableInstallationOptions> LoadForManagerAsync(IPackageManager manager)
-            => Task.Run(() => _loadFromDisk(StoragePath.Get(manager)));
+            => Task.Run(() => LoadForManager(manager));
 
         // Saving to disk (package and manager)
         public static void SaveForPackage(SerializableInstallationOptions options, IPackage package)
@@ -54,19 +55,34 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public static Task SaveForManagerAsync(SerializableInstallationOptions options, IPackageManager manager)
             => Task.Run(() => _saveToDisk(options, StoragePath.Get(manager)));
 
-        // Loading applicable
+        /// <summary>
+        /// Loads the applicable InstallationOptions, and applies
+        /// any required transformations in case that generic options are being used
+        /// </summary>
+        /// <param name="package">The package whose options to load</param>
+        /// <param name="elevated">Overrides the RunAsAdmin property</param>
+        /// <param name="interactive">Overrides the Interactive property</param>
+        /// <param name="no_integrity">Overrides the SkipHashCheck property</param>
+        /// <param name="remove_data">Overrides the RemoveDataOnUninstall property</param>
+        /// <param name="overridePackageOptions">In case of on-the-fly command generation, the PACKAGE
+        /// options can be overriden with this object </param>
+        /// <returns>The applicable SerializableInstallationOptions</returns>
         public static SerializableInstallationOptions LoadApplicable(
             IPackage package,
             bool? elevated = null,
             bool? interactive = null,
             bool? no_integrity = null,
-            bool? remove_data = null)
+            bool? remove_data = null,
+            SerializableInstallationOptions? overridePackageOptions = null)
         {
-            var instance = LoadForPackage(package);
+            var instance = overridePackageOptions ?? LoadForPackage(package);
             if (!instance.OverridesNextLevelOpts)
             {
                 Logger.Debug($"Package {package.Id} does not override options, will use package manager's default...");
                 instance = LoadForManager(package.Manager);
+
+                var legalizedId = CoreTools.MakeValidFileName(package.Id);
+                instance.CustomInstallLocation = instance.CustomInstallLocation.Replace("%PACKAGE%", legalizedId);
             }
 
             if (elevated is not null) instance.RunAsAdministrator = (bool)elevated;
@@ -77,12 +93,25 @@ namespace UniGetUI.PackageEngine.PackageClasses
             return instance;
         }
 
+        /// <summary>
+        /// Loads the applicable InstallationOptions, and applies
+        /// any required transformations in case that generic options are being used
+        /// </summary>
+        /// <param name="package">The package whose options to load</param>
+        /// <param name="elevated">Overrides the RunAsAdmin property</param>
+        /// <param name="interactive">Overrides the Interactive property</param>
+        /// <param name="no_integrity">Overrides the SkipHashCheck property</param>
+        /// <param name="remove_data">Overrides the RemoveDataOnUninstall property</param>
+        /// <param name="overridePackageOptions">In case of on-the-fly command generation, the PACKAGE
+        /// options can be overriden with this object </param>
+        /// <returns>The applicable SerializableInstallationOptions</returns>
         public static Task<SerializableInstallationOptions> LoadApplicableAsync(
             IPackage package,
             bool? elevated = null,
             bool? interactive = null,
             bool? no_integrity = null,
-            bool? remove_data = null)
+            bool? remove_data = null,
+            SerializableInstallationOptions? overridePackageOptions = null)
             => Task.Run(() => LoadApplicable(package, elevated, interactive, no_integrity, remove_data));
 
         /*
@@ -140,7 +169,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
                         ArgumentNullException.ThrowIfNull(jsonData);
                         serializedOptions = new SerializableInstallationOptions(jsonData);
                         _optionsCache[key] = serializedOptions;
-                        return serializedOptions;
+                        return serializedOptions.Copy();
                     }
                 }
             }
