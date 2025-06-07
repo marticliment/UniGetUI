@@ -39,7 +39,7 @@ namespace UniGetUI.PackageEngine.Serializable
 
         public override void LoadFromJson(JsonNode data)
         {
-            // RemoveDataOnUninstall is not stored on disk
+            // RemoveDataOnUninstall should not be loaded from disk
 
             this.SkipHashCheck = data[nameof(SkipHashCheck)]?.GetVal<bool>() ?? false;
             this.InteractiveInstallation = data[nameof(InteractiveInstallation)]?.GetVal<bool>() ?? false;
