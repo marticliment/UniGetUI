@@ -14,7 +14,7 @@ namespace UniGetUI.PackageEngine.Interfaces.ManagerProviders
         /// installation options.
         /// </summary>
         public IReadOnlyList<string> GetParameters(IPackage package,
-            SerializableInstallationOptions options,
+            InstallOptions options,
             OperationType operation);
 
         /// <summary>

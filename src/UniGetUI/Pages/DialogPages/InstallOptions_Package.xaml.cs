@@ -21,15 +21,15 @@ namespace UniGetUI.Interface.Dialogs
     /// </summary>
     public sealed partial class InstallOptionsPage : Page
     {
-        public SerializableInstallationOptions Options;
+        public InstallOptions Options;
         public IPackage Package;
         public event EventHandler? Close;
         private readonly OperationType Operation;
         private readonly string packageInstallLocation;
         private bool _uiLoaded;
 
-        public InstallOptionsPage(IPackage package, SerializableInstallationOptions options) : this(package, OperationType.None, options) { }
-        public InstallOptionsPage(IPackage package, OperationType operation, SerializableInstallationOptions options)
+        public InstallOptionsPage(IPackage package, InstallOptions options) : this(package, OperationType.None, options) { }
+        public InstallOptionsPage(IPackage package, OperationType operation, InstallOptions options)
         {
             Package = package;
             InitializeComponent();
@@ -225,7 +225,7 @@ namespace UniGetUI.Interface.Dialogs
             VersionProgress.Visibility = Visibility.Collapsed;
         }
 
-        public async Task<SerializableInstallationOptions> GetUpdatedOptions(bool updateIgnoredUpdates = true)
+        public async Task<InstallOptions> GetUpdatedOptions(bool updateIgnoredUpdates = true)
         {
             Options.RunAsAdministrator = AdminCheckBox?.IsChecked ?? false;
             Options.InteractiveInstallation = InteractiveCheckBox?.IsChecked ?? false;
@@ -317,7 +317,7 @@ namespace UniGetUI.Interface.Dialogs
         private async void GenerateCommand()
         {
             if (!_uiLoaded) return;
-            SerializableInstallationOptions options = await GetUpdatedOptions(updateIgnoredUpdates: false);
+            InstallOptions options = await GetUpdatedOptions(updateIgnoredUpdates: false);
             if (!options.OverridesNextLevelOpts)
             {
                 options = await InstallOptionsFactory.LoadApplicableAsync(this.Package, overridePackageOptions: options);

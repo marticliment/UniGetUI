@@ -11,7 +11,7 @@ internal sealed class DotNetPkgOperationHelper : BasePkgOperationHelper
     public DotNetPkgOperationHelper(DotNet manager) : base(manager) { }
 
     protected override IReadOnlyList<string> _getOperationParameters(IPackage package,
-        SerializableInstallationOptions options,
+        InstallOptions options,
         OperationType operation)
     {
         List<string> parameters =

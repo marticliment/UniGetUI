@@ -18,7 +18,7 @@ namespace UniGetUI.PackageEngine.Operations
         protected List<string> DesktopShortcutsBeforeStart = [];
 
         public readonly IPackage Package;
-        public readonly SerializableInstallationOptions Options;
+        public readonly InstallOptions Options;
         public readonly OperationType Role;
 
         protected abstract Task HandleSuccess();
@@ -27,7 +27,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         public PackageOperation(
             IPackage package,
-            SerializableInstallationOptions options,
+            InstallOptions options,
             OperationType role,
             bool IgnoreParallelInstalls = false,
             AbstractOperation? req = null)
@@ -135,7 +135,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         public InstallPackageOperation(
             IPackage package,
-            SerializableInstallationOptions options,
+            InstallOptions options,
             bool IgnoreParallelInstalls = false,
             AbstractOperation? req = null)
             : base(package, options, OperationType.Install, IgnoreParallelInstalls, req)
@@ -184,7 +184,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         public UpdatePackageOperation(
             IPackage package,
-            SerializableInstallationOptions options,
+            InstallOptions options,
             bool IgnoreParallelInstalls = false,
             AbstractOperation? req = null)
             : base(package, options, OperationType.Update, IgnoreParallelInstalls, req)
@@ -238,7 +238,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         public UninstallPackageOperation(
             IPackage package,
-            SerializableInstallationOptions options,
+            InstallOptions options,
             bool IgnoreParallelInstalls = false,
             AbstractOperation? req = null)
             : base(package, options, OperationType.Uninstall, IgnoreParallelInstalls, req)

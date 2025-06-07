@@ -108,7 +108,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager
 
     internal sealed class NullPkgOperationHelper : IPackageOperationHelper
     {
-        public IReadOnlyList<string> GetParameters(IPackage package, SerializableInstallationOptions options,
+        public IReadOnlyList<string> GetParameters(IPackage package, InstallOptions options,
             OperationType operation)
             => throw new NotImplementedException();
 

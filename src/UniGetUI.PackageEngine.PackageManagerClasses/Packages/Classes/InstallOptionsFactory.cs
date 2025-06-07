@@ -30,29 +30,29 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
 
         // Loading from disk (package and manager)
-        public static SerializableInstallationOptions LoadForPackage(IPackage package)
+        public static InstallOptions LoadForPackage(IPackage package)
             => _loadFromDisk(StoragePath.Get(package));
 
-        public static Task<SerializableInstallationOptions> LoadForPackageAsync(IPackage package)
+        public static Task<InstallOptions> LoadForPackageAsync(IPackage package)
             => Task.Run(() => LoadForPackage(package));
 
-        public static SerializableInstallationOptions LoadForManager(IPackageManager manager)
+        public static InstallOptions LoadForManager(IPackageManager manager)
             => _loadFromDisk(StoragePath.Get(manager));
 
-        public static Task<SerializableInstallationOptions> LoadForManagerAsync(IPackageManager manager)
+        public static Task<InstallOptions> LoadForManagerAsync(IPackageManager manager)
             => Task.Run(() => LoadForManager(manager));
 
         // Saving to disk (package and manager)
-        public static void SaveForPackage(SerializableInstallationOptions options, IPackage package)
+        public static void SaveForPackage(InstallOptions options, IPackage package)
             => _saveToDisk(options, StoragePath.Get(package));
 
-        public static Task SaveForPackageAsync(SerializableInstallationOptions options, IPackage package)
+        public static Task SaveForPackageAsync(InstallOptions options, IPackage package)
             => Task.Run(() => _saveToDisk(options, StoragePath.Get(package)));
 
-        public static void SaveForManager(SerializableInstallationOptions options, IPackageManager manager)
+        public static void SaveForManager(InstallOptions options, IPackageManager manager)
             => _saveToDisk(options, StoragePath.Get(manager));
 
-        public static Task SaveForManagerAsync(SerializableInstallationOptions options, IPackageManager manager)
+        public static Task SaveForManagerAsync(InstallOptions options, IPackageManager manager)
             => Task.Run(() => _saveToDisk(options, StoragePath.Get(manager)));
 
         /// <summary>
@@ -66,14 +66,14 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <param name="remove_data">Overrides the RemoveDataOnUninstall property</param>
         /// <param name="overridePackageOptions">In case of on-the-fly command generation, the PACKAGE
         /// options can be overriden with this object </param>
-        /// <returns>The applicable SerializableInstallationOptions</returns>
-        public static SerializableInstallationOptions LoadApplicable(
+        /// <returns>The applicable InstallOptions</returns>
+        public static InstallOptions LoadApplicable(
             IPackage package,
             bool? elevated = null,
             bool? interactive = null,
             bool? no_integrity = null,
             bool? remove_data = null,
-            SerializableInstallationOptions? overridePackageOptions = null)
+            InstallOptions? overridePackageOptions = null)
         {
             var instance = overridePackageOptions ?? LoadForPackage(package);
             if (!instance.OverridesNextLevelOpts)
@@ -104,14 +104,14 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <param name="remove_data">Overrides the RemoveDataOnUninstall property</param>
         /// <param name="overridePackageOptions">In case of on-the-fly command generation, the PACKAGE
         /// options can be overriden with this object </param>
-        /// <returns>The applicable SerializableInstallationOptions</returns>
-        public static Task<SerializableInstallationOptions> LoadApplicableAsync(
+        /// <returns>The applicable InstallOptions</returns>
+        public static Task<InstallOptions> LoadApplicableAsync(
             IPackage package,
             bool? elevated = null,
             bool? interactive = null,
             bool? no_integrity = null,
             bool? remove_data = null,
-            SerializableInstallationOptions? overridePackageOptions = null)
+            InstallOptions? overridePackageOptions = null)
             => Task.Run(() => LoadApplicable(package, elevated, interactive, no_integrity, remove_data));
 
         /*
@@ -120,9 +120,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
          *
          */
 
-        private static readonly ConcurrentDictionary<string, SerializableInstallationOptions> _optionsCache = new();
+        private static readonly ConcurrentDictionary<string, InstallOptions> _optionsCache = new();
 
-        private static void _saveToDisk(SerializableInstallationOptions options, string key)
+        private static void _saveToDisk(InstallOptions options, string key)
         {
             try
             {
@@ -142,11 +142,11 @@ namespace UniGetUI.PackageEngine.PackageClasses
             }
         }
 
-        private static SerializableInstallationOptions _loadFromDisk(string key)
+        private static InstallOptions _loadFromDisk(string key)
         {
             try
             {
-                SerializableInstallationOptions serializedOptions;
+                InstallOptions serializedOptions;
                 if (_optionsCache.TryGetValue(key, out var cached))
                 {
                     // If the wanted instance is already cached
@@ -158,8 +158,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
                     if (!File.Exists(filePath))
                     {
                         // If the file where it should be stored does not exist
-                        _optionsCache[key] = new SerializableInstallationOptions();
-                        return new SerializableInstallationOptions();
+                        _optionsCache[key] = new InstallOptions();
+                        return new InstallOptions();
                     }
                     else
                     {
@@ -167,7 +167,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
                         var rawData = File.ReadAllText(filePath);
                         JsonNode? jsonData = JsonNode.Parse(rawData);
                         ArgumentNullException.ThrowIfNull(jsonData);
-                        serializedOptions = new SerializableInstallationOptions(jsonData);
+                        serializedOptions = new InstallOptions(jsonData);
                         _optionsCache[key] = serializedOptions;
                         return serializedOptions.Copy();
                     }

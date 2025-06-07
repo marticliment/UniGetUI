@@ -9,7 +9,7 @@ internal sealed class PowerShell7PkgOperationHelper : BasePkgOperationHelper
     public PowerShell7PkgOperationHelper(PowerShell7 manager) : base(manager) { }
 
     protected override IReadOnlyList<string> _getOperationParameters(IPackage package,
-        SerializableInstallationOptions options, OperationType operation)
+        InstallOptions options, OperationType operation)
     {
         List<string> parameters = [operation switch {
             OperationType.Install => Manager.Properties.InstallVerb,

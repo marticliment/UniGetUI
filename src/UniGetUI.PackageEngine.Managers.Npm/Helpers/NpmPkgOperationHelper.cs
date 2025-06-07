@@ -9,7 +9,7 @@ internal sealed class NpmPkgOperationHelper : BasePkgOperationHelper
     public NpmPkgOperationHelper(Npm manager) : base(manager) { }
 
     protected override IReadOnlyList<string> _getOperationParameters(IPackage package,
-        SerializableInstallationOptions options, OperationType operation)
+        InstallOptions options, OperationType operation)
     {
         List<string> parameters = operation switch {
             OperationType.Install => [Manager.Properties.InstallVerb, $"{package.Id}@{(options.Version == string.Empty? package.VersionString: options.Version)}"],

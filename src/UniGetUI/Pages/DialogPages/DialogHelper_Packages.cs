@@ -53,10 +53,10 @@ public static partial class DialogHelper
         return dialogResult;
     }
 
-    private static async Task<(SerializableInstallationOptions, ContentDialogResult)> ShowInstallOptions(
+    private static async Task<(InstallOptions, ContentDialogResult)> ShowInstallOptions(
         IPackage package,
         OperationType operation,
-        SerializableInstallationOptions options)
+        InstallOptions options)
     {
         InstallOptionsPage OptionsPage = new(package, operation, options);
 

@@ -2,7 +2,7 @@ using System.Text.Json.Nodes;
 
 namespace UniGetUI.PackageEngine.Serializable.Tests;
 
-public class TestSerializableInstallationOptions
+public class TestInstallOptions
 {
     [Theory]
     [InlineData(false, false, "", "", "", "", "", "", false, false, false, "")]
@@ -13,7 +13,7 @@ public class TestSerializableInstallationOptions
     public void ToAndFromJsonNode(bool a, bool b, string c, string d, string e, string f, string g, string h, bool i,
         bool j, bool k, string l)
     {
-        var originalObject1 = new SerializableInstallationOptions()
+        var originalObject1 = new InstallOptions()
         {
             SkipHashCheck = a,
             Architecture = h,
@@ -29,7 +29,7 @@ public class TestSerializableInstallationOptions
 
         Assert.Equal(a, originalObject1.DiffersFromDefault());
 
-        var object2 = new SerializableInstallationOptions();
+        var object2 = new InstallOptions();
         string contents = originalObject1.AsJsonString();
         Assert.NotEmpty(contents);
         var jsonContent = JsonNode.Parse(contents);
@@ -37,7 +37,7 @@ public class TestSerializableInstallationOptions
         object2.LoadFromJson(jsonContent);
         AreEqual(originalObject1, object2);
 
-        var object3 = new SerializableInstallationOptions(originalObject1.AsJsonNode());
+        var object3 = new InstallOptions(originalObject1.AsJsonNode());
         AreEqual(originalObject1, object3);
 
         var object4 = originalObject1.Copy();
@@ -77,7 +77,7 @@ public class TestSerializableInstallationOptions
         Assert.NotEmpty(JSON);
         var jsonContent = JsonNode.Parse(JSON);
         Assert.NotNull(jsonContent);
-        var o2 = new SerializableInstallationOptions(jsonContent);
+        var o2 = new InstallOptions(jsonContent);
 
         var list = new List<string>() { arg1, arg2, arg3 }.Where(x => x.Any());
 
@@ -95,7 +95,7 @@ public class TestSerializableInstallationOptions
         Assert.Equal(ver, o2.Version);
     }
 
-    internal static void AreEqual(SerializableInstallationOptions o1, SerializableInstallationOptions o2)
+    internal static void AreEqual(InstallOptions o1, InstallOptions o2)
     {
         Assert.Equal(o1.SkipHashCheck, o2.SkipHashCheck);
         Assert.Equal(o1.Architecture, o2.Architecture);

@@ -12,7 +12,7 @@ namespace UniGetUI.PackageEngine.Classes.Serializable
         public string Source { get; set; } = "";
         public string ManagerName { get; set; } = "";
 
-        public SerializableInstallationOptions InstallationOptions { get; set; } = new();
+        public InstallOptions InstallationOptions { get; set; } = new();
         public SerializableUpdatesOptions Updates { get; set; } = new();
 
         public override SerializablePackage Copy()

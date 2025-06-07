@@ -150,7 +150,7 @@ public sealed partial class InstallOptions_Manager : UserControl
         LoadingIndicator.Visibility = Visibility.Visible;
         DisableAllInput();
 
-        SerializableInstallationOptions options = new();
+        InstallOptions options = new();
         // Checkboxes
         options.RunAsAdministrator = AdminCheckBox.IsChecked ?? false;
         options.SkipHashCheck = HashCheckBox.IsChecked ?? false;

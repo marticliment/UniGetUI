@@ -3,7 +3,7 @@ using UniGetUI.Core.Data;
 
 namespace UniGetUI.PackageEngine.Serializable
 {
-    public class SerializableInstallationOptions: SerializableComponent<SerializableInstallationOptions>
+    public class InstallOptions: SerializableComponent<InstallOptions>
     {
         public bool SkipHashCheck { get; set; }
         public bool InteractiveInstallation { get; set; }
@@ -18,7 +18,7 @@ namespace UniGetUI.PackageEngine.Serializable
         public bool OverridesNextLevelOpts { get; set; }
         public bool RemoveDataOnUninstall { get; set; }
 
-        public override SerializableInstallationOptions Copy()
+        public override InstallOptions Copy()
         {
             return new()
             {
@@ -97,18 +97,18 @@ namespace UniGetUI.PackageEngine.Serializable
             // this method is invoked before this property has been set
         }
 
-        public SerializableInstallationOptions() : base()
+        public InstallOptions() : base()
         {
         }
 
-        public SerializableInstallationOptions(JsonNode data) : base(data)
+        public InstallOptions(JsonNode data) : base(data)
         {
         }
 
         public override string ToString()
         {
             string customparams = CustomParameters.Any() ? string.Join(",", CustomParameters) : "[]";
-            return $"<SerializableInstallationOptions: SkipHashCheck={SkipHashCheck};" +
+            return $"<InstallOptions: SkipHashCheck={SkipHashCheck};" +
                    $"InteractiveInstallation={InteractiveInstallation};" +
                    $"RunAsAdministrator={RunAsAdministrator};" +
                    $"Version={Version};" +

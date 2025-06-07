@@ -8,7 +8,7 @@ namespace UniGetUI.PackageEngine.Managers.CargoManager;
 internal sealed class CargoPkgOperationHelper(Cargo cargo) : BasePkgOperationHelper(cargo)
 {
     protected override IReadOnlyList<string> _getOperationParameters(IPackage package,
-        SerializableInstallationOptions options, OperationType operation)
+        InstallOptions options, OperationType operation)
     {
         var version = options.Version == string.Empty ? package.VersionString : options.Version;
         List<string> parameters = operation switch

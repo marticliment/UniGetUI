@@ -16,7 +16,7 @@ public abstract class BasePkgOperationHelper : IPackageOperationHelper
     }
 
     protected abstract IReadOnlyList<string> _getOperationParameters(IPackage package,
-        SerializableInstallationOptions options,
+        InstallOptions options,
         OperationType operation);
 
     protected abstract OperationVeredict _getOperationResult(
@@ -26,7 +26,7 @@ public abstract class BasePkgOperationHelper : IPackageOperationHelper
         int returnCode);
 
     public IReadOnlyList<string> GetParameters(IPackage package,
-        SerializableInstallationOptions options,
+        InstallOptions options,
         OperationType operation)
     {
         var parameters = _getOperationParameters(package, options, operation);

@@ -5,6 +5,7 @@ using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Serializable;
+using InstallOptions = UniGetUI.PackageEngine.Serializable.InstallOptions;
 
 namespace UniGetUI.PackageEngine.Managers.WingetManager;
 
@@ -80,7 +81,7 @@ public static class NativePackageHandler
     /// <summary>
     /// Get (cached or load) the native installer for the given package, if any. The operation type determines wether
     /// </summary>
-    public static PackageInstallerInfo? GetInstallationOptions(IPackage package, SerializableInstallationOptions unigetuiOptions, OperationType operation)
+    public static PackageInstallerInfo? GetInstallationOptions(IPackage package, InstallOptions unigetuiOptions, OperationType operation)
     //    =>  TaskRecycler<PackageInstallerInfo?>.RunOrAttach(_getInstallationOptions, package, operation);
     //
     //private static PackageInstallerInfo? _getInstallationOptions(IPackage package, OperationType operation)
@@ -106,7 +107,7 @@ public static class NativePackageHandler
     }
 
     private static PackageInstallerInfo? _getInstallationOptionsOnDict(IPackage package,
-        ref ConcurrentDictionary<long, PackageInstallerInfo> source, bool installed, SerializableInstallationOptions unigetuiOptions)
+        ref ConcurrentDictionary<long, PackageInstallerInfo> source, bool installed, InstallOptions unigetuiOptions)
     {
         if (source.TryGetValue(package.GetHash(), out PackageInstallerInfo? installerInfo))
             return installerInfo;
@@ -115,8 +116,8 @@ public static class NativePackageHandler
         if (installed) catalogPackage = GetPackage(package)?.InstalledVersion;
         else catalogPackage = GetPackage(package)?.DefaultInstallVersion;
 
-        InstallOptions? wingetOptions = NativeWinGetHelper.ExternalFactory?.CreateInstallOptions();
-        InstallOptions? wingetDefaultOptions = NativeWinGetHelper.ExternalFactory?.CreateInstallOptions();
+        Microsoft.Management.Deployment.InstallOptions? wingetOptions = NativeWinGetHelper.ExternalFactory?.CreateInstallOptions();
+        Microsoft.Management.Deployment.InstallOptions? wingetDefaultOptions = NativeWinGetHelper.ExternalFactory?.CreateInstallOptions();
 
         if (wingetOptions is null)
         {
