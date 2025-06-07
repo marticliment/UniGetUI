@@ -153,7 +153,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             MenuFlyoutSubItem menuPause = new()
             {
-                Text = CoreTools.AutoTranslated("Pause updates for"),
+                Text = CoreTools.Translate("Pause updates for"),
                 Icon = new FontIcon { Glyph = "\uE769" },
             };
             foreach (IgnoredUpdatesDatabase.PauseTime menuTime in new List<IgnoredUpdatesDatabase.PauseTime>{
