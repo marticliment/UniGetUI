@@ -45,7 +45,7 @@ public class TestSerializableInstallationOptions
     }
 
     [Theory]
-    [InlineData("{}", false, false, "", "", "", "", "", "", false, false, false, "")]
+    [InlineData("{}", false, false, "", "", "", "", "", "", false, false, false, "", false)]
     [InlineData("""
                 {
                   "SkipHashCheck": true,
@@ -57,7 +57,7 @@ public class TestSerializableInstallationOptions
                     "a"
                   ]
                 }
-                """, true, true, "", "a", "", "", "", "lol", false, false, false, "")]
+                """, true, true, "", "a", "", "", "", "lol", false, false, false, "", true)]
 
     [InlineData("""
                 {
@@ -71,8 +71,8 @@ public class TestSerializableInstallationOptions
                   "UNKNOWN_VAL4": "hehe"
                 }
                 """, false, false, "", "", "", "",
-        "", "", false, false, true, "heyheyhey")]
-    public void FromJson(string JSON, bool hash, bool inter, string installLoc, string arg1, string arg2, string arg3, string scope, string arch, bool pre, bool admin, bool skipMin, string ver)
+        "", "", false, false, true, "heyheyhey", true)]
+    public void FromJson(string JSON, bool hash, bool inter, string installLoc, string arg1, string arg2, string arg3, string scope, string arch, bool pre, bool admin, bool skipMin, string ver, bool mod)
     {
         Assert.NotEmpty(JSON);
         var jsonContent = JsonNode.Parse(JSON);
@@ -81,6 +81,8 @@ public class TestSerializableInstallationOptions
 
         var list = new List<string>() { arg1, arg2, arg3 }.Where(x => x.Any());
 
+        Assert.Equal(mod, o2.OverridesNextLevelOpts);
+        Assert.Equal(mod, o2.DiffersFromDefault());
         Assert.Equal(hash, o2.SkipHashCheck);
         Assert.Equal(arch, o2.Architecture);
         Assert.Equal(installLoc, o2.CustomInstallLocation);

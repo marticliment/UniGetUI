@@ -53,11 +53,7 @@ namespace UniGetUI.PackageEngine.Operations
         }
 
         private bool RequiresAdminRights()
-        {
-            return Package.OverridenOptions.RunAsAdministrator is true
-                    || Options.RunAsAdministrator
-                    || (Settings.GetDictionaryItem<string, bool>("AlwaysElevate", Package.Manager.Name) && Package.OverridenOptions.RunAsAdministrator != false);
-        }
+            => Package.OverridenOptions.RunAsAdministrator is true || Options.RunAsAdministrator;
 
         protected override void ApplyRetryAction(string retryMode)
         {

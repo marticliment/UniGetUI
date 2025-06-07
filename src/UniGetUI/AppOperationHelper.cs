@@ -124,7 +124,7 @@ public partial class MainApp
         {
             if (package is null) return null;
 
-            var options = await InstallationOptions.FromPackageAsync(package, elevated, interactive, no_integrity);
+            var options = await InstallationOptions.LoadApplicableAsync(package, elevated, interactive, no_integrity);
             var op = new InstallPackageOperation(package, options, ignoreParallel, req);
             op.OperationSucceeded += (_, _) => TelemetryHandler.InstallPackage(package, TEL_OP_RESULT.SUCCESS, referral);
             op.OperationFailed += (_, _) => TelemetryHandler.InstallPackage(package, TEL_OP_RESULT.FAILED, referral);
@@ -148,7 +148,7 @@ public partial class MainApp
         {
             if (package is null) return null;
 
-            var options = await InstallationOptions.FromPackageAsync(package, elevated, interactive, no_integrity);
+            var options = await InstallationOptions.LoadApplicableAsync(package, elevated, interactive, no_integrity);
             var op = new UpdatePackageOperation(package, options, ignoreParallel, req);
             op.OperationSucceeded += (_, _) => TelemetryHandler.UpdatePackage(package, TEL_OP_RESULT.SUCCESS);
             op.OperationFailed += (_, _) => TelemetryHandler.UpdatePackage(package, TEL_OP_RESULT.FAILED);
@@ -221,7 +221,7 @@ public partial class MainApp
         {
             if (package is null) return null;
 
-            var options = await InstallationOptions.FromPackageAsync(package, elevated, interactive, remove_data: remove_data);
+            var options = await InstallationOptions.LoadApplicableAsync(package, elevated, interactive, remove_data: remove_data);
             var op = new UninstallPackageOperation(package, options, ignoreParallel, req);
             op.OperationSucceeded += (_, _) => TelemetryHandler.UninstallPackage(package, TEL_OP_RESULT.SUCCESS);
             op.OperationFailed += (_, _) => TelemetryHandler.UninstallPackage(package, TEL_OP_RESULT.FAILED);

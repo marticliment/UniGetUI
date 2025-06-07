@@ -3,7 +3,7 @@ using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 
 namespace UniGetUI.PackageEngine.Managers.PipManager;
-internal sealed class PipPkgOperationHelper : PackagePkgOperationHelper
+internal sealed class PipPkgOperationHelper : BasePkgOperationHelper
 {
     public PipPkgOperationHelper(Pip manager) : base(manager) { }
 

@@ -20,13 +20,13 @@ public static partial class DialogHelper
     /// </summary>
     public static async Task<bool> ShowInstallatOptions_Continue(IPackage package, OperationType operation)
     {
-        var options = (await InstallationOptions.FromPackageAsync(package)).AsSerializable();
+        var options = (await InstallationOptions.LoadForPackageAsync(package)).ToSerializable();
         var (dialogOptions, dialogResult) = await ShowInstallOptions(package, operation, options);
 
         if (dialogResult != ContentDialogResult.None)
         {
-            InstallationOptions newOptions = await InstallationOptions.FromPackageAsync(package);
-            newOptions.FromSerializable(dialogOptions);
+            InstallationOptions newOptions = await InstallationOptions.LoadForPackageAsync(package);
+            newOptions.GetValuesFromSerializable(dialogOptions);
             await newOptions.SaveToDiskAsync();
         }
 
@@ -68,7 +68,7 @@ public static partial class DialogHelper
         };
         OptionsDialog.PrimaryButtonText = CoreTools.Translate("Save and close");
         OptionsDialog.DefaultButton = ContentDialogButton.Secondary;
-        OptionsDialog.Title = CoreTools.Translate("{0} installation options", package.Name);
+        // OptionsDialog.Title = CoreTools.Translate("{0} installation options", package.Name);
         OptionsDialog.Content = OptionsPage;
 
         OptionsPage.Close += (_, _) => { OptionsDialog.Hide(); };

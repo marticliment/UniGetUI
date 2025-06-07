@@ -17,43 +17,22 @@ namespace UniGetUI.PackageEngine.Interfaces
         public bool RemoveDataOnUninstall { get; set; }
         public bool PreRelease { get; set; }
         public string CustomInstallLocation { get; set; }
-        public IPackage Package { get; }
+        public bool OverridesNextLevelOpts { get; set; }
 
         /// <summary>
         /// Loads and applies the options from the given SerializableInstallationOptions object to the current object.
         /// </summary>
-        public void FromSerializable(SerializableInstallationOptions options);
+        public void GetValuesFromSerializable(SerializableInstallationOptions options);
 
         /// <summary>
         /// Returns a SerializableInstallationOptions object containing the options of the current instance.
         /// </summary>
-        public SerializableInstallationOptions AsSerializable();
-
-        /// <summary>
-        /// Saves the current options to disk, asynchronously.
-        /// </summary>
-        public async Task SaveToDiskAsync()
-        {
-            await Task.Run(SaveToDisk);
-        }
-
-        /// <summary>
-        /// Loads the options from disk, asynchronously.
-        /// </summary>
-        public async Task LoadFromDiskAsync()
-        {
-            await Task.Run(LoadFromDisk);
-        }
+        public SerializableInstallationOptions ToSerializable();
 
         /// <summary>
         /// Saves the current options to disk.
         /// </summary>
         public void SaveToDisk();
-
-        /// <summary>
-        /// Loads the options from disk.
-        /// </summary>
-        protected void LoadFromDisk();
 
         /// <summary>
         /// Returns a string representation of the current options.
