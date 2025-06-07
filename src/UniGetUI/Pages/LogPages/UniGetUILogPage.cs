@@ -20,6 +20,9 @@ namespace UniGetUI.Interface.Pages.LogPage
             LogLevelCombo.Items.Add(CoreTools.Translate("4 - Information (more)"));
             LogLevelCombo.Items.Add(CoreTools.Translate("5 - information (debug)"));
             LogLevelCombo.SelectedIndex = 3;
+#if DEBUG
+            LogLevelCombo.SelectedIndex = 4;
+#endif
         }
 
         public override void LoadLog(bool isReload = false)
