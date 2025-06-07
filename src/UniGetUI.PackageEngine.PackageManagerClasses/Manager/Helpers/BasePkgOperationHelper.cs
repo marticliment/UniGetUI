@@ -44,7 +44,7 @@ public abstract class BasePkgOperationHelper : IPackageOperationHelper
 
         Logger.Info($"Loaded operation parameters for package id={package.Id} on manager {Manager.Name} and operation {operation}: " +
                     string.Join(' ', parameters));
-        return parameters;
+        return parameters.Where(x => x.Any()).ToArray();
 
     }
 

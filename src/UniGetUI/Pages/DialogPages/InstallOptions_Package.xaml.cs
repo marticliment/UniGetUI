@@ -317,25 +317,24 @@ namespace UniGetUI.Interface.Dialogs
         private async void GenerateCommand()
         {
             if (!_uiLoaded) return;
-            var io = await GetUpdatedOptions(updateIgnoredUpdates: false);
+            SerializableInstallationOptions options;
+            if (FollowGlobalOptionsSwitch.IsOn)
+                options = await InstallOptionsFactory.LoadForManagerAsync(Package.Manager);
+            else
+                options = await GetUpdatedOptions(updateIgnoredUpdates: false);
             var op = ProfileComboBox.SelectedIndex switch
             {
                 1 => OperationType.Update,
                 2 => OperationType.Uninstall,
                 _ => OperationType.Install,
             };
-            var commandline = await Task.Run(() => Package.Manager.OperationHelper.GetParameters(Package, io, op));
+            var commandline = await Task.Run(() => Package.Manager.OperationHelper.GetParameters(Package, options, op));
             CommandBox.Text = Package.Manager.Properties.ExecutableFriendlyName + " " + string.Join(" ", commandline);
         }
 
         private void LayoutGrid_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if(LayoutGrid.ActualSize.Y > 1 && LayoutGrid.ActualSize.Y < double.PositiveInfinity) MaxHeight = LayoutGrid.ActualSize.Y;
-        }
-
-        private void ProfileComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
         }
     }
 }
