@@ -152,22 +152,6 @@ namespace UniGetUI.Core.Language
 
     public static class CommonTranslations
     {
-        public static readonly Dictionary<string, string> ArchNames = new()
-        {
-            { Architecture.X64, "x64" },
-            { Architecture.X86, "x86" },
-            { Architecture.Arm64, "arm64" },
-            { Architecture.Arm, "arm32" },
-        };
-
-        public static readonly Dictionary<string, string> InvertedArchNames = new()
-        {
-            { "x64", Architecture.X64 },
-            { "x86", Architecture.X86 },
-            { "arm64", Architecture.Arm64 },
-            { "arm32", Architecture.Arm },
-        };
-
         public static readonly Dictionary<string, string> ScopeNames = new()
         {
             { PackageScope.Global, "Machine | Global" },
@@ -178,18 +162,6 @@ namespace UniGetUI.Core.Language
         {
             { "Machine | Global", PackageScope.Global },
             { "User | Local", PackageScope.Local },
-        };
-
-        public static readonly Dictionary<string, string> ScopeNames_NonLang = new()
-        {
-            { PackageScope.Global, "machine" },
-            { PackageScope.Local, "user" },
-        };
-
-        public static readonly Dictionary<string, string> InvertedScopeNames_NonLang = new()
-        {
-            { "machine", PackageScope.Global },
-            { "user", PackageScope.Local },
         };
     }
 }

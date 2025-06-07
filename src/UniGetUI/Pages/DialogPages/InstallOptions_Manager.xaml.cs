@@ -9,8 +9,7 @@ using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.Serializable;
-using Windows.ApplicationModel;
-using Windows.Gaming.XboxLive.Storage;
+using Architecture = UniGetUI.PackageEngine.Enums.Architecture;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -87,10 +86,10 @@ public sealed partial class InstallOptions_Manager : UserControl
             ArchitectureCombo.IsEnabled = true;
             foreach (string arch in Manager.Capabilities.SupportedCustomArchitectures)
             {
-                ArchitectureCombo.Items.Add(CommonTranslations.ArchNames[arch]);
-                if (options.Architecture == CommonTranslations.ArchNames[arch])
+                ArchitectureCombo.Items.Add(arch);
+                if (options.Architecture == arch)
                 {
-                    ArchitectureCombo.SelectedValue = CommonTranslations.ArchNames[arch];
+                    ArchitectureCombo.SelectedValue = arch;
                 }
             }
         }
@@ -103,13 +102,13 @@ public sealed partial class InstallOptions_Manager : UserControl
         {
             ScopeCombo.IsEnabled = true;
             ScopeCombo.Items.Add(CoreTools.Translate(CommonTranslations.ScopeNames[PackageScope.Local]));
-            if (options.InstallationScope == CommonTranslations.ScopeNames_NonLang[PackageScope.Local])
+            if (options.InstallationScope == PackageScope.Local)
             {
                 ScopeCombo.SelectedValue = CommonTranslations.ScopeNames[PackageScope.Local];
             }
 
             ScopeCombo.Items.Add(CoreTools.Translate(CommonTranslations.ScopeNames[PackageScope.Global]));
-            if (options.InstallationScope == CommonTranslations.ScopeNames_NonLang[PackageScope.Global])
+            if (options.InstallationScope == PackageScope.Global)
             {
                 ScopeCombo.SelectedValue = CommonTranslations.ScopeNames[PackageScope.Global];
             }
@@ -159,18 +158,18 @@ public sealed partial class InstallOptions_Manager : UserControl
 
         // Administrator
         options.Architecture = "";
-        string candidateValue = ArchitectureCombo.SelectedValue.ToString() ?? "";
-        if (CommonTranslations.InvertedArchNames.ContainsKey(candidateValue))
+        string userSelection = ArchitectureCombo.SelectedValue?.ToString() ?? "";
+        if (Architecture.ValidValues.Contains(userSelection))
         {
-            options.Architecture = candidateValue;
+            options.Architecture = userSelection;
         }
 
         // Scope
         options.InstallationScope = "";
-        candidateValue = ScopeCombo.SelectedValue.ToString() ?? "";
-        if (CommonTranslations.InvertedScopeNames.TryGetValue(candidateValue, out string? result))
+        userSelection = ScopeCombo.SelectedValue?.ToString() ?? "";
+        if (CommonTranslations.InvertedScopeNames.TryGetValue(userSelection, out string? value))
         {
-            options.InstallationScope = CommonTranslations.ScopeNames_NonLang[result];
+            options.InstallationScope = value;
         }
 
         // Location

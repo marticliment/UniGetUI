@@ -29,7 +29,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                 CanDownloadInstaller = true,
                 SupportsCustomScopes = true,
                 SupportsCustomArchitectures = true,
-                SupportedCustomArchitectures = [Architecture.X86, Architecture.X64, Architecture.Arm64, Architecture.Arm],
+                SupportedCustomArchitectures = [Architecture.x86, Architecture.x64, Architecture.arm64, Architecture.arm32],
                 SupportsPreRelease = true,
                 SupportsCustomLocations = true,
                 SupportsCustomPackageIcons = true,

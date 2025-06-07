@@ -42,10 +42,10 @@ internal sealed class DotNetPkgOperationHelper : BasePkgOperationHelper
         {
             parameters.AddRange(options.Architecture switch
             {
-                Architecture.X86 => ["--arch", "x86"],
-                Architecture.X64 => ["--arch", "x64"],
-                Architecture.Arm => ["--arch", "arm32"],
-                Architecture.Arm64 => ["--arch", "arm64"],
+                Architecture.x86 => ["--arch", "x86"],
+                Architecture.x64 => ["--arch", "x64"],
+                Architecture.arm32 => ["--arch", "arm32"],
+                Architecture.arm64 => ["--arch", "arm64"],
                 _ => []
             });
         }

@@ -51,9 +51,9 @@ internal sealed class ScoopPkgOperationHelper : BasePkgOperationHelper
         {
             parameters.AddRange(options.Architecture switch
             {
-                Architecture.X64 => ["--arch", "64bit"],
-                Architecture.X86 => ["--arch", "32bit"],
-                Architecture.Arm64 => ["--arch", "arm64"],
+                Architecture.x64 => ["--arch", "64bit"],
+                Architecture.x86 => ["--arch", "32bit"],
+                Architecture.arm64 => ["--arch", "arm64"],
                 _ => []
             });
         }

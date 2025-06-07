@@ -10,6 +10,7 @@ using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.Serializable;
+using Architecture = UniGetUI.PackageEngine.Enums.Architecture;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -91,10 +92,10 @@ namespace UniGetUI.Interface.Dialogs
             {
                 foreach (string arch in Package.Manager.Capabilities.SupportedCustomArchitectures)
                 {
-                    ArchitectureComboBox.Items.Add(CommonTranslations.ArchNames[arch]);
-                    if (Options.Architecture == CommonTranslations.ArchNames[arch])
+                    ArchitectureComboBox.Items.Add(arch);
+                    if (Options.Architecture == arch)
                     {
-                        ArchitectureComboBox.SelectedValue = CommonTranslations.ArchNames[arch];
+                        ArchitectureComboBox.SelectedValue = arch;
                     }
                 }
             }
@@ -137,13 +138,13 @@ namespace UniGetUI.Interface.Dialogs
             if (package.Manager.Capabilities.SupportsCustomScopes)
             {
                 ScopeCombo.Items.Add(CoreTools.Translate(CommonTranslations.ScopeNames[PackageScope.Local]));
-                if (Options.InstallationScope == CommonTranslations.ScopeNames_NonLang[PackageScope.Local])
+                if (Options.InstallationScope == PackageScope.Local)
                 {
                     ScopeCombo.SelectedValue = CommonTranslations.ScopeNames[PackageScope.Local];
                 }
 
                 ScopeCombo.Items.Add(CoreTools.Translate(CommonTranslations.ScopeNames[PackageScope.Global]));
-                if (Options.InstallationScope == CommonTranslations.ScopeNames_NonLang[PackageScope.Global])
+                if (Options.InstallationScope == PackageScope.Global)
                 {
                     ScopeCombo.SelectedValue = CommonTranslations.ScopeNames[PackageScope.Global];
                 }
@@ -232,22 +233,18 @@ namespace UniGetUI.Interface.Dialogs
             Options.SkipHashCheck = HashCheckbox?.IsChecked ?? false;
             Options.OverridesNextLevelOpts = !FollowGlobalOptionsSwitch.IsOn;
 
-            if (CommonTranslations.InvertedArchNames.ContainsKey(ArchitectureComboBox.SelectedValue.ToString() ?? ""))
+            Options.Architecture = "";
+            var userSelection = ArchitectureComboBox.SelectedValue?.ToString() ?? "";
+            if (Architecture.ValidValues.Contains(userSelection))
             {
-                Options.Architecture = ArchitectureComboBox.SelectedValue.ToString() ?? "";
-            }
-            else
-            {
-                Options.Architecture = "";
+                Options.Architecture = userSelection;
             }
 
-            if (CommonTranslations.InvertedScopeNames.ContainsKey(ScopeCombo.SelectedValue.ToString() ?? ""))
+            Options.InstallationScope = "";
+            userSelection = ScopeCombo.SelectedValue?.ToString() ?? "";
+            if (CommonTranslations.InvertedScopeNames.TryGetValue(userSelection, out string? value))
             {
-                Options.InstallationScope = CommonTranslations.ScopeNames_NonLang[CommonTranslations.InvertedScopeNames[ScopeCombo.SelectedValue.ToString() ?? ""]];
-            }
-            else
-            {
-                Options.InstallationScope = "";
+                Options.InstallationScope = value;
             }
 
             if (CustomInstallLocation.Text == packageInstallLocation) Options.CustomInstallLocation = "";

@@ -32,7 +32,7 @@ internal sealed class ChocolateyPkgOperationHelper : BasePkgOperationHelper
         {
             parameters.Add("--no-progress");
 
-            if (options.Architecture == Architecture.X86)
+            if (options.Architecture == Architecture.x86)
                 parameters.Add("--forcex86");
 
             if (options.PreRelease)
