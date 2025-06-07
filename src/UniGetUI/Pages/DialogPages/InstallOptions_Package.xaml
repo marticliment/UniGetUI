@@ -61,8 +61,7 @@
                         <widgets:TranslatedTextBlock Margin="4,0" Text="Operation profile:" />
                         <ComboBox
                             x:Name="ProfileComboBox"
-                            HorizontalAlignment="Stretch"
-                            SelectionChanged="ProfileComboBox_SelectionChanged" />
+                            HorizontalAlignment="Stretch" />
                     </StackPanel>
                 </Grid>
 

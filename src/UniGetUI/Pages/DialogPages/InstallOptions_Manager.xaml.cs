@@ -9,8 +9,7 @@ using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.Serializable;
-using Windows.ApplicationModel;
-using Windows.Gaming.XboxLive.Storage;
+using Architecture = UniGetUI.PackageEngine.Enums.Architecture;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -47,7 +46,7 @@ public sealed partial class InstallOptions_Manager : UserControl
     private async Task LoadOptions()
     {
         LoadingIndicator.Visibility = Visibility.Visible;
-        var options = await Task.Run(() => InstallationOptions.LoadForManager(Manager).ToSerializable());
+        var options = await InstallOptionsFactory.LoadForManagerAsync(Manager);
 
         // This delay allows the spinner to show,
         // and give the user the sensation that things have worked
@@ -85,12 +84,12 @@ public sealed partial class InstallOptions_Manager : UserControl
         if (Manager.Capabilities.SupportsCustomArchitectures)
         {
             ArchitectureCombo.IsEnabled = true;
-            foreach (Architecture arch in Manager.Capabilities.SupportedCustomArchitectures)
+            foreach (string arch in Manager.Capabilities.SupportedCustomArchitectures)
             {
-                ArchitectureCombo.Items.Add(CommonTranslations.ArchNames[arch]);
-                if (options.Architecture == CommonTranslations.ArchNames[arch])
+                ArchitectureCombo.Items.Add(arch);
+                if (options.Architecture == arch)
                 {
-                    ArchitectureCombo.SelectedValue = CommonTranslations.ArchNames[arch];
+                    ArchitectureCombo.SelectedValue = arch;
                 }
             }
         }
@@ -103,13 +102,13 @@ public sealed partial class InstallOptions_Manager : UserControl
         {
             ScopeCombo.IsEnabled = true;
             ScopeCombo.Items.Add(CoreTools.Translate(CommonTranslations.ScopeNames[PackageScope.Local]));
-            if (options.InstallationScope == CommonTranslations.ScopeNames_NonLang[PackageScope.Local])
+            if (options.InstallationScope == PackageScope.Local)
             {
                 ScopeCombo.SelectedValue = CommonTranslations.ScopeNames[PackageScope.Local];
             }
 
             ScopeCombo.Items.Add(CoreTools.Translate(CommonTranslations.ScopeNames[PackageScope.Global]));
-            if (options.InstallationScope == CommonTranslations.ScopeNames_NonLang[PackageScope.Global])
+            if (options.InstallationScope == PackageScope.Global)
             {
                 ScopeCombo.SelectedValue = CommonTranslations.ScopeNames[PackageScope.Global];
             }
@@ -150,7 +149,7 @@ public sealed partial class InstallOptions_Manager : UserControl
         LoadingIndicator.Visibility = Visibility.Visible;
         DisableAllInput();
 
-        SerializableInstallationOptions options = new();
+        InstallOptions options = new();
         // Checkboxes
         options.RunAsAdministrator = AdminCheckBox.IsChecked ?? false;
         options.SkipHashCheck = HashCheckBox.IsChecked ?? false;
@@ -159,18 +158,18 @@ public sealed partial class InstallOptions_Manager : UserControl
 
         // Administrator
         options.Architecture = "";
-        string candidateValue = ArchitectureCombo.SelectedValue.ToString() ?? "";
-        if (CommonTranslations.InvertedArchNames.ContainsKey(candidateValue))
+        string userSelection = ArchitectureCombo.SelectedValue?.ToString() ?? "";
+        if (Architecture.ValidValues.Contains(userSelection))
         {
-            options.Architecture = candidateValue;
+            options.Architecture = userSelection;
         }
 
         // Scope
         options.InstallationScope = "";
-        candidateValue = ScopeCombo.SelectedValue.ToString() ?? "";
-        if (CommonTranslations.InvertedScopeNames.TryGetValue(candidateValue, out PackageScope result))
+        userSelection = ScopeCombo.SelectedValue?.ToString() ?? "";
+        if (CommonTranslations.InvertedScopeNames.TryGetValue(userSelection, out string? value))
         {
-            options.InstallationScope = CommonTranslations.ScopeNames_NonLang[result];
+            options.InstallationScope = value;
         }
 
         // Location
@@ -183,8 +182,7 @@ public sealed partial class InstallOptions_Manager : UserControl
         // Command-line parameters
         options.CustomParameters = CustomParameters.Text.Split(' ').Where(x => x.Any()).ToList();
 
-        var temp = InstallationOptions.FromSerialized(options, Manager);
-        await temp.SaveToDiskAsync();
+        await InstallOptionsFactory.SaveForManagerAsync(options, Manager);
         await LoadOptions();
     }
 
@@ -193,8 +191,7 @@ public sealed partial class InstallOptions_Manager : UserControl
         LoadingIndicator.Visibility = Visibility.Visible;
         DisableAllInput();
 
-        var opts = InstallationOptions.CreateEmpty(Manager);
-        await opts.SaveToDiskAsync();
+        await InstallOptionsFactory.SaveForManagerAsync(new(), Manager);
         await LoadOptions();
     }
 
@@ -231,7 +228,7 @@ public sealed partial class InstallOptions_Manager : UserControl
         string folder = openPicker.Show();
         if (folder != string.Empty)
         {
-            CustomInstallLocation.Text = folder;
+            CustomInstallLocation.Text = folder.TrimEnd('\\') + "\\%PACKAGE%";
             ResetDir.IsEnabled = true;
             ApplyButton.Style = (Style)Application.Current.Resources["AccentButtonStyle"];
         }
