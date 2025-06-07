@@ -2,15 +2,16 @@ using System.Runtime.InteropServices;
 using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.Serializable;
+using Architecture = UniGetUI.PackageEngine.Enums.Architecture;
 
 namespace UniGetUI.PackageEngine.Managers.ChocolateyManager;
 internal sealed class ChocolateyPkgOperationHelper : BasePkgOperationHelper
 {
     public ChocolateyPkgOperationHelper(Chocolatey manager) : base(manager) { }
 
-    protected override IReadOnlyList<string> _getOperationParameters(
-        IPackage package,
-        IInstallationOptions options,
+    protected override IReadOnlyList<string> _getOperationParameters(IPackage package,
+        InstallOptions options,
         OperationType operation)
     {
         List<string> parameters = [operation switch {
@@ -31,7 +32,7 @@ internal sealed class ChocolateyPkgOperationHelper : BasePkgOperationHelper
         {
             parameters.Add("--no-progress");
 
-            if (options.Architecture == Architecture.X86)
+            if (options.Architecture == Architecture.x86)
                 parameters.Add("--forcex86");
 
             if (options.PreRelease)

@@ -124,13 +124,13 @@ public partial class MainApp
         {
             if (package is null) return null;
 
-            var options = await InstallationOptions.LoadApplicableAsync(package, elevated, interactive, no_integrity);
-            var op = new InstallPackageOperation(package, options, ignoreParallel, req);
-            op.OperationSucceeded += (_, _) => TelemetryHandler.InstallPackage(package, TEL_OP_RESULT.SUCCESS, referral);
-            op.OperationFailed += (_, _) => TelemetryHandler.InstallPackage(package, TEL_OP_RESULT.FAILED, referral);
-            Add(op);
+            var options = await InstallOptionsFactory.LoadApplicableAsync(package, elevated, interactive, no_integrity);
+            var operation = new InstallPackageOperation(package, options, ignoreParallel, req);
+            operation.OperationSucceeded += (_, _) => TelemetryHandler.InstallPackage(package, TEL_OP_RESULT.SUCCESS, referral);
+            operation.OperationFailed += (_, _) => TelemetryHandler.InstallPackage(package, TEL_OP_RESULT.FAILED, referral);
+            Add(operation);
             Instance.MainWindow.UpdateSystemTrayStatus();
-            return op;
+            return operation;
         }
 
         public static void Install(IReadOnlyList<IPackage> packages, TEL_InstallReferral referral, bool? elevated = null, bool? interactive = null, bool? no_integrity = null)
@@ -148,13 +148,13 @@ public partial class MainApp
         {
             if (package is null) return null;
 
-            var options = await InstallationOptions.LoadApplicableAsync(package, elevated, interactive, no_integrity);
-            var op = new UpdatePackageOperation(package, options, ignoreParallel, req);
-            op.OperationSucceeded += (_, _) => TelemetryHandler.UpdatePackage(package, TEL_OP_RESULT.SUCCESS);
-            op.OperationFailed += (_, _) => TelemetryHandler.UpdatePackage(package, TEL_OP_RESULT.FAILED);
-            Add(op);
+            var options = await InstallOptionsFactory.LoadApplicableAsync(package, elevated, interactive, no_integrity);
+            var operation = new UpdatePackageOperation(package, options, ignoreParallel, req);
+            operation.OperationSucceeded += (_, _) => TelemetryHandler.UpdatePackage(package, TEL_OP_RESULT.SUCCESS);
+            operation.OperationFailed += (_, _) => TelemetryHandler.UpdatePackage(package, TEL_OP_RESULT.FAILED);
+            Add(operation);
             Instance.MainWindow.UpdateSystemTrayStatus();
-            return op;
+            return operation;
         }
 
         public static void Update(IReadOnlyList<IPackage> packages, bool? elevated = null, bool? interactive = null, bool? no_integrity = null)
@@ -221,13 +221,13 @@ public partial class MainApp
         {
             if (package is null) return null;
 
-            var options = await InstallationOptions.LoadApplicableAsync(package, elevated, interactive, remove_data: remove_data);
-            var op = new UninstallPackageOperation(package, options, ignoreParallel, req);
-            op.OperationSucceeded += (_, _) => TelemetryHandler.UninstallPackage(package, TEL_OP_RESULT.SUCCESS);
-            op.OperationFailed += (_, _) => TelemetryHandler.UninstallPackage(package, TEL_OP_RESULT.FAILED);
-            Add(op);
+            var options = await InstallOptionsFactory.LoadApplicableAsync(package, elevated, interactive, remove_data: remove_data);
+            var operation = new UninstallPackageOperation(package, options, ignoreParallel, req);
+            operation.OperationSucceeded += (_, _) => TelemetryHandler.UninstallPackage(package, TEL_OP_RESULT.SUCCESS);
+            operation.OperationFailed += (_, _) => TelemetryHandler.UninstallPackage(package, TEL_OP_RESULT.FAILED);
+            Add(operation);
             Instance.MainWindow.UpdateSystemTrayStatus();
-            return op;
+            return operation;
         }
 
         public static void Uninstall(IReadOnlyList<IPackage> packages, bool? elevated = null, bool? interactive = null, bool? remove_data = null)

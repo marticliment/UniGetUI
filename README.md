@@ -8,7 +8,7 @@ The main goal of this project is to create an intuitive GUI for the most common 
 With this app, you can easily download, install, update, and uninstall any software published on the supported package managers — and much more!
 
 ![image](https://github.com/user-attachments/assets/7cb447ca-ee8b-4bce-8561-b9332fb0139a)
-
+View more screenshots [here](#screenthots)
 
 Check out the [Supported Package Managers Table](#supported-package-managers) for more details!
 

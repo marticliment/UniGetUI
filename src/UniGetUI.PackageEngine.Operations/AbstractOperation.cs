@@ -82,9 +82,9 @@ public abstract class AbstractOperation : IDisposable
         public readonly bool AsAdministrator;
         public readonly bool Interactive;
         public readonly bool SkipHashCheck;
-        public readonly PackageScope? Scope;
+        public readonly string? Scope;
 
-        public BadgeCollection(bool admin, bool interactive, bool skiphash, PackageScope? scope)
+        public BadgeCollection(bool admin, bool interactive, bool skiphash, string? scope)
         {
             AsAdministrator = admin;
             Interactive = interactive;
@@ -92,7 +92,7 @@ public abstract class AbstractOperation : IDisposable
             Scope = scope;
         }
     }
-    public void ApplyCapabilities(bool admin, bool interactive, bool skiphash, PackageScope? scope)
+    public void ApplyCapabilities(bool admin, bool interactive, bool skiphash, string? scope)
     {
         BadgesChanged?.Invoke(this, new BadgeCollection(admin, interactive, skiphash, scope));
     }

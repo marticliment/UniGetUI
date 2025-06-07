@@ -7,6 +7,9 @@ using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
 using UniGetUI.PackageEngine.Classes.Packages.Classes;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.Serializable;
+using Architecture = UniGetUI.PackageEngine.Enums.Architecture;
+using InstallOptions = UniGetUI.PackageEngine.Serializable.InstallOptions;
 
 namespace UniGetUI.PackageEngine.Managers.WingetManager;
 internal sealed class WinGetPkgOperationHelper : BasePkgOperationHelper
@@ -24,7 +27,8 @@ internal sealed class WinGetPkgOperationHelper : BasePkgOperationHelper
 
     public WinGetPkgOperationHelper(WinGet manager) : base(manager) { }
 
-    protected override IReadOnlyList<string> _getOperationParameters(IPackage package, IInstallationOptions options, OperationType operation)
+    protected override IReadOnlyList<string> _getOperationParameters(IPackage package,
+        InstallOptions options, OperationType operation)
     {
         List<string> parameters = [operation switch {
             OperationType.Install => Manager.Properties.InstallVerb,
@@ -60,11 +64,11 @@ internal sealed class WinGetPkgOperationHelper : BasePkgOperationHelper
         {
             if (package.Name.Contains("64-bit") || package.Id.ToLower().Contains("x64"))
             {
-                options.Architecture = Architecture.X64;
+                options.Architecture = Architecture.x64;
             }
             else if (package.Name.Contains("32-bit") || package.Id.ToLower().Contains("x86"))
             {
-                options.Architecture = Architecture.X86;
+                options.Architecture = Architecture.x86;
             }
             parameters.Add("--include-unknown");
         }
@@ -81,9 +85,9 @@ internal sealed class WinGetPkgOperationHelper : BasePkgOperationHelper
 
             parameters.AddRange(options.Architecture switch
             {
-                Architecture.X86 => ["--architecture", "x86"],
-                Architecture.X64 => ["--architecture", "x64"],
-                Architecture.Arm64 => ["--architecture", "arm64"],
+                Architecture.x86 => ["--architecture", "x86"],
+                Architecture.x64 => ["--architecture", "x64"],
+                Architecture.arm64 => ["--architecture", "arm64"],
                 _ => []
             });
         }

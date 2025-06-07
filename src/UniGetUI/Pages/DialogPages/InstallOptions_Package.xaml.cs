@@ -10,6 +10,7 @@ using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.Serializable;
+using Architecture = UniGetUI.PackageEngine.Enums.Architecture;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -21,15 +22,15 @@ namespace UniGetUI.Interface.Dialogs
     /// </summary>
     public sealed partial class InstallOptionsPage : Page
     {
-        public SerializableInstallationOptions Options;
+        public InstallOptions Options;
         public IPackage Package;
         public event EventHandler? Close;
         private readonly OperationType Operation;
         private readonly string packageInstallLocation;
         private bool _uiLoaded;
 
-        public InstallOptionsPage(IPackage package, SerializableInstallationOptions options) : this(package, OperationType.None, options) { }
-        public InstallOptionsPage(IPackage package, OperationType operation, SerializableInstallationOptions options)
+        public InstallOptionsPage(IPackage package, InstallOptions options) : this(package, OperationType.None, options) { }
+        public InstallOptionsPage(IPackage package, OperationType operation, InstallOptions options)
         {
             Package = package;
             InitializeComponent();
@@ -89,12 +90,12 @@ namespace UniGetUI.Interface.Dialogs
 
             if (Package.Manager.Capabilities.SupportsCustomArchitectures)
             {
-                foreach (Architecture arch in Package.Manager.Capabilities.SupportedCustomArchitectures)
+                foreach (string arch in Package.Manager.Capabilities.SupportedCustomArchitectures)
                 {
-                    ArchitectureComboBox.Items.Add(CommonTranslations.ArchNames[arch]);
-                    if (Options.Architecture == CommonTranslations.ArchNames[arch])
+                    ArchitectureComboBox.Items.Add(arch);
+                    if (Options.Architecture == arch)
                     {
-                        ArchitectureComboBox.SelectedValue = CommonTranslations.ArchNames[arch];
+                        ArchitectureComboBox.SelectedValue = arch;
                     }
                 }
             }
@@ -137,13 +138,13 @@ namespace UniGetUI.Interface.Dialogs
             if (package.Manager.Capabilities.SupportsCustomScopes)
             {
                 ScopeCombo.Items.Add(CoreTools.Translate(CommonTranslations.ScopeNames[PackageScope.Local]));
-                if (Options.InstallationScope == CommonTranslations.ScopeNames_NonLang[PackageScope.Local])
+                if (Options.InstallationScope == PackageScope.Local)
                 {
                     ScopeCombo.SelectedValue = CommonTranslations.ScopeNames[PackageScope.Local];
                 }
 
                 ScopeCombo.Items.Add(CoreTools.Translate(CommonTranslations.ScopeNames[PackageScope.Global]));
-                if (Options.InstallationScope == CommonTranslations.ScopeNames_NonLang[PackageScope.Global])
+                if (Options.InstallationScope == PackageScope.Global)
                 {
                     ScopeCombo.SelectedValue = CommonTranslations.ScopeNames[PackageScope.Global];
                 }
@@ -225,29 +226,25 @@ namespace UniGetUI.Interface.Dialogs
             VersionProgress.Visibility = Visibility.Collapsed;
         }
 
-        public async Task<SerializableInstallationOptions> GetUpdatedOptions(bool updateIgnoredUpdates = true)
+        public async Task<InstallOptions> GetUpdatedOptions(bool updateIgnoredUpdates = true)
         {
             Options.RunAsAdministrator = AdminCheckBox?.IsChecked ?? false;
             Options.InteractiveInstallation = InteractiveCheckBox?.IsChecked ?? false;
             Options.SkipHashCheck = HashCheckbox?.IsChecked ?? false;
             Options.OverridesNextLevelOpts = !FollowGlobalOptionsSwitch.IsOn;
 
-            if (CommonTranslations.InvertedArchNames.ContainsKey(ArchitectureComboBox.SelectedValue.ToString() ?? ""))
+            Options.Architecture = "";
+            var userSelection = ArchitectureComboBox.SelectedValue?.ToString() ?? "";
+            if (Architecture.ValidValues.Contains(userSelection))
             {
-                Options.Architecture = ArchitectureComboBox.SelectedValue.ToString() ?? "";
-            }
-            else
-            {
-                Options.Architecture = "";
+                Options.Architecture = userSelection;
             }
 
-            if (CommonTranslations.InvertedScopeNames.ContainsKey(ScopeCombo.SelectedValue.ToString() ?? ""))
+            Options.InstallationScope = "";
+            userSelection = ScopeCombo.SelectedValue?.ToString() ?? "";
+            if (CommonTranslations.InvertedScopeNames.TryGetValue(userSelection, out string? value))
             {
-                Options.InstallationScope = CommonTranslations.ScopeNames_NonLang[CommonTranslations.InvertedScopeNames[ScopeCombo.SelectedValue.ToString() ?? ""]];
-            }
-            else
-            {
-                Options.InstallationScope = "";
+                Options.InstallationScope = value;
             }
 
             if (CustomInstallLocation.Text == packageInstallLocation) Options.CustomInstallLocation = "";
@@ -317,25 +314,25 @@ namespace UniGetUI.Interface.Dialogs
         private async void GenerateCommand()
         {
             if (!_uiLoaded) return;
-            InstallationOptions io = InstallationOptions.FromSerialized(await GetUpdatedOptions(updateIgnoredUpdates: false), Package);
+            InstallOptions options = await GetUpdatedOptions(updateIgnoredUpdates: false);
+            if (!options.OverridesNextLevelOpts)
+            {
+                options = await InstallOptionsFactory.LoadApplicableAsync(this.Package, overridePackageOptions: options);
+            }
+
             var op = ProfileComboBox.SelectedIndex switch
             {
                 1 => OperationType.Update,
                 2 => OperationType.Uninstall,
                 _ => OperationType.Install,
             };
-            var commandline = await Task.Run(() => Package.Manager.OperationHelper.GetParameters(Package, io, op));
+            var commandline = await Task.Run(() => Package.Manager.OperationHelper.GetParameters(Package, options, op));
             CommandBox.Text = Package.Manager.Properties.ExecutableFriendlyName + " " + string.Join(" ", commandline);
         }
 
         private void LayoutGrid_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if(LayoutGrid.ActualSize.Y > 1 && LayoutGrid.ActualSize.Y < double.PositiveInfinity) MaxHeight = LayoutGrid.ActualSize.Y;
-        }
-
-        private void ProfileComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
         }
     }
 }

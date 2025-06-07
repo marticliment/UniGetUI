@@ -13,6 +13,7 @@ using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
+using Architecture = System.Runtime.InteropServices.Architecture;
 
 namespace UniGetUI.PackageEngine.Managers.VcpkgManager
 {
@@ -459,9 +460,9 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
 
             if (DefaultTriplet == "")
             {
-                if (RuntimeInformation.OSArchitecture == Architecture.X64) DefaultTriplet = "x64-";
-                else if (RuntimeInformation.OSArchitecture == Architecture.X86) DefaultTriplet = "x86-";
-                else if (RuntimeInformation.OSArchitecture == Architecture.Arm64) DefaultTriplet = "arm64-";
+                if (RuntimeInformation.OSArchitecture is Architecture.X64) DefaultTriplet = "x64-";
+                else if (RuntimeInformation.OSArchitecture is Architecture.X86) DefaultTriplet = "x86-";
+                else if (RuntimeInformation.OSArchitecture is Architecture.Arm64) DefaultTriplet = "arm64-";
 
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) DefaultTriplet += "windows";
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) DefaultTriplet += "osx";

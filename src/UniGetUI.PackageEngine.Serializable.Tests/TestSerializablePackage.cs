@@ -5,7 +5,7 @@ namespace UniGetUI.PackageEngine.Serializable.Tests;
 
 public class TestSerializablePackage
 {
-    public static SerializableInstallationOptions TestOptions = new()
+    public static InstallOptions TestOptions = new()
     {
         SkipHashCheck = true,
         CustomParameters = ["a", "b", "c"],
@@ -88,7 +88,7 @@ public class TestSerializablePackage
         Assert.Equal(manager, o2.ManagerName);
         Assert.Equal(source, o2.Source);
         Assert.Equal(version, o2.Version);
-        TestSerializableInstallationOptions.AreEqual(new() { SkipHashCheck = skipHash }, o2.InstallationOptions);
+        TestInstallOptions.AreEqual(new() { SkipHashCheck = skipHash }, o2.InstallationOptions);
         TestSerializableUpdatesOptions.AreEqual(new(){IgnoredVersion = ignoredVer}, o2.Updates);
     }
 
@@ -99,7 +99,7 @@ public class TestSerializablePackage
         Assert.Equal(o1.Source, o2.Source);
         Assert.Equal(o1.Version, o2.Version);
         Assert.Equal(o1.ManagerName, o2.ManagerName);
-        TestSerializableInstallationOptions.AreEqual(o1.InstallationOptions, o2.InstallationOptions);
+        TestInstallOptions.AreEqual(o1.InstallationOptions, o2.InstallationOptions);
         TestSerializableUpdatesOptions.AreEqual(o1.Updates, o2.Updates);
     }
 }

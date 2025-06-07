@@ -694,5 +694,9 @@ namespace UniGetUI.Core.Tools
         {
             return LanguageEngine?.Locale ?? "Unset/Unknown";
         }
+
+        private static readonly HashSet<char> illegalPathChars = Path.GetInvalidFileNameChars().ToHashSet();
+        public static string MakeValidFileName(string name)
+            => string.Concat(name.Where(x => !illegalPathChars.Contains(x)));
     }
 }

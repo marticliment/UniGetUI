@@ -59,7 +59,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 sources = [ Properties.DefaultSource ];
             }
 
-            bool canPrerelease = InstallationOptions.LoadForManager(this).PreRelease;
+            bool canPrerelease = InstallOptionsFactory.LoadForManager(this).PreRelease;
 
             foreach(IManagerSource source in sources)
             {
@@ -154,7 +154,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 if (!sourceMapping.ContainsKey(uri)) sourceMapping[uri] = new();
                 sourceMapping[uri].Add(package);
             }
-            bool canPrerelease = InstallationOptions.LoadForManager(this).PreRelease;
+            bool canPrerelease = InstallOptionsFactory.LoadForManager(this).PreRelease;
 
             foreach (var pair in sourceMapping)
             {

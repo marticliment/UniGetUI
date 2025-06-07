@@ -15,6 +15,7 @@ using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
+using Architecture = UniGetUI.PackageEngine.Enums.Architecture;
 
 namespace UniGetUI.PackageEngine.Managers.WingetManager
 {
@@ -45,7 +46,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 SupportsCustomVersions = true,
                 CanDownloadInstaller = true,
                 SupportsCustomArchitectures = true,
-                SupportedCustomArchitectures = [Architecture.X86, Architecture.X64, Architecture.Arm64],
+                SupportedCustomArchitectures = [Architecture.x86, Architecture.x64, Architecture.arm64],
                 SupportsCustomScopes = true,
                 SupportsCustomLocations = true,
                 SupportsCustomSources = true,
