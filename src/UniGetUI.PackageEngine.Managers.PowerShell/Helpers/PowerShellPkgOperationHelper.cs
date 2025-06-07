@@ -3,7 +3,7 @@ using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 
 namespace UniGetUI.PackageEngine.Managers.PowerShellManager;
-internal sealed class PowerShellPkgOperationHelper : PackagePkgOperationHelper
+internal sealed class PowerShellPkgOperationHelper : BasePkgOperationHelper
 {
     public PowerShellPkgOperationHelper(PowerShell manager) : base(manager) { }
 

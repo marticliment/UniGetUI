@@ -310,7 +310,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 Version = VersionString,
                 Source = Source.Name,
                 ManagerName = Manager.Name,
-                InstallationOptions = InstallationOptions.FromPackage(this).AsSerializable(),
+                InstallationOptions = InstallationOptions.LoadForPackage(this).ToSerializable(),
                 Updates = new SerializableUpdatesOptions
                 {
                     IgnoredVersion = GetIgnoredUpdatesVersionAsync().GetAwaiter().GetResult(),

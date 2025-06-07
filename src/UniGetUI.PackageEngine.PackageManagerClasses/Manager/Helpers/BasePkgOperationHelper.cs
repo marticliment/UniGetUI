@@ -5,11 +5,11 @@ using UniGetUI.PackageEngine.Interfaces.ManagerProviders;
 
 namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
 
-public abstract class PackagePkgOperationHelper : IPackageOperationHelper
+public abstract class BasePkgOperationHelper : IPackageOperationHelper
 {
     protected IPackageManager Manager;
 
-    public PackagePkgOperationHelper(IPackageManager manager)
+    public BasePkgOperationHelper(IPackageManager manager)
     {
         Manager = manager;
     }
@@ -30,10 +30,21 @@ public abstract class PackagePkgOperationHelper : IPackageOperationHelper
         IInstallationOptions options,
         OperationType operation)
     {
-        var parameters = _getOperationParameters(package, options, operation);
-        Logger.Info(
-            $"Loaded operation parameters for package id={package.Id} on manager {Manager.Name} and operation {operation}: " +
-            string.Join(' ', parameters));
+        var parameters = _getOperationParameters(package, options, operation).ToArray();
+
+        for (int i = 0; i < parameters.Length; i++)
+        {
+            parameters[i] = parameters[i]
+                .Replace("&", "")
+                .Replace("|", "")
+                .Replace(";", "")
+                .Replace("<", "")
+                .Replace(">", "")
+                .Replace("\n", "");
+        }
+
+        Logger.Info($"Loaded operation parameters for package id={package.Id} on manager {Manager.Name} and operation {operation}: " +
+                    string.Join(' ', parameters));
         return parameters;
 
     }

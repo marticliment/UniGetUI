@@ -449,25 +449,38 @@ namespace UniGetUI.Core.Tools
         /// <summary>
         /// Enables GSudo cache for the current process
         /// </summary>
+        private static bool _isCaching;
         public static async Task CacheUACForCurrentProcess()
         {
-            Logger.Info("Caching admin rights for process id " + Environment.ProcessId);
-            using Process p = new()
+            while (_isCaching) await Task.Delay(100);
+
+            try
             {
-                StartInfo = new ProcessStartInfo
+                _isCaching = true;
+                Logger.Info("Caching admin rights for process id " + Environment.ProcessId);
+                using Process p = new()
                 {
-                    FileName = CoreData.ElevatorPath,
-                    Arguments = "cache on --pid " + Environment.ProcessId + " -d 1",
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    RedirectStandardInput = true,
-                    CreateNoWindow = true,
-                    StandardOutputEncoding = Encoding.UTF8,
-                }
-            };
-            p.Start();
-            await p.WaitForExitAsync();
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = CoreData.ElevatorPath,
+                        Arguments = "cache on --pid " + Environment.ProcessId + " -d 1",
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true,
+                        RedirectStandardInput = true,
+                        CreateNoWindow = true,
+                        StandardOutputEncoding = Encoding.UTF8,
+                    }
+                };
+                p.Start();
+                await p.WaitForExitAsync();
+                _isCaching = false;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+                _isCaching = false;
+            }
         }
 
         /// <summary>

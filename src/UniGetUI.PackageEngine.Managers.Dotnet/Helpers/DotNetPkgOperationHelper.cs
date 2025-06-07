@@ -4,7 +4,7 @@ using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 
 namespace UniGetUI.PackageEngine.Managers.DotNetManager;
-internal sealed class DotNetPkgOperationHelper : PackagePkgOperationHelper
+internal sealed class DotNetPkgOperationHelper : BasePkgOperationHelper
 {
     public DotNetPkgOperationHelper(DotNet manager) : base(manager) { }
 

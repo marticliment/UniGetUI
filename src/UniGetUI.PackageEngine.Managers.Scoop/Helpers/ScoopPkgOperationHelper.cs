@@ -4,7 +4,7 @@ using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 
 namespace UniGetUI.PackageEngine.Managers.ScoopManager;
-internal sealed class ScoopPkgOperationHelper : PackagePkgOperationHelper
+internal sealed class ScoopPkgOperationHelper : BasePkgOperationHelper
 {
     public ScoopPkgOperationHelper(Scoop manager) : base(manager) { }
 
