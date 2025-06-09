@@ -22,10 +22,12 @@ namespace UniGetUI.Interface.Widgets
         {
             set
             {
+                _checkbox.IsEnabled = false;
                 setting_name = value;
                 IS_INVERTED = value.StartsWith("Disable");
                 _checkbox.IsOn = SecureSettings.Get(setting_name) ^ IS_INVERTED ^ ForceInversion;
                 _textblock.Opacity = _checkbox.IsOn ? 1 : 0.7;
+                _checkbox.IsEnabled = true;
             }
         }
 
