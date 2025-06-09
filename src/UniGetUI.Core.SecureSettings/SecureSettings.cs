@@ -35,9 +35,10 @@ public static class SecureSettings
         using Process p = new Process();
         p.StartInfo = new()
         {
-            UseShellExecute = false,
+            UseShellExecute = true,
             CreateNoWindow = true,
             FileName = CoreData.UniGetUIExecutableFile,
+            Verb = "runas",
             ArgumentList =
             {
                 enabled? Args.ENABLE_FOR_USER: Args.DISABLE_FOR_USER,
@@ -58,7 +59,7 @@ public static class SecureSettings
             string purifiedUser = CoreTools.MakeValidFileName(username);
             string purifiedSetting = CoreTools.MakeValidFileName(setting);
 
-            var appData = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+            var appData = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
             var settingsLocation = Path.Join(appData, "UniGetUI\\SecureSettings", purifiedUser);
             var settingFile = Path.Join(settingsLocation, purifiedSetting);
 

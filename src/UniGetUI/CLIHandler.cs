@@ -292,7 +292,7 @@ public static class CLIHandler
     {
         var args = Environment.GetCommandLineArgs().ToList();
 
-        var basePos = args.IndexOf(ENABLE_SECURE_SETTING);
+        var basePos = args.IndexOf(ENABLE_SECURE_SETTING_FOR_USER);
         if (basePos < 0)
             return (int)HRESULT.STATUS_INVALID_PARAMETER; // The base paramater was not found
 
@@ -316,7 +316,7 @@ public static class CLIHandler
     {
         var args = Environment.GetCommandLineArgs().ToList();
 
-        var basePos = args.IndexOf(ENABLE_SECURE_SETTING);
+        var basePos = args.IndexOf(DISABLE_SECURE_SETTING_FOR_USER);
         if (basePos < 0)
             return (int)HRESULT.STATUS_INVALID_PARAMETER; // The base paramater was not found
 

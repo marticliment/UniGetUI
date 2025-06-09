@@ -91,6 +91,15 @@
                 CornerRadius="8"
                 SettingName="DisableDMWThreadOptimizations"
                 Text="Enable background CPU Usage optimizations (see Pull Request #3278)" />
+
+            <UserControl Height="16" />
+
+            <widgets:SecureCheckboxCard
+                CornerRadius="8"
+                SettingName="SecureSettingTest"
+                Text="This is a test"
+                />
+
         </StackPanel>
     </ScrollViewer>
 </Page>
