@@ -633,7 +633,7 @@
             ]
         },
         "acrobat-reader-64-bit": {
-            "icon": "https://upload.wikimedia.org/wikipedia/commons/e/ea/Adobe_Acrobat_DC_icon.png",
+            "icon": "https://i.postimg.cc/wvbKJzmr/acrobat.png",
             "images": [
                 "https://img-19.ccm.net/fheSH8Cl0detgNX2J1v2QAgMrR4=/450x/smart/4b36b6809e574683aa645cf6023a7c52/ccmcms-enccm/35559148.png",
                 "https://cdn.mos.cms.futurecdn.net/bKeFKKwEaBtyJwwCDWhsu5-1200-80.jpg",
@@ -34051,7 +34051,7 @@
             "images": []
         },
         "raspberrypiimager": {
-            "icon": "https://i.postimg.cc/YS3H6YtJ/rasp-logo.png",
+            "icon": "https://i.postimg.cc/mknNsXFJ/raspberry-pi-imager.png",
             "images": [
                 "https://i.postimg.cc/DZwKB0Zm/rasp1.png",
                 "https://i.postimg.cc/269NJYbG/rasp2.png",
@@ -49647,7 +49647,7 @@
             "images": []
         },
         "zoom": {
-            "icon": "https://i.postimg.cc/SjtH36PD/ZoomIcon.png",
+            "icon": "https://i.postimg.cc/NFd1Qg5d/zoom-logo.png",
             "images": [
                 "https://i.postimg.cc/HW0dsF59/Zoom1.png",
                 "https://i.postimg.cc/pXqvK8s9/Zoom2.png",
