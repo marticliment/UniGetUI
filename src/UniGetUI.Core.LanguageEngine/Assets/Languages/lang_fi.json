@@ -441,7 +441,7 @@
   "Partially": "Osittain",
   "Password": "Salasana",
   "Paste a valid URL to the database": "Liitä kelvollinen URL-osoite tietokantaan",
-  "Pause updates for": null,
+  "Pause updates for": "Keskeytä päivitykset",
   "Perform a backup now": "Suorita varmuuskopiointi nyt",
   "Performing backup, please wait...": "Suoritetaan varmuuskopiointia, odota hetki...",
   "Periodically perform a backup of the installed packages": "Suorita ajoittain varmuuskopio asennetuista paketeista",
