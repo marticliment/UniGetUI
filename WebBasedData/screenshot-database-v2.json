@@ -1,8 +1,8 @@
 {
     "package_count": {
-        "total": 11813,
-        "done": 5289,
-        "packages_with_icon": 5289,
+        "total": 11814,
+        "done": 5292,
+        "packages_with_icon": 5292,
         "packages_with_screenshot": 638,
         "total_screenshots": 1991
     },
@@ -10024,7 +10024,7 @@
             "images": []
         },
         "deluge": {
-            "icon": "",
+            "icon": "https://deluge-torrent.org/images/deluge_logo.png",
             "images": []
         },
         "delugebeta": {
@@ -15093,7 +15093,7 @@
             "images": []
         },
         "foxit-pdf-reader": {
-            "icon": "https://images2.imgbox.com/20/60/DRe5tHGN_o.png",
+            "icon": "https://www.foxit.com/static/company/images/icons/foxit-pdf-reader-logo-500x500.png",
             "images": [
                 "https://i.ibb.co/WtYDb60/NJ1-E9-Pf7d-T.png"
             ]
@@ -30293,7 +30293,7 @@
             "images": []
         },
         "pcmanager": {
-            "icon": "",
+            "icon": "https://store-images.s-microsoft.com/image/apps.5035.14298090620665013.cb25e253-e091-4d54-8b38-83056d549887.6cb80d38-5f06-461c-800f-34ac2c478fec?h=170",
             "images": []
         },
         "pcmanager-cn": {
@@ -31362,6 +31362,10 @@
         },
         "plexrichpresence": {
             "icon": "",
+            "images": []
+        },
+        "plitch": {
+            "icon": "https://www.plitch.com/images/icons/favicons/favicon-96x96.png?v=cL97JBBJkExlzzI5_WaT0XL8To54lbHldXos1yA2WCA",
             "images": []
         },
         "plottr": {
