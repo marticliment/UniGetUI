@@ -1,6 +1,7 @@
 using CommunityToolkit.WinUI.Controls;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine.SecureSettings;
 using UniGetUI.Core.Tools;
@@ -14,6 +15,7 @@ namespace UniGetUI.Interface.Widgets
     {
         public ToggleSwitch _checkbox;
         public TextBlock _textblock;
+        public TextBlock _warningBlock;
         public ProgressRing _loading;
         protected bool IS_INVERTED;
 
@@ -44,6 +46,15 @@ namespace UniGetUI.Interface.Widgets
             set => _textblock.Text = CoreTools.Translate(value);
         }
 
+        public string WarningText
+        {
+            set
+            {
+                _warningBlock.Text = CoreTools.Translate(value);
+                _warningBlock.Visibility = value.Any() ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+
         public SecureCheckboxCard()
         {
             _checkbox = new ToggleSwitch()
@@ -58,6 +69,15 @@ namespace UniGetUI.Interface.Widgets
                 Margin = new Thickness(0, 0, 0, 0),
                 TextWrapping = TextWrapping.Wrap
             };
+            _warningBlock = new TextBlock()
+            {
+                VerticalAlignment = VerticalAlignment.Center,
+                Margin = new Thickness(0, 0, 0, 0),
+                TextWrapping = TextWrapping.Wrap,
+                Foreground = (SolidColorBrush)Application.Current.Resources["SystemControlErrorTextForegroundBrush"],
+                FontSize = 12,
+                Visibility = Visibility.Collapsed,
+            };
             IS_INVERTED = false;
             Content = new StackPanel()
             {
@@ -65,7 +85,13 @@ namespace UniGetUI.Interface.Widgets
                 Orientation = Orientation.Horizontal,
                 Children = { _loading, _checkbox },
             };
-            Header = _textblock;
+            //Header = _textblock;
+            Header = new StackPanel()
+            {
+                Spacing = 4,
+                Orientation = Orientation.Vertical,
+                Children = { _textblock, _warningBlock }
+            };
 
             _checkbox.HorizontalAlignment = HorizontalAlignment.Stretch;
             _checkbox.Toggled += (s, e) => _ = _checkbox_Toggled();
@@ -82,14 +108,14 @@ namespace UniGetUI.Interface.Widgets
                 StateChanged?.Invoke(this, EventArgs.Empty);
                 await SecureSettings.TrySet(setting_name, _checkbox.IsOn ^ IS_INVERTED ^ ForceInversion);
                 _textblock.Opacity = _checkbox.IsOn ? 1 : 0.7;
-                _checkbox.IsOn = SecureSettings.Get(setting_name);
+                _checkbox.IsOn = SecureSettings.Get(setting_name) ^ IS_INVERTED ^ ForceInversion;
                 _loading.Visibility = Visibility.Collapsed;
                 _checkbox.IsEnabled = true;
             }
             catch (Exception ex)
             {
                 Logger.Warn(ex);
-                _checkbox.IsOn = SecureSettings.Get(setting_name);
+                _checkbox.IsOn = SecureSettings.Get(setting_name) ^ IS_INVERTED ^ ForceInversion;
                 _loading.Visibility = Visibility.Collapsed;
                 _checkbox.IsEnabled = true;
             }

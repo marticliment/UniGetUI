@@ -25,6 +25,13 @@
         VerticalContentAlignment="Center">
         <StackPanel>
 
+            <InfoBar
+                x:Name="WarningTitlebar"
+                CornerRadius="8"
+                IsClosable="False"
+                IsOpen="True"
+                Severity="Warning" />
+
             <widgets:TranslatedTextBlock
                 Margin="4,32,4,8"
                 FontWeight="SemiBold"

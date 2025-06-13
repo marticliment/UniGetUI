@@ -33,6 +33,6 @@ namespace UniGetUI.Pages.SettingsPages
         public void Operations(object s, RoutedEventArgs e) => NavigationRequested?.Invoke(this, typeof(Operations));
         public void Startup(object s, RoutedEventArgs e) => NavigationRequested?.Invoke(this, typeof(Updates));
         private void Internet(object sender, RoutedEventArgs e) => NavigationRequested?.Invoke(this, typeof(Internet));
-
+        private void ManagersShortcut(object sender, RoutedEventArgs e) => NavigationRequested?.Invoke(this, typeof(ManagersHomepage));
     }
 }
