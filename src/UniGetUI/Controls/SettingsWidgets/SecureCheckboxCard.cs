@@ -33,6 +33,16 @@ namespace UniGetUI.Interface.Widgets
             }
         }
 
+        public new bool IsEnabled
+        {
+            set
+            {
+                base.IsEnabled = value;
+                _warningBlock.Opacity = value ? 1 : 0.2;
+            }
+            get => base.IsEnabled;
+        }
+
         public bool ForceInversion { get; set; }
 
         public bool Checked

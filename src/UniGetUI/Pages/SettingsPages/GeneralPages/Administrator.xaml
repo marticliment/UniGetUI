@@ -51,7 +51,55 @@
                 CornerRadius="0,0,8,8"
                 SettingName="DoCacheAdminRights"
                 StateChanged="RestartCache"
-                Text="Ask only once for administrator privileges (not recommended)" />
+                Text="Ask only once for administrator privileges" />
+
+            <widgets:TranslatedTextBlock
+                Margin="4,32,4,8"
+                FontWeight="SemiBold"
+                Text="Restrictions on package operations" />
+
+            <widgets:SecureCheckboxCard
+                x:Name="AllowCLIArguments"
+                CornerRadius="8,8,0,0"
+                SettingName="AllowImportingCLIArguments"
+                Text="Allow custom command-line arguments"
+                WarningText="Custom command-line arguments can change the way in which programs are installed, upgraded or uninstalled, in a way UniGetUI cannot control. Using custom command-lines can break packages. Proceed with caution." />
+
+            <!--
+                widgets:SecureCheckboxCard
+                x:Name="AllowPrePostInstallCommands"
+                BorderThickness="1,0,1,1"
+                CornerRadius="0,0,8,8"
+                SettingName="AllowImportingPrePostInstallCommands"
+                Text="Ignore custom pre-install and post-install commands when importing packages from a bundle"
+                WarningText="Pre and post install commands will be run before and after a package gets installed, upgraded or uninstalled. Be aware thay they may break things unless used carefully" /
+            -->
+
+            <widgets:TranslatedTextBlock
+                Margin="4,32,4,8"
+                FontWeight="SemiBold"
+                Text="Restrictions when importing package bundles" />
+
+            <widgets:SecureCheckboxCard
+                x:Name="AllowImportingCLIArguments"
+                CornerRadius="8,8,0,0"
+                ForceInversion="true"
+                IsEnabled="{x:Bind AllowCLIArguments._checkbox.IsOn, Mode=OneWay}"
+                SettingName="AllowImportingCLIArguments"
+                Text="Ignore custom command-line arguments when importing packages from a bundle"
+                WarningText="Malformed command-line arguments can break packages, or even gain remote execution. Therefore, importing custom command-line arguments is disabled by default" />
+
+            <!--
+                widgets:SecureCheckboxCard
+                x:Name="AllowImportingPrePostInstallCommands"
+                BorderThickness="1,0,1,1"
+                CornerRadius="0,0,8,8"
+                ForceInversion="true"
+                IsEnabled="{x:Bind AllowPrePostInstallCommands._checkbox.IsOn, Mode=OneWay}"
+                SettingName="AllowImportingPrePostInstallCommands"
+                Text="Ignore custom pre-install and post-install commands when importing packages from a bundle"
+                WarningText="Pre and post install commands can do very nasty things to your device, if designed to do so. It can be very dangerous to import the commands from a bundle, unless you trust the source of that package bundle" /
+            -->
         </StackPanel>
     </ScrollViewer>
 </Page>
