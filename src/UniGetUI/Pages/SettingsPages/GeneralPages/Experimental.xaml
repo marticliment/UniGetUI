@@ -44,6 +44,7 @@
                 StateChanged="ShowRestartBanner"
                 Text="Wait for the device to be connected to the internet before attempting to do tasks that require internet connectivity." />
 
+            <UserControl Height="16" />
             <widgets:CheckboxCard
                 CornerRadius="8"
                 ForceInversion="True"
@@ -59,12 +60,14 @@
                 SettingName="DisableUniGetUIElevator"
                 StateChanged="ShowRestartBanner"
                 Text="Enable the new UniGetUI-Branded UAC Elevator" />
-            <!--widgets:CheckboxCard
+            <!--
+                widgets:CheckboxCard
                 x:Name="UseUserGSudoToggle"
                 CornerRadius="0,0,8,8"
                 SettingName="UseUserGSudo"
                 StateChanged="ShowRestartBanner"
-                Text="Use installed GSudo instead of the bundled one" /-->
+                Text="Use installed GSudo instead of the bundled one" /
+            -->
 
             <UserControl Height="16" />
 
@@ -92,13 +95,6 @@
                 SettingName="DisableDMWThreadOptimizations"
                 Text="Enable background CPU Usage optimizations (see Pull Request #3278)" />
 
-            <UserControl Height="16" />
-
-            <widgets:SecureCheckboxCard
-                CornerRadius="8"
-                SettingName="SecureSettingTest"
-                Text="This is a test"
-                />
 
         </StackPanel>
     </ScrollViewer>
