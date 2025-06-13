@@ -315,10 +315,10 @@ namespace UniGetUI.Interface.Dialogs
         {
             if (!_uiLoaded) return;
             InstallOptions options = await GetUpdatedOptions(updateIgnoredUpdates: false);
-            if (!options.OverridesNextLevelOpts)
-            {
-                options = await InstallOptionsFactory.LoadApplicableAsync(this.Package, overridePackageOptions: options);
-            }
+            //if (!options.OverridesNextLevelOpts)
+            //{
+            options = await InstallOptionsFactory.LoadApplicableAsync(this.Package, overridePackageOptions: options);
+            //}
 
             var op = ProfileComboBox.SelectedIndex switch
             {

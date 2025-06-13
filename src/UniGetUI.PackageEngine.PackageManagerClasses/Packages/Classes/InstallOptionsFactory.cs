@@ -1,13 +1,10 @@
 using System.Collections.Concurrent;
-using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using ABI.Windows.UI.Text.Core;
 using UniGetUI.Core.Data;
-using UniGetUI.Core.Language;
 using UniGetUI.Core.Logging;
+using UniGetUI.Core.SettingsEngine.SecureSettings;
 using UniGetUI.Core.Tools;
-using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Serializable;
 
@@ -90,7 +87,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             if (no_integrity is not null) instance.SkipHashCheck = (bool)no_integrity;
             if (remove_data is not null) instance.RemoveDataOnUninstall = (bool)remove_data;
 
-            return instance;
+            return EnsureSecureOptions(instance);
         }
 
         /// <summary>
@@ -112,7 +109,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             bool? no_integrity = null,
             bool? remove_data = null,
             InstallOptions? overridePackageOptions = null)
-            => Task.Run(() => LoadApplicable(package, elevated, interactive, no_integrity, remove_data));
+            => Task.Run(() => LoadApplicable(package, elevated, interactive, no_integrity, remove_data, overridePackageOptions));
 
         /*
          *
@@ -185,6 +182,34 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 Logger.Error(e);
                 return new();
             }
+        }
+
+        private static InstallOptions EnsureSecureOptions(InstallOptions options)
+        {
+            if (SecureSettings.Get("AllowCLIArguments"))
+            {
+                // If CLI arguments are allowed, sanitize them
+                for (int i = 0; i < options.CustomParameters.Count; i++)
+                {
+                    options.CustomParameters[i] = options.CustomParameters[i]
+                        .Replace("&", "")
+                        .Replace("|", "")
+                        .Replace(";", "")
+                        .Replace("<", "")
+                        .Replace(">", "")
+                        .Replace("\n", "");
+                }
+            }
+            else
+            {
+                // Otherwhise, clear them
+                if (options.CustomParameters.Count > 0)
+                    Logger.Warn($"Custom CLI parameters [{string.Join(' ', options.CustomParameters)}] will be discarded");
+
+                options.CustomParameters = [];
+            }
+
+            return options;
         }
     }
 }

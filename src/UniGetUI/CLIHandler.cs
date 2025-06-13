@@ -1,5 +1,6 @@
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
+using UniGetUI.Core.SettingsEngine.SecureSettings;
 
 namespace UniGetUI;
 
@@ -19,10 +20,16 @@ public static class CLIHandler
     public const string DISABLE_SETTING = "--disable-setting";
     public const string SET_SETTING_VAL = "--set-setting-value";
 
+    public const string ENABLE_SECURE_SETTING = "--enable-secure-setting";
+    public const string DISABLE_SECURE_SETTING = "--disable-secure-setting";
+    public const string ENABLE_SECURE_SETTING_FOR_USER = SecureSettings.Args.ENABLE_FOR_USER;
+    public const string DISABLE_SECURE_SETTING_FOR_USER = SecureSettings.Args.DISABLE_FOR_USER;
+
 
     private enum HRESULT
     {
-        SUCCESS = 0x00000000,
+        SUCCESS = 0,
+        STATUS_FAILED = -1,
         STATUS_INVALID_PARAMETER = -1073741811,
         STATUS_NO_SUCH_FILE = -1073741809,
     }
@@ -48,7 +55,7 @@ public static class CLIHandler
         if (filePos +1 >= args.Count)
             return (int)HRESULT.STATUS_INVALID_PARAMETER; // The file parameter does not exist (import settings requires "--import-settings file")
 
-        var file = args[filePos + 1].Replace("\"", "").Replace("\'", "");
+        var file = args[filePos + 1].Trim('"').Trim('\'');
         if (!File.Exists(file))
             return (int)HRESULT.STATUS_NO_SUCH_FILE; // The given file does not exist
 
@@ -75,7 +82,7 @@ public static class CLIHandler
         if (filePos +1 >= args.Count)
             return (int)HRESULT.STATUS_INVALID_PARAMETER; // The file parameter does not exist (export settings requires "--export-settings file")
 
-        var file = args[filePos + 1].Replace("\"", "").Replace("\'", "");
+        var file = args[filePos + 1].Trim('"').Trim('\'');
 
         try
         {
@@ -100,7 +107,7 @@ public static class CLIHandler
         if (basePos +1 >= args.Count)
             return (int)HRESULT.STATUS_INVALID_PARAMETER; // The file parameter does not exist (export settings requires "--export-settings file")
 
-        var setting = args[basePos + 1].Replace("\"", "").Replace("\'", "");
+        var setting = args[basePos + 1].Trim('"').Trim('\'');
 
         try
         {
@@ -125,7 +132,7 @@ public static class CLIHandler
         if (basePos +1 >= args.Count)
             return (int)HRESULT.STATUS_INVALID_PARAMETER; // The file parameter does not exist (export settings requires "--export-settings file")
 
-        var setting = args[basePos + 1].Replace("\"", "").Replace("\'", "");
+        var setting = args[basePos + 1].Trim('"').Trim('\'');
 
         try
         {
@@ -150,7 +157,7 @@ public static class CLIHandler
         if (basePos +2 >= args.Count)
             return (int)HRESULT.STATUS_INVALID_PARAMETER; // The file parameter does not exist (export settings requires "--export-settings file")
 
-        var setting = args[basePos + 1].Replace("\"", "").Replace("\'", "");
+        var setting = args[basePos + 1].Trim('"').Trim('\'');
         var value = args[basePos + 2];
 
         try
@@ -229,5 +236,103 @@ public static class CLIHandler
     {
         // There is currently no uninstall logic. However, this needs to be maintained, or otherwhise UniGetUI will launch on uninstall
         return 0;
+    }
+
+    public static int EnableSecureSetting()
+    {
+        var args = Environment.GetCommandLineArgs().ToList();
+
+        var basePos = args.IndexOf(ENABLE_SECURE_SETTING);
+        if (basePos < 0)
+            return (int)HRESULT.STATUS_INVALID_PARAMETER; // The base paramater was not found
+
+        if (basePos +1 >= args.Count)
+            return (int)HRESULT.STATUS_INVALID_PARAMETER; // The file parameter does not exist (export settings requires "--export-settings file")
+
+        var setting = args[basePos + 1].Trim('"').Trim('\'');
+
+        try
+        {
+            bool success = SecureSettings.TrySet(setting, true).GetAwaiter().GetResult();
+            if (!success) return (int)HRESULT.STATUS_FAILED;
+            else return (int)HRESULT.SUCCESS;
+        }
+        catch (Exception ex)
+        {
+            return ex.HResult;
+        }
+    }
+
+    public static int DisableSecureSetting()
+    {
+        var args = Environment.GetCommandLineArgs().ToList();
+
+        var basePos = args.IndexOf(DISABLE_SECURE_SETTING);
+        if (basePos < 0)
+            return (int)HRESULT.STATUS_INVALID_PARAMETER; // The base paramater was not found
+
+        if (basePos +1 >= args.Count)
+            return (int)HRESULT.STATUS_INVALID_PARAMETER; // The first positional argument does not exist
+
+        var setting = args[basePos + 1].Trim('"').Trim('\'');
+
+        try
+        {
+            bool success = SecureSettings.TrySet(setting, false).GetAwaiter().GetResult();
+            if (!success) return (int)HRESULT.STATUS_FAILED;
+            else return (int)HRESULT.SUCCESS;
+        }
+        catch (Exception ex)
+        {
+            return ex.HResult;
+        }
+    }
+
+    public static int EnableSecureSettingForUser()
+    {
+        var args = Environment.GetCommandLineArgs().ToList();
+
+        var basePos = args.IndexOf(ENABLE_SECURE_SETTING_FOR_USER);
+        if (basePos < 0)
+            return (int)HRESULT.STATUS_INVALID_PARAMETER; // The base paramater was not found
+
+        if (basePos +2 >= args.Count)
+            return (int)HRESULT.STATUS_INVALID_PARAMETER; // The required parameters do not exist
+
+        var user = args[basePos + 1].Trim('"').Trim('\'');
+        var setting = args[basePos + 2].Trim('"').Trim('\'');
+
+        try
+        {
+            return SecureSettings.ApplyForUser(user, setting, true);
+        }
+        catch (Exception ex)
+        {
+            return ex.HResult;
+        }
+    }
+
+    public static int DisableSecureSettingForUser()
+    {
+        var args = Environment.GetCommandLineArgs().ToList();
+
+        var basePos = args.IndexOf(DISABLE_SECURE_SETTING_FOR_USER);
+        if (basePos < 0)
+            return (int)HRESULT.STATUS_INVALID_PARAMETER; // The base paramater was not found
+
+        if (basePos +2 >= args.Count)
+            return (int)HRESULT.STATUS_INVALID_PARAMETER; // The required parameters do not exist
+
+        var user = args[basePos + 1].Trim('"').Trim('\'');
+        var setting = args[basePos + 2].Trim('"').Trim('\'');
+
+        try
+        {
+            return SecureSettings.ApplyForUser(user, setting, false);
+        }
+        catch (Exception ex)
+        {
+            return ex.HResult;
+        }
     }
 }
