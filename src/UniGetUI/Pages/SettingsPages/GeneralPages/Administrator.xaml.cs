@@ -24,7 +24,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             WarningTitlebar.Title = CoreTools.Translate("Warning") + "!";
             WarningTitlebar.Message =
                 CoreTools.Translate("The following settings may pose a security risk, hence they are disabled by default.") + " " + 
-                CoreTools.Translate("Enable the settings below only if you fully understand what they do, and the implications they may have.") + "\n\n" + 
+                CoreTools.Translate("Enable the settings below if and only if you fully understand what they do, and the implications they may have.") + "\n\n" + 
                 CoreTools.Translate("The settings will list, in their descriptions, the potential security issues they may have.") + " ";
 
             // The following settings may pose a security risk, hence they are disabled by default. Enable them ONLY if you undertsand what you are doing. Some of those settings will show a UAC prompt before being enabled."
