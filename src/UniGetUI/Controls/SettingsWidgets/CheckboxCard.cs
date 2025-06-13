@@ -1,6 +1,7 @@
 using CommunityToolkit.WinUI.Controls;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 
@@ -13,6 +14,7 @@ namespace UniGetUI.Interface.Widgets
     {
         public ToggleSwitch _checkbox;
         public TextBlock _textblock;
+        public TextBlock _warningBlock;
         protected bool IS_INVERTED;
 
         protected string setting_name = "";
@@ -40,6 +42,20 @@ namespace UniGetUI.Interface.Widgets
             set => _textblock.Text = CoreTools.Translate(value);
         }
 
+        public string WarningText
+        {
+            set
+            {
+                _warningBlock.Text = CoreTools.Translate(value);
+                _warningBlock.Visibility = value.Any() ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+
+        public Brush WarningForeground
+        {
+            set => _warningBlock.Foreground = value;
+        }
+
         public CheckboxCard()
         {
             _checkbox = new ToggleSwitch()
@@ -52,9 +68,22 @@ namespace UniGetUI.Interface.Widgets
                 Margin = new Thickness(0, 0, 0, 0),
                 TextWrapping = TextWrapping.Wrap
             };
+            _warningBlock = new TextBlock()
+            {
+                VerticalAlignment = VerticalAlignment.Center,
+                Margin = new Thickness(0, 0, 0, 0),
+                TextWrapping = TextWrapping.Wrap,
+                FontSize = 12,
+                Visibility = Visibility.Collapsed,
+            };
             IS_INVERTED = false;
             Content = _checkbox;
-            Header = _textblock;
+            Header = new StackPanel()
+            {
+                Spacing = 4,
+                Orientation = Orientation.Vertical,
+                Children = { _textblock, _warningBlock }
+            };
 
             _checkbox.HorizontalAlignment = HorizontalAlignment.Stretch;
             _checkbox.Toggled += _checkbox_Toggled;

@@ -32,7 +32,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         }
 
         public bool CanGoBack => true;
-        public string ShortTitle => CoreTools.Translate("Administrator privileges preferences");
+        public string ShortTitle => CoreTools.Translate("Administrator rights and other dangerous settings");
 
         public event EventHandler? RestartRequired;
         public event EventHandler<Type>? NavigationRequested;

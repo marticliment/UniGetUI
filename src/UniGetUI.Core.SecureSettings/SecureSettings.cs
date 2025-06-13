@@ -6,6 +6,8 @@ namespace UniGetUI.Core.SettingsEngine.SecureSettings;
 
 public static class SecureSettings
 {
+    private static readonly Dictionary<string, bool> _cache = new();
+
     public static class Args
     {
         public const string ENABLE_FOR_USER = "--enable-secure-setting-for-user";
@@ -14,23 +16,35 @@ public static class SecureSettings
 
     public static bool Get(string setting)
     {
-        string purifiedUser = CoreTools.MakeValidFileName(Environment.UserName);
         string purifiedSetting = CoreTools.MakeValidFileName(setting);
+        if (_cache.TryGetValue(purifiedSetting, out var value))
+        {
+            return value;
+        }
+
+        string purifiedUser = CoreTools.MakeValidFileName(Environment.UserName);
 
         var appData = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
         var settingsLocation = Path.Join(appData, "UniGetUI\\SecureSettings", purifiedUser);
         var settingFile = Path.Join(settingsLocation, purifiedSetting);
 
         if (!Directory.Exists(settingsLocation))
+        {
+            _cache[purifiedSetting] = false;
             return false;
+        }
 
-        return File.Exists(settingFile);
+        bool exists = File.Exists(settingFile);
+        _cache[purifiedSetting] = exists;
+        return exists;
     }
 
     public static async Task<bool> TrySet(string setting, bool enabled)
     {
-        string purifiedUser = CoreTools.MakeValidFileName(Environment.UserName);
         string purifiedSetting = CoreTools.MakeValidFileName(setting);
+        _cache.Remove(purifiedSetting);
+
+        string purifiedUser = CoreTools.MakeValidFileName(Environment.UserName);
 
         using Process p = new Process();
         p.StartInfo = new()
@@ -56,8 +70,10 @@ public static class SecureSettings
     {
         try
         {
-            string purifiedUser = CoreTools.MakeValidFileName(username);
             string purifiedSetting = CoreTools.MakeValidFileName(setting);
+            _cache.Remove(purifiedSetting);
+
+            string purifiedUser = CoreTools.MakeValidFileName(username);
 
             var appData = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
             var settingsLocation = Path.Join(appData, "UniGetUI\\SecureSettings", purifiedUser);
