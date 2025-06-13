@@ -1,10 +1,10 @@
 {
     "package_count": {
         "total": 11818,
-        "done": 5303,
-        "packages_with_icon": 5303,
-        "packages_with_screenshot": 654,
-        "total_screenshots": 2035
+        "done": 5304,
+        "packages_with_icon": 5304,
+        "packages_with_screenshot": 656,
+        "total_screenshots": 2041
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -10033,12 +10033,20 @@
             "images": []
         },
         "deluge": {
-            "icon": "https://deluge-torrent.org/images/deluge_logo.png",
-            "images": []
+            "icon": "https://i.postimg.cc/FzR3fcmq/image.png",
+            "images": [
+                "https://i.postimg.cc/bJdQ6MFr/image.png",
+                "https://i.postimg.cc/W1j0RtfQ/image.png",
+                "https://i.postimg.cc/6p0nBwkT/image.png"
+            ]
         },
         "delugebeta": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/FzR3fcmq/image.png",
+            "images": [
+                "https://i.postimg.cc/bJdQ6MFr/image.png",
+                "https://i.postimg.cc/W1j0RtfQ/image.png",
+                "https://i.postimg.cc/6p0nBwkT/image.png"
+            ]
         },
         "demo-rest-service": {
             "icon": "",
