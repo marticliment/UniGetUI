@@ -319,6 +319,11 @@ namespace UniGetUI.Interface
             NavigateTo(PageType.ManagerLog);
             if (manager is not null) ManagerLogPage?.LoadForManager(manager);
         }
+        public void OpenManagerSettings(IPackageManager? manager = null)
+        {
+            NavigateTo(PageType.Managers);
+            if (manager is not null) ManagersPage?.NavigateTo(manager);
+        }
 
         public void UniGetUILogs_Click(object sender, RoutedEventArgs e)
             => NavigateTo(PageType.OwnLog);

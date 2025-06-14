@@ -78,6 +78,7 @@ namespace UniGetUI.Interface.Dialogs
             }
             _ = LoadImage();
             DialogTitle.Text = CoreTools.Translate("{0} installation options", package.Name);
+            PlaceholderText.Text = CoreTools.Translate("{0} Install options are currently locked because {0} follows the default install options.", package.Name);
 
             packageInstallLocation = Package.Manager.DetailsHelper.GetInstallLocation(package) ?? CoreTools.Translate("Unset or unknown");
 
@@ -168,9 +169,9 @@ namespace UniGetUI.Interface.Dialogs
         {
             if(FollowGlobalOptionsSwitch.IsOn)
             {
-                OptionsPanel0.Opacity = 0.6;
-                OptionsPanel1.Opacity = 0.6;
-                OptionsPanel2.Opacity = 0.6;
+                OptionsPanel0.Opacity = 0.3;
+                OptionsPanel1.Opacity = 0.3;
+                OptionsPanel2.Opacity = 0.3;
                 OptionsPanelBase.IsEnabled = false;
                 PlaceholderBanner.Visibility = Visibility.Visible;
             }
@@ -310,15 +311,11 @@ namespace UniGetUI.Interface.Dialogs
         private void HashCheckbox_Click(object sender, RoutedEventArgs e) => GenerateCommand();
         private void ArchitectureComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e) => GenerateCommand();
 
-
         private async void GenerateCommand()
         {
             if (!_uiLoaded) return;
             InstallOptions options = await GetUpdatedOptions(updateIgnoredUpdates: false);
-            if (!options.OverridesNextLevelOpts)
-            {
-                options = await InstallOptionsFactory.LoadApplicableAsync(this.Package, overridePackageOptions: options);
-            }
+            options = await InstallOptionsFactory.LoadApplicableAsync(this.Package, overridePackageOptions: options);
 
             var op = ProfileComboBox.SelectedIndex switch
             {
@@ -333,6 +330,17 @@ namespace UniGetUI.Interface.Dialogs
         private void LayoutGrid_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if(LayoutGrid.ActualSize.Y > 1 && LayoutGrid.ActualSize.Y < double.PositiveInfinity) MaxHeight = LayoutGrid.ActualSize.Y;
+        }
+
+        private void UnlockSettingsButton_Click(object sender, RoutedEventArgs e)
+        {
+            FollowGlobalOptionsSwitch.IsOn = false;
+        }
+
+        private void GoToDefaultOptionsSettings_Click(object sender, RoutedEventArgs e)
+        {
+            Close?.Invoke(this, EventArgs.Empty);
+            MainApp.Instance.MainWindow.NavigationPage.OpenManagerSettings(Package.Manager);
         }
     }
 }

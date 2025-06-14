@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml.Media.Animation;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.Pages.SettingsPages.GeneralPages;
 using UniGetUI.Interface.Pages;
+using UniGetUI.PackageEngine.Interfaces;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -90,6 +91,11 @@ namespace UniGetUI.Pages.SettingsPages
             {
                 MainNavigationFrame.Navigate(e, null, new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight} );
             }
+        }
+
+        public void NavigateTo(IPackageManager manager)
+        {
+            Page_NavigationRequested(this, manager.GetType());
         }
 
         public void OnEnter()
