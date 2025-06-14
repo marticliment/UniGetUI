@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11818,
-        "done": 5304,
-        "packages_with_icon": 5304,
-        "packages_with_screenshot": 656,
-        "total_screenshots": 2041
+        "total": 11825,
+        "done": 5309,
+        "packages_with_icon": 5309,
+        "packages_with_screenshot": 666,
+        "total_screenshots": 2069
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -346,7 +346,7 @@
             "images": []
         },
         "7zip": {
-            "icon": "https://i.postimg.cc/Wprhq34p/7-Zip-icon.png",
+            "icon": "https://i.postimg.cc/CLMvJ2Fp/image.png",
             "images": [
                 "https://i.postimg.cc/fyxLGHPS/7-Zip-1.png",
                 "https://cdn.mos.cms.futurecdn.net/0c3ce5fdf135bb76208e0558845eb98c.jpg"
@@ -2740,8 +2740,10 @@
             "images": []
         },
         "appinstaller": {
-            "icon": "https://i.postimg.cc/bvmN1dfM/App-Installer-icon.png",
-            "images": []
+            "icon": "https://i.postimg.cc/76k6y060/image.png",
+            "images": [
+                "https://i.postimg.cc/qMCGmH9Y/image.png"
+            ]
         },
         "appinstallerfilebuilder": {
             "icon": "",
@@ -10392,12 +10394,8 @@
             "images": []
         },
         "die": {
-            "icon": "https://community.chocolatey.org/content/packageimages/die.3.07.png",
-            "images": [
-                "https://i.postimg.cc/VsbkrHtD/image.png",
-                "https://i.postimg.cc/PxDnx97D/image.png",
-                "https://i.postimg.cc/YS1xCx39/image.png"
-            ]
+            "icon": "",
+            "images": []
         },
         "diff-pdf": {
             "icon": "",
@@ -19082,7 +19080,7 @@
             "images": []
         },
         "icloud": {
-            "icon": "https://community.chocolatey.org/content/packageimages/iCloud.7.21.0.23.png",
+            "icon": "https://developer.apple.com/assets/elements/icons/icloud/icloud-256x256.png",
             "images": []
         },
         "icnsify": {
@@ -20295,8 +20293,12 @@
             "images": []
         },
         "itunes": {
-            "icon": "https://zv915ylvcs.ufs.sh/f/fYIgEizARqiSf4d1j8PzARqiSTo3v8UBHIdlOwWsVeK71Y5Z",
-            "images": []
+            "icon": "https://developer.apple.com/assets/elements/icons/itunes/itunes-256x256.png",
+            "images": [
+                "https://i.postimg.cc/J7B3hnyY/image.png",
+                "https://i.postimg.cc/fR3DG6qd/image.png",
+                "https://i.postimg.cc/2SBNcn3F/image.png"
+            ]
         },
         "itunesfusion": {
             "icon": "https://community.chocolatey.org/content/packageimages/itunesfusion.3.3.0.20200624.png",
@@ -20856,7 +20858,13 @@
         },
         "joytokey": {
             "icon": "https://community.chocolatey.org/content/packageimages/joytokey.6.9.1.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/cLf5TDHR/image.png",
+                "https://i.postimg.cc/CLXWcB4g/image.png",
+                "https://i.postimg.cc/25fgfsJ9/image.png",
+                "https://i.postimg.cc/BvckZhfS/image.png",
+                "https://i.postimg.cc/4yMF2qV5/image.png"
+            ]
         },
         "jp": {
             "icon": "https://community.chocolatey.org/content/packageimages/jp.1.1.11.png",
@@ -23134,8 +23142,10 @@
             "images": []
         },
         "lightburn": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/6pNTh6p3/Lightburn.png",
+            "images": [
+                "https://i.postimg.cc/662SNnd8/image.png"
+            ]
         },
         "lightcord": {
             "icon": "",
@@ -45414,7 +45424,14 @@
         },
         "voiceattack": {
             "icon": "https://i.postimg.cc/7LXf5rRG/Voice-Attack.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/wTy3YfBS/image.png",
+                "https://i.postimg.cc/zf5fWqkr/image.png",
+                "https://i.postimg.cc/RFZVsG8p/image.png",
+                "https://i.postimg.cc/rsdycsqS/image.png",
+                "https://i.postimg.cc/vHV8N4qy/image.png",
+                "https://i.postimg.cc/Bn5SJdfw/image.png"
+            ]
         },
         "voicebot": {
             "icon": "",
@@ -49953,7 +49970,7 @@
                 "https://www.jetbrains.com/idea/img/overview-heading-screenshot.png"
             ]
         },
-        "samsung-dex\n": {
+        "samsung-dex": {
             "icon": "https://i.postimg.cc/pVsYggXd/Samsung-De-X.png",
             "images": []
         },
@@ -49974,6 +49991,55 @@
             "icon": "https://i.postimg.cc/yN3GL0q7/phoxosee.png",
             "images": [
                 "https://i.postimg.cc/ncdwZ3pH/image.png"
+            ]
+        },
+        "roblox": {
+            "icon": "https://i.postimg.cc/yYJ7tDNj/Roblox-Player.png",
+            "images": [
+                "https://i.postimg.cc/Dy4vWSLD/image.png",
+                "https://i.postimg.cc/mrLWSk1T/image.png"
+            ]
+        },
+        "die-engine": {
+            "icon": "https://community.chocolatey.org/content/packageimages/die.3.07.png",
+            "images": [
+                "https://i.postimg.cc/VsbkrHtD/image.png",
+                "https://i.postimg.cc/PxDnx97D/image.png",
+                "https://i.postimg.cc/YS1xCx39/image.png"
+            ]
+        },
+        "archivepassword": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/8zmM3pwy/image.png",
+                "https://i.postimg.cc/0jSJCPb0/image.png",
+                "https://i.postimg.cc/FsjLdFt9/image.png"
+            ]
+        },
+        "sagepassword": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/hv2NpW6h/image.png"
+            ]
+        },
+        "warp": {
+            "icon": "https://i.postimg.cc/wT15bYsJ/cloudwarp.png",
+            "images": [
+                "https://i.postimg.cc/GhhW9QSz/image.png",
+                "https://i.postimg.cc/KjY0c9vM/image.png",
+                "https://i.postimg.cc/KvDtp7GX/image.png"
+            ]
+        },
+        "bonjour": {
+            "icon": "https://developer.apple.com/assets/elements/icons/bonjour/bonjour-256x256.png",
+            "images": []
+        },
+        "windowsmigrationassistant": {
+            "icon": "https://i.postimg.cc/zBJPcC6V/Migration-Assistant.png",
+            "images": [
+                "https://i.postimg.cc/cHw4FSqs/image.png",
+                "https://i.postimg.cc/RhTCzLVy/image.png",
+                "https://i.postimg.cc/BbJsNPcg/image.png"
             ]
         }
     }
