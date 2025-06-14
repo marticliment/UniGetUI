@@ -62,22 +62,6 @@ namespace UniGetUI.PackageEngine.Serializable
             // This entry shall be checked the last one, to ensure all other properties are set
             this.OverridesNextLevelOpts =
                 data[nameof(OverridesNextLevelOpts)]?.GetValue<bool>() ?? DiffersFromDefault();
-
-            SanitizeOptions();
-        }
-
-        private void SanitizeOptions()
-        {
-            for (int i = 0; i < this.CustomParameters.Count; i++)
-            {
-                this.CustomParameters[i] = this.CustomParameters[i]
-                    .Replace("&", "")
-                    .Replace("|", "")
-                    .Replace(";", "")
-                    .Replace("<", "")
-                    .Replace(">", "")
-                    .Replace("\n", "");
-            }
         }
 
         public bool DiffersFromDefault()

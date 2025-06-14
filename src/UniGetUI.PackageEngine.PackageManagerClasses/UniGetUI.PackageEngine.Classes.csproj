@@ -7,6 +7,7 @@
     <ProjectReference Include="..\UniGetUI.Core.Data\UniGetUI.Core.Data.csproj" />
     <ProjectReference Include="..\UniGetUI.Core.IconStore\UniGetUI.Core.IconEngine.csproj" />
     <ProjectReference Include="..\UniGetUI.Core.LanguageEngine\UniGetUI.Core.LanguageEngine.csproj" />
+    <ProjectReference Include="..\UniGetUI.Core.SecureSettings\UniGetUI.Core.SecureSettings.csproj" />
     <ProjectReference Include="..\UniGetUI.Core.Settings\UniGetUI.Core.Settings.csproj" />
     <ProjectReference Include="..\UniGetUI.Core.Tools\UniGetUI.Core.Tools.csproj" />
     <ProjectReference Include="..\UniGetUI.PackageEngine.Enums\UniGetUI.PackageEngine.Structs.csproj" />

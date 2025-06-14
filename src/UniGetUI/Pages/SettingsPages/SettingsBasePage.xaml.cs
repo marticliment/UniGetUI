@@ -83,6 +83,10 @@ namespace UniGetUI.Pages.SettingsPages
 
         private void Page_NavigationRequested(object? sender, Type e)
         {
+            if(e == typeof(ManagersHomepage))
+            {
+                MainApp.Instance.MainWindow.NavigationPage.NavigateTo(Interface.PageType.Managers);
+            }
             if(e.IsSubclassOf(typeof(PackageManager)))
             {
                 MainNavigationFrame.Navigate(typeof(PackageManagerPage), e, new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight} );

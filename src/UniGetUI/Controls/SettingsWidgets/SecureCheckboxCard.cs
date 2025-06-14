@@ -2,7 +2,8 @@ using CommunityToolkit.WinUI.Controls;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
-using UniGetUI.Core.SettingsEngine;
+using UniGetUI.Core.Logging;
+using UniGetUI.Core.SettingsEngine.SecureSettings;
 using UniGetUI.Core.Tools;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -10,11 +11,12 @@ using UniGetUI.Core.Tools;
 
 namespace UniGetUI.Interface.Widgets
 {
-    public partial class CheckboxCard : SettingsCard
+    public partial class SecureCheckboxCard : SettingsCard
     {
         public ToggleSwitch _checkbox;
         public TextBlock _textblock;
         public TextBlock _warningBlock;
+        public ProgressRing _loading;
         protected bool IS_INVERTED;
 
         protected string setting_name = "";
@@ -22,11 +24,23 @@ namespace UniGetUI.Interface.Widgets
         {
             set
             {
+                _checkbox.IsEnabled = false;
                 setting_name = value;
                 IS_INVERTED = value.StartsWith("Disable");
-                _checkbox.IsOn = Settings.Get(setting_name) ^ IS_INVERTED ^ ForceInversion;
+                _checkbox.IsOn = SecureSettings.Get(setting_name) ^ IS_INVERTED ^ ForceInversion;
                 _textblock.Opacity = _checkbox.IsOn ? 1 : 0.7;
+                _checkbox.IsEnabled = true;
             }
+        }
+
+        public new bool IsEnabled
+        {
+            set
+            {
+                base.IsEnabled = value;
+                _warningBlock.Opacity = value ? 1 : 0.2;
+            }
+            get => base.IsEnabled;
         }
 
         public bool ForceInversion { get; set; }
@@ -51,17 +65,14 @@ namespace UniGetUI.Interface.Widgets
             }
         }
 
-        public Brush WarningForeground
-        {
-            set => _warningBlock.Foreground = value;
-        }
-
-        public CheckboxCard()
+        public SecureCheckboxCard()
         {
             _checkbox = new ToggleSwitch()
             {
                 Margin = new Thickness(0, 0, 8, 0)
             };
+
+            _loading = new ProgressRing() { IsIndeterminate = true, Visibility = Visibility.Collapsed};
             _textblock = new TextBlock()
             {
                 VerticalAlignment = VerticalAlignment.Center,
@@ -73,11 +84,18 @@ namespace UniGetUI.Interface.Widgets
                 VerticalAlignment = VerticalAlignment.Center,
                 Margin = new Thickness(0, 0, 0, 0),
                 TextWrapping = TextWrapping.Wrap,
+                Foreground = (SolidColorBrush)Application.Current.Resources["SystemControlErrorTextForegroundBrush"],
                 FontSize = 12,
                 Visibility = Visibility.Collapsed,
             };
             IS_INVERTED = false;
-            Content = _checkbox;
+            Content = new StackPanel()
+            {
+                Spacing = 4,
+                Orientation = Orientation.Horizontal,
+                Children = { _loading, _checkbox },
+            };
+            //Header = _textblock;
             Header = new StackPanel()
             {
                 Spacing = 4,
@@ -86,57 +104,31 @@ namespace UniGetUI.Interface.Widgets
             };
 
             _checkbox.HorizontalAlignment = HorizontalAlignment.Stretch;
-            _checkbox.Toggled += _checkbox_Toggled;
+            _checkbox.Toggled += (s, e) => _ = _checkbox_Toggled();
         }
-        protected virtual void _checkbox_Toggled(object sender, RoutedEventArgs e)
+        protected virtual async Task _checkbox_Toggled()
         {
-            Settings.Set(setting_name, _checkbox.IsOn ^ IS_INVERTED ^ ForceInversion);
-            StateChanged?.Invoke(this, EventArgs.Empty);
-            _textblock.Opacity = _checkbox.IsOn ? 1 : 0.7;
-        }
-    }
-
-    public partial class CheckboxCard_Dict : CheckboxCard
-    {
-        public override event EventHandler<EventArgs>? StateChanged;
-
-        private string _dictName = "";
-        public string DictionaryName 
-        {
-            set
+            try
             {
-                _dictName = value;
-                IS_INVERTED = value.StartsWith("Disable");
-                if (setting_name != "")
-                {
-                    _checkbox.IsOn = Settings.GetDictionaryItem<string, bool>(_dictName, setting_name) ^ IS_INVERTED ^ ForceInversion;
-                    _textblock.Opacity = _checkbox.IsOn ? 1 : 0.7;
-                }
-            }
-        }
+                if (_checkbox.IsEnabled is false)
+                    return;
 
-        public override string SettingName
-        {
-            set
+                _loading.Visibility = Visibility.Visible;
+                _checkbox.IsEnabled = false;
+                StateChanged?.Invoke(this, EventArgs.Empty);
+                await SecureSettings.TrySet(setting_name, _checkbox.IsOn ^ IS_INVERTED ^ ForceInversion);
+                _textblock.Opacity = _checkbox.IsOn ? 1 : 0.7;
+                _checkbox.IsOn = SecureSettings.Get(setting_name) ^ IS_INVERTED ^ ForceInversion;
+                _loading.Visibility = Visibility.Collapsed;
+                _checkbox.IsEnabled = true;
+            }
+            catch (Exception ex)
             {
-                setting_name = value;
-                if (_dictName != "")
-                {
-                    _checkbox.IsOn = Settings.GetDictionaryItem<string, bool>(_dictName, setting_name) ^ IS_INVERTED ^ ForceInversion;
-                    _textblock.Opacity = _checkbox.IsOn ? 1 : 0.7;
-                }
+                Logger.Warn(ex);
+                _checkbox.IsOn = SecureSettings.Get(setting_name) ^ IS_INVERTED ^ ForceInversion;
+                _loading.Visibility = Visibility.Collapsed;
+                _checkbox.IsEnabled = true;
             }
-        }
-
-        public CheckboxCard_Dict() : base()
-        {
-        }
-
-        protected override void _checkbox_Toggled(object sender, RoutedEventArgs e)
-        {
-            Settings.SetDictionaryItem(_dictName, setting_name, _checkbox.IsOn ^ IS_INVERTED ^ ForceInversion);
-            StateChanged?.Invoke(this, EventArgs.Empty);
-            _textblock.Opacity = _checkbox.IsOn ? 1 : 0.7;
         }
     }
 }

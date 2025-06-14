@@ -4,7 +4,8 @@
       "commandName": "MsixPackage"
     },
     "UniGetUI (Unpackaged)": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": ""
     }
   }
 }
