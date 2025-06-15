@@ -21,9 +21,9 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         {
             this.InitializeComponent();
 
-            if (Settings.GetValue("PreferredTheme") == "")
+            if (Settings.GetValue(Settings.PreferredTheme) == "")
             {
-                Settings.SetValue("PreferredTheme", "auto");
+                Settings.SetValue(Settings.PreferredTheme, "auto");
             }
 
             ThemeSelector.AddItem(CoreTools.AutoTranslated("Light"), "light");

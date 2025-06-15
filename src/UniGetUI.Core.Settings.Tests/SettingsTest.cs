@@ -54,8 +54,8 @@ namespace UniGetUI.Core.SettingsEngine.Tests
         [Fact]
         public void TestSettingsSaveToNewDirectory()
         {
-            Settings.Set("FreshBoolSetting", true);
-            Settings.SetValue("FreshValue", "test");
+            Settings.Set(Settings.FreshBoolSetting, true);
+            Settings.SetValue(Settings.FreshValue, "test");
 
             Assert.True(File.Exists(GetNewSettingPath("FreshBoolSetting")));
             Assert.True(File.Exists(GetNewSettingPath("FreshValue")));

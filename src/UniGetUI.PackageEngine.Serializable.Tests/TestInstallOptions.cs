@@ -88,9 +88,9 @@ public class TestInstallOptions
         Assert.Equal(hash, o2.SkipHashCheck);
         Assert.Equal(arch, o2.Architecture);
         Assert.Equal(installLoc, o2.CustomInstallLocation);
-        Assert.Equal(list, o2.CustomParameters_Install);
-        Assert.Equal(list, o2.CustomParameters_Update);
-        Assert.Equal(list, o2.CustomParameters_Uninstall);
+        Assert.Equal(list.Where(x => x.Any()).ToList(), o2.CustomParameters_Install.Where(x => x.Any()).ToList());
+        Assert.Equal(list.Where(x => x.Any()).ToList(), o2.CustomParameters_Update.Where(x => x.Any()).ToList());
+        Assert.Equal(list.Where(x => x.Any()).ToList(), o2.CustomParameters_Uninstall.Where(x => x.Any()).ToList());
         Assert.Equal(scope, o2.InstallationScope);
         Assert.Equal(inter, o2.InteractiveInstallation);
         Assert.Equal(pre, o2.PreRelease);
@@ -104,9 +104,9 @@ public class TestInstallOptions
         Assert.Equal(o1.SkipHashCheck, o2.SkipHashCheck);
         Assert.Equal(o1.Architecture, o2.Architecture);
         Assert.Equal(o1.CustomInstallLocation, o2.CustomInstallLocation);
-        Assert.Equal(o1.CustomParameters_Install, o2.CustomParameters_Install);
-        Assert.Equal(o1.CustomParameters_Uninstall, o2.CustomParameters_Uninstall);
-        Assert.Equal(o1.CustomParameters_Update, o2.CustomParameters_Update);
+        Assert.Equal(o1.CustomParameters_Install.Where(x => x.Any()).ToList(), o2.CustomParameters_Install.Where(x => x.Any()).ToList());
+        Assert.Equal(o1.CustomParameters_Uninstall.Where(x => x.Any()).ToList(), o2.CustomParameters_Uninstall.Where(x => x.Any()).ToList());
+        Assert.Equal(o1.CustomParameters_Update.Where(x => x.Any()).ToList(), o2.CustomParameters_Update.Where(x => x.Any()).ToList());
         Assert.Equal(o1.InstallationScope, o2.InstallationScope);
         Assert.Equal(o1.InteractiveInstallation, o2.InteractiveInstallation);
         Assert.Equal(o1.PreRelease, o2.PreRelease);

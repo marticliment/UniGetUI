@@ -257,7 +257,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 DisableNotifsCard.BorderThickness = new Thickness(1, 1, 1, 0);
                 ExtraControls.Children.Add(DisableNotifsCard);
 
-                Settings.SetValue("DefaultVcpkgTriplet", Vcpkg.GetDefaultTriplet());
+                Settings.SetValue(Settings.DefaultVcpkgTriplet, Vcpkg.GetDefaultTriplet());
                 ComboboxCard Vcpkg_DefaultTriplet = new()
                 {
                     Text = CoreTools.Translate("Default vcpkg triplet"),
@@ -284,23 +284,23 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 var ResetVcPkgRootLabel = new HyperlinkButton { Content = CoreTools.Translate("Reset") };
                 var OpenVcPkgRootLabel = new HyperlinkButton { Content = CoreTools.Translate("Open") };
 
-                VcPkgRootLabel.Text = Settings.Get("CustomVcpkgRoot")
-                    ? Settings.GetValue("CustomVcpkgRoot")
+                VcPkgRootLabel.Text = Settings.Get(Settings.CustomVcpkgRoot)
+                    ? Settings.GetValue(Settings.CustomVcpkgRoot)
                     : "%VCPKG_ROOT%";
-                OpenVcPkgRootLabel.IsEnabled = Settings.Get("CustomVcpkgRoot");
-                ResetVcPkgRootLabel.IsEnabled = Settings.Get("CustomVcpkgRoot");
+                OpenVcPkgRootLabel.IsEnabled = Settings.Get(Settings.CustomVcpkgRoot);
+                ResetVcPkgRootLabel.IsEnabled = Settings.Get(Settings.CustomVcpkgRoot);
 
                 ResetVcPkgRootLabel.Click += (_, _) =>
                 {
                     VcPkgRootLabel.Text = "%VCPKG_ROOT%";
-                    Settings.Set("CustomVcpkgRoot", false);
+                    Settings.Set(Settings.CustomVcpkgRoot, false);
                     ResetVcPkgRootLabel.IsEnabled = false;
                     OpenVcPkgRootLabel.IsEnabled = false;
                 };
 
                 OpenVcPkgRootLabel.Click += (_, _) =>
                 {
-                    string directory = Settings.GetValue("CustomVcpkgRoot").Replace("/", "\\");
+                    string directory = Settings.GetValue(Settings.CustomVcpkgRoot).Replace("/", "\\");
                     if (directory.Any()) Process.Start("explorer.exe", directory);
                 };
 
@@ -311,7 +311,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                     string folder = openPicker.Show();
                     if (folder != string.Empty)
                     {
-                        Settings.SetValue("CustomVcpkgRoot", folder);
+                        Settings.SetValue(Settings.CustomVcpkgRoot, folder);
                         VcPkgRootLabel.Text = folder;
                         ResetVcPkgRootLabel.IsEnabled = true;
                         OpenVcPkgRootLabel.IsEnabled = true;

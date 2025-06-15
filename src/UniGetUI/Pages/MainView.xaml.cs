@@ -143,21 +143,21 @@ namespace UniGetUI.Interface
 
             LoadDefaultPage();
 
-            if (CoreTools.IsAdministrator() && !Settings.Get("AlreadyWarnedAboutAdmin"))
+            if (CoreTools.IsAdministrator() && !Settings.Get(Settings.AlreadyWarnedAboutAdmin))
             {
-                Settings.Set("AlreadyWarnedAboutAdmin", true);
+                Settings.Set(Settings.AlreadyWarnedAboutAdmin, true);
                 DialogHelper.WarnAboutAdminRights();
             }
 
             UpdateOperationsLayout();
             MainApp.Operations._operationList.CollectionChanged += (_, _) => UpdateOperationsLayout();
 
-            if (!Settings.Get("ShownTelemetryBanner"))
+            if (!Settings.Get(Settings.ShownTelemetryBanner))
             {
                 DialogHelper.ShowTelemetryBanner();
             }
 
-            if (!Settings.Get("CollapseNavMenuOnWideScreen"))
+            if (!Settings.Get(Settings.CollapseNavMenuOnWideScreen))
             {
                 NavView.IsPaneOpen = true;
             }
@@ -165,7 +165,7 @@ namespace UniGetUI.Interface
 
         public void LoadDefaultPage()
         {
-            PageType type = Settings.GetValue("StartupPage") switch
+            PageType type = Settings.GetValue(Settings.StartupPage) switch
             {
                 "discover" => PageType.Discover,
                 "updates" => PageType.Updates,

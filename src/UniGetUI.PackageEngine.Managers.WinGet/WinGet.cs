@@ -93,11 +93,11 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         public static string GetProxyArgument()
         {
-            if (!Settings.Get("EnableProxy")) return "";
+            if (!Settings.Get(Settings.EnableProxy)) return "";
             var proxyUri = Settings.GetProxyUrl();
             if (proxyUri is null) return "";
 
-            if (Settings.Get("EnableProxyAuth"))
+            if (Settings.Get(Settings.EnableProxyAuth))
             {
                 Logger.Warn("Proxy is enabled, but WinGet does not support proxy authentication, so the proxy setting will be ignored");
                 return "";
@@ -179,7 +179,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         {
             ManagerStatus status = new();
 
-            bool FORCE_BUNDLED = Settings.Get("ForceLegacyBundledWinGet");
+            bool FORCE_BUNDLED = Settings.Get(Settings.ForceLegacyBundledWinGet);
 
             var (found, path) = CoreTools.Which("winget.exe");
             status.ExecutablePath = path;
@@ -292,7 +292,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         private static void TryRepairTempFolderPermissions()
         {
-            if (Settings.Get("DisableNewWinGetTroubleshooter")) return;
+            if (Settings.Get(Settings.DisableNewWinGetTroubleshooter)) return;
 
             try
             {
