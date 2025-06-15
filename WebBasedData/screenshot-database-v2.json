@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11825,
-        "done": 5309,
-        "packages_with_icon": 5309,
-        "packages_with_screenshot": 666,
-        "total_screenshots": 2069
+        "total": 11826,
+        "done": 5310,
+        "packages_with_icon": 5310,
+        "packages_with_screenshot": 667,
+        "total_screenshots": 2072
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -20884,7 +20884,11 @@
         },
         "jpegview": {
             "icon": "https://community.chocolatey.org/content/packageimages/jpegview.1.1.43.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/MTLhgn8V/image.png",
+                "https://i.postimg.cc/VLPYNV3M/image.png",
+                "https://i.postimg.cc/vZ3M3HDL/image.png"
+            ]
         },
         "jq": {
             "icon": "https://community.chocolatey.org/content/packageimages/jq.1.6.png",
@@ -50041,6 +50045,10 @@
                 "https://i.postimg.cc/RhTCzLVy/image.png",
                 "https://i.postimg.cc/BbJsNPcg/image.png"
             ]
+        },
+        "sysinternals-zoomIt": {
+            "icon": "https://i.postimg.cc/hjPX2PL9/ZoomIt.png",
+            "images": []
         }
     }
 }
