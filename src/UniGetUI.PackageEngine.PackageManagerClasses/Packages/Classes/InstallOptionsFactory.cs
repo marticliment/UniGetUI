@@ -212,11 +212,11 @@ namespace UniGetUI.PackageEngine.PackageClasses
             {
                 // Otherwhise, clear them
                 if (options.CustomParameters_Install.Count > 0)
-                    Logger.Warn($"Custom CLI parameters [{string.Join(' ', options.CustomParameters_Install)}] will be discarded");
+                    Logger.Warn($"Custom install parameters [{string.Join(' ', options.CustomParameters_Install)}] will be discarded");
                 if (options.CustomParameters_Update.Count > 0)
-                    Logger.Warn($"Custom CLI parameters [{string.Join(' ', options.CustomParameters_Update)}] will be discarded");
+                    Logger.Warn($"Custom update parameters [{string.Join(' ', options.CustomParameters_Update)}] will be discarded");
                 if (options.CustomParameters_Uninstall.Count > 0)
-                    Logger.Warn($"Custom CLI parameters [{string.Join(' ', options.CustomParameters_Uninstall)}] will be discarded");
+                    Logger.Warn($"Custom uninstall parameters [{string.Join(' ', options.CustomParameters_Uninstall)}] will be discarded");
 
                 options.CustomParameters_Install = [];
                 options.CustomParameters_Update = [];
