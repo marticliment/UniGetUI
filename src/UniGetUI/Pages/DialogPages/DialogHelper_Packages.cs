@@ -1,5 +1,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
@@ -10,6 +11,7 @@ using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.Serializable;
+using UniGetUI.Pages.SettingsPages.GeneralPages;
 
 namespace UniGetUI.Pages.DialogPages;
 
@@ -195,5 +197,65 @@ public static partial class DialogHelper
             await Window.ShowDialogAsync(warningDialog);
 
         }
+    }
+
+    public static async Task ShowBundleSecurityReport(Dictionary<string, List<string>> packageReport)
+    {
+        var dialog = DialogFactory.Create_AsWindow(true, true);
+
+        var title = CoreTools.Translate("Bundle security report");
+        dialog.Title = title;
+        Hyperlink a;
+
+        string reportBody = "";
+
+        foreach(var pair in packageReport)
+        {
+            reportBody += $" - {CoreTools.Translate("Package")}: {pair.Key}:\n";
+            foreach (var issue in pair.Value)
+            {
+                reportBody += "   * " + issue + "\n";
+            }
+            reportBody += "\n";
+        }
+
+        dialog.Content = new ScrollViewer()
+        {
+            Content = new RichTextBlock()
+            {
+                Blocks = {
+                    new Paragraph()
+                    {
+                        Inlines = {
+                            new Run()
+                            {
+                                Text = CoreTools.Translate("The bundle had some settings that are currently restricted for security reasons, so they have been ignored.") +
+                                    CoreTools.Translate("You can change this behaviour on UniGetUI security settings. ")
+                            },
+                            (a = new Hyperlink
+                            {
+                                Inlines = { new Run() { Text = CoreTools.Translate("Open UniGetUI security settings") } },
+                            }),
+                            new LineBreak(),
+                            new LineBreak(),
+                            new Run() { Text = CoreTools.Translate("Details of the report:") },
+                            new LineBreak(),
+                            new LineBreak(),
+                            new Run()
+                            {
+                                Text = reportBody,
+                                FontFamily = new FontFamily("Consolas")
+                            }
+                        }
+                    }
+                }
+            }
+        };
+        a.Click += (_, _) => {
+            dialog.Hide();
+            Window.NavigationPage.OpenSettingsPage(typeof(Administrator));
+        };
+        dialog.SecondaryButtonText = CoreTools.Translate("Close");
+        await Window.ShowDialogAsync(dialog);
     }
 }
