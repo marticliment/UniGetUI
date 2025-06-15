@@ -375,7 +375,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
                 string BackupContents = await PackageBundlesPage.CreateBundle(packagesToExport.ToArray(), BundleFormatType.UBUNDLE);
 
-                string dirName = Settings.GetValue("ChangeBackupOutputDirectory");
+                string dirName = Settings.GetValue(Settings.ChangeBackupOutputDirectory);
                 if (dirName == "")
                 {
                     dirName = CoreData.UniGetUI_DefaultBackupDirectory;
@@ -386,7 +386,7 @@ namespace UniGetUI.Interface.SoftwarePages
                     Directory.CreateDirectory(dirName);
                 }
 
-                string fileName = Settings.GetValue("ChangeBackupFileName");
+                string fileName = Settings.GetValue(Settings.ChangeBackupFileName);
                 if (fileName == "")
                 {
                     fileName = CoreTools.Translate("{pcName} installed packages", new Dictionary<string, object?> { { "pcName", Environment.MachineName } });

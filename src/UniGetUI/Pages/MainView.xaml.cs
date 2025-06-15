@@ -165,7 +165,7 @@ namespace UniGetUI.Interface
 
         public void LoadDefaultPage()
         {
-            PageType type = Settings.GetValue("StartupPage") switch
+            PageType type = Settings.GetValue(Settings.StartupPage) switch
             {
                 "discover" => PageType.Discover,
                 "updates" => PageType.Updates,

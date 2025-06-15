@@ -257,7 +257,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 DisableNotifsCard.BorderThickness = new Thickness(1, 1, 1, 0);
                 ExtraControls.Children.Add(DisableNotifsCard);
 
-                Settings.SetValue("DefaultVcpkgTriplet", Vcpkg.GetDefaultTriplet());
+                Settings.SetValue(Settings.DefaultVcpkgTriplet, Vcpkg.GetDefaultTriplet());
                 ComboboxCard Vcpkg_DefaultTriplet = new()
                 {
                     Text = CoreTools.Translate("Default vcpkg triplet"),
@@ -285,7 +285,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 var OpenVcPkgRootLabel = new HyperlinkButton { Content = CoreTools.Translate("Open") };
 
                 VcPkgRootLabel.Text = Settings.Get(Settings.CustomVcpkgRoot)
-                    ? Settings.GetValue("CustomVcpkgRoot")
+                    ? Settings.GetValue(Settings.CustomVcpkgRoot)
                     : "%VCPKG_ROOT%";
                 OpenVcPkgRootLabel.IsEnabled = Settings.Get(Settings.CustomVcpkgRoot);
                 ResetVcPkgRootLabel.IsEnabled = Settings.Get(Settings.CustomVcpkgRoot);
@@ -300,7 +300,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
 
                 OpenVcPkgRootLabel.Click += (_, _) =>
                 {
-                    string directory = Settings.GetValue("CustomVcpkgRoot").Replace("/", "\\");
+                    string directory = Settings.GetValue(Settings.CustomVcpkgRoot).Replace("/", "\\");
                     if (directory.Any()) Process.Start("explorer.exe", directory);
                 };
 
@@ -311,7 +311,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                     string folder = openPicker.Show();
                     if (folder != string.Empty)
                     {
-                        Settings.SetValue("CustomVcpkgRoot", folder);
+                        Settings.SetValue(Settings.CustomVcpkgRoot, folder);
                         VcPkgRootLabel.Text = folder;
                         ResetVcPkgRootLabel.IsEnabled = true;
                         OpenVcPkgRootLabel.IsEnabled = true;

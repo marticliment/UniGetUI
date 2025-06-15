@@ -68,7 +68,7 @@ namespace UniGetUI
 
                 InitializeComponent();
 
-                string preferredTheme = Settings.GetValue("PreferredTheme");
+                string preferredTheme = Settings.GetValue(Settings.PreferredTheme);
                 if (preferredTheme == "dark")
                 {
                     RequestedTheme = ApplicationTheme.Dark;

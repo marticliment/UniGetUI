@@ -51,7 +51,7 @@ namespace UniGetUI.Interface
             }
 
             ApiTokenHolder.Token = CoreTools.RandomString(64);
-            Settings.SetValue("CurrentSessionToken", ApiTokenHolder.Token);
+            Settings.SetValue(Settings.CurrentSessionToken, ApiTokenHolder.Token);
             Logger.Info("Randomly-generated background API auth token: " + ApiTokenHolder.Token);
 
             var builder = Host.CreateDefaultBuilder();

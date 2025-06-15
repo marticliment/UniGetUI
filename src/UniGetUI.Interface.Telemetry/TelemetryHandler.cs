@@ -219,11 +219,11 @@ public static class TelemetryHandler
 
     private static string GetRandomizedId()
     {
-        string ID = Settings.GetValue("TelemetryClientToken");
+        string ID = Settings.GetValue(Settings.TelemetryClientToken);
         if (ID.Length != 64)
         {
             ID = CoreTools.RandomString(64);
-            Settings.SetValue("TelemetryClientToken", ID);
+            Settings.SetValue(Settings.TelemetryClientToken, ID);
         }
 
         return ID;

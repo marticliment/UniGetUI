@@ -62,7 +62,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 { "x86-windows", new ManagerSource(this, "x86-windows", URI_VCPKG_IO) }
             };
 
-            string vcpkgRoot = Settings.GetValue("CustomVcpkgRoot");
+            string vcpkgRoot = Settings.GetValue(Settings.CustomVcpkgRoot);
             Properties = new ManagerProperties
             {
                 Name = "vcpkg",
@@ -428,7 +428,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
 
         public static Tuple<bool, string> GetVcpkgRoot()
         {
-            string? vcpkgRoot = Settings.GetValue("CustomVcpkgRoot");
+            string? vcpkgRoot = Settings.GetValue(Settings.CustomVcpkgRoot);
             if (vcpkgRoot == "")
             {
                 vcpkgRoot = Environment.GetEnvironmentVariable("VCPKG_ROOT");
@@ -452,7 +452,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
 
         public static string GetDefaultTriplet()
         {
-            string DefaultTriplet = Settings.GetValue("DefaultVcpkgTriplet");
+            string DefaultTriplet = Settings.GetValue(Settings.DefaultVcpkgTriplet);
             if (DefaultTriplet == "")
             {
                 DefaultTriplet = Environment.GetEnvironmentVariable("VCPKG_DEFAULT_TRIPLET") ?? "";

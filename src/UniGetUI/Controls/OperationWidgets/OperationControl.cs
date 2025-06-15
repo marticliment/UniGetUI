@@ -146,11 +146,11 @@ public partial class OperationControl: INotifyPropertyChanged
             rawOutput.Add(line.Item1);
         }
 
-        string[] oldHistory = Settings.GetValue("OperationHistory").Split("\n");
+        string[] oldHistory = Settings.GetValue(Settings.OperationHistory).Split("\n");
         if (oldHistory.Length > 300) oldHistory = oldHistory.Take(300).ToArray();
 
         List<string> newHistory = [.. rawOutput, .. oldHistory];
-        Settings.SetValue("OperationHistory", string.Join('\n', newHistory));
+        Settings.SetValue(Settings.OperationHistory, string.Join('\n', newHistory));
         rawOutput.Add("");
         rawOutput.Add("");
         rawOutput.Add("");

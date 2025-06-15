@@ -65,7 +65,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
                 long waitTime = 3600;
                 try
                 {
-                    waitTime = long.Parse(Settings.GetValue("UpdatesCheckInterval"));
+                    waitTime = long.Parse(Settings.GetValue(Settings.UpdatesCheckInterval));
                     Logger.Debug($"Starting check for updates wait interval with waitTime={waitTime}");
                 }
                 catch

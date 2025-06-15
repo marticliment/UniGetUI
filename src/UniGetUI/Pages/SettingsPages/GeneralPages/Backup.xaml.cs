@@ -44,7 +44,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             string folder = openPicker.Show();
             if (folder != string.Empty)
             {
-                Settings.SetValue("ChangeBackupOutputDirectory", folder);
+                Settings.SetValue(Settings.ChangeBackupOutputDirectory, folder);
                 BackupDirectoryLabel.Text = folder;
                 ResetBackupDirectory.IsEnabled = true;
             }
@@ -66,7 +66,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 }
                 else
                 {
-                    BackupDirectoryLabel.Text = Settings.GetValue("ChangeBackupOutputDirectory");
+                    BackupDirectoryLabel.Text = Settings.GetValue(Settings.ChangeBackupOutputDirectory);
                     ResetBackupDirectory.IsEnabled = true;
                 }
             }
@@ -81,7 +81,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
 
         private void OpenBackupPath_Click(object sender, RoutedEventArgs e)
         {
-            string directory = Settings.GetValue("ChangeBackupOutputDirectory");
+            string directory = Settings.GetValue(Settings.ChangeBackupOutputDirectory);
             if (directory == "")
             {
                 directory = CoreData.UniGetUI_DefaultBackupDirectory;

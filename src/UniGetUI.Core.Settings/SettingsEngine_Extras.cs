@@ -42,7 +42,7 @@ public partial class Settings
     {
         if (!Settings.Get(Settings.EnableProxy)) return null;
 
-        string plainUrl = Settings.GetValue("ProxyURL");
+        string plainUrl = Settings.GetValue(Settings.ProxyURL);
         Uri.TryCreate(plainUrl, UriKind.RelativeOrAbsolute, out Uri? var);
         if(Settings.Get(Settings.EnableProxy) && var is null) Logger.Warn($"Proxy setting {plainUrl} is not valid");
         return var;
@@ -55,7 +55,7 @@ public partial class Settings
         try
         {
             var vault = new PasswordVault();
-            var credentials = vault.Retrieve(PROXY_RES_ID, Settings.GetValue("ProxyUsername"));
+            var credentials = vault.Retrieve(PROXY_RES_ID, Settings.GetValue(Settings.ProxyUsername));
 
             return new NetworkCredential()
             {
@@ -76,7 +76,7 @@ public partial class Settings
         try
         {
             var vault = new PasswordVault();
-            Settings.SetValue("ProxyUsername", username);
+            Settings.SetValue(Settings.ProxyUsername, username);
             vault.Add(new PasswordCredential(PROXY_RES_ID, username, password));
         }
         catch (Exception ex)

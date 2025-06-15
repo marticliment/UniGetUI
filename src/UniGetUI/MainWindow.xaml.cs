@@ -708,7 +708,7 @@ namespace UniGetUI.Interface
 
         public void ApplyTheme()
         {
-            string preferredTheme = Settings.GetValue("PreferredTheme");
+            string preferredTheme = Settings.GetValue(Settings.PreferredTheme);
             if (preferredTheme == "dark")
             {
                 MainApp.Instance.ThemeListener.CurrentTheme = ApplicationTheme.Dark;
@@ -885,13 +885,13 @@ namespace UniGetUI.Interface
                 $"{AppWindow.Position.X},{AppWindow.Position.Y},{AppWindow.Size.Width},{AppWindow.Size.Height},{windowState}";
 
             Logger.Debug($"Saving window geometry {geometry}");
-            Settings.SetValue("WindowGeometry", geometry);
+            Settings.SetValue(Settings.WindowGeometry, geometry);
         }
 
         private void RestoreGeometry()
         {
 
-            string geometry = Settings.GetValue("WindowGeometry");
+            string geometry = Settings.GetValue(Settings.WindowGeometry);
             string[] items = geometry.Split(",");
             if (items.Length != 5)
             {

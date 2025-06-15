@@ -21,7 +21,7 @@ namespace UniGetUI.Core.Language
 
         public LanguageEngine(string ForceLanguage = "")
         {
-            string LangName = Settings.GetValue("PreferredLanguage");
+            string LangName = Settings.GetValue(Settings.PreferredLanguage);
             if (LangName is "default" or "")
             {
                 LangName = CultureInfo.CurrentUICulture.ToString().Replace("-", "_");
