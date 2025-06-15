@@ -280,7 +280,6 @@ public static partial class DialogHelper
                             new LineBreak(),
                             new LineBreak(),
                             new Run() { Text = CoreTools.Translate("Details of the report:") },
-                            new Run() { Text = CoreTools.Translate("Details of the report:") },
                             new LineBreak(),
                         }
                     },
