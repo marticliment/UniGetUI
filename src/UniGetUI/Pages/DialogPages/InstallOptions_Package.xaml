@@ -304,7 +304,7 @@
                                             Click="GoToSecureSettings_Click">
                                             <widgets:TranslatedTextBlock Text="Go to UniGetUI security settings" />
                                         </Button>
-                                        <Grid ColumnSpacing="8">
+                                        <Grid ColumnSpacing="8" RowSpacing="8">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*" />
                                                 <ColumnDefinition Width="2*" />

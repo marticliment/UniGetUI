@@ -19,10 +19,10 @@ namespace UniGetUI.PackageEngine.PackageClasses
         private static class StoragePath
         {
             public static string Get(IPackageManager manager)
-                => "GlobalValues." + manager.Name.Replace(" ", "").Replace(".", "");
+                => "GlobalValues." + manager.Name.Replace(" ", "").Replace(".", "") + ".json";
 
             public static string Get(IPackage package)
-                => package.Manager.Name.Replace(" ", "").Replace(".", "") + "." + package.Id;
+                => package.Manager.Name.Replace(" ", "").Replace(".", "") + "." + package.Id + ".json";
         }
 
 
