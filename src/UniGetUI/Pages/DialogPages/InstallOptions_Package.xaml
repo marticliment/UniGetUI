@@ -309,13 +309,50 @@
                                                 <ColumnDefinition Width="*" />
                                                 <ColumnDefinition Width="2*" />
                                             </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
                                             <widgets:TranslatedTextBlock
-                                                x:Name="CustomParametersLabel"
+                                                x:Name="CustomParametersLabel1"
+                                                Grid.Row="0"
                                                 Grid.Column="0"
                                                 VerticalAlignment="Center"
-                                                Text="Custom arguments:" />
+                                                Text="Custom install arguments:" />
                                             <TextBox
-                                                Name="CustomParameters"
+                                                Name="CustomParameters1"
+                                                Grid.Row="0"
+                                                Grid.Column="1"
+                                                Padding="5,7,5,5"
+                                                FontFamily="Consolas"
+                                                TextChanged="CustomParameters_TextChanged"
+                                                TextWrapping="Wrap" />
+
+                                            <widgets:TranslatedTextBlock
+                                                x:Name="CustomParametersLabel2"
+                                                Grid.Row="1"
+                                                Grid.Column="0"
+                                                VerticalAlignment="Center"
+                                                Text="Custom update arguments:" />
+                                            <TextBox
+                                                Name="CustomParameters2"
+                                                Grid.Row="1"
+                                                Grid.Column="1"
+                                                Padding="5,7,5,5"
+                                                FontFamily="Consolas"
+                                                TextChanged="CustomParameters_TextChanged"
+                                                TextWrapping="Wrap" />
+
+                                            <widgets:TranslatedTextBlock
+                                                x:Name="CustomParametersLabel3"
+                                                Grid.Row="2"
+                                                Grid.Column="0"
+                                                VerticalAlignment="Center"
+                                                Text="Custom uninstall arguments:" />
+                                            <TextBox
+                                                Name="CustomParameters3"
+                                                Grid.Row="2"
                                                 Grid.Column="1"
                                                 Padding="5,7,5,5"
                                                 FontFamily="Consolas"

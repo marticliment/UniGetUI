@@ -33,7 +33,9 @@ public sealed partial class InstallOptions_Manager : UserControl
         LocationLabel.Text = CoreTools.Translate("Install location:");
         SelectDir.Content = CoreTools.Translate("Select");
         ResetDir.Content = CoreTools.Translate("Reset");
-        CustomCommandsLabel.Text = CoreTools.Translate("Custom arguments:");
+        CustomCommandsLabel1.Text = CoreTools.Translate("Custom install arguments:");
+        CustomCommandsLabel2.Text = CoreTools.Translate("Custom update arguments:");
+        CustomCommandsLabel3.Text = CoreTools.Translate("Custom uninstall arguments:");
         DefaultLocationLabel ??= CoreTools.Translate("Package's default");
         ResetButton.Content = CoreTools.Translate("Reset");
         ApplyButton.Content = CoreTools.Translate("Apply");
@@ -134,8 +136,14 @@ public sealed partial class InstallOptions_Manager : UserControl
             CustomInstallLocation.Text = CoreTools.Translate("Install location can't be changed for {0} packages", Manager.DisplayName);
         }
 
-        CustomParameters.IsEnabled = true;
-        CustomParameters.Text = string.Join(' ', options.CustomParameters);
+        CustomParameters1.IsEnabled = true;
+        CustomParameters1.Text = string.Join(' ', options.CustomParameters_Install);
+
+        CustomParameters2.IsEnabled = true;
+        CustomParameters2.Text = string.Join(' ', options.CustomParameters_Update);
+
+        CustomParameters3.IsEnabled = true;
+        CustomParameters3.Text = string.Join(' ', options.CustomParameters_Uninstall);
 
         ResetButton.IsEnabled = true;
         ApplyButton.IsEnabled = true;
@@ -180,7 +188,9 @@ public sealed partial class InstallOptions_Manager : UserControl
         }
 
         // Command-line parameters
-        options.CustomParameters = CustomParameters.Text.Split(' ').Where(x => x.Any()).ToList();
+        options.CustomParameters_Install = CustomParameters1.Text.Split(' ').Where(x => x.Any()).ToList();
+        options.CustomParameters_Update = CustomParameters2.Text.Split(' ').Where(x => x.Any()).ToList();
+        options.CustomParameters_Uninstall = CustomParameters3.Text.Split(' ').Where(x => x.Any()).ToList();
 
         await InstallOptionsFactory.SaveForManagerAsync(options, Manager);
         await LoadOptions();
@@ -205,7 +215,9 @@ public sealed partial class InstallOptions_Manager : UserControl
         ScopeCombo.IsEnabled = false;
         SelectDir.IsEnabled = false;
         ResetDir.IsEnabled = false;
-        CustomParameters.IsEnabled = false;
+        CustomParameters1.IsEnabled = false;
+        CustomParameters2.IsEnabled = false;
+        CustomParameters3.IsEnabled = false;
         ResetButton.IsEnabled = false;
         ApplyButton.IsEnabled = false;
     }

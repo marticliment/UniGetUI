@@ -149,12 +149,47 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="2*" />
                 </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
                 <TextBlock
-                    x:Name="CustomCommandsLabel"
+                    x:Name="CustomCommandsLabel1"
+                    Grid.Row="0"
                     Grid.Column="0"
                     VerticalAlignment="Center" />
                 <TextBox
-                    Name="CustomParameters"
+                    Name="CustomParameters1"
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Padding="5,7,5,5"
+                    FontFamily="Consolas"
+                    TextChanged="CustomParameters_TextChanged"
+                    TextWrapping="Wrap" />
+
+                <TextBlock
+                    x:Name="CustomCommandsLabel2"
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    VerticalAlignment="Center" />
+                <TextBox
+                    Name="CustomParameters2"
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Padding="5,7,5,5"
+                    FontFamily="Consolas"
+                    TextChanged="CustomParameters_TextChanged"
+                    TextWrapping="Wrap" />
+
+                <TextBlock
+                    x:Name="CustomCommandsLabel3"
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    VerticalAlignment="Center" />
+                <TextBox
+                    Name="CustomParameters3"
+                    Grid.Row="0"
                     Grid.Column="1"
                     Padding="5,7,5,5"
                     FontFamily="Consolas"

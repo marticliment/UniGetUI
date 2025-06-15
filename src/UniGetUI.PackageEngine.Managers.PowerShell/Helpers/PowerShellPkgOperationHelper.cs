@@ -19,9 +19,6 @@ internal sealed class PowerShellPkgOperationHelper : BasePkgOperationHelper
         }];
         parameters.AddRange(["-Name", package.Id, "-Confirm:$false", "-Force"]);
 
-        if (options.CustomParameters is not null)
-            parameters.AddRange(options.CustomParameters);
-
         if (operation is not OperationType.Uninstall)
         {
             if (options.PreRelease)
@@ -45,6 +42,13 @@ internal sealed class PowerShellPkgOperationHelper : BasePkgOperationHelper
             if (options.Version != "")
                 parameters.AddRange(["-RequiredVersion", options.Version]);
         }
+
+        parameters.AddRange(operation switch
+        {
+            OperationType.Update => options.CustomParameters_Update,
+            OperationType.Uninstall => options.CustomParameters_Uninstall,
+            _ => options.CustomParameters_Install,
+        });
 
         return parameters;
     }

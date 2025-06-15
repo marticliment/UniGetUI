@@ -158,10 +158,10 @@ namespace UniGetUI.Interface.Dialogs
             if (Options.CustomInstallLocation == "") CustomInstallLocation.Text = packageInstallLocation;
             else CustomInstallLocation.Text = Options.CustomInstallLocation;
 
-            if (Options.CustomParameters.Count != 0)
-            {
-                CustomParameters.Text = string.Join(' ', Options.CustomParameters);
-            }
+            
+            CustomParameters1.Text = string.Join(' ', Options.CustomParameters_Install);
+            CustomParameters2.Text = string.Join(' ', Options.CustomParameters_Update);
+            CustomParameters3.Text = string.Join(' ', Options.CustomParameters_Uninstall);
 
             _uiLoaded = true;
             EnableDisableControls(operation);
@@ -201,8 +201,12 @@ namespace UniGetUI.Interface.Dialogs
             }
 
             bool IsCLIEnabled = SecureSettings.Get(SecureSettings.ALLOW_CLI_ARGUMENTS);
-            CustomParameters.IsEnabled = IsCLIEnabled;
-            CustomParametersLabel.Opacity = IsCLIEnabled ? 1 : 0.5;
+            CustomParameters1.IsEnabled = IsCLIEnabled;
+            CustomParameters2.IsEnabled = IsCLIEnabled;
+            CustomParameters3.IsEnabled = IsCLIEnabled;
+            CustomParametersLabel1.Opacity = IsCLIEnabled ? 1 : 0.5;
+            CustomParametersLabel2.Opacity = IsCLIEnabled ? 1 : 0.5;
+            CustomParametersLabel3.Opacity = IsCLIEnabled ? 1 : 0.5;
             GoToCLISettings.Visibility = IsCLIEnabled ? Visibility.Collapsed : Visibility.Visible;
             CLIDisabled.Visibility = IsCLIEnabled ? Visibility.Collapsed : Visibility.Visible;
             GenerateCommand();
@@ -260,7 +264,9 @@ namespace UniGetUI.Interface.Dialogs
             if (CustomInstallLocation.Text == packageInstallLocation) Options.CustomInstallLocation = "";
             else Options.CustomInstallLocation = CustomInstallLocation.Text;
 
-            Options.CustomParameters = CustomParameters.Text.Split(' ').ToList();
+            Options.CustomParameters_Install = CustomParameters1.Text.Split(' ').ToList();
+            Options.CustomParameters_Update = CustomParameters2.Text.Split(' ').ToList();
+            Options.CustomParameters_Uninstall = CustomParameters3.Text.Split(' ').ToList();
             Options.PreRelease = VersionComboBox.SelectedValue.ToString() == CoreTools.Translate("PreRelease");
 
             if (VersionComboBox.SelectedValue.ToString() != CoreTools.Translate("PreRelease") && VersionComboBox.SelectedValue.ToString() != CoreTools.Translate("Latest"))

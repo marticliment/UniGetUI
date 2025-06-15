@@ -30,7 +30,13 @@ internal sealed class CargoPkgOperationHelper(Cargo cargo) : BasePkgOperationHel
                 parameters.AddRange(["--install-path", options.CustomInstallLocation]);
         }
 
-        parameters.AddRange(options.CustomParameters);
+        parameters.AddRange(operation switch
+        {
+            OperationType.Update => options.CustomParameters_Update,
+            OperationType.Uninstall => options.CustomParameters_Uninstall,
+            _ => options.CustomParameters_Install,
+        });
+
         return parameters;
     }
 

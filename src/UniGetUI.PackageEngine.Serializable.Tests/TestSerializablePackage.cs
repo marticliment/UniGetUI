@@ -8,7 +8,9 @@ public class TestSerializablePackage
     public static InstallOptions TestOptions = new()
     {
         SkipHashCheck = true,
-        CustomParameters = ["a", "b", "c"],
+        CustomParameters_Install = ["a", "b", "c"],
+        CustomParameters_Update = ["b", "b", "b"],
+        CustomParameters_Uninstall = ["c", "b", "a"],
         Architecture = "ia64",
         Version = "-1",
         RunAsAdministrator = true
