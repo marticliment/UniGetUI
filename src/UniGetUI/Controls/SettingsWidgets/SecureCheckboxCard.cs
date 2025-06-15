@@ -115,8 +115,8 @@ namespace UniGetUI.Interface.Widgets
 
                 _loading.Visibility = Visibility.Visible;
                 _checkbox.IsEnabled = false;
-                StateChanged?.Invoke(this, EventArgs.Empty);
                 await SecureSettings.TrySet(setting_name, _checkbox.IsOn ^ IS_INVERTED ^ ForceInversion);
+                StateChanged?.Invoke(this, EventArgs.Empty);
                 _textblock.Opacity = _checkbox.IsOn ? 1 : 0.7;
                 _checkbox.IsOn = SecureSettings.Get(setting_name) ^ IS_INVERTED ^ ForceInversion;
                 _loading.Visibility = Visibility.Collapsed;

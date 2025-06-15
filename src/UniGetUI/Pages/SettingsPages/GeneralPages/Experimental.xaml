@@ -53,21 +53,19 @@
 
             <UserControl Height="16" />
 
-            <widgets:CheckboxCard
+            <!--widgets:CheckboxCard
                 x:Name="DisableUniGetUIElevatorToggle"
                 BorderThickness="1,1,1,0"
                 CornerRadius="8"
                 SettingName="DisableUniGetUIElevator"
                 StateChanged="ShowRestartBanner"
-                Text="Enable the new UniGetUI-Branded UAC Elevator" />
-            <!--
-                widgets:CheckboxCard
+                Text="Enable the new UniGetUI-Branded UAC Elevator" /-->
+            <widgets:SecureCheckboxCard
                 x:Name="UseUserGSudoToggle"
-                CornerRadius="0,0,8,8"
-                SettingName="UseUserGSudo"
+                CornerRadius="8"
+                SettingName="ForceUserGSudo"
                 StateChanged="ShowRestartBanner"
-                Text="Use installed GSudo instead of the bundled one" /
-            -->
+                Text="Use installed GSudo instead of UniGetUI Elevator" />
 
             <UserControl Height="16" />
 

@@ -12,6 +12,7 @@ public static class SecureSettings
     public const string ALLOW_IMPORTING_CLI_ARGUMENTS = "AllowImportingCLIArguments";
     public const string ALLOW_PREPOST_OPERATIONS = "AllowPrePostInstallCommands";
     public const string ALLOW_IMPORT_PREPOST_OPERATIONS = "AllowImportingPrePostInstallCommands";
+    public const string FORCE_USER_GSUDO = "ForceUserGSudo";
 
 
     private static readonly Dictionary<string, bool> _cache = new();

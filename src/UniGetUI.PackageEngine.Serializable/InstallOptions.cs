@@ -83,7 +83,7 @@ namespace UniGetUI.PackageEngine.Serializable
             foreach (var element in data[name]?.AsArray2() ?? [])
                 if (element is not null)
                     result.Add(element.GetVal<string>());
-            return result;
+            return result.Where(x => x.Any()).ToList();
         }
 
         public bool DiffersFromDefault()
