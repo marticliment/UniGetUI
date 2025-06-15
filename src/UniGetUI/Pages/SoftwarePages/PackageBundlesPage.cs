@@ -660,19 +660,51 @@ namespace UniGetUI.Interface.SoftwarePages
 
 
             bool showReport = false;
-            var packageReport = new Dictionary<string, List<string>>();
-            bool AllowCLIParameters = SecureSettings.Get(SecureSettings.ALLOW_IMPORTING_CLI_ARGUMENTS);
+            var packageReport = new Dictionary<string, List<BundleReportEntry>>();
+            bool AllowCLIParameters =
+                SecureSettings.Get(SecureSettings.ALLOW_CLI_ARGUMENTS) &&
+                SecureSettings.Get(SecureSettings.ALLOW_IMPORTING_CLI_ARGUMENTS);
+
 
             foreach (var pkg in DeserializedData.packages)
             {
-                if(!AllowCLIParameters && pkg.InstallationOptions.CustomParameters.Where(x => x.Any()).Any())
+                if (pkg.InstallationOptions.CustomParameters_Install.Where(x => x.Any()).Any())
                 {
                     showReport = true;
-                    if (!packageReport.ContainsKey(pkg.Id)) packageReport[pkg.Id] = new();
-                    packageReport[pkg.Id].Add($"Custom arguments: [{string.Join(", ", pkg.InstallationOptions.CustomParameters)}]");
-                    pkg.InstallationOptions.CustomParameters.Clear();
+                    if (!packageReport.ContainsKey(pkg.Id))
+                        packageReport[pkg.Id] = new();
+
+                    packageReport[pkg.Id].Add(new(
+                        $"Custom install arguments: [{string.Join(", ", pkg.InstallationOptions.CustomParameters_Install)}]",
+                        AllowCLIParameters));
+
+                    if(!AllowCLIParameters) pkg.InstallationOptions.CustomParameters_Install.Clear();
                 }
-                
+                if (pkg.InstallationOptions.CustomParameters_Update.Where(x => x.Any()).Any())
+                {
+                    showReport = true;
+                    if (!packageReport.ContainsKey(pkg.Id))
+                        packageReport[pkg.Id] = new();
+
+                    packageReport[pkg.Id].Add(new(
+                        $"Custom update arguments: [{string.Join(", ", pkg.InstallationOptions.CustomParameters_Update)}]",
+                        AllowCLIParameters));
+
+                    if(!AllowCLIParameters) pkg.InstallationOptions.CustomParameters_Update.Clear();
+                }
+                if (pkg.InstallationOptions.CustomParameters_Uninstall.Where(x => x.Any()).Any())
+                {
+                    showReport = true;
+                    if (!packageReport.ContainsKey(pkg.Id))
+                        packageReport[pkg.Id] = new();
+
+                    packageReport[pkg.Id].Add(new(
+                        $"Custom uninstall arguments: [{string.Join(", ", pkg.InstallationOptions.CustomParameters_Uninstall)}]",
+                        AllowCLIParameters));
+
+                    if(!AllowCLIParameters) pkg.InstallationOptions.CustomParameters_Uninstall.Clear();
+                }
+
                 packages.Add(DeserializePackage(pkg));
             }
 

@@ -1,3 +1,4 @@
+using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
@@ -5,6 +6,7 @@ using Microsoft.UI.Xaml.Media;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Dialogs;
+using UniGetUI.Interface.Enums;
 using UniGetUI.Interface.Telemetry;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Enums;
@@ -199,28 +201,49 @@ public static partial class DialogHelper
         }
     }
 
-    public static async Task ShowBundleSecurityReport(Dictionary<string, List<string>> packageReport)
+    public static async Task ShowBundleSecurityReport(Dictionary<string, List<BundleReportEntry>> packageReport)
     {
         var dialog = DialogFactory.Create_AsWindow(true, true);
+        Brush bad = new SolidColorBrush(Colors.PaleVioletRed);
+        Brush good = new SolidColorBrush(Colors.Gold);
+
+        if (Window.NavigationPage.ActualTheme is ElementTheme.Light)
+        {
+            bad = new SolidColorBrush(Colors.Red);
+            good = new SolidColorBrush(Colors.DarkGoldenrod);
+        }
 
         var title = CoreTools.Translate("Bundle security report");
         dialog.Title = title;
         Hyperlink a;
-
-        string reportBody = "";
+        Paragraph p = new();
 
         foreach(var pair in packageReport)
         {
-            reportBody += $" - {CoreTools.Translate("Package")}: {pair.Key}:\n";
+            p.Inlines.Add(new Run()
+            {
+                Text = $" - {CoreTools.Translate("Package")}: {pair.Key}:\n",
+                FontFamily = new("Consolas")
+            });
+
             foreach (var issue in pair.Value)
             {
-                reportBody += "   * " + issue + "\n";
+                p.Inlines.Add(new Run()
+                {
+                    Text = $"   * {issue.Line}\n",
+                    FontFamily = new("Consolas"),
+                    Foreground = issue.Allowed? bad: good
+                });
             }
-            reportBody += "\n";
+            p.Inlines.Add(new LineBreak());
         }
 
         dialog.Content = new ScrollViewer()
         {
+            MaxWidth = 800,
+            Background = (Brush)Application.Current.Resources["ApplicationPageBackgroundThemeBrush"],
+            CornerRadius = new CornerRadius(8),
+            Padding = new Thickness(16),
             Content = new RichTextBlock()
             {
                 Blocks = {
@@ -229,25 +252,39 @@ public static partial class DialogHelper
                         Inlines = {
                             new Run()
                             {
-                                Text = CoreTools.Translate("The bundle had some settings that are currently restricted for security reasons, so they have been ignored.") +
-                                    CoreTools.Translate("You can change this behaviour on UniGetUI security settings. ")
+                                Text = CoreTools.Translate("This package bundle had some settings that are potetially dangerous, and may be ignored by default.")
+                            },
+                            new Run()
+                            {
+                                Text = "\n - " + CoreTools.Translate("Entries that show in YELLOW will be IGNORED."),
+                                Foreground = good,
+                            },
+                            new Run()
+                            {
+                                Text = "\n - " + CoreTools.Translate("Entries that show in RED will be IMPORTED."),
+                                Foreground = bad
+                            },
+                            new Run()
+                            {
+                                Text = "\n" + CoreTools.Translate("You can change this behaviour on UniGetUI security settings.") + " "
                             },
                             (a = new Hyperlink
                             {
                                 Inlines = { new Run() { Text = CoreTools.Translate("Open UniGetUI security settings") } },
                             }),
                             new LineBreak(),
-                            new LineBreak(),
-                            new Run() { Text = CoreTools.Translate("Details of the report:") },
-                            new LineBreak(),
-                            new LineBreak(),
                             new Run()
                             {
-                                Text = reportBody,
-                                FontFamily = new FontFamily("Consolas")
-                            }
+                                Text = CoreTools.Translate("Should you modify the security settings, you will need to open the bundle again for the changes to take effect.")
+                            },
+                            new LineBreak(),
+                            new LineBreak(),
+                            new Run() { Text = CoreTools.Translate("Details of the report:") },
+                            new Run() { Text = CoreTools.Translate("Details of the report:") },
+                            new LineBreak(),
                         }
-                    }
+                    },
+                    p
                 }
             }
         };
