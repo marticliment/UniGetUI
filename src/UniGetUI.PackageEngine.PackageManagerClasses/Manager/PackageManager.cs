@@ -152,7 +152,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                 var task = Task.Run(() => FindPackages_UnSafe(query));
                 if (!task.Wait(TimeSpan.FromSeconds(PackageListingTaskTimeout)))
                 {
-                    if (!Settings.Get("DisableTimeoutOnPackageListingTasks"))
+                    if (!Settings.Get(Settings.DisableTimeoutOnPackageListingTasks))
                         throw new TimeoutException($"Task _getInstalledPackages for manager {Name} did not finish after " +
                                                    $"{PackageListingTaskTimeout} seconds, aborting.  You may disable " +
                                                    $"timeouts from UniGetUI Advanced Settings");
@@ -202,7 +202,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                 var task = Task.Run(GetAvailableUpdates_UnSafe);
                 if (!task.Wait(TimeSpan.FromSeconds(PackageListingTaskTimeout)))
                 {
-                    if (!Settings.Get("DisableTimeoutOnPackageListingTasks"))
+                    if (!Settings.Get(Settings.DisableTimeoutOnPackageListingTasks))
                         throw new TimeoutException($"Task _getInstalledPackages for manager {Name} did not finish after " +
                                                    $"{PackageListingTaskTimeout} seconds, aborting.  You may disable " +
                                                    $"timeouts from UniGetUI Advanced Settings");
@@ -251,7 +251,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                 var task = Task.Run(GetInstalledPackages_UnSafe);
                 if (!task.Wait(TimeSpan.FromSeconds(PackageListingTaskTimeout)))
                 {
-                    if (!Settings.Get("DisableTimeoutOnPackageListingTasks"))
+                    if (!Settings.Get(Settings.DisableTimeoutOnPackageListingTasks))
                         throw new TimeoutException($"Task _getInstalledPackages for manager {Name} did not finish after " +
                                                    $"{PackageListingTaskTimeout} seconds, aborting.  You may disable " +
                                                    $"timeouts from UniGetUI Advanced Settings");

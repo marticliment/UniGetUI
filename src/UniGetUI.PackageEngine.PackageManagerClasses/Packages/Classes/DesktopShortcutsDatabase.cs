@@ -153,7 +153,7 @@ public static class DesktopShortcutsDatabase
     /// <param name="PreviousShortCutList">The shortcuts that already existed</param>
     public static void HandleNewShortcuts(IReadOnlyList<string> PreviousShortCutList)
     {
-        bool DeleteUnknownShortcuts = Settings.Get("RemoveAllDesktopShortcuts");
+        bool DeleteUnknownShortcuts = Settings.Get(Settings.RemoveAllDesktopShortcuts);
         HashSet<string> PreviousShortcuts = [.. PreviousShortCutList];
         List<string> CurrentShortcuts = GetShortcutsOnDisk();
 

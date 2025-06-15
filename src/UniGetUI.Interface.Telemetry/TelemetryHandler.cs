@@ -56,7 +56,7 @@ public static class TelemetryHandler
     {
         try
         {
-            if (Settings.Get("DisableTelemetry")) return;
+            if (Settings.Get(Settings.DisableTelemetry)) return;
             await CoreTools.WaitForInternetConnection();
             string ID = GetRandomizedId();
 
@@ -144,7 +144,7 @@ public static class TelemetryHandler
 
         try
         {
-            if (Settings.Get("DisableTelemetry")) return;
+            if (Settings.Get(Settings.DisableTelemetry)) return;
             await CoreTools.WaitForInternetConnection();
             string ID = GetRandomizedId();
 
@@ -189,7 +189,7 @@ public static class TelemetryHandler
     {
         try
         {
-            if (Settings.Get("DisableTelemetry")) return;
+            if (Settings.Get(Settings.DisableTelemetry)) return;
             await CoreTools.WaitForInternetConnection();
             string ID = GetRandomizedId();
 

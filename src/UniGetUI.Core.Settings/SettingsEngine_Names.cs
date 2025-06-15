@@ -1,0 +1,61 @@
+namespace UniGetUI.Core.SettingsEngine;
+
+public static partial class Settings
+{
+    public const string EnableProxy = "EnableProxy";
+    public const string EnableProxyAuth = "EnableProxyAuth";
+    public const string DisableWaitForInternetConnection = "DisableWaitForInternetConnection";
+    public const string IconDataBaseURL = "IconDataBaseURL";
+    public const string DisableLangAutoUpdater = "DisableLangAutoUpdater";
+    public const string DisableDMWThreadOptimizations = "DisableDMWThreadOptimizations";
+    public const string DisableWidgetsApi = "DisableWidgetsApi";
+    public const string DisableTelemetry = "DisableTelemetry";
+    public const string DisableTimeoutOnPackageListingTasks = "DisableTimeoutOnPackageListingTasks";
+    public const string RemoveAllDesktopShortcuts = "RemoveAllDesktopShortcuts";
+    public const string EnableScoopCleanup = "EnableScoopCleanup";
+    public const string IgnoreUpdatesNotApplicable = "IgnoreUpdatesNotApplicable";
+    public const string ForceLegacyBundledWinGet = "ForceLegacyBundledWinGet";
+    public const string DisableNewWinGetTroubleshooter = "DisableNewWinGetTroubleshooter";
+    public const string DisableUpdateVcpkgGitPorts = "DisableUpdateVcpkgGitPorts";
+    public const string ChocolateySymbolicLinkCreated = "ChocolateySymbolicLinkCreated";
+    public const string UseSystemChocolatey = "UseSystemChocolatey";
+    public const string DisableSelectingUpdatesByDefault = "DisableSelectingUpdatesByDefault";
+    public const string DisableAutoCheckforUpdates = "DisableAutoCheckforUpdates";
+    public const string AskToDeleteNewDesktopShortcuts = "AskToDeleteNewDesktopShortcuts";
+    public const string DoCacheAdminRights = "DoCacheAdminRights";
+    public const string DoCacheAdminRightsForBatches = "DoCacheAdminRightsForBatches";
+    public const string DisableAutoUpdateWingetUI = "DisableAutoUpdateWingetUI";
+    public const string EnableUniGetUIBeta = "EnableUniGetUIBeta";
+    public const string ShowVersionNumberOnTitlebar = "ShowVersionNumberOnTitlebar";
+    public const string TransferredOldSettings = "TransferredOldSettings";
+    public const string /* NEEDS REVIEW */ DisableApi = "DisableApi";
+    public const string DisableSystemTray = "DisableSystemTray";
+    public const string MaintainSuccessfulInstalls = "MaintainSuccessfulInstalls";
+    public const string AutomaticallyUpdatePackages = "AutomaticallyUpdatePackages";
+    public const string DisableAUPOnMeteredConnections = "DisableAUPOnMeteredConnections";
+    public const string DisableAUPOnBatterySaver = "DisableAUPOnBatterySaver";
+    public const string CustomVcpkgRoot = "CustomVcpkgRoot";
+    public const string AlreadyWarnedAboutAdmin = "AlreadyWarnedAboutAdmin";
+    public const string ShownTelemetryBanner = "ShownTelemetryBanner";
+    public const string CollapseNavMenuOnWideScreen = "CollapseNavMenuOnWideScreen";
+    public const string EnablePackageBackup = "EnablePackageBackup";
+    public const string ChangeBackupOutputDirectory = "ChangeBackupOutputDirectory";
+    public const string DisableWinGetMalfunctionDetector = "DisableWinGetMalfunctionDetector";
+    public const string EnableBackupTimestamping = "EnableBackupTimestamping";
+    public const string DisableIconsOnPackageLists = "DisableIconsOnPackageLists";
+    /*public const string EnableProxyAuth = "EnableProxyAuth";
+    public const string EnableProxyAuth = "EnableProxyAuth";
+    public const string EnableProxyAuth = "EnableProxyAuth";
+    public const string EnableProxyAuth = "EnableProxyAuth";
+    public const string EnableProxyAuth = "EnableProxyAuth";
+    public const string EnableProxyAuth = "EnableProxyAuth";
+    public const string EnableProxyAuth = "EnableProxyAuth";
+    public const string EnableProxyAuth = "EnableProxyAuth";
+    public const string EnableProxyAuth = "EnableProxyAuth";
+    public const string EnableProxyAuth = "EnableProxyAuth";
+    public const string EnableProxyAuth = "EnableProxyAuth";
+    public const string EnableProxyAuth = "EnableProxyAuth";
+    public const string EnableProxyAuth = "EnableProxyAuth";
+    public const string EnableProxyAuth = "EnableProxyAuth";
+    */
+}

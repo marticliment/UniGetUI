@@ -68,11 +68,11 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
 
         public static string GetProxyArgument()
         {
-            if (!Settings.Get("EnableProxy")) return "";
+            if (!Settings.Get(Settings.EnableProxy)) return "";
             var proxyUri = Settings.GetProxyUrl();
             if (proxyUri is null) return "";
 
-            if (Settings.Get("EnableProxyAuth") is false)
+            if (Settings.Get(Settings.EnableProxyAuth) is false)
                 return $"--proxy {proxyUri.ToString()}";
 
             var creds = Settings.GetProxyCredentials();
@@ -206,7 +206,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             {
                 Logger.ImportantInfo("Old chocolatey path is a symbolic link, not migrating Chocolatey...");
             }
-            else if (Settings.Get("ChocolateySymbolicLinkCreated"))
+            else if (Settings.Get(Settings.ChocolateySymbolicLinkCreated))
             {
                 Logger.Warn("The Choco path symbolic link has already been set to created!");
             }
@@ -285,7 +285,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 }
             }
 
-            if (Settings.Get("UseSystemChocolatey"))
+            if (Settings.Get(Settings.UseSystemChocolatey))
             {
                 status.ExecutablePath = CoreTools.Which("choco.exe").Item2;
             }
@@ -323,9 +323,9 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             status.Version = process.StandardOutput.ReadToEnd().Trim();
 
             // If the user is running bundled chocolatey and chocolatey is not in path, add chocolatey to path
-            if (!Settings.Get("UseSystemChocolatey")
+            if (!Settings.Get(Settings.UseSystemChocolatey)
                 && !File.Exists("C:\\ProgramData\\Chocolatey\\bin\\choco.exe"))
-                /* && Settings.Get("ShownWelcomeWizard")) */
+                /* && Settings.Get(Settings.ShownWelcomeWizard)) */
             {
                 string? path = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.User);
                 if (!path?.Contains(status.ExecutablePath.Replace("\\choco.exe", "\\bin")) ?? false)

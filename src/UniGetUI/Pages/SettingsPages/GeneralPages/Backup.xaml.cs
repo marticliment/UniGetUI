@@ -23,7 +23,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         {
             this.InitializeComponent();
 
-            EnablePackageBackupUI(Settings.Get("EnablePackageBackup"));
+            EnablePackageBackupUI(Settings.Get(Settings.EnablePackageBackup));
             ResetBackupDirectory.Content = CoreTools.Translate("Reset");
             OpenBackupDirectory.Content = CoreTools.Translate("Open");
         }
@@ -59,7 +59,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
 
             if (enabled)
             {
-                if (!Settings.Get("ChangeBackupOutputDirectory"))
+                if (!Settings.Get(Settings.ChangeBackupOutputDirectory))
                 {
                     BackupDirectoryLabel.Text = CoreData.UniGetUI_DefaultBackupDirectory;
                     ResetBackupDirectory.IsEnabled = false;

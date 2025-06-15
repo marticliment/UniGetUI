@@ -143,7 +143,7 @@ namespace UniGetUI.Interface
 
             LoadDefaultPage();
 
-            if (CoreTools.IsAdministrator() && !Settings.Get("AlreadyWarnedAboutAdmin"))
+            if (CoreTools.IsAdministrator() && !Settings.Get(Settings.AlreadyWarnedAboutAdmin))
             {
                 Settings.Set("AlreadyWarnedAboutAdmin", true);
                 DialogHelper.WarnAboutAdminRights();
@@ -152,12 +152,12 @@ namespace UniGetUI.Interface
             UpdateOperationsLayout();
             MainApp.Operations._operationList.CollectionChanged += (_, _) => UpdateOperationsLayout();
 
-            if (!Settings.Get("ShownTelemetryBanner"))
+            if (!Settings.Get(Settings.ShownTelemetryBanner))
             {
                 DialogHelper.ShowTelemetryBanner();
             }
 
-            if (!Settings.Get("CollapseNavMenuOnWideScreen"))
+            if (!Settings.Get(Settings.CollapseNavMenuOnWideScreen))
             {
                 NavView.IsPaneOpen = true;
             }

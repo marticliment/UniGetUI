@@ -423,7 +423,7 @@ public static partial class DialogHelper
             DialogHelper.HideLoadingDialog();
 
             // Toggle bundled WinGet
-            if (Settings.Get("ForceLegacyBundledWinGet"))
+            if (Settings.Get(Settings.ForceLegacyBundledWinGet))
                 Settings.Set("ForceLegacyBundledWinGet", false);
 
             var c = DialogFactory.Create();

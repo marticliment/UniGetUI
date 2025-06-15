@@ -93,7 +93,7 @@ namespace UniGetUI.Core.Language
 
                 string CachedLangFileToLoad = Path.Join(CoreData.UniGetUICacheDirectory_Lang, "lang_" + LangKey + ".json");
 
-                if (Settings.Get("DisableLangAutoUpdater"))
+                if (Settings.Get(Settings.DisableLangAutoUpdater))
                 {
                     Logger.Warn("User has updated translations disabled");
                 }
@@ -120,7 +120,7 @@ namespace UniGetUI.Core.Language
                     }
                 }
 
-                if (!Settings.Get("DisableLangAutoUpdater"))
+                if (!Settings.Get(Settings.DisableLangAutoUpdater))
                     _ = DownloadUpdatedLanguageFile(LangKey);
 
                 return LangDict;

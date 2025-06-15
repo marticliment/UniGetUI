@@ -339,18 +339,18 @@ namespace UniGetUI.Interface.SoftwarePages
                 if (upgradablePackages.Count == 0)
                     return;
 
-                bool EnableAutoUpdate = Settings.Get("AutomaticallyUpdatePackages");
+                bool EnableAutoUpdate = Settings.Get(Settings.AutomaticallyUpdatePackages);
 
                 if (EnableAutoUpdate)
                 {
                     var connectionCost = NetworkInformation.GetInternetConnectionProfile()?.GetConnectionCost().NetworkCostType;
-                    if (connectionCost is NetworkCostType.Fixed or NetworkCostType.Variable && Settings.Get("DisableAUPOnMeteredConnections"))
+                    if (connectionCost is NetworkCostType.Fixed or NetworkCostType.Variable && Settings.Get(Settings.DisableAUPOnMeteredConnections))
                     {
                         Logger.Warn("Updates will not be installed automatically because the current internet connection is metered.");
                         EnableAutoUpdate = false;
                     }
 
-                    if (PowerManager.EnergySaverStatus is EnergySaverStatus.On && Settings.Get("DisableAUPOnBatterySaver"))
+                    if (PowerManager.EnergySaverStatus is EnergySaverStatus.On && Settings.Get(Settings.DisableAUPOnBatterySaver))
                     {
                         Logger.Warn("Updates will not be installed automatically because battery saver is enabled.");
                         EnableAutoUpdate = false;

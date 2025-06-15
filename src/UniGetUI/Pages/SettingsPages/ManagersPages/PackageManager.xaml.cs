@@ -284,11 +284,11 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 var ResetVcPkgRootLabel = new HyperlinkButton { Content = CoreTools.Translate("Reset") };
                 var OpenVcPkgRootLabel = new HyperlinkButton { Content = CoreTools.Translate("Open") };
 
-                VcPkgRootLabel.Text = Settings.Get("CustomVcpkgRoot")
+                VcPkgRootLabel.Text = Settings.Get(Settings.CustomVcpkgRoot)
                     ? Settings.GetValue("CustomVcpkgRoot")
                     : "%VCPKG_ROOT%";
-                OpenVcPkgRootLabel.IsEnabled = Settings.Get("CustomVcpkgRoot");
-                ResetVcPkgRootLabel.IsEnabled = Settings.Get("CustomVcpkgRoot");
+                OpenVcPkgRootLabel.IsEnabled = Settings.Get(Settings.CustomVcpkgRoot);
+                ResetVcPkgRootLabel.IsEnabled = Settings.Get(Settings.CustomVcpkgRoot);
 
                 ResetVcPkgRootLabel.Click += (_, _) =>
                 {

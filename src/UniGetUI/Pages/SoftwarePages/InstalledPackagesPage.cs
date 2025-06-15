@@ -285,13 +285,13 @@ namespace UniGetUI.Interface.SoftwarePages
         {
             if (!HasDoneBackup)
             {
-                if (Settings.Get("EnablePackageBackup"))
+                if (Settings.Get(Settings.EnablePackageBackup))
                 {
                     _ = BackupPackages();
                 }
             }
 
-            if (WinGet.NO_PACKAGES_HAVE_BEEN_LOADED && !Settings.Get("DisableWinGetMalfunctionDetector"))
+            if (WinGet.NO_PACKAGES_HAVE_BEEN_LOADED && !Settings.Get(Settings.DisableWinGetMalfunctionDetector))
             {
                 var infoBar = MainApp.Instance.MainWindow.WinGetWarningBanner;
                 infoBar.IsOpen = true;
@@ -392,7 +392,7 @@ namespace UniGetUI.Interface.SoftwarePages
                     fileName = CoreTools.Translate("{pcName} installed packages", new Dictionary<string, object?> { { "pcName", Environment.MachineName } });
                 }
 
-                if (Settings.Get("EnableBackupTimestamping"))
+                if (Settings.Get(Settings.EnableBackupTimestamping))
                 {
                     fileName += " " + DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss");
                 }

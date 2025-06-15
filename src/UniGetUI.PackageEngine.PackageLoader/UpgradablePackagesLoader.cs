@@ -22,7 +22,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
             identifier: "UPGRADABLE_PACKAGES",
             AllowMultiplePackageVersions: false,
             DisableReload: false,
-            CheckedBydefault: !Settings.Get("DisableSelectingUpdatesByDefault"),
+            CheckedBydefault: !Settings.Get(Settings.DisableSelectingUpdatesByDefault),
             RequiresInternet: true)
         {
             Instance = this;
@@ -60,7 +60,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
 
         protected void StartAutoCheckTimeout()
         {
-            if (!Settings.Get("DisableAutoCheckforUpdates"))
+            if (!Settings.Get(Settings.DisableAutoCheckforUpdates))
             {
                 long waitTime = 3600;
                 try

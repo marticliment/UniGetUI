@@ -72,7 +72,7 @@ namespace UniGetUI.Interface
             LoadTrayMenu();
             ApplyTheme();
 
-            if (Settings.Get("ShowVersionNumberOnTitlebar"))
+            if (Settings.Get(Settings.ShowVersionNumberOnTitlebar))
             {
                 AddToSubtitle(CoreTools.Translate("version {0}", CoreData.VersionName));
             }
@@ -172,14 +172,14 @@ namespace UniGetUI.Interface
             try
             {
                 var proxyUri = Settings.GetProxyUrl();
-                if (proxyUri is null || !Settings.Get("EnableProxy"))
+                if (proxyUri is null || !Settings.Get(Settings.EnableProxy))
                 {
                     Environment.SetEnvironmentVariable("HTTP_PROXY", "", EnvironmentVariableTarget.Process);
                     return;
                 }
 
                 string content;
-                if (Settings.Get("EnableProxyAuth") is false)
+                if (Settings.Get(Settings.EnableProxyAuth) is false)
                 {
                     content = proxyUri.ToString();
                 }
@@ -223,7 +223,7 @@ namespace UniGetUI.Interface
 
         private static void TransferOldSettingsFormats()
         {
-            if (!Settings.Get("TransferredOldSettings"))
+            if (!Settings.Get(Settings.TransferredOldSettings))
             {
                 foreach (IPackageManager Manager in PEInterface.Managers)
                 {
@@ -298,7 +298,7 @@ namespace UniGetUI.Interface
         {
             AutoUpdater.ReleaseLockForAutoupdate_Window = true;
             SaveGeometry(Force: true);
-            if (!Settings.Get("DisableSystemTray") || AutoUpdater.UpdateReadyToBeInstalled)
+            if (!Settings.Get(Settings.DisableSystemTray) || AutoUpdater.UpdateReadyToBeInstalled)
             {
                 args.Cancel = true;
                 DWMThreadHelper.ChangeState_DWM(true);
@@ -662,7 +662,7 @@ namespace UniGetUI.Interface
                     }
                 }
 
-                if (Settings.Get("DisableSystemTray"))
+                if (Settings.Get(Settings.DisableSystemTray))
                 {
                     TrayIcon.Visibility = Visibility.Collapsed;
                 }

@@ -107,7 +107,7 @@ public partial class OperationControl: INotifyPropertyChanged
         ShowSuccessToast();
 
         // Clean succesful operation from list
-        if (!Settings.Get("MaintainSuccessfulInstalls") && Operation is not DownloadOperation)
+        if (!Settings.Get(Settings.MaintainSuccessfulInstalls) && Operation is not DownloadOperation)
         {
             await TimeoutAndClose();
         }
@@ -156,7 +156,7 @@ public partial class OperationControl: INotifyPropertyChanged
         rawOutput.Add("");
 
         // Handle UAC for batches
-        if (Settings.Get("DoCacheAdminRightsForBatches"))
+        if (Settings.Get(Settings.DoCacheAdminRightsForBatches))
         {
             if (!MainApp.Operations.AreThereRunningOperations())
             {
@@ -166,7 +166,7 @@ public partial class OperationControl: INotifyPropertyChanged
         }
 
         // Handle newly created shortcuts
-        if(Settings.Get("AskToDeleteNewDesktopShortcuts")
+        if(Settings.Get(Settings.AskToDeleteNewDesktopShortcuts)
             && !MainApp.Operations.AreThereRunningOperations()
             && DesktopShortcutsDatabase.GetUnknownShortcuts().Any())
         {

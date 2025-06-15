@@ -44,7 +44,7 @@ namespace UniGetUI.Interface
         public async Task Start()
         {
 
-            if (Settings.Get("DisableWidgetsApi"))
+            if (Settings.Get(Settings.DisableWidgetsApi))
             {
                 Logger.Warn("Widgets API is disabled");
                 return;

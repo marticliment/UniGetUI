@@ -351,11 +351,11 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             if (!found || !gitFound || !vcpkgRootFound)
             {
                 INativeTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes);
-                if (Settings.Get("DisableUpdateVcpkgGitPorts")) logger.Error("User has disabled updating sources");
+                if (Settings.Get(Settings.DisableUpdateVcpkgGitPorts)) logger.Error("User has disabled updating sources");
                 if (!found) logger.Error("Vcpkg was not found???");
                 if (!gitFound) logger.Error("Vcpkg sources won't be updated since git was not found");
                 if (!vcpkgRootFound) logger.Error("Cannot update vcpkg port files as requested: the VCPKG_ROOT environment variable or custom vcpkg root setting was not set");
-                logger.Close(Settings.Get("DisableUpdateVcpkgGitPorts") ? 0 : 1);
+                logger.Close(Settings.Get(Settings.DisableUpdateVcpkgGitPorts) ? 0 : 1);
                 return;
             }
 

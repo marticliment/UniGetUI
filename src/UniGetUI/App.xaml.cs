@@ -254,7 +254,7 @@ namespace UniGetUI
         private async Task InitializeBackgroundAPI()
         {
             // Bind the background api to the main interface
-            if (!Settings.Get("DisableApi"))
+            if (!Settings.Get(Settings.DisableApi))
             {
                 try
                 {

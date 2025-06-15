@@ -40,11 +40,11 @@ public partial class Settings
 
     public static Uri? GetProxyUrl()
     {
-        if (!Settings.Get("EnableProxy")) return null;
+        if (!Settings.Get(Settings.EnableProxy)) return null;
 
         string plainUrl = Settings.GetValue("ProxyURL");
         Uri.TryCreate(plainUrl, UriKind.RelativeOrAbsolute, out Uri? var);
-        if(Settings.Get("EnableProxy") && var is null) Logger.Warn($"Proxy setting {plainUrl} is not valid");
+        if(Settings.Get(Settings.EnableProxy) && var is null) Logger.Warn($"Proxy setting {plainUrl} is not valid");
         return var;
     }
 

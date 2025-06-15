@@ -849,7 +849,7 @@ namespace UniGetUI.Interface
                 ForceRedrawByScroll();
             }
 
-            if (!Settings.Get("DisableIconsOnPackageLists"))
+            if (!Settings.Get(Settings.DisableIconsOnPackageLists))
                 _ = LoadIconsForNewPackages();
         }
 
