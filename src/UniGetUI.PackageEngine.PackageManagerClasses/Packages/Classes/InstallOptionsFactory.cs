@@ -19,10 +19,10 @@ namespace UniGetUI.PackageEngine.PackageClasses
         private static class StoragePath
         {
             public static string Get(IPackageManager manager)
-                => "GlobalValues." + manager.Name.Replace(" ", "").Replace(".", "");
+                => "GlobalValues." + manager.Name.Replace(" ", "").Replace(".", "") + ".json";
 
             public static string Get(IPackage package)
-                => package.Manager.Name.Replace(" ", "").Replace(".", "") + "." + package.Id;
+                => package.Manager.Name.Replace(" ", "").Replace(".", "") + "." + package.Id + ".json";
         }
 
 
@@ -189,24 +189,38 @@ namespace UniGetUI.PackageEngine.PackageClasses
             if (SecureSettings.Get(SecureSettings.ALLOW_CLI_ARGUMENTS))
             {
                 // If CLI arguments are allowed, sanitize them
-                for (int i = 0; i < options.CustomParameters.Count; i++)
+                for (int i = 0; i < options.CustomParameters_Install.Count; i++)
                 {
-                    options.CustomParameters[i] = options.CustomParameters[i]
-                        .Replace("&", "")
-                        .Replace("|", "")
-                        .Replace(";", "")
-                        .Replace("<", "")
-                        .Replace(">", "")
-                        .Replace("\n", "");
+                    options.CustomParameters_Install[i] = options.CustomParameters_Install[i]
+                        .Replace("&", "").Replace("|", "").Replace(";", "").Replace("<", "")
+                        .Replace(">", "").Replace("\n", "");
+                }
+                for (int i = 0; i < options.CustomParameters_Update.Count; i++)
+                {
+                    options.CustomParameters_Update[i] = options.CustomParameters_Update[i]
+                        .Replace("&", "").Replace("|", "").Replace(";", "").Replace("<", "")
+                        .Replace(">", "").Replace("\n", "");
+                }
+                for (int i = 0; i < options.CustomParameters_Uninstall.Count; i++)
+                {
+                    options.CustomParameters_Uninstall[i] = options.CustomParameters_Uninstall[i]
+                        .Replace("&", "").Replace("|", "").Replace(";", "").Replace("<", "")
+                        .Replace(">", "").Replace("\n", "");
                 }
             }
             else
             {
                 // Otherwhise, clear them
-                if (options.CustomParameters.Count > 0)
-                    Logger.Warn($"Custom CLI parameters [{string.Join(' ', options.CustomParameters)}] will be discarded");
+                if (options.CustomParameters_Install.Count > 0)
+                    Logger.Warn($"Custom CLI parameters [{string.Join(' ', options.CustomParameters_Install)}] will be discarded");
+                if (options.CustomParameters_Update.Count > 0)
+                    Logger.Warn($"Custom CLI parameters [{string.Join(' ', options.CustomParameters_Update)}] will be discarded");
+                if (options.CustomParameters_Uninstall.Count > 0)
+                    Logger.Warn($"Custom CLI parameters [{string.Join(' ', options.CustomParameters_Uninstall)}] will be discarded");
 
-                options.CustomParameters = [];
+                options.CustomParameters_Install = [];
+                options.CustomParameters_Update = [];
+                options.CustomParameters_Uninstall = [];
             }
 
             return options;

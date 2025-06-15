@@ -143,18 +143,76 @@
                     TextWrapping="Wrap" />
             </Grid>
 
+            <widgets:TranslatedTextBlock
+                x:Name="CLIDisabled"
+                Margin="0,16,0,0"
+                Text="For security reasons, custom command-line arguments are disabled by default. Go to UniGetUI security settings to change this. ">
+                <widgets:TranslatedTextBlock.Resources>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Foreground" Value="{ThemeResource SystemErrorTextColor}" />
+                    </Style>
+                </widgets:TranslatedTextBlock.Resources>
+            </widgets:TranslatedTextBlock>
+            <HyperlinkButton
+                x:Name="GoToCLISettings"
+                HorizontalAlignment="Center"
+                Click="GoToSecureSettings_Click">
+                <widgets:TranslatedTextBlock Text="Go to UniGetUI security settings" >
+                    <widgets:TranslatedTextBlock.Resources>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Foreground" Value="{ThemeResource AccentTextFillColorPrimaryBrush}" />
+                        </Style>
+                    </widgets:TranslatedTextBlock.Resources>
+                </widgets:TranslatedTextBlock>
+            </HyperlinkButton>
+
             <!--  CUSTOM COMMAND-LINE ARGUMENTS  -->
-            <Grid ColumnSpacing="8">
+            <Grid ColumnSpacing="8" RowSpacing="8">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="2*" />
                 </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
                 <TextBlock
-                    x:Name="CustomCommandsLabel"
+                    x:Name="CustomCommandsLabel1"
+                    Grid.Row="0"
                     Grid.Column="0"
                     VerticalAlignment="Center" />
                 <TextBox
-                    Name="CustomParameters"
+                    Name="CustomParameters1"
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Padding="5,7,5,5"
+                    FontFamily="Consolas"
+                    TextChanged="CustomParameters_TextChanged"
+                    TextWrapping="Wrap" />
+
+                <TextBlock
+                    x:Name="CustomCommandsLabel2"
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    VerticalAlignment="Center" />
+                <TextBox
+                    Name="CustomParameters2"
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Padding="5,7,5,5"
+                    FontFamily="Consolas"
+                    TextChanged="CustomParameters_TextChanged"
+                    TextWrapping="Wrap" />
+
+                <TextBlock
+                    x:Name="CustomCommandsLabel3"
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    VerticalAlignment="Center" />
+                <TextBox
+                    Name="CustomParameters3"
+                    Grid.Row="2"
                     Grid.Column="1"
                     Padding="5,7,5,5"
                     FontFamily="Consolas"

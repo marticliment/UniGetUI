@@ -19,15 +19,19 @@ internal sealed class NpmPkgOperationHelper : BasePkgOperationHelper
         };
         parameters.Add(package.Id);
 
-        if (options.CustomParameters is not null)
-            parameters.AddRange(options.CustomParameters);
-
         if (package.OverridenOptions.Scope == PackageScope.Global ||
             (package.OverridenOptions.Scope is null && options.InstallationScope == PackageScope.Global))
             parameters.Add("--global");
 
         if (options.PreRelease)
             parameters.AddRange(["--include", "dev"]);
+
+        parameters.AddRange(operation switch
+        {
+            OperationType.Update => options.CustomParameters_Update,
+            OperationType.Uninstall => options.CustomParameters_Uninstall,
+            _ => options.CustomParameters_Install,
+        });
 
         return parameters;
     }

@@ -33,8 +33,12 @@ internal sealed class ScoopPkgOperationHelper : BasePkgOperationHelper
             parameters.Add("--global");
         }
 
-        if (options.CustomParameters?.Any() is true)
-            parameters.AddRange(options.CustomParameters);
+        parameters.AddRange(operation switch
+        {
+            OperationType.Update => options.CustomParameters_Update,
+            OperationType.Uninstall => options.CustomParameters_Uninstall,
+            _ => options.CustomParameters_Install,
+        });
 
         if (operation is OperationType.Uninstall)
         {

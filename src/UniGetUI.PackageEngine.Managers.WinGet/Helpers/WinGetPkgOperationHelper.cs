@@ -58,7 +58,6 @@ internal sealed class WinGetPkgOperationHelper : BasePkgOperationHelper
         }
 
         parameters.Add(options.InteractiveInstallation ? "--interactive" : "--silent");
-        parameters.AddRange(options.CustomParameters);
 
         if (operation is OperationType.Update)
         {
@@ -129,6 +128,13 @@ internal sealed class WinGetPkgOperationHelper : BasePkgOperationHelper
         }
 
         parameters.Add(WinGet.GetProxyArgument());
+
+        parameters.AddRange(operation switch
+        {
+            OperationType.Update => options.CustomParameters_Update,
+            OperationType.Uninstall => options.CustomParameters_Uninstall,
+            _ => options.CustomParameters_Install,
+        });
         return parameters;
     }
 

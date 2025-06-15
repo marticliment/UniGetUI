@@ -25,9 +25,6 @@ internal sealed class PipPkgOperationHelper : BasePkgOperationHelper
             "--no-cache"
         ]);
 
-        if (options.CustomParameters is not null)
-            parameters.AddRange(options.CustomParameters);
-
         if (operation is OperationType.Uninstall)
         {
             parameters.Add("--yes");
@@ -43,6 +40,14 @@ internal sealed class PipPkgOperationHelper : BasePkgOperationHelper
         }
 
         parameters.Add(Pip.GetProxyArgument());
+
+        parameters.AddRange(operation switch
+        {
+            OperationType.Update => options.CustomParameters_Update,
+            OperationType.Uninstall => options.CustomParameters_Uninstall,
+            _ => options.CustomParameters_Install,
+        });
+
         return parameters;
     }
 

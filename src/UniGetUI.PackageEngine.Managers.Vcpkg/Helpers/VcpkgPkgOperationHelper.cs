@@ -18,7 +18,13 @@ internal sealed class VcpkgPkgOperationHelper : BasePkgOperationHelper
             _ => throw new InvalidDataException("Invalid package operation")
         };
 
-        parameters.AddRange(options.CustomParameters);
+        parameters.AddRange(operation switch
+        {
+            OperationType.Update => options.CustomParameters_Update,
+            OperationType.Uninstall => options.CustomParameters_Uninstall,
+            _ => options.CustomParameters_Install,
+        });
+
         return parameters;
     }
 
