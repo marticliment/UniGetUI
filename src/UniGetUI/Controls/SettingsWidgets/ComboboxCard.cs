@@ -84,5 +84,6 @@ namespace UniGetUI.Interface.Widgets
         }
 
         public string SelectedValue() => _combobox.SelectedValue.ToString() ?? throw new InvalidCastException();
+        public void SelectIndex(int index) => _combobox.SelectedIndex = index;
     }
 }
