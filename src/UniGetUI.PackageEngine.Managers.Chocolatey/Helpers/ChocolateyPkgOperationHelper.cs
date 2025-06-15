@@ -22,9 +22,6 @@ internal sealed class ChocolateyPkgOperationHelper : BasePkgOperationHelper
         }];
         parameters.AddRange([package.Id, "-y"]);
 
-        if (options.CustomParameters.Count > 0)
-            parameters.AddRange(options.CustomParameters);
-
         if (options.InteractiveInstallation)
             parameters.Add("--notsilent");
 
@@ -46,6 +43,14 @@ internal sealed class ChocolateyPkgOperationHelper : BasePkgOperationHelper
         }
 
         parameters.Add(Chocolatey.GetProxyArgument());
+
+        parameters.AddRange(operation switch
+        {
+            OperationType.Update => options.CustomParameters_Update,
+            OperationType.Uninstall => options.CustomParameters_Uninstall,
+            _ => options.CustomParameters_Install,
+        });
+
         return parameters;
     }
 

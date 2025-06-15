@@ -10,7 +10,9 @@ namespace UniGetUI.PackageEngine.Serializable
         public bool RunAsAdministrator { get; set; }
         public string Architecture { get; set; } = "";
         public string InstallationScope { get; set; } = "";
-        public List<string> CustomParameters { get; set; } = [];
+        public List<string> CustomParameters_Install { get; set; } = [];
+        public List<string> CustomParameters_Update { get; set; } = [];
+        public List<string> CustomParameters_Uninstall { get; set; } = [];
         public bool PreRelease { get; set; }
         public string CustomInstallLocation { get; set; } = "";
         public string Version { get; set; } = "";
@@ -25,7 +27,9 @@ namespace UniGetUI.PackageEngine.Serializable
                 SkipHashCheck = SkipHashCheck,
                 Architecture = Architecture,
                 CustomInstallLocation = CustomInstallLocation,
-                CustomParameters = CustomParameters,
+                CustomParameters_Install = CustomParameters_Install,
+                CustomParameters_Update = CustomParameters_Update,
+                CustomParameters_Uninstall = CustomParameters_Uninstall,
                 InstallationScope = InstallationScope,
                 InteractiveInstallation = InteractiveInstallation,
                 PreRelease = PreRelease,
@@ -47,10 +51,19 @@ namespace UniGetUI.PackageEngine.Serializable
             this.Architecture = data[nameof(Architecture)]?.GetVal<string>() ?? "";
             this.InstallationScope = data[nameof(InstallationScope)]?.GetVal<string>() ?? "";
 
-            this.CustomParameters = new List<string>();
-            foreach (var element in data[nameof(CustomParameters)]?.AsArray2() ?? [])
-                if (element is not null)
-                    this.CustomParameters.Add(element.GetVal<string>());
+            this.CustomParameters_Install = ReadArrayFromJson(data, nameof(CustomParameters_Install));
+            this.CustomParameters_Update = ReadArrayFromJson(data, nameof(CustomParameters_Update));
+            this.CustomParameters_Uninstall = ReadArrayFromJson(data, nameof(CustomParameters_Uninstall));
+
+            if (this.CustomParameters_Install.Count is 0 &&
+                this.CustomParameters_Update.Count  is 0 &&
+                this.CustomParameters_Uninstall.Count is 0 &&
+                ((data as JsonObject)?.ContainsKey("CustomParameters") ?? false))
+            {
+                this.CustomParameters_Install = ReadArrayFromJson(data, "CustomParameters");
+                this.CustomParameters_Update = ReadArrayFromJson(data, "CustomParameters");
+                this.CustomParameters_Uninstall = ReadArrayFromJson(data, "CustomParameters");
+            }
 
             this.PreRelease = data[nameof(PreRelease)]?.GetVal<bool>() ?? false;
             this.CustomInstallLocation = data[nameof(CustomInstallLocation)]?.GetVal<string>() ?? "";
@@ -64,6 +77,15 @@ namespace UniGetUI.PackageEngine.Serializable
                 data[nameof(OverridesNextLevelOpts)]?.GetValue<bool>() ?? DiffersFromDefault();
         }
 
+        private static List<string> ReadArrayFromJson(JsonNode data, string name)
+        {
+            List<string> result = new List<string>();
+            foreach (var element in data[name]?.AsArray2() ?? [])
+                if (element is not null)
+                    result.Add(element.GetVal<string>());
+            return result;
+        }
+
         public bool DiffersFromDefault()
         {
             return SkipHashCheck is not false ||
@@ -73,7 +95,9 @@ namespace UniGetUI.PackageEngine.Serializable
                    SkipMinorUpdates is not false ||
                    Architecture.Any() ||
                    InstallationScope.Any() ||
-                   CustomParameters.Where(x => x != "").Any() ||
+                   CustomParameters_Install.Where(x => x != "").Any() ||
+                   CustomParameters_Update.Where(x => x != "").Any() ||
+                   CustomParameters_Uninstall.Where(x => x != "").Any() ||
                    CustomInstallLocation.Any() ||
                    RemoveDataOnUninstall is not false ||
                    Version.Any();
@@ -91,7 +115,9 @@ namespace UniGetUI.PackageEngine.Serializable
 
         public override string ToString()
         {
-            string customparams = CustomParameters.Any() ? string.Join(",", CustomParameters) : "[]";
+            string customparams = CustomParameters_Install.Any() ? string.Join(",", CustomParameters_Install) : "[]";
+            customparams += CustomParameters_Update.Any() ? string.Join(",", CustomParameters_Update) : "[]";
+            customparams += CustomParameters_Uninstall.Any() ? string.Join(",", CustomParameters_Uninstall) : "[]";
             return $"<InstallOptions: SkipHashCheck={SkipHashCheck};" +
                    $"InteractiveInstallation={InteractiveInstallation};" +
                    $"RunAsAdministrator={RunAsAdministrator};" +

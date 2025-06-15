@@ -20,9 +20,6 @@ internal sealed class PowerShell7PkgOperationHelper : BasePkgOperationHelper
         parameters.AddRange(["-Name", package.Id, "-Confirm:$false"]);
         if (operation is OperationType.Update) parameters.Add("-Force");
 
-        if (options.CustomParameters is not null)
-            parameters.AddRange(options.CustomParameters);
-
         if (operation is not OperationType.Uninstall)
         {
             parameters.AddRange(["-TrustRepository", "-AcceptLicense"]);
@@ -42,6 +39,13 @@ internal sealed class PowerShell7PkgOperationHelper : BasePkgOperationHelper
             if (options.Version != "")
                 parameters.AddRange(["-Version", options.Version]);
         }
+
+        parameters.AddRange(operation switch
+        {
+            OperationType.Update => options.CustomParameters_Update,
+            OperationType.Uninstall => options.CustomParameters_Uninstall,
+            _ => options.CustomParameters_Install,
+        });
 
         return parameters;
     }
