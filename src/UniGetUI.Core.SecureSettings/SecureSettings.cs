@@ -1,11 +1,19 @@
 using System.Diagnostics;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Tools;
+using YamlDotNet.Serialization;
 
 namespace UniGetUI.Core.SettingsEngine.SecureSettings;
 
 public static class SecureSettings
 {
+    // Various predefined secure settings keys
+    public const string ALLOW_CLI_ARGUMENTS = "AllowCLIArguments";
+    public const string ALLOW_IMPORTING_CLI_ARGUMENTS = "AllowImportingCLIArguments";
+    public const string ALLOW_PREPOST_OPERATIONS = "AllowPrePostInstallCommands";
+    public const string ALLOW_IMPORT_PREPOST_OPERATIONS = "AllowImportingPrePostInstallCommands";
+
+
     private static readonly Dictionary<string, bool> _cache = new();
 
     public static class Args

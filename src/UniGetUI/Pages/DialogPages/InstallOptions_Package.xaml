@@ -31,6 +31,7 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
+                <!--  Title, Package Icon and operation profile selector  -->
                 <Grid
                     Grid.Row="0"
                     Margin="8,0,16,0"
@@ -63,10 +64,11 @@
                     </StackPanel>
                 </Grid>
 
+                <!--  Override global options switch  -->
                 <Border
                     Grid.Row="1"
                     Padding="16,4,0,4"
-                    Background="{ThemeResource ControlFillColorInputActiveBrush}"
+                    Background="{ThemeResource SystemChromeAltHighColor}"
                     CornerRadius="8">
                     <Grid
                         Grid.Row="1"
@@ -101,173 +103,235 @@
                     </Grid>
                 </Border>
 
+                <!--  Main UI: main controls and overlay  -->
                 <Grid Grid.Row="2" RowSpacing="8">
+                    <!--  All install options are placed here  -->
                     <UserControl Name="OptionsPanelBase">
                         <Grid RowSpacing="8">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
+
                             <widgets:TranslatedTextBlock
                                 x:Name="OptionsPanel0"
                                 Grid.Row="0"
-                                Margin="16,0"
+                                Margin="8,0"
                                 Text="The following settings will be applied each time this package is installed, updated or removed." />
+
                             <Border
-                                x:Name="OptionsPanel1"
                                 Grid.Row="1"
-                                Padding="16,12,16,12"
-                                Background="{ThemeResource ControlFillColorInputActiveBrush}"
-                                CornerRadius="8">
-                                <StackPanel Spacing="8">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="*" MaxWidth="200" />
-                                        </Grid.ColumnDefinitions>
-                                        <widgets:TranslatedTextBlock
-                                            Grid.Column="0"
-                                            VerticalAlignment="Center"
-                                            Text="Architecture to install:" />
-                                        <ComboBox
-                                            Name="ArchitectureComboBox"
-                                            Grid.Column="1"
-                                            HorizontalAlignment="Stretch"
-                                            VerticalAlignment="Center"
-                                            SelectedIndex="0"
-                                            SelectionChanged="ArchitectureComboBox_SelectionChanged" />
-                                    </Grid>
-                                    <controls:WrapPanel HorizontalSpacing="16" VerticalSpacing="0">
-                                        <CheckBox Name="AdminCheckBox" Click="AdminCheckBox_Click">
-                                            <widgets:TranslatedTextBlock Text="Run as admin" />
-                                        </CheckBox>
-                                        <CheckBox Name="InteractiveCheckBox" Click="InteractiveCheckBox_Click">
-                                            <widgets:TranslatedTextBlock Text="Interactive installation" />
-                                        </CheckBox>
-                                        <CheckBox Name="HashCheckbox" Click="HashCheckbox_Click">
-                                            <widgets:TranslatedTextBlock HorizontalAlignment="Stretch" Text="Skip hash check" />
-                                        </CheckBox>
-                                    </controls:WrapPanel>
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="*" MaxWidth="200" />
-                                        </Grid.ColumnDefinitions>
-                                        <widgets:TranslatedTextBlock
-                                            Grid.Column="0"
-                                            VerticalAlignment="Center"
-                                            Text="Version to install:" />
-
-                                        <ComboBox
-                                            Name="VersionComboBox"
-                                            Grid.Column="1"
-                                            HorizontalAlignment="Stretch"
-                                            VerticalAlignment="Center"
-                                            SelectionChanged="VersionComboBox_SelectionChanged" />
-
-                                        <ProgressBar
-                                            Name="VersionProgress"
-                                            Grid.Column="1"
-                                            Margin="1,0,1,0"
-                                            VerticalAlignment="Top"
-                                            CornerRadius="4,4,0,0"
-                                            IsIndeterminate="True"
-                                            Visibility="Visible" />
-                                    </Grid>
-                                    <controls:WrapPanel HorizontalSpacing="16" VerticalSpacing="0">
-                                        <CheckBox Name="IgnoreUpdatesCheckbox">
-                                            <widgets:TranslatedTextBlock Text="Ignore future updates for this package" />
-                                        </CheckBox>
-                                        <CheckBox Name="SkipMinorUpdatesCheckbox">
-                                            <widgets:TranslatedTextBlock Text="Skip minor updates for this package" />
-                                        </CheckBox>
-                                    </controls:WrapPanel>
-                                </StackPanel>
+                                Margin="0,0,0,-8"
+                                HorizontalAlignment="Stretch"
+                                CornerRadius="8,8,0,0">
+                                <TabView
+                                    x:Name="SettingsTabBar"
+                                    HorizontalAlignment="Stretch"
+                                    Background="{ThemeResource SystemChromeAltHighColor}"
+                                    IsAddTabButtonVisible="False"
+                                    TabWidthMode="SizeToContent">
+                                    <widgets:BetterTabViewItem
+                                        IconName="Settings"
+                                        IsSelected="True"
+                                        Line1="General"
+                                        Line2="Version" />
+                                    <widgets:BetterTabViewItem
+                                        IconName="OpenFolder"
+                                        Line1="Architecture"
+                                        Line2="Location and Scope" />
+                                    <widgets:BetterTabViewItem
+                                        IconName="Console"
+                                        Line1="Command-line"
+                                        Line2="Arguments" />
+                                    <!--
+                                        widgets:BetterTabViewItem
+                                        IconName="ClipboardList"
+                                        Line1="Pre-install"
+                                        Line2="Post-install" /
+                                    -->
+                                </TabView>
                             </Border>
 
-                            <Border
-                                x:Name="OptionsPanel2"
+                            <controls:SwitchPresenter
+                                x:Name="SettingsSwitchPresenter"
                                 Grid.Row="2"
-                                Padding="16,12,16,12"
-                                Background="{ThemeResource ControlFillColorInputActiveBrush}"
-                                CornerRadius="8">
-                                <StackPanel Spacing="8">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="*" MaxWidth="200" />
-                                        </Grid.ColumnDefinitions>
+                                Padding="16"
+                                Background="{ThemeResource SystemChromeAltHighColor}"
+                                CornerRadius="0,0,8,8"
+                                TargetType="x:Int32"
+                                Value="{x:Bind SettingsTabBar.SelectedIndex, Mode=OneWay}">
+                                <!--  General settings  -->
+                                <controls:Case IsDefault="True" Value="0">
+                                    <StackPanel Spacing="8">
+                                        <controls:WrapPanel HorizontalSpacing="16" VerticalSpacing="0">
+                                            <CheckBox Name="AdminCheckBox" Click="AdminCheckBox_Click">
+                                                <widgets:TranslatedTextBlock Text="Run as admin" />
+                                            </CheckBox>
+                                            <CheckBox Name="InteractiveCheckBox" Click="InteractiveCheckBox_Click">
+                                                <widgets:TranslatedTextBlock Text="Interactive installation" />
+                                            </CheckBox>
+                                            <CheckBox Name="HashCheckbox" Click="HashCheckbox_Click">
+                                                <widgets:TranslatedTextBlock HorizontalAlignment="Stretch" Text="Skip hash check" />
+                                            </CheckBox>
+                                        </controls:WrapPanel>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="*" MaxWidth="200" />
+                                            </Grid.ColumnDefinitions>
+                                            <widgets:TranslatedTextBlock
+                                                Grid.Column="0"
+                                                VerticalAlignment="Center"
+                                                Text="Version to install:" />
+
+                                            <ComboBox
+                                                Name="VersionComboBox"
+                                                Grid.Column="1"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Center"
+                                                SelectionChanged="VersionComboBox_SelectionChanged" />
+
+                                            <ProgressBar
+                                                Name="VersionProgress"
+                                                Grid.Column="1"
+                                                Margin="1,0,1,0"
+                                                VerticalAlignment="Top"
+                                                CornerRadius="4,4,0,0"
+                                                IsIndeterminate="True"
+                                                Visibility="Visible" />
+                                        </Grid>
+                                        <controls:WrapPanel HorizontalSpacing="16" VerticalSpacing="0">
+                                            <CheckBox Name="IgnoreUpdatesCheckbox">
+                                                <widgets:TranslatedTextBlock Text="Ignore future updates for this package" />
+                                            </CheckBox>
+                                            <CheckBox Name="SkipMinorUpdatesCheckbox">
+                                                <widgets:TranslatedTextBlock Text="Skip minor updates for this package" />
+                                            </CheckBox>
+                                        </controls:WrapPanel>
+                                    </StackPanel>
+                                </controls:Case>
+
+                                <!--  Scope, location and architecture  -->
+                                <controls:Case Value="1">
+                                    <StackPanel Spacing="8">
+
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="*" MaxWidth="200" />
+                                            </Grid.ColumnDefinitions>
+                                            <widgets:TranslatedTextBlock
+                                                Grid.Column="0"
+                                                VerticalAlignment="Center"
+                                                Text="Architecture to install:" />
+                                            <ComboBox
+                                                Name="ArchitectureComboBox"
+                                                Grid.Column="1"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Center"
+                                                SelectedIndex="0"
+                                                SelectionChanged="ArchitectureComboBox_SelectionChanged" />
+                                        </Grid>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="*" MaxWidth="200" />
+                                            </Grid.ColumnDefinitions>
+                                            <widgets:TranslatedTextBlock
+                                                Grid.Column="0"
+                                                VerticalAlignment="Center"
+                                                Text="Installation scope:" />
+                                            <ComboBox
+                                                Name="ScopeCombo"
+                                                Grid.Column="1"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Center"
+                                                SelectionChanged="ScopeCombo_SelectionChanged" />
+                                        </Grid>
+                                        <Grid ColumnSpacing="8">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="*" MaxWidth="96" />
+                                                <ColumnDefinition Width="*" MaxWidth="96" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <widgets:TranslatedTextBlock
+                                                Grid.Column="0"
+                                                VerticalAlignment="Center"
+                                                Text="Install location:" />
+                                            <HyperlinkButton
+                                                Name="SelectDir"
+                                                Grid.Column="1"
+                                                HorizontalAlignment="Stretch"
+                                                Click="SelectDir_Click">
+                                                <widgets:TranslatedTextBlock Text="Select" />
+                                            </HyperlinkButton>
+                                            <HyperlinkButton
+                                                Name="ResetDir"
+                                                Grid.Column="2"
+                                                HorizontalAlignment="Stretch"
+                                                Click="ResetDir_Click">
+                                                <widgets:TranslatedTextBlock Text="Reset" />
+                                            </HyperlinkButton>
+                                            <TextBlock
+                                                Name="CustomInstallLocation"
+                                                Grid.Row="2"
+                                                Grid.ColumnSpan="3"
+                                                MaxWidth="700"
+                                                VerticalAlignment="Center"
+                                                FontFamily="Consolas"
+                                                Opacity="0.6"
+                                                TextWrapping="Wrap" />
+                                        </Grid>
+                                    </StackPanel>
+                                </controls:Case>
+
+                                <!--  Custom command-line arguments  -->
+                                <controls:Case Value="2">
+                                    <StackPanel Spacing="8">
                                         <widgets:TranslatedTextBlock
-                                            Grid.Column="0"
-                                            VerticalAlignment="Center"
-                                            Text="Installation scope:" />
-                                        <ComboBox
-                                            Name="ScopeCombo"
-                                            Grid.Column="1"
-                                            HorizontalAlignment="Stretch"
-                                            VerticalAlignment="Center"
-                                            SelectionChanged="ScopeCombo_SelectionChanged" />
-                                    </Grid>
-                                    <Grid ColumnSpacing="8">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="*" MaxWidth="96" />
-                                            <ColumnDefinition Width="*" MaxWidth="96" />
-                                        </Grid.ColumnDefinitions>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto" />
-                                            <RowDefinition Height="Auto" />
-                                        </Grid.RowDefinitions>
-                                        <widgets:TranslatedTextBlock
-                                            Grid.Column="0"
-                                            VerticalAlignment="Center"
-                                            Text="Install location:" />
-                                        <HyperlinkButton
-                                            Name="SelectDir"
-                                            Grid.Column="1"
-                                            HorizontalAlignment="Stretch"
-                                            Click="SelectDir_Click">
-                                            <widgets:TranslatedTextBlock Text="Select" />
-                                        </HyperlinkButton>
-                                        <HyperlinkButton
-                                            Name="ResetDir"
-                                            Grid.Column="2"
-                                            HorizontalAlignment="Stretch"
-                                            Click="ResetDir_Click">
-                                            <widgets:TranslatedTextBlock Text="Reset" />
-                                        </HyperlinkButton>
-                                        <TextBlock
-                                            Name="CustomInstallLocation"
-                                            Grid.Row="2"
-                                            Grid.ColumnSpan="3"
-                                            MaxWidth="700"
-                                            VerticalAlignment="Center"
-                                            FontFamily="Consolas"
-                                            Opacity="0.6"
-                                            TextWrapping="Wrap" />
-                                    </Grid>
-                                    <Grid ColumnSpacing="8">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="2*" />
-                                        </Grid.ColumnDefinitions>
-                                        <widgets:TranslatedTextBlock
-                                            Grid.Column="0"
-                                            VerticalAlignment="Center"
-                                            Text="Custom arguments:" />
-                                        <TextBox
-                                            Name="CustomParameters"
-                                            Grid.Column="1"
-                                            Padding="5,7,5,5"
-                                            FontFamily="Consolas"
-                                            TextChanged="CustomParameters_TextChanged"
-                                            TextWrapping="Wrap" />
-                                    </Grid>
-                                </StackPanel>
-                            </Border>
+                                            x:Name="CLIDisabled"
+                                            Foreground="{ThemeResource SystemErrorTextColor}"
+                                            Text="For security reasons, custom command-line arguments are disabled by default. Go to UniGetUI security settings to change this. " />
+                                        <Button
+                                            x:Name="GoToCLISettings"
+                                            HorizontalAlignment="Center"
+                                            Click="GoToSecureSettings_Click">
+                                            <widgets:TranslatedTextBlock Text="Go to UniGetUI security settings" />
+                                        </Button>
+                                        <Grid ColumnSpacing="8">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="2*" />
+                                            </Grid.ColumnDefinitions>
+                                            <widgets:TranslatedTextBlock
+                                                x:Name="CustomParametersLabel"
+                                                Grid.Column="0"
+                                                VerticalAlignment="Center"
+                                                Text="Custom arguments:" />
+                                            <TextBox
+                                                Name="CustomParameters"
+                                                Grid.Column="1"
+                                                Padding="5,7,5,5"
+                                                FontFamily="Consolas"
+                                                TextChanged="CustomParameters_TextChanged"
+                                                TextWrapping="Wrap" />
+                                        </Grid>
+                                    </StackPanel>
+                                </controls:Case>
+
+                                <!--  Pre-install and post-install operations  -->
+                                <!--  controls:Case Value="3" /  -->
+                            </controls:SwitchPresenter>
                         </Grid>
                     </UserControl>
+
+                    <!--  Overlay to warn user that options are not overriden  -->
                     <Border
                         x:Name="PlaceholderBanner"
                         Grid.RowSpan="5"
@@ -300,10 +364,11 @@
                     </Border>
                 </Grid>
 
+                <!--  Current command-line display  -->
                 <Border
                     Grid.Row="3"
                     Padding="16,12,16,12"
-                    Background="{ThemeResource ControlFillColorInputActiveBrush}"
+                    Background="{ThemeResource SystemChromeAltHighColor}"
                     CornerRadius="8">
                     <StackPanel Spacing="8">
                         <widgets:TranslatedTextBlock
@@ -324,7 +389,7 @@
                 </Border>
             </Grid>
         </ScrollViewer>
-        <widgets:DialogCloseButton Margin="0,-24,-24,0" Click="CloseButton_Click" />
         <!--  Close Button  -->
+        <widgets:DialogCloseButton Margin="0,-24,-24,0" Click="CloseButton_Click" />
     </Grid>
 </Page>

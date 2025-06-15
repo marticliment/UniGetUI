@@ -324,6 +324,11 @@ namespace UniGetUI.Interface
             NavigateTo(PageType.Managers);
             if (manager is not null) ManagersPage?.NavigateTo(manager);
         }
+        public void OpenSettingsPage(Type page)
+        {
+            NavigateTo(PageType.Settings);
+            SettingsPage?.NavigateTo(page);
+        }
 
         public void UniGetUILogs_Click(object sender, RoutedEventArgs e)
             => NavigateTo(PageType.OwnLog);

@@ -102,6 +102,11 @@ namespace UniGetUI.Pages.SettingsPages
             Page_NavigationRequested(this, manager.GetType());
         }
 
+        public void NavigateTo(Type e)
+        {
+            MainNavigationFrame.Navigate(e, null, new DrillInNavigationTransitionInfo());
+        }
+
         public void OnEnter()
             => MainNavigationFrame.Navigate(IsManagers ? typeof(ManagersHomepage) : typeof(SettingsHomepage), null, new DrillInNavigationTransitionInfo());
 

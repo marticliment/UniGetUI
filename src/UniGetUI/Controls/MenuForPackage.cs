@@ -62,4 +62,28 @@ namespace UniGetUI.Interface.Widgets
             Style = menuStyle;
         }
     }
+
+    public partial class BetterTabViewItem : TabViewItem
+    {
+        string line1 = "";
+        string line2 = "";
+        public string Line1 { set { line1 = value; LoadText(); } }
+        public string Line2 { set { line2 = value; LoadText(); } }
+
+        public IconType IconName { set => IconSource = new LocalIconSource(value); }
+
+
+        public BetterTabViewItem()
+        {
+            IsClosable = false;
+        }
+
+        public void LoadText()
+        {
+            string text = "";
+            if (line1 != "") text += CoreTools.Translate(line1) + " ‎‎ ";
+            if (line2 != "") text += (text.Length> 0?"\n":"") + CoreTools.Translate(line2) + " ‎ ";
+            Header = text;
+        }
+    }
 }

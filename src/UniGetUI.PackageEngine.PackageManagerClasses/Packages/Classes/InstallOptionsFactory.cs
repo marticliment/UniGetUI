@@ -186,7 +186,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         private static InstallOptions EnsureSecureOptions(InstallOptions options)
         {
-            if (SecureSettings.Get("AllowCLIArguments"))
+            if (SecureSettings.Get(SecureSettings.ALLOW_CLI_ARGUMENTS))
             {
                 // If CLI arguments are allowed, sanitize them
                 for (int i = 0; i < options.CustomParameters.Count; i++)

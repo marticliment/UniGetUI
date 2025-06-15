@@ -72,7 +72,7 @@
                 x:Name="AllowPrePostInstallCommands"
                 BorderThickness="1,0,1,1"
                 CornerRadius="0,0,8,8"
-                SettingName="AllowImportingPrePostInstallCommands"
+                SettingName="AllowPrePostInstallCommands"
                 Text="Ignore custom pre-install and post-install commands when importing packages from a bundle"
                 WarningText="Pre and post install commands will be run before and after a package gets installed, upgraded or uninstalled. Be aware thay they may break things unless used carefully" /
             >

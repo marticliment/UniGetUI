@@ -5,11 +5,14 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
 using UniGetUI.Core.Language;
+using UniGetUI.Core.SettingsEngine.SecureSettings;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.Serializable;
+using UniGetUI.Pages.SettingsPages.GeneralPages;
+using Windows.ApplicationModel.Activation;
 using Architecture = UniGetUI.PackageEngine.Enums.Architecture;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -170,16 +173,16 @@ namespace UniGetUI.Interface.Dialogs
             if(FollowGlobalOptionsSwitch.IsOn)
             {
                 OptionsPanel0.Opacity = 0.3;
-                OptionsPanel1.Opacity = 0.3;
-                OptionsPanel2.Opacity = 0.3;
+                SettingsSwitchPresenter.Opacity = 0.3;
+                SettingsTabBar.Opacity = 0.3;
                 OptionsPanelBase.IsEnabled = false;
                 PlaceholderBanner.Visibility = Visibility.Visible;
             }
             else
             {
                 OptionsPanel0.Opacity = 1;
-                OptionsPanel1.Opacity = 1;
-                OptionsPanel2.Opacity = 1;
+                SettingsSwitchPresenter.Opacity = 1;
+                SettingsTabBar.Opacity = 1;
                 OptionsPanelBase.IsEnabled = true;
                 PlaceholderBanner.Visibility = Visibility.Collapsed;
 
@@ -196,6 +199,12 @@ namespace UniGetUI.Interface.Dialogs
                 ResetDir.IsEnabled = Package.Manager.Capabilities.SupportsCustomLocations;
                 SelectDir.IsEnabled = Package.Manager.Capabilities.SupportsCustomLocations;
             }
+
+            bool IsCLIEnabled = SecureSettings.Get(SecureSettings.ALLOW_CLI_ARGUMENTS);
+            CustomParameters.IsEnabled = IsCLIEnabled;
+            CustomParametersLabel.Opacity = IsCLIEnabled ? 1 : 0.5;
+            GoToCLISettings.Visibility = IsCLIEnabled ? Visibility.Collapsed : Visibility.Visible;
+            CLIDisabled.Visibility = IsCLIEnabled ? Visibility.Collapsed : Visibility.Visible;
             GenerateCommand();
         }
 
@@ -341,6 +350,12 @@ namespace UniGetUI.Interface.Dialogs
         {
             Close?.Invoke(this, EventArgs.Empty);
             MainApp.Instance.MainWindow.NavigationPage.OpenManagerSettings(Package.Manager);
+        }
+
+        private void GoToSecureSettings_Click(object sender, RoutedEventArgs e)
+        {
+            Close?.Invoke(this, EventArgs.Empty);
+            MainApp.Instance.MainWindow.NavigationPage.OpenSettingsPage(typeof(Administrator));
         }
     }
 }
