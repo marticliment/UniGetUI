@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Runtime.Serialization.Formatters;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Xml;
@@ -10,6 +11,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
+using UniGetUI.Core.SettingsEngine.SecureSettings;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.Interface.Telemetry;
@@ -651,18 +653,67 @@ namespace UniGetUI.Interface.SoftwarePages
 
             DeserializedData = await Task.Run(() =>
             {
-                return new SerializableBundle(JsonNode.Parse(content) ?? throw new Exception("Could not parse JSON object"));
+                return new SerializableBundle(JsonNode.Parse(content) ?? throw new JsonException("Could not parse JSON object"));
             });
 
             List<IPackage> packages = [];
 
+
+            bool showReport = false;
+            var packageReport = new Dictionary<string, List<BundleReportEntry>>();
+            bool AllowCLIParameters =
+                SecureSettings.Get(SecureSettings.ALLOW_CLI_ARGUMENTS) &&
+                SecureSettings.Get(SecureSettings.ALLOW_IMPORTING_CLI_ARGUMENTS);
+
+
             foreach (var pkg in DeserializedData.packages)
+            {
+                if (pkg.InstallationOptions.CustomParameters_Install.Where(x => x.Any()).Any())
+                {
+                    showReport = true;
+                    if (!packageReport.ContainsKey(pkg.Id))
+                        packageReport[pkg.Id] = new();
+
+                    packageReport[pkg.Id].Add(new(
+                        $"Custom install arguments: [{string.Join(", ", pkg.InstallationOptions.CustomParameters_Install)}]",
+                        AllowCLIParameters));
+
+                    if(!AllowCLIParameters) pkg.InstallationOptions.CustomParameters_Install.Clear();
+                }
+                if (pkg.InstallationOptions.CustomParameters_Update.Where(x => x.Any()).Any())
+                {
+                    showReport = true;
+                    if (!packageReport.ContainsKey(pkg.Id))
+                        packageReport[pkg.Id] = new();
+
+                    packageReport[pkg.Id].Add(new(
+                        $"Custom update arguments: [{string.Join(", ", pkg.InstallationOptions.CustomParameters_Update)}]",
+                        AllowCLIParameters));
+
+                    if(!AllowCLIParameters) pkg.InstallationOptions.CustomParameters_Update.Clear();
+                }
+                if (pkg.InstallationOptions.CustomParameters_Uninstall.Where(x => x.Any()).Any())
+                {
+                    showReport = true;
+                    if (!packageReport.ContainsKey(pkg.Id))
+                        packageReport[pkg.Id] = new();
+
+                    packageReport[pkg.Id].Add(new(
+                        $"Custom uninstall arguments: [{string.Join(", ", pkg.InstallationOptions.CustomParameters_Uninstall)}]",
+                        AllowCLIParameters));
+
+                    if(!AllowCLIParameters) pkg.InstallationOptions.CustomParameters_Uninstall.Clear();
+                }
+
                 packages.Add(DeserializePackage(pkg));
+            }
 
             foreach (var pkg in DeserializedData.incompatible_packages)
                 packages.Add(DeserializeIncompatiblePackage(pkg, NullSource.Instance));
 
             await PEInterface.PackageBundlesLoader.AddPackagesAsync(packages);
+
+            if(showReport) _ = DialogHelper.ShowBundleSecurityReport(packageReport);
             return DeserializedData.export_version;
         }
 
