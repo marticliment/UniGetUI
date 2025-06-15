@@ -143,6 +143,29 @@
                     TextWrapping="Wrap" />
             </Grid>
 
+            <widgets:TranslatedTextBlock
+                x:Name="CLIDisabled"
+                Margin="0,16,0,0"
+                Text="For security reasons, custom command-line arguments are disabled by default. Go to UniGetUI security settings to change this. ">
+                <widgets:TranslatedTextBlock.Resources>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Foreground" Value="{ThemeResource SystemErrorTextColor}" />
+                    </Style>
+                </widgets:TranslatedTextBlock.Resources>
+            </widgets:TranslatedTextBlock>
+            <HyperlinkButton
+                x:Name="GoToCLISettings"
+                HorizontalAlignment="Center"
+                Click="GoToSecureSettings_Click">
+                <widgets:TranslatedTextBlock Text="Go to UniGetUI security settings" >
+                    <widgets:TranslatedTextBlock.Resources>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Foreground" Value="{ThemeResource AccentTextFillColorPrimaryBrush}" />
+                        </Style>
+                    </widgets:TranslatedTextBlock.Resources>
+                </widgets:TranslatedTextBlock>
+            </HyperlinkButton>
+
             <!--  CUSTOM COMMAND-LINE ARGUMENTS  -->
             <Grid ColumnSpacing="8" RowSpacing="8">
                 <Grid.ColumnDefinitions>

@@ -1,14 +1,17 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using CommunityToolkit.WinUI.Controls;
 using Microsoft.Extensions.Options;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using UniGetUI.Core.Language;
+using UniGetUI.Core.SettingsEngine.SecureSettings;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.Serializable;
+using UniGetUI.Pages.SettingsPages.GeneralPages;
 using Architecture = UniGetUI.PackageEngine.Enums.Architecture;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -136,13 +139,18 @@ public sealed partial class InstallOptions_Manager : UserControl
             CustomInstallLocation.Text = CoreTools.Translate("Install location can't be changed for {0} packages", Manager.DisplayName);
         }
 
-        CustomParameters1.IsEnabled = true;
+        bool IsCLIEnabled = SecureSettings.Get(SecureSettings.ALLOW_CLI_ARGUMENTS);
+        CustomParameters1.IsEnabled = IsCLIEnabled;
+        CustomParameters2.IsEnabled = IsCLIEnabled;
+        CustomParameters3.IsEnabled = IsCLIEnabled;
+        CustomCommandsLabel1.Opacity = IsCLIEnabled ? 1 : 0.5;
+        CustomCommandsLabel2.Opacity = IsCLIEnabled ? 1 : 0.5;
+        CustomCommandsLabel3.Opacity = IsCLIEnabled ? 1 : 0.5;
+        GoToCLISettings.Visibility = IsCLIEnabled ? Visibility.Collapsed : Visibility.Visible;
+        CLIDisabled.Visibility = IsCLIEnabled ? Visibility.Collapsed : Visibility.Visible;
+
         CustomParameters1.Text = string.Join(' ', options.CustomParameters_Install);
-
-        CustomParameters2.IsEnabled = true;
         CustomParameters2.Text = string.Join(' ', options.CustomParameters_Update);
-
-        CustomParameters3.IsEnabled = true;
         CustomParameters3.Text = string.Join(' ', options.CustomParameters_Uninstall);
 
         ResetButton.IsEnabled = true;
@@ -284,5 +292,10 @@ public sealed partial class InstallOptions_Manager : UserControl
     private void ApplyButton_Click(object sender, RoutedEventArgs e)
     {
         _ = SaveOptions();
+    }
+
+    private void GoToSecureSettings_Click(object sender, RoutedEventArgs e)
+    {
+        MainApp.Instance.MainWindow.NavigationPage.OpenSettingsPage(typeof(Administrator));
     }
 }

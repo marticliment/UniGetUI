@@ -298,12 +298,14 @@
                                             x:Name="CLIDisabled"
                                             Foreground="{ThemeResource SystemErrorTextColor}"
                                             Text="For security reasons, custom command-line arguments are disabled by default. Go to UniGetUI security settings to change this. " />
-                                        <Button
+                                        <HyperlinkButton
                                             x:Name="GoToCLISettings"
+                                            Margin="0,-8,0,0"
+                                            Padding="0"
                                             HorizontalAlignment="Center"
                                             Click="GoToSecureSettings_Click">
-                                            <widgets:TranslatedTextBlock Text="Go to UniGetUI security settings" />
-                                        </Button>
+                                            <widgets:TranslatedTextBlock FontWeight="SemiBold" Text="Go to UniGetUI security settings" />
+                                        </HyperlinkButton>
                                         <Grid ColumnSpacing="8" RowSpacing="8">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*" />
