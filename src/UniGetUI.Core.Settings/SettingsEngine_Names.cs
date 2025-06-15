@@ -67,17 +67,4 @@ public static partial class Settings
     public const string HideToggleFilters = "HideToggleFilters";
     public const string FreshBoolSetting = "FreshBoolSetting";
     public const string FreshValue = "FreshValue";
-    /*public const string SidepanelWidths = "SidepanelWidths";
-    public const string SidepanelWidths = "SidepanelWidths";
-    public const string SidepanelWidths = "SidepanelWidths";
-    public const string SidepanelWidths = "SidepanelWidths";
-    public const string SidepanelWidths = "SidepanelWidths";
-    public const string SidepanelWidths = "SidepanelWidths";
-    public const string SidepanelWidths = "SidepanelWidths";
-    public const string SidepanelWidths = "SidepanelWidths";
-    public const string SidepanelWidths = "SidepanelWidths";
-    public const string SidepanelWidths = "SidepanelWidths";
-    public const string SidepanelWidths = "SidepanelWidths";
-    public const string SidepanelWidths = "SidepanelWidths";
-    */
 }
