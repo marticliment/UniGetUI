@@ -75,7 +75,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         private void ResetBackupPath_Click(object sender, RoutedEventArgs e)
         {
             BackupDirectoryLabel.Text = CoreData.UniGetUI_DefaultBackupDirectory;
-            Settings.Set("ChangeBackupOutputDirectory", false);
+            Settings.Set(Settings.ChangeBackupOutputDirectory, false);
             ResetBackupDirectory.IsEnabled = false;
         }
 

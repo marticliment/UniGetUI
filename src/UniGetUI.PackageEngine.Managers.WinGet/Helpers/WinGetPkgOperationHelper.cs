@@ -210,11 +210,11 @@ internal sealed class WinGetPkgOperationHelper : BasePkgOperationHelper
 
     private static void MarkUpgradeAsDone(IPackage package)
     {
-        Settings.SetDictionaryItem<string, string>("WinGetAlreadyUpgradedPackages", package.Id, package.NewVersionString);
+        Settings.SetDictionaryItem<string, string>(Settings.WinGetAlreadyUpgradedPackages, package.Id, package.NewVersionString);
     }
 
     public static bool UpdateAlreadyInstalled(IPackage package)
     {
-        return Settings.GetDictionaryItem<string, string>("WinGetAlreadyUpgradedPackages", package.Id) == package.NewVersionString;
+        return Settings.GetDictionaryItem<string, string>(Settings.WinGetAlreadyUpgradedPackages, package.Id) == package.NewVersionString;
     }
 }

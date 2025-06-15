@@ -8,7 +8,6 @@ public static partial class Settings
     public const string IconDataBaseURL = "IconDataBaseURL";
     public const string DisableLangAutoUpdater = "DisableLangAutoUpdater";
     public const string DisableDMWThreadOptimizations = "DisableDMWThreadOptimizations";
-    public const string DisableWidgetsApi = "DisableWidgetsApi";
     public const string DisableTelemetry = "DisableTelemetry";
     public const string DisableTimeoutOnPackageListingTasks = "DisableTimeoutOnPackageListingTasks";
     public const string RemoveAllDesktopShortcuts = "RemoveAllDesktopShortcuts";
@@ -28,7 +27,7 @@ public static partial class Settings
     public const string EnableUniGetUIBeta = "EnableUniGetUIBeta";
     public const string ShowVersionNumberOnTitlebar = "ShowVersionNumberOnTitlebar";
     public const string TransferredOldSettings = "TransferredOldSettings";
-    public const string /* TODO: NEEDS REVIEW */ DisableApi = "DisableApi";
+    public const string DisableApi = "DisableApi";
     public const string DisableSystemTray = "DisableSystemTray";
     public const string MaintainSuccessfulInstalls = "MaintainSuccessfulInstalls";
     public const string AutomaticallyUpdatePackages = "AutomaticallyUpdatePackages";
@@ -56,14 +55,29 @@ public static partial class Settings
     public const string WindowGeometry = "WindowGeometry";
     public const string ChangeBackupFileName = "ChangeBackupFileName";
     public const string CurrentSessionToken = "CurrentSessionToken";
-    /*public const string EnableProxyAuth = "EnableProxyAuth";
-    public const string EnableProxyAuth = "EnableProxyAuth";
-    public const string EnableProxyAuth = "EnableProxyAuth";
-    public const string EnableProxyAuth = "EnableProxyAuth";
-    public const string EnableProxyAuth = "EnableProxyAuth";
-    public const string EnableProxyAuth = "EnableProxyAuth";
-    public const string EnableProxyAuth = "EnableProxyAuth";
-    public const string EnableProxyAuth = "EnableProxyAuth";
-    public const string EnableProxyAuth = "EnableProxyAuth";
+    public const string IgnoredPackageUpdates = "IgnoredPackageUpdates";
+    public const string DisabledManagers = "DisabledManagers";
+    public const string DeletableDesktopShortcuts = "DeletableDesktopShortcuts";
+    public const string WinGetAlreadyUpgradedPackages = "WinGetAlreadyUpgradedPackages";
+    public const string DependencyManagement = "DependencyManagement";
+    public const string DisabledPackageManagerNotifications = "DisabledPackageManagerNotifications";
+    public const string PackageListViewMode = "PackageListViewMode";
+    public const string DisableInstantSearch = "DisableInstantSearch";
+    public const string SidepanelWidths = "SidepanelWidths";
+    public const string HideToggleFilters = "HideToggleFilters";
+    public const string FreshBoolSetting = "FreshBoolSetting";
+    public const string FreshValue = "FreshValue";
+    /*public const string SidepanelWidths = "SidepanelWidths";
+    public const string SidepanelWidths = "SidepanelWidths";
+    public const string SidepanelWidths = "SidepanelWidths";
+    public const string SidepanelWidths = "SidepanelWidths";
+    public const string SidepanelWidths = "SidepanelWidths";
+    public const string SidepanelWidths = "SidepanelWidths";
+    public const string SidepanelWidths = "SidepanelWidths";
+    public const string SidepanelWidths = "SidepanelWidths";
+    public const string SidepanelWidths = "SidepanelWidths";
+    public const string SidepanelWidths = "SidepanelWidths";
+    public const string SidepanelWidths = "SidepanelWidths";
+    public const string SidepanelWidths = "SidepanelWidths";
     */
 }

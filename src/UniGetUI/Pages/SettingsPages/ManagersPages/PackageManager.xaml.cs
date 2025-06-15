@@ -293,7 +293,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 ResetVcPkgRootLabel.Click += (_, _) =>
                 {
                     VcPkgRootLabel.Text = "%VCPKG_ROOT%";
-                    Settings.Set("CustomVcpkgRoot", false);
+                    Settings.Set(Settings.CustomVcpkgRoot, false);
                     ResetVcPkgRootLabel.IsEnabled = false;
                     OpenVcPkgRootLabel.IsEnabled = false;
                 };

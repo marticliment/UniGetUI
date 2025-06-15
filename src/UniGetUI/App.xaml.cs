@@ -325,7 +325,7 @@ namespace UniGetUI
 
                     if (!isInstalled)
                     {
-                        if (Settings.GetDictionaryItem<string, string>("DependencyManagement", dependency.Name) == "skipped")
+                        if (Settings.GetDictionaryItem<string, string>(Settings.DependencyManagement, dependency.Name) == "skipped")
                         {
                             Logger.Error($"Dependency {dependency.Name} was not found, and the user set it to not be reminded of the missing dependency");
                         }

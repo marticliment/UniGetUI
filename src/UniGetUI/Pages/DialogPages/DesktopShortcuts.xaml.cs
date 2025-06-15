@@ -104,7 +104,7 @@ namespace UniGetUI.Interface
 
         private void HandleAllDesktop_Unchecked(object sender, RoutedEventArgs e)
         {
-            Settings.Set("RemoveAllDesktopShortcuts", false);
+            Settings.Set(Settings.RemoveAllDesktopShortcuts, false);
         }
 
         public void SaveChanges()

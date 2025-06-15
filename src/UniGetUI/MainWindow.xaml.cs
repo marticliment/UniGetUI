@@ -230,7 +230,7 @@ namespace UniGetUI.Interface
                     string SettingName = "Disable" + Manager.Name;
                     if (Settings.Get(SettingName))
                     {
-                        Settings.SetDictionaryItem("DisabledManagers", Manager.Name, true);
+                        Settings.SetDictionaryItem(Settings.DisabledManagers, Manager.Name, true);
                         Settings.Set(SettingName, false);
                     }
                 }
@@ -241,22 +241,22 @@ namespace UniGetUI.Interface
                 {
                     if (Settings.Get($"HideToggleFilters{Page}Page"))
                     {
-                        Settings.SetDictionaryItem("HideToggleFilters", Page, true);
+                        Settings.SetDictionaryItem(Settings.HideToggleFilters, Page, true);
                         Settings.Set($"HideToggleFilters{Page}Page", false);
                     }
 
                     if (Settings.Get($"DisableInstantSearch{Page}Tab"))
                     {
-                        Settings.SetDictionaryItem("DisableInstantSearch", Page, true);
+                        Settings.SetDictionaryItem(Settings.DisableInstantSearch, Page, true);
                         Settings.Set($"DisableInstantSearch{Page}Tab", false);
                     }
 
                     if (!int.TryParse(Settings.GetValue($"SidepanelWidth{Page}Page"), out int sidepanelWidth)) sidepanelWidth = 250;
-                    Settings.SetDictionaryItem("SidepanelWidths", Page, sidepanelWidth);
+                    Settings.SetDictionaryItem(Settings.SidepanelWidths, Page, sidepanelWidth);
                     Settings.Set($"SidepanelWidth{Page}Page", false);
                 }
 
-                Settings.Set("TransferredOldSettings", true);
+                Settings.Set(Settings.TransferredOldSettings, true);
             }
         }
 
@@ -1002,7 +1002,7 @@ namespace UniGetUI.Interface
 
             if(this.AppWindow.Size.Width >= 1600)
             {
-                Settings.Set("CollapseNavMenuOnWideScreen", NavigationPage.NavView.IsPaneOpen);
+                Settings.Set(Settings.CollapseNavMenuOnWideScreen, NavigationPage.NavView.IsPaneOpen);
             }
             NavigationPage.NavView.IsPaneOpen = !NavigationPage.NavView.IsPaneOpen;
         }

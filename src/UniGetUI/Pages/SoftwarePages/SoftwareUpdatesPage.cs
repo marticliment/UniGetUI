@@ -419,7 +419,7 @@ namespace UniGetUI.Interface.SoftwarePages
                     string attribution = "";
                     foreach (IPackage package in upgradablePackages)
                     {
-                        if (!Settings.GetDictionaryItem<string, bool>("DisabledPackageManagerNotifications", package.Manager.Name))
+                        if (!Settings.GetDictionaryItem<string, bool>(Settings.DisabledPackageManagerNotifications, package.Manager.Name))
                             attribution += package.Name + ", ";
                     }
 
@@ -464,7 +464,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 bool SendNotification = false;
                 foreach (var Package in upgradablePackages)
                 {
-                    if (!Settings.GetDictionaryItem<string, bool>("DisabledPackageManagerNotifications", Package.Manager.Name))
+                    if (!Settings.GetDictionaryItem<string, bool>(Settings.DisabledPackageManagerNotifications, Package.Manager.Name))
                     {
                         SendNotification = true;
                         break;

@@ -274,7 +274,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                     }
 
                     CoreTools.CreateSymbolicLinkDir(old_choco_path, new_choco_path);
-                    Settings.Set("ChocolateySymbolicLinkCreated", true);
+                    Settings.Set(Settings.ChocolateySymbolicLinkCreated, true);
                     Logger.Info($"Symbolic link created successfully from {old_choco_path} to {new_choco_path}.");
 
                 }

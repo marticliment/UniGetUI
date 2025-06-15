@@ -16,12 +16,12 @@ public static class DesktopShortcutsDatabase
 
     public static IReadOnlyDictionary<string, bool> GetDatabase()
     {
-        return Settings.GetDictionary<string, bool>("DeletableDesktopShortcuts") ?? new Dictionary<string, bool>();
+        return Settings.GetDictionary<string, bool>(Settings.DeletableDesktopShortcuts) ?? new Dictionary<string, bool>();
     }
 
     public static void ResetDatabase()
     {
-        Settings.ClearDictionary("DeletableDesktopShortcuts");
+        Settings.ClearDictionary(Settings.DeletableDesktopShortcuts);
     }
 
     /// <summary>
@@ -32,9 +32,9 @@ public static class DesktopShortcutsDatabase
     public static void AddToDatabase(string shortcutPath, Status shortcutStatus)
     {
         if (shortcutStatus is Status.Unknown)
-            Settings.RemoveDictionaryKey<string, bool>("DeletableDesktopShortcuts", shortcutPath);
+            Settings.RemoveDictionaryKey<string, bool>(Settings.DeletableDesktopShortcuts, shortcutPath);
         else
-            Settings.SetDictionaryItem<string, bool>("DeletableDesktopShortcuts", shortcutPath, shortcutStatus is Status.Delete);
+            Settings.SetDictionaryItem<string, bool>(Settings.DeletableDesktopShortcuts, shortcutPath, shortcutStatus is Status.Delete);
     }
 
     /// <summary>
@@ -45,10 +45,10 @@ public static class DesktopShortcutsDatabase
     public static bool Remove(string shortcutPath)
     {
         // Remove the entry if present
-        if (Settings.DictionaryContainsKey<string, bool>("DeletableDesktopShortcuts", shortcutPath))
+        if (Settings.DictionaryContainsKey<string, bool>(Settings.DeletableDesktopShortcuts, shortcutPath))
         {
             // Remove the entry and propagate changes to disk
-            Settings.SetDictionaryItem("DeletableDesktopShortcuts", shortcutPath, false);
+            Settings.SetDictionaryItem(Settings.DeletableDesktopShortcuts, shortcutPath, false);
             return true;
         }
 
@@ -88,9 +88,9 @@ public static class DesktopShortcutsDatabase
     public static Status GetStatus(string shortcutPath)
     {
         // Check if the package is ignored
-        if (Settings.DictionaryContainsKey<string, bool>("DeletableDesktopShortcuts", shortcutPath))
+        if (Settings.DictionaryContainsKey<string, bool>(Settings.DeletableDesktopShortcuts, shortcutPath))
         {
-            bool canDelete = Settings.GetDictionaryItem<string, bool>("DeletableDesktopShortcuts", shortcutPath);
+            bool canDelete = Settings.GetDictionaryItem<string, bool>(Settings.DeletableDesktopShortcuts, shortcutPath);
             return canDelete ? Status.Delete : Status.Maintain;
         }
 
@@ -119,7 +119,7 @@ public static class DesktopShortcutsDatabase
     {
         var shortcuts = GetShortcutsOnDisk();
 
-        foreach (var item in Settings.GetDictionary<string, bool>("DeletableDesktopShortcuts"))
+        foreach (var item in Settings.GetDictionary<string, bool>(Settings.DeletableDesktopShortcuts))
         {
             if (!shortcuts.Contains(item.Key))
                 shortcuts.Add(item.Key);

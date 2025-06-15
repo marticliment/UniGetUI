@@ -43,13 +43,6 @@ namespace UniGetUI.Interface
 
         public async Task Start()
         {
-
-            if (Settings.Get(Settings.DisableWidgetsApi))
-            {
-                Logger.Warn("Widgets API is disabled");
-                return;
-            }
-
             ApiTokenHolder.Token = CoreTools.RandomString(64);
             Settings.SetValue(Settings.CurrentSessionToken, ApiTokenHolder.Token);
             Logger.Info("Randomly-generated background API auth token: " + ApiTokenHolder.Token);

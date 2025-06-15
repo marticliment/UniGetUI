@@ -101,15 +101,15 @@ public static partial class DialogHelper
         string fancy_command, int current, int total)
     {
 
-        if (Settings.GetDictionaryItem<string, string>("DependencyManagement", dep_name) == "skipped")
+        if (Settings.GetDictionaryItem<string, string>(Settings.DependencyManagement, dep_name) == "skipped")
         {
             Logger.Error(
                 $"Dependency {dep_name} was not found, and the user set it to not be reminded of the missing dependency");
             return;
         }
 
-        bool NotFirstTime = Settings.GetDictionaryItem<string, string>("DependencyManagement", dep_name) == "attempted";
-        Settings.SetDictionaryItem("DependencyManagement", dep_name, "attempted");
+        bool NotFirstTime = Settings.GetDictionaryItem<string, string>(Settings.DependencyManagement, dep_name) == "attempted";
+        Settings.SetDictionaryItem(Settings.DependencyManagement, dep_name, "attempted");
 
         var dialog = DialogFactory.Create();
         dialog.Title = CoreTools.Translate("Missing dependency") + (total > 1 ? $" ({current}/{total})" : "");
@@ -168,8 +168,8 @@ public static partial class DialogHelper
         {
             c.Content = CoreTools.Translate("Do not show this dialog again for {0}", dep_name);
             c.IsChecked = false;
-            c.Checked += (_, _) => Settings.SetDictionaryItem("DependencyManagement", dep_name, "skipped");
-            c.Unchecked += (_, _) => Settings.SetDictionaryItem("DependencyManagement", dep_name, "attempted");
+            c.Checked += (_, _) => Settings.SetDictionaryItem(Settings.DependencyManagement, dep_name, "skipped");
+            c.Unchecked += (_, _) => Settings.SetDictionaryItem(Settings.DependencyManagement, dep_name, "attempted");
             p.Children.Add(c);
         }
 
@@ -424,7 +424,7 @@ public static partial class DialogHelper
 
             // Toggle bundled WinGet
             if (Settings.Get(Settings.ForceLegacyBundledWinGet))
-                Settings.Set("ForceLegacyBundledWinGet", false);
+                Settings.Set(Settings.ForceLegacyBundledWinGet, false);
 
             var c = DialogFactory.Create();
             c.Title = CoreTools.Translate("WinGet was repaired successfully");
@@ -517,11 +517,11 @@ public static partial class DialogHelper
 
         if (res is ContentDialogResult.Primary)
         {
-            Settings.Set("DisableTelemetry", false);
+            Settings.Set(Settings.DisableTelemetry, false);
         }
         else
         {
-            Settings.Set("DisableTelemetry", true);
+            Settings.Set(Settings.DisableTelemetry, true);
         }
     }
 
@@ -543,7 +543,7 @@ public static partial class DialogHelper
         {
             Window.TelemetryWarner.Visibility = Visibility.Collapsed;
             Window.TelemetryWarner.IsOpen = false;
-            Settings.Set("ShownTelemetryBanner", true);
+            Settings.Set(Settings.ShownTelemetryBanner, true);
         };
 
         var SettingsBtn = new Button()
@@ -555,7 +555,7 @@ public static partial class DialogHelper
             Window.TelemetryWarner.Visibility = Visibility.Collapsed;
             Window.TelemetryWarner.IsOpen = false;
             ShowTelemetryDialog();
-            Settings.Set("ShownTelemetryBanner", true);
+            Settings.Set(Settings.ShownTelemetryBanner, true);
         };
 
         StackPanel btns = new() { Margin = new Thickness(4,0,4,0), Spacing = 4, Orientation = Orientation.Horizontal };
@@ -571,7 +571,7 @@ public static partial class DialogHelper
         };
         mainButton.Resources["HyperlinkButtonBackgroundPointerOver"] = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
 
-        Window.TelemetryWarner.CloseButtonClick += (_, _) => Settings.Set("ShownTelemetryBanner", true);
+        Window.TelemetryWarner.CloseButtonClick += (_, _) => Settings.Set(Settings.ShownTelemetryBanner, true);
 
     }
 
@@ -587,7 +587,7 @@ public static partial class DialogHelper
         dialog.DefaultButton = ContentDialogButton.Close;
         if (await Window.ShowDialogAsync(dialog) is ContentDialogResult.Primary)
         {
-            Settings.Set("RemoveAllDesktopShortcuts", true);
+            Settings.Set(Settings.RemoveAllDesktopShortcuts, true);
         }
         _ = DialogHelper.ManageDesktopShortcuts();
     }

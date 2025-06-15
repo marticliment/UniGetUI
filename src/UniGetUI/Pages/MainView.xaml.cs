@@ -145,7 +145,7 @@ namespace UniGetUI.Interface
 
             if (CoreTools.IsAdministrator() && !Settings.Get(Settings.AlreadyWarnedAboutAdmin))
             {
-                Settings.Set("AlreadyWarnedAboutAdmin", true);
+                Settings.Set(Settings.AlreadyWarnedAboutAdmin, true);
                 DialogHelper.WarnAboutAdminRights();
             }
 
