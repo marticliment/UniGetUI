@@ -103,14 +103,16 @@ namespace UniGetUI.Core.Tools
         /// Finds an executable in path and returns its location
         /// </summary>
         /// <param name="command">The executable alias to find</param>
-        /// <returns>A tuple containing: a boolean hat represents whether the path was found or not; the path to the file if found.</returns>
+        /// <returns>A tuple containing: a boolean that represents whether the path was found or not; the path to the file if found.</returns>
         public static async Task<Tuple<bool, string>> WhichAsync(string command)
         {
             return await Task.Run(() => Which(command));
         }
 
-        public static Tuple<bool, string> Which(string command, bool updateEnv = true)
+        public static Tuple<bool, List<string>> WhichMultiple(string command, bool updateEnv = true)
         {
+            List<string> paths = [];
+
             command = command.Replace(";", "").Replace("&", "").Trim();
             Logger.Debug($"Begin \"which\" search for command {command}");
 
@@ -142,28 +144,36 @@ namespace UniGetUI.Core.Tools
             try
             {
                 process.Start();
-                string? line = process.StandardOutput.ReadLine();
-                string output;
-
-                if (line is null) output = "";
-                else output = line.Trim();
+                string[] lines = process.StandardOutput.ReadToEnd()
+                    .Split(["\r\n", "\n"], StringSplitOptions.RemoveEmptyEntries);
 
                 process.WaitForExit();
 
-                if (process.ExitCode != 0 || output == "")
+                if ((process.ExitCode != 0 || lines.Length == 0) && paths.Count == 0)
                 {
                     Logger.ImportantInfo($"Command {command} was not found on the system");
-                    return new Tuple<bool, string>(false, "");
+                    return new Tuple<bool, List<string>>(false, []);
                 }
 
-                Logger.Debug($"Command {command} was found on {output}");
-                return new Tuple<bool, string>(File.Exists(output), output);
+                foreach (var line in lines)
+                {
+                    Logger.Debug($"Command {command} was found on {line}{(line.Length > 1 ? $" (#{paths.Count + 1})" : "")}");
+                    paths.Add(line);
+                }
             }
             catch
             {
-                if (updateEnv) return Which(command, false);
+                if (updateEnv) return WhichMultiple(command, false);
                 throw;
             }
+            return new Tuple<bool, List<string>>(true, paths);
+        }
+
+        public static Tuple<bool, string> Which(string command, bool updateEnv = true)
+        {
+            var (found, paths) = WhichMultiple(command, updateEnv);
+            if (found && paths.Count > 0) return new Tuple<bool, string>(true, paths[0]);
+            else return new Tuple<bool, string>(false, "");
         }
 
         /// <summary>

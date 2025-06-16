@@ -21,6 +21,8 @@ using UniGetUI.Interface.Widgets;
 using UniGetUI.Core.Data;
 using UniGetUI.Pages.DialogPages;
 using UniGetUI.Core.SettingsEngine;
+using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using UniGetUI.Core.Logging;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -37,7 +39,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         public event EventHandler<Type>? NavigationRequested;
         public event EventHandler? ReapplyProperties;
         public bool CanGoBack => true;
-        public string ShortTitle => Manager is null? "": CoreTools.Translate("{0} settings", Manager.DisplayName);
+        public string ShortTitle => Manager is null ? "" : CoreTools.Translate("{0} settings", Manager.DisplayName);
 
         public PackageManagerPage()
         {
@@ -86,18 +88,29 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
 
             ManagerLogsLabel.Text = CoreTools.Translate("View {0} logs", Manager.DisplayName);
 
+            HashSet<string> Paths = ((PackageManager)Manager).LoadAvailablePaths();
+            var (CurrentlyExists, CurrentPath) = ((PackageManager)Manager).GetManagerExecutablePath();
+            foreach (string Path in Paths)
+            {
+                ManagerExecutable.AddItem(Path, Path);
+            }
+            ManagerExecutable.ShowAddedItems();
+            ManagerExecutable.SelectIndex(CurrentlyExists ? Paths.ToList().IndexOf(CurrentPath) : 0);
+            ManagerExecutable.ValueChanged += ManagerExecutableSelection_OnValueChanged;
+            
             InstallOptionsPanel.Description = new InstallOptions_Manager(Manager);
 
             // ----------------------- SOURCES CONTROL -------------------
 
             ExtraControls.Children.Clear();
 
-            if(Manager.Capabilities.SupportsCustomSources && Manager is not Vcpkg)
+            if (Manager.Capabilities.SupportsCustomSources && Manager is not Vcpkg)
             {
-                SettingsCard SourceManagerCard = new() {
+                SettingsCard SourceManagerCard = new()
+                {
                     Resources = { ["SettingsCardLeftIndention"] = 10 },
                     CornerRadius = new CornerRadius(8),
-                    Margin = new Thickness(0,0,0,16)
+                    Margin = new Thickness(0, 0, 0, 16)
                 };
                 var man = new SourceManager(Manager);
                 SourceManagerCard.Description = man;
@@ -231,23 +244,6 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 };
                 ExtraControls.Children.Add(Scoop_CleanupOnStart);
             }
-            // ----------------------------- CHOCO EXTRA SETTINGS ------------------------------
-
-            else if (Manager is Chocolatey)
-            {
-                DisableNotifsCard.CornerRadius = new CornerRadius(8,8,0,0);
-                DisableNotifsCard.BorderThickness = new Thickness(1, 1, 1, 0);
-                ExtraControls.Children.Add(DisableNotifsCard);
-
-                CheckboxCard Chocolatey_SystemChoco = new()
-                {
-                    Text = CoreTools.AutoTranslated("Use system Chocolatey"),
-                    SettingName = "UseSystemChocolatey",
-                    CornerRadius = new CornerRadius(0, 0, 8, 8)
-                };
-                Chocolatey_SystemChoco.StateChanged += (_, _) => RestartRequired?.Invoke(this, new());
-                ExtraControls.Children.Add(Chocolatey_SystemChoco);
-            }
 
             // -------------------------------- VCPKG EXTRA SETTINGS --------------------------------------
 
@@ -334,7 +330,18 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 ExtraControls.Children.Add(DisableNotifsCard);
             }
 
-                base.OnNavigatedTo(e);
+            // Hide the AppExecutionAliasWarning element if Manager is not Pip
+            if (Manager is Pip)
+            {
+                ManagerLogs.CornerRadius = new CornerRadius(8, 8, 0, 0);
+                AppExecutionAliasWarningLabel.Text = "If Python cannot be found or is not listing packages but is installed on the system, you may need to disable the \"python.exe\" App Execution Alias in the settings.";
+            }
+            else
+            {
+                AppExecutionAliasWarning.Visibility = Visibility.Collapsed;
+            }
+
+            base.OnNavigatedTo(e);
         }
 
         private void ShowVersionHyperlink_Click(object sender, RoutedEventArgs e)
@@ -353,7 +360,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 if (!Manager.Status.Version.Contains('\n'))
                 {
                     ManagerStatusBar.Message =
-                        CoreTools.Translate("{pm} version:", new Dictionary<string, object?> {{ "pm", Manager.DisplayName }}) + $" {Manager.Status.Version}";
+                        CoreTools.Translate("{pm} version:", new Dictionary<string, object?> { { "pm", Manager.DisplayName } }) + $" {Manager.Status.Version}";
                 }
                 else if (ShowVersion)
                 {
@@ -397,6 +404,12 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         private void ManagerLogs_Click(object sender, RoutedEventArgs e)
         {
             MainApp.Instance.MainWindow.NavigationPage.OpenManagerLogs(Manager as IPackageManager);
+        }
+
+        public void ManagerExecutableSelection_OnValueChanged(object sender, EventArgs e)
+        {
+            Settings.SetDictionaryItem("ManagerPaths", Manager.Name, ManagerExecutable.SelectedValue());
+            RestartRequired?.Invoke(this, EventArgs.Empty);
         }
     }
 }

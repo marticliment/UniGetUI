@@ -59,7 +59,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             // END integrity check
 
             Properties.DefaultSource.RefreshSourceNames();
-            foreach(var source in Properties.KnownSources)
+            foreach (var source in Properties.KnownSources)
             {
                 source.RefreshSourceNames();
             }
@@ -114,6 +114,44 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                 Logger.Error("Could not initialize Package Manager " + Name);
                 Logger.Error(e);
             }
+        }
+
+        /// <summary>
+        /// Returns a list of paths that could be used for this package manager.
+        /// For example, if you have three Pythons installed on your system, this would return those three Pythons.
+        /// </summary>
+        /// <returns>A tuple containing: a boolean that represents whether the path was found or not; the path to the file if found.</returns>
+        public abstract HashSet<string> LoadAvailablePaths();
+
+        public Tuple<bool, string> GetManagerExecutablePath()
+        {
+            HashSet<string> AvailablePaths = LoadAvailablePaths();
+            string? Path = Settings.GetDictionaryItem<string, string>("ManagerPaths", Name);
+
+            if (AvailablePaths.Count == 0)
+            {
+                Logger.Warn("No available paths found for manager " + Name);
+
+                if (File.Exists(Path) && Path != null) Logger.Info("Using stored path " + Path);
+                else Logger.Error("Stored path " + Path + " is invalid");
+                return new Tuple<bool, string>(File.Exists(Path) && Path != null, Path ?? "");
+            }
+            else if (Path == null && File.Exists(AvailablePaths.ElementAt(0)))
+            {
+                Logger.Info("Stored path for " + Name + " is missing, using AvailablePaths[0]: " + AvailablePaths.ElementAt(0));
+                return new Tuple<bool, string>(true, AvailablePaths.ElementAt(0));
+            }
+            else
+            {
+                if (File.Exists(Path) && Path != null)
+                {
+                    Logger.Info("Using stored path " + Path);
+                    return new Tuple<bool, string>(true, Path);
+                }
+            }
+
+            Logger.Info("No suitable path found for " + Name);
+            return new Tuple<bool, string>(false, "");
         }
 
         /// <summary>
