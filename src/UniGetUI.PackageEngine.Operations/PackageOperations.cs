@@ -89,7 +89,7 @@ namespace UniGetUI.PackageEngine.Operations
             if (RequiresAdminRights() && IsAdmin is false)
             {
                 IsAdmin = true;
-                if (Settings.Get(Settings.DoCacheAdminRights) || Settings.Get(Settings.DoCacheAdminRightsForBatches))
+                if (Settings.Get(Settings.K.DoCacheAdminRights) || Settings.Get(Settings.K.DoCacheAdminRightsForBatches))
                 {
                     RequestCachingOfUACPrompt();
                 }
@@ -152,7 +152,7 @@ namespace UniGetUI.PackageEngine.Operations
             Package.SetTag(PackageTag.AlreadyInstalled);
             InstalledPackagesLoader.Instance.AddForeign(Package);
 
-            if (Settings.Get(Settings.AskToDeleteNewDesktopShortcuts))
+            if (Settings.Get(Settings.K.AskToDeleteNewDesktopShortcuts))
             {
                 DesktopShortcutsDatabase.HandleNewShortcuts(DesktopShortcutsBeforeStart);
             }
@@ -172,7 +172,7 @@ namespace UniGetUI.PackageEngine.Operations
             Metadata.FailureTitle = CoreTools.Translate("Installation failed", new Dictionary<string, object?> { { "package", Package.Name } });
             Metadata.FailureMessage = CoreTools.Translate("{package} could not be installed", new Dictionary<string, object?> { { "package", Package.Name } });
 
-            if (Settings.Get(Settings.AskToDeleteNewDesktopShortcuts))
+            if (Settings.Get(Settings.K.AskToDeleteNewDesktopShortcuts))
             {
                 DesktopShortcutsBeforeStart = DesktopShortcutsDatabase.GetShortcutsOnDisk();
             }
@@ -204,7 +204,7 @@ namespace UniGetUI.PackageEngine.Operations
 
             UpgradablePackagesLoader.Instance.Remove(Package);
 
-            if (Settings.Get(Settings.AskToDeleteNewDesktopShortcuts))
+            if (Settings.Get(Settings.K.AskToDeleteNewDesktopShortcuts))
             {
                 DesktopShortcutsDatabase.HandleNewShortcuts(DesktopShortcutsBeforeStart);
             }
@@ -226,7 +226,7 @@ namespace UniGetUI.PackageEngine.Operations
             Metadata.FailureTitle = CoreTools.Translate("Update failed", new Dictionary<string, object?> { { "package", Package.Name } });
             Metadata.FailureMessage = CoreTools.Translate("{package} could not be updated", new Dictionary<string, object?> { { "package", Package.Name } });
 
-            if (Settings.Get(Settings.AskToDeleteNewDesktopShortcuts))
+            if (Settings.Get(Settings.K.AskToDeleteNewDesktopShortcuts))
             {
                 DesktopShortcutsBeforeStart = DesktopShortcutsDatabase.GetShortcutsOnDisk();
             }

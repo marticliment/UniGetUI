@@ -132,7 +132,7 @@ namespace UniGetUI.Core.Language
                             Name: (url is not null ? "@" : "") + (translator["name"] ?? "").ToString(),
                             ProfilePicture: url is not null ? new Uri(url.ToString() + ".png") : null,
                             GitHubUrl: url,
-                            Language: !LangShown ? LanguageData.LanguageReference[langKey.Key] : ""
+                            Language: !LangShown ? LanguageReference[langKey.Key] : ""
                         );
                         LangShown = true;
                         result.Add(person);

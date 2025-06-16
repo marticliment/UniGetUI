@@ -107,7 +107,7 @@ public partial class OperationControl: INotifyPropertyChanged
         ShowSuccessToast();
 
         // Clean succesful operation from list
-        if (!Settings.Get(Settings.MaintainSuccessfulInstalls) && Operation is not DownloadOperation)
+        if (!Settings.Get(Settings.K.MaintainSuccessfulInstalls) && Operation is not DownloadOperation)
         {
             await TimeoutAndClose();
         }
@@ -146,17 +146,17 @@ public partial class OperationControl: INotifyPropertyChanged
             rawOutput.Add(line.Item1);
         }
 
-        string[] oldHistory = Settings.GetValue(Settings.OperationHistory).Split("\n");
+        string[] oldHistory = Settings.GetValue(Settings.K.OperationHistory).Split("\n");
         if (oldHistory.Length > 300) oldHistory = oldHistory.Take(300).ToArray();
 
         List<string> newHistory = [.. rawOutput, .. oldHistory];
-        Settings.SetValue(Settings.OperationHistory, string.Join('\n', newHistory));
+        Settings.SetValue(Settings.K.OperationHistory, string.Join('\n', newHistory));
         rawOutput.Add("");
         rawOutput.Add("");
         rawOutput.Add("");
 
         // Handle UAC for batches
-        if (Settings.Get(Settings.DoCacheAdminRightsForBatches))
+        if (Settings.Get(Settings.K.DoCacheAdminRightsForBatches))
         {
             if (!MainApp.Operations.AreThereRunningOperations())
             {
@@ -166,7 +166,7 @@ public partial class OperationControl: INotifyPropertyChanged
         }
 
         // Handle newly created shortcuts
-        if(Settings.Get(Settings.AskToDeleteNewDesktopShortcuts)
+        if(Settings.Get(Settings.K.AskToDeleteNewDesktopShortcuts)
             && !MainApp.Operations.AreThereRunningOperations()
             && DesktopShortcutsDatabase.GetUnknownShortcuts().Any())
         {

@@ -29,8 +29,8 @@ namespace UniGetUI.Core.Tools
                 IWebProxy? proxy = null;
                 ICredentials? creds = null;
 
-                if (Settings.Get(Settings.EnableProxy)) proxyUri = Settings.GetProxyUrl();
-                if (Settings.Get(Settings.EnableProxyAuth)) creds = Settings.GetProxyCredentials();
+                if (Settings.Get(Settings.K.EnableProxy)) proxyUri = Settings.GetProxyUrl();
+                if (Settings.Get(Settings.K.EnableProxyAuth)) creds = Settings.GetProxyCredentials();
                 if (proxyUri is not null) proxy = new WebProxy()
                 {
                     Address = proxyUri,
@@ -608,7 +608,7 @@ namespace UniGetUI.Core.Tools
 
         public static void _waitForInternetConnection()
         {
-            if (Settings.Get(Settings.DisableWaitForInternetConnection)) return;
+            if (Settings.Get(Settings.K.DisableWaitForInternetConnection)) return;
 
             Logger.Debug("Checking for internet connectivity...");
             bool internetLost = false;

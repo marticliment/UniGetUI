@@ -72,7 +72,7 @@ namespace UniGetUI.Interface
             LoadTrayMenu();
             ApplyTheme();
 
-            if (Settings.Get(Settings.ShowVersionNumberOnTitlebar))
+            if (Settings.Get(Settings.K.ShowVersionNumberOnTitlebar))
             {
                 AddToSubtitle(CoreTools.Translate("version {0}", CoreData.VersionName));
             }
@@ -172,14 +172,14 @@ namespace UniGetUI.Interface
             try
             {
                 var proxyUri = Settings.GetProxyUrl();
-                if (proxyUri is null || !Settings.Get(Settings.EnableProxy))
+                if (proxyUri is null || !Settings.Get(Settings.K.EnableProxy))
                 {
                     Environment.SetEnvironmentVariable("HTTP_PROXY", "", EnvironmentVariableTarget.Process);
                     return;
                 }
 
                 string content;
-                if (Settings.Get(Settings.EnableProxyAuth) is false)
+                if (Settings.Get(Settings.K.EnableProxyAuth) is false)
                 {
                     content = proxyUri.ToString();
                 }
@@ -223,14 +223,14 @@ namespace UniGetUI.Interface
 
         private static void TransferOldSettingsFormats()
         {
-            if (!Settings.Get(Settings.TransferredOldSettings))
+            /*if (!Settings.Get(Settings.K.TransferredOldSettings))
             {
                 foreach (IPackageManager Manager in PEInterface.Managers)
                 {
                     string SettingName = "Disable" + Manager.Name;
                     if (Settings.Get(SettingName))
                     {
-                        Settings.SetDictionaryItem(Settings.DisabledManagers, Manager.Name, true);
+                        Settings.SetDictionaryItem(Settings.K.DisabledManagers, Manager.Name, true);
                         Settings.Set(SettingName, false);
                     }
                 }
@@ -241,23 +241,23 @@ namespace UniGetUI.Interface
                 {
                     if (Settings.Get($"HideToggleFilters{Page}Page"))
                     {
-                        Settings.SetDictionaryItem(Settings.HideToggleFilters, Page, true);
+                        Settings.SetDictionaryItem(Settings.K.HideToggleFilters, Page, true);
                         Settings.Set($"HideToggleFilters{Page}Page", false);
                     }
 
                     if (Settings.Get($"DisableInstantSearch{Page}Tab"))
                     {
-                        Settings.SetDictionaryItem(Settings.DisableInstantSearch, Page, true);
+                        Settings.SetDictionaryItem(Settings.K.DisableInstantSearch, Page, true);
                         Settings.Set($"DisableInstantSearch{Page}Tab", false);
                     }
 
                     if (!int.TryParse(Settings.GetValue($"SidepanelWidth{Page}Page"), out int sidepanelWidth)) sidepanelWidth = 250;
-                    Settings.SetDictionaryItem(Settings.SidepanelWidths, Page, sidepanelWidth);
+                    Settings.SetDictionaryItem(Settings.K.SidepanelWidths, Page, sidepanelWidth);
                     Settings.Set($"SidepanelWidth{Page}Page", false);
                 }
 
-                Settings.Set(Settings.TransferredOldSettings, true);
-            }
+                Settings.Set(Settings.K.TransferredOldSettings, true);
+            }*/
         }
 
         public void HandleNotificationActivation(AppNotificationActivatedEventArgs args)
@@ -298,7 +298,7 @@ namespace UniGetUI.Interface
         {
             AutoUpdater.ReleaseLockForAutoupdate_Window = true;
             SaveGeometry(Force: true);
-            if (!Settings.Get(Settings.DisableSystemTray) || AutoUpdater.UpdateReadyToBeInstalled)
+            if (!Settings.Get(Settings.K.DisableSystemTray) || AutoUpdater.UpdateReadyToBeInstalled)
             {
                 args.Cancel = true;
                 DWMThreadHelper.ChangeState_DWM(true);
@@ -662,7 +662,7 @@ namespace UniGetUI.Interface
                     }
                 }
 
-                if (Settings.Get(Settings.DisableSystemTray))
+                if (Settings.Get(Settings.K.DisableSystemTray))
                 {
                     TrayIcon.Visibility = Visibility.Collapsed;
                 }
@@ -708,7 +708,7 @@ namespace UniGetUI.Interface
 
         public void ApplyTheme()
         {
-            string preferredTheme = Settings.GetValue(Settings.PreferredTheme);
+            string preferredTheme = Settings.GetValue(Settings.K.PreferredTheme);
             if (preferredTheme == "dark")
             {
                 MainApp.Instance.ThemeListener.CurrentTheme = ApplicationTheme.Dark;
@@ -885,13 +885,13 @@ namespace UniGetUI.Interface
                 $"{AppWindow.Position.X},{AppWindow.Position.Y},{AppWindow.Size.Width},{AppWindow.Size.Height},{windowState}";
 
             Logger.Debug($"Saving window geometry {geometry}");
-            Settings.SetValue(Settings.WindowGeometry, geometry);
+            Settings.SetValue(Settings.K.WindowGeometry, geometry);
         }
 
         private void RestoreGeometry()
         {
 
-            string geometry = Settings.GetValue(Settings.WindowGeometry);
+            string geometry = Settings.GetValue(Settings.K.WindowGeometry);
             string[] items = geometry.Split(",");
             if (items.Length != 5)
             {
@@ -995,19 +995,19 @@ namespace UniGetUI.Interface
             return true;
         }
 
-        private void TitleBar_PaneToggleRequested(WinUIEx.TitleBar sender, object args)
+        private void TitleBar_PaneToggleRequested(TitleBar sender, object args)
         {
             if (NavigationPage is null)
                 return;
 
             if(this.AppWindow.Size.Width >= 1600)
             {
-                Settings.Set(Settings.CollapseNavMenuOnWideScreen, NavigationPage.NavView.IsPaneOpen);
+                Settings.Set(Settings.K.CollapseNavMenuOnWideScreen, NavigationPage.NavView.IsPaneOpen);
             }
             NavigationPage.NavView.IsPaneOpen = !NavigationPage.NavView.IsPaneOpen;
         }
 
-        private void TitleBar_OnBackRequested(WinUIEx.TitleBar sender, object args)
+        private void TitleBar_OnBackRequested(TitleBar sender, object args)
         {
             NavigationPage?.NavigateBack();
         }

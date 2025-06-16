@@ -48,7 +48,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         public void ShowRestartBanner(object sender, EventArgs e)
             => RestartRequired?.Invoke(this, e);
 
-        private void OperationsSettingsButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        private void OperationsSettingsButton_Click(object sender, RoutedEventArgs e)
         {
             NavigationRequested?.Invoke(this, typeof(Operations));
         }

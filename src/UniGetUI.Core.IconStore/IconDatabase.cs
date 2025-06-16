@@ -60,9 +60,9 @@ namespace UniGetUI.Core.IconEngine
             try
             {
                 Uri DownloadUrl = new("https://raw.githubusercontent.com/marticliment/UniGetUI/main/WebBasedData/screenshot-database-v2.json");
-                if (Settings.Get(Settings.IconDataBaseURL))
+                if (Settings.Get(Settings.K.IconDataBaseURL))
                 {
-                    DownloadUrl = new Uri(Settings.GetValue(Settings.IconDataBaseURL));
+                    DownloadUrl = new Uri(Settings.GetValue(Settings.K.IconDataBaseURL));
                 }
 
                 using (HttpClient client = new(CoreTools.GenericHttpClientParameters))

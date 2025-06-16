@@ -68,7 +68,7 @@ namespace UniGetUI
 
                 InitializeComponent();
 
-                string preferredTheme = Settings.GetValue(Settings.PreferredTheme);
+                string preferredTheme = Settings.GetValue(Settings.K.PreferredTheme);
                 if (preferredTheme == "dark")
                 {
                     RequestedTheme = ApplicationTheme.Dark;
@@ -254,7 +254,7 @@ namespace UniGetUI
         private async Task InitializeBackgroundAPI()
         {
             // Bind the background api to the main interface
-            if (!Settings.Get(Settings.DisableApi))
+            if (!Settings.Get(Settings.K.DisableApi))
             {
                 try
                 {
@@ -325,7 +325,7 @@ namespace UniGetUI
 
                     if (!isInstalled)
                     {
-                        if (Settings.GetDictionaryItem<string, string>(Settings.DependencyManagement, dependency.Name) == "skipped")
+                        if (Settings.GetDictionaryItem<string, string>(Settings.K.DependencyManagement, dependency.Name) == "skipped")
                         {
                             Logger.Error($"Dependency {dependency.Name} was not found, and the user set it to not be reminded of the missing dependency");
                         }
@@ -395,7 +395,7 @@ namespace UniGetUI
         public void KillAndRestart()
         {
             Process.Start(CoreData.UniGetUIExecutableFile);
-            MainApp.Instance.MainWindow?.Close();
+            Instance.MainWindow?.Close();
             Environment.Exit(0);
         }
     }

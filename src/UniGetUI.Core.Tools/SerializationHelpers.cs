@@ -30,7 +30,7 @@ public static class SerializationHelpers
         var doc = new XmlDocument();
         doc.LoadXml(XML);
         if (doc.DocumentElement is null) return "{'message': 'XmlDocument.DocumentElement was null'}";
-        return JsonSerializer.Serialize(_convertXmlNode(doc.DocumentElement), SerializationHelpers.DefaultOptions);
+        return JsonSerializer.Serialize(_convertXmlNode(doc.DocumentElement), DefaultOptions);
     }
 
     private static object? _convertXmlNode(XmlNode node)

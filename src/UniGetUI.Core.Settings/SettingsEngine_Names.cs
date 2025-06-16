@@ -2,69 +2,173 @@ namespace UniGetUI.Core.SettingsEngine;
 
 public static partial class Settings
 {
-    public const string EnableProxy = "EnableProxy";
-    public const string EnableProxyAuth = "EnableProxyAuth";
-    public const string DisableWaitForInternetConnection = "DisableWaitForInternetConnection";
-    public const string IconDataBaseURL = "IconDataBaseURL";
-    public const string DisableLangAutoUpdater = "DisableLangAutoUpdater";
-    public const string DisableDMWThreadOptimizations = "DisableDMWThreadOptimizations";
-    public const string DisableTelemetry = "DisableTelemetry";
-    public const string DisableTimeoutOnPackageListingTasks = "DisableTimeoutOnPackageListingTasks";
-    public const string RemoveAllDesktopShortcuts = "RemoveAllDesktopShortcuts";
-    public const string EnableScoopCleanup = "EnableScoopCleanup";
-    public const string IgnoreUpdatesNotApplicable = "IgnoreUpdatesNotApplicable";
-    public const string ForceLegacyBundledWinGet = "ForceLegacyBundledWinGet";
-    public const string DisableNewWinGetTroubleshooter = "DisableNewWinGetTroubleshooter";
-    public const string DisableUpdateVcpkgGitPorts = "DisableUpdateVcpkgGitPorts";
-    public const string ChocolateySymbolicLinkCreated = "ChocolateySymbolicLinkCreated";
-    public const string UseSystemChocolatey = "UseSystemChocolatey";
-    public const string DisableSelectingUpdatesByDefault = "DisableSelectingUpdatesByDefault";
-    public const string DisableAutoCheckforUpdates = "DisableAutoCheckforUpdates";
-    public const string AskToDeleteNewDesktopShortcuts = "AskToDeleteNewDesktopShortcuts";
-    public const string DoCacheAdminRights = "DoCacheAdminRights";
-    public const string DoCacheAdminRightsForBatches = "DoCacheAdminRightsForBatches";
-    public const string DisableAutoUpdateWingetUI = "DisableAutoUpdateWingetUI";
-    public const string EnableUniGetUIBeta = "EnableUniGetUIBeta";
-    public const string ShowVersionNumberOnTitlebar = "ShowVersionNumberOnTitlebar";
-    public const string TransferredOldSettings = "TransferredOldSettings";
-    public const string DisableApi = "DisableApi";
-    public const string DisableSystemTray = "DisableSystemTray";
-    public const string MaintainSuccessfulInstalls = "MaintainSuccessfulInstalls";
-    public const string AutomaticallyUpdatePackages = "AutomaticallyUpdatePackages";
-    public const string DisableAUPOnMeteredConnections = "DisableAUPOnMeteredConnections";
-    public const string DisableAUPOnBatterySaver = "DisableAUPOnBatterySaver";
-    public const string CustomVcpkgRoot = "CustomVcpkgRoot";
-    public const string AlreadyWarnedAboutAdmin = "AlreadyWarnedAboutAdmin";
-    public const string ShownTelemetryBanner = "ShownTelemetryBanner";
-    public const string CollapseNavMenuOnWideScreen = "CollapseNavMenuOnWideScreen";
-    public const string EnablePackageBackup = "EnablePackageBackup";
-    public const string ChangeBackupOutputDirectory = "ChangeBackupOutputDirectory";
-    public const string DisableWinGetMalfunctionDetector = "DisableWinGetMalfunctionDetector";
-    public const string EnableBackupTimestamping = "EnableBackupTimestamping";
-    public const string DisableIconsOnPackageLists = "DisableIconsOnPackageLists";
-    public const string ProxyURL = "ProxyURL";
-    public const string ProxyUsername = "ProxyUsername";
-    public const string PreferredLanguage = "PreferredLanguage";
-    public const string DefaultVcpkgTriplet = "DefaultVcpkgTriplet";
-    public const string UpdatesCheckInterval = "UpdatesCheckInterval";
-    public const string ParallelOperationCount = "ParallelOperationCount";
-    public const string TelemetryClientToken = "TelemetryClientToken";
-    public const string PreferredTheme = "PreferredTheme";
-    public const string OperationHistory = "OperationHistory";
-    public const string StartupPage = "StartupPage";
-    public const string WindowGeometry = "WindowGeometry";
-    public const string ChangeBackupFileName = "ChangeBackupFileName";
-    public const string CurrentSessionToken = "CurrentSessionToken";
-    public const string IgnoredPackageUpdates = "IgnoredPackageUpdates";
-    public const string DisabledManagers = "DisabledManagers";
-    public const string DeletableDesktopShortcuts = "DeletableDesktopShortcuts";
-    public const string WinGetAlreadyUpgradedPackages = "WinGetAlreadyUpgradedPackages";
-    public const string DependencyManagement = "DependencyManagement";
-    public const string DisabledPackageManagerNotifications = "DisabledPackageManagerNotifications";
-    public const string PackageListViewMode = "PackageListViewMode";
-    public const string DisableInstantSearch = "DisableInstantSearch";
-    public const string SidepanelWidths = "SidepanelWidths";
-    public const string HideToggleFilters = "HideToggleFilters";
-    public const string FreshBoolSetting = "FreshBoolSetting";
-    public const string FreshValue = "FreshValue";
+    public enum K
+    {
+        EnableProxy,
+        EnableProxyAuth,
+        DisableWaitForInternetConnection,
+        IconDataBaseURL,
+        DisableLangAutoUpdater,
+        DisableDMWThreadOptimizations,
+        DisableTelemetry,
+        DisableTimeoutOnPackageListingTasks,
+        RemoveAllDesktopShortcuts,
+        EnableScoopCleanup,
+        IgnoreUpdatesNotApplicable,
+        ForceLegacyBundledWinGet,
+        DisableNewWinGetTroubleshooter,
+        DisableUpdateVcpkgGitPorts,
+        ChocolateySymbolicLinkCreated,
+        UseSystemChocolatey,
+        DisableSelectingUpdatesByDefault,
+        DisableAutoCheckforUpdates,
+        AskToDeleteNewDesktopShortcuts,
+        DoCacheAdminRights,
+        DoCacheAdminRightsForBatches,
+        DisableAutoUpdateWingetUI,
+        EnableUniGetUIBeta,
+        ShowVersionNumberOnTitlebar,
+        TransferredOldSettings,
+        DisableApi,
+        DisableSystemTray,
+        MaintainSuccessfulInstalls,
+        AutomaticallyUpdatePackages,
+        DisableAUPOnMeteredConnections,
+        DisableAUPOnBatterySaver,
+        CustomVcpkgRoot,
+        AlreadyWarnedAboutAdmin,
+        ShownTelemetryBanner,
+        CollapseNavMenuOnWideScreen,
+        EnablePackageBackup,
+        ChangeBackupOutputDirectory,
+        DisableWinGetMalfunctionDetector,
+        EnableBackupTimestamping,
+        DisableIconsOnPackageLists,
+        ProxyURL,
+        ProxyUsername,
+        PreferredLanguage,
+        DefaultVcpkgTriplet,
+        UpdatesCheckInterval,
+        ParallelOperationCount,
+        TelemetryClientToken,
+        PreferredTheme,
+        OperationHistory,
+        StartupPage,
+        WindowGeometry,
+        ChangeBackupFileName,
+        CurrentSessionToken,
+        IgnoredPackageUpdates,
+        DisabledManagers,
+        DeletableDesktopShortcuts,
+        WinGetAlreadyUpgradedPackages,
+        DependencyManagement,
+        DisabledPackageManagerNotifications,
+        PackageListViewMode,
+        DisableInstantSearch,
+        SidepanelWidths,
+        HideToggleFilters,
+        FreshBoolSetting,
+        FreshValue,
+        DisableNotifications,
+        DisableUpdatesNotifications,
+        DisableErrorNotifications,
+        DisableSuccessNotifications,
+        DisableProgressNotifications,
+
+        Test1,
+        Test2,
+        Test3,
+        Test4,
+        Test5,
+        Test6,
+        Test7_Legacy,
+        Unset
+    };
+
+    public static string ResolveKey(K key)
+    {
+        return key switch
+        {
+            K.EnableProxy => "EnableProxy",
+            K.EnableProxyAuth => "EnableProxyAuth",
+            K.DisableWaitForInternetConnection => "DisableWaitForInternetConnection",
+            K.IconDataBaseURL => "IconDataBaseURL",
+            K.DisableLangAutoUpdater => "DisableLangAutoUpdater",
+            K.DisableDMWThreadOptimizations => "DisableDMWThreadOptimizations",
+            K.DisableTelemetry => "DisableTelemetry",
+            K.DisableTimeoutOnPackageListingTasks => "DisableTimeoutOnPackageListingTasks",
+            K.RemoveAllDesktopShortcuts => "RemoveAllDesktopShortcuts",
+            K.EnableScoopCleanup => "EnableScoopCleanup",
+            K.IgnoreUpdatesNotApplicable => "IgnoreUpdatesNotApplicable",
+            K.ForceLegacyBundledWinGet => "ForceLegacyBundledWinGet",
+            K.DisableNewWinGetTroubleshooter => "DisableNewWinGetTroubleshooter",
+            K.DisableUpdateVcpkgGitPorts => "DisableUpdateVcpkgGitPorts",
+            K.ChocolateySymbolicLinkCreated => "ChocolateySymbolicLinkCreated",
+            K.UseSystemChocolatey => "UseSystemChocolatey",
+            K.DisableSelectingUpdatesByDefault => "DisableSelectingUpdatesByDefault",
+            K.DisableAutoCheckforUpdates => "DisableAutoCheckforUpdates",
+            K.AskToDeleteNewDesktopShortcuts => "AskToDeleteNewDesktopShortcuts",
+            K.DoCacheAdminRights => "DoCacheAdminRights",
+            K.DoCacheAdminRightsForBatches => "DoCacheAdminRightsForBatches",
+            K.DisableAutoUpdateWingetUI => "DisableAutoUpdateWingetUI",
+            K.EnableUniGetUIBeta => "EnableUniGetUIBeta",
+            K.ShowVersionNumberOnTitlebar => "ShowVersionNumberOnTitlebar",
+            K.TransferredOldSettings => "TransferredOldSettings",
+            K.DisableApi => "DisableApi",
+            K.DisableSystemTray => "DisableSystemTray",
+            K.MaintainSuccessfulInstalls => "MaintainSuccessfulInstalls",
+            K.AutomaticallyUpdatePackages => "AutomaticallyUpdatePackages",
+            K.DisableAUPOnMeteredConnections => "DisableAUPOnMeteredConnections",
+            K.DisableAUPOnBatterySaver => "DisableAUPOnBatterySaver",
+            K.CustomVcpkgRoot => "CustomVcpkgRoot",
+            K.AlreadyWarnedAboutAdmin => "AlreadyWarnedAboutAdmin",
+            K.ShownTelemetryBanner => "ShownTelemetryBanner",
+            K.CollapseNavMenuOnWideScreen => "CollapseNavMenuOnWideScreen",
+            K.EnablePackageBackup => "EnablePackageBackup",
+            K.ChangeBackupOutputDirectory => "ChangeBackupOutputDirectory",
+            K.DisableWinGetMalfunctionDetector => "DisableWinGetMalfunctionDetector",
+            K.EnableBackupTimestamping => "EnableBackupTimestamping",
+            K.DisableIconsOnPackageLists => "DisableIconsOnPackageLists",
+            K.ProxyURL => "ProxyURL",
+            K.ProxyUsername => "ProxyUsername",
+            K.PreferredLanguage => "PreferredLanguage",
+            K.DefaultVcpkgTriplet => "DefaultVcpkgTriplet",
+            K.UpdatesCheckInterval => "UpdatesCheckInterval",
+            K.ParallelOperationCount => "ParallelOperationCount",
+            K.TelemetryClientToken => "TelemetryClientToken",
+            K.PreferredTheme => "PreferredTheme",
+            K.OperationHistory => "OperationHistory",
+            K.StartupPage => "StartupPage",
+            K.WindowGeometry => "WindowGeometry",
+            K.ChangeBackupFileName => "ChangeBackupFileName",
+            K.CurrentSessionToken => "CurrentSessionToken",
+            K.IgnoredPackageUpdates => "IgnoredPackageUpdates",
+            K.DisabledManagers => "DisabledManagers",
+            K.DeletableDesktopShortcuts => "DeletableDesktopShortcuts",
+            K.WinGetAlreadyUpgradedPackages => "WinGetAlreadyUpgradedPackages",
+            K.DependencyManagement => "DependencyManagement",
+            K.DisabledPackageManagerNotifications => "DisabledPackageManagerNotifications",
+            K.PackageListViewMode => "PackageListViewMode",
+            K.DisableInstantSearch => "DisableInstantSearch",
+            K.SidepanelWidths => "SidepanelWidths",
+            K.HideToggleFilters => "HideToggleFilters",
+            K.FreshBoolSetting => "FreshBoolSetting",
+            K.FreshValue => "FreshValue",
+            K.DisableNotifications => "DisableNotifications",
+            K.DisableUpdatesNotifications => "DisableUpdatesNotifications",
+            K.DisableErrorNotifications => "DisableErrorNotifications",
+            K.DisableSuccessNotifications => "DisableSuccessNotifications",
+            K.DisableProgressNotifications => "DisableProgressNotifications",
+
+            K.Test1 => "TestSetting1",
+            K.Test2 => "TestSetting2",
+            K.Test3 => "Test.Settings_with",
+            K.Test4 => "TestSettingEntry With A  Space",
+            K.Test5 => "ª",
+            K.Test6 => "VeryVeryLongTestSettingEntrySoTheClassCanReallyBeStressedOut",
+            K.Test7_Legacy => "LegacyBoolSetting",
+            K.Unset => throw new InvalidDataException("Setting key was unset!"),
+            _ => throw new KeyNotFoundException($"The settings key {key} was not found on the ResolveKey map")
+        };
+    }
 }

@@ -339,18 +339,18 @@ namespace UniGetUI.Interface.SoftwarePages
                 if (upgradablePackages.Count == 0)
                     return;
 
-                bool EnableAutoUpdate = Settings.Get(Settings.AutomaticallyUpdatePackages);
+                bool EnableAutoUpdate = Settings.Get(Settings.K.AutomaticallyUpdatePackages);
 
                 if (EnableAutoUpdate)
                 {
                     var connectionCost = NetworkInformation.GetInternetConnectionProfile()?.GetConnectionCost().NetworkCostType;
-                    if (connectionCost is NetworkCostType.Fixed or NetworkCostType.Variable && Settings.Get(Settings.DisableAUPOnMeteredConnections))
+                    if (connectionCost is NetworkCostType.Fixed or NetworkCostType.Variable && Settings.Get(Settings.K.DisableAUPOnMeteredConnections))
                     {
                         Logger.Warn("Updates will not be installed automatically because the current internet connection is metered.");
                         EnableAutoUpdate = false;
                     }
 
-                    if (PowerManager.EnergySaverStatus is EnergySaverStatus.On && Settings.Get(Settings.DisableAUPOnBatterySaver))
+                    if (PowerManager.EnergySaverStatus is EnergySaverStatus.On && Settings.Get(Settings.K.DisableAUPOnBatterySaver))
                     {
                         Logger.Warn("Updates will not be installed automatically because battery saver is enabled.");
                         EnableAutoUpdate = false;
@@ -419,7 +419,7 @@ namespace UniGetUI.Interface.SoftwarePages
                     string attribution = "";
                     foreach (IPackage package in upgradablePackages)
                     {
-                        if (!Settings.GetDictionaryItem<string, bool>(Settings.DisabledPackageManagerNotifications, package.Manager.Name))
+                        if (!Settings.GetDictionaryItem<string, bool>(Settings.K.DisabledPackageManagerNotifications, package.Manager.Name))
                             attribution += package.Name + ", ";
                     }
 
@@ -464,7 +464,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 bool SendNotification = false;
                 foreach (var Package in upgradablePackages)
                 {
-                    if (!Settings.GetDictionaryItem<string, bool>(Settings.DisabledPackageManagerNotifications, Package.Manager.Name))
+                    if (!Settings.GetDictionaryItem<string, bool>(Settings.K.DisabledPackageManagerNotifications, Package.Manager.Name))
                     {
                         SendNotification = true;
                         break;

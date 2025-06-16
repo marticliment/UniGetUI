@@ -18,8 +18,8 @@ namespace UniGetUI.Interface.Widgets
         private readonly Dictionary<string, string> _values_ref = [];
         private readonly Dictionary<string, string> _inverted_val_ref = [];
 
-        private string settings_name = "";
-        public string SettingName
+        private Settings.K settings_name = Settings.K.Unset;
+        public Settings.K SettingName
         {
             set
             {

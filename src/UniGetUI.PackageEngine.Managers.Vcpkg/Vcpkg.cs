@@ -62,7 +62,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 { "x86-windows", new ManagerSource(this, "x86-windows", URI_VCPKG_IO) }
             };
 
-            string vcpkgRoot = Settings.GetValue(Settings.CustomVcpkgRoot);
+            string vcpkgRoot = Settings.GetValue(Settings.K.CustomVcpkgRoot);
             Properties = new ManagerProperties
             {
                 Name = "vcpkg",
@@ -351,11 +351,11 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             if (!found || !gitFound || !vcpkgRootFound)
             {
                 INativeTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes);
-                if (Settings.Get(Settings.DisableUpdateVcpkgGitPorts)) logger.Error("User has disabled updating sources");
+                if (Settings.Get(Settings.K.DisableUpdateVcpkgGitPorts)) logger.Error("User has disabled updating sources");
                 if (!found) logger.Error("Vcpkg was not found???");
                 if (!gitFound) logger.Error("Vcpkg sources won't be updated since git was not found");
                 if (!vcpkgRootFound) logger.Error("Cannot update vcpkg port files as requested: the VCPKG_ROOT environment variable or custom vcpkg root setting was not set");
-                logger.Close(Settings.Get(Settings.DisableUpdateVcpkgGitPorts) ? 0 : 1);
+                logger.Close(Settings.Get(Settings.K.DisableUpdateVcpkgGitPorts) ? 0 : 1);
                 return;
             }
 
@@ -428,7 +428,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
 
         public static Tuple<bool, string> GetVcpkgRoot()
         {
-            string? vcpkgRoot = Settings.GetValue(Settings.CustomVcpkgRoot);
+            string? vcpkgRoot = Settings.GetValue(Settings.K.CustomVcpkgRoot);
             if (vcpkgRoot == "")
             {
                 vcpkgRoot = Environment.GetEnvironmentVariable("VCPKG_ROOT");
@@ -452,7 +452,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
 
         public static string GetDefaultTriplet()
         {
-            string DefaultTriplet = Settings.GetValue(Settings.DefaultVcpkgTriplet);
+            string DefaultTriplet = Settings.GetValue(Settings.K.DefaultVcpkgTriplet);
             if (DefaultTriplet == "")
             {
                 DefaultTriplet = Environment.GetEnvironmentVariable("VCPKG_DEFAULT_TRIPLET") ?? "";

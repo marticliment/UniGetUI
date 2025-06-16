@@ -66,7 +66,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
             ConnectResult result = CatalogReference.Connect();
             if (result.Status == ConnectResultStatus.Ok)
             {
-                foreach (var filter_type in new PackageMatchField[] { PackageMatchField.Name, PackageMatchField.Id, PackageMatchField.Moniker })
+                foreach (var filter_type in new[] { PackageMatchField.Name, PackageMatchField.Id, PackageMatchField.Moniker })
                 {
                     FindPackagesOptions PackageFilters = Factory.CreateFindPackagesOptions();
 

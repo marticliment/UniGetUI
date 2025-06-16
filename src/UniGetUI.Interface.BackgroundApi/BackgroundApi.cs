@@ -44,7 +44,7 @@ namespace UniGetUI.Interface
         public async Task Start()
         {
             ApiTokenHolder.Token = CoreTools.RandomString(64);
-            Settings.SetValue(Settings.CurrentSessionToken, ApiTokenHolder.Token);
+            Settings.SetValue(Settings.K.CurrentSessionToken, ApiTokenHolder.Token);
             Logger.Info("Randomly-generated background API auth token: " + ApiTokenHolder.Token);
 
             var builder = Host.CreateDefaultBuilder();
