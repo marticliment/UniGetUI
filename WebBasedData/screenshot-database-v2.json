@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11826,
-        "done": 5310,
-        "packages_with_icon": 5310,
-        "packages_with_screenshot": 667,
-        "total_screenshots": 2072
+        "total": 11833,
+        "done": 5322,
+        "packages_with_icon": 5322,
+        "packages_with_screenshot": 677,
+        "total_screenshots": 2105
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -12952,8 +12952,12 @@
             "images": []
         },
         "electronmail": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/zB1h53ds/image.png",
+            "images": [
+                "https://i.postimg.cc/jdRhP34p/image.png",
+                "https://i.postimg.cc/BZHhxK9K/image.png",
+                "https://i.postimg.cc/VkG4Y9M3/image.png"
+            ]
         },
         "electrum": {
             "icon": "https://community.chocolatey.org/content/packageimages/electrum.portable.4.3.4.png",
@@ -23350,8 +23354,12 @@
             "images": []
         },
         "listary": {
-            "icon": "https://community.chocolatey.org/content/packageimages/Listary.6.0.11.35.png",
-            "images": []
+            "icon": "https://i.postimg.cc/2SxZ7C2m/Listary.png",
+            "images": [
+                "https://i.postimg.cc/L8vJZN88/image.png",
+                "https://i.postimg.cc/NfcFJWy0/image.png",
+                "https://i.postimg.cc/C1CTz6wv/image.png"
+            ]
         },
         "listdlls": {
             "icon": "",
@@ -32464,12 +32472,16 @@
             "images": []
         },
         "proton": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/Wp5VcCz8/image.png",
+            "images": [
+                "https://i.postimg.cc/KzFbmytq/image.png"
+            ]
         },
         "protonclient": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/0yQbq79M/image.png",
+            "images": [
+                "https://i.postimg.cc/gcVwyYMJ/image.png"
+            ]
         },
         "protonmail-bridge": {
             "icon": "",
@@ -32477,11 +32489,17 @@
         },
         "protonmailbridge": {
             "icon": "https://community.chocolatey.org/content/packageimages/protonmailbridge.3.0.17.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/QC1c11Fx/image.png",
+                "https://i.postimg.cc/fTQcZ2P3/image.png",
+                "https://i.postimg.cc/XvP5PQFY/image.png"
+            ]
         },
         "protonvpn": {
             "icon": "https://community.chocolatey.org/content/packageimages/protonvpn.2.3.2.png",
             "images": [
+                "https://i.postimg.cc/GphzR864/image.png",
+                "https://i.postimg.cc/x8Sz0Bq6/image.png",
                 "https://i.postimg.cc/2yQBsfSF/windows-ovpn-9-1024x616.png"
             ]
         },
@@ -49955,7 +49973,7 @@
                 "https://paulstsmith.github.io/images/netextender-screenShot-disconnected.png"
             ]
         },
-        "beyondcompare-5": {
+        "beyondcompare.5": {
             "icon": "https://www.scootersoftware.com/bc_icon.png",
             "images": [
                 "https://www.scootersoftware.com/shot_FolderCompare_Dark.png",
@@ -50013,7 +50031,7 @@
             ]
         },
         "archivepassword": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/SQPYg2yy/ARCHPR.png",
             "images": [
                 "https://i.postimg.cc/8zmM3pwy/image.png",
                 "https://i.postimg.cc/0jSJCPb0/image.png",
@@ -50021,7 +50039,7 @@
             ]
         },
         "sagepassword": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/pdBnCsd7/asapr.png",
             "images": [
                 "https://i.postimg.cc/hv2NpW6h/image.png"
             ]
@@ -50049,6 +50067,59 @@
         "sysinternals-zoomIt": {
             "icon": "https://i.postimg.cc/hjPX2PL9/ZoomIt.png",
             "images": []
+        },
+        "rightnote": {
+            "icon": "https://i.postimg.cc/mZj8kSNm/Right-Note.png",
+            "images": [
+                "https://i.postimg.cc/Jhs9c2K7/image.png",
+                "https://i.postimg.cc/52sVmvVg/image.png",
+                "https://i.postimg.cc/QdyztqD2/image.png",
+                "https://i.postimg.cc/9MGgL592/image.png",
+                "https://i.postimg.cc/4N42Q0xC/image.png",
+                "https://i.postimg.cc/g0hg0FNh/image.png"
+            ]
+        },
+        "protonmail": {
+            "icon": "https://i.postimg.cc/zGYnzbHJ/protonmail.png",
+            "images": [
+                "https://i.postimg.cc/zB6G5QXV/image.png",
+                "https://i.postimg.cc/SN3gWxX5/mail.png",
+                "https://i.postimg.cc/P51QYznp/image.png",
+                "https://i.postimg.cc/XvFmZyQQ/image.png"
+            ]
+        },
+        "protonpass": {
+            "icon": "https://i.postimg.cc/8PvZmf2v/protonpass.png",
+            "images": [
+                "https://i.postimg.cc/cLh16CLq/image.png",
+                "https://i.postimg.cc/sDrN8Xfh/image.png",
+                "https://i.postimg.cc/htCZf1LL/image.png",
+                "https://i.postimg.cc/y8qY20gT/image.png",
+                "https://i.postimg.cc/sDb98H40/image.png",
+                "https://i.postimg.cc/nLG4XFb6/image.png"
+            ]
+        },
+        "protondrive": {
+            "icon": "https://i.postimg.cc/RZpFXq57/Proton-Drive.png",
+            "images": [
+                "https://i.postimg.cc/MGtwZFtz/image.png",
+                "https://i.postimg.cc/HxBPyG7k/image.png",
+                "https://i.postimg.cc/W3b5j9fL/image.png"
+            ]
+        },
+        "sketchup-2022": {
+            "icon": "https://i.postimg.cc/259Fnnxn/sketchup.png",
+            "images": []
+        },
+        "sketchup-2023": {
+            "icon": "https://i.postimg.cc/259Fnnxn/sketchup.png",
+            "images": []
+        },
+        "sketchup-2025": {
+            "icon": "https://i.postimg.cc/259Fnnxn/sketchup.png",
+            "images": [
+                "https://i.postimg.cc/yxZwM1Nr/image.png"
+            ]
         }
     }
 }
