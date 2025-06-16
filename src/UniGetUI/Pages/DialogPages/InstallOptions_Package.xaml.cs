@@ -158,7 +158,7 @@ namespace UniGetUI.Interface.Dialogs
             if (Options.CustomInstallLocation == "") CustomInstallLocation.Text = packageInstallLocation;
             else CustomInstallLocation.Text = Options.CustomInstallLocation;
 
-            
+
             CustomParameters1.Text = string.Join(' ', Options.CustomParameters_Install);
             CustomParameters2.Text = string.Join(' ', Options.CustomParameters_Update);
             CustomParameters3.Text = string.Join(' ', Options.CustomParameters_Uninstall);
@@ -200,7 +200,7 @@ namespace UniGetUI.Interface.Dialogs
                 SelectDir.IsEnabled = Package.Manager.Capabilities.SupportsCustomLocations;
             }
 
-            bool IsCLIEnabled = SecureSettings.Get(SecureSettings.ALLOW_CLI_ARGUMENTS);
+            bool IsCLIEnabled = SecureSettings.Get(SecureSettings.K.AllowCLIArguments);
             CustomParameters1.IsEnabled = IsCLIEnabled;
             CustomParameters2.IsEnabled = IsCLIEnabled;
             CustomParameters3.IsEnabled = IsCLIEnabled;

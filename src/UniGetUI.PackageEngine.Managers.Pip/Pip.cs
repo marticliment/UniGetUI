@@ -76,11 +76,11 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
 
         public static string GetProxyArgument()
         {
-            if (!Settings.Get("EnableProxy")) return "";
+            if (!Settings.Get(Settings.K.EnableProxy)) return "";
             var proxyUri = Settings.GetProxyUrl();
             if (proxyUri is null) return "";
 
-            if (Settings.Get("EnableProxyAuth") is false)
+            if (Settings.Get(Settings.K.EnableProxyAuth) is false)
                 return $"--proxy {proxyUri.ToString()}";
 
             var creds = Settings.GetProxyCredentials();

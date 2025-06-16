@@ -41,7 +41,7 @@ public class DWMThreadHelper
 
     public static void ChangeState_DWM(bool suspend)
     {
-        if (Settings.Get("DisableDMWThreadOptimizations")) return;
+        if (Settings.Get(Settings.K.DisableDMWThreadOptimizations)) return;
 
         if (DWM_IsSuspended && suspend)
         {
@@ -63,7 +63,7 @@ public class DWMThreadHelper
 
     public static void ChangeState_XAML(bool suspend)
     {
-        if (Settings.Get("DisableDMWThreadOptimizations")) return;
+        if (Settings.Get(Settings.K.DisableDMWThreadOptimizations)) return;
 
         if (XAML_IsSuspended && suspend)
         {

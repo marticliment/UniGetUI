@@ -131,7 +131,7 @@ public abstract class AbstractOperation : IDisposable
         Status = OperationStatus.InQueue;
         Line("Please wait...", LineType.ProgressIndicator);
 
-        if (int.TryParse(Settings.GetValue("ParallelOperationCount"), out int _maxPps))
+        if (int.TryParse(Settings.GetValue(Settings.K.ParallelOperationCount), out int _maxPps))
         {
             MAX_OPERATIONS = _maxPps;
             Logger.Debug($"Parallel operation limit set to {MAX_OPERATIONS}");

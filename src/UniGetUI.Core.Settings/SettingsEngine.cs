@@ -6,28 +6,30 @@ namespace UniGetUI.Core.SettingsEngine
 {
     public static partial class Settings
     {
-        private static readonly ConcurrentDictionary<string, bool> booleanSettings = new();
-        private static readonly ConcurrentDictionary<string, string> valueSettings = new();
+        private static readonly ConcurrentDictionary<K, bool> booleanSettings = new();
+        private static readonly ConcurrentDictionary<K, string> valueSettings = new();
 
-        public static bool Get(string setting, bool invert = false)
+        public static bool Get(K key, bool invert = false)
         {
-            if (booleanSettings.TryGetValue(setting, out bool result))
+            string setting = ResolveKey(key);
+            if (booleanSettings.TryGetValue(key, out bool result))
             {   // If the setting was cached
                 return result ^ invert;
             }
 
             // Otherwise, load the value from disk and cache that setting
             result = File.Exists(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, setting));
-            booleanSettings[setting] = result;
+            booleanSettings[key] = result;
             return result ^ invert;
         }
 
-        public static void Set(string setting, bool value)
+        public static void Set(K key, bool value)
         {
+            string setting = ResolveKey(key);
             try
             {
                 // Cache that setting's new value
-                booleanSettings[setting] = value;
+                booleanSettings[key] = value;
 
                 // Update changes on disk if applicable
                 if (value && !File.Exists(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, setting)))
@@ -36,7 +38,7 @@ namespace UniGetUI.Core.SettingsEngine
                 }
                 else if (!value)
                 {
-                    valueSettings[setting] = "";
+                    valueSettings[key] = "";
 
                     if (File.Exists(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, setting)))
                     {
@@ -52,9 +54,10 @@ namespace UniGetUI.Core.SettingsEngine
             }
         }
 
-        public static string GetValue(string setting)
+        public static string GetValue(K key)
         {
-            if (valueSettings.TryGetValue(setting, out string? value))
+            string setting = ResolveKey(key);
+            if (valueSettings.TryGetValue(key, out string? value))
             {   // If the setting was cached
                 return value;
             }
@@ -66,26 +69,27 @@ namespace UniGetUI.Core.SettingsEngine
                 value = File.ReadAllText(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, setting));
             }
 
-            valueSettings[setting] = value;
+            valueSettings[key] = value;
             return value;
 
         }
 
-        public static void SetValue(string setting, string value)
+        public static void SetValue(K key, string value)
         {
+            string setting = ResolveKey(key);
             try
             {
                 if (value == String.Empty)
                 {
-                    Set(setting, false);
-                    booleanSettings[setting] = false;
-                    valueSettings[setting] = "";
+                    Set(key, false);
+                    booleanSettings[key] = false;
+                    valueSettings[key] = "";
                 }
                 else
                 {
                     File.WriteAllText(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, setting), value);
-                    booleanSettings[setting] = true;
-                    valueSettings[setting] = value;
+                    booleanSettings[key] = true;
+                    valueSettings[key] = value;
                 }
             }
             catch (Exception e)

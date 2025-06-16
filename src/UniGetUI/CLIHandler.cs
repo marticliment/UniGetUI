@@ -32,6 +32,7 @@ public static class CLIHandler
         STATUS_FAILED = -1,
         STATUS_INVALID_PARAMETER = -1073741811,
         STATUS_NO_SUCH_FILE = -1073741809,
+        STATUS_UNKNOWN__SETTINGS_KEY = -2,
     }
 
     public static int Help()
@@ -108,10 +109,12 @@ public static class CLIHandler
             return (int)HRESULT.STATUS_INVALID_PARAMETER; // The file parameter does not exist (export settings requires "--export-settings file")
 
         var setting = args[basePos + 1].Trim('"').Trim('\'');
+        if (!Enum.TryParse(setting, out Settings.K validKey))
+            return (int)HRESULT.STATUS_UNKNOWN__SETTINGS_KEY;
 
         try
         {
-            Settings.Set(setting, true);
+            Settings.Set(validKey, true);
         }
         catch (Exception ex)
         {
@@ -133,10 +136,11 @@ public static class CLIHandler
             return (int)HRESULT.STATUS_INVALID_PARAMETER; // The file parameter does not exist (export settings requires "--export-settings file")
 
         var setting = args[basePos + 1].Trim('"').Trim('\'');
-
+        if (!Enum.TryParse(setting, out Settings.K validKey))
+            return (int)HRESULT.STATUS_UNKNOWN__SETTINGS_KEY;
         try
         {
-            Settings.Set(setting, false);
+            Settings.Set(validKey, false);
         }
         catch (Exception ex)
         {
@@ -159,10 +163,12 @@ public static class CLIHandler
 
         var setting = args[basePos + 1].Trim('"').Trim('\'');
         var value = args[basePos + 2];
+        if (!Enum.TryParse(setting, out Settings.K validKey))
+            return (int)HRESULT.STATUS_UNKNOWN__SETTINGS_KEY;
 
         try
         {
-            Settings.SetValue(setting, value);
+            Settings.SetValue(validKey, value);
         }
         catch (Exception ex)
         {
@@ -250,10 +256,12 @@ public static class CLIHandler
             return (int)HRESULT.STATUS_INVALID_PARAMETER; // The file parameter does not exist (export settings requires "--export-settings file")
 
         var setting = args[basePos + 1].Trim('"').Trim('\'');
+        if (!Enum.TryParse(setting, out SecureSettings.K validKey))
+            return (int)HRESULT.STATUS_UNKNOWN__SETTINGS_KEY;
 
         try
         {
-            bool success = SecureSettings.TrySet(setting, true).GetAwaiter().GetResult();
+            bool success = SecureSettings.TrySet(validKey, true).GetAwaiter().GetResult();
             if (!success) return (int)HRESULT.STATUS_FAILED;
             else return (int)HRESULT.SUCCESS;
         }
@@ -275,10 +283,12 @@ public static class CLIHandler
             return (int)HRESULT.STATUS_INVALID_PARAMETER; // The first positional argument does not exist
 
         var setting = args[basePos + 1].Trim('"').Trim('\'');
+        if (!Enum.TryParse(setting, out SecureSettings.K validKey))
+            return (int)HRESULT.STATUS_UNKNOWN__SETTINGS_KEY;
 
         try
         {
-            bool success = SecureSettings.TrySet(setting, false).GetAwaiter().GetResult();
+            bool success = SecureSettings.TrySet(validKey, false).GetAwaiter().GetResult();
             if (!success) return (int)HRESULT.STATUS_FAILED;
             else return (int)HRESULT.SUCCESS;
         }

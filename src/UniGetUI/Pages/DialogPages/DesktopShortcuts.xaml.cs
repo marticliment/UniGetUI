@@ -26,7 +26,7 @@ namespace UniGetUI.Interface
             InitializeComponent();
             DeletableDesktopShortcutsList.ItemsSource = Shortcuts;
 
-            AutoDeleteShortcutsCheckbox.IsChecked = Settings.Get("RemoveAllDesktopShortcuts");
+            AutoDeleteShortcutsCheckbox.IsChecked = Settings.Get(Settings.K.RemoveAllDesktopShortcuts);
             AutoDeleteShortcutsCheckbox.Checked += HandleAllDesktop_Checked;
             AutoDeleteShortcutsCheckbox.Unchecked += HandleAllDesktop_Unchecked;
         }
@@ -104,7 +104,7 @@ namespace UniGetUI.Interface
 
         private void HandleAllDesktop_Unchecked(object sender, RoutedEventArgs e)
         {
-            Settings.Set("RemoveAllDesktopShortcuts", false);
+            Settings.Set(Settings.K.RemoveAllDesktopShortcuts, false);
         }
 
         public void SaveChanges()

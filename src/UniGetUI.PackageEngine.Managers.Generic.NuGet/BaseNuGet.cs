@@ -47,7 +47,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
         protected sealed override IReadOnlyList<Package> FindPackages_UnSafe(string query)
         {
             List<Package> Packages = [];
-            INativeTaskLogger logger = TaskLogger.CreateNew(Enums.LoggableTaskType.FindPackages);
+            INativeTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.FindPackages);
 
             IReadOnlyList<IManagerSource> sources;
             if (Capabilities.SupportsCustomSources)

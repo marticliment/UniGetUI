@@ -662,8 +662,8 @@ namespace UniGetUI.Interface.SoftwarePages
             bool showReport = false;
             var packageReport = new Dictionary<string, List<BundleReportEntry>>();
             bool AllowCLIParameters =
-                SecureSettings.Get(SecureSettings.ALLOW_CLI_ARGUMENTS) &&
-                SecureSettings.Get(SecureSettings.ALLOW_IMPORTING_CLI_ARGUMENTS);
+                SecureSettings.Get(SecureSettings.K.AllowCLIArguments) &&
+                SecureSettings.Get(SecureSettings.K.AllowImportingCLIArguments);
 
 
             foreach (var pkg in DeserializedData.packages)

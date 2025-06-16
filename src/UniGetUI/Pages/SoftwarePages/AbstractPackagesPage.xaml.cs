@@ -218,7 +218,7 @@ namespace UniGetUI.Interface
             InitializeComponent();
 
             // Selection of grid view mode
-            int viewMode = Settings.GetDictionaryItem<string, int>("PackageListViewMode", PAGE_NAME);
+            int viewMode = Settings.GetDictionaryItem<string, int>(Settings.K.PackageListViewMode, PAGE_NAME);
             if (viewMode < 0 || viewMode >= ViewModeSelector.Items.Count) viewMode = 0;
             ViewModeSelector.SelectedIndex = viewMode;
 
@@ -367,7 +367,7 @@ namespace UniGetUI.Interface
 
             QueryBlock.PlaceholderText = CoreTools.Translate("Search for packages");
             MegaQueryBlock.PlaceholderText = CoreTools.Translate("Search for packages");
-            InstantSearchCheckbox.IsChecked = !Settings.GetDictionaryItem<string, bool>("DisableInstantSearch", PAGE_NAME);
+            InstantSearchCheckbox.IsChecked = !Settings.GetDictionaryItem<string, bool>(Settings.K.DisableInstantSearch, PAGE_NAME);
 
             HeaderIcon.FontWeight = new Windows.UI.Text.FontWeight(700);
             NameHeader.Content = CoreTools.Translate("Package Name");
@@ -569,7 +569,7 @@ namespace UniGetUI.Interface
         }
 
         private void InstantSearchValueChanged(object sender, RoutedEventArgs e)
-            => Settings.SetDictionaryItem("DisableInstantSearch", PAGE_NAME, !InstantSearchCheckbox.IsChecked);
+            => Settings.SetDictionaryItem(Settings.K.DisableInstantSearch, PAGE_NAME, !InstantSearchCheckbox.IsChecked);
 
         private void SourcesTreeView_SelectionChanged(TreeView sender, TreeViewSelectionChangedEventArgs args)
             => FilterPackages();
@@ -849,7 +849,7 @@ namespace UniGetUI.Interface
                 ForceRedrawByScroll();
             }
 
-            if (!Settings.Get("DisableIconsOnPackageLists"))
+            if (!Settings.Get(Settings.K.DisableIconsOnPackageLists))
                 _ = LoadIconsForNewPackages();
         }
 
@@ -1021,11 +1021,11 @@ namespace UniGetUI.Interface
             if ((int)e.NewSize.Width < 100)
             {
                 HideFilteringPane();
-                Settings.SetDictionaryItem("SidepanelWidths", PAGE_NAME, 250);
+                Settings.SetDictionaryItem(Settings.K.SidepanelWidths, PAGE_NAME, 250);
             }
             else
             {
-                Settings.SetDictionaryItem("SidepanelWidths", PAGE_NAME, (int)e.NewSize.Width);
+                Settings.SetDictionaryItem(Settings.K.SidepanelWidths, PAGE_NAME, (int)e.NewSize.Width);
             }
         }
 
@@ -1113,7 +1113,7 @@ namespace UniGetUI.Interface
         {
             if(FilteringPanel.DisplayMode is SplitViewDisplayMode.Inline)
             {
-                Settings.SetDictionaryItem("HideToggleFilters", PAGE_NAME, !ToggleFiltersButton.IsChecked ?? false);
+                Settings.SetDictionaryItem(Settings.K.HideToggleFilters, PAGE_NAME, !ToggleFiltersButton.IsChecked ?? false);
             }
 
             if (ToggleFiltersButton.IsChecked ?? false)
@@ -1139,11 +1139,11 @@ namespace UniGetUI.Interface
                 int finalWidth = 250;
                 try
                 {
-                    finalWidth = Settings.GetDictionaryItem<string, int>("SidepanelWidths", PAGE_NAME);
+                    finalWidth = Settings.GetDictionaryItem<string, int>(Settings.K.SidepanelWidths, PAGE_NAME);
                 }
                 catch
                 {
-                    Settings.SetDictionaryItem("SidepanelWidths", PAGE_NAME, 250);
+                    Settings.SetDictionaryItem(Settings.K.SidepanelWidths, PAGE_NAME, 250);
                 }
                 FilteringPanel.OpenPaneLength = finalWidth;
                 PackagesListGrid.Margin = new Thickness(12, 0, 0, 0);
@@ -1313,7 +1313,7 @@ namespace UniGetUI.Interface
                 filters.Margin = new Thickness(0);
             }
 
-            if (!Settings.GetDictionaryItem<string, bool>("HideToggleFilters", PAGE_NAME))
+            if (!Settings.GetDictionaryItem<string, bool>(Settings.K.HideToggleFilters, PAGE_NAME))
             {
                 ShowFilteringPane();
             }
@@ -1346,7 +1346,7 @@ namespace UniGetUI.Interface
         }
         private void ViewModeSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Settings.SetDictionaryItem("PackageListViewMode", PAGE_NAME, ViewModeSelector.SelectedIndex);
+            Settings.SetDictionaryItem(Settings.K.PackageListViewMode, PAGE_NAME, ViewModeSelector.SelectedIndex);
         }
 
         FrameworkElement _lastContextMenuButtonTapped = null!;

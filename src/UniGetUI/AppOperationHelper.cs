@@ -68,14 +68,14 @@ public partial class MainApp
                         Content = CoreTools.Translate("No applicable installer was found for the package {0}", package.Name),
                         PrimaryButtonText = CoreTools.Translate("Ok"),
                         DefaultButton = ContentDialogButton.Primary,
-                        XamlRoot = MainApp.Instance.MainWindow.Content.XamlRoot,
+                        XamlRoot = Instance.MainWindow.Content.XamlRoot,
                     };
-                    await MainApp.Instance.MainWindow.ShowDialogAsync(dialog);
+                    await Instance.MainWindow.ShowDialogAsync(dialog);
                     return null;
                 }
 
                 FileSavePicker savePicker = new();
-                MainWindow window = MainApp.Instance.MainWindow;
+                MainWindow window = Instance.MainWindow;
                 IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
                 WinRT.Interop.InitializeWithWindow.Initialize(savePicker, hWnd);
                 savePicker.SuggestedStartLocation = PickerLocationId.Downloads;

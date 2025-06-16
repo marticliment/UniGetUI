@@ -398,7 +398,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             status.Found = CoreTools.Which("scoop").Item1;
 
             Status = status; // Wee need this for the RunCleanup method to get the executable path
-            if (status.Found && IsEnabled() && Settings.Get("EnableScoopCleanup"))
+            if (status.Found && IsEnabled() && Settings.Get(Settings.K.EnableScoopCleanup))
             {
                 RunCleanup();
             }
