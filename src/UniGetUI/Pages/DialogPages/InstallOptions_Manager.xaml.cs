@@ -139,7 +139,7 @@ public sealed partial class InstallOptions_Manager : UserControl
             CustomInstallLocation.Text = CoreTools.Translate("Install location can't be changed for {0} packages", Manager.DisplayName);
         }
 
-        bool IsCLIEnabled = SecureSettings.Get(SecureSettings.ALLOW_CLI_ARGUMENTS);
+        bool IsCLIEnabled = SecureSettings.Get(SecureSettings.K.AllowCLIArguments);
         CustomParameters1.IsEnabled = IsCLIEnabled;
         CustomParameters2.IsEnabled = IsCLIEnabled;
         CustomParameters3.IsEnabled = IsCLIEnabled;

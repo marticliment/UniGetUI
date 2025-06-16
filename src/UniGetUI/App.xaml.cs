@@ -99,7 +99,7 @@ namespace UniGetUI
             Logger.Warn($"Using bundled GSudo at {CoreData.ElevatorPath} since UniGetUI Elevator is not available!");
             CoreData.ElevatorPath = (await CoreTools.WhichAsync("gsudo.exe")).Item2;
 #else
-            if (SecureSettings.Get(SecureSettings.FORCE_USER_GSUDO))
+            if (SecureSettings.Get(SecureSettings.ForceUserGSudo))
             {
                 var res = await CoreTools.WhichAsync("gsudo.exe");
                 if (res.Item1)

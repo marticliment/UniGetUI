@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Tools;
+using YamlDotNet.Core.Tokens;
 using YamlDotNet.Serialization;
 
 namespace UniGetUI.Core.SettingsEngine.SecureSettings;
@@ -8,11 +9,30 @@ namespace UniGetUI.Core.SettingsEngine.SecureSettings;
 public static class SecureSettings
 {
     // Various predefined secure settings keys
-    public const string ALLOW_CLI_ARGUMENTS = "AllowCLIArguments";
-    public const string ALLOW_IMPORTING_CLI_ARGUMENTS = "AllowImportingCLIArguments";
-    public const string ALLOW_PREPOST_OPERATIONS = "AllowPrePostInstallCommands";
-    public const string ALLOW_IMPORT_PREPOST_OPERATIONS = "AllowImportingPrePostInstallCommands";
-    public const string FORCE_USER_GSUDO = "ForceUserGSudo";
+    public enum K
+    {
+        AllowCLIArguments,
+        AllowImportingCLIArguments,
+        AllowPrePostOpCommand,
+        AllowImportPrePostOpCommands,
+        ForceUserGSudo,
+        Unset
+    };
+
+    public static string ResolveKey(K key)
+    {
+        return key switch
+        {
+            K.AllowCLIArguments => "AllowCLIArguments",
+            K.AllowImportingCLIArguments => "AllowImportingCLIArguments",
+            K.AllowPrePostOpCommand => "AllowPrePostInstallCommands",
+            K.AllowImportPrePostOpCommands => "AllowImportingPrePostInstallCommands",
+            K.ForceUserGSudo => "ForceUserGSudo",
+
+            K.Unset => throw new InvalidDataException("SecureSettings key was unset!"),
+            _ => throw new KeyNotFoundException($"The SecureSettings key {key} was not found on the ResolveKey map")
+        };
+    }
 
 
     private static readonly Dictionary<string, bool> _cache = new();
@@ -23,9 +43,9 @@ public static class SecureSettings
         public const string DISABLE_FOR_USER = "--disable-secure-setting-for-user";
     }
 
-    public static bool Get(string setting)
+    public static bool Get(K key)
     {
-        string purifiedSetting = CoreTools.MakeValidFileName(setting);
+        string purifiedSetting = CoreTools.MakeValidFileName(ResolveKey(key));
         if (_cache.TryGetValue(purifiedSetting, out var value))
         {
             return value;
@@ -48,9 +68,9 @@ public static class SecureSettings
         return exists;
     }
 
-    public static async Task<bool> TrySet(string setting, bool enabled)
+    public static async Task<bool> TrySet(K key, bool enabled)
     {
-        string purifiedSetting = CoreTools.MakeValidFileName(setting);
+        string purifiedSetting = CoreTools.MakeValidFileName(ResolveKey(key));
         _cache.Remove(purifiedSetting);
 
         string purifiedUser = CoreTools.MakeValidFileName(Environment.UserName);
