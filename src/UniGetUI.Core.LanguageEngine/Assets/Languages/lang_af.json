@@ -413,7 +413,7 @@
   "Operation cancelled": "Opdrag gekanselleer",
   "Operation history": "Opdrag Geskiedenis",
   "Operation in progress": "Opdrag in vordering",
-  "Operation on queue (position {0})...": "Opdrag op tou (posisie {0})...",
+  "Operation on queue (position {0})...": "Opdrag in wagting (posisie {0})...",
   "Options saved": "Opsies gestoor",
   "Order by:": "Volgorde:",
   "Other": "Ander",
