@@ -140,8 +140,8 @@
                                     x:Name="SettingsTabBar"
                                     HorizontalAlignment="Stretch"
                                     Background="{ThemeResource SystemChromeAltHighColor}"
-                                    IsAddTabButtonVisible="False"
                                     CanReorderTabs="False"
+                                    IsAddTabButtonVisible="False"
                                     TabWidthMode="SizeToContent">
                                     <widgets:BetterTabViewItem
                                         IconName="Settings"
@@ -149,9 +149,13 @@
                                         Line1="General"
                                         Line2="Version" />
                                     <widgets:BetterTabViewItem
-                                        IconName="OpenFolder"
+                                        IconName="Cross"
                                         Line1="Architecture"
                                         Line2="Location and Scope" />
+                                    <widgets:BetterTabViewItem
+                                        IconName="Console"
+                                        Line1="Close apps"
+                                        Line2="before installing" />
                                     <widgets:BetterTabViewItem
                                         IconName="Console"
                                         Line1="Command-line"
@@ -221,24 +225,6 @@
                                                 <widgets:TranslatedTextBlock Text="Skip minor updates for this package" />
                                             </CheckBox>
                                         </controls:WrapPanel>
-                                        <controls:TokenizingTextBox
-                                            x:Name="KillProcessesBox"
-                                            MaxWidth="620"
-                                            HorizontalAlignment="Left"
-                                            ItemsSource="{x:Bind ProcessesToKill, Mode=TwoWay}"
-                                            Loaded="KillProcessesBox_Loaded"
-                                            PlaceholderText="process1.exe,process2.exe"
-                                            SuggestedItemTemplate="{StaticResource ProcessTemplate}"
-                                            SuggestedItemsSource="{x:Bind SuggestedProcesses, Mode=OneWay}"
-                                            TextChanged="KillProcessesBox_TextChanged"
-                                            TextMemberPath="Text"
-                                            TokenDelimiter=","
-                                            TokenItemAdding="KillProcessesBox_TokenItemAdding"
-                                            TokenItemTemplate="{StaticResource ProcessTemplate}">
-                                            <controls:TokenizingTextBox.Header>
-                                                <widgets:TranslatedTextBlock Text="Processes to close before this package is installed, updated or uninstalled:" />
-                                            </controls:TokenizingTextBox.Header>
-                                        </controls:TokenizingTextBox>
                                     </StackPanel>
                                 </controls:Case>
 
@@ -322,6 +308,32 @@
 
                                 <!--  Custom command-line arguments  -->
                                 <controls:Case Value="2">
+                                    <StackPanel Spacing="8">
+                                        <TextBlock
+                                            x:Name="KillProcessesLabel"
+                                            Margin="8,0,8,-8"
+                                            Text="Select the processes that should be closed before this package is installed, updated or uninstalled:" />
+                                        <controls:TokenizingTextBox
+                                            x:Name="KillProcessesBox"
+                                            HorizontalAlignment="Left"
+                                            ItemsSource="{x:Bind ProcessesToKill, Mode=TwoWay}"
+                                            Loaded="KillProcessesBox_Loaded"
+                                            PlaceholderText=""
+                                            SuggestedItemTemplate="{StaticResource ProcessTemplate}"
+                                            SuggestedItemsSource="{x:Bind SuggestedProcesses, Mode=OneWay}"
+                                            TextChanged="KillProcessesBox_TextChanged"
+                                            TextMemberPath="Text"
+                                            TokenDelimiter=","
+                                            TokenItemAdding="KillProcessesBox_TokenItemAdding"
+                                            TokenItemTemplate="{StaticResource ProcessTemplate}" />
+                                        <CheckBox x:Name="KillProcessesThatWontDie">
+                                            <widgets:TranslatedTextBlock Text="Try to kill the processes that refuse to close when requested to" />
+                                        </CheckBox>
+                                    </StackPanel>
+                                </controls:Case>
+
+                                <!--  Custom command-line arguments  -->
+                                <controls:Case Value="3">
                                     <StackPanel Spacing="8">
                                         <widgets:TranslatedTextBlock
                                             x:Name="CLIDisabled"

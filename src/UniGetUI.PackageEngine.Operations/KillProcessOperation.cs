@@ -1,5 +1,6 @@
 
 using System.Diagnostics;
+using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Enums;
 
@@ -38,8 +39,15 @@ public class KillProcessOperation: AbstractOperation
                 await Task.WhenAny(proc.WaitForExitAsync(), Task.Delay(1000));
                 if (!proc.HasExited)
                 {
-                    Line($"Timeout for process {ProcessName}, attempting to kill...", LineType.Information);
-                    proc.Kill();
+                    if(Settings.Get(Settings.K.KillProcessesThatRefuseToDie))
+                    {
+                        Line($"Timeout for process {ProcessName}, attempting to kill...", LineType.Information);
+                        proc.Kill();
+                    }
+                    else
+                    {
+                        Line($"{ProcessName} with pid={proc.Id} did not exit and will not be killed. You can change this from UniGetUI settings.", LineType.Error);
+                    }
                 }
             }
 

@@ -56,6 +56,11 @@ namespace UniGetUI.Interface.Widgets
             set => _warningBlock.Foreground = value;
         }
 
+        public double WarningOpacity
+        {
+            set => _warningBlock.Opacity = value;
+        }
+
         public CheckboxCard()
         {
             _checkbox = new ToggleSwitch()
@@ -74,6 +79,7 @@ namespace UniGetUI.Interface.Widgets
                 Margin = new Thickness(0, 0, 0, 0),
                 TextWrapping = TextWrapping.Wrap,
                 FontSize = 12,
+                Opacity = 0.7,
                 Visibility = Visibility.Collapsed,
             };
             IS_INVERTED = false;

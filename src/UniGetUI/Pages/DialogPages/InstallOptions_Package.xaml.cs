@@ -9,6 +9,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
 using UniGetUI.Core.Language;
+using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.SettingsEngine.SecureSettings;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Enums;
@@ -43,11 +44,13 @@ namespace UniGetUI.Interface.Dialogs
 
         public InstallOptionsPage(IPackage package, InstallOptions options) : this(package, OperationType.None, options) { }
         public InstallOptionsPage(IPackage package, OperationType operation, InstallOptions options)
-        {
+        { 
             Package = package;
             InitializeComponent();
             Operation = operation;
             Options = options;
+
+            KillProcessesThatWontDie.IsChecked = Settings.Get(Settings.K.KillProcessesThatRefuseToDie);
 
             ProfileComboBox.Items.Add(CoreTools.Translate("Install"));
             ProfileComboBox.Items.Add(CoreTools.Translate("Update"));
@@ -91,7 +94,9 @@ namespace UniGetUI.Interface.Dialogs
             _ = LoadImage();
             DialogTitle.Text = CoreTools.Translate("{0} installation options", package.Name);
             PlaceholderText.Text = CoreTools.Translate("{0} Install options are currently locked because {0} follows the default install options.", package.Name);
-            KillProcessesBox.PlaceholderText = CoreTools.Translate("Write here the process names, separed by commas (,)");
+
+            KillProcessesLabel.Text = CoreTools.Translate("Select the processes that should be closed before this package is installed, updated or uninstalled.");
+            KillProcessesBox.PlaceholderText = CoreTools.Translate("Write here the process names here, separed by commas (,)");
 
             packageInstallLocation = Package.Manager.DetailsHelper.GetInstallLocation(package) ?? CoreTools.Translate("Unset or unknown");
 
@@ -269,7 +274,7 @@ namespace UniGetUI.Interface.Dialogs
             VersionProgress.Visibility = Visibility.Collapsed;
         }
 
-        public async Task<InstallOptions> GetUpdatedOptions(bool updateIgnoredUpdates = true)
+        public async Task<InstallOptions> GetUpdatedOptions(bool updateDetachedOptions = true)
         {
             Options.RunAsAdministrator = AdminCheckBox?.IsChecked ?? false;
             Options.InteractiveInstallation = InteractiveCheckBox?.IsChecked ?? false;
@@ -311,8 +316,10 @@ namespace UniGetUI.Interface.Dialogs
             }
             Options.SkipMinorUpdates = SkipMinorUpdatesCheckbox?.IsChecked ?? false;
 
-            if (updateIgnoredUpdates)
+            if (updateDetachedOptions)
             {
+                Settings.Set(Settings.K.KillProcessesThatRefuseToDie, KillProcessesThatWontDie.IsChecked ?? false);
+
                 if (IgnoreUpdatesCheckbox?.IsChecked ?? false)
                 {
                     await Package.AddToIgnoredUpdatesAsync(version: "*");
@@ -361,7 +368,7 @@ namespace UniGetUI.Interface.Dialogs
         private async void GenerateCommand()
         {
             if (!_uiLoaded) return;
-            InstallOptions options = await GetUpdatedOptions(updateIgnoredUpdates: false);
+            InstallOptions options = await GetUpdatedOptions(updateDetachedOptions: false);
             options = await InstallOptionsFactory.LoadApplicableAsync(this.Package, overridePackageOptions: options);
 
             var op = ProfileComboBox.SelectedIndex switch
