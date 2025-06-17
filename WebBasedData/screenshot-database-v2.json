@@ -1,10 +1,10 @@
 {
     "package_count": {
         "total": 11833,
-        "done": 5322,
-        "packages_with_icon": 5322,
-        "packages_with_screenshot": 677,
-        "total_screenshots": 2105
+        "done": 5324,
+        "packages_with_icon": 5324,
+        "packages_with_screenshot": 686,
+        "total_screenshots": 2132
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -2213,7 +2213,6 @@
                 "https://1.bp.blogspot.com/-b1_n6tOHvWU/YKMssWEjo-I/AAAAAAAAQjk/vIJQsAPUpRQKxR44GoCbm3CtRgr8tVBKACLcBGAsYHQ/s0/Android_NewForDevelopers_1024x512_updated.png",
                 "https://pbs.twimg.com/media/EeL1D6cWkAEWgTC.png",
                 "https://developer.android.com/static/studio/images/releases/compose-multipreview-annotations.png",
-                "https://developer.android.com/static/studio/images/studio-homepage-hero.jpg",
                 "https://i.ytimg.com/vi/kMI2jy-WlGM/maxresdefault.jpg"
             ]
         },
@@ -2225,7 +2224,6 @@
                 "https://1.bp.blogspot.com/-b1_n6tOHvWU/YKMssWEjo-I/AAAAAAAAQjk/vIJQsAPUpRQKxR44GoCbm3CtRgr8tVBKACLcBGAsYHQ/s0/Android_NewForDevelopers_1024x512_updated.png",
                 "https://pbs.twimg.com/media/EeL1D6cWkAEWgTC.png",
                 "https://developer.android.com/static/studio/images/releases/compose-multipreview-annotations.png",
-                "https://developer.android.com/static/studio/images/studio-homepage-hero.jpg",
                 "https://i.ytimg.com/vi/kMI2jy-WlGM/maxresdefault.jpg"
             ]
         },
@@ -2237,7 +2235,6 @@
                 "https://1.bp.blogspot.com/-b1_n6tOHvWU/YKMssWEjo-I/AAAAAAAAQjk/vIJQsAPUpRQKxR44GoCbm3CtRgr8tVBKACLcBGAsYHQ/s0/Android_NewForDevelopers_1024x512_updated.png",
                 "https://pbs.twimg.com/media/EeL1D6cWkAEWgTC.png",
                 "https://developer.android.com/static/studio/images/releases/compose-multipreview-annotations.png",
-                "https://developer.android.com/static/studio/images/studio-homepage-hero.jpg",
                 "https://i.ytimg.com/vi/kMI2jy-WlGM/maxresdefault.jpg"
             ]
         },
@@ -2417,16 +2414,14 @@
             "icon": "https://img.icons8.com/fluency/512/anydesk.png",
             "images": [
                 "https://cdn.mos.cms.futurecdn.net/rGU2S5Jz22yFy28i5shEFL.jpg",
-                "https://blog.anydesk.com/wp-content/uploads/2019/04/anydesk-software-version-5.png",
                 "https://cdn.afterdawn.fi/screenshots/normal/20813.jpg",
                 "https://static.sitejabber.com/img/urls/1323983/picture_374006.1626670964.jpg",
                 "https://support.anydesk.com/hs-fs/hubfs/Help%20Center/Connecting%20to%20a%20Remote%20Client/VirtualBoxVM_bao5gPJz7u.png?width=475&name=VirtualBoxVM_bao5gPJz7u.png"
             ]
         },
         "anydo": {
-            "icon": "https://www.any.do/v4/images/logo_blue.svg",
+            "icon": "https://i.postimg.cc/43QGKq9x/image.png",
             "images": [
-                "https://dk2dyle8k4h9a.cloudfront.net/newPages/app_review/anydo.png",
                 "https://www.any.do/v4/images/pc/calendar@2x.png",
                 "https://gdm-catalog-fmapi-prod.imgix.net/ProductScreenshot/869cbc09-bd48-47df-b65e-00eed3b27217.jpg",
                 "https://images.saasworthy.com/anydo_7454_screenshot_1591679649_adivu.jpg",
@@ -6231,12 +6226,22 @@
             "images": []
         },
         "cadreader": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/DZRr4bcc/image.png",
+            "images": [
+                "https://i.postimg.cc/g0TR161P/image.png",
+                "https://i.postimg.cc/rsYvrjPP/image.png",
+                "https://i.postimg.cc/sX5YSg0d/image.png",
+                "https://i.postimg.cc/vBw9Qd8P/image.png"
+            ]
         },
         "cadreader-cn": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/DZRr4bcc/image.png",
+            "images": [
+                "https://i.postimg.cc/g0TR161P/image.png",
+                "https://i.postimg.cc/rsYvrjPP/image.png",
+                "https://i.postimg.cc/sX5YSg0d/image.png",
+                "https://i.postimg.cc/vBw9Qd8P/image.png"
+            ]
         },
         "caesium": {
             "icon": "https://community.chocolatey.org/content/packageimages/caesium.install.2.3.1.png",
@@ -15943,7 +15948,10 @@
         },
         "geforcenow": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/g20x2SPP/image.png",
+                "https://i.postimg.cc/tgZ7hsTS/image.png"
+            ]
         },
         "gejigeji": {
             "icon": "",
@@ -16615,8 +16623,13 @@
             "images": []
         },
         "glasswire": {
-            "icon": "https://www.megaleechers.com/storage/GlassWire-Icon.png",
-            "images": []
+            "icon": "https://i.postimg.cc/c1XvgWkK/image.png",
+            "images": [
+                "https://i.postimg.cc/k4j74JMq/image.png",
+                "https://i.postimg.cc/dQpKSSLH/image.png",
+                "https://i.postimg.cc/T3XvTLjn/image.png",
+                "https://i.postimg.cc/DzvVb9MZ/image.png"
+            ]
         },
         "glasswire-lite": {
             "icon": "",
@@ -30662,11 +30675,11 @@
             "icon": "https://community.chocolatey.org/content/packageimages/pdk.2.5.0.0.png",
             "images": []
         },
-        "pdq-deploy": {
+        "pdqdeploy": {
             "icon": "https://community.chocolatey.org/content/packageimages/pdq-deploy.19.3.360.0.png",
             "images": []
         },
-        "pdq-inventory": {
+        "pdqinventory": {
             "icon": "https://i.postimg.cc/prhSk68Z/PDQInventory.png",
             "images": []
         },
@@ -33990,7 +34003,12 @@
         },
         "raidrive": {
             "icon": "https://community.chocolatey.org/content/packageimages/raidrive.2022.6.92.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/hvSqbrV1/image.png",
+                "https://i.postimg.cc/K8KhN43w/image.png",
+                "https://i.postimg.cc/7YKq9psG/image.png",
+                "https://i.postimg.cc/C5YwrYpD/image.png"
+            ]
         },
         "railsinstaller": {
             "icon": "",
@@ -35302,7 +35320,9 @@
         },
         "roboform": {
             "icon": "https://community.chocolatey.org/content/packageimages/RoboForm.9.2.1.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/T2ks4fx6/image.png"
+            ]
         },
         "robomirror": {
             "icon": "https://community.chocolatey.org/content/packageimages/robomirror.2.0.20161009.png",
@@ -41656,7 +41676,11 @@
         },
         "tightvnc": {
             "icon": "https://tweakers.net/ext/i/1278099200.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/VNX6YrVt/image.png",
+                "https://i.postimg.cc/zvGXSdXw/image.png",
+                "https://i.postimg.cc/3R4HKPRc/image.png"
+            ]
         },
         "tikzedtbeta": {
             "icon": "",
@@ -44356,8 +44380,15 @@
             "images": []
         },
         "victoria": {
-            "icon": "https://community.chocolatey.org/content/packageimages/victoria.5.37.png",
-            "images": []
+            "icon": "https://i.postimg.cc/1zLrVmLp/image.png",
+            "images": [
+                "https://i.postimg.cc/gkChKSMW/image.png",
+                "https://i.postimg.cc/DzbYMMhP/image.png",
+                "https://i.postimg.cc/bYRVWn7W/image.png",
+                "https://i.postimg.cc/L5VWVgSd/image.png",
+                "https://i.postimg.cc/P55g2yNS/image.png",
+                "https://i.postimg.cc/4NSPRQBL/image.png"
+            ]
         },
         "victormononf": {
             "icon": "https://community.chocolatey.org/content/packageimages/victormononf.2.1.0.png",
@@ -47677,7 +47708,12 @@
         },
         "wings3d": {
             "icon": "https://community.chocolatey.org/content/packageimages/wings3d.2.2.6.1.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/nVv7xtcs/image.png",
+                "https://i.postimg.cc/bvDDF7Bw/image.png",
+                "https://i.postimg.cc/rpB06fBC/image.png",
+                "https://i.postimg.cc/4yZYymNY/image.png"
+            ]
         },
         "winhotkey": {
             "icon": "https://community.chocolatey.org/content/packageimages/winhotkey.0.70.0.1.png",
