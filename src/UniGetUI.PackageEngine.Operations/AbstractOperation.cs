@@ -23,7 +23,7 @@ public abstract partial class AbstractOperation : IDisposable
     public bool Started { get; private set; }
     protected bool QUEUE_ENABLED;
     protected bool FORCE_HOLD_QUEUE;
-    private bool IsInnerOperation = false;
+    private bool IsInnerOperation;
 
     private readonly List<(string, LineType)> LogList = [];
     private OperationStatus _status = OperationStatus.InQueue;
@@ -38,7 +38,6 @@ public abstract partial class AbstractOperation : IDisposable
         BadgesChanged?.Invoke(this, new BadgeCollection(admin, interactive, skiphash, scope));
     }
 
-    // private readonly AbstractOperation? requirement;
     private readonly IReadOnlyList<InnerOperation> PreOperations = [];
     private readonly IReadOnlyList<InnerOperation> PostOperations = [];
 

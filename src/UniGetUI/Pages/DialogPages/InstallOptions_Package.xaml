@@ -11,6 +11,16 @@
     xmlns:widgets="using:UniGetUI.Interface.Widgets"
     MaxWidth="700"
     mc:Ignorable="d">
+    <Page.Resources>
+        <DataTemplate x:Key="ProcessTemplate" x:DataType="local:IOP_Proc">
+            <StackPanel Orientation="Horizontal">
+                <Viewbox Width="16">
+                    <FontIcon Glyph="&#xECAA;" />
+                </Viewbox>
+                <TextBlock Padding="8,0,0,0" Text="{x:Bind Name}" />
+            </StackPanel>
+        </DataTemplate>
+    </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -131,6 +141,7 @@
                                     HorizontalAlignment="Stretch"
                                     Background="{ThemeResource SystemChromeAltHighColor}"
                                     IsAddTabButtonVisible="False"
+                                    CanReorderTabs="False"
                                     TabWidthMode="SizeToContent">
                                     <widgets:BetterTabViewItem
                                         IconName="Settings"
@@ -210,6 +221,24 @@
                                                 <widgets:TranslatedTextBlock Text="Skip minor updates for this package" />
                                             </CheckBox>
                                         </controls:WrapPanel>
+                                        <controls:TokenizingTextBox
+                                            x:Name="KillProcessesBox"
+                                            MaxWidth="620"
+                                            HorizontalAlignment="Left"
+                                            ItemsSource="{x:Bind ProcessesToKill, Mode=TwoWay}"
+                                            Loaded="KillProcessesBox_Loaded"
+                                            PlaceholderText="process1.exe,process2.exe"
+                                            SuggestedItemTemplate="{StaticResource ProcessTemplate}"
+                                            SuggestedItemsSource="{x:Bind SuggestedProcesses, Mode=OneWay}"
+                                            TextChanged="KillProcessesBox_TextChanged"
+                                            TextMemberPath="Text"
+                                            TokenDelimiter=","
+                                            TokenItemAdding="KillProcessesBox_TokenItemAdding"
+                                            TokenItemTemplate="{StaticResource ProcessTemplate}">
+                                            <controls:TokenizingTextBox.Header>
+                                                <widgets:TranslatedTextBlock Text="Processes to close before this package is installed, updated or uninstalled:" />
+                                            </controls:TokenizingTextBox.Header>
+                                        </controls:TokenizingTextBox>
                                     </StackPanel>
                                 </controls:Case>
 

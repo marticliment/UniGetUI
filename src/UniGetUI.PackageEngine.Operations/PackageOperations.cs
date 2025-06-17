@@ -132,10 +132,13 @@ namespace UniGetUI.PackageEngine.Operations
         private static IReadOnlyList<InnerOperation> _getPreInstallOps(InstallOptions opts, AbstractOperation? preReq = null)
         {
             List<InnerOperation> l = new();
-
-            // Things Things Things
-
             if(preReq is not null) l.Add(new(preReq, true));
+
+            foreach (var process in opts.KillBeforeOperation)
+                l.Add(new InnerOperation(
+                    new KillProcessOperation(process),
+                    mustSucceed: false));
+
             return l;
         }
 

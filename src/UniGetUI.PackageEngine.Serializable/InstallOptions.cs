@@ -19,6 +19,8 @@ namespace UniGetUI.PackageEngine.Serializable
         public bool SkipMinorUpdates { get; set; }
         public bool OverridesNextLevelOpts { get; set; }
         public bool RemoveDataOnUninstall { get; set; }
+        public List<string> KillBeforeOperation { get; set; } = [];
+
 
         public override InstallOptions Copy()
         {
@@ -27,9 +29,9 @@ namespace UniGetUI.PackageEngine.Serializable
                 SkipHashCheck = SkipHashCheck,
                 Architecture = Architecture,
                 CustomInstallLocation = CustomInstallLocation,
-                CustomParameters_Install = CustomParameters_Install,
-                CustomParameters_Update = CustomParameters_Update,
-                CustomParameters_Uninstall = CustomParameters_Uninstall,
+                CustomParameters_Install = CustomParameters_Install.ToList(),
+                CustomParameters_Update = CustomParameters_Update.ToList(),
+                CustomParameters_Uninstall = CustomParameters_Uninstall.ToList(),
                 InstallationScope = InstallationScope,
                 InteractiveInstallation = InteractiveInstallation,
                 PreRelease = PreRelease,
@@ -38,6 +40,7 @@ namespace UniGetUI.PackageEngine.Serializable
                 SkipMinorUpdates = SkipMinorUpdates,
                 OverridesNextLevelOpts = OverridesNextLevelOpts,
                 RemoveDataOnUninstall = RemoveDataOnUninstall,
+                KillBeforeOperation = KillBeforeOperation.ToList(),
             };
         }
 
@@ -65,6 +68,7 @@ namespace UniGetUI.PackageEngine.Serializable
                 this.CustomParameters_Uninstall = ReadArrayFromJson(data, "CustomParameters");
             }
 
+            this.KillBeforeOperation = ReadArrayFromJson(data, nameof(KillBeforeOperation));
             this.PreRelease = data[nameof(PreRelease)]?.GetVal<bool>() ?? false;
             this.CustomInstallLocation = data[nameof(CustomInstallLocation)]?.GetVal<string>() ?? "";
             this.Version = data[nameof(Version)]?.GetVal<string>() ?? "";
@@ -98,6 +102,7 @@ namespace UniGetUI.PackageEngine.Serializable
                    CustomParameters_Install.Where(x => x != "").Any() ||
                    CustomParameters_Update.Where(x => x != "").Any() ||
                    CustomParameters_Uninstall.Where(x => x != "").Any() ||
+                   KillBeforeOperation.Where(x => x != "").Any() ||
                    CustomInstallLocation.Any() ||
                    RemoveDataOnUninstall is not false ||
                    Version.Any();
@@ -115,8 +120,8 @@ namespace UniGetUI.PackageEngine.Serializable
 
         public override string ToString()
         {
-            string customparams = CustomParameters_Install.Any() ? string.Join(",", CustomParameters_Install) : "[]";
-            customparams += CustomParameters_Update.Any() ? string.Join(",", CustomParameters_Update) : "[]";
+            string customparams = CustomParameters_Install.Any() ? string.Join(",", CustomParameters_Install) : "[],";
+            customparams += CustomParameters_Update.Any() ? string.Join(",", CustomParameters_Update) : "[],";
             customparams += CustomParameters_Uninstall.Any() ? string.Join(",", CustomParameters_Uninstall) : "[]";
             return $"<InstallOptions: SkipHashCheck={SkipHashCheck};" +
                    $"InteractiveInstallation={InteractiveInstallation};" +
@@ -127,6 +132,7 @@ namespace UniGetUI.PackageEngine.Serializable
                    $"InstallationScope={CustomInstallLocation};" +
                    $"CustomParameters={customparams};" +
                    $"RemoveDataOnUninstall={RemoveDataOnUninstall};" +
+                   $"KillBeforeOperation={KillBeforeOperation};" +
                    $"PreRelease={PreRelease}>";
         }
     }

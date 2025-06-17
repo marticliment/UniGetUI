@@ -1,5 +1,9 @@
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
+using CommunityToolkit.WinUI.Controls;
 using Microsoft.Extensions.Options;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -13,6 +17,7 @@ using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.Serializable;
 using UniGetUI.Pages.SettingsPages.GeneralPages;
 using Windows.ApplicationModel.Activation;
+using Windows.Services.Maps;
 using Architecture = UniGetUI.PackageEngine.Enums.Architecture;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -31,6 +36,10 @@ namespace UniGetUI.Interface.Dialogs
         private readonly OperationType Operation;
         private readonly string packageInstallLocation;
         private bool _uiLoaded;
+
+        public ObservableCollection<IOP_Proc> ProcessesToKill = new();
+        private readonly ObservableCollection<IOP_Proc> _runningProcesses = new();
+        public ObservableCollection<IOP_Proc> SuggestedProcesses = new();
 
         public InstallOptionsPage(IPackage package, InstallOptions options) : this(package, OperationType.None, options) { }
         public InstallOptionsPage(IPackage package, OperationType operation, InstallOptions options)
@@ -82,6 +91,7 @@ namespace UniGetUI.Interface.Dialogs
             _ = LoadImage();
             DialogTitle.Text = CoreTools.Translate("{0} installation options", package.Name);
             PlaceholderText.Text = CoreTools.Translate("{0} Install options are currently locked because {0} follows the default install options.", package.Name);
+            KillProcessesBox.PlaceholderText = CoreTools.Translate("Write here the process names, separed by commas (,)");
 
             packageInstallLocation = Package.Manager.DetailsHelper.GetInstallLocation(package) ?? CoreTools.Translate("Unset or unknown");
 
@@ -154,10 +164,13 @@ namespace UniGetUI.Interface.Dialogs
                 }
             }
 
+            foreach(var p in Options.KillBeforeOperation)
+            {
+                ProcessesToKill.Add(new(p));
+            }
 
             if (Options.CustomInstallLocation == "") CustomInstallLocation.Text = packageInstallLocation;
             else CustomInstallLocation.Text = Options.CustomInstallLocation;
-
 
             CustomParameters1.Text = string.Join(' ', Options.CustomParameters_Install);
             CustomParameters2.Text = string.Join(' ', Options.CustomParameters_Update);
@@ -166,8 +179,20 @@ namespace UniGetUI.Interface.Dialogs
             _uiLoaded = true;
             EnableDisableControls(operation);
             LoadIgnoredUpdates();
+            _ = _loadProcesses();
         }
 
+        private async Task _loadProcesses()
+        {
+            var processNames = await Task.Run(() =>
+                Process.GetProcesses().Select(p => p.ProcessName).Distinct().ToList());
+
+            _runningProcesses.Clear();
+            foreach (var name in processNames)
+            {
+                if(name.Any()) _runningProcesses.Add(new(name + ".exe"));
+            }
+        }
         private void EnableDisableControls(OperationType operation)
         {
             if(FollowGlobalOptionsSwitch.IsOn)
@@ -188,13 +213,17 @@ namespace UniGetUI.Interface.Dialogs
 
                 AdminCheckBox.IsEnabled = Package.Manager.Capabilities.CanRunAsAdmin;
                 InteractiveCheckBox.IsEnabled = Package.Manager.Capabilities.CanRunInteractively;
-                HashCheckbox.IsEnabled = operation != OperationType.Uninstall && Package.Manager.Capabilities.CanSkipIntegrityChecks;
-                ArchitectureComboBox.IsEnabled = operation != OperationType.Uninstall && Package.Manager.Capabilities.SupportsCustomArchitectures;
+                HashCheckbox.IsEnabled =
+                    operation is not OperationType.Uninstall
+                    && Package.Manager.Capabilities.CanSkipIntegrityChecks;
+
+                ArchitectureComboBox.IsEnabled =
+                    operation is not OperationType.Uninstall
+                    && Package.Manager.Capabilities.SupportsCustomArchitectures;
+
                 VersionComboBox.IsEnabled =
-                    (operation == OperationType.Install
-                        || operation == OperationType.None)
-                    && (Package.Manager.Capabilities.SupportsCustomVersions
-                        || Package.Manager.Capabilities.SupportsPreRelease);
+                    operation is OperationType.Install or OperationType.None
+                    && (Package.Manager.Capabilities.SupportsCustomVersions || Package.Manager.Capabilities.SupportsPreRelease);
                 ScopeCombo.IsEnabled = Package.Manager.Capabilities.SupportsCustomScopes;
                 ResetDir.IsEnabled = Package.Manager.Capabilities.SupportsCustomLocations;
                 SelectDir.IsEnabled = Package.Manager.Capabilities.SupportsCustomLocations;
@@ -268,6 +297,9 @@ namespace UniGetUI.Interface.Dialogs
             Options.CustomParameters_Update = CustomParameters2.Text.Split(' ').ToList();
             Options.CustomParameters_Uninstall = CustomParameters3.Text.Split(' ').ToList();
             Options.PreRelease = VersionComboBox.SelectedValue.ToString() == CoreTools.Translate("PreRelease");
+
+            Options.KillBeforeOperation.Clear();
+            foreach(var p in ProcessesToKill) Options.KillBeforeOperation.Add(p.Name);
 
             if (VersionComboBox.SelectedValue.ToString() != CoreTools.Translate("PreRelease") && VersionComboBox.SelectedValue.ToString() != CoreTools.Translate("Latest"))
             {
@@ -362,6 +394,51 @@ namespace UniGetUI.Interface.Dialogs
         {
             Close?.Invoke(this, EventArgs.Empty);
             MainApp.Instance.MainWindow.NavigationPage.OpenSettingsPage(typeof(Administrator));
+        }
+
+        private void KillProcessesBox_TokenItemAdding(TokenizingTextBox sender, TokenItemAddingEventArgs args)
+        {
+            args.Item = _runningProcesses.FirstOrDefault((item) => item.Name.Contains(args.TokenText));
+            if(args.Item is null)
+            {
+                string text = args.TokenText;
+                if (!text.EndsWith(".exe")) text += ".exe";
+                args.Item = new IOP_Proc(text);
+            }
+        }
+
+        private async void KillProcessesBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+        {
+            var text = KillProcessesBox.Text;
+            await Task.Delay(100);
+            if (text != KillProcessesBox.Text)
+                return;
+
+            SuggestedProcesses.Clear();
+            if (text.Trim() != "")
+            {
+                if (!text.EndsWith(".exe"))
+                    text = text.Trim() + ".exe";
+                SuggestedProcesses.Add(new(text));
+                foreach (var item in _runningProcesses.Where(x => x.Name.Contains(KillProcessesBox.Text)))
+                {
+                    SuggestedProcesses.Add(item);
+                }
+            }
+        }
+
+        private void KillProcessesBox_Loaded(object sender, RoutedEventArgs e)
+        {
+
+        }
+    }
+
+    public class IOP_Proc
+    {
+        public readonly string Name;
+        public IOP_Proc(string name)
+        {
+            Name = name;
         }
     }
 }
