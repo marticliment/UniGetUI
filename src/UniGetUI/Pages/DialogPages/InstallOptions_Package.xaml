@@ -3,6 +3,7 @@
     x:Class="UniGetUI.Interface.Dialogs.InstallOptionsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:animations="using:CommunityToolkit.WinUI.Animations"
     xmlns:controls="using:CommunityToolkit.WinUI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:UniGetUI.Interface.Dialogs"
@@ -180,6 +181,16 @@
                                 <!--  General settings  -->
                                 <controls:Case IsDefault="True" Value="0">
                                     <StackPanel Spacing="8">
+                                        <animations:Implicit.ShowAnimations>
+                                            <animations:TranslationAnimation
+                                                From="0,20,0"
+                                                To="0"
+                                                Duration="0:0:0.3" />
+                                            <animations:OpacityAnimation
+                                                From="0"
+                                                To="1.0"
+                                                Duration="0:0:0.3" />
+                                        </animations:Implicit.ShowAnimations>
                                         <controls:WrapPanel HorizontalSpacing="16" VerticalSpacing="0">
                                             <CheckBox Name="AdminCheckBox" Click="AdminCheckBox_Click">
                                                 <widgets:TranslatedTextBlock Text="Run as admin" />
@@ -232,6 +243,16 @@
                                 <controls:Case Value="1">
                                     <StackPanel Spacing="8">
 
+                                        <animations:Implicit.ShowAnimations>
+                                            <animations:TranslationAnimation
+                                                From="0,20,0"
+                                                To="0"
+                                                Duration="0:0:0.3" />
+                                            <animations:OpacityAnimation
+                                                From="0"
+                                                To="1.0"
+                                                Duration="0:0:0.3" />
+                                        </animations:Implicit.ShowAnimations>
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*" />
@@ -308,7 +329,18 @@
 
                                 <!--  Custom command-line arguments  -->
                                 <controls:Case Value="2">
-                                    <StackPanel Spacing="8">
+                                    <StackPanel HorizontalAlignment="Center" Spacing="8">
+                                        <animations:Implicit.ShowAnimations>
+                                            <animations:TranslationAnimation
+                                                From="0,20,0"
+                                                To="0"
+                                                Duration="0:0:0.3" />
+                                            <animations:OpacityAnimation
+                                                From="0"
+                                                To="1.0"
+                                                Duration="0:0:0.3" />
+                                        </animations:Implicit.ShowAnimations>
+
                                         <TextBlock
                                             x:Name="KillProcessesLabel"
                                             Margin="8,0,8,-8"
@@ -335,6 +367,16 @@
                                 <!--  Custom command-line arguments  -->
                                 <controls:Case Value="3">
                                     <StackPanel Spacing="8">
+                                        <animations:Implicit.ShowAnimations>
+                                            <animations:TranslationAnimation
+                                                From="0,20,0"
+                                                To="0"
+                                                Duration="0:0:0.3" />
+                                            <animations:OpacityAnimation
+                                                From="0"
+                                                To="1.0"
+                                                Duration="0:0:0.3" />
+                                        </animations:Implicit.ShowAnimations>
                                         <widgets:TranslatedTextBlock
                                             x:Name="CLIDisabled"
                                             Foreground="{ThemeResource SystemErrorTextColor}"
