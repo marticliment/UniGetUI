@@ -116,7 +116,11 @@ public partial class MainApp
         }
 
         /*
+         *
+         *
          * PACKAGE INSTALLATION
+         *
+         *
          */
         public static async Task<AbstractOperation?> Install(IPackage? package, TEL_InstallReferral referral,
             bool? elevated = null, bool? interactive = null, bool? no_integrity = null, bool ignoreParallel = false,
@@ -141,8 +145,31 @@ public partial class MainApp
             }
         }
 
+        public static async Task<AbstractOperation?> UninstallThenReinstall(IPackage? package, TEL_InstallReferral referral)
+        {
+            if (package is null) return null;
+
+            var options = await InstallOptionsFactory.LoadApplicableAsync(package);
+
+            var uninstallOp = new UninstallPackageOperation(package, options);
+            uninstallOp.OperationSucceeded += (_, _) => TelemetryHandler.UninstallPackage(package, TEL_OP_RESULT.SUCCESS);
+            uninstallOp.OperationFailed += (_, _) => TelemetryHandler.UninstallPackage(package, TEL_OP_RESULT.FAILED);
+
+            var installOp = new InstallPackageOperation(package, options, req: uninstallOp);
+            installOp.OperationSucceeded += (_, _) => TelemetryHandler.InstallPackage(package, TEL_OP_RESULT.SUCCESS, referral);
+            installOp.OperationFailed += (_, _) => TelemetryHandler.InstallPackage(package, TEL_OP_RESULT.FAILED, referral);
+
+            Add(installOp);
+            Instance.MainWindow.UpdateSystemTrayStatus();
+            return installOp;
+        }
+
         /*
+         *
+         *
          * PACKAGE UPDATE
+         *
+         *
          */
         public static async Task<AbstractOperation?> Update(IPackage? package, bool? elevated = null, bool? interactive = null, bool? no_integrity = null, bool ignoreParallel = false, AbstractOperation? req = null)
         {
@@ -197,8 +224,31 @@ public partial class MainApp
             Logger.Warn($"[WIDGETS] No package with id={packageId} was found");
         }
 
+        public static async Task<AbstractOperation?> UninstallThenUpdate(IPackage? package)
+        {
+            if (package is null) return null;
+
+            var options = await InstallOptionsFactory.LoadApplicableAsync(package);
+
+            var uninstallOp = new UninstallPackageOperation(package, options);
+            uninstallOp.OperationSucceeded += (_, _) => TelemetryHandler.UninstallPackage(package, TEL_OP_RESULT.SUCCESS);
+            uninstallOp.OperationFailed += (_, _) => TelemetryHandler.UninstallPackage(package, TEL_OP_RESULT.FAILED);
+
+            var installOp = new UpdatePackageOperation(package, options, req: uninstallOp);
+            installOp.OperationSucceeded += (_, _) => TelemetryHandler.UpdatePackage(package, TEL_OP_RESULT.SUCCESS);
+            installOp.OperationFailed += (_, _) => TelemetryHandler.UpdatePackage(package, TEL_OP_RESULT.FAILED);
+
+            Add(installOp);
+            Instance.MainWindow.UpdateSystemTrayStatus();
+            return installOp;
+        }
+
         /*
+         *
+         *
          * PACKAGE UNINSTALL
+         *
+         *
          */
 
         public static async void ConfirmAndUninstall(IReadOnlyList<IPackage> packages, bool? elevated = null, bool? interactive = null, bool? remove_data = null)

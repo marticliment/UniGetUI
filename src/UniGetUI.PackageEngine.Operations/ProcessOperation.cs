@@ -11,7 +11,10 @@ public abstract class AbstractProcessOperation : AbstractOperation
     protected Process process { get; private set; }
     private bool ProcessKilled;
 
-    protected AbstractProcessOperation(bool queue_enabled, AbstractOperation? req) : base(queue_enabled, req)
+    protected AbstractProcessOperation(
+        bool queue_enabled,
+        IReadOnlyList<InnerOperation>? preOps = null,
+        IReadOnlyList<InnerOperation>? postOps = null) : base(queue_enabled, preOps, postOps)
     {
         process = new();
         CancelRequested += (_, _) =>
