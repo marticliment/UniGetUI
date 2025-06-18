@@ -201,7 +201,10 @@
                                                 <widgets:TranslatedTextBlock HorizontalAlignment="Stretch" Text="Skip hash check" />
                                             </CheckBox>
                                         </controls:WrapPanel>
-                                        <Grid>
+                                        <Grid
+                                            Padding="4,8"
+                                            BorderBrush="{ThemeResource AppBarToggleButtonCheckedDisabledBackgroundThemeBrush}"
+                                            BorderThickness="0,1,0,1">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*" />
                                                 <ColumnDefinition Width="*" MaxWidth="200" />
@@ -252,7 +255,7 @@
                                                 To="1.0"
                                                 Duration="0:0:0.3" />
                                         </animations:Implicit.ShowAnimations>
-                                        <Grid>
+                                        <Grid Padding="4,0">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*" />
                                                 <ColumnDefinition Width="*" MaxWidth="200" />
@@ -269,7 +272,10 @@
                                                 SelectedIndex="0"
                                                 SelectionChanged="ArchitectureComboBox_SelectionChanged" />
                                         </Grid>
-                                        <Grid>
+                                        <Grid
+                                            Padding="4,8"
+                                            BorderBrush="{ThemeResource AppBarToggleButtonCheckedDisabledBackgroundThemeBrush}"
+                                            BorderThickness="0,1">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*" />
                                                 <ColumnDefinition Width="*" MaxWidth="200" />
@@ -285,7 +291,7 @@
                                                 VerticalAlignment="Center"
                                                 SelectionChanged="ScopeCombo_SelectionChanged" />
                                         </Grid>
-                                        <Grid ColumnSpacing="8">
+                                        <Grid Padding="4,0" ColumnSpacing="8">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*" />
                                                 <ColumnDefinition Width="*" MaxWidth="96" />

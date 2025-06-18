@@ -181,6 +181,16 @@ namespace UniGetUI.Interface.Dialogs
             CustomParameters2.Text = string.Join(' ', Options.CustomParameters_Update);
             CustomParameters3.Text = string.Join(' ', Options.CustomParameters_Uninstall);
 
+            PreInstallCommandBox.Text = Options.PreInstallCommand;
+            PostInstallCommandBox.Text = Options.PostInstallCommand;
+            PreUpdateCommandBox.Text = Options.PreUpdateCommand;
+            PostUpdateCommandBox.Text = Options.PostUpdateCommand;
+            PreUninstallCommandBox.Text = Options.PreUninstallCommand;
+            PostUninstallCommandBox.Text = Options.PostUninstallCommand;
+            AbortInsFailedCheck.IsChecked = Options.AbortOnPreInstallFail;
+            AbortUpdFailedCheck.IsChecked = Options.AbortOnPreUpdateFail;
+            AbortUniFailedCheck.IsChecked = Options.AbortOnPreUninstallFail;
+
             _uiLoaded = true;
             EnableDisableControls(operation);
             LoadIgnoredUpdates();
@@ -321,6 +331,16 @@ namespace UniGetUI.Interface.Dialogs
             Options.CustomParameters_Update = CustomParameters2.Text.Split(' ').ToList();
             Options.CustomParameters_Uninstall = CustomParameters3.Text.Split(' ').ToList();
             Options.PreRelease = VersionComboBox.SelectedValue.ToString() == CoreTools.Translate("PreRelease");
+
+            Options.PreInstallCommand = PreInstallCommandBox.Text;
+            Options.PostInstallCommand = PostInstallCommandBox.Text;
+            Options.PreUpdateCommand = PreUpdateCommandBox.Text;
+            Options.PostUpdateCommand = PostUpdateCommandBox.Text;
+            Options.PreUninstallCommand = PreUninstallCommandBox.Text;
+            Options.PostUninstallCommand = PostUninstallCommandBox.Text;
+            Options.AbortOnPreInstallFail = AbortInsFailedCheck.IsChecked ?? true;
+            Options.AbortOnPreUpdateFail = AbortUpdFailedCheck.IsChecked ?? true;
+            Options.AbortOnPreUninstallFail = AbortUniFailedCheck.IsChecked ?? true;
 
             Options.KillBeforeOperation.Clear();
             foreach(var p in ProcessesToKill) Options.KillBeforeOperation.Add(p.Name);

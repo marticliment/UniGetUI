@@ -223,6 +223,45 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 options.CustomParameters_Uninstall = [];
             }
 
+            if (!SecureSettings.Get(SecureSettings.K.AllowPrePostOpCommand))
+            {
+                if (options.PreInstallCommand.Any())
+                {
+                    Logger.Warn($"Pre-install command {options.PreInstallCommand} will be discarded");
+                    options.PreInstallCommand = "";
+                }
+
+                if (options.PostInstallCommand.Any())
+                {
+                    Logger.Warn($"Post-install command {options.PostInstallCommand} will be discarded");
+                    options.PostInstallCommand = "";
+                }
+
+                if (options.PreUpdateCommand.Any())
+                {
+                    Logger.Warn($"Pre-update command {options.PreUpdateCommand} will be discarded");
+                    options.PreUpdateCommand = "";
+                }
+
+                if (options.PostUpdateCommand.Any())
+                {
+                    Logger.Warn($"Post-update command {options.PostUpdateCommand} will be discarded");
+                    options.PostUpdateCommand = "";
+                }
+
+                if (options.PreUninstallCommand.Any())
+                {
+                    Logger.Warn($"Pre-uninstall command {options.PreUninstallCommand} will be discarded");
+                    options.PreUninstallCommand = "";
+                }
+
+                if (options.PostUninstallCommand.Any())
+                {
+                    Logger.Warn($"Post-uninstall command {options.PostUninstallCommand} will be discarded");
+                    options.PostUninstallCommand = "";
+                }
+            }
+
             return options;
         }
     }

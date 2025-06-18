@@ -21,6 +21,16 @@ namespace UniGetUI.PackageEngine.Serializable
         public bool RemoveDataOnUninstall { get; set; }
         public List<string> KillBeforeOperation { get; set; } = [];
 
+        public string PreInstallCommand { get; set; } = "";
+        public string PostInstallCommand { get; set; } = "";
+        public bool AbortOnPreInstallFail { get; set; } = true;
+        public string PreUpdateCommand { get; set; } = "";
+        public string PostUpdateCommand { get; set; } = "";
+        public bool AbortOnPreUpdateFail { get; set; } = true;
+        public string PreUninstallCommand { get; set; } = "";
+        public string PostUninstallCommand { get; set; } = "";
+        public bool AbortOnPreUninstallFail { get; set; } = true;
+
 
         public override InstallOptions Copy()
         {
@@ -41,6 +51,15 @@ namespace UniGetUI.PackageEngine.Serializable
                 OverridesNextLevelOpts = OverridesNextLevelOpts,
                 RemoveDataOnUninstall = RemoveDataOnUninstall,
                 KillBeforeOperation = KillBeforeOperation.ToList(),
+                PreInstallCommand = PreInstallCommand,
+                PreUpdateCommand = PreUpdateCommand,
+                PreUninstallCommand = PreUninstallCommand,
+                PostInstallCommand = PostInstallCommand,
+                PostUpdateCommand = PostUpdateCommand,
+                PostUninstallCommand = PostUninstallCommand,
+                AbortOnPreInstallFail = AbortOnPreInstallFail,
+                AbortOnPreUpdateFail = AbortOnPreUpdateFail,
+                AbortOnPreUninstallFail = AbortOnPreUninstallFail
             };
         }
 
@@ -74,6 +93,16 @@ namespace UniGetUI.PackageEngine.Serializable
             this.Version = data[nameof(Version)]?.GetVal<string>() ?? "";
             this.SkipMinorUpdates = data[nameof(SkipMinorUpdates)]?.GetVal<bool>() ?? false;
 
+            this.PreInstallCommand = data[nameof(PreInstallCommand)]?.GetVal<string>() ?? "";
+            this.PreUpdateCommand = data[nameof(PreUpdateCommand)]?.GetVal<string>() ?? "";
+            this.PreUninstallCommand = data[nameof(PreUninstallCommand)]?.GetVal<string>() ?? "";
+            this.PostInstallCommand = data[nameof(PostInstallCommand)]?.GetVal<string>() ?? "";
+            this.PostUpdateCommand = data[nameof(PostUpdateCommand)]?.GetVal<string>() ?? "";
+            this.PostUninstallCommand = data[nameof(PostUninstallCommand)]?.GetVal<string>() ?? "";
+            this.AbortOnPreInstallFail = data[nameof(AbortOnPreInstallFail)]?.GetVal<bool>() ?? true;
+            this.AbortOnPreUpdateFail = data[nameof(AbortOnPreUpdateFail)]?.GetVal<bool>() ?? true;
+            this.AbortOnPreUninstallFail = data[nameof(AbortOnPreUninstallFail)]?.GetVal<bool>() ?? true;
+
             // if OverridesNextLevelOpts is not found on the JSON, set it to true or false depending
             // on whether the current settings instances are different from the default values.
             // This entry shall be checked the last one, to ensure all other properties are set
@@ -99,13 +128,22 @@ namespace UniGetUI.PackageEngine.Serializable
                    SkipMinorUpdates is not false ||
                    Architecture.Any() ||
                    InstallationScope.Any() ||
-                   CustomParameters_Install.Where(x => x != "").Any() ||
-                   CustomParameters_Update.Where(x => x != "").Any() ||
-                   CustomParameters_Uninstall.Where(x => x != "").Any() ||
-                   KillBeforeOperation.Where(x => x != "").Any() ||
+                   CustomParameters_Install.Where(x => x.Any()).Any() ||
+                   CustomParameters_Update.Where(x => x.Any()).Any() ||
+                   CustomParameters_Uninstall.Where(x => x.Any()).Any() ||
+                   KillBeforeOperation.Where(x => x.Any()).Any() ||
                    CustomInstallLocation.Any() ||
                    RemoveDataOnUninstall is not false ||
-                   Version.Any();
+                   Version.Any() ||
+                   PreInstallCommand.Any() ||
+                   PostInstallCommand.Any() ||
+                   AbortOnPreInstallFail is not true ||
+                   PreUpdateCommand.Any() ||
+                   PostUpdateCommand.Any() ||
+                   AbortOnPreUpdateFail is not true ||
+                   PreUninstallCommand.Any() ||
+                   PostUninstallCommand.Any() ||
+                   AbortOnPreUninstallFail is not true;
             // OverridesNextLevelOpts does not need to be checked here, since
             // this method is invoked before this property has been set
         }
@@ -133,6 +171,15 @@ namespace UniGetUI.PackageEngine.Serializable
                    $"CustomParameters={customparams};" +
                    $"RemoveDataOnUninstall={RemoveDataOnUninstall};" +
                    $"KillBeforeOperation={KillBeforeOperation};" +
+                   $"PreInstallCommand={PreInstallCommand};" +
+                   $"PostInstallCommand={PostInstallCommand};" +
+                   $"AbortOnPreInstallFail={AbortOnPreInstallFail};" +
+                   $"PreUpdateCommand={PreUpdateCommand};" +
+                   $"PostUpdateCommand={PostUpdateCommand};" +
+                   $"AbortOnPreUpdateFail={AbortOnPreUpdateFail};" +
+                   $"PreUninstallCommand={PreUninstallCommand};" +
+                   $"PostUninstallCommand={PostUninstallCommand};" +
+                   $"AbortOnPreUninstallFail={AbortOnPreUninstallFail};" +
                    $"PreRelease={PreRelease}>";
         }
     }
