@@ -665,46 +665,81 @@ namespace UniGetUI.Interface.SoftwarePages
                 SecureSettings.Get(SecureSettings.K.AllowCLIArguments) &&
                 SecureSettings.Get(SecureSettings.K.AllowImportingCLIArguments);
 
+            bool AllowPrePostOps =
+                SecureSettings.Get(SecureSettings.K.AllowPrePostOpCommand) &&
+                SecureSettings.Get(SecureSettings.K.AllowImportPrePostOpCommands);
+
 
             foreach (var pkg in DeserializedData.packages)
             {
-                if (pkg.InstallationOptions.CustomParameters_Install.Where(x => x.Any()).Any())
+                var opts = pkg.InstallationOptions;
+
+                if (opts.CustomParameters_Install.Where(x => x.Any()).Any())
                 {
                     showReport = true;
-                    if (!packageReport.ContainsKey(pkg.Id))
-                        packageReport[pkg.Id] = new();
-
-                    packageReport[pkg.Id].Add(new(
-                        $"Custom install arguments: [{string.Join(", ", pkg.InstallationOptions.CustomParameters_Install)}]",
-                        AllowCLIParameters));
-
-                    if(!AllowCLIParameters) pkg.InstallationOptions.CustomParameters_Install.Clear();
+                    if (!packageReport.ContainsKey(pkg.Id)) packageReport[pkg.Id] = new();
+                    packageReport[pkg.Id].Add(new($"Custom install arguments: [{string.Join(", ", opts.CustomParameters_Install)}]", AllowCLIParameters));
+                    if(!AllowCLIParameters) opts.CustomParameters_Install.Clear();
                 }
-                if (pkg.InstallationOptions.CustomParameters_Update.Where(x => x.Any()).Any())
+                if (opts.CustomParameters_Update.Where(x => x.Any()).Any())
                 {
                     showReport = true;
-                    if (!packageReport.ContainsKey(pkg.Id))
-                        packageReport[pkg.Id] = new();
-
-                    packageReport[pkg.Id].Add(new(
-                        $"Custom update arguments: [{string.Join(", ", pkg.InstallationOptions.CustomParameters_Update)}]",
-                        AllowCLIParameters));
-
-                    if(!AllowCLIParameters) pkg.InstallationOptions.CustomParameters_Update.Clear();
+                    if (!packageReport.ContainsKey(pkg.Id)) packageReport[pkg.Id] = new();
+                    packageReport[pkg.Id].Add(new($"Custom update arguments: [{string.Join(", ", opts.CustomParameters_Update)}]", AllowCLIParameters));
+                    if(!AllowCLIParameters) opts.CustomParameters_Update.Clear();
                 }
-                if (pkg.InstallationOptions.CustomParameters_Uninstall.Where(x => x.Any()).Any())
+                if (opts.CustomParameters_Uninstall.Where(x => x.Any()).Any())
                 {
                     showReport = true;
-                    if (!packageReport.ContainsKey(pkg.Id))
-                        packageReport[pkg.Id] = new();
-
-                    packageReport[pkg.Id].Add(new(
-                        $"Custom uninstall arguments: [{string.Join(", ", pkg.InstallationOptions.CustomParameters_Uninstall)}]",
-                        AllowCLIParameters));
-
-                    if(!AllowCLIParameters) pkg.InstallationOptions.CustomParameters_Uninstall.Clear();
+                    if (!packageReport.ContainsKey(pkg.Id)) packageReport[pkg.Id] = new();
+                    packageReport[pkg.Id].Add(new($"Custom uninstall arguments: [{string.Join(", ", opts.CustomParameters_Uninstall)}]", AllowCLIParameters));
+                    if(!AllowCLIParameters) opts.CustomParameters_Uninstall.Clear();
                 }
 
+                if (opts.PreInstallCommand.Any())
+                {
+                    showReport = true;
+                    if (!packageReport.ContainsKey(pkg.Id)) packageReport[pkg.Id] = new();
+                    packageReport[pkg.Id].Add(new($"Pre-install command: {opts.PreInstallCommand}", AllowPrePostOps));
+                    if (!AllowPrePostOps) opts.PreInstallCommand = "";
+                }
+                if (opts.PostInstallCommand.Any())
+                {
+                    showReport = true;
+                    if (!packageReport.ContainsKey(pkg.Id)) packageReport[pkg.Id] = new();
+                    packageReport[pkg.Id].Add(new($"Post-install command: {opts.PostInstallCommand}", AllowPrePostOps));
+                    if (!AllowPrePostOps) opts.PostInstallCommand = "";
+                }
+                if (opts.PreUpdateCommand.Any())
+                {
+                    showReport = true;
+                    if (!packageReport.ContainsKey(pkg.Id)) packageReport[pkg.Id] = new();
+                    packageReport[pkg.Id].Add(new($"Pre-update command: {opts.PreUpdateCommand}", AllowPrePostOps));
+                    if (!AllowPrePostOps) opts.PreUpdateCommand = "";
+                }
+                if (opts.PostUpdateCommand.Any())
+                {
+                    showReport = true;
+                    if (!packageReport.ContainsKey(pkg.Id)) packageReport[pkg.Id] = new();
+                    packageReport[pkg.Id].Add(new($"Post-update command: {opts.PostUpdateCommand}", AllowPrePostOps));
+                    if (!AllowPrePostOps) opts.PostUpdateCommand = "";
+                }
+                if (opts.PreUninstallCommand.Any())
+                {
+                    showReport = true;
+                    if (!packageReport.ContainsKey(pkg.Id)) packageReport[pkg.Id] = new();
+                    packageReport[pkg.Id].Add(new($"Pre-uninstall command: {opts.PreUninstallCommand}", AllowPrePostOps));
+                    if (!AllowPrePostOps) opts.PreUninstallCommand = "";
+                }
+                if (opts.PostUninstallCommand.Any())
+                {
+                    showReport = true;
+                    if (!packageReport.ContainsKey(pkg.Id)) packageReport[pkg.Id] = new();
+                    packageReport[pkg.Id].Add(new($"Post-uninstall command: {opts.PostUninstallCommand}", AllowPrePostOps));
+                    if (!AllowPrePostOps) opts.PostUninstallCommand = "";
+                }
+
+                pkg.InstallationOptions = opts;
                 packages.Add(DeserializePackage(pkg));
             }
 
