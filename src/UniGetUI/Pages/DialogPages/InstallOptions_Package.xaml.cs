@@ -243,6 +243,27 @@ namespace UniGetUI.Interface.Dialogs
             CustomParametersLabel3.Opacity = IsCLIEnabled ? 1 : 0.5;
             GoToCLISettings.Visibility = IsCLIEnabled ? Visibility.Collapsed : Visibility.Visible;
             CLIDisabled.Visibility = IsCLIEnabled ? Visibility.Collapsed : Visibility.Visible;
+
+            bool IsPrePostOpEnabled = SecureSettings.Get(SecureSettings.K.AllowPrePostOpCommand);
+            PreInstallCommandBox.IsEnabled = IsPrePostOpEnabled;
+            PostInstallCommandBox.IsEnabled = IsPrePostOpEnabled;
+            AbortInsFailedCheck.IsEnabled = IsPrePostOpEnabled;
+            PreUpdateCommandBox.IsEnabled = IsPrePostOpEnabled;
+            PostUpdateCommandBox.IsEnabled = IsPrePostOpEnabled;
+            AbortUpdFailedCheck.IsEnabled = IsPrePostOpEnabled;
+            PreUninstallCommandBox.IsEnabled = IsPrePostOpEnabled;
+            PostUninstallCommandBox.IsEnabled = IsPrePostOpEnabled;
+            AbortUniFailedCheck.IsEnabled = IsPrePostOpEnabled;
+            PeInsLabel.Opacity = IsPrePostOpEnabled ? 1 : 0.5;
+            PoInsLabel.Opacity = IsPrePostOpEnabled ? 1 : 0.5;
+            PeUpdLabel.Opacity = IsPrePostOpEnabled ? 1 : 0.5;
+            PoUpdLabel.Opacity = IsPrePostOpEnabled ? 1 : 0.5;
+            PeUniLabel.Opacity = IsPrePostOpEnabled ? 1 : 0.5;
+            PoUniLabel.Opacity = IsPrePostOpEnabled ? 1 : 0.5;
+            CustomCommandsHeaderExplainer.Opacity = IsPrePostOpEnabled ? 1 : 0.5;
+            GoToPrePostSettings.Visibility = IsPrePostOpEnabled ? Visibility.Collapsed : Visibility.Visible;
+            PrePostDisabled.Visibility = IsPrePostOpEnabled ? Visibility.Collapsed : Visibility.Visible;
+
             GenerateCommand();
         }
 
@@ -435,6 +456,11 @@ namespace UniGetUI.Interface.Dialogs
         private void KillProcessesBox_Loaded(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void SettingsTabBar_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            CommandLineViewBox.Visibility = SettingsTabBar.SelectedIndex < 3 ? Visibility.Visible : Visibility.Collapsed;
         }
     }
 
