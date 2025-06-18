@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using UniGetUI.Core.Classes;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.SettingsEngine;
@@ -31,7 +32,7 @@ namespace UniGetUI.PackageEngine.Operations
             OperationType role,
             bool IgnoreParallelInstalls = false,
             AbstractOperation? req = null)
-            : base(!IgnoreParallelInstalls, _getPreInstallOps(options, req), _getPostInstallOps(options))
+            : base(!IgnoreParallelInstalls, _getPreInstallOps(options, role, req), _getPostInstallOps(options, role))
         {
             Package = package;
             Options = options;
@@ -129,7 +130,7 @@ namespace UniGetUI.PackageEngine.Operations
             return TaskRecycler<Uri>.RunOrAttachAsync(Package.GetIconUrl);
         }
 
-        private static IReadOnlyList<InnerOperation> _getPreInstallOps(InstallOptions opts, AbstractOperation? preReq = null)
+        private static IReadOnlyList<InnerOperation> _getPreInstallOps(InstallOptions opts, OperationType role, AbstractOperation? preReq = null)
         {
             List<InnerOperation> l = new();
             if(preReq is not null) l.Add(new(preReq, true));
@@ -139,14 +140,26 @@ namespace UniGetUI.PackageEngine.Operations
                     new KillProcessOperation(process),
                     mustSucceed: false));
 
+            if (role is OperationType.Install && opts.PreInstallCommand.Any())
+                l.Add(new(new PrePostOperation(opts.PreInstallCommand), opts.AbortOnPreInstallFail));
+            else if (role is OperationType.Update && opts.PreUpdateCommand.Any())
+                l.Add(new(new PrePostOperation(opts.PreUpdateCommand), opts.AbortOnPreUpdateFail));
+            else if (role is OperationType.Uninstall && opts.PreUninstallCommand.Any())
+                l.Add(new(new PrePostOperation(opts.PreUninstallCommand), opts.AbortOnPreUninstallFail));
+
             return l;
         }
 
-        private static IReadOnlyList<InnerOperation> _getPostInstallOps(InstallOptions opts)
+        private static IReadOnlyList<InnerOperation> _getPostInstallOps(InstallOptions opts, OperationType role)
         {
             List<InnerOperation> l = new();
 
-            // Things Things Things
+            if (role is OperationType.Install && opts.PostInstallCommand.Any())
+                l.Add(new(new PrePostOperation(opts.PostInstallCommand), false));
+            else if (role is OperationType.Update && opts.PostUpdateCommand.Any())
+                l.Add(new(new PrePostOperation(opts.PostUpdateCommand), false));
+            else if (role is OperationType.Uninstall && opts.PostUninstallCommand.Any())
+                l.Add(new(new PrePostOperation(opts.PostUninstallCommand), false));
 
             return l;
         }
