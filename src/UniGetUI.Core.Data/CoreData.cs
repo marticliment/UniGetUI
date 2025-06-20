@@ -1,7 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Text.Json.Serialization.Metadata;
 using UniGetUI.Core.Logging;
 
 namespace UniGetUI.Core.Data

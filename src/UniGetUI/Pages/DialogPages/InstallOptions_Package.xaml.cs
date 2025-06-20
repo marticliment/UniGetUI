@@ -472,12 +472,7 @@ namespace UniGetUI.Interface.Dialogs
                 }
             }
         }
-
-        private void KillProcessesBox_Loaded(object sender, RoutedEventArgs e)
-        {
-
-        }
-
+        
         private void SettingsTabBar_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             CommandLineViewBox.Visibility = SettingsTabBar.SelectedIndex < 3 ? Visibility.Visible : Visibility.Collapsed;

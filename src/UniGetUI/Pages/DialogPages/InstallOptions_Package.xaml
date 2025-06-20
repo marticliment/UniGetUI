@@ -354,7 +354,6 @@
                                             x:Name="KillProcessesBox"
                                             HorizontalAlignment="Left"
                                             ItemsSource="{x:Bind ProcessesToKill, Mode=TwoWay}"
-                                            Loaded="KillProcessesBox_Loaded"
                                             PlaceholderText=""
                                             SuggestedItemTemplate="{StaticResource ProcessTemplate}"
                                             SuggestedItemsSource="{x:Bind SuggestedProcesses, Mode=OneWay}"

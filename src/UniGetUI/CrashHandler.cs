@@ -1,7 +1,5 @@
 using System.Diagnostics;
-using Microsoft.UI;
 using UniGetUI.Core.Data;
-using UniGetUI.Core.Language;
 using UniGetUI.Core.Tools;
 
 namespace UniGetUI;

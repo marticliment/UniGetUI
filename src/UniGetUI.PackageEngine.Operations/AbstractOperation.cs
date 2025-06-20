@@ -2,7 +2,6 @@ using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Enums;
-using YamlDotNet.Serialization.ObjectGraphVisitors;
 
 namespace UniGetUI.PackageOperations;
 
