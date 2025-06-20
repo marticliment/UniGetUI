@@ -328,14 +328,15 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 {
                     "Steam" => p.Id.ToLower().Split("\\")[^1].Replace("steam app ", "steam-").Trim(),
                     "Local PC" => p.Id.Split("\\")[^1],
-                    "Microsoft Store" => p.Id.IndexOf('_') < p.Id.IndexOf('.')
-                        ? // If the first underscore is before the period, this ID has no publisher
-                        string.Join('_', p.Id.Split("\\")[1].Split("_")[0..^4])
-                        : // no publisher: remove `MSIX\`, then the standard ending _version_arch__{random p.Id}
+                    // If the first underscore is before the period, this ID has no publisher
+                    "Microsoft Store" => p.Id.IndexOf('_') < p.Id.IndexOf('.') ?
+                        // no publisher: remove `MSIX\`, then the standard ending _version_arch__{random p.Id}
+                        string.Join('_', p.Id.Split("\\")[1].Split("_")[0..^4]) :
+                        // remove the publisher (before the first .), then the standard _version_arch__{random p.Id}
                         string.Join('_',
                             string.Join('.', p.Id.Split(".")[1..])
                                 .Split("_")
-                                [0..^4]), // remove the publisher (before the first .), then the standard _version_arch__{random p.Id}
+                                [0..^4]),
                     _ => string.Join('.', p.Id.Split(".")[1..]),
                 },
                 "Scoop" => p.Id.Replace(".app", ""),
