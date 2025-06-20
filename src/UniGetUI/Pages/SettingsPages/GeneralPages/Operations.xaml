@@ -40,6 +40,15 @@
                 SettingName="MaintainSuccessfulInstalls"
                 Text="Clear successful operations from the operation list after a 5 second delay" />
 
+            <UserControl Height="16" />
+
+            <widgets:CheckboxCard
+                x:Name="KillProcessesThatRefuseToDie"
+                CornerRadius="8"
+                SettingName="KillProcessesThatRefuseToDie"
+                Text="Try to kill the processes that refuse to close when requested to"
+                WarningOpacity="0.7"
+                WarningText="You may lose unsaved data" />
 
 
             <widgets:TranslatedTextBlock

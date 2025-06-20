@@ -494,11 +494,8 @@ namespace UniGetUI.Interface.SoftwarePages
         private void MenuAsAdmin_Invoked(object sender, RoutedEventArgs e)
             => _ = MainApp.Operations.Update(SelectedItem, elevated: true);
 
-        private async void MenuUpdateAfterUninstall_Invoked(object sender, RoutedEventArgs e)
-        {
-            var op = await MainApp.Operations.Uninstall(SelectedItem);
-            _ = MainApp.Operations.Install(SelectedItem, TEL_InstallReferral.ALREADY_INSTALLED, req: op);
-        }
+        private void MenuUpdateAfterUninstall_Invoked(object sender, RoutedEventArgs e)
+            => _ = MainApp.Operations.UninstallThenUpdate(SelectedItem);
 
         private void MenuUninstall_Invoked(object sender, RoutedEventArgs e)
             => _ = MainApp.Operations.Uninstall(SelectedItem);

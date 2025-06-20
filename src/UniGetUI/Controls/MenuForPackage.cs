@@ -76,6 +76,7 @@ namespace UniGetUI.Interface.Widgets
         public BetterTabViewItem()
         {
             IsClosable = false;
+            CanDrag = false;
         }
 
         public void LoadText()

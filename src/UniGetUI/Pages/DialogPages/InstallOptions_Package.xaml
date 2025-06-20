@@ -3,6 +3,7 @@
     x:Class="UniGetUI.Interface.Dialogs.InstallOptionsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:animations="using:CommunityToolkit.WinUI.Animations"
     xmlns:controls="using:CommunityToolkit.WinUI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:UniGetUI.Interface.Dialogs"
@@ -11,6 +12,16 @@
     xmlns:widgets="using:UniGetUI.Interface.Widgets"
     MaxWidth="700"
     mc:Ignorable="d">
+    <Page.Resources>
+        <DataTemplate x:Key="ProcessTemplate" x:DataType="local:IOP_Proc">
+            <StackPanel Orientation="Horizontal">
+                <Viewbox Width="16">
+                    <FontIcon Glyph="&#xECAA;" />
+                </Viewbox>
+                <TextBlock Padding="8,0,0,0" Text="{x:Bind Name}" />
+            </StackPanel>
+        </DataTemplate>
+    </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -130,7 +141,9 @@
                                     x:Name="SettingsTabBar"
                                     HorizontalAlignment="Stretch"
                                     Background="{ThemeResource SystemChromeAltHighColor}"
+                                    CanReorderTabs="False"
                                     IsAddTabButtonVisible="False"
+                                    SelectionChanged="SettingsTabBar_SelectionChanged"
                                     TabWidthMode="SizeToContent">
                                     <widgets:BetterTabViewItem
                                         IconName="Settings"
@@ -145,12 +158,14 @@
                                         IconName="Console"
                                         Line1="Command-line"
                                         Line2="Arguments" />
-                                    <!--
-                                        widgets:BetterTabViewItem
+                                    <widgets:BetterTabViewItem
+                                        IconName="Cross"
+                                        Line1="Close apps"
+                                        Line2="before installing" />
+                                    <widgets:BetterTabViewItem
                                         IconName="ClipboardList"
                                         Line1="Pre-install"
-                                        Line2="Post-install" /
-                                    -->
+                                        Line2="Post-install" />
                                 </TabView>
                             </Border>
 
@@ -165,6 +180,16 @@
                                 <!--  General settings  -->
                                 <controls:Case IsDefault="True" Value="0">
                                     <StackPanel Spacing="8">
+                                        <animations:Implicit.ShowAnimations>
+                                            <animations:TranslationAnimation
+                                                From="0,20,0"
+                                                To="0"
+                                                Duration="0:0:0.3" />
+                                            <animations:OpacityAnimation
+                                                From="0"
+                                                To="1.0"
+                                                Duration="0:0:0.3" />
+                                        </animations:Implicit.ShowAnimations>
                                         <controls:WrapPanel HorizontalSpacing="16" VerticalSpacing="0">
                                             <CheckBox Name="AdminCheckBox" Click="AdminCheckBox_Click">
                                                 <widgets:TranslatedTextBlock Text="Run as admin" />
@@ -176,7 +201,10 @@
                                                 <widgets:TranslatedTextBlock HorizontalAlignment="Stretch" Text="Skip hash check" />
                                             </CheckBox>
                                         </controls:WrapPanel>
-                                        <Grid>
+                                        <Grid
+                                            Padding="4,8"
+                                            BorderBrush="{ThemeResource AppBarToggleButtonCheckedDisabledBackgroundThemeBrush}"
+                                            BorderThickness="0,1,0,1">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*" />
                                                 <ColumnDefinition Width="*" MaxWidth="200" />
@@ -217,7 +245,17 @@
                                 <controls:Case Value="1">
                                     <StackPanel Spacing="8">
 
-                                        <Grid>
+                                        <animations:Implicit.ShowAnimations>
+                                            <animations:TranslationAnimation
+                                                From="0,20,0"
+                                                To="0"
+                                                Duration="0:0:0.3" />
+                                            <animations:OpacityAnimation
+                                                From="0"
+                                                To="1.0"
+                                                Duration="0:0:0.3" />
+                                        </animations:Implicit.ShowAnimations>
+                                        <Grid Padding="4,0">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*" />
                                                 <ColumnDefinition Width="*" MaxWidth="200" />
@@ -234,7 +272,10 @@
                                                 SelectedIndex="0"
                                                 SelectionChanged="ArchitectureComboBox_SelectionChanged" />
                                         </Grid>
-                                        <Grid>
+                                        <Grid
+                                            Padding="4,8"
+                                            BorderBrush="{ThemeResource AppBarToggleButtonCheckedDisabledBackgroundThemeBrush}"
+                                            BorderThickness="0,1">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*" />
                                                 <ColumnDefinition Width="*" MaxWidth="200" />
@@ -250,7 +291,7 @@
                                                 VerticalAlignment="Center"
                                                 SelectionChanged="ScopeCombo_SelectionChanged" />
                                         </Grid>
-                                        <Grid ColumnSpacing="8">
+                                        <Grid Padding="4,0" ColumnSpacing="8">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*" />
                                                 <ColumnDefinition Width="*" MaxWidth="96" />
@@ -291,9 +332,55 @@
                                     </StackPanel>
                                 </controls:Case>
 
+                                <!--  Close apps before installing  -->
+                                <controls:Case Value="3">
+                                    <StackPanel HorizontalAlignment="Center" Spacing="8">
+                                        <animations:Implicit.ShowAnimations>
+                                            <animations:TranslationAnimation
+                                                From="0,20,0"
+                                                To="0"
+                                                Duration="0:0:0.3" />
+                                            <animations:OpacityAnimation
+                                                From="0"
+                                                To="1.0"
+                                                Duration="0:0:0.3" />
+                                        </animations:Implicit.ShowAnimations>
+
+                                        <TextBlock
+                                            x:Name="KillProcessesLabel"
+                                            Margin="8,0,8,-8"
+                                            Text="Select the processes that should be closed before this package is installed, updated or uninstalled:" />
+                                        <controls:TokenizingTextBox
+                                            x:Name="KillProcessesBox"
+                                            HorizontalAlignment="Left"
+                                            ItemsSource="{x:Bind ProcessesToKill, Mode=TwoWay}"
+                                            PlaceholderText=""
+                                            SuggestedItemTemplate="{StaticResource ProcessTemplate}"
+                                            SuggestedItemsSource="{x:Bind SuggestedProcesses, Mode=OneWay}"
+                                            TextChanged="KillProcessesBox_TextChanged"
+                                            TextMemberPath="Text"
+                                            TokenDelimiter=","
+                                            TokenItemAdding="KillProcessesBox_TokenItemAdding"
+                                            TokenItemTemplate="{StaticResource ProcessTemplate}" />
+                                        <CheckBox x:Name="KillProcessesThatWontDie">
+                                            <widgets:TranslatedTextBlock Text="Try to kill the processes that refuse to close when requested to" />
+                                        </CheckBox>
+                                    </StackPanel>
+                                </controls:Case>
+
                                 <!--  Custom command-line arguments  -->
                                 <controls:Case Value="2">
                                     <StackPanel Spacing="8">
+                                        <animations:Implicit.ShowAnimations>
+                                            <animations:TranslationAnimation
+                                                From="0,20,0"
+                                                To="0"
+                                                Duration="0:0:0.3" />
+                                            <animations:OpacityAnimation
+                                                From="0"
+                                                To="1.0"
+                                                Duration="0:0:0.3" />
+                                        </animations:Implicit.ShowAnimations>
                                         <widgets:TranslatedTextBlock
                                             x:Name="CLIDisabled"
                                             Foreground="{ThemeResource SystemErrorTextColor}"
@@ -365,7 +452,174 @@
                                 </controls:Case>
 
                                 <!--  Pre-install and post-install operations  -->
-                                <!--  controls:Case Value="3" /  -->
+                                <controls:Case Value="4">
+                                    <StackPanel Spacing="8">
+                                        <animations:Implicit.ShowAnimations>
+                                            <animations:TranslationAnimation
+                                                From="0,20,0"
+                                                To="0"
+                                                Duration="0:0:0.3" />
+                                            <animations:OpacityAnimation
+                                                From="0"
+                                                To="1.0"
+                                                Duration="0:0:0.3" />
+                                        </animations:Implicit.ShowAnimations>
+                                        <widgets:TranslatedTextBlock
+                                            x:Name="PrePostDisabled"
+                                            Foreground="{ThemeResource SystemErrorTextColor}"
+                                            Text="For security reasons, pre-operation and post-operation scripts are disabled by default. Go to UniGetUI security settings to change this. " />
+                                        <HyperlinkButton
+                                            x:Name="GoToPrePostSettings"
+                                            Margin="0,-8,0,0"
+                                            Padding="0"
+                                            HorizontalAlignment="Center"
+                                            Click="GoToSecureSettings_Click">
+                                            <widgets:TranslatedTextBlock FontWeight="SemiBold" Text="Go to UniGetUI security settings" />
+                                        </HyperlinkButton>
+
+                                        <widgets:TranslatedTextBlock x:Name="CustomCommandsHeaderExplainer" Text="You can define the commands that will be run before or after this package is installed, updated or uninstalled. They will be run on a command prompt, so CMD scripts will work here." />
+
+                                        <Grid
+                                            Padding="8"
+                                            BorderBrush="{ThemeResource AppBarToggleButtonCheckedDisabledBackgroundThemeBrush}"
+                                            BorderThickness="0,1,0,1"
+                                            ColumnSpacing="8"
+                                            RowSpacing="4">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+
+                                            <widgets:TranslatedTextBlock
+                                                x:Name="PeInsLabel"
+                                                FontSize="12"
+                                                Text="Pre-install command:" />
+                                            <widgets:TranslatedTextBlock
+                                                x:Name="PoInsLabel"
+                                                Grid.Column="1"
+                                                FontSize="12"
+                                                Text="Post-install command:" />
+                                            <TextBox
+                                                x:Name="PreInstallCommandBox"
+                                                Grid.Row="1"
+                                                AcceptsReturn="True"
+                                                FontFamily="Consolas"
+                                                TextWrapping="Wrap" />
+                                            <TextBox
+                                                x:Name="PostInstallCommandBox"
+                                                Grid.Row="1"
+                                                Grid.Column="1"
+                                                AcceptsReturn="True"
+                                                FontFamily="Consolas"
+                                                TextWrapping="Wrap" />
+                                            <CheckBox
+                                                x:Name="AbortInsFailedCheck"
+                                                Grid.Row="2"
+                                                Grid.ColumnSpan="2">
+                                                <widgets:TranslatedTextBlock Text="Abort install if pre-install command fails" />
+                                            </CheckBox>
+                                        </Grid>
+
+                                        <Grid
+                                            Margin="0,-8,0,0"
+                                            Padding="8"
+                                            BorderBrush="{ThemeResource AppBarToggleButtonCheckedDisabledBackgroundThemeBrush}"
+                                            BorderThickness="0,0,0,0"
+                                            ColumnSpacing="8"
+                                            RowSpacing="4">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+
+                                            <widgets:TranslatedTextBlock
+                                                x:Name="PeUpdLabel"
+                                                FontSize="12"
+                                                Text="Pre-update command:" />
+                                            <widgets:TranslatedTextBlock
+                                                x:Name="PoUpdLabel"
+                                                Grid.Column="1"
+                                                FontSize="12"
+                                                Text="Post-update command:" />
+                                            <TextBox
+                                                x:Name="PreUpdateCommandBox"
+                                                Grid.Row="1"
+                                                AcceptsReturn="True"
+                                                FontFamily="Consolas"
+                                                TextWrapping="Wrap" />
+                                            <TextBox
+                                                x:Name="PostUpdateCommandBox"
+                                                Grid.Row="1"
+                                                Grid.Column="1"
+                                                AcceptsReturn="True"
+                                                FontFamily="Consolas"
+                                                TextWrapping="Wrap" />
+                                            <CheckBox
+                                                x:Name="AbortUpdFailedCheck"
+                                                Grid.Row="2"
+                                                Grid.ColumnSpan="2">
+                                                <widgets:TranslatedTextBlock Text="Abort update if pre-update command fails" />
+                                            </CheckBox>
+                                        </Grid>
+
+                                        <Grid
+                                            Margin="0,-8,0,0"
+                                            Padding="8"
+                                            BorderBrush="{ThemeResource AppBarToggleButtonCheckedDisabledBackgroundThemeBrush}"
+                                            BorderThickness="0,1,0,0"
+                                            ColumnSpacing="8"
+                                            RowSpacing="4">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+
+                                            <widgets:TranslatedTextBlock
+                                                x:Name="PeUniLabel"
+                                                FontSize="12"
+                                                Text="Pre-uninstall command:" />
+                                            <widgets:TranslatedTextBlock
+                                                x:Name="PoUniLabel"
+                                                Grid.Column="1"
+                                                FontSize="12"
+                                                Text="Post-uninstall command:" />
+                                            <TextBox
+                                                x:Name="PreUninstallCommandBox"
+                                                Grid.Row="1"
+                                                AcceptsReturn="True"
+                                                FontFamily="Consolas"
+                                                TextWrapping="Wrap" />
+                                            <TextBox
+                                                x:Name="PostUninstallCommandBox"
+                                                Grid.Row="1"
+                                                Grid.Column="1"
+                                                AcceptsReturn="True"
+                                                FontFamily="Consolas"
+                                                TextWrapping="Wrap" />
+                                            <CheckBox
+                                                x:Name="AbortUniFailedCheck"
+                                                Grid.Row="2"
+                                                Grid.ColumnSpan="2">
+                                                <widgets:TranslatedTextBlock Text="Abort uninstall if pre-uninstall command fails" />
+                                            </CheckBox>
+                                        </Grid>
+                                    </StackPanel>
+                                </controls:Case>
                             </controls:SwitchPresenter>
                         </Grid>
                     </UserControl>
@@ -405,6 +659,7 @@
 
                 <!--  Current command-line display  -->
                 <Border
+                    x:Name="CommandLineViewBox"
                     Grid.Row="3"
                     Padding="16,12,16,12"
                     Background="{ThemeResource SystemChromeAltHighColor}"

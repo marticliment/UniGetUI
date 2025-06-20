@@ -1,10 +1,11 @@
-using System.Data;
-using System.Runtime.InteropServices;
-using Microsoft.Extensions.Options;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using CommunityToolkit.WinUI.Controls;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
 using UniGetUI.Core.Language;
+using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.SettingsEngine.SecureSettings;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Enums;
@@ -12,7 +13,6 @@ using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.Serializable;
 using UniGetUI.Pages.SettingsPages.GeneralPages;
-using Windows.ApplicationModel.Activation;
 using Architecture = UniGetUI.PackageEngine.Enums.Architecture;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -32,6 +32,10 @@ namespace UniGetUI.Interface.Dialogs
         private readonly string packageInstallLocation;
         private bool _uiLoaded;
 
+        public ObservableCollection<IOP_Proc> ProcessesToKill = new();
+        private readonly ObservableCollection<IOP_Proc> _runningProcesses = new();
+        public ObservableCollection<IOP_Proc> SuggestedProcesses = new();
+
         public InstallOptionsPage(IPackage package, InstallOptions options) : this(package, OperationType.None, options) { }
         public InstallOptionsPage(IPackage package, OperationType operation, InstallOptions options)
         {
@@ -39,6 +43,8 @@ namespace UniGetUI.Interface.Dialogs
             InitializeComponent();
             Operation = operation;
             Options = options;
+
+            KillProcessesThatWontDie.IsChecked = Settings.Get(Settings.K.KillProcessesThatRefuseToDie);
 
             ProfileComboBox.Items.Add(CoreTools.Translate("Install"));
             ProfileComboBox.Items.Add(CoreTools.Translate("Update"));
@@ -82,6 +88,9 @@ namespace UniGetUI.Interface.Dialogs
             _ = LoadImage();
             DialogTitle.Text = CoreTools.Translate("{0} installation options", package.Name);
             PlaceholderText.Text = CoreTools.Translate("{0} Install options are currently locked because {0} follows the default install options.", package.Name);
+
+            KillProcessesLabel.Text = CoreTools.Translate("Select the processes that should be closed before this package is installed, updated or uninstalled.");
+            KillProcessesBox.PlaceholderText = CoreTools.Translate("Write here the process names here, separed by commas (,)");
 
             packageInstallLocation = Package.Manager.DetailsHelper.GetInstallLocation(package) ?? CoreTools.Translate("Unset or unknown");
 
@@ -154,20 +163,45 @@ namespace UniGetUI.Interface.Dialogs
                 }
             }
 
+            foreach(var p in Options.KillBeforeOperation)
+            {
+                ProcessesToKill.Add(new(p));
+            }
 
             if (Options.CustomInstallLocation == "") CustomInstallLocation.Text = packageInstallLocation;
             else CustomInstallLocation.Text = Options.CustomInstallLocation;
-
 
             CustomParameters1.Text = string.Join(' ', Options.CustomParameters_Install);
             CustomParameters2.Text = string.Join(' ', Options.CustomParameters_Update);
             CustomParameters3.Text = string.Join(' ', Options.CustomParameters_Uninstall);
 
+            PreInstallCommandBox.Text = Options.PreInstallCommand;
+            PostInstallCommandBox.Text = Options.PostInstallCommand;
+            PreUpdateCommandBox.Text = Options.PreUpdateCommand;
+            PostUpdateCommandBox.Text = Options.PostUpdateCommand;
+            PreUninstallCommandBox.Text = Options.PreUninstallCommand;
+            PostUninstallCommandBox.Text = Options.PostUninstallCommand;
+            AbortInsFailedCheck.IsChecked = Options.AbortOnPreInstallFail;
+            AbortUpdFailedCheck.IsChecked = Options.AbortOnPreUpdateFail;
+            AbortUniFailedCheck.IsChecked = Options.AbortOnPreUninstallFail;
+
             _uiLoaded = true;
             EnableDisableControls(operation);
             LoadIgnoredUpdates();
+            _ = _loadProcesses();
         }
 
+        private async Task _loadProcesses()
+        {
+            var processNames = await Task.Run(() =>
+                Process.GetProcesses().Select(p => p.ProcessName).Distinct().ToList());
+
+            _runningProcesses.Clear();
+            foreach (var name in processNames)
+            {
+                if(name.Any()) _runningProcesses.Add(new(name + ".exe"));
+            }
+        }
         private void EnableDisableControls(OperationType operation)
         {
             if(FollowGlobalOptionsSwitch.IsOn)
@@ -188,13 +222,17 @@ namespace UniGetUI.Interface.Dialogs
 
                 AdminCheckBox.IsEnabled = Package.Manager.Capabilities.CanRunAsAdmin;
                 InteractiveCheckBox.IsEnabled = Package.Manager.Capabilities.CanRunInteractively;
-                HashCheckbox.IsEnabled = operation != OperationType.Uninstall && Package.Manager.Capabilities.CanSkipIntegrityChecks;
-                ArchitectureComboBox.IsEnabled = operation != OperationType.Uninstall && Package.Manager.Capabilities.SupportsCustomArchitectures;
+                HashCheckbox.IsEnabled =
+                    operation is not OperationType.Uninstall
+                    && Package.Manager.Capabilities.CanSkipIntegrityChecks;
+
+                ArchitectureComboBox.IsEnabled =
+                    operation is not OperationType.Uninstall
+                    && Package.Manager.Capabilities.SupportsCustomArchitectures;
+
                 VersionComboBox.IsEnabled =
-                    (operation == OperationType.Install
-                        || operation == OperationType.None)
-                    && (Package.Manager.Capabilities.SupportsCustomVersions
-                        || Package.Manager.Capabilities.SupportsPreRelease);
+                    operation is OperationType.Install or OperationType.None
+                    && (Package.Manager.Capabilities.SupportsCustomVersions || Package.Manager.Capabilities.SupportsPreRelease);
                 ScopeCombo.IsEnabled = Package.Manager.Capabilities.SupportsCustomScopes;
                 ResetDir.IsEnabled = Package.Manager.Capabilities.SupportsCustomLocations;
                 SelectDir.IsEnabled = Package.Manager.Capabilities.SupportsCustomLocations;
@@ -209,6 +247,27 @@ namespace UniGetUI.Interface.Dialogs
             CustomParametersLabel3.Opacity = IsCLIEnabled ? 1 : 0.5;
             GoToCLISettings.Visibility = IsCLIEnabled ? Visibility.Collapsed : Visibility.Visible;
             CLIDisabled.Visibility = IsCLIEnabled ? Visibility.Collapsed : Visibility.Visible;
+
+            bool IsPrePostOpEnabled = SecureSettings.Get(SecureSettings.K.AllowPrePostOpCommand);
+            PreInstallCommandBox.IsEnabled = IsPrePostOpEnabled;
+            PostInstallCommandBox.IsEnabled = IsPrePostOpEnabled;
+            AbortInsFailedCheck.IsEnabled = IsPrePostOpEnabled;
+            PreUpdateCommandBox.IsEnabled = IsPrePostOpEnabled;
+            PostUpdateCommandBox.IsEnabled = IsPrePostOpEnabled;
+            AbortUpdFailedCheck.IsEnabled = IsPrePostOpEnabled;
+            PreUninstallCommandBox.IsEnabled = IsPrePostOpEnabled;
+            PostUninstallCommandBox.IsEnabled = IsPrePostOpEnabled;
+            AbortUniFailedCheck.IsEnabled = IsPrePostOpEnabled;
+            PeInsLabel.Opacity = IsPrePostOpEnabled ? 1 : 0.5;
+            PoInsLabel.Opacity = IsPrePostOpEnabled ? 1 : 0.5;
+            PeUpdLabel.Opacity = IsPrePostOpEnabled ? 1 : 0.5;
+            PoUpdLabel.Opacity = IsPrePostOpEnabled ? 1 : 0.5;
+            PeUniLabel.Opacity = IsPrePostOpEnabled ? 1 : 0.5;
+            PoUniLabel.Opacity = IsPrePostOpEnabled ? 1 : 0.5;
+            CustomCommandsHeaderExplainer.Opacity = IsPrePostOpEnabled ? 1 : 0.5;
+            GoToPrePostSettings.Visibility = IsPrePostOpEnabled ? Visibility.Collapsed : Visibility.Visible;
+            PrePostDisabled.Visibility = IsPrePostOpEnabled ? Visibility.Collapsed : Visibility.Visible;
+
             GenerateCommand();
         }
 
@@ -233,14 +292,12 @@ namespace UniGetUI.Interface.Dialogs
             }
 
             VersionComboBox.IsEnabled =
-                (Operation == OperationType.Install
-                 || Operation == OperationType.None)
-                && (Package.Manager.Capabilities.SupportsCustomVersions
-                    || Package.Manager.Capabilities.SupportsPreRelease);
+                Operation is OperationType.Install or OperationType.None
+                && (Package.Manager.Capabilities.SupportsCustomVersions || Package.Manager.Capabilities.SupportsPreRelease);
             VersionProgress.Visibility = Visibility.Collapsed;
         }
 
-        public async Task<InstallOptions> GetUpdatedOptions(bool updateIgnoredUpdates = true)
+        public async Task<InstallOptions> GetUpdatedOptions(bool updateDetachedOptions = true)
         {
             Options.RunAsAdministrator = AdminCheckBox?.IsChecked ?? false;
             Options.InteractiveInstallation = InteractiveCheckBox?.IsChecked ?? false;
@@ -269,6 +326,19 @@ namespace UniGetUI.Interface.Dialogs
             Options.CustomParameters_Uninstall = CustomParameters3.Text.Split(' ').ToList();
             Options.PreRelease = VersionComboBox.SelectedValue.ToString() == CoreTools.Translate("PreRelease");
 
+            Options.PreInstallCommand = PreInstallCommandBox.Text;
+            Options.PostInstallCommand = PostInstallCommandBox.Text;
+            Options.PreUpdateCommand = PreUpdateCommandBox.Text;
+            Options.PostUpdateCommand = PostUpdateCommandBox.Text;
+            Options.PreUninstallCommand = PreUninstallCommandBox.Text;
+            Options.PostUninstallCommand = PostUninstallCommandBox.Text;
+            Options.AbortOnPreInstallFail = AbortInsFailedCheck.IsChecked ?? true;
+            Options.AbortOnPreUpdateFail = AbortUpdFailedCheck.IsChecked ?? true;
+            Options.AbortOnPreUninstallFail = AbortUniFailedCheck.IsChecked ?? true;
+
+            Options.KillBeforeOperation.Clear();
+            foreach(var p in ProcessesToKill) Options.KillBeforeOperation.Add(p.Name);
+
             if (VersionComboBox.SelectedValue.ToString() != CoreTools.Translate("PreRelease") && VersionComboBox.SelectedValue.ToString() != CoreTools.Translate("Latest"))
             {
                 Options.Version = VersionComboBox.SelectedValue.ToString() ?? "";
@@ -279,8 +349,10 @@ namespace UniGetUI.Interface.Dialogs
             }
             Options.SkipMinorUpdates = SkipMinorUpdatesCheckbox?.IsChecked ?? false;
 
-            if (updateIgnoredUpdates)
+            if (updateDetachedOptions)
             {
+                Settings.Set(Settings.K.KillProcessesThatRefuseToDie, KillProcessesThatWontDie.IsChecked ?? false);
+
                 if (IgnoreUpdatesCheckbox?.IsChecked ?? false)
                 {
                     await Package.AddToIgnoredUpdatesAsync(version: "*");
@@ -329,7 +401,7 @@ namespace UniGetUI.Interface.Dialogs
         private async void GenerateCommand()
         {
             if (!_uiLoaded) return;
-            InstallOptions options = await GetUpdatedOptions(updateIgnoredUpdates: false);
+            InstallOptions options = await GetUpdatedOptions(updateDetachedOptions: false);
             options = await InstallOptionsFactory.LoadApplicableAsync(this.Package, overridePackageOptions: options);
 
             var op = ProfileComboBox.SelectedIndex switch
@@ -362,6 +434,51 @@ namespace UniGetUI.Interface.Dialogs
         {
             Close?.Invoke(this, EventArgs.Empty);
             MainApp.Instance.MainWindow.NavigationPage.OpenSettingsPage(typeof(Administrator));
+        }
+
+        private void KillProcessesBox_TokenItemAdding(TokenizingTextBox sender, TokenItemAddingEventArgs args)
+        {
+            args.Item = _runningProcesses.FirstOrDefault((item) => item.Name.Contains(args.TokenText));
+            if(args.Item is null)
+            {
+                string text = args.TokenText;
+                if (!text.EndsWith(".exe")) text += ".exe";
+                args.Item = new IOP_Proc(text);
+            }
+        }
+
+        private async void KillProcessesBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+        {
+            var text = KillProcessesBox.Text;
+            await Task.Delay(100);
+            if (text != KillProcessesBox.Text)
+                return;
+
+            SuggestedProcesses.Clear();
+            if (text.Trim() != "")
+            {
+                if (!text.EndsWith(".exe"))
+                    text = text.Trim() + ".exe";
+                SuggestedProcesses.Add(new(text));
+                foreach (var item in _runningProcesses.Where(x => x.Name.Contains(KillProcessesBox.Text)))
+                {
+                    SuggestedProcesses.Add(item);
+                }
+            }
+        }
+
+        private void SettingsTabBar_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            CommandLineViewBox.Visibility = SettingsTabBar.SelectedIndex < 3 ? Visibility.Visible : Visibility.Collapsed;
+        }
+    }
+
+    public class IOP_Proc
+    {
+        public readonly string Name;
+        public IOP_Proc(string name)
+        {
+            Name = name;
         }
     }
 }

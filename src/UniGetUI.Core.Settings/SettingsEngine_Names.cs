@@ -74,6 +74,7 @@ public static partial class Settings
         DisableErrorNotifications,
         DisableSuccessNotifications,
         DisableProgressNotifications,
+        KillProcessesThatRefuseToDie,
 
         Test1,
         Test2,
@@ -159,6 +160,7 @@ public static partial class Settings
             K.DisableErrorNotifications => "DisableErrorNotifications",
             K.DisableSuccessNotifications => "DisableSuccessNotifications",
             K.DisableProgressNotifications => "DisableProgressNotifications",
+            K.KillProcessesThatRefuseToDie => "KillProcessesThatRefuseToDie",
 
             K.Test1 => "TestSetting1",
             K.Test2 => "TestSetting2",
