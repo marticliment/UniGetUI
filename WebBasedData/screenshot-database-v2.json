@@ -4,7 +4,7 @@
         "done": 5326,
         "packages_with_icon": 5326,
         "packages_with_screenshot": 687,
-        "total_screenshots": 2135
+        "total_screenshots": 2141
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -58,9 +58,7 @@
         },
         "0install": {
             "icon": "https://i.postimg.cc/W1ygf5s9/zeroinstall-icon.png",
-            "images": [
-                "https://i.postimg.cc/W1ygf5s9/zeroinstall-icon.png"
-            ]
+            "images": []
         },
         "0patch": {
             "icon": "https://imgur.com/YHwGP6l.png",
@@ -12031,7 +12029,7 @@
             "images": []
         },
         "dropbox": {
-            "icon": "https://i.postimg.cc/6q5xZffs/dropbox-ico.jpg",
+            "icon": "https://i.postimg.cc/kgM4jKJ1/Dropbox-icon-icons-com-66767.png",
             "images": [
                 "https://i.postimg.cc/7L8v9knn/drop1.png",
                 "https://i.postimg.cc/P5QWQRZ2/dropp.png"
@@ -26898,7 +26896,15 @@
         },
         "naps2": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/25B0gqTv/1.png",
+                "https://i.postimg.cc/JnVp81dF/2.png",
+                "https://i.postimg.cc/FzGp00st/3.png",
+                "https://i.postimg.cc/gJVNkfC2/4.png",
+                "https://i.postimg.cc/brqLGmPH/5.png",
+                "https://i.postimg.cc/Wp75Rcm9/6.png",
+                "https://i.postimg.cc/wTT0g409/7.png"
+            ]
         },
         "naps2-prerelease": {
             "icon": "",
@@ -33860,7 +33866,7 @@
             "images": []
         },
         "quicklook": {
-            "icon": "https://i.postimg.cc/ZqyTPn6k/ql-icon.png",
+            "icon": "https://i.postimg.cc/ZR64Y5Yv/quick-ico.png",
             "images": [
                 "https://i.postimg.cc/y8G1ScgX/ql1.png"
             ]
