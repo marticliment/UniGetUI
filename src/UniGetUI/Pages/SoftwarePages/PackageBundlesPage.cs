@@ -1,8 +1,6 @@
 using System.Diagnostics;
-using System.Runtime.Serialization.Formatters;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using System.Xml;
 using System.Xml.Serialization;
 using ExternalLibraries.Pickers;
 using Microsoft.UI.Text;

@@ -1,10 +1,6 @@
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 using CommunityToolkit.WinUI.Controls;
-using Microsoft.Extensions.Options;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
@@ -17,8 +13,6 @@ using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.Serializable;
 using UniGetUI.Pages.SettingsPages.GeneralPages;
-using Windows.ApplicationModel.Activation;
-using Windows.Services.Maps;
 using Architecture = UniGetUI.PackageEngine.Enums.Architecture;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -472,7 +466,7 @@ namespace UniGetUI.Interface.Dialogs
                 }
             }
         }
-        
+
         private void SettingsTabBar_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             CommandLineViewBox.Visibility = SettingsTabBar.SelectedIndex < 3 ? Visibility.Visible : Visibility.Collapsed;

@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using UniGetUI.Core.Classes;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.SettingsEngine;

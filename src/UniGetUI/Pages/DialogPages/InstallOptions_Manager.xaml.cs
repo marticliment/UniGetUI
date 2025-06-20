@@ -1,7 +1,3 @@
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using CommunityToolkit.WinUI.Controls;
-using Microsoft.Extensions.Options;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using UniGetUI.Core.Language;
