@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11833,
-        "done": 5324,
-        "packages_with_icon": 5324,
-        "packages_with_screenshot": 686,
-        "total_screenshots": 2132
+        "total": 11834,
+        "done": 5326,
+        "packages_with_icon": 5326,
+        "packages_with_screenshot": 687,
+        "total_screenshots": 2141
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -58,9 +58,7 @@
         },
         "0install": {
             "icon": "https://i.postimg.cc/W1ygf5s9/zeroinstall-icon.png",
-            "images": [
-                "https://i.postimg.cc/W1ygf5s9/zeroinstall-icon.png"
-            ]
+            "images": []
         },
         "0patch": {
             "icon": "https://imgur.com/YHwGP6l.png",
@@ -1347,6 +1345,12 @@
                 "https://windows-cdn.softpedia.com/screenshots/ALV-Advanced-Log-Viewer_4.png",
                 "https://windows-cdn.softpedia.com/screenshots/ALV-Advanced-Log-Viewer_5.png",
                 "https://windows-cdn.softpedia.com/screenshots/ALV-Advanced-Log-Viewer_6.png"
+            ]
+        },
+        "advancedofficepasswordrecovery": {
+            "icon": "https://i.postimg.cc/4yhBwPkG/aopr.png",
+            "images": [
+                "https://i.postimg.cc/YS9VY19r/image.png"
             ]
         },
         "advancedrenamer": {
@@ -2852,6 +2856,14 @@
             "icon": "",
             "images": []
         },
+        "archivepassword": {
+            "icon": "https://i.postimg.cc/SQPYg2yy/ARCHPR.png",
+            "images": [
+                "https://i.postimg.cc/8zmM3pwy/image.png",
+                "https://i.postimg.cc/0jSJCPb0/image.png",
+                "https://i.postimg.cc/FsjLdFt9/image.png"
+            ]
+        },
         "archiver": {
             "icon": "",
             "images": []
@@ -4294,6 +4306,10 @@
             "icon": "",
             "images": []
         },
+        "bambustudio": {
+            "icon": "https://cdn.meowcat285.com/unigeticons/BambuStudio.png",
+            "images": []
+        },
         "banana-buchhaltung": {
             "icon": "https://community.chocolatey.org/content/packageimages/banana-buchhaltung.10.0.12.png",
             "images": []
@@ -4963,9 +4979,14 @@
             "icon": "https://community.chocolatey.org/content/packageimages/beyondcompare-integration.2.0.0.png",
             "images": []
         },
-        "beyondcompare2": {
-            "icon": "",
-            "images": []
+        "beyondcompare-5": {
+            "icon": "https://www.scootersoftware.com/bc_icon.png",
+            "images": [
+                "https://www.scootersoftware.com/shot_FolderCompare_Dark.png",
+                "https://www.scootersoftware.com/shot_TextCompare_Dark.png",
+                "https://www.scootersoftware.com/shot_FolderMerge_Dark.png",
+                "https://www.scootersoftware.com/shot_TextMerge_Dark.png"
+            ]
         },
         "beyondcompare4": {
             "icon": "",
@@ -5516,6 +5537,10 @@
         },
         "bomist": {
             "icon": "",
+            "images": []
+        },
+        "bonjour": {
+            "icon": "https://developer.apple.com/assets/elements/icons/bonjour/bonjour-256x256.png",
             "images": []
         },
         "bonobo-git-server": {
@@ -9625,6 +9650,10 @@
             "icon": "",
             "images": []
         },
+        "dbbrowserforsqlite": {
+            "icon": "https://cdn.meowcat285.com/unigeticons/DBBrowser.png",
+            "images": []
+        },
         "dbeaver": {
             "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/DBeaver_logo.svg/2048px-DBeaver_logo.svg.png",
             "images": []
@@ -9960,6 +9989,10 @@
             "icon": "",
             "images": []
         },
+        "defender-injector": {
+            "icon": "https://community.chocolatey.org/content/packageimages/defender-injector.1.1.png",
+            "images": []
+        },
         "defenderui": {
             "icon": "https://i.postimg.cc/8Pyn1b94/defui-icon.png",
             "images": [
@@ -9970,10 +10003,6 @@
                 "https://i.postimg.cc/fTWrnP2k/defui5.png",
                 "https://i.postimg.cc/mgtphHGs/defui6.png"
             ]
-        },
-        "defender-injector": {
-            "icon": "https://community.chocolatey.org/content/packageimages/defender-injector.1.1.png",
-            "images": []
         },
         "defi": {
             "icon": "",
@@ -10402,6 +10431,14 @@
             "icon": "",
             "images": []
         },
+        "die-engine": {
+            "icon": "https://community.chocolatey.org/content/packageimages/die.3.07.png",
+            "images": [
+                "https://i.postimg.cc/VsbkrHtD/image.png",
+                "https://i.postimg.cc/PxDnx97D/image.png",
+                "https://i.postimg.cc/YS1xCx39/image.png"
+            ]
+        },
         "diff-pdf": {
             "icon": "",
             "images": []
@@ -10583,12 +10620,6 @@
                 "https://i.ibb.co/GFdRfcy/discord-3.png"
             ]
         },
-        "discord.py": {
-            "icon": "https://zv915ylvcs.ufs.sh/f/fYIgEizARqiSbhS0cIEZnSK3rQ5xwzjGJg7BXpaCtml9EW2s",
-            "images": [
-                "https://raw.githubusercontent.com/Rapptz/discord.py/refs/heads/master/docs/images/commands/positional3.png"
-            ]
-        },
         "discord-canary": {
             "icon": "https://i.ibb.co/9qxY46z/canary.png",
             "images": [
@@ -10620,6 +10651,12 @@
         "discord-rpc-extension": {
             "icon": "",
             "images": []
+        },
+        "discord-py": {
+            "icon": "https://zv915ylvcs.ufs.sh/f/fYIgEizARqiSbhS0cIEZnSK3rQ5xwzjGJg7BXpaCtml9EW2s",
+            "images": [
+                "https://raw.githubusercontent.com/Rapptz/discord.py/refs/heads/master/docs/images/commands/positional3.png"
+            ]
         },
         "discordchatexporter": {
             "icon": "",
@@ -11872,10 +11909,6 @@
             "images": []
         },
         "draw-io": {
-            "icon": "",
-            "images": []
-        },
-        "draw.io": {
             "icon": "https://raw.githubusercontent.com/jgraph/drawio-desktop/dev/build/1024x1024.png",
             "images": []
         },
@@ -11996,7 +12029,7 @@
             "images": []
         },
         "dropbox": {
-            "icon": "https://i.postimg.cc/6q5xZffs/dropbox-ico.jpg",
+            "icon": "https://i.postimg.cc/kgM4jKJ1/Dropbox-icon-icons-com-66767.png",
             "images": [
                 "https://i.postimg.cc/7L8v9knn/drop1.png",
                 "https://i.postimg.cc/P5QWQRZ2/dropp.png"
@@ -16237,12 +16270,6 @@
                 "https://i.postimg.cc/j5k2pfRR/git3.png"
             ]
         },
-        "gitbutler": {
-            "icon": "https://gitbutler.com/favicon/favicon-64x64.png",
-            "images": [
-                "https://docs.gitbutler.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Finitial-workspace.8084a3ae.png&w=3840&q=75"
-            ]
-        },
         "git-aliases": {
             "icon": "",
             "images": []
@@ -16394,6 +16421,12 @@
         "gitblit": {
             "icon": "",
             "images": []
+        },
+        "gitbutler": {
+            "icon": "https://gitbutler.com/favicon/favicon-64x64.png",
+            "images": [
+                "https://docs.gitbutler.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Finitial-workspace.8084a3ae.png&w=3840&q=75"
+            ]
         },
         "gitcredentialmanagercore": {
             "icon": "",
@@ -19605,6 +19638,10 @@
             "icon": "https://community.chocolatey.org/content/packageimages/InfraRecorder.0.53.0.1.png",
             "images": []
         },
+        "inimanager": {
+            "icon": "https://cdn.meowcat285.com/unigeticons/iniManager.png",
+            "images": []
+        },
         "inireloc": {
             "icon": "",
             "images": []
@@ -19885,6 +19922,12 @@
         "intellijidea-ultimate-eap": {
             "icon": "https://resources.jetbrains.com/storage/products/intellij-idea/img/meta/intellij-idea_logo_300x300.png",
             "images": []
+        },
+        "IntelliJIDEA-Ultimate": {
+            "icon": "https://resources.jetbrains.com/storage/products/company/brand/logos/IntelliJ_IDEA_icon.png",
+            "images": [
+                "https://www.jetbrains.com/idea/img/overview-heading-screenshot.png"
+            ]
         },
         "intellitype": {
             "icon": "https://community.chocolatey.org/content/packageimages/intellitype.8.20.469.0.png",
@@ -24995,10 +25038,6 @@
             "icon": "https://community.chocolatey.org/content/packageimages/microsip-lite.3.21.3.png",
             "images": []
         },
-        "microsoftofficehub": {
-            "icon": "https://i.postimg.cc/T31K2tXf/Brand-Logo-org-Microsoft-Copilot-Logo.png",
-            "images": []
-        },
         "microsoft-band-sync": {
             "icon": "https://community.chocolatey.org/content/packageimages/Microsoft-Band-Sync.1.3.1021.3.png",
             "images": []
@@ -25073,6 +25112,10 @@
         },
         "microsoftmathematics": {
             "icon": "https://community.chocolatey.org/content/packageimages/microsoftmathematics.4.0.1108.0000.png",
+            "images": []
+        },
+        "microsoftofficehub": {
+            "icon": "https://i.postimg.cc/T31K2tXf/Brand-Logo-org-Microsoft-Copilot-Logo.png",
             "images": []
         },
         "microsoftsecurityessentials": {
@@ -25406,12 +25449,12 @@
             "icon": "",
             "images": []
         },
-        "miservice": {
-            "icon": "",
-            "images": []
-        },
         "mise-en-place": {
             "icon": "https://raw.githubusercontent.com/jdx/mise/refs/heads/main/docs/public/favicon-32x32.png",
+            "images": []
+        },
+        "miservice": {
+            "icon": "",
             "images": []
         },
         "misfitmodel3d": {
@@ -26745,6 +26788,10 @@
             "icon": "",
             "images": []
         },
+        "mysqlworkbench": {
+            "icon": "https://cdn.meowcat285.com/unigeticons/MySQLWorkbench.png",
+            "images": []
+        },
         "mysterium": {
             "icon": "",
             "images": []
@@ -26849,7 +26896,15 @@
         },
         "naps2": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/25B0gqTv/1.png",
+                "https://i.postimg.cc/JnVp81dF/2.png",
+                "https://i.postimg.cc/FzGp00st/3.png",
+                "https://i.postimg.cc/gJVNkfC2/4.png",
+                "https://i.postimg.cc/brqLGmPH/5.png",
+                "https://i.postimg.cc/Wp75Rcm9/6.png",
+                "https://i.postimg.cc/wTT0g409/7.png"
+            ]
         },
         "naps2-prerelease": {
             "icon": "",
@@ -29614,6 +29669,10 @@
             "icon": "https://community.chocolatey.org/content/packageimages/orca.10.0.22621.png",
             "images": []
         },
+        "orcaslicer": {
+            "icon": "https://cdn.meowcat285.com/unigeticons/OrcaSlicer.png",
+            "images": []
+        },
         "orchardcms": {
             "icon": "",
             "images": []
@@ -30002,12 +30061,12 @@
             "icon": "https://community.chocolatey.org/content/packageimages/pandabank.3.0.2.0.png",
             "images": []
         },
-        "pandas": {
-            "icon": "",
-            "images": []
-        },
         "pandafreeantivirus": {
             "icon": "https://community.chocolatey.org/content/packageimages/PandaFreeAntivirus.18.07.04.20200620.png",
+            "images": []
+        },
+        "pandas": {
+            "icon": "",
             "images": []
         },
         "pandoc": {
@@ -31038,6 +31097,12 @@
         "photoworks": {
             "icon": "",
             "images": []
+        },
+        "phoxosee": {
+            "icon": "https://i.postimg.cc/yN3GL0q7/phoxosee.png",
+            "images": [
+                "https://i.postimg.cc/ncdwZ3pH/image.png"
+            ]
         },
         "php": {
             "icon": "",
@@ -32496,6 +32561,23 @@
                 "https://i.postimg.cc/gcVwyYMJ/image.png"
             ]
         },
+        "protondrive": {
+            "icon": "https://i.postimg.cc/RZpFXq57/Proton-Drive.png",
+            "images": [
+                "https://i.postimg.cc/MGtwZFtz/image.png",
+                "https://i.postimg.cc/HxBPyG7k/image.png",
+                "https://i.postimg.cc/W3b5j9fL/image.png"
+            ]
+        },
+        "protonmail": {
+            "icon": "https://i.postimg.cc/zGYnzbHJ/protonmail.png",
+            "images": [
+                "https://i.postimg.cc/zB6G5QXV/image.png",
+                "https://i.postimg.cc/SN3gWxX5/mail.png",
+                "https://i.postimg.cc/P51QYznp/image.png",
+                "https://i.postimg.cc/XvFmZyQQ/image.png"
+            ]
+        },
         "protonmail-bridge": {
             "icon": "",
             "images": []
@@ -32506,6 +32588,17 @@
                 "https://i.postimg.cc/QC1c11Fx/image.png",
                 "https://i.postimg.cc/fTQcZ2P3/image.png",
                 "https://i.postimg.cc/XvP5PQFY/image.png"
+            ]
+        },
+        "protonpass": {
+            "icon": "https://i.postimg.cc/8PvZmf2v/protonpass.png",
+            "images": [
+                "https://i.postimg.cc/cLh16CLq/image.png",
+                "https://i.postimg.cc/sDrN8Xfh/image.png",
+                "https://i.postimg.cc/htCZf1LL/image.png",
+                "https://i.postimg.cc/y8qY20gT/image.png",
+                "https://i.postimg.cc/sDb98H40/image.png",
+                "https://i.postimg.cc/nLG4XFb6/image.png"
             ]
         },
         "protonvpn": {
@@ -33030,7 +33123,7 @@
             "icon": "",
             "images": []
         },
-        "Pylogmon.pot": {
+        "Pylogmon-pot": {
             "icon": "https://cdn.staticaly.com/gh/Pylogmon/pot/master/public/icon.png",
             "images": [
                 "https://cdn.staticaly.com/gh/Pylogmon/pot/master/asset/dark.png",
@@ -33066,10 +33159,6 @@
             "icon": "https://community.chocolatey.org/content/packageimages/pypy3.7.3.4.20210425.png",
             "images": []
         },
-        "pytest": {
-            "icon": "https://raw.githubusercontent.com/pytest-dev/pytest/refs/heads/main/doc/en/_static/pytest1.png",
-            "images": []
-        },
         "pyqt4": {
             "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Python_and_Qt.svg/1200px-Python_and_Qt.svg.png",
             "images": []
@@ -33078,11 +33167,11 @@
             "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Python_and_Qt.svg/1200px-Python_and_Qt.svg.png",
             "images": []
         },
-        "pyqt5-qt5": {
+        "pyqt5_sip": {
             "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Python_and_Qt.svg/1200px-Python_and_Qt.svg.png",
             "images": []
         },
-        "pyqt5_sip": {
+        "pyqt5-qt5": {
             "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Python_and_Qt.svg/1200px-Python_and_Qt.svg.png",
             "images": []
         },
@@ -33090,11 +33179,11 @@
             "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Python_and_Qt.svg/1200px-Python_and_Qt.svg.png",
             "images": []
         },
-        "pyqt6-qt6": {
+        "pyqt6_sip": {
             "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Python_and_Qt.svg/1200px-Python_and_Qt.svg.png",
             "images": []
         },
-        "pyqt6_sip": {
+        "pyqt6-qt6": {
             "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Python_and_Qt.svg/1200px-Python_and_Qt.svg.png",
             "images": []
         },
@@ -33112,6 +33201,10 @@
         },
         "pyrevit-cli": {
             "icon": "https://community.chocolatey.org/content/packageimages/pyrevit-cli.4.8.12.22247.png",
+            "images": []
+        },
+        "pytest": {
+            "icon": "https://raw.githubusercontent.com/pytest-dev/pytest/refs/heads/main/doc/en/_static/pytest1.png",
             "images": []
         },
         "python": {
@@ -33229,34 +33322,6 @@
             "images": []
         },
         "python38": {
-            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Python_Windows_setup_icon_2016.svg/512px-Python_Windows_setup_icon_2016.svg.png",
-            "images": []
-        },
-        "python.3.10": {
-            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Python_Windows_setup_icon_2016.svg/512px-Python_Windows_setup_icon_2016.svg.png",
-            "images": []
-        },
-        "python.3.11": {
-            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Python_Windows_setup_icon_2016.svg/512px-Python_Windows_setup_icon_2016.svg.png",
-            "images": []
-        },
-        "python.3.12": {
-            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Python_Windows_setup_icon_2016.svg/512px-Python_Windows_setup_icon_2016.svg.png",
-            "images": []
-        },
-        "python.3.5": {
-            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Python_Windows_setup_icon_2016.svg/512px-Python_Windows_setup_icon_2016.svg.png",
-            "images": []
-        },
-        "python.3.6": {
-            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Python_Windows_setup_icon_2016.svg/512px-Python_Windows_setup_icon_2016.svg.png",
-            "images": []
-        },
-        "python.3.7": {
-            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Python_Windows_setup_icon_2016.svg/512px-Python_Windows_setup_icon_2016.svg.png",
-            "images": []
-        },
-        "python.3.8": {
             "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Python_Windows_setup_icon_2016.svg/512px-Python_Windows_setup_icon_2016.svg.png",
             "images": []
         },
@@ -33801,7 +33866,7 @@
             "images": []
         },
         "quicklook": {
-            "icon": "https://i.postimg.cc/ZqyTPn6k/ql-icon.png",
+            "icon": "https://i.postimg.cc/ZR64Y5Yv/quick-ico.png",
             "images": [
                 "https://i.postimg.cc/y8G1ScgX/ql1.png"
             ]
@@ -35178,6 +35243,17 @@
             "icon": "",
             "images": []
         },
+        "rightnote": {
+            "icon": "https://i.postimg.cc/mZj8kSNm/Right-Note.png",
+            "images": [
+                "https://i.postimg.cc/Jhs9c2K7/image.png",
+                "https://i.postimg.cc/52sVmvVg/image.png",
+                "https://i.postimg.cc/QdyztqD2/image.png",
+                "https://i.postimg.cc/9MGgL592/image.png",
+                "https://i.postimg.cc/4N42Q0xC/image.png",
+                "https://i.postimg.cc/g0hg0FNh/image.png"
+            ]
+        },
         "rigsofrods": {
             "icon": "",
             "images": []
@@ -35305,6 +35381,13 @@
         "roamresearch": {
             "icon": "",
             "images": []
+        },
+        "roblox": {
+            "icon": "https://i.postimg.cc/yYJ7tDNj/Roblox-Player.png",
+            "images": [
+                "https://i.postimg.cc/Dy4vWSLD/image.png",
+                "https://i.postimg.cc/mrLWSk1T/image.png"
+            ]
         },
         "robo3t": {
             "icon": "https://i.imgur.com/XSYqe6j.png",
@@ -35939,6 +36022,12 @@
             "icon": "",
             "images": []
         },
+        "sagepassword": {
+            "icon": "https://i.postimg.cc/pdBnCsd7/asapr.png",
+            "images": [
+                "https://i.postimg.cc/hv2NpW6h/image.png"
+            ]
+        },
         "sagethumbs": {
             "icon": "https://community.chocolatey.org/content/packageimages/sagethumbs.2.0.0.23.png",
             "images": []
@@ -35990,6 +36079,10 @@
         },
         "sampler": {
             "icon": "",
+            "images": []
+        },
+        "samsung-dex": {
+            "icon": "https://i.postimg.cc/pVsYggXd/Samsung-De-X.png",
             "images": []
         },
         "samsung-magician": {
@@ -37641,6 +37734,20 @@
             "icon": "https://www.logolynx.com/images/logolynx/38/384353c7d320c8c409fd75fd9200037d.png",
             "images": []
         },
+        "sketchup-2022": {
+            "icon": "https://i.postimg.cc/259Fnnxn/sketchup.png",
+            "images": []
+        },
+        "sketchup-2023": {
+            "icon": "https://i.postimg.cc/259Fnnxn/sketchup.png",
+            "images": []
+        },
+        "sketchup-2025": {
+            "icon": "https://i.postimg.cc/259Fnnxn/sketchup.png",
+            "images": [
+                "https://i.postimg.cc/yxZwM1Nr/image.png"
+            ]
+        },
         "sketchup-pro-2022": {
             "icon": "",
             "images": []
@@ -38260,6 +38367,13 @@
         "sonicvisualiser": {
             "icon": "https://community.chocolatey.org/content/packageimages/sonicvisualiser.4.5.1.png",
             "images": []
+        },
+        "sonicwall-netextender\n": {
+            "icon": "https://paulstsmith.github.io/images/netextender-icon.png",
+            "images": [
+                "https://paulstsmith.github.io/images/netextender-screenshot-connected.png",
+                "https://paulstsmith.github.io/images/netextender-screenShot-disconnected.png"
+            ]
         },
         "sonixd": {
             "icon": "",
@@ -39477,6 +39591,22 @@
                 "https://i.postimg.cc/7ZRhzyvw/image.png"
             ]
         },
+        "steam-322170": {
+            "icon": "https://upload.wikimedia.org/wikipedia/en/thumb/4/4d/Logo_of_Geometry_Dash.svg/1200px-Logo_of_Geometry_Dash.svg.png",
+            "images": []
+        },
+        "steam-32440": {
+            "icon": "https://cdn2.steamgriddb.com/icon/0b70b95deb2dfeeb11aa462c44169894.png",
+            "images": []
+        },
+        "steam-32510": {
+            "icon": "https://cdn2.steamgriddb.com/icon/013d407166ec4fa56eb1e1f8cbe183b9/8/32x32.png",
+            "images": []
+        },
+        "steam-920210": {
+            "icon": "https://cdn2.steamgriddb.com/icon/b156769842d5235767f769b5c8617399/32/32x32.png",
+            "images": []
+        },
         "steam-cleaner": {
             "icon": "https://community.chocolatey.org/content/packageimages/steam-cleaner.2.4.png",
             "images": []
@@ -39503,22 +39633,6 @@
         },
         "steamcmd": {
             "icon": "",
-            "images": []
-        },
-        "steam-32440": {
-            "icon": "https://cdn2.steamgriddb.com/icon/0b70b95deb2dfeeb11aa462c44169894.png",
-            "images": []
-        },
-        "steam-32510": {
-            "icon": "https://cdn2.steamgriddb.com/icon/013d407166ec4fa56eb1e1f8cbe183b9/8/32x32.png",
-            "images": []
-        },
-        "steam-322170": {
-            "icon": "https://upload.wikimedia.org/wikipedia/en/thumb/4/4d/Logo_of_Geometry_Dash.svg/1200px-Logo_of_Geometry_Dash.svg.png",
-            "images": []
-        },
-        "steam-920210": {
-            "icon": "https://cdn2.steamgriddb.com/icon/b156769842d5235767f769b5c8617399/32/32x32.png",
             "images": []
         },
         "steascree": {
@@ -40406,6 +40520,10 @@
         },
         "sysinternals-tcpview": {
             "icon": "https://learn.microsoft.com/en-us/sysinternals/media/index/sysinternals.png",
+            "images": []
+        },
+        "sysinternals-zoomIt": {
+            "icon": "https://i.postimg.cc/hjPX2PL9/ZoomIt.png",
             "images": []
         },
         "syspin": {
@@ -42984,15 +43102,15 @@
             "icon": "https://i.imgur.com/kTVX1t5.png",
             "images": []
         },
-        "ui.xaml.2.6": {
+        "ui-xaml-2-6": {
             "icon": "https://user-images.githubusercontent.com/7389110/64734952-8a06ae80-d4df-11e9-830a-2c451a6c0694.png",
             "images": []
         },
-        "ui.xaml.2.7": {
+        "ui-xaml-2-7": {
             "icon": "https://user-images.githubusercontent.com/7389110/64734952-8a06ae80-d4df-11e9-830a-2c451a6c0694.png",
             "images": []
         },
-        "ui.xaml.2.8": {
+        "ui-xaml-2-8": {
             "icon": "https://user-images.githubusercontent.com/7389110/64734952-8a06ae80-d4df-11e9-830a-2c451a6c0694.png",
             "images": []
         },
@@ -43198,6 +43316,10 @@
         },
         "unifyingsoftware": {
             "icon": "",
+            "images": []
+        },
+        "unigetui": {
+            "icon": "https://community.chocolatey.org/content/packageimages/wingetui.3.2.0.png",
             "images": []
         },
         "unihex": {
@@ -43815,10 +43937,6 @@
             "icon": "",
             "images": []
         },
-        "vercel": {
-            "icon": "https://zv915ylvcs.ufs.sh/f/fYIgEizARqiSKv03FUtUaGqDZpvIXcO2YTyfjCHRkoFNAmxn",
-            "images": []
-        },
         "valorant": {
             "icon": "https://zv915ylvcs.ufs.sh/f/fYIgEizARqiSm9QzvKbv3WNIoXHVpASdBFORtzZ6JCYTeDnh",
             "images": []
@@ -43919,6 +44037,14 @@
             "icon": "https://community.chocolatey.org/content/packageimages/VCExpress2010.0.1.0.20140915.png",
             "images": []
         },
+        "vclibs": {
+            "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
+            "images": []
+        },
+        "vclibs-desktop-14": {
+            "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
+            "images": []
+        },
         "vclip": {
             "icon": "https://community.chocolatey.org/content/packageimages/vclip.2.0.0.1.png",
             "images": []
@@ -43943,14 +44069,6 @@
             "icon": "https://static-00.iconduck.com/assets.00/file-type-meson-icon-256x256-ias65td0.png",
             "images": []
         },
-        "vclibs": {
-            "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
-            "images": []
-        },
-        "vclibs.desktop.14": {
-            "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
-            "images": []
-        },
         "vcredist": {
             "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
             "images": []
@@ -43959,15 +44077,7 @@
             "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
             "images": []
         },
-        "vcredist.2005.x64": {
-            "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
-            "images": []
-        },
         "vcredist-2005-x86": {
-            "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
-            "images": []
-        },
-        "vcredist.2005.x86": {
             "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
             "images": []
         },
@@ -43975,15 +44085,7 @@
             "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
             "images": []
         },
-        "vcredist.2008.x64": {
-            "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
-            "images": []
-        },
         "vcredist-2008-x86": {
-            "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
-            "images": []
-        },
-        "vcredist.2008.x86": {
             "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
             "images": []
         },
@@ -43991,15 +44093,7 @@
             "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
             "images": []
         },
-        "vcredist.2010.x64": {
-            "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
-            "images": []
-        },
         "vcredist-2010-x86": {
-            "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
-            "images": []
-        },
-        "vcredist.2010.x86": {
             "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
             "images": []
         },
@@ -44007,15 +44101,7 @@
             "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
             "images": []
         },
-        "vcredist.2012.x64": {
-            "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
-            "images": []
-        },
         "vcredist-2012-x86": {
-            "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
-            "images": []
-        },
-        "vcredist.2012.x86": {
             "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
             "images": []
         },
@@ -44023,15 +44109,7 @@
             "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
             "images": []
         },
-        "vcredist.2013.x64": {
-            "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
-            "images": []
-        },
         "vcredist-2013-x86": {
-            "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
-            "images": []
-        },
-        "vcredist.2013.x86": {
             "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
             "images": []
         },
@@ -44039,15 +44117,7 @@
             "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
             "images": []
         },
-        "vcredist.2015+.x64": {
-            "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
-            "images": []
-        },
         "vcredist-2015+-x86": {
-            "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
-            "images": []
-        },
-        "vcredist.2015+.x86": {
             "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
             "images": []
         },
@@ -44055,15 +44125,7 @@
             "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
             "images": []
         },
-        "vcredist.2019.arm64": {
-            "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
-            "images": []
-        },
         "vcredist-2022-arm64": {
-            "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
-            "images": []
-        },
-        "vcredist.2022.arm64": {
             "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
             "images": []
         },
@@ -44317,6 +44379,10 @@
         },
         "veracrypt": {
             "icon": "https://community.chocolatey.org/content/packageimages/veracrypt.1.25.9.png",
+            "images": []
+        },
+        "vercel": {
+            "icon": "https://zv915ylvcs.ufs.sh/f/fYIgEizARqiSKv03FUtUaGqDZpvIXcO2YTyfjCHRkoFNAmxn",
             "images": []
         },
         "verysleepy": {
@@ -44780,16 +44846,8 @@
             "icon": "https://pics.computerbase.de/9/9/2/3/0-e36f805671c3b980/logo-256.png",
             "images": []
         },
-        "visualstudio.2022.buildtools": {
-            "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
-            "images": []
-        },
         "visualstudio-2022-commun\u2026": {
             "icon": "https://pics.computerbase.de/9/9/2/3/0-e36f805671c3b980/logo-256.png",
-            "images": []
-        },
-        "visualstudio.2022.community": {
-            "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
             "images": []
         },
         "visualstudio-2022-enterp\u2026": {
@@ -44814,6 +44872,14 @@
         },
         "visualstudio-locator": {
             "icon": "",
+            "images": []
+        },
+        "visualstudio-2022-buildtools": {
+            "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
+            "images": []
+        },
+        "visualstudio-2022-community": {
+            "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
             "images": []
         },
         "visualstudio2012premium": {
@@ -46420,6 +46486,14 @@
             "icon": "",
             "images": []
         },
+        "warp": {
+            "icon": "https://i.postimg.cc/wT15bYsJ/cloudwarp.png",
+            "images": [
+                "https://i.postimg.cc/GhhW9QSz/image.png",
+                "https://i.postimg.cc/KjY0c9vM/image.png",
+                "https://i.postimg.cc/KvDtp7GX/image.png"
+            ]
+        },
         "warp-terminal": {
             "icon": "https://community.chocolatey.org/content/packageimages/warp-terminal.2025.5.21.png",
             "images": []
@@ -46660,6 +46734,13 @@
         "webdl": {
             "icon": "",
             "images": []
+        },
+        "webdrive": {
+            "icon": "https://i.postimg.cc/5NcLdbWb/WebDrive.png",
+            "images": [
+                "https://i.postimg.cc/NfgGrz1R/image.png",
+                "https://southrivertech.com/wp-content/uploads/2023/07/WD_Various_Servers_Connected.png"
+            ]
         },
         "webessentials2015": {
             "icon": "",
@@ -47272,10 +47353,6 @@
             "icon": "https://community.chocolatey.org/content/packageimages/windowinspector.3.1.png",
             "images": []
         },
-        "windowsstore": {
-            "icon": "https://apps.microsoft.com/assets/icons/logo-256x256.png",
-            "images": []
-        },
         "windows-11-installation-assistant": {
             "icon": "https://community.chocolatey.org/content/packageimages/windows-11-installation-assistant.1.4.19041.1285.png",
             "images": []
@@ -47493,6 +47570,14 @@
             "icon": "https://community.chocolatey.org/content/packageimages/WindowsLiveMesh.2011.0.0.png",
             "images": []
         },
+        "windowsmigrationassistant": {
+            "icon": "https://i.postimg.cc/zBJPcC6V/Migration-Assistant.png",
+            "images": [
+                "https://i.postimg.cc/cHw4FSqs/image.png",
+                "https://i.postimg.cc/RhTCzLVy/image.png",
+                "https://i.postimg.cc/BbJsNPcg/image.png"
+            ]
+        },
         "windowsnotepad": {
             "icon": "https://upload.wikimedia.org/wikipedia/commons/c/c9/Windows_Notepad_icon.png",
             "images": []
@@ -47513,12 +47598,16 @@
             "icon": "",
             "images": []
         },
-        "windowssdk.10.0.19041": {
+        "windowssdk-10-0-19041": {
             "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
             "images": []
         },
         "windowsspyblocker": {
             "icon": "https://community.chocolatey.org/content/packageimages/windowsspyblocker.4.39.0.png",
+            "images": []
+        },
+        "windowsstore": {
+            "icon": "https://apps.microsoft.com/assets/icons/logo-256x256.png",
             "images": []
         },
         "windowssubsystem\u2026": {
@@ -49045,6 +49134,10 @@
             "icon": "https://community.chocolatey.org/content/packageimages/xpdf-utils.3.4.0.20170430.png",
             "images": []
         },
+        "XPFFTQ032PTPHF": {
+            "icon": "https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/icon.png",
+            "images": []
+        },
         "xpipe": {
             "icon": "https://raw.githubusercontent.com/xpipe-io/xpipe/refs/heads/master/dist/logo/logo.iconset/icon_512x512.png",
             "images": [
@@ -49982,179 +50075,12 @@
                 "https://i.postimg.cc/Yq3jSms2/image.png"
             ]
         },
-        "bambustudio": {
-            "icon": "https://cdn.meowcat285.com/unigeticons/BambuStudio.png",
-            "images": []
-        },
-        "dbbrowserforsqlite": {
-            "icon": "https://cdn.meowcat285.com/unigeticons/DBBrowser.png",
-            "images": []
-        },
-        "inimanager": {
-            "icon": "https://cdn.meowcat285.com/unigeticons/iniManager.png",
-            "images": []
-        },
-        "mysqlworkbench": {
-            "icon": "https://cdn.meowcat285.com/unigeticons/MySQLWorkbench.png",
-            "images": []
-        },
-        "orcaslicer": {
-            "icon": "https://cdn.meowcat285.com/unigeticons/OrcaSlicer.png",
-            "images": []
-        },
-        "sonicwall-netextender\n": {
-            "icon": "https://paulstsmith.github.io/images/netextender-icon.png",
+        "wordaizer": {
+            "icon": "https://i.postimg.cc/J0BR3tZQ/Wordaizer.png",
             "images": [
-                "https://paulstsmith.github.io/images/netextender-screenshot-connected.png",
-                "https://paulstsmith.github.io/images/netextender-screenShot-disconnected.png"
-            ]
-        },
-        "beyondcompare.5": {
-            "icon": "https://www.scootersoftware.com/bc_icon.png",
-            "images": [
-                "https://www.scootersoftware.com/shot_FolderCompare_Dark.png",
-                "https://www.scootersoftware.com/shot_TextCompare_Dark.png",
-                "https://www.scootersoftware.com/shot_FolderMerge_Dark.png",
-                "https://www.scootersoftware.com/shot_TextMerge_Dark.png"
-            ]
-        },
-        "XPFFTQ032PTPHF": {
-            "icon": "https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/icon.png",
-            "images": []
-        },
-        "IntelliJIDEA.Ultimate": {
-            "icon": "https://resources.jetbrains.com/storage/products/company/brand/logos/IntelliJ_IDEA_icon.png",
-            "images": [
-                "https://www.jetbrains.com/idea/img/overview-heading-screenshot.png"
-            ]
-        },
-        "samsung-dex": {
-            "icon": "https://i.postimg.cc/pVsYggXd/Samsung-De-X.png",
-            "images": []
-        },
-        "webdrive": {
-            "icon": "https://i.postimg.cc/5NcLdbWb/WebDrive.png",
-            "images": [
-                "https://i.postimg.cc/NfgGrz1R/image.png",
-                "https://southrivertech.com/wp-content/uploads/2023/07/WD_Various_Servers_Connected.png"
-            ]
-        },
-        "advancedofficepasswordrecovery": {
-            "icon": "https://i.postimg.cc/4yhBwPkG/aopr.png",
-            "images": [
-                "https://i.postimg.cc/YS9VY19r/image.png"
-            ]
-        },
-        "phoxosee": {
-            "icon": "https://i.postimg.cc/yN3GL0q7/phoxosee.png",
-            "images": [
-                "https://i.postimg.cc/ncdwZ3pH/image.png"
-            ]
-        },
-        "roblox": {
-            "icon": "https://i.postimg.cc/yYJ7tDNj/Roblox-Player.png",
-            "images": [
-                "https://i.postimg.cc/Dy4vWSLD/image.png",
-                "https://i.postimg.cc/mrLWSk1T/image.png"
-            ]
-        },
-        "die-engine": {
-            "icon": "https://community.chocolatey.org/content/packageimages/die.3.07.png",
-            "images": [
-                "https://i.postimg.cc/VsbkrHtD/image.png",
-                "https://i.postimg.cc/PxDnx97D/image.png",
-                "https://i.postimg.cc/YS1xCx39/image.png"
-            ]
-        },
-        "archivepassword": {
-            "icon": "https://i.postimg.cc/SQPYg2yy/ARCHPR.png",
-            "images": [
-                "https://i.postimg.cc/8zmM3pwy/image.png",
-                "https://i.postimg.cc/0jSJCPb0/image.png",
-                "https://i.postimg.cc/FsjLdFt9/image.png"
-            ]
-        },
-        "sagepassword": {
-            "icon": "https://i.postimg.cc/pdBnCsd7/asapr.png",
-            "images": [
-                "https://i.postimg.cc/hv2NpW6h/image.png"
-            ]
-        },
-        "warp": {
-            "icon": "https://i.postimg.cc/wT15bYsJ/cloudwarp.png",
-            "images": [
-                "https://i.postimg.cc/GhhW9QSz/image.png",
-                "https://i.postimg.cc/KjY0c9vM/image.png",
-                "https://i.postimg.cc/KvDtp7GX/image.png"
-            ]
-        },
-        "bonjour": {
-            "icon": "https://developer.apple.com/assets/elements/icons/bonjour/bonjour-256x256.png",
-            "images": []
-        },
-        "windowsmigrationassistant": {
-            "icon": "https://i.postimg.cc/zBJPcC6V/Migration-Assistant.png",
-            "images": [
-                "https://i.postimg.cc/cHw4FSqs/image.png",
-                "https://i.postimg.cc/RhTCzLVy/image.png",
-                "https://i.postimg.cc/BbJsNPcg/image.png"
-            ]
-        },
-        "sysinternals-zoomIt": {
-            "icon": "https://i.postimg.cc/hjPX2PL9/ZoomIt.png",
-            "images": []
-        },
-        "rightnote": {
-            "icon": "https://i.postimg.cc/mZj8kSNm/Right-Note.png",
-            "images": [
-                "https://i.postimg.cc/Jhs9c2K7/image.png",
-                "https://i.postimg.cc/52sVmvVg/image.png",
-                "https://i.postimg.cc/QdyztqD2/image.png",
-                "https://i.postimg.cc/9MGgL592/image.png",
-                "https://i.postimg.cc/4N42Q0xC/image.png",
-                "https://i.postimg.cc/g0hg0FNh/image.png"
-            ]
-        },
-        "protonmail": {
-            "icon": "https://i.postimg.cc/zGYnzbHJ/protonmail.png",
-            "images": [
-                "https://i.postimg.cc/zB6G5QXV/image.png",
-                "https://i.postimg.cc/SN3gWxX5/mail.png",
-                "https://i.postimg.cc/P51QYznp/image.png",
-                "https://i.postimg.cc/XvFmZyQQ/image.png"
-            ]
-        },
-        "protonpass": {
-            "icon": "https://i.postimg.cc/8PvZmf2v/protonpass.png",
-            "images": [
-                "https://i.postimg.cc/cLh16CLq/image.png",
-                "https://i.postimg.cc/sDrN8Xfh/image.png",
-                "https://i.postimg.cc/htCZf1LL/image.png",
-                "https://i.postimg.cc/y8qY20gT/image.png",
-                "https://i.postimg.cc/sDb98H40/image.png",
-                "https://i.postimg.cc/nLG4XFb6/image.png"
-            ]
-        },
-        "protondrive": {
-            "icon": "https://i.postimg.cc/RZpFXq57/Proton-Drive.png",
-            "images": [
-                "https://i.postimg.cc/MGtwZFtz/image.png",
-                "https://i.postimg.cc/HxBPyG7k/image.png",
-                "https://i.postimg.cc/W3b5j9fL/image.png"
-            ]
-        },
-        "sketchup-2022": {
-            "icon": "https://i.postimg.cc/259Fnnxn/sketchup.png",
-            "images": []
-        },
-        "sketchup-2023": {
-            "icon": "https://i.postimg.cc/259Fnnxn/sketchup.png",
-            "images": []
-        },
-        "sketchup-2025": {
-            "icon": "https://i.postimg.cc/259Fnnxn/sketchup.png",
-            "images": [
-                "https://i.postimg.cc/yxZwM1Nr/image.png"
+                "https://i.postimg.cc/XqFpjsH3/image.png",
+                "https://i.postimg.cc/g0JjXzSg/image.png",
+                "https://i.postimg.cc/RhrZDcMY/image.png"
             ]
         }
     }
