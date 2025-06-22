@@ -3,8 +3,8 @@
         "total": 11834,
         "done": 5326,
         "packages_with_icon": 5326,
-        "packages_with_screenshot": 687,
-        "total_screenshots": 2141
+        "packages_with_screenshot": 688,
+        "total_screenshots": 2144
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -6900,7 +6900,11 @@
         },
         "charles": {
             "icon": "https://community.chocolatey.org/content/packageimages/Charles.3.12.3.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/hjWL10jV/image.png",
+                "https://i.postimg.cc/DZrqjbJH/image.png",
+                "https://i.postimg.cc/ydHRZYQP/image.png"
+            ]
         },
         "charles4": {
             "icon": "https://community.chocolatey.org/content/packageimages/charles4.4.6.3.png",
