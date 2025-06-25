@@ -3,8 +3,8 @@
         "total": 11838,
         "done": 5336,
         "packages_with_icon": 5336,
-        "packages_with_screenshot": 702,
-        "total_screenshots": 2173
+        "packages_with_screenshot": 703,
+        "total_screenshots": 2174
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -46534,8 +46534,10 @@
             ]
         },
         "warp-terminal": {
-            "icon": "https://community.chocolatey.org/content/packageimages/warp-terminal.2025.5.21.png",
-            "images": []
+            "icon": "https://imgur.com/a/ZkT8nyP",
+            "images": [
+                "https://imgur.com/a/ZkT8nyP"
+            ]
         },
         "warthunder": {
             "icon": "https://cdn2.steamgriddb.com/icon_thumb/3fdc6213681ba98cb5a95150380e0e04.png",
