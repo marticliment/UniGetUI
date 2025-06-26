@@ -28,6 +28,7 @@ namespace UniGetUI.Interface.SoftwarePages
             MegaQueryBlockEnabled = true,
             PackagesAreCheckedByDefault = false,
             ShowLastLoadTime = false,
+            DisableReload = false,
             DisableSuggestedResultsRadio = false,
             PageName = "Discover",
 

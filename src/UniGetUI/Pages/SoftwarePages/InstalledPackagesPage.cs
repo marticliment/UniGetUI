@@ -38,6 +38,7 @@ namespace UniGetUI.Interface.SoftwarePages
             DisableFilterOnQueryChange = false,
             MegaQueryBlockEnabled = false,
             ShowLastLoadTime = false,
+            DisableReload = false,
             PackagesAreCheckedByDefault = false,
             DisableSuggestedResultsRadio = true,
             PageName = "Installed",

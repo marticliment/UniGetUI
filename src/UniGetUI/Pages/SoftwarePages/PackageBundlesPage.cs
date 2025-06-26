@@ -55,6 +55,7 @@ namespace UniGetUI.Interface.SoftwarePages
             DisableFilterOnQueryChange = false,
             MegaQueryBlockEnabled = false,
             ShowLastLoadTime = false,
+            DisableReload = true,
             PackagesAreCheckedByDefault = false,
             DisableSuggestedResultsRadio = true,
             PageName = "Bundles",
@@ -76,8 +77,6 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 HasUnsavedChanges = true;
             };
-
-            ReloadButton.Visibility = Visibility.Collapsed;
         }
 
         public override BetterMenu GenerateContextMenu()

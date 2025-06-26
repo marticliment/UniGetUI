@@ -34,6 +34,7 @@ namespace UniGetUI.Interface.SoftwarePages
             DisableFilterOnQueryChange = false,
             MegaQueryBlockEnabled = false,
             ShowLastLoadTime = true,
+            DisableReload = false,
             PackagesAreCheckedByDefault = true,
             DisableSuggestedResultsRadio = true,
             PageName = "Updates",
