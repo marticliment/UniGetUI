@@ -71,11 +71,18 @@
                     Click="RetryFailedOps_Click"
                     IconName="Reload"
                     Text="Retry failed operations" />
+                <MenuFlyoutSeparator/>
                 <widgets:BetterMenuItem
-                    Name="PausePendingOps"
+                    Name="ClearSuccessful"
                     Click="ClearSuccessfulOps_Click"
                     IconName="ClipboardList"
-                    Text="Clean successful operations" />
+                    Text="Clear successful operations" />
+                <widgets:BetterMenuItem
+                    Name="ClearAllFinished"
+                    Click="ClearAllFinished_OnClick"
+                    IconName="ClipboardList"
+                    Text="Clear finished operations" />
+                <MenuFlyoutSeparator/>
                 <widgets:BetterMenuItem
                     Name="CancellAllOps"
                     Click="CancellAllOps_Click"
@@ -229,9 +236,7 @@
                 </ItemContainer>
             </DataTemplate>
 
-
         </ResourceDictionary>
-
     </UserControl.Resources>
 
     <NavigationView
