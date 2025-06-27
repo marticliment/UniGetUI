@@ -85,7 +85,7 @@
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
     <PackageReference Include="System.Private.Uri" Version="4.3.2" />
     <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
-    <PackageReference Include="WinUIEx" Version="2.5.1" />
+    <PackageReference Include="WinUIEx" Version="2.6.0" />
     <PackageReference Include="YamlDotNet" Version="16.3.0" />
 
     <Manifest Include="$(ApplicationManifest)" />

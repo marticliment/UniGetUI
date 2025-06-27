@@ -57,6 +57,7 @@ namespace UniGetUI.Interface
             DismissableNotification.CloseButtonContent = CoreTools.Translate("Close");
 
             ExtendsContentIntoTitleBar = true;
+            AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
             try
             {
                 SetTitleBar(MainContentGrid);
@@ -124,8 +125,6 @@ namespace UniGetUI.Interface
 
             _ = AutoUpdater.UpdateCheckLoop(this, UpdatesBanner);
 
-
-            TransferOldSettingsFormats();
 
             Activated += (_, e) =>
             {
@@ -219,45 +218,6 @@ namespace UniGetUI.Interface
         {
             TitleBar.Subtitle = "";
             Title = "UniGetUI";
-        }
-
-        private static void TransferOldSettingsFormats()
-        {
-            /*if (!Settings.Get(Settings.K.TransferredOldSettings))
-            {
-                foreach (IPackageManager Manager in PEInterface.Managers)
-                {
-                    string SettingName = "Disable" + Manager.Name;
-                    if (Settings.Get(SettingName))
-                    {
-                        Settings.SetDictionaryItem(Settings.K.DisabledManagers, Manager.Name, true);
-                        Settings.Set(SettingName, false);
-                    }
-                }
-
-                // Dependency checks don't need to be transferred, because the worst case scenario is the user has to click the "don't show again" again
-
-                foreach (string Page in new[]{ "Discover", "Installed", "Bundles", "Updates"})
-                {
-                    if (Settings.Get($"HideToggleFilters{Page}Page"))
-                    {
-                        Settings.SetDictionaryItem(Settings.K.HideToggleFilters, Page, true);
-                        Settings.Set($"HideToggleFilters{Page}Page", false);
-                    }
-
-                    if (Settings.Get($"DisableInstantSearch{Page}Tab"))
-                    {
-                        Settings.SetDictionaryItem(Settings.K.DisableInstantSearch, Page, true);
-                        Settings.Set($"DisableInstantSearch{Page}Tab", false);
-                    }
-
-                    if (!int.TryParse(Settings.GetValue($"SidepanelWidth{Page}Page"), out int sidepanelWidth)) sidepanelWidth = 250;
-                    Settings.SetDictionaryItem(Settings.K.SidepanelWidths, Page, sidepanelWidth);
-                    Settings.Set($"SidepanelWidth{Page}Page", false);
-                }
-
-                Settings.Set(Settings.K.TransferredOldSettings, true);
-            }*/
         }
 
         public void HandleNotificationActivation(AppNotificationActivatedEventArgs args)
