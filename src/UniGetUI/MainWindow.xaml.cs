@@ -57,7 +57,7 @@ namespace UniGetUI.Interface
             DismissableNotification.CloseButtonContent = CoreTools.Translate("Close");
 
             ExtendsContentIntoTitleBar = true;
-            AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
+            // AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
             try
             {
                 SetTitleBar(MainContentGrid);

@@ -167,7 +167,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             try
             {
                 CacheableIcon? icon = TaskRecycler<CacheableIcon?>.RunOrAttach(Manager.DetailsHelper.GetIcon, this);
-                string? path = IconCacheEngine.GetCacheOrDownloadIcon(icon, Manager.Name, _iconId);
+                string? path = IconCacheEngine.GetCacheOrDownloadIcon(icon, Manager.Name, CoreTools.MakeValidFileName(Id));
                 return path is null? null: new Uri("file:///" + path);
             }
             catch (Exception ex)

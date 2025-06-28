@@ -69,11 +69,13 @@ namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders
                     }
                 }
 
-                string? iconUrl = IconDatabase.Instance.GetIconUrlForId(package.GetIconId());
-                if (iconUrl is not null)
-                {
-                    return new CacheableIcon(new Uri(iconUrl), package.VersionString);
-                }
+                // Try to get the icon especially for this package
+                string? iconUrl = IconDatabase.Instance.GetIconUrlForId(Manager.Name + "." + package.Id);
+                if (iconUrl is not null) return new CacheableIcon(new Uri(iconUrl), package.VersionString);
+
+                // Try to get other corresponding icons for the package
+                iconUrl = IconDatabase.Instance.GetIconUrlForId(package.GetIconId());
+                if (iconUrl is not null) return new CacheableIcon(new Uri(iconUrl), package.VersionString);
 
                 return null;
             } catch (Exception e)
