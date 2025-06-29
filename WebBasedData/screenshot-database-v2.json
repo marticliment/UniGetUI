@@ -1,10 +1,10 @@
 {
     "package_count": {
         "total": 11838,
-        "done": 5336,
-        "packages_with_icon": 5336,
+        "done": 5334,
+        "packages_with_icon": 5334,
         "packages_with_screenshot": 703,
-        "total_screenshots": 2174
+        "total_screenshots": 2175
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -17413,11 +17413,11 @@
             "images": []
         },
         "gradle": {
-            "icon": "https://static-00.iconduck.com/assets.00/gradle-icon-1024x752-8azdwgt9.png",
+            "icon": "",
             "images": []
         },
         "gradle-bin": {
-            "icon": "https://static-00.iconduck.com/assets.00/gradle-icon-1024x752-8azdwgt9.png",
+            "icon": "",
             "images": []
         },
         "grafana": {
@@ -46525,7 +46525,7 @@
             "icon": "",
             "images": []
         },
-        "warp": {
+        "Winget.Cloudflare.Warp": {
             "icon": "https://i.postimg.cc/wT15bYsJ/cloudwarp.png",
             "images": [
                 "https://i.postimg.cc/GhhW9QSz/image.png",
@@ -46533,10 +46533,11 @@
                 "https://i.postimg.cc/KvDtp7GX/image.png"
             ]
         },
-        "warp-terminal": {
-            "icon": "https://i.postimg.cc/2SYN9zDC/www-warp-dev.png",
+        "Winget.Warp.Warp": {
+            "icon": "https://i.postimg.cc/kGK1RH4Y/warp-icon.png",
             "images": [
-                "https://i.postimg.cc/2SYN9zDC/www-warp-dev.png"
+                "https://i.postimg.cc/SNL1yHHJ/warp-banner.png",
+                "https://i.postimg.cc/xTVFV9xw/warp-screenshot.png"
             ]
         },
         "warthunder": {
