@@ -45,6 +45,7 @@ The installer is inno-setup based. It supports [all Inno Setup command-line para
 | `/NoVCRedist` | Will not install MS Visual C++ Redistributable x64 (v3.1.2+) |
 | `/NoEdgeWebView` | Will not install Microsoft Edge WebView Runtime (v3.1.2+) |
 | `/NoChocolatey` | Do NOT install chocolatey within UniGetUI | 
+| `/EnableSystemChocolatey` | Force UniGetUI to use system chocolatey |
 | `/NoWinGet` | Do NOT install WinGet and Microsoft.WinGet.Client if not installed **(not recommended)** | 
 | `/ALLUSERS` | Will force the installer to install per-machine (requires administrator privileges) |
 | `/CURRENTUSER` | Will force the installer to install per-user | 
