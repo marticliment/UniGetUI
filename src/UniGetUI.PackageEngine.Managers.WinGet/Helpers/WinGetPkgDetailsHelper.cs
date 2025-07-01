@@ -1,8 +1,6 @@
-using System.ComponentModel.Design;
 using System.Text.RegularExpressions;
 using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
-using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Managers.WinGet.ClientHelpers;

@@ -7,7 +7,7 @@ WingetUI Installer.exe
 UniGetUI Store.exe
 UniGetUI.exe
 installer.iss
-Output/
+output/
 *.old
 vcredist.exe
 unigetui_bin/

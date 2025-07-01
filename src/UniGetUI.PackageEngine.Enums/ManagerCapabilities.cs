@@ -1,5 +1,3 @@
-using System.Runtime.InteropServices;
-
 namespace UniGetUI.PackageEngine.ManagerClasses.Manager
 {
     public enum ProxySupport

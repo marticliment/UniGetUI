@@ -1,7 +1,6 @@
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Runtime.Serialization;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -41,6 +40,7 @@ namespace UniGetUI.Interface
             public bool ShowLastLoadTime;
             public bool DisableSuggestedResultsRadio;
             public bool DisableFilterOnQueryChange;
+            public bool DisableReload;
 
             public OperationType PageRole;
             public AbstractPackageLoader Loader;
@@ -125,6 +125,7 @@ namespace UniGetUI.Interface
         protected readonly bool MEGA_QUERY_BOX_ENABLED;
         protected readonly bool SHOW_LAST_CHECKED_TIME;
         protected readonly bool DISABLE_FILTER_ON_QUERY_CHANGE;
+        protected readonly bool DISABLE_RELOAD;
         protected readonly string PAGE_NAME;
         public readonly bool RoleIsUpdateLike;
         protected DateTime LastPackageLoadTime { get; private set; }
@@ -200,6 +201,7 @@ namespace UniGetUI.Interface
             DISABLE_FILTER_ON_QUERY_CHANGE = data.DisableFilterOnQueryChange;
             MEGA_QUERY_BOX_ENABLED = data.MegaQueryBlockEnabled;
             SHOW_LAST_CHECKED_TIME = data.ShowLastLoadTime;
+            DISABLE_RELOAD = data.DisableReload;
 
             PAGE_ROLE = data.PageRole;
             RoleIsUpdateLike = PAGE_ROLE == OperationType.Update;
@@ -258,6 +260,7 @@ namespace UniGetUI.Interface
             LocalPackagesNode.IsExpanded = false;
 
             ReloadButton.Click += async (_, _) => await LoadPackages();
+            ReloadButton.Visibility = DISABLE_RELOAD ? Visibility.Collapsed : Visibility.Visible;
 
             // Handle Find Button click on the Query Block
             FindButton.Click += (_, _) =>
@@ -489,6 +492,7 @@ namespace UniGetUI.Interface
 
         public void ReloadTriggered()
         {
+            if (DISABLE_RELOAD) return;
             _ = LoadPackages(ReloadReason.Manual);
         }
 

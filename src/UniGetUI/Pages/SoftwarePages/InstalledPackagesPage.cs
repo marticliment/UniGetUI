@@ -38,6 +38,7 @@ namespace UniGetUI.Interface.SoftwarePages
             DisableFilterOnQueryChange = false,
             MegaQueryBlockEnabled = false,
             ShowLastLoadTime = false,
+            DisableReload = false,
             PackagesAreCheckedByDefault = false,
             DisableSuggestedResultsRadio = true,
             PageName = "Installed",
@@ -426,11 +427,8 @@ namespace UniGetUI.Interface.SoftwarePages
         private void MenuReinstall_Invoked(object sender, RoutedEventArgs args)
             => _ = MainApp.Operations.Install(SelectedItem, TEL_InstallReferral.ALREADY_INSTALLED);
 
-        private async void MenuUninstallThenReinstall_Invoked(object sender, RoutedEventArgs args)
-        {
-            var op = await MainApp.Operations.Uninstall(SelectedItem, ignoreParallel: true);
-            _ = MainApp.Operations.Install(SelectedItem, TEL_InstallReferral.ALREADY_INSTALLED, ignoreParallel: true, req: op);
-        }
+        private void MenuUninstallThenReinstall_Invoked(object sender, RoutedEventArgs args)
+            => _ = MainApp.Operations.UninstallThenReinstall(SelectedItem, TEL_InstallReferral.ALREADY_INSTALLED);
 
         private async void MenuIgnorePackage_Invoked(object sender, RoutedEventArgs args)
         {

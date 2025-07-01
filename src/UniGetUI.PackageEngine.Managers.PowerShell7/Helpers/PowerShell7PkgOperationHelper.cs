@@ -18,7 +18,20 @@ internal sealed class PowerShell7PkgOperationHelper : BasePkgOperationHelper
             _ => throw new InvalidDataException("Invalid package operation")
         }];
         parameters.AddRange(["-Name", package.Id, "-Confirm:$false"]);
-        if (operation is OperationType.Update) parameters.Add("-Force");
+
+        if (operation is OperationType.Install)
+        {
+            if(options.Version != "")
+                parameters.AddRange(["-Version", options.Version]);
+        }
+        else if (operation is OperationType.Update)
+        {
+            parameters.Add("-Force");
+        }
+        else if (operation is OperationType.Uninstall)
+        {
+            parameters.AddRange(["-Version", package.VersionString]);
+        }
 
         if (operation is not OperationType.Uninstall)
         {
@@ -27,17 +40,11 @@ internal sealed class PowerShell7PkgOperationHelper : BasePkgOperationHelper
             if (options.PreRelease)
                 parameters.Add("-Prerelease");
 
-            if (package.OverridenOptions.Scope == PackageScope.Global ||
-                (package.OverridenOptions.Scope is null && options.InstallationScope == PackageScope.Global))
+            if (package.OverridenOptions.Scope is PackageScope.Global ||
+                (package.OverridenOptions.Scope is null && options.InstallationScope is PackageScope.Global))
                 parameters.AddRange(["-Scope", "AllUsers"]);
             else
                 parameters.AddRange(["-Scope", "CurrentUser"]);
-        }
-
-        if (operation is OperationType.Install)
-        {
-            if (options.Version != "")
-                parameters.AddRange(["-Version", options.Version]);
         }
 
         parameters.AddRange(operation switch

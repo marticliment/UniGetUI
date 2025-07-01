@@ -59,6 +59,7 @@ public class DownloadOperation : AbstractOperation
                 return OperationVeredict.Failure;
             }
 
+            Line($"Download URL found at {downloadUrl} ", LineType.Information);
             using var httpClient = new HttpClient(CoreTools.HttpClientConfig);
             using var response = await httpClient.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead);
 

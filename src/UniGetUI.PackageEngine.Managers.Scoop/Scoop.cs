@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using UniGetUI.Core.Classes;
 using UniGetUI.Core.Logging;
@@ -390,9 +389,17 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
         protected override ManagerStatus LoadManager()
         {
+            string path = Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe");
+            var pwsh7 = CoreTools.Which("pwsh.exe");
+            if (pwsh7.Item1)
+            {
+                Logger.Info("Scoop found PowerShell7, PowerShell7 will be used...");
+                path = pwsh7.Item2;
+            }
+
             ManagerStatus status = new()
             {
-                ExecutablePath = Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe"),
+                ExecutablePath = path,
                 Found = GetManagerExecutablePath().Item1
             };
 

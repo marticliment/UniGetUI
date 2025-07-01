@@ -79,7 +79,7 @@ namespace UniGetUI
                 }
                 ThemeListener = new ThemeListener();
 
-                LoadGSudo();
+                _ = LoadGSudo();
                 RegisterErrorHandling();
                 SetUpWebViewUserDataFolder();
                 InitializeMainWindow();
@@ -93,26 +93,35 @@ namespace UniGetUI
             }
         }
 
-        private static async void LoadGSudo()
+        private static async Task LoadGSudo()
         {
-#if DEBUG
-            Logger.Warn($"Using bundled GSudo at {CoreData.ElevatorPath} since UniGetUI Elevator is not available!");
-            CoreData.ElevatorPath = (await CoreTools.WhichAsync("gsudo.exe")).Item2;
-#else
-            if (SecureSettings.Get(SecureSettings.K.ForceUserGSudo))
+            try
             {
-                var res = await CoreTools.WhichAsync("gsudo.exe");
-                if (res.Item1)
+                if (SecureSettings.Get(SecureSettings.K.ForceUserGSudo))
                 {
-                    CoreData.ElevatorPath = res.Item2;
-                    Logger.Warn($"Using user GSudo (forced by user) at {CoreData.ElevatorPath}");
-                    return;
+                    var res = await CoreTools.WhichAsync("gsudo.exe");
+                    if (res.Item1)
+                    {
+                        CoreData.ElevatorPath = res.Item2;
+                        Logger.Warn($"Using user GSudo (forced by user) at {CoreData.ElevatorPath}");
+                        return;
+                    }
                 }
-            }
 
-            CoreData.ElevatorPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "UniGetUI Elevator.exe");
-            Logger.Debug($"Using built-in UniGetUI Elevator at {CoreData.ElevatorPath}");
+#if DEBUG
+                Logger.Warn($"Using bundled GSudo at {CoreData.ElevatorPath} since UniGetUI Elevator is not available!");
+                CoreData.ElevatorPath = (await CoreTools.WhichAsync("gsudo.exe")).Item2;
+#else
+                CoreData.ElevatorPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities",
+                    "UniGetUI Elevator.exe");
+                Logger.Debug($"Using built-in UniGetUI Elevator at {CoreData.ElevatorPath}");
 #endif
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Elevator/GSudo failed to be loaded!");
+                Logger.Error(ex);
+            }
         }
 
         private void RegisterErrorHandling()
@@ -124,8 +133,8 @@ namespace UniGetUI
                 Logger.Error(" -");
                 Logger.Error(" -");
                 Logger.Error("  ⚠️⚠️⚠️ START OF UNHANDLED ERROR TRACE ⚠️⚠️⚠️");
-                Logger.Error(e.Message);
-                Logger.Error(e.Exception);
+                Logger.Error(message);
+                Logger.Error(stackTrace);
                 Logger.Error("  ⚠️⚠️⚠️  END OF UNHANDLED ERROR TRACE  ⚠️⚠️⚠️");
                 Logger.Error(" -");
                 Logger.Error(" -");

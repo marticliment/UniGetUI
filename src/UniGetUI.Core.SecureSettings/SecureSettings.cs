@@ -1,8 +1,6 @@
 using System.Diagnostics;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Tools;
-using YamlDotNet.Core.Tokens;
-using YamlDotNet.Serialization;
 
 namespace UniGetUI.Core.SettingsEngine.SecureSettings;
 

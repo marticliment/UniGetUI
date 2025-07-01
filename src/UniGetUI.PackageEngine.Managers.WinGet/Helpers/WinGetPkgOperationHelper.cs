@@ -1,4 +1,3 @@
-using System.Runtime.InteropServices;
 using Microsoft.Management.Deployment;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
@@ -7,7 +6,6 @@ using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
 using UniGetUI.PackageEngine.Classes.Packages.Classes;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
-using UniGetUI.PackageEngine.Serializable;
 using Architecture = UniGetUI.PackageEngine.Enums.Architecture;
 using InstallOptions = UniGetUI.PackageEngine.Serializable.InstallOptions;
 

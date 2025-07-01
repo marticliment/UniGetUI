@@ -471,5 +471,15 @@ namespace UniGetUI.Interface
             NavigateTo(PageType.Bundles);
             BundlesPage?.OpenFromFile(param);
         }
+
+        private void ClearAllFinished_OnClick(object sender, RoutedEventArgs e)
+        {
+            foreach (var widget in MainApp.Operations._operationList.ToArray())
+            {
+                var operation = widget.Operation;
+                if (operation.Status is OperationStatus.Succeeded or OperationStatus.Failed or OperationStatus.Canceled)
+                    widget.Close();
+            }
+        }
     }
 }
