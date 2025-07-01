@@ -37,7 +37,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 InstallVerb = "install",
                 UninstallVerb = "uninstall",
                 UpdateVerb = "install",
-                ExecutableCallArgs = " -NoProfile -ExecutionPolicy Bypass -Command npm",
+                ExecutableCallArgs = $" -NoProfile -ExecutionPolicy Bypass -Command \"& \\\"{GetManagerExecutablePath().Item2}\\\"\"",
                 DefaultSource = new ManagerSource(this, "npm", new Uri("https://www.npmjs.com/")),
                 KnownSources = [new ManagerSource(this, "npm", new Uri("https://www.npmjs.com/"))],
 
@@ -189,7 +189,16 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
 
         public override HashSet<string> LoadAvailablePaths()
         {
-            return [.. CoreTools.WhichMultiple("npm").Item2];
+            HashSet<string> Paths = [.. CoreTools.WhichMultiple("npm.ps1").Item2];
+            foreach (string Path in CoreTools.WhichMultiple("npm").Item2)
+            {
+                string ps1Path = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Path) ?? "", "npm.ps1");
+                if (File.Exists(ps1Path) && !Paths.Contains(ps1Path, StringComparer.OrdinalIgnoreCase))
+                {
+                    Paths.Add(ps1Path);
+                }
+            }
+            return Paths;
         }
 
         protected override ManagerStatus LoadManager()
@@ -197,7 +206,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             ManagerStatus status = new()
             {
                 ExecutablePath = Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe"),
-                Found = CoreTools.Which("npm").Item1
+                Found = GetManagerExecutablePath().Item1
             };
 
             if (!status.Found)

@@ -71,7 +71,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 Description = CoreTools.Translate("Great repository of unknown but useful utilities and other interesting packages.<br>Contains: <b>Utilities, Command-line programs, General Software (extras bucket required)</b>"),
                 IconId = IconType.Scoop,
                 ColorIconId = "scoop_color",
-                ExecutableCallArgs = " -NoProfile -ExecutionPolicy Bypass -Command scoop",
+                ExecutableCallArgs = $" -NoProfile -ExecutionPolicy Bypass -Command \"& \\\"{GetManagerExecutablePath().Item2}\\\"\"",
                 ExecutableFriendlyName = "scoop",
                 InstallVerb = "install",
                 UpdateVerb = "update",
@@ -375,7 +375,16 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
         public override HashSet<string> LoadAvailablePaths()
         {
-            return [.. CoreTools.WhichMultiple("scoop").Item2];
+            HashSet<string> Paths = [.. CoreTools.WhichMultiple("scoop.ps1").Item2];
+            foreach (string Path in CoreTools.WhichMultiple("scoop").Item2)
+            {
+                string ps1Path = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Path) ?? "", "scoop.ps1");
+                if (File.Exists(ps1Path) && !Paths.Contains(ps1Path, StringComparer.OrdinalIgnoreCase))
+                {
+                    Paths.Add(ps1Path);
+                }
+            }
+            return Paths;
         }
 
 
@@ -383,7 +392,8 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
         {
             ManagerStatus status = new()
             {
-                ExecutablePath = Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe")
+                ExecutablePath = Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe"),
+                Found = GetManagerExecutablePath().Item1
             };
 
             Process process = new()
