@@ -75,7 +75,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 return $"--proxy {proxyUri.ToString()}";
 
             var creds = Settings.GetProxyCredentials();
-            if(creds is null)
+            if (creds is null)
                 return $"--proxy {proxyUri.ToString()}";
 
             return $"--proxy={proxyUri.ToString()} --proxy-user={Uri.EscapeDataString(creds.UserName)}" +
@@ -200,6 +200,8 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             var (SystemFound, SystemPaths) = CoreTools.WhichMultiple("choco");
             if (SystemFound) foreach (var Path in SystemPaths) ChocoPaths.Add(Path);
             if (File.Exists(Path.Join(new_choco_path, "choco.exe"))) ChocoPaths.Add(Path.Join(new_choco_path, "choco.exe"));
+            string EnvPath = Path.Join(Environment.GetEnvironmentVariable("ChocolateyInstall"), "choco.exe");
+            if (File.Exists(EnvPath)) ChocoPaths.Add(EnvPath);
 
             return ChocoPaths;
         }
@@ -337,7 +339,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             // If the user is running bundled chocolatey and chocolatey is not in path, add chocolatey to path
             if (!Settings.Get("UseSystemChocolatey")
                 && !File.Exists("C:\\ProgramData\\Chocolatey\\bin\\choco.exe"))
-                /* && Settings.Get("ShownWelcomeWizard")) */
+            /* && Settings.Get("ShownWelcomeWizard")) */
             {
                 string? path = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.User);
                 if (!path?.Contains(status.ExecutablePath.Replace("\\choco.exe", "\\bin")) ?? false)
