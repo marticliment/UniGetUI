@@ -259,7 +259,8 @@ namespace UniGetUI.PackageEngine.Operations
         {
             Metadata.OperationInformation = "Package update operation for Package=" + Package.Id + " with Manager=" +
                                             Package.Manager.Name + "\nInstallation options: " + Options.ToString()
-                                            + "\nOverriden options: " + Package.OverridenOptions.ToString();
+                                            + "\nOverriden options: " + Package.OverridenOptions.ToString() +
+                                            "\nVersion: " + Package.VersionString + " -> " + Package.NewVersionString;
 
             Metadata.Title = CoreTools.Translate("{package} Update", new Dictionary<string, object?> { { "package", Package.Name } });
             Metadata.Status = CoreTools.Translate("{0} is being updated to version {1}", Package.Name, Package.NewVersionString);
