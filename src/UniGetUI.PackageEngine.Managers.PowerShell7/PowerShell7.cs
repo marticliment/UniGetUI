@@ -146,7 +146,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8
+                    StandardOutputEncoding = Encoding.UTF8
                 }
             };
             process.Start();

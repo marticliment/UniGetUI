@@ -441,6 +441,7 @@
   "Partially": null,
   "Password": null,
   "Paste a valid URL to the database": "Klistra in en giltig URL i databasen",
+  "Pause updates for": null,
   "Perform a backup now": "Gör en säkerhetskopia nu",
   "Performing backup, please wait...": "Säkerhetskopiering utförs, vänligen vänta...",
   "Periodically perform a backup of the installed packages": "Utför regelbundet säkerhetskopiering av de installerade paketen",

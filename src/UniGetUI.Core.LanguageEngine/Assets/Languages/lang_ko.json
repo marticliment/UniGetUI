@@ -441,6 +441,7 @@
   "Partially": "부분적",
   "Password": "암호",
   "Paste a valid URL to the database": "유효한 URL을 데이터베이스에 붙여넣으세요.",
+  "Pause updates for": null,
   "Perform a backup now": "지금 백업 수행",
   "Performing backup, please wait...": "백업을 수행하는 중. 잠시만 기다려주세요...",
   "Periodically perform a backup of the installed packages": "설치된 패키지의 백업을 주기적으로 수행",

@@ -9,6 +9,7 @@ using UniGetUI.PackageEngine.Interfaces.ManagerProviders;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.PackageEngine.Serializable;
 
 namespace UniGetUI.PackageEngine.Classes.Manager
 {
@@ -107,7 +108,8 @@ namespace UniGetUI.PackageEngine.Classes.Manager
 
     internal sealed class NullPkgOperationHelper : IPackageOperationHelper
     {
-        public IReadOnlyList<string> GetParameters(IPackage package, IInstallationOptions options, OperationType operation)
+        public IReadOnlyList<string> GetParameters(IPackage package, InstallOptions options,
+            OperationType operation)
             => throw new NotImplementedException();
 
         public OperationVeredict GetResult(IPackage package, OperationType operation, IReadOnlyList<string> processOutput, int returnCode)

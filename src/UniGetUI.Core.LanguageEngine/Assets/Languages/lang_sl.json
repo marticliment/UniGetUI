@@ -441,6 +441,7 @@
   "Partially": "Delno",
   "Password": "Geslo",
   "Paste a valid URL to the database": "Prilepite veljaven URL v bazo podatkov",
+  "Pause updates for": null,
   "Perform a backup now": "Izvedite varnostno kopijo zdaj",
   "Performing backup, please wait...": "Izvajanje varnostne kopije, počakajte ...",
   "Periodically perform a backup of the installed packages": "Občasno naredite varnostno kopijo nameščenih paketov",

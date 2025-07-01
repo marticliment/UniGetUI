@@ -143,21 +143,21 @@ namespace UniGetUI.Interface
 
             LoadDefaultPage();
 
-            if (CoreTools.IsAdministrator() && !Settings.Get("AlreadyWarnedAboutAdmin"))
+            if (CoreTools.IsAdministrator() && !Settings.Get(Settings.K.AlreadyWarnedAboutAdmin))
             {
-                Settings.Set("AlreadyWarnedAboutAdmin", true);
+                Settings.Set(Settings.K.AlreadyWarnedAboutAdmin, true);
                 DialogHelper.WarnAboutAdminRights();
             }
 
             UpdateOperationsLayout();
             MainApp.Operations._operationList.CollectionChanged += (_, _) => UpdateOperationsLayout();
 
-            if (!Settings.Get("ShownTelemetryBanner"))
+            if (!Settings.Get(Settings.K.ShownTelemetryBanner))
             {
                 DialogHelper.ShowTelemetryBanner();
             }
 
-            if (!Settings.Get("CollapseNavMenuOnWideScreen"))
+            if (!Settings.Get(Settings.K.CollapseNavMenuOnWideScreen))
             {
                 NavView.IsPaneOpen = true;
             }
@@ -165,7 +165,7 @@ namespace UniGetUI.Interface
 
         public void LoadDefaultPage()
         {
-            PageType type = Settings.GetValue("StartupPage") switch
+            PageType type = Settings.GetValue(Settings.K.StartupPage) switch
             {
                 "discover" => PageType.Discover,
                 "updates" => PageType.Updates,
@@ -318,6 +318,16 @@ namespace UniGetUI.Interface
         {
             NavigateTo(PageType.ManagerLog);
             if (manager is not null) ManagerLogPage?.LoadForManager(manager);
+        }
+        public void OpenManagerSettings(IPackageManager? manager = null)
+        {
+            NavigateTo(PageType.Managers);
+            if (manager is not null) ManagersPage?.NavigateTo(manager);
+        }
+        public void OpenSettingsPage(Type page)
+        {
+            NavigateTo(PageType.Settings);
+            SettingsPage?.NavigateTo(page);
         }
 
         public void UniGetUILogs_Click(object sender, RoutedEventArgs e)

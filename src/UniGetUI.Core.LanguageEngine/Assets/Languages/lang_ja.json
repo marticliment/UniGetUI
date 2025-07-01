@@ -441,6 +441,7 @@
   "Partially": null,
   "Password": null,
   "Paste a valid URL to the database": "データベースの有効なURLを入力してください",
+  "Pause updates for": null,
   "Perform a backup now": "今すぐバックアップする",
   "Performing backup, please wait...": "バックアップ中です。お待ち下さい…",
   "Periodically perform a backup of the installed packages": "インストール済みパッケージのバックアップを定期的に取る",

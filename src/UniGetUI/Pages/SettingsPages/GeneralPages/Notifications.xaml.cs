@@ -21,7 +21,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (Settings.Get("DisableSystemTray"))
+            if (Settings.Get(Settings.K.DisableSystemTray))
             {
                 ToolbarText.Visibility = Visibility.Visible;
                 DisableNotifications.IsEnabled = false;

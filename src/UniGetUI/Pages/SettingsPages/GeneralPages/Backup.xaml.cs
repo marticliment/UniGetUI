@@ -23,7 +23,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         {
             this.InitializeComponent();
 
-            EnablePackageBackupUI(Settings.Get("EnablePackageBackup"));
+            EnablePackageBackupUI(Settings.Get(Settings.K.EnablePackageBackup));
             ResetBackupDirectory.Content = CoreTools.Translate("Reset");
             OpenBackupDirectory.Content = CoreTools.Translate("Open");
         }
@@ -44,7 +44,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             string folder = openPicker.Show();
             if (folder != string.Empty)
             {
-                Settings.SetValue("ChangeBackupOutputDirectory", folder);
+                Settings.SetValue(Settings.K.ChangeBackupOutputDirectory, folder);
                 BackupDirectoryLabel.Text = folder;
                 ResetBackupDirectory.IsEnabled = true;
             }
@@ -59,14 +59,14 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
 
             if (enabled)
             {
-                if (!Settings.Get("ChangeBackupOutputDirectory"))
+                if (!Settings.Get(Settings.K.ChangeBackupOutputDirectory))
                 {
                     BackupDirectoryLabel.Text = CoreData.UniGetUI_DefaultBackupDirectory;
                     ResetBackupDirectory.IsEnabled = false;
                 }
                 else
                 {
-                    BackupDirectoryLabel.Text = Settings.GetValue("ChangeBackupOutputDirectory");
+                    BackupDirectoryLabel.Text = Settings.GetValue(Settings.K.ChangeBackupOutputDirectory);
                     ResetBackupDirectory.IsEnabled = true;
                 }
             }
@@ -75,13 +75,13 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         private void ResetBackupPath_Click(object sender, RoutedEventArgs e)
         {
             BackupDirectoryLabel.Text = CoreData.UniGetUI_DefaultBackupDirectory;
-            Settings.Set("ChangeBackupOutputDirectory", false);
+            Settings.Set(Settings.K.ChangeBackupOutputDirectory, false);
             ResetBackupDirectory.IsEnabled = false;
         }
 
         private void OpenBackupPath_Click(object sender, RoutedEventArgs e)
         {
-            string directory = Settings.GetValue("ChangeBackupOutputDirectory");
+            string directory = Settings.GetValue(Settings.K.ChangeBackupOutputDirectory);
             if (directory == "")
             {
                 directory = CoreData.UniGetUI_DefaultBackupDirectory;

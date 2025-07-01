@@ -32,31 +32,28 @@ public static class TelemetryHandler
     private const string HOST = "https://marticliment.com/unigetui/statistics";
 #endif
 
-    private static readonly string[] SettingsToSend =
+    private static readonly Settings.K[] SettingsToSend =
     [
-        "DisableAutoUpdateWingetUI",
-        "EnableUniGetUIBeta",
-        "DisableSystemTray",
-        "DisableNotifications",
-        "DisableAutoCheckforUpdates",
-        "AutomaticallyUpdatePackages",
-        "AskToDeleteNewDesktopShortcuts",
-        "EnablePackageBackup",
-        "DoCacheAdminRights",
-        "DoCacheAdminRightsForBatches",
-        "ForceLegacyBundledWinGet",
-        "UseSystemChocolatey",
-        "SP1", // UniGetUI is portable
-        "SP2", // UniGetUI was started as daemon
+        Settings.K.DisableAutoUpdateWingetUI,
+        Settings.K.EnableUniGetUIBeta,
+        Settings.K.DisableSystemTray,
+        Settings.K.DisableNotifications,
+        Settings.K.DisableAutoCheckforUpdates,
+        Settings.K.AutomaticallyUpdatePackages,
+        Settings.K.AskToDeleteNewDesktopShortcuts,
+        Settings.K.EnablePackageBackup,
+        Settings.K.DoCacheAdminRights,
+        Settings.K.DoCacheAdminRightsForBatches,
+        Settings.K.ForceLegacyBundledWinGet,
+        Settings.K.UseSystemChocolatey
     ];
-
     // -------------------------------------------------------------------------
 
     public static async void Initialize()
     {
         try
         {
-            if (Settings.Get("DisableTelemetry")) return;
+            if (Settings.Get(Settings.K.DisableTelemetry)) return;
             await CoreTools.WaitForInternetConnection();
             string ID = GetRandomizedId();
 
@@ -78,11 +75,23 @@ public static class TelemetryHandler
             mask = 0x1;
             foreach (var setting in SettingsToSend)
             {
+                bool enabled = Settings.Get(
+                    key: setting,
+                    invert: Settings.ResolveKey(setting).StartsWith("Disable")
+                );
+
+                if (enabled) SettingsMagicValue |= mask;
+                mask = mask << 1;
+
+                if (mask == 0x1)
+                    throw new OverflowException();
+            }
+            foreach (var setting in new []{"SP1", "SP2"})
+            {
                 bool enabled;
                 if (setting == "SP1") enabled = File.Exists("ForceUniGetUIPortable");
                 else if (setting == "SP2") enabled = CoreData.WasDaemon;
-                else if (setting.StartsWith("Disable")) enabled = !Settings.Get(setting);
-                else enabled = Settings.Get(setting);
+                else throw new NotImplementedException();
 
                 if (enabled) SettingsMagicValue |= mask;
                 mask = mask << 1;
@@ -144,7 +153,7 @@ public static class TelemetryHandler
 
         try
         {
-            if (Settings.Get("DisableTelemetry")) return;
+            if (Settings.Get(Settings.K.DisableTelemetry)) return;
             await CoreTools.WaitForInternetConnection();
             string ID = GetRandomizedId();
 
@@ -189,7 +198,7 @@ public static class TelemetryHandler
     {
         try
         {
-            if (Settings.Get("DisableTelemetry")) return;
+            if (Settings.Get(Settings.K.DisableTelemetry)) return;
             await CoreTools.WaitForInternetConnection();
             string ID = GetRandomizedId();
 
@@ -219,11 +228,11 @@ public static class TelemetryHandler
 
     private static string GetRandomizedId()
     {
-        string ID = Settings.GetValue("TelemetryClientToken");
+        string ID = Settings.GetValue(Settings.K.TelemetryClientToken);
         if (ID.Length != 64)
         {
             ID = CoreTools.RandomString(64);
-            Settings.SetValue("TelemetryClientToken", ID);
+            Settings.SetValue(Settings.K.TelemetryClientToken, ID);
         }
 
         return ID;

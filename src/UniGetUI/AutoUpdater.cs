@@ -30,7 +30,7 @@ public class AutoUpdater
 
     public static async Task UpdateCheckLoop(Window window, InfoBar banner)
     {
-        if (Settings.Get("DisableAutoUpdateWingetUI"))
+        if (Settings.Get(Settings.K.DisableAutoUpdateWingetUI))
         {
             Logger.Warn("User has disabled updates");
             return;
@@ -44,7 +44,7 @@ public class AutoUpdater
         while (true)
         {
             // User could have disabled updates on runtime
-            if (Settings.Get("DisableAutoUpdateWingetUI"))
+            if (Settings.Get(Settings.K.DisableAutoUpdateWingetUI))
             {
                 Logger.Warn("User has disabled updates");
                 return;
@@ -74,8 +74,8 @@ public class AutoUpdater
             );
 
             // Check for updates
-            string UpdatesEndpoint = Settings.Get("EnableUniGetUIBeta") ? BETA_ENDPOINT : STABLE_ENDPOINT;
-            string InstallerDownloadUrl = Settings.Get("EnableUniGetUIBeta") ? BETA_INSTALLER_URL : STABLE_INSTALLER_URL;
+            string UpdatesEndpoint = Settings.Get(Settings.K.EnableUniGetUIBeta) ? BETA_ENDPOINT : STABLE_ENDPOINT;
+            string InstallerDownloadUrl = Settings.Get(Settings.K.EnableUniGetUIBeta) ? BETA_INSTALLER_URL : STABLE_INSTALLER_URL;
             var (IsUpgradable, LatestVersion, InstallerHash) = await CheckForUpdates(UpdatesEndpoint);
 
             if (IsUpgradable)
@@ -221,7 +221,7 @@ public class AutoUpdater
         ReleaseLockForAutoupdate_UpdateBanner = false;
 
         // Check if the user has disabled updates
-        if (!ManualCheck && Settings.Get("DisableAutoUpdateWingetUI"))
+        if (!ManualCheck && Settings.Get(Settings.K.DisableAutoUpdateWingetUI))
         {
             Banner.IsOpen = false;
             Logger.Warn("User disabled updates!");
@@ -273,7 +273,7 @@ public class AutoUpdater
             Logger.Debug("Autoupdater lock released, launching installer...");
         }
 
-        if (!ManualCheck && Settings.Get("DisableAutoUpdateWingetUI"))
+        if (!ManualCheck && Settings.Get(Settings.K.DisableAutoUpdateWingetUI))
         {
             Logger.Warn("User has disabled updates");
             return true;

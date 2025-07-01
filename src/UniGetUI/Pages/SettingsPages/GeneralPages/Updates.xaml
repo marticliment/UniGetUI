@@ -74,9 +74,9 @@
                 Text="Related settings" />
 
             <controls:SettingsCard
+                BorderThickness="1,1,1,0"
                 Click="OperationsSettingsButton_Click"
                 CornerRadius="8,8,0,0"
-                BorderThickness="1,1,1,0"
                 IsClickEnabled="True">
                 <controls:SettingsCard.Header>
                     <widgets:TranslatedTextBlock Text="Package operation preferences" />
@@ -94,10 +94,10 @@
                 CornerRadius="0,0,8,8"
                 IsClickEnabled="True">
                 <controls:SettingsCard.Header>
-                    <widgets:TranslatedTextBlock Text="Administrator privileges preferences" />
+                    <widgets:TranslatedTextBlock Text="Administrator rights and other dangerous settings" />
                 </controls:SettingsCard.Header>
                 <controls:SettingsCard.Description>
-                    <widgets:TranslatedTextBlock Text="Ask once or always for administrator rights, elevate installations by default" />
+                    <widgets:TranslatedTextBlock Text="Reduce UAC prompts, elevate installations by default, unlock certain dangerous features, etc." />
                 </controls:SettingsCard.Description>
                 <controls:SettingsCard.HeaderIcon>
                     <widgets:LocalIcon Icon="UAC" />

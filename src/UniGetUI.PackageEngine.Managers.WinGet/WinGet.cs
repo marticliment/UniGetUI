@@ -15,6 +15,7 @@ using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
+using Architecture = UniGetUI.PackageEngine.Enums.Architecture;
 
 namespace UniGetUI.PackageEngine.Managers.WingetManager
 {
@@ -45,7 +46,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 SupportsCustomVersions = true,
                 CanDownloadInstaller = true,
                 SupportsCustomArchitectures = true,
-                SupportedCustomArchitectures = [Architecture.X86, Architecture.X64, Architecture.Arm64],
+                SupportedCustomArchitectures = [Architecture.x86, Architecture.x64, Architecture.arm64],
                 SupportsCustomScopes = true,
                 SupportsCustomLocations = true,
                 SupportsCustomSources = true,
@@ -92,11 +93,11 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         public static string GetProxyArgument()
         {
-            if (!Settings.Get("EnableProxy")) return "";
+            if (!Settings.Get(Settings.K.EnableProxy)) return "";
             var proxyUri = Settings.GetProxyUrl();
             if (proxyUri is null) return "";
 
-            if (Settings.Get("EnableProxyAuth"))
+            if (Settings.Get(Settings.K.EnableProxyAuth))
             {
                 Logger.Warn("Proxy is enabled, but WinGet does not support proxy authentication, so the proxy setting will be ignored");
                 return "";
@@ -183,7 +184,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         {
             ManagerStatus status = new();
 
-            bool FORCE_BUNDLED = Settings.Get("ForceLegacyBundledWinGet");
+            bool FORCE_BUNDLED = Settings.Get(Settings.K.ForceLegacyBundledWinGet);
 
             var (found, path) = GetManagerExecutablePath();
             status.ExecutablePath = path;
@@ -296,7 +297,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         private static void TryRepairTempFolderPermissions()
         {
-            if (Settings.Get("DisableNewWinGetTroubleshooter")) return;
+            if (Settings.Get(Settings.K.DisableNewWinGetTroubleshooter)) return;
 
             try
             {
@@ -354,7 +355,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " source update --disable-interactivity " + WinGet.GetProxyArgument(),
+                    Arguments = Properties.ExecutableCallArgs + " source update --disable-interactivity " + GetProxyArgument(),
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,

@@ -47,7 +47,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         public bool IsUpgradable { get => false; }
 
-        public PackageScope Scope { get => PackageScope.Local; set { } }
+        public string Scope { get => PackageScope.Local; set { } }
 
         public string SourceAsString { get; }
 
@@ -75,7 +75,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             return Task.CompletedTask;
         }
 
-        public SerializablePackage AsSerializable()
+        public Task<SerializablePackage> AsSerializableAsync()
         {
             throw new NotImplementedException();
         }

@@ -1,16 +1,18 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using CommunityToolkit.WinUI.Controls;
 using Microsoft.Extensions.Options;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using UniGetUI.Core.Language;
+using UniGetUI.Core.SettingsEngine.SecureSettings;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.Serializable;
-using Windows.ApplicationModel;
-using Windows.Gaming.XboxLive.Storage;
+using UniGetUI.Pages.SettingsPages.GeneralPages;
+using Architecture = UniGetUI.PackageEngine.Enums.Architecture;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -34,7 +36,9 @@ public sealed partial class InstallOptions_Manager : UserControl
         LocationLabel.Text = CoreTools.Translate("Install location:");
         SelectDir.Content = CoreTools.Translate("Select");
         ResetDir.Content = CoreTools.Translate("Reset");
-        CustomCommandsLabel.Text = CoreTools.Translate("Custom arguments:");
+        CustomCommandsLabel1.Text = CoreTools.Translate("Custom install arguments:");
+        CustomCommandsLabel2.Text = CoreTools.Translate("Custom update arguments:");
+        CustomCommandsLabel3.Text = CoreTools.Translate("Custom uninstall arguments:");
         DefaultLocationLabel ??= CoreTools.Translate("Package's default");
         ResetButton.Content = CoreTools.Translate("Reset");
         ApplyButton.Content = CoreTools.Translate("Apply");
@@ -47,7 +51,7 @@ public sealed partial class InstallOptions_Manager : UserControl
     private async Task LoadOptions()
     {
         LoadingIndicator.Visibility = Visibility.Visible;
-        var options = await Task.Run(() => InstallationOptions.LoadForManager(Manager).ToSerializable());
+        var options = await InstallOptionsFactory.LoadForManagerAsync(Manager);
 
         // This delay allows the spinner to show,
         // and give the user the sensation that things have worked
@@ -85,12 +89,12 @@ public sealed partial class InstallOptions_Manager : UserControl
         if (Manager.Capabilities.SupportsCustomArchitectures)
         {
             ArchitectureCombo.IsEnabled = true;
-            foreach (Architecture arch in Manager.Capabilities.SupportedCustomArchitectures)
+            foreach (string arch in Manager.Capabilities.SupportedCustomArchitectures)
             {
-                ArchitectureCombo.Items.Add(CommonTranslations.ArchNames[arch]);
-                if (options.Architecture == CommonTranslations.ArchNames[arch])
+                ArchitectureCombo.Items.Add(arch);
+                if (options.Architecture == arch)
                 {
-                    ArchitectureCombo.SelectedValue = CommonTranslations.ArchNames[arch];
+                    ArchitectureCombo.SelectedValue = arch;
                 }
             }
         }
@@ -103,13 +107,13 @@ public sealed partial class InstallOptions_Manager : UserControl
         {
             ScopeCombo.IsEnabled = true;
             ScopeCombo.Items.Add(CoreTools.Translate(CommonTranslations.ScopeNames[PackageScope.Local]));
-            if (options.InstallationScope == CommonTranslations.ScopeNames_NonLang[PackageScope.Local])
+            if (options.InstallationScope == PackageScope.Local)
             {
                 ScopeCombo.SelectedValue = CommonTranslations.ScopeNames[PackageScope.Local];
             }
 
             ScopeCombo.Items.Add(CoreTools.Translate(CommonTranslations.ScopeNames[PackageScope.Global]));
-            if (options.InstallationScope == CommonTranslations.ScopeNames_NonLang[PackageScope.Global])
+            if (options.InstallationScope == PackageScope.Global)
             {
                 ScopeCombo.SelectedValue = CommonTranslations.ScopeNames[PackageScope.Global];
             }
@@ -135,8 +139,19 @@ public sealed partial class InstallOptions_Manager : UserControl
             CustomInstallLocation.Text = CoreTools.Translate("Install location can't be changed for {0} packages", Manager.DisplayName);
         }
 
-        CustomParameters.IsEnabled = true;
-        CustomParameters.Text = string.Join(' ', options.CustomParameters);
+        bool IsCLIEnabled = SecureSettings.Get(SecureSettings.K.AllowCLIArguments);
+        CustomParameters1.IsEnabled = IsCLIEnabled;
+        CustomParameters2.IsEnabled = IsCLIEnabled;
+        CustomParameters3.IsEnabled = IsCLIEnabled;
+        CustomCommandsLabel1.Opacity = IsCLIEnabled ? 1 : 0.5;
+        CustomCommandsLabel2.Opacity = IsCLIEnabled ? 1 : 0.5;
+        CustomCommandsLabel3.Opacity = IsCLIEnabled ? 1 : 0.5;
+        GoToCLISettings.Visibility = IsCLIEnabled ? Visibility.Collapsed : Visibility.Visible;
+        CLIDisabled.Visibility = IsCLIEnabled ? Visibility.Collapsed : Visibility.Visible;
+
+        CustomParameters1.Text = string.Join(' ', options.CustomParameters_Install);
+        CustomParameters2.Text = string.Join(' ', options.CustomParameters_Update);
+        CustomParameters3.Text = string.Join(' ', options.CustomParameters_Uninstall);
 
         ResetButton.IsEnabled = true;
         ApplyButton.IsEnabled = true;
@@ -150,7 +165,7 @@ public sealed partial class InstallOptions_Manager : UserControl
         LoadingIndicator.Visibility = Visibility.Visible;
         DisableAllInput();
 
-        SerializableInstallationOptions options = new();
+        InstallOptions options = new();
         // Checkboxes
         options.RunAsAdministrator = AdminCheckBox.IsChecked ?? false;
         options.SkipHashCheck = HashCheckBox.IsChecked ?? false;
@@ -159,18 +174,18 @@ public sealed partial class InstallOptions_Manager : UserControl
 
         // Administrator
         options.Architecture = "";
-        string candidateValue = ArchitectureCombo.SelectedValue.ToString() ?? "";
-        if (CommonTranslations.InvertedArchNames.ContainsKey(candidateValue))
+        string userSelection = ArchitectureCombo.SelectedValue?.ToString() ?? "";
+        if (Architecture.ValidValues.Contains(userSelection))
         {
-            options.Architecture = candidateValue;
+            options.Architecture = userSelection;
         }
 
         // Scope
         options.InstallationScope = "";
-        candidateValue = ScopeCombo.SelectedValue.ToString() ?? "";
-        if (CommonTranslations.InvertedScopeNames.TryGetValue(candidateValue, out PackageScope result))
+        userSelection = ScopeCombo.SelectedValue?.ToString() ?? "";
+        if (CommonTranslations.InvertedScopeNames.TryGetValue(userSelection, out string? value))
         {
-            options.InstallationScope = CommonTranslations.ScopeNames_NonLang[result];
+            options.InstallationScope = value;
         }
 
         // Location
@@ -181,10 +196,11 @@ public sealed partial class InstallOptions_Manager : UserControl
         }
 
         // Command-line parameters
-        options.CustomParameters = CustomParameters.Text.Split(' ').Where(x => x.Any()).ToList();
+        options.CustomParameters_Install = CustomParameters1.Text.Split(' ').Where(x => x.Any()).ToList();
+        options.CustomParameters_Update = CustomParameters2.Text.Split(' ').Where(x => x.Any()).ToList();
+        options.CustomParameters_Uninstall = CustomParameters3.Text.Split(' ').Where(x => x.Any()).ToList();
 
-        var temp = InstallationOptions.FromSerialized(options, Manager);
-        await temp.SaveToDiskAsync();
+        await InstallOptionsFactory.SaveForManagerAsync(options, Manager);
         await LoadOptions();
     }
 
@@ -193,8 +209,7 @@ public sealed partial class InstallOptions_Manager : UserControl
         LoadingIndicator.Visibility = Visibility.Visible;
         DisableAllInput();
 
-        var opts = InstallationOptions.CreateEmpty(Manager);
-        await opts.SaveToDiskAsync();
+        await InstallOptionsFactory.SaveForManagerAsync(new(), Manager);
         await LoadOptions();
     }
 
@@ -208,7 +223,9 @@ public sealed partial class InstallOptions_Manager : UserControl
         ScopeCombo.IsEnabled = false;
         SelectDir.IsEnabled = false;
         ResetDir.IsEnabled = false;
-        CustomParameters.IsEnabled = false;
+        CustomParameters1.IsEnabled = false;
+        CustomParameters2.IsEnabled = false;
+        CustomParameters3.IsEnabled = false;
         ResetButton.IsEnabled = false;
         ApplyButton.IsEnabled = false;
     }
@@ -231,7 +248,7 @@ public sealed partial class InstallOptions_Manager : UserControl
         string folder = openPicker.Show();
         if (folder != string.Empty)
         {
-            CustomInstallLocation.Text = folder;
+            CustomInstallLocation.Text = folder.TrimEnd('\\') + "\\%PACKAGE%";
             ResetDir.IsEnabled = true;
             ApplyButton.Style = (Style)Application.Current.Resources["AccentButtonStyle"];
         }
@@ -275,5 +292,10 @@ public sealed partial class InstallOptions_Manager : UserControl
     private void ApplyButton_Click(object sender, RoutedEventArgs e)
     {
         _ = SaveOptions();
+    }
+
+    private void GoToSecureSettings_Click(object sender, RoutedEventArgs e)
+    {
+        MainApp.Instance.MainWindow.NavigationPage.OpenSettingsPage(typeof(Administrator));
     }
 }

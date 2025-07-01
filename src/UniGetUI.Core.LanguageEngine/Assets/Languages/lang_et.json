@@ -441,6 +441,7 @@
   "Partially": null,
   "Password": null,
   "Paste a valid URL to the database": null,
+  "Pause updates for": null,
   "Perform a backup now": "Tee varukoopia praegu",
   "Performing backup, please wait...": "Toimub varundamine, palun oodake...",
   "Periodically perform a backup of the installed packages": "Tee perioodiliselt paigaldatud pakettide varukoopia",

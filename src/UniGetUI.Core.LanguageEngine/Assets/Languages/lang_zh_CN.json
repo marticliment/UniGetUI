@@ -441,6 +441,7 @@
   "Partially": "部分",
   "Password": "密码",
   "Paste a valid URL to the database": "粘贴有效网址到数据库",
+  "Pause updates for": "暂停更新：",
   "Perform a backup now": "立刻执行一次备份",
   "Performing backup, please wait...": "正在备份中，请稍候...",
   "Periodically perform a backup of the installed packages": "定期对已安装软件包进行备份 ",

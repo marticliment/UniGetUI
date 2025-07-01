@@ -14,37 +14,27 @@ public partial class Settings
      */
 
     public static bool AreNotificationsDisabled()
-    {
-        return Get("DisableSystemTray") || Get("DisableNotifications");
-    }
+        => Get(K.DisableSystemTray) || Get(K.DisableNotifications);
 
     public static bool AreUpdatesNotificationsDisabled()
-    {
-        return AreNotificationsDisabled() || Get("DisableUpdatesNotifications");
-    }
+        => AreNotificationsDisabled() || Get(K.DisableUpdatesNotifications);
 
     public static bool AreErrorNotificationsDisabled()
-    {
-        return AreNotificationsDisabled() || Get("DisableErrorNotifications");
-    }
+        => AreNotificationsDisabled() || Get(K.DisableErrorNotifications);
 
     public static bool AreSuccessNotificationsDisabled()
-    {
-        return AreNotificationsDisabled() || Get("DisableSuccessNotifications");
-    }
+        => AreNotificationsDisabled() || Get(K.DisableSuccessNotifications);
 
     public static bool AreProgressNotificationsDisabled()
-    {
-        return AreNotificationsDisabled() || Get("DisableProgressNotifications");
-    }
+        => AreNotificationsDisabled() || Get(K.DisableProgressNotifications);
 
     public static Uri? GetProxyUrl()
     {
-        if (!Settings.Get("EnableProxy")) return null;
+        if (!Get(K.EnableProxy)) return null;
 
-        string plainUrl = Settings.GetValue("ProxyURL");
+        string plainUrl = GetValue(K.ProxyURL);
         Uri.TryCreate(plainUrl, UriKind.RelativeOrAbsolute, out Uri? var);
-        if(Settings.Get("EnableProxy") && var is null) Logger.Warn($"Proxy setting {plainUrl} is not valid");
+        if(Get(K.EnableProxy) && var is null) Logger.Warn($"Proxy setting {plainUrl} is not valid");
         return var;
     }
 
@@ -55,7 +45,7 @@ public partial class Settings
         try
         {
             var vault = new PasswordVault();
-            var credentials = vault.Retrieve(PROXY_RES_ID, Settings.GetValue("ProxyUsername"));
+            var credentials = vault.Retrieve(PROXY_RES_ID, GetValue(K.ProxyUsername));
 
             return new NetworkCredential()
             {
@@ -76,7 +66,7 @@ public partial class Settings
         try
         {
             var vault = new PasswordVault();
-            Settings.SetValue("ProxyUsername", username);
+            SetValue(K.ProxyUsername, username);
             vault.Add(new PasswordCredential(PROXY_RES_ID, username, password));
         }
         catch (Exception ex)

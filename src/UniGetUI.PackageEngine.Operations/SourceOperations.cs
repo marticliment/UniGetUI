@@ -52,7 +52,7 @@ namespace UniGetUI.PackageEngine.Operations
             bool admin = false;
            if (ForceAsAdministrator || Source.Manager.Capabilities.Sources.MustBeInstalledAsAdmin)
            {
-                if (Settings.Get("DoCacheAdminRights") || Settings.Get("DoCacheAdminRightsForBatches"))
+                if (Settings.Get(Settings.K.DoCacheAdminRights) || Settings.Get(Settings.K.DoCacheAdminRightsForBatches))
                 {
                     CoreTools.CacheUACForCurrentProcess().GetAwaiter().GetResult();
                 }
@@ -105,7 +105,7 @@ namespace UniGetUI.PackageEngine.Operations
             bool admin = false;
             if (ForceAsAdministrator || Source.Manager.Capabilities.Sources.MustBeInstalledAsAdmin)
             {
-                if (Settings.Get("DoCacheAdminRights") || Settings.Get("DoCacheAdminRightsForBatches"))
+                if (Settings.Get(Settings.K.DoCacheAdminRights) || Settings.Get(Settings.K.DoCacheAdminRightsForBatches))
                 {
                     CoreTools.CacheUACForCurrentProcess().GetAwaiter().GetResult();
                 }

@@ -441,6 +441,7 @@
   "Partially": "Một phần",
   "Password": "Mật khẩu",
   "Paste a valid URL to the database": "Dán URL hợp lệ vào cơ sở dữ liệu",
+  "Pause updates for": null,
   "Perform a backup now": "Thực hiện sao lưu ngay bây giờ",
   "Performing backup, please wait...": "Đang thực hiện sao lưu, vui lòng đợi...",
   "Periodically perform a backup of the installed packages": "Thực hiện sao lưu định kỳ các gói đã cài đặt",

@@ -1,5 +1,10 @@
 {
-  "af": [],
+  "af": [
+    {
+      "name": "Hendrik Bezuidenhout",
+      "link": ""
+    }
+  ],
   "ar": [
     {
       "name": "Abdu11ahAS",
@@ -8,6 +13,10 @@
     {
       "name": "Abdullah-Dev115",
       "link": "https://github.com/Abdullah-Dev115"
+    },
+    {
+      "name": "AbdullahAlousi",
+      "link": "https://github.com/AbdullahAlousi"
     },
     {
       "name": "bassuny3003",
@@ -20,6 +29,10 @@
     {
       "name": "FancyCookin",
       "link": "https://github.com/FancyCookin"
+    },
+    {
+      "name": "IFrxo",
+      "link": "https://github.com/IFrxo"
     },
     {
       "name": "mo9a7i",
@@ -173,6 +186,10 @@
     }
   ],
   "en": [
+    {
+      "name": "lucadsign",
+      "link": "https://github.com/lucadsign"
+    },
     {
       "name": "marticliment",
       "link": "https://github.com/marticliment"
@@ -703,6 +720,10 @@
     }
   ],
   "ua": [
+    {
+      "name": "Alex Logvin",
+      "link": ""
+    },
     {
       "name": "Artem Moldovanenko",
       "link": ""

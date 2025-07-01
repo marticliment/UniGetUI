@@ -34,7 +34,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
                 RedirectStandardError = true,
                 UseShellExecute = false,
                 CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8
+                StandardOutputEncoding = Encoding.UTF8
             }
         };
 
@@ -145,7 +145,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
                 RedirectStandardError = true,
                 UseShellExecute = false,
                 CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8
+                StandardOutputEncoding = Encoding.UTF8
             }
         };
 
@@ -245,7 +245,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
                 RedirectStandardError = true,
                 UseShellExecute = false,
                 CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8
+                StandardOutputEncoding = Encoding.UTF8
             }
         };
 
@@ -392,7 +392,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
                 RedirectStandardInput = true,
                 UseShellExecute = false,
                 CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8
+                StandardOutputEncoding = Encoding.UTF8
             };
             process.StartInfo = startInfo;
             if (CoreTools.IsAdministrator())
@@ -436,7 +436,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
                 RedirectStandardInput = true,
                 UseShellExecute = false,
                 CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8
+                StandardOutputEncoding = Encoding.UTF8
             };
             process.StartInfo = startInfo;
             if (CoreTools.IsAdministrator())
@@ -581,7 +581,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
                 RedirectStandardError = true,
                 RedirectStandardInput = true,
                 CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8
+                StandardOutputEncoding = Encoding.UTF8
             }
         };
 

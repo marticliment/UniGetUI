@@ -441,6 +441,7 @@
   "Partially": "באופן חלקי",
   "Password": "סיסמה",
   "Paste a valid URL to the database": "הדבק כתובת אתר חוקית למסד הנתונים",
+  "Pause updates for": null,
   "Perform a backup now": "בצע גיבוי כעת",
   "Performing backup, please wait...": "מבצע גיבוי, אנא המתן...",
   "Periodically perform a backup of the installed packages": "בצע מעת לעת גיבוי של החבילות המותקנות",

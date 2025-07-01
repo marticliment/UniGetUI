@@ -2,15 +2,16 @@ using System.Runtime.InteropServices;
 using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.Serializable;
+using Architecture = UniGetUI.PackageEngine.Enums.Architecture;
 
 namespace UniGetUI.PackageEngine.Managers.DotNetManager;
 internal sealed class DotNetPkgOperationHelper : BasePkgOperationHelper
 {
     public DotNetPkgOperationHelper(DotNet manager) : base(manager) { }
 
-    protected override IReadOnlyList<string> _getOperationParameters(
-        IPackage package,
-        IInstallationOptions options,
+    protected override IReadOnlyList<string> _getOperationParameters(IPackage package,
+        InstallOptions options,
         OperationType operation)
     {
         List<string> parameters =
@@ -27,9 +28,6 @@ internal sealed class DotNetPkgOperationHelper : BasePkgOperationHelper
 
         ];
 
-        if (options.CustomParameters is not null)
-            parameters.AddRange(options.CustomParameters);
-
         if (options.CustomInstallLocation != "")
             parameters.AddRange(["--tool-path", "\"" + options.CustomInstallLocation + "\""]);
 
@@ -41,10 +39,10 @@ internal sealed class DotNetPkgOperationHelper : BasePkgOperationHelper
         {
             parameters.AddRange(options.Architecture switch
             {
-                Architecture.X86 => ["--arch", "x86"],
-                Architecture.X64 => ["--arch", "x64"],
-                Architecture.Arm => ["--arch", "arm32"],
-                Architecture.Arm64 => ["--arch", "arm64"],
+                Architecture.x86 => ["--arch", "x86"],
+                Architecture.x64 => ["--arch", "x64"],
+                Architecture.arm32 => ["--arch", "arm32"],
+                Architecture.arm64 => ["--arch", "arm64"],
                 _ => []
             });
         }
@@ -56,6 +54,13 @@ internal sealed class DotNetPkgOperationHelper : BasePkgOperationHelper
                 parameters.AddRange(["--version", options.Version]);
             }
         }
+
+        parameters.AddRange(operation switch
+        {
+            OperationType.Update => options.CustomParameters_Update,
+            OperationType.Uninstall => options.CustomParameters_Uninstall,
+            _ => options.CustomParameters_Install,
+        });
 
         return parameters;
     }

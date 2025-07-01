@@ -5,6 +5,7 @@ using UniGetUI.Core.Classes;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.Enums;
+using Architecture = UniGetUI.PackageEngine.Enums.Architecture;
 
 namespace UniGetUI.Core.Language
 {
@@ -131,7 +132,7 @@ namespace UniGetUI.Core.Language
                             Name: (url is not null ? "@" : "") + (translator["name"] ?? "").ToString(),
                             ProfilePicture: url is not null ? new Uri(url.ToString() + ".png") : null,
                             GitHubUrl: url,
-                            Language: !LangShown ? LanguageData.LanguageReference[langKey.Key] : ""
+                            Language: !LangShown ? LanguageReference[langKey.Key] : ""
                         );
                         LangShown = true;
                         result.Add(person);
@@ -151,44 +152,16 @@ namespace UniGetUI.Core.Language
 
     public static class CommonTranslations
     {
-        public static readonly Dictionary<Architecture, string> ArchNames = new()
-        {
-            { Architecture.X64, "x64" },
-            { Architecture.X86, "x86" },
-            { Architecture.Arm64, "arm64" },
-            { Architecture.Arm, "arm32" },
-        };
-
-        public static readonly Dictionary<string, Architecture> InvertedArchNames = new()
-        {
-            { "x64", Architecture.X64 },
-            { "x86", Architecture.X86 },
-            { "arm64", Architecture.Arm64 },
-            { "arm32", Architecture.Arm },
-        };
-
-        public static readonly Dictionary<PackageScope, string> ScopeNames = new()
+        public static readonly Dictionary<string, string> ScopeNames = new()
         {
             { PackageScope.Global, "Machine | Global" },
             { PackageScope.Local, "User | Local" },
         };
 
-        public static readonly Dictionary<string, PackageScope> InvertedScopeNames = new()
+        public static readonly Dictionary<string, string> InvertedScopeNames = new()
         {
             { "Machine | Global", PackageScope.Global },
             { "User | Local", PackageScope.Local },
-        };
-
-        public static readonly Dictionary<PackageScope, string> ScopeNames_NonLang = new()
-        {
-            { PackageScope.Global, "machine" },
-            { PackageScope.Local, "user" },
-        };
-
-        public static readonly Dictionary<string, PackageScope> InvertedScopeNames_NonLang = new()
-        {
-            { "machine", PackageScope.Global },
-            { "user", PackageScope.Local },
         };
     }
 }

@@ -441,6 +441,7 @@
   "Partially": "部分",
   "Password": "密碼",
   "Paste a valid URL to the database": "貼上可用的資料庫網址",
+  "Pause updates for": null,
   "Perform a backup now": "立即備份",
   "Performing backup, please wait...": "正在備份中,請稍後...",
   "Periodically perform a backup of the installed packages": "定期備份已安裝的套件",

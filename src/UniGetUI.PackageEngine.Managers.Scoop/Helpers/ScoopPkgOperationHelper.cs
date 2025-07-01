@@ -2,13 +2,16 @@ using System.Runtime.InteropServices;
 using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.Serializable;
+using Architecture = UniGetUI.PackageEngine.Enums.Architecture;
 
 namespace UniGetUI.PackageEngine.Managers.ScoopManager;
 internal sealed class ScoopPkgOperationHelper : BasePkgOperationHelper
 {
     public ScoopPkgOperationHelper(Scoop manager) : base(manager) { }
 
-    protected override IReadOnlyList<string> _getOperationParameters(IPackage package, IInstallationOptions options, OperationType operation)
+    protected override IReadOnlyList<string> _getOperationParameters(IPackage package,
+        InstallOptions options, OperationType operation)
     {
         List<string> parameters = [operation switch {
             OperationType.Install => Manager.Properties.InstallVerb,
@@ -30,8 +33,12 @@ internal sealed class ScoopPkgOperationHelper : BasePkgOperationHelper
             parameters.Add("--global");
         }
 
-        if (options.CustomParameters?.Any() is true)
-            parameters.AddRange(options.CustomParameters);
+        parameters.AddRange(operation switch
+        {
+            OperationType.Update => options.CustomParameters_Update,
+            OperationType.Uninstall => options.CustomParameters_Uninstall,
+            _ => options.CustomParameters_Install,
+        });
 
         if (operation is OperationType.Uninstall)
         {
@@ -48,9 +55,9 @@ internal sealed class ScoopPkgOperationHelper : BasePkgOperationHelper
         {
             parameters.AddRange(options.Architecture switch
             {
-                Architecture.X64 => ["--arch", "64bit"],
-                Architecture.X86 => ["--arch", "32bit"],
-                Architecture.Arm64 => ["--arch", "arm64"],
+                Architecture.x64 => ["--arch", "64bit"],
+                Architecture.x86 => ["--arch", "32bit"],
+                Architecture.arm64 => ["--arch", "arm64"],
                 _ => []
             });
         }

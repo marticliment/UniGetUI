@@ -16,7 +16,9 @@ public class TestSerializableBundle
         {
             SkipHashCheck = true,
             Architecture = "4+1€",
-            CustomParameters = ["--hello-world", "--another-param", "-help"]
+            CustomParameters_Install = ["--hello-world", "--another-param", "-help"],
+            CustomParameters_Update = ["--update", "--another-param", "-help"],
+            CustomParameters_Uninstall = ["--uninstall", "--another-param", "-help"]
         },
         Updates = new()
         {

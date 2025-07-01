@@ -285,13 +285,13 @@ namespace UniGetUI.Interface.SoftwarePages
         {
             if (!HasDoneBackup)
             {
-                if (Settings.Get("EnablePackageBackup"))
+                if (Settings.Get(Settings.K.EnablePackageBackup))
                 {
                     _ = BackupPackages();
                 }
             }
 
-            if (WinGet.NO_PACKAGES_HAVE_BEEN_LOADED && !Settings.Get("DisableWinGetMalfunctionDetector"))
+            if (WinGet.NO_PACKAGES_HAVE_BEEN_LOADED && !Settings.Get(Settings.K.DisableWinGetMalfunctionDetector))
             {
                 var infoBar = MainApp.Instance.MainWindow.WinGetWarningBanner;
                 infoBar.IsOpen = true;
@@ -375,7 +375,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
                 string BackupContents = await PackageBundlesPage.CreateBundle(packagesToExport.ToArray(), BundleFormatType.UBUNDLE);
 
-                string dirName = Settings.GetValue("ChangeBackupOutputDirectory");
+                string dirName = Settings.GetValue(Settings.K.ChangeBackupOutputDirectory);
                 if (dirName == "")
                 {
                     dirName = CoreData.UniGetUI_DefaultBackupDirectory;
@@ -386,13 +386,13 @@ namespace UniGetUI.Interface.SoftwarePages
                     Directory.CreateDirectory(dirName);
                 }
 
-                string fileName = Settings.GetValue("ChangeBackupFileName");
+                string fileName = Settings.GetValue(Settings.K.ChangeBackupFileName);
                 if (fileName == "")
                 {
                     fileName = CoreTools.Translate("{pcName} installed packages", new Dictionary<string, object?> { { "pcName", Environment.MachineName } });
                 }
 
-                if (Settings.Get("EnableBackupTimestamping"))
+                if (Settings.Get(Settings.K.EnableBackupTimestamping))
                 {
                     fileName += " " + DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss");
                 }

@@ -44,7 +44,7 @@ namespace UniGetUI.Pages.SettingsPages
                 button.Click += (_, _) => NavigationRequested?.Invoke(this, manager.GetType());
 
                 var toggle = new ToggleSwitch();
-                toggle.Toggled += (_, _) => Settings.SetDictionaryItem("DisabledManagers", manager.Name, !toggle.IsOn);
+                toggle.Toggled += (_, _) => Settings.SetDictionaryItem(Settings.K.DisabledManagers, manager.Name, !toggle.IsOn);
                 button.Content = toggle;
 
                 first = false;
@@ -60,7 +60,7 @@ namespace UniGetUI.Pages.SettingsPages
             for(int i = 0; i < managerControls.Count; i++)
             {
                 var toggle = (ToggleSwitch)managerControls[i].Content;
-                toggle.IsOn = !Settings.GetDictionaryItem<string, bool>("DisabledManagers", PEInterface.Managers[i].Name);
+                toggle.IsOn = !Settings.GetDictionaryItem<string, bool>(Settings.K.DisabledManagers, PEInterface.Managers[i].Name);
             }
 
             base.OnNavigatedTo(e);

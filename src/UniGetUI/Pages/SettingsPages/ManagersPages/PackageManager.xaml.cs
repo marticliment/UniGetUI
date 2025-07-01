@@ -71,7 +71,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
 
             LocationLabel.Text = Manager.Status.ExecutablePath + Manager.Properties.ExecutableCallArgs;
             if (LocationLabel.Text == "") LocationLabel.Text = CoreTools.Translate("The executable file for {0} was not found", Manager.DisplayName);
-            EnableManager.SettingName = Manager.Name;
+            EnableManager.KeyName = Manager.Name;
             EnableManager.Text = CoreTools.Translate("Enable {pm}").Replace("{pm}", Manager.DisplayName);
             InstallOptionsTitle.Text = CoreTools.Translate("Default installation options for {0} packages", Manager.DisplayName);
 
@@ -81,9 +81,9 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             var DisableNotifsCard = new CheckboxCard_Dict()
             {
                 Text = CoreTools.Translate("Ignore packages from {pm} when showing a notification about updates").Replace("{pm}", Manager.DisplayName),
-                DictionaryName = "DisabledPackageManagerNotifications",
+                DictionaryName = Settings.K.DisabledPackageManagerNotifications,
                 ForceInversion = true,
-                SettingName = Manager.Name
+                KeyName = Manager.Name
             };
 
             ManagerLogsLabel.Text = CoreTools.Translate("View {0} logs", Manager.DisplayName);
@@ -139,7 +139,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 {
                     Text =
                         $"{CoreTools.Translate("Use bundled WinGet instead of system WinGet")} ({CoreTools.Translate("This may help if WinGet packages are not shown")})",
-                    SettingName = "ForceLegacyBundledWinGet",
+                    SettingName = Settings.K.ForceLegacyBundledWinGet,
                     CornerRadius = new CornerRadius(0),
                     BorderThickness = new Thickness(1, 0, 1, 0),
                 };
@@ -149,7 +149,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 CheckboxCard WinGet_EnableTroubleshooter = new()
                 {
                     Text = CoreTools.Translate("Enable the automatic WinGet troubleshooter"),
-                    SettingName = "DisableWinGetMalfunctionDetector",
+                    SettingName = Settings.K.DisableWinGetMalfunctionDetector,
                     CornerRadius = new CornerRadius(0),
                 };
                 WinGet_EnableTroubleshooter.StateChanged += (_, _) =>
@@ -162,7 +162,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 CheckboxCard WinGet_EnableTroubleshooter_v2 = new()
                 {
                     Text = CoreTools.Translate("Enable an [experimental] improved WinGet troubleshooter"),
-                    SettingName = "DisableNewWinGetTroubleshooter",
+                    SettingName = Settings.K.DisableNewWinGetTroubleshooter,
                     CornerRadius = new CornerRadius(0),
                     BorderThickness = new Thickness(1, 0, 1, 0),
                 };
@@ -176,7 +176,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 CheckboxCard WinGet_HideNonApplicableUpdates = new()
                 {
                     Text = CoreTools.Translate("Add updates that fail with a 'no applicable update found' to the ignored updates list"),
-                    SettingName = "IgnoreUpdatesNotApplicable",
+                    SettingName = Settings.K.IgnoreUpdatesNotApplicable,
                     CornerRadius = new CornerRadius(0, 0, 8, 8)
                 };
                 ExtraControls.Children.Add(WinGet_HideNonApplicableUpdates);
@@ -239,10 +239,27 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 {
                     CornerRadius = new CornerRadius(0, 0, 8, 8),
                     BorderThickness = new Thickness(1, 0, 1, 1),
-                    SettingName = "EnableScoopCleanup",
+                    SettingName = Settings.K.EnableScoopCleanup,
                     Text = "Enable Scoop cleanup on launch",
                 };
                 ExtraControls.Children.Add(Scoop_CleanupOnStart);
+            }
+            // ----------------------------- CHOCO EXTRA SETTINGS ------------------------------
+
+            else if (Manager is Chocolatey)
+            {
+                DisableNotifsCard.CornerRadius = new CornerRadius(8,8,0,0);
+                DisableNotifsCard.BorderThickness = new Thickness(1, 1, 1, 0);
+                ExtraControls.Children.Add(DisableNotifsCard);
+
+                CheckboxCard Chocolatey_SystemChoco = new()
+                {
+                    Text = CoreTools.AutoTranslated("Use system Chocolatey"),
+                    SettingName = Settings.K.UseSystemChocolatey,
+                    CornerRadius = new CornerRadius(0, 0, 8, 8)
+                };
+                Chocolatey_SystemChoco.StateChanged += (_, _) => RestartRequired?.Invoke(this, new());
+                ExtraControls.Children.Add(Chocolatey_SystemChoco);
             }
 
             // -------------------------------- VCPKG EXTRA SETTINGS --------------------------------------
@@ -253,11 +270,11 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 DisableNotifsCard.BorderThickness = new Thickness(1, 1, 1, 0);
                 ExtraControls.Children.Add(DisableNotifsCard);
 
-                Settings.SetValue("DefaultVcpkgTriplet", Vcpkg.GetDefaultTriplet());
+                Settings.SetValue(Settings.K.DefaultVcpkgTriplet, Vcpkg.GetDefaultTriplet());
                 ComboboxCard Vcpkg_DefaultTriplet = new()
                 {
                     Text = CoreTools.Translate("Default vcpkg triplet"),
-                    SettingName = "DefaultVcpkgTriplet",
+                    SettingName = Settings.K.DefaultVcpkgTriplet,
                     CornerRadius = new CornerRadius(0)
                 };
                 foreach (string triplet in Vcpkg.GetSystemTriplets())
@@ -280,23 +297,23 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 var ResetVcPkgRootLabel = new HyperlinkButton { Content = CoreTools.Translate("Reset") };
                 var OpenVcPkgRootLabel = new HyperlinkButton { Content = CoreTools.Translate("Open") };
 
-                VcPkgRootLabel.Text = Settings.Get("CustomVcpkgRoot")
-                    ? Settings.GetValue("CustomVcpkgRoot")
+                VcPkgRootLabel.Text = Settings.Get(Settings.K.CustomVcpkgRoot)
+                    ? Settings.GetValue(Settings.K.CustomVcpkgRoot)
                     : "%VCPKG_ROOT%";
-                OpenVcPkgRootLabel.IsEnabled = Settings.Get("CustomVcpkgRoot");
-                ResetVcPkgRootLabel.IsEnabled = Settings.Get("CustomVcpkgRoot");
+                OpenVcPkgRootLabel.IsEnabled = Settings.Get(Settings.K.CustomVcpkgRoot);
+                ResetVcPkgRootLabel.IsEnabled = Settings.Get(Settings.K.CustomVcpkgRoot);
 
                 ResetVcPkgRootLabel.Click += (_, _) =>
                 {
                     VcPkgRootLabel.Text = "%VCPKG_ROOT%";
-                    Settings.Set("CustomVcpkgRoot", false);
+                    Settings.Set(Settings.K.CustomVcpkgRoot, false);
                     ResetVcPkgRootLabel.IsEnabled = false;
                     OpenVcPkgRootLabel.IsEnabled = false;
                 };
 
                 OpenVcPkgRootLabel.Click += (_, _) =>
                 {
-                    string directory = Settings.GetValue("CustomVcpkgRoot").Replace("/", "\\");
+                    string directory = Settings.GetValue(Settings.K.CustomVcpkgRoot).Replace("/", "\\");
                     if (directory.Any()) Process.Start("explorer.exe", directory);
                 };
 
@@ -307,7 +324,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                     string folder = openPicker.Show();
                     if (folder != string.Empty)
                     {
-                        Settings.SetValue("CustomVcpkgRoot", folder);
+                        Settings.SetValue(Settings.K.CustomVcpkgRoot, folder);
                         VcPkgRootLabel.Text = folder;
                         ResetVcPkgRootLabel.IsEnabled = true;
                         OpenVcPkgRootLabel.IsEnabled = true;

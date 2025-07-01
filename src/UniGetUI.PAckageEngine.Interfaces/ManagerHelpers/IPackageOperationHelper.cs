@@ -1,4 +1,5 @@
 using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.Serializable;
 
 namespace UniGetUI.PackageEngine.Interfaces.ManagerProviders
 {
@@ -12,11 +13,9 @@ namespace UniGetUI.PackageEngine.Interfaces.ManagerProviders
         /// that the requested operation is performed over the given package, with its corresponding
         /// installation options.
         /// </summary>
-        public IReadOnlyList<string> GetParameters(
-            IPackage package,
-            IInstallationOptions options,
-            OperationType operation
-        );
+        public IReadOnlyList<string> GetParameters(IPackage package,
+            InstallOptions options,
+            OperationType operation);
 
         /// <summary>
         /// Returns the veredict of the given package operation, given the package, the operation type,

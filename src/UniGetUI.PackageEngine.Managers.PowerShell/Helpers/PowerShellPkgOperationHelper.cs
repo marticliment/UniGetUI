@@ -1,13 +1,15 @@
 using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.Serializable;
 
 namespace UniGetUI.PackageEngine.Managers.PowerShellManager;
 internal sealed class PowerShellPkgOperationHelper : BasePkgOperationHelper
 {
     public PowerShellPkgOperationHelper(PowerShell manager) : base(manager) { }
 
-    protected override IReadOnlyList<string> _getOperationParameters(IPackage package, IInstallationOptions options, OperationType operation)
+    protected override IReadOnlyList<string> _getOperationParameters(IPackage package,
+        InstallOptions options, OperationType operation)
     {
         List<string> parameters = [operation switch {
             OperationType.Install => Manager.Properties.InstallVerb,
@@ -16,9 +18,6 @@ internal sealed class PowerShellPkgOperationHelper : BasePkgOperationHelper
             _ => throw new InvalidDataException("Invalid package operation")
         }];
         parameters.AddRange(["-Name", package.Id, "-Confirm:$false", "-Force"]);
-
-        if (options.CustomParameters is not null)
-            parameters.AddRange(options.CustomParameters);
 
         if (operation is not OperationType.Uninstall)
         {
@@ -43,6 +42,13 @@ internal sealed class PowerShellPkgOperationHelper : BasePkgOperationHelper
             if (options.Version != "")
                 parameters.AddRange(["-RequiredVersion", options.Version]);
         }
+
+        parameters.AddRange(operation switch
+        {
+            OperationType.Update => options.CustomParameters_Update,
+            OperationType.Uninstall => options.CustomParameters_Uninstall,
+            _ => options.CustomParameters_Install,
+        });
 
         return parameters;
     }

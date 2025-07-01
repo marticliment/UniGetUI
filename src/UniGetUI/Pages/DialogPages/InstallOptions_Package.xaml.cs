@@ -5,11 +5,15 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
 using UniGetUI.Core.Language;
+using UniGetUI.Core.SettingsEngine.SecureSettings;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.Serializable;
+using UniGetUI.Pages.SettingsPages.GeneralPages;
+using Windows.ApplicationModel.Activation;
+using Architecture = UniGetUI.PackageEngine.Enums.Architecture;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -21,15 +25,15 @@ namespace UniGetUI.Interface.Dialogs
     /// </summary>
     public sealed partial class InstallOptionsPage : Page
     {
-        public SerializableInstallationOptions Options;
+        public InstallOptions Options;
         public IPackage Package;
         public event EventHandler? Close;
         private readonly OperationType Operation;
         private readonly string packageInstallLocation;
         private bool _uiLoaded;
 
-        public InstallOptionsPage(IPackage package, SerializableInstallationOptions options) : this(package, OperationType.None, options) { }
-        public InstallOptionsPage(IPackage package, OperationType operation, SerializableInstallationOptions options)
+        public InstallOptionsPage(IPackage package, InstallOptions options) : this(package, OperationType.None, options) { }
+        public InstallOptionsPage(IPackage package, OperationType operation, InstallOptions options)
         {
             Package = package;
             InitializeComponent();
@@ -77,6 +81,7 @@ namespace UniGetUI.Interface.Dialogs
             }
             _ = LoadImage();
             DialogTitle.Text = CoreTools.Translate("{0} installation options", package.Name);
+            PlaceholderText.Text = CoreTools.Translate("{0} Install options are currently locked because {0} follows the default install options.", package.Name);
 
             packageInstallLocation = Package.Manager.DetailsHelper.GetInstallLocation(package) ?? CoreTools.Translate("Unset or unknown");
 
@@ -89,12 +94,12 @@ namespace UniGetUI.Interface.Dialogs
 
             if (Package.Manager.Capabilities.SupportsCustomArchitectures)
             {
-                foreach (Architecture arch in Package.Manager.Capabilities.SupportedCustomArchitectures)
+                foreach (string arch in Package.Manager.Capabilities.SupportedCustomArchitectures)
                 {
-                    ArchitectureComboBox.Items.Add(CommonTranslations.ArchNames[arch]);
-                    if (Options.Architecture == CommonTranslations.ArchNames[arch])
+                    ArchitectureComboBox.Items.Add(arch);
+                    if (Options.Architecture == arch)
                     {
-                        ArchitectureComboBox.SelectedValue = CommonTranslations.ArchNames[arch];
+                        ArchitectureComboBox.SelectedValue = arch;
                     }
                 }
             }
@@ -137,13 +142,13 @@ namespace UniGetUI.Interface.Dialogs
             if (package.Manager.Capabilities.SupportsCustomScopes)
             {
                 ScopeCombo.Items.Add(CoreTools.Translate(CommonTranslations.ScopeNames[PackageScope.Local]));
-                if (Options.InstallationScope == CommonTranslations.ScopeNames_NonLang[PackageScope.Local])
+                if (Options.InstallationScope == PackageScope.Local)
                 {
                     ScopeCombo.SelectedValue = CommonTranslations.ScopeNames[PackageScope.Local];
                 }
 
                 ScopeCombo.Items.Add(CoreTools.Translate(CommonTranslations.ScopeNames[PackageScope.Global]));
-                if (Options.InstallationScope == CommonTranslations.ScopeNames_NonLang[PackageScope.Global])
+                if (Options.InstallationScope == PackageScope.Global)
                 {
                     ScopeCombo.SelectedValue = CommonTranslations.ScopeNames[PackageScope.Global];
                 }
@@ -153,10 +158,10 @@ namespace UniGetUI.Interface.Dialogs
             if (Options.CustomInstallLocation == "") CustomInstallLocation.Text = packageInstallLocation;
             else CustomInstallLocation.Text = Options.CustomInstallLocation;
 
-            if (Options.CustomParameters.Count != 0)
-            {
-                CustomParameters.Text = string.Join(' ', Options.CustomParameters);
-            }
+
+            CustomParameters1.Text = string.Join(' ', Options.CustomParameters_Install);
+            CustomParameters2.Text = string.Join(' ', Options.CustomParameters_Update);
+            CustomParameters3.Text = string.Join(' ', Options.CustomParameters_Uninstall);
 
             _uiLoaded = true;
             EnableDisableControls(operation);
@@ -167,17 +172,17 @@ namespace UniGetUI.Interface.Dialogs
         {
             if(FollowGlobalOptionsSwitch.IsOn)
             {
-                OptionsPanel0.Opacity = 0.6;
-                OptionsPanel1.Opacity = 0.6;
-                OptionsPanel2.Opacity = 0.6;
+                OptionsPanel0.Opacity = 0.3;
+                SettingsSwitchPresenter.Opacity = 0.3;
+                SettingsTabBar.Opacity = 0.3;
                 OptionsPanelBase.IsEnabled = false;
                 PlaceholderBanner.Visibility = Visibility.Visible;
             }
             else
             {
                 OptionsPanel0.Opacity = 1;
-                OptionsPanel1.Opacity = 1;
-                OptionsPanel2.Opacity = 1;
+                SettingsSwitchPresenter.Opacity = 1;
+                SettingsTabBar.Opacity = 1;
                 OptionsPanelBase.IsEnabled = true;
                 PlaceholderBanner.Visibility = Visibility.Collapsed;
 
@@ -194,6 +199,16 @@ namespace UniGetUI.Interface.Dialogs
                 ResetDir.IsEnabled = Package.Manager.Capabilities.SupportsCustomLocations;
                 SelectDir.IsEnabled = Package.Manager.Capabilities.SupportsCustomLocations;
             }
+
+            bool IsCLIEnabled = SecureSettings.Get(SecureSettings.K.AllowCLIArguments);
+            CustomParameters1.IsEnabled = IsCLIEnabled;
+            CustomParameters2.IsEnabled = IsCLIEnabled;
+            CustomParameters3.IsEnabled = IsCLIEnabled;
+            CustomParametersLabel1.Opacity = IsCLIEnabled ? 1 : 0.5;
+            CustomParametersLabel2.Opacity = IsCLIEnabled ? 1 : 0.5;
+            CustomParametersLabel3.Opacity = IsCLIEnabled ? 1 : 0.5;
+            GoToCLISettings.Visibility = IsCLIEnabled ? Visibility.Collapsed : Visibility.Visible;
+            CLIDisabled.Visibility = IsCLIEnabled ? Visibility.Collapsed : Visibility.Visible;
             GenerateCommand();
         }
 
@@ -225,35 +240,33 @@ namespace UniGetUI.Interface.Dialogs
             VersionProgress.Visibility = Visibility.Collapsed;
         }
 
-        public async Task<SerializableInstallationOptions> GetUpdatedOptions(bool updateIgnoredUpdates = true)
+        public async Task<InstallOptions> GetUpdatedOptions(bool updateIgnoredUpdates = true)
         {
             Options.RunAsAdministrator = AdminCheckBox?.IsChecked ?? false;
             Options.InteractiveInstallation = InteractiveCheckBox?.IsChecked ?? false;
             Options.SkipHashCheck = HashCheckbox?.IsChecked ?? false;
             Options.OverridesNextLevelOpts = !FollowGlobalOptionsSwitch.IsOn;
 
-            if (CommonTranslations.InvertedArchNames.ContainsKey(ArchitectureComboBox.SelectedValue.ToString() ?? ""))
+            Options.Architecture = "";
+            var userSelection = ArchitectureComboBox.SelectedValue?.ToString() ?? "";
+            if (Architecture.ValidValues.Contains(userSelection))
             {
-                Options.Architecture = ArchitectureComboBox.SelectedValue.ToString() ?? "";
-            }
-            else
-            {
-                Options.Architecture = "";
+                Options.Architecture = userSelection;
             }
 
-            if (CommonTranslations.InvertedScopeNames.ContainsKey(ScopeCombo.SelectedValue.ToString() ?? ""))
+            Options.InstallationScope = "";
+            userSelection = ScopeCombo.SelectedValue?.ToString() ?? "";
+            if (CommonTranslations.InvertedScopeNames.TryGetValue(userSelection, out string? value))
             {
-                Options.InstallationScope = CommonTranslations.ScopeNames_NonLang[CommonTranslations.InvertedScopeNames[ScopeCombo.SelectedValue.ToString() ?? ""]];
-            }
-            else
-            {
-                Options.InstallationScope = "";
+                Options.InstallationScope = value;
             }
 
             if (CustomInstallLocation.Text == packageInstallLocation) Options.CustomInstallLocation = "";
             else Options.CustomInstallLocation = CustomInstallLocation.Text;
 
-            Options.CustomParameters = CustomParameters.Text.Split(' ').ToList();
+            Options.CustomParameters_Install = CustomParameters1.Text.Split(' ').ToList();
+            Options.CustomParameters_Update = CustomParameters2.Text.Split(' ').ToList();
+            Options.CustomParameters_Uninstall = CustomParameters3.Text.Split(' ').ToList();
             Options.PreRelease = VersionComboBox.SelectedValue.ToString() == CoreTools.Translate("PreRelease");
 
             if (VersionComboBox.SelectedValue.ToString() != CoreTools.Translate("PreRelease") && VersionComboBox.SelectedValue.ToString() != CoreTools.Translate("Latest"))
@@ -313,18 +326,19 @@ namespace UniGetUI.Interface.Dialogs
         private void HashCheckbox_Click(object sender, RoutedEventArgs e) => GenerateCommand();
         private void ArchitectureComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e) => GenerateCommand();
 
-
         private async void GenerateCommand()
         {
             if (!_uiLoaded) return;
-            InstallationOptions io = InstallationOptions.FromSerialized(await GetUpdatedOptions(updateIgnoredUpdates: false), Package);
+            InstallOptions options = await GetUpdatedOptions(updateIgnoredUpdates: false);
+            options = await InstallOptionsFactory.LoadApplicableAsync(this.Package, overridePackageOptions: options);
+
             var op = ProfileComboBox.SelectedIndex switch
             {
                 1 => OperationType.Update,
                 2 => OperationType.Uninstall,
                 _ => OperationType.Install,
             };
-            var commandline = await Task.Run(() => Package.Manager.OperationHelper.GetParameters(Package, io, op));
+            var commandline = await Task.Run(() => Package.Manager.OperationHelper.GetParameters(Package, options, op));
             CommandBox.Text = Package.Manager.Properties.ExecutableFriendlyName + " " + string.Join(" ", commandline);
         }
 
@@ -333,9 +347,21 @@ namespace UniGetUI.Interface.Dialogs
             if(LayoutGrid.ActualSize.Y > 1 && LayoutGrid.ActualSize.Y < double.PositiveInfinity) MaxHeight = LayoutGrid.ActualSize.Y;
         }
 
-        private void ProfileComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void UnlockSettingsButton_Click(object sender, RoutedEventArgs e)
         {
+            FollowGlobalOptionsSwitch.IsOn = false;
+        }
 
+        private void GoToDefaultOptionsSettings_Click(object sender, RoutedEventArgs e)
+        {
+            Close?.Invoke(this, EventArgs.Empty);
+            MainApp.Instance.MainWindow.NavigationPage.OpenManagerSettings(Package.Manager);
+        }
+
+        private void GoToSecureSettings_Click(object sender, RoutedEventArgs e)
+        {
+            Close?.Invoke(this, EventArgs.Empty);
+            MainApp.Instance.MainWindow.NavigationPage.OpenSettingsPage(typeof(Administrator));
         }
     }
 }

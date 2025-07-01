@@ -7,6 +7,9 @@ using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
 using UniGetUI.PackageEngine.Classes.Packages.Classes;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.Serializable;
+using Architecture = UniGetUI.PackageEngine.Enums.Architecture;
+using InstallOptions = UniGetUI.PackageEngine.Serializable.InstallOptions;
 
 namespace UniGetUI.PackageEngine.Managers.WingetManager;
 internal sealed class WinGetPkgOperationHelper : BasePkgOperationHelper
@@ -24,7 +27,8 @@ internal sealed class WinGetPkgOperationHelper : BasePkgOperationHelper
 
     public WinGetPkgOperationHelper(WinGet manager) : base(manager) { }
 
-    protected override IReadOnlyList<string> _getOperationParameters(IPackage package, IInstallationOptions options, OperationType operation)
+    protected override IReadOnlyList<string> _getOperationParameters(IPackage package,
+        InstallOptions options, OperationType operation)
     {
         List<string> parameters = [operation switch {
             OperationType.Install => Manager.Properties.InstallVerb,
@@ -54,17 +58,16 @@ internal sealed class WinGetPkgOperationHelper : BasePkgOperationHelper
         }
 
         parameters.Add(options.InteractiveInstallation ? "--interactive" : "--silent");
-        parameters.AddRange(options.CustomParameters);
 
         if (operation is OperationType.Update)
         {
             if (package.Name.Contains("64-bit") || package.Id.ToLower().Contains("x64"))
             {
-                options.Architecture = Architecture.X64;
+                options.Architecture = Architecture.x64;
             }
             else if (package.Name.Contains("32-bit") || package.Id.ToLower().Contains("x86"))
             {
-                options.Architecture = Architecture.X86;
+                options.Architecture = Architecture.x86;
             }
             parameters.Add("--include-unknown");
         }
@@ -81,9 +84,9 @@ internal sealed class WinGetPkgOperationHelper : BasePkgOperationHelper
 
             parameters.AddRange(options.Architecture switch
             {
-                Architecture.X86 => ["--architecture", "x86"],
-                Architecture.X64 => ["--architecture", "x64"],
-                Architecture.Arm64 => ["--architecture", "arm64"],
+                Architecture.x86 => ["--architecture", "x86"],
+                Architecture.x64 => ["--architecture", "x64"],
+                Architecture.arm64 => ["--architecture", "arm64"],
                 _ => []
             });
         }
@@ -125,6 +128,13 @@ internal sealed class WinGetPkgOperationHelper : BasePkgOperationHelper
         }
 
         parameters.Add(WinGet.GetProxyArgument());
+
+        parameters.AddRange(operation switch
+        {
+            OperationType.Update => options.CustomParameters_Update,
+            OperationType.Uninstall => options.CustomParameters_Uninstall,
+            _ => options.CustomParameters_Install,
+        });
         return parameters;
     }
 
@@ -161,7 +171,7 @@ internal sealed class WinGetPkgOperationHelper : BasePkgOperationHelper
 
         if (uintCode is 0x8A15002B)
         {
-            if (Settings.Get("IgnoreUpdatesNotApplicable"))
+            if (Settings.Get(Settings.K.IgnoreUpdatesNotApplicable))
             {
                 Logger.Warn($"Ignoring update {package.Id} as the update is not applicable to the platform, and the user has enabled IgnoreUpdatesNotApplicable");
                 IgnoredUpdatesDatabase.Add(IgnoredUpdatesDatabase.GetIgnoredIdForPackage(package), package.VersionString);
@@ -200,11 +210,11 @@ internal sealed class WinGetPkgOperationHelper : BasePkgOperationHelper
 
     private static void MarkUpgradeAsDone(IPackage package)
     {
-        Settings.SetDictionaryItem<string, string>("WinGetAlreadyUpgradedPackages", package.Id, package.NewVersionString);
+        Settings.SetDictionaryItem<string, string>(Settings.K.WinGetAlreadyUpgradedPackages, package.Id, package.NewVersionString);
     }
 
     public static bool UpdateAlreadyInstalled(IPackage package)
     {
-        return Settings.GetDictionaryItem<string, string>("WinGetAlreadyUpgradedPackages", package.Id) == package.NewVersionString;
+        return Settings.GetDictionaryItem<string, string>(Settings.K.WinGetAlreadyUpgradedPackages, package.Id) == package.NewVersionString;
     }
 }

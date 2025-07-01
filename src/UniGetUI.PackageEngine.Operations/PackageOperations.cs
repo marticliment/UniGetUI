@@ -8,6 +8,7 @@ using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Managers.WingetManager;
 using UniGetUI.PackageEngine.PackageLoader;
+using UniGetUI.PackageEngine.Serializable;
 using UniGetUI.PackageOperations;
 
 namespace UniGetUI.PackageEngine.Operations
@@ -17,7 +18,7 @@ namespace UniGetUI.PackageEngine.Operations
         protected List<string> DesktopShortcutsBeforeStart = [];
 
         public readonly IPackage Package;
-        public readonly IInstallationOptions Options;
+        public readonly InstallOptions Options;
         public readonly OperationType Role;
 
         protected abstract Task HandleSuccess();
@@ -26,7 +27,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         public PackageOperation(
             IPackage package,
-            IInstallationOptions options,
+            InstallOptions options,
             OperationType role,
             bool IgnoreParallelInstalls = false,
             AbstractOperation? req = null)
@@ -88,7 +89,7 @@ namespace UniGetUI.PackageEngine.Operations
             if (RequiresAdminRights() && IsAdmin is false)
             {
                 IsAdmin = true;
-                if (Settings.Get("DoCacheAdminRights") || Settings.Get("DoCacheAdminRightsForBatches"))
+                if (Settings.Get(Settings.K.DoCacheAdminRights) || Settings.Get(Settings.K.DoCacheAdminRightsForBatches))
                 {
                     RequestCachingOfUACPrompt();
                 }
@@ -134,7 +135,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         public InstallPackageOperation(
             IPackage package,
-            IInstallationOptions options,
+            InstallOptions options,
             bool IgnoreParallelInstalls = false,
             AbstractOperation? req = null)
             : base(package, options, OperationType.Install, IgnoreParallelInstalls, req)
@@ -151,7 +152,7 @@ namespace UniGetUI.PackageEngine.Operations
             Package.SetTag(PackageTag.AlreadyInstalled);
             InstalledPackagesLoader.Instance.AddForeign(Package);
 
-            if (Settings.Get("AskToDeleteNewDesktopShortcuts"))
+            if (Settings.Get(Settings.K.AskToDeleteNewDesktopShortcuts))
             {
                 DesktopShortcutsDatabase.HandleNewShortcuts(DesktopShortcutsBeforeStart);
             }
@@ -171,7 +172,7 @@ namespace UniGetUI.PackageEngine.Operations
             Metadata.FailureTitle = CoreTools.Translate("Installation failed", new Dictionary<string, object?> { { "package", Package.Name } });
             Metadata.FailureMessage = CoreTools.Translate("{package} could not be installed", new Dictionary<string, object?> { { "package", Package.Name } });
 
-            if (Settings.Get("AskToDeleteNewDesktopShortcuts"))
+            if (Settings.Get(Settings.K.AskToDeleteNewDesktopShortcuts))
             {
                 DesktopShortcutsBeforeStart = DesktopShortcutsDatabase.GetShortcutsOnDisk();
             }
@@ -183,7 +184,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         public UpdatePackageOperation(
             IPackage package,
-            IInstallationOptions options,
+            InstallOptions options,
             bool IgnoreParallelInstalls = false,
             AbstractOperation? req = null)
             : base(package, options, OperationType.Update, IgnoreParallelInstalls, req)
@@ -203,7 +204,7 @@ namespace UniGetUI.PackageEngine.Operations
 
             UpgradablePackagesLoader.Instance.Remove(Package);
 
-            if (Settings.Get("AskToDeleteNewDesktopShortcuts"))
+            if (Settings.Get(Settings.K.AskToDeleteNewDesktopShortcuts))
             {
                 DesktopShortcutsDatabase.HandleNewShortcuts(DesktopShortcutsBeforeStart);
             }
@@ -225,7 +226,7 @@ namespace UniGetUI.PackageEngine.Operations
             Metadata.FailureTitle = CoreTools.Translate("Update failed", new Dictionary<string, object?> { { "package", Package.Name } });
             Metadata.FailureMessage = CoreTools.Translate("{package} could not be updated", new Dictionary<string, object?> { { "package", Package.Name } });
 
-            if (Settings.Get("AskToDeleteNewDesktopShortcuts"))
+            if (Settings.Get(Settings.K.AskToDeleteNewDesktopShortcuts))
             {
                 DesktopShortcutsBeforeStart = DesktopShortcutsDatabase.GetShortcutsOnDisk();
             }
@@ -237,7 +238,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         public UninstallPackageOperation(
             IPackage package,
-            IInstallationOptions options,
+            InstallOptions options,
             bool IgnoreParallelInstalls = false,
             AbstractOperation? req = null)
             : base(package, options, OperationType.Uninstall, IgnoreParallelInstalls, req)

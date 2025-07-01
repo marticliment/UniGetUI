@@ -441,6 +441,7 @@
   "Partially": "Τμηματικά",
   "Password": "Κωδικός πρόσβασης",
   "Paste a valid URL to the database": "Επικολλήστε μια έγκυρη διεύθυνση URL προς τη βάση δεδομένων",
+  "Pause updates for": null,
   "Perform a backup now": "Δημιουργήστε ένα αντίγραφο ασφαλείας τώρα",
   "Performing backup, please wait...": "Δημιουργία αντιγράφου ασφαλείας, αναμείνατε...",
   "Periodically perform a backup of the installed packages": "Περιοδική δημιουργία αντιγράφου ασφαλείας των εγκατεστημένων πακέτων",

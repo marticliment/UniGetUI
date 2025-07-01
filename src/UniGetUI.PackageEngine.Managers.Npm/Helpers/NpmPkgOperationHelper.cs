@@ -1,13 +1,15 @@
 using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.Serializable;
 
 namespace UniGetUI.PackageEngine.Managers.NpmManager;
 internal sealed class NpmPkgOperationHelper : BasePkgOperationHelper
 {
     public NpmPkgOperationHelper(Npm manager) : base(manager) { }
 
-    protected override IReadOnlyList<string> _getOperationParameters(IPackage package, IInstallationOptions options, OperationType operation)
+    protected override IReadOnlyList<string> _getOperationParameters(IPackage package,
+        InstallOptions options, OperationType operation)
     {
         List<string> parameters = operation switch {
             OperationType.Install => [Manager.Properties.InstallVerb, $"{package.Id}@{(options.Version == string.Empty? package.VersionString: options.Version)}"],
@@ -17,15 +19,19 @@ internal sealed class NpmPkgOperationHelper : BasePkgOperationHelper
         };
         parameters.Add(package.Id);
 
-        if (options.CustomParameters is not null)
-            parameters.AddRange(options.CustomParameters);
-
         if (package.OverridenOptions.Scope == PackageScope.Global ||
             (package.OverridenOptions.Scope is null && options.InstallationScope == PackageScope.Global))
             parameters.Add("--global");
 
         if (options.PreRelease)
             parameters.AddRange(["--include", "dev"]);
+
+        parameters.AddRange(operation switch
+        {
+            OperationType.Update => options.CustomParameters_Update,
+            OperationType.Uninstall => options.CustomParameters_Uninstall,
+            _ => options.CustomParameters_Install,
+        });
 
         return parameters;
     }

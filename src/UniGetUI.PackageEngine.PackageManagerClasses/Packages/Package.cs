@@ -98,22 +98,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
             ignoredId = IgnoredUpdatesDatabase.GetIgnoredIdForPackage(this);
 
-            _iconId = Manager.Name switch
-            {
-                "Winget" => Source.Name switch
-                {
-                    "Steam" => id.ToLower().Split("\\")[^1].Replace("steam app ", "steam-").Trim(),
-                    "Local PC" => id.ToLower().Split("\\")[^1],
-                    "Microsoft Store" => id.IndexOf('_') < id.IndexOf('.') ? // If the first underscore is before the period, this ID has no publisher
-                        string.Join('_', id.ToLower().Split("\\")[1].Split("_")[0..^4]) : // no publisher: remove `MSIX\`, then the standard ending _version_arch__{random id}
-                        string.Join('_', string.Join('.', id.ToLower().Split(".")[1..]).Split("_")[0..^4]), // remove the publisher (before the first .), then the standard _version_arch__{random id}
-                    _ => string.Join('.', id.ToLower().Split(".")[1..]),
-                },
-                "Scoop" => id.ToLower().Replace(".app", ""),
-                "Chocolatey" => id.ToLower().Replace(".install", "").Replace(".portable", ""),
-                "vcpkg" => id.ToLower().Split(":")[0].Split("[")[0],
-                _ => id.ToLower()
-            };
+            _iconId = GenerateIconId(this);
         }
 
         /// <summary>
@@ -301,7 +286,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
                    (NormalizedVersion.Patch != NormalizedNewVersion.Patch || NormalizedVersion.Remainder != NormalizedNewVersion.Remainder);
         }
 
-        public virtual SerializablePackage AsSerializable()
+        public virtual async Task<SerializablePackage> AsSerializableAsync()
         {
             return new SerializablePackage
             {
@@ -310,11 +295,11 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 Version = VersionString,
                 Source = Source.Name,
                 ManagerName = Manager.Name,
-                InstallationOptions = InstallationOptions.LoadForPackage(this).ToSerializable(),
+                InstallationOptions = await InstallOptionsFactory.LoadForPackageAsync(this),
                 Updates = new SerializableUpdatesOptions
                 {
-                    IgnoredVersion = GetIgnoredUpdatesVersionAsync().GetAwaiter().GetResult(),
-                    UpdatesIgnored = HasUpdatesIgnoredAsync().GetAwaiter().GetResult(),
+                    IgnoredVersion = await GetIgnoredUpdatesVersionAsync(),
+                    UpdatesIgnored = await HasUpdatesIgnoredAsync(),
                 }
             };
         }
@@ -333,6 +318,31 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public static void ResetIconCache()
         {
             _cachedIconPaths.Clear();
+        }
+
+        private static string GenerateIconId(Package p)
+        {
+            return (p.Manager.Name switch
+            {
+                "Winget" => p.Source.Name switch
+                {
+                    "Steam" => p.Id.ToLower().Split("\\")[^1].Replace("steam app ", "steam-").Trim(),
+                    "Local PC" => p.Id.Split("\\")[^1],
+                    "Microsoft Store" => p.Id.IndexOf('_') < p.Id.IndexOf('.')
+                        ? // If the first underscore is before the period, this ID has no publisher
+                        string.Join('_', p.Id.Split("\\")[1].Split("_")[0..^4])
+                        : // no publisher: remove `MSIX\`, then the standard ending _version_arch__{random p.Id}
+                        string.Join('_',
+                            string.Join('.', p.Id.Split(".")[1..])
+                                .Split("_")
+                                [0..^4]), // remove the publisher (before the first .), then the standard _version_arch__{random p.Id}
+                    _ => string.Join('.', p.Id.Split(".")[1..]),
+                },
+                "Scoop" => p.Id.Replace(".app", ""),
+                "Chocolatey" => p.Id.Replace(".install", "").Replace(".portable", ""),
+                "vcpkg" => p.Id.Split(":")[0].Split("[")[0],
+                _ => p.Id
+            }).ToLower().Replace('_', '-').Replace('.', '-').Replace(' ', '-').Replace('/', '-').Replace(',', '-');
         }
     }
 }

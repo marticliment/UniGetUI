@@ -1,15 +1,15 @@
 using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.Serializable;
 
 namespace UniGetUI.PackageEngine.Managers.PipManager;
 internal sealed class PipPkgOperationHelper : BasePkgOperationHelper
 {
     public PipPkgOperationHelper(Pip manager) : base(manager) { }
 
-    protected override IReadOnlyList<string> _getOperationParameters(
-        IPackage package,
-        IInstallationOptions options,
+    protected override IReadOnlyList<string> _getOperationParameters(IPackage package,
+        InstallOptions options,
         OperationType operation)
     {
         List<string> parameters = [operation switch {
@@ -24,9 +24,6 @@ internal sealed class PipPkgOperationHelper : BasePkgOperationHelper
             "--no-color",
             "--no-cache"
         ]);
-
-        if (options.CustomParameters is not null)
-            parameters.AddRange(options.CustomParameters);
 
         if (operation is OperationType.Uninstall)
         {
@@ -43,6 +40,14 @@ internal sealed class PipPkgOperationHelper : BasePkgOperationHelper
         }
 
         parameters.Add(Pip.GetProxyArgument());
+
+        parameters.AddRange(operation switch
+        {
+            OperationType.Update => options.CustomParameters_Update,
+            OperationType.Uninstall => options.CustomParameters_Uninstall,
+            _ => options.CustomParameters_Install,
+        });
+
         return parameters;
     }
 

@@ -3,12 +3,22 @@ namespace UniGetUI.PackageEngine.Enums
     /// <summary>
     /// Represents the installation scope of a package
     /// </summary>
-    public enum PackageScope
+    public static class PackageScope
     {
-        Global = 1,
-        Machine = 1,
-        Local = 0,
-        User = 0,
+        public static HashSet<string> ValidValues = [Machine, User];
+        public const string Machine = "machine";
+        public const string Global = Machine;
+        public const string User = "user";
+        public const string Local = User;
+    }
+
+    public static class Architecture
+    {
+        public static HashSet<string> ValidValues = [x86, x64, arm32, arm64];
+        public const string x86 = "x86";
+        public const string x64 = "x64";
+        public const string arm32 = "arm32";
+        public const string arm64 = "arm64";
     }
 
     public enum DeserializedPackageStatus

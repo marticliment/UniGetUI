@@ -22,7 +22,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
             identifier: "UPGRADABLE_PACKAGES",
             AllowMultiplePackageVersions: false,
             DisableReload: false,
-            CheckedBydefault: !Settings.Get("DisableSelectingUpdatesByDefault"),
+            CheckedBydefault: !Settings.Get(Settings.K.DisableSelectingUpdatesByDefault),
             RequiresInternet: true)
         {
             Instance = this;
@@ -37,7 +37,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
                 IgnoredPackages[package.Id] = package;
                 return false;
             }
-            if ((await InstallationOptions.LoadApplicableAsync(package)).SkipMinorUpdates && package.IsUpdateMinor())
+            if ((await InstallOptionsFactory.LoadApplicableAsync(package)).SkipMinorUpdates && package.IsUpdateMinor())
             {
                 Logger.Info($"Ignoring package {package.Id} because it is a minor update ({package.VersionString} -> {package.NewVersionString}) and SkipMinorUpdates is set to true.");
                 return false;
@@ -60,12 +60,12 @@ namespace UniGetUI.PackageEngine.PackageLoader
 
         protected void StartAutoCheckTimeout()
         {
-            if (!Settings.Get("DisableAutoCheckforUpdates"))
+            if (!Settings.Get(Settings.K.DisableAutoCheckforUpdates))
             {
                 long waitTime = 3600;
                 try
                 {
-                    waitTime = long.Parse(Settings.GetValue("UpdatesCheckInterval"));
+                    waitTime = long.Parse(Settings.GetValue(Settings.K.UpdatesCheckInterval));
                     Logger.Debug($"Starting check for updates wait interval with waitTime={waitTime}");
                 }
                 catch

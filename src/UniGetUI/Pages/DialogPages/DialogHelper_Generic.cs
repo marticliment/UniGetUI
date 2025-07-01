@@ -101,15 +101,15 @@ public static partial class DialogHelper
         string fancy_command, int current, int total)
     {
 
-        if (Settings.GetDictionaryItem<string, string>("DependencyManagement", dep_name) == "skipped")
+        if (Settings.GetDictionaryItem<string, string>(Settings.K.DependencyManagement, dep_name) == "skipped")
         {
             Logger.Error(
                 $"Dependency {dep_name} was not found, and the user set it to not be reminded of the missing dependency");
             return;
         }
 
-        bool NotFirstTime = Settings.GetDictionaryItem<string, string>("DependencyManagement", dep_name) == "attempted";
-        Settings.SetDictionaryItem("DependencyManagement", dep_name, "attempted");
+        bool NotFirstTime = Settings.GetDictionaryItem<string, string>(Settings.K.DependencyManagement, dep_name) == "attempted";
+        Settings.SetDictionaryItem(Settings.K.DependencyManagement, dep_name, "attempted");
 
         var dialog = DialogFactory.Create();
         dialog.Title = CoreTools.Translate("Missing dependency") + (total > 1 ? $" ({current}/{total})" : "");
@@ -168,8 +168,8 @@ public static partial class DialogHelper
         {
             c.Content = CoreTools.Translate("Do not show this dialog again for {0}", dep_name);
             c.IsChecked = false;
-            c.Checked += (_, _) => Settings.SetDictionaryItem("DependencyManagement", dep_name, "skipped");
-            c.Unchecked += (_, _) => Settings.SetDictionaryItem("DependencyManagement", dep_name, "attempted");
+            c.Checked += (_, _) => Settings.SetDictionaryItem(Settings.K.DependencyManagement, dep_name, "skipped");
+            c.Unchecked += (_, _) => Settings.SetDictionaryItem(Settings.K.DependencyManagement, dep_name, "attempted");
             p.Children.Add(c);
         }
 
@@ -391,7 +391,7 @@ public static partial class DialogHelper
         bool bannerWasOpen = false;
         try
         {
-            DialogHelper.ShowLoadingDialog("Attempting to repair WinGet...",
+            ShowLoadingDialog("Attempting to repair WinGet...",
                 "WinGet is being repaired. Please wait until the process finishes.");
             bannerWasOpen = Window.WinGetWarningBanner.IsOpen;
             Window.WinGetWarningBanner.IsOpen = false;
@@ -420,11 +420,11 @@ public static partial class DialogHelper
             };
             p.Start();
             await p.WaitForExitAsync();
-            DialogHelper.HideLoadingDialog();
+            HideLoadingDialog();
 
             // Toggle bundled WinGet
-            if (Settings.Get("ForceLegacyBundledWinGet"))
-                Settings.Set("ForceLegacyBundledWinGet", false);
+            if (Settings.Get(Settings.K.ForceLegacyBundledWinGet))
+                Settings.Set(Settings.K.ForceLegacyBundledWinGet, false);
 
             var c = DialogFactory.Create();
             c.Title = CoreTools.Translate("WinGet was repaired successfully");
@@ -453,7 +453,7 @@ public static partial class DialogHelper
             Window.WinGetWarningBanner.IsOpen = bannerWasOpen;
             Logger.Error("An error occurred while trying to repair WinGet");
             Logger.Error(ex);
-            DialogHelper.HideLoadingDialog();
+            HideLoadingDialog();
 
             var c = DialogFactory.Create();
             c.Title = CoreTools.Translate("WinGet could not be repaired");
@@ -517,11 +517,11 @@ public static partial class DialogHelper
 
         if (res is ContentDialogResult.Primary)
         {
-            Settings.Set("DisableTelemetry", false);
+            Settings.Set(Settings.K.DisableTelemetry, false);
         }
         else
         {
-            Settings.Set("DisableTelemetry", true);
+            Settings.Set(Settings.K.DisableTelemetry, true);
         }
     }
 
@@ -543,7 +543,7 @@ public static partial class DialogHelper
         {
             Window.TelemetryWarner.Visibility = Visibility.Collapsed;
             Window.TelemetryWarner.IsOpen = false;
-            Settings.Set("ShownTelemetryBanner", true);
+            Settings.Set(Settings.K.ShownTelemetryBanner, true);
         };
 
         var SettingsBtn = new Button()
@@ -555,7 +555,7 @@ public static partial class DialogHelper
             Window.TelemetryWarner.Visibility = Visibility.Collapsed;
             Window.TelemetryWarner.IsOpen = false;
             ShowTelemetryDialog();
-            Settings.Set("ShownTelemetryBanner", true);
+            Settings.Set(Settings.K.ShownTelemetryBanner, true);
         };
 
         StackPanel btns = new() { Margin = new Thickness(4,0,4,0), Spacing = 4, Orientation = Orientation.Horizontal };
@@ -571,7 +571,7 @@ public static partial class DialogHelper
         };
         mainButton.Resources["HyperlinkButtonBackgroundPointerOver"] = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
 
-        Window.TelemetryWarner.CloseButtonClick += (_, _) => Settings.Set("ShownTelemetryBanner", true);
+        Window.TelemetryWarner.CloseButtonClick += (_, _) => Settings.Set(Settings.K.ShownTelemetryBanner, true);
 
     }
 
@@ -587,9 +587,9 @@ public static partial class DialogHelper
         dialog.DefaultButton = ContentDialogButton.Close;
         if (await Window.ShowDialogAsync(dialog) is ContentDialogResult.Primary)
         {
-            Settings.Set("RemoveAllDesktopShortcuts", true);
+            Settings.Set(Settings.K.RemoveAllDesktopShortcuts, true);
         }
-        _ = DialogHelper.ManageDesktopShortcuts();
+        _ = ManageDesktopShortcuts();
     }
 
     /*public static async Task ManualScanDidNotFoundNewShortcuts()

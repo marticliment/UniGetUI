@@ -15,6 +15,7 @@ using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using Microsoft.Windows.AppLifecycle;
 using Microsoft.Windows.AppNotifications;
+using UniGetUI.Core.SettingsEngine.SecureSettings;
 using UniGetUI.Interface.Telemetry;
 using UniGetUI.PackageEngine.Interfaces;
 using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
@@ -67,7 +68,7 @@ namespace UniGetUI
 
                 InitializeComponent();
 
-                string preferredTheme = Settings.GetValue("PreferredTheme");
+                string preferredTheme = Settings.GetValue(Settings.K.PreferredTheme);
                 if (preferredTheme == "dark")
                 {
                     RequestedTheme = ApplicationTheme.Dark;
@@ -98,6 +99,17 @@ namespace UniGetUI
             Logger.Warn($"Using bundled GSudo at {CoreData.ElevatorPath} since UniGetUI Elevator is not available!");
             CoreData.ElevatorPath = (await CoreTools.WhichAsync("gsudo.exe")).Item2;
 #else
+            if (SecureSettings.Get(SecureSettings.K.ForceUserGSudo))
+            {
+                var res = await CoreTools.WhichAsync("gsudo.exe");
+                if (res.Item1)
+                {
+                    CoreData.ElevatorPath = res.Item2;
+                    Logger.Warn($"Using user GSudo (forced by user) at {CoreData.ElevatorPath}");
+                    return;
+                }
+            }
+
             CoreData.ElevatorPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "UniGetUI Elevator.exe");
             Logger.Debug($"Using built-in UniGetUI Elevator at {CoreData.ElevatorPath}");
 #endif
@@ -242,7 +254,7 @@ namespace UniGetUI
         private async Task InitializeBackgroundAPI()
         {
             // Bind the background api to the main interface
-            if (!Settings.Get("DisableApi"))
+            if (!Settings.Get(Settings.K.DisableApi))
             {
                 try
                 {
@@ -313,7 +325,7 @@ namespace UniGetUI
 
                     if (!isInstalled)
                     {
-                        if (Settings.GetDictionaryItem<string, string>("DependencyManagement", dependency.Name) == "skipped")
+                        if (Settings.GetDictionaryItem<string, string>(Settings.K.DependencyManagement, dependency.Name) == "skipped")
                         {
                             Logger.Error($"Dependency {dependency.Name} was not found, and the user set it to not be reminded of the missing dependency");
                         }
@@ -383,7 +395,7 @@ namespace UniGetUI
         public void KillAndRestart()
         {
             Process.Start(CoreData.UniGetUIExecutableFile);
-            MainApp.Instance.MainWindow?.Close();
+            Instance.MainWindow?.Close();
             Environment.Exit(0);
         }
     }

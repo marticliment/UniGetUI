@@ -441,6 +441,7 @@
   "Partially": null,
   "Password": null,
   "Paste a valid URL to the database": "Indsæt en gyldig URL til databasen",
+  "Pause updates for": null,
   "Perform a backup now": "Lav en backup",
   "Performing backup, please wait...": "Laver backup, vent venligst...",
   "Periodically perform a backup of the installed packages": "Lav backup af installerede pakker periodisk",
