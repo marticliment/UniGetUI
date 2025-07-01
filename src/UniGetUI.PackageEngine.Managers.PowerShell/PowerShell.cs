@@ -118,17 +118,24 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 
         public override HashSet<string> LoadAvailablePaths()
         {
-            // TODO: Search correctly
-            return [.. CoreTools.WhichMultiple("powershell").Item2];
+            string path = Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe");
+            HashSet<string> paths = [.. CoreTools.WhichMultiple("powershell").Item2];
+            if (File.Exists(path) && !paths.Contains(path, StringComparer.OrdinalIgnoreCase))
+            {
+                paths.Add(path);
+            }
+
+            return paths;
         }
 
         protected override ManagerStatus LoadManager()
         {
+            var (found, path) = GetManagerExecutablePath();
             ManagerStatus status = new()
             {
-                ExecutablePath = Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe")
+                ExecutablePath = path,
+                Found = found
             };
-            status.Found = File.Exists(status.ExecutablePath);
 
             if (!status.Found)
             {
