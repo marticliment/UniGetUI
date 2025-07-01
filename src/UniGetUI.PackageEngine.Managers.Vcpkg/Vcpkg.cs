@@ -434,12 +434,16 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             {
                 // Unfortunately, we can't use `GetVcpkgPath` or `GetManagerExecutablePath`
                 // for this as it would become a bunch of functions calling each other
-                var (found, path) = CoreTools.Which("vcpkg");
-                path = Path.GetDirectoryName(path);
-                // Make sure the root is a valid root not just a random directory
-                if (found && Path.Exists($"{path}\\triplets"))
+                var (found, paths) = CoreTools.WhichMultiple("vcpkg");
+                foreach (string path in paths)
                 {
-                    vcpkgRoot = path;
+                    path = Path.GetDirectoryName(path);
+                    // Make sure the root is a valid root not just a random directory
+                    if (found && Path.Exists($"{path}\\triplets"))
+                    {
+                        vcpkgRoot = path;
+                        break;
+                    }
                 }
             }
 
