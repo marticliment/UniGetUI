@@ -12,7 +12,7 @@ jobs:
 
     steps:
       - name: Publish to WinGet
-        uses: vedantmgoyal9/winget-releaser@3e78d7ff0f525445bca5d6a989d31cdca383372e
+        uses: vedantmgoyal9/winget-releaser@19e706d4c9121098010096f9c495a70a7518b30f
         with:
           identifier: MartiCliment.UniGetUI.Pre-Release
           installers-regex: 'UniGetUI\.Installer\.exe$'

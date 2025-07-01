@@ -4,7 +4,7 @@ using UniGetUI.PackageEngine.Interfaces;
 
 namespace UniGetUI.PackageEngine.Managers.CargoManager;
 
-internal sealed class CargoPkgOperationHelper(Cargo cargo) : PackagePkgOperationHelper(cargo)
+internal sealed class CargoPkgOperationHelper(Cargo cargo) : BasePkgOperationHelper(cargo)
 {
     protected override IReadOnlyList<string> _getOperationParameters(IPackage package, IInstallationOptions options, OperationType operation)
     {

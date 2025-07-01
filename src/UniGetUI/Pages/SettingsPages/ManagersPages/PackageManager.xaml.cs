@@ -73,18 +73,10 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             if (LocationLabel.Text == "") LocationLabel.Text = CoreTools.Translate("The executable file for {0} was not found", Manager.DisplayName);
             EnableManager.SettingName = Manager.Name;
             EnableManager.Text = CoreTools.Translate("Enable {pm}").Replace("{pm}", Manager.DisplayName);
+            InstallOptionsTitle.Text = CoreTools.Translate("Default installation options for {0} packages", Manager.DisplayName);
 
             SettingsTitle.Text = CoreTools.Translate("{0} settings", Manager.DisplayName);
             StatusTitle.Text = CoreTools.Translate("{0} status", Manager.DisplayName);
-
-            var AlwaysElevateManagerOP = new CheckboxCard_Dict()
-            {
-                Text = CoreTools.Translate("Always run {pm} operations with administrator rights").Replace("{pm}", Manager.DisplayName),
-                DictionaryName = "AlwaysElevate",
-                SettingName = Manager.Name,
-                CornerRadius = new CornerRadius(8, 8, 0, 0),
-                BorderThickness = new Thickness(1, 1, 1, 0),
-            };
 
             var DisableNotifsCard = new CheckboxCard_Dict()
             {
@@ -105,6 +97,8 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             ManagerExecutable.ShowAddedItems();
             ManagerExecutable.SelectIndex(CurrentlyExists ? Paths.ToList().IndexOf(CurrentPath) : 0);
             ManagerExecutable.ValueChanged += ManagerExecutableSelection_OnValueChanged;
+            
+            InstallOptionsPanel.Description = new InstallOptions_Manager(Manager);
 
             // ----------------------- SOURCES CONTROL -------------------
 
@@ -127,9 +121,8 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
 
             if (Manager is WinGet)
             {
-                DisableNotifsCard.CornerRadius = new CornerRadius(0);
+                DisableNotifsCard.CornerRadius = new CornerRadius(8, 8, 0, 0);
                 DisableNotifsCard.BorderThickness = new Thickness(1, 1, 1, 0);
-                ExtraControls.Children.Add(AlwaysElevateManagerOP);
                 ExtraControls.Children.Add(DisableNotifsCard);
 
                 ButtonCard WinGet_ResetWindowsIPackageManager = new()
@@ -193,9 +186,8 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
 
             else if (Manager is Scoop)
             {
-                DisableNotifsCard.CornerRadius = new CornerRadius(0);
+                DisableNotifsCard.CornerRadius = new CornerRadius(8,8,0,0);
                 DisableNotifsCard.BorderThickness = new Thickness(1, 1, 1, 0);
-                ExtraControls.Children.Add(AlwaysElevateManagerOP);
                 ExtraControls.Children.Add(DisableNotifsCard);
 
                 ButtonCard Scoop_Install = new()
@@ -257,9 +249,8 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
 
             else if (Manager is Vcpkg)
             {
-                DisableNotifsCard.CornerRadius = new CornerRadius(0);
+                DisableNotifsCard.CornerRadius = new CornerRadius(8,8,0,0);
                 DisableNotifsCard.BorderThickness = new Thickness(1, 1, 1, 0);
-                ExtraControls.Children.Add(AlwaysElevateManagerOP);
                 ExtraControls.Children.Add(DisableNotifsCard);
 
                 Settings.SetValue("DefaultVcpkgTriplet", Vcpkg.GetDefaultTriplet());
@@ -334,9 +325,8 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             // -------------------------------- DEFAULT EXTRA SETTINGS --------------------------------------
             else
             {
-                DisableNotifsCard.CornerRadius = new CornerRadius(0, 0, 8, 8);
+                DisableNotifsCard.CornerRadius = new CornerRadius(8);
                 DisableNotifsCard.BorderThickness = new Thickness(1, 1, 1, 1);
-                ExtraControls.Children.Add(AlwaysElevateManagerOP);
                 ExtraControls.Children.Add(DisableNotifsCard);
             }
 

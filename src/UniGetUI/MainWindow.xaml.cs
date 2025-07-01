@@ -258,20 +258,6 @@ namespace UniGetUI.Interface
 
                 Settings.Set("TransferredOldSettings", true);
             }
-
-            if (!Settings.Get("TransferredOldSettingsv2"))
-            {
-                foreach (IPackageManager Manager in PEInterface.Managers)
-                {
-                    string SettingName = "AlwaysElevate" + Manager.Name;
-                    if (Settings.Get(SettingName))
-                    {
-                        Settings.SetDictionaryItem("AlwaysElevate", Manager.Name, true);
-                        Settings.Set(SettingName, false);
-                    }
-                }
-                Settings.Set("TransferredOldSettingsv2", true);
-            }
         }
 
         public void HandleNotificationActivation(AppNotificationActivatedEventArgs args)

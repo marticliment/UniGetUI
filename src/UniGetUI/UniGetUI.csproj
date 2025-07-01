@@ -54,6 +54,7 @@
     <None Remove="Interface\Widgets\NavButton.xaml" />
     <None Remove="MainWindow.xaml" />
     <None Remove="PackageEngine\OperationControl.xaml" />
+    <None Remove="Pages\DialogPages\InstallOptions_Manager.xaml" />
     <None Remove="Pages\DialogPages\OperationFailedDialog.xaml" />
     <None Remove="Pages\SettingsPages\GeneralPages\Administrator.xaml" />
     <None Remove="Pages\SettingsPages\GeneralPages\Backup.xaml" />
@@ -73,6 +74,7 @@
     <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.2.250402" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.Sizers" Version="8.2.250402" />
     <PackageReference Include="CommunityToolkit.WinUI.Converters" Version="8.2.250402" />
+    <PackageReference Include="CommunityToolkit.WinUI.Media" Version="8.2.250402" />
     <PackageReference Include="H.NotifyIcon.WinUI" Version="2.3.0" />
     <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.2.0" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.250401001" />
@@ -177,6 +179,9 @@
     <None Update="Assets\Utilities\uninstall_scoop.cmd">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="Pages\DialogPages\InstallOptions_Manager.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Pages\DialogPages\OperationFailedDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
