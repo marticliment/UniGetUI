@@ -298,8 +298,6 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 }
             }
 
-            (status.Found, status.ExecutablePath) = GetManagerExecutablePath();
-
             if (Settings.Get(Settings.K.UseSystemChocolatey) && !Settings.Get(Settings.K.TransferredSystemChocolatey))
             {
                 var (SystemFound, SystemPaths) = CoreTools.WhichMultiple("choco");
@@ -315,6 +313,8 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                     Settings.Set(Settings.K.TransferredSystemChocolatey, true);
                 }
             }
+
+            (status.Found, status.ExecutablePath) = GetManagerExecutablePath();
 
             if (!status.Found)
             {
