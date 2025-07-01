@@ -16,6 +16,7 @@ public static class SecureSettings
         AllowPrePostOpCommand,
         AllowImportPrePostOpCommands,
         ForceUserGSudo,
+        AllowCustomManagerPaths,
         Unset
     };
 
@@ -28,6 +29,7 @@ public static class SecureSettings
             K.AllowPrePostOpCommand => "AllowPrePostInstallCommands",
             K.AllowImportPrePostOpCommands => "AllowImportingPrePostInstallCommands",
             K.ForceUserGSudo => "ForceUserGSudo",
+            K.AllowCustomManagerPaths => "AllowCustomManagerPaths",
 
             K.Unset => throw new InvalidDataException("SecureSettings key was unset!"),
             _ => throw new KeyNotFoundException($"The SecureSettings key {key} was not found on the ResolveKey map")

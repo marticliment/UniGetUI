@@ -1,5 +1,6 @@
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
+using UniGetUI.Core.SettingsEngine.SecureSettings;
 using UniGetUI.PackageEngine.Classes.Manager;
 using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
@@ -127,6 +128,14 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         {
             HashSet<string> AvailablePaths = LoadAvailablePaths();
             string? Path = Settings.GetDictionaryItem<string, string>(Settings.K.ManagerPaths, Name);
+            if (!SecureSettings.Get(SecureSettings.K.AllowCustomManagerPaths))
+            {
+                if (Path != null)
+                {
+                    Logger.Info($"Available path {Path} found but not used as AllowCustomManagerPaths is turned off");
+                }
+                Path = null;
+            }
 
             if (AvailablePaths.Count == 0)
             {

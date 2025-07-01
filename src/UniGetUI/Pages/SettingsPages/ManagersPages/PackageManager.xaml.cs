@@ -23,6 +23,7 @@ using UniGetUI.Pages.DialogPages;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.Core.Logging;
+using UniGetUI.Core.SettingsEngine.SecureSettings;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -97,7 +98,8 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             ManagerExecutable.ShowAddedItems();
             ManagerExecutable.SelectIndex(CurrentlyExists ? Paths.ToList().IndexOf(CurrentPath) : 0);
             ManagerExecutable.ValueChanged += ManagerExecutableSelection_OnValueChanged;
-            
+            ManagerExecutable.IsEnabled = SecureSettings.Get(SecureSettings.K.AllowCustomManagerPaths);
+
             InstallOptionsPanel.Description = new InstallOptions_Manager(Manager);
 
             // ----------------------- SOURCES CONTROL -------------------
@@ -425,7 +427,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
 
         public void ManagerExecutableSelection_OnValueChanged(object sender, EventArgs e)
         {
-            Settings.SetDictionaryItem("ManagerPaths", Manager.Name, ManagerExecutable.SelectedValue());
+            Settings.SetDictionaryItem(Settings.K.ManagerPaths, Manager.Name, ManagerExecutable.SelectedValue());
             RestartRequired?.Invoke(this, EventArgs.Empty);
         }
     }
