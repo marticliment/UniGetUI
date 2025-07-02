@@ -49,7 +49,7 @@ public static class TelemetryHandler
     ];
     // -------------------------------------------------------------------------
 
-    public static async void Initialize()
+    public static async Task InitializeAsync()
     {
         try
         {

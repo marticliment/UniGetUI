@@ -65,32 +65,32 @@ namespace UniGetUI
             {
                 Instance = this;
                 Dispatcher = DispatcherQueue.GetForCurrentThread();
-
                 InitializeComponent();
-
-                string preferredTheme = Settings.GetValue(Settings.K.PreferredTheme);
-                if (preferredTheme == "dark")
-                {
-                    RequestedTheme = ApplicationTheme.Dark;
-                }
-                else if (preferredTheme == "light")
-                {
-                    RequestedTheme = ApplicationTheme.Light;
-                }
-                ThemeListener = new ThemeListener();
-
-                _ = LoadGSudo();
-                RegisterErrorHandling();
-                SetUpWebViewUserDataFolder();
-                InitializeMainWindow();
-                RegisterNotificationService();
-
-                LoadComponentsAsync().ConfigureAwait(false);
+                ApplyThemeToApp();
+                _ = LoadComponentsAsync();
             }
             catch (Exception e)
             {
                 CrashHandler.ReportFatalException(e);
             }
+        }
+
+        /// <summary>
+        /// This method must be called during the constructor, because
+        /// setting RequestedTheme on runtime will crash the app
+        /// </summary>
+        private void ApplyThemeToApp()
+        {
+            string preferredTheme = Settings.GetValue(Settings.K.PreferredTheme);
+            if (preferredTheme == "dark")
+            {
+                RequestedTheme = ApplicationTheme.Dark;
+            }
+            else if (preferredTheme == "light")
+            {
+                RequestedTheme = ApplicationTheme.Light;
+            }
+            ThemeListener = new ThemeListener();
         }
 
         private static async Task LoadGSudo()
@@ -231,21 +231,39 @@ namespace UniGetUI
         {
             try
             {
-                IconDatabase.InitializeInstance();
-                IconDatabase.Instance.LoadIconAndScreenshotsDatabase();
+                RegisterErrorHandling();
 
-                await InitializeBackgroundAPI();
+                // Create MainWindow
+                InitializeMainWindow();
+                await MainWindow.DoEntryTextAnimationAsync();
 
-                _ = MainWindow.DoEntryTextAnimationAsync();
+                IEnumerable<Task> iniTasks =
+                [
+                    Task.Run(SetUpWebViewUserDataFolder),
+                    Task.Run(async () =>
+                    {
+                        IconDatabase.InitializeInstance();
+                        await IconDatabase.Instance.LoadFromCacheAsync();
+                    }),
+                    Task.Run(RegisterNotificationService),
+                    Task.Run(LoadGSudo),
+                    Task.Run(InitializeBackgroundAPI),
+                    Task.Run(PEInterface.Initialize)
+                ];
 
-                // Load package managers
-                await Task.Run(PEInterface.Initialize);
-                TelemetryHandler.Initialize();
+                // Load essential components
+                await Task.WhenAll(iniTasks);
 
+                // Load non-essential components
+                _ = TelemetryHandler.InitializeAsync();
+                _ = IconDatabase.Instance.LoadIconAndScreenshotsDatabaseAsync();
+
+                // Load interface
                 Logger.Info("LoadComponentsAsync finished executing. All managers loaded. Proceeding to interface.");
                 MainWindow.SwitchToInterface();
                 RaiseExceptionAsFatal = false;
 
+                // Process any remaining command-line arguments
                 MainWindow.ProcessCommandLineParameters();
                 MainWindow.ParametersToProcess.ItemEnqueued += (_, _) =>
                 {
