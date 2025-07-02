@@ -1,8 +1,8 @@
 {
     "package_count": {
-        "total": 11838,
-        "done": 5334,
-        "packages_with_icon": 5334,
+        "total": 11839,
+        "done": 5335,
+        "packages_with_icon": 5335,
         "packages_with_screenshot": 703,
         "total_screenshots": 2175
     },
@@ -33269,6 +33269,10 @@
             "images": []
         },
         "python-3-12": {
+            "icon": "https://cdn4.iconfinder.com/data/icons/logos-and-brands/512/267_Python_logo-1024.png",
+            "images": []
+        },
+        "python-3-13": {
             "icon": "https://cdn4.iconfinder.com/data/icons/logos-and-brands/512/267_Python_logo-1024.png",
             "images": []
         },
