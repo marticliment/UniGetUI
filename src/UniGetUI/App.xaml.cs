@@ -79,13 +79,12 @@ namespace UniGetUI
                 }
                 ThemeListener = new ThemeListener();
 
-                _ = LoadGSudo();
                 RegisterErrorHandling();
                 SetUpWebViewUserDataFolder();
                 InitializeMainWindow();
                 RegisterNotificationService();
 
-                LoadComponentsAsync().ConfigureAwait(false);
+                _ = LoadComponentsAsync();
             }
             catch (Exception e)
             {
@@ -231,6 +230,7 @@ namespace UniGetUI
         {
             try
             {
+                await LoadGSudo();
                 IconDatabase.InitializeInstance();
                 IconDatabase.Instance.LoadIconAndScreenshotsDatabase();
 
