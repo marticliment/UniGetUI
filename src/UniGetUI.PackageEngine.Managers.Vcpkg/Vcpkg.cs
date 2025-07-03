@@ -437,11 +437,11 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 var (found, paths) = CoreTools.WhichMultiple("vcpkg");
                 foreach (string path in paths)
                 {
-                    path = Path.GetDirectoryName(path);
+                    string dir = Path.GetDirectoryName(path);
                     // Make sure the root is a valid root not just a random directory
-                    if (found && Path.Exists($"{path}\\triplets"))
+                    if (found && Path.Exists($"{dir}\\triplets"))
                     {
-                        vcpkgRoot = path;
+                        vcpkgRoot = dir;
                         break;
                     }
                 }
