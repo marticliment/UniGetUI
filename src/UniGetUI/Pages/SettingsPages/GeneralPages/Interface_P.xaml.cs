@@ -69,8 +69,8 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 Logger.Error(ex);
             }
             ShowRestartBanner(this, new());
-            PackageWrapper.ResetIconCache();
-            Package.ResetIconCache();
+            // PackageWrapper.ResetIconCache();
+            // Package.ResetIconCache();
             LoadIconCacheSize();
         }
 
