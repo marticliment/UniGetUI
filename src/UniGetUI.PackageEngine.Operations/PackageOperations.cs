@@ -1,5 +1,6 @@
 using UniGetUI.Core.Classes;
 using UniGetUI.Core.Data;
+using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
@@ -31,7 +32,7 @@ namespace UniGetUI.PackageEngine.Operations
             OperationType role,
             bool IgnoreParallelInstalls = false,
             AbstractOperation? req = null)
-            : base(!IgnoreParallelInstalls, _getPreInstallOps(options, role, req), _getPostInstallOps(options, role))
+            : base(!IgnoreParallelInstalls, _getPreInstallOps(options, role, package, req), _getPostInstallOps(options, role, package))
         {
             Package = package;
             Options = options;
@@ -129,7 +130,7 @@ namespace UniGetUI.PackageEngine.Operations
             return TaskRecycler<Uri>.RunOrAttachAsync(Package.GetIconUrl);
         }
 
-        private static IReadOnlyList<InnerOperation> _getPreInstallOps(InstallOptions opts, OperationType role, AbstractOperation? preReq = null)
+        private static IReadOnlyList<InnerOperation> _getPreInstallOps(InstallOptions opts, OperationType role, IPackage package, AbstractOperation? preReq = null)
         {
             List<InnerOperation> l = new();
             if(preReq is not null) l.Add(new(preReq, true));
@@ -149,7 +150,7 @@ namespace UniGetUI.PackageEngine.Operations
             return l;
         }
 
-        private static IReadOnlyList<InnerOperation> _getPostInstallOps(InstallOptions opts, OperationType role)
+        private static IReadOnlyList<InnerOperation> _getPostInstallOps(InstallOptions opts, OperationType role, IPackage package)
         {
             List<InnerOperation> l = new();
 
@@ -159,6 +160,17 @@ namespace UniGetUI.PackageEngine.Operations
                 l.Add(new(new PrePostOperation(opts.PostUpdateCommand), false));
             else if (role is OperationType.Uninstall && opts.PostUninstallCommand.Any())
                 l.Add(new(new PrePostOperation(opts.PostUninstallCommand), false));
+
+            if (role is OperationType.Update && opts.UninstallPreviousVersionsOnUpdate)
+            {
+                var matches = InstalledPackagesLoader.Instance.Packages.Where(
+                    p => p.IsEquivalentTo(package) && p.NormalizedVersion < package.NormalizedNewVersion);
+                foreach (var match in matches)
+                {
+                    Logger.Info($"Queuing {match} version {match.VersionString} for automatic uninstall after update...");
+                    l.Add(new(new UninstallPackageOperation(match, opts.Copy()), false));
+                }
+            }
 
             return l;
         }
