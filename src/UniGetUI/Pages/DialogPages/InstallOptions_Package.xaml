@@ -200,6 +200,9 @@
                                             <CheckBox Name="HashCheckbox" Click="HashCheckbox_Click">
                                                 <widgets:TranslatedTextBlock HorizontalAlignment="Stretch" Text="Skip hash check" />
                                             </CheckBox>
+                                            <CheckBox Name="UninstallPreviousOnUpdate">
+                                                <widgets:TranslatedTextBlock HorizontalAlignment="Stretch" Text="Uninstall previous versions when updated" />
+                                            </CheckBox>
                                         </controls:WrapPanel>
                                         <Grid
                                             Padding="4,8"

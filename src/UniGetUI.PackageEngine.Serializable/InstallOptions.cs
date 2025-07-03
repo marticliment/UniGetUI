@@ -19,6 +19,7 @@ namespace UniGetUI.PackageEngine.Serializable
         public bool SkipMinorUpdates { get; set; }
         public bool OverridesNextLevelOpts { get; set; }
         public bool RemoveDataOnUninstall { get; set; }
+        public bool UninstallPreviousVersionsOnUpdate { get; set; }
         public List<string> KillBeforeOperation { get; set; } = [];
 
         public string PreInstallCommand { get; set; } = "";
@@ -59,7 +60,8 @@ namespace UniGetUI.PackageEngine.Serializable
                 PostUninstallCommand = PostUninstallCommand,
                 AbortOnPreInstallFail = AbortOnPreInstallFail,
                 AbortOnPreUpdateFail = AbortOnPreUpdateFail,
-                AbortOnPreUninstallFail = AbortOnPreUninstallFail
+                AbortOnPreUninstallFail = AbortOnPreUninstallFail,
+                UninstallPreviousVersionsOnUpdate = UninstallPreviousVersionsOnUpdate,
             };
         }
 
@@ -92,6 +94,7 @@ namespace UniGetUI.PackageEngine.Serializable
             this.CustomInstallLocation = data[nameof(CustomInstallLocation)]?.GetVal<string>() ?? "";
             this.Version = data[nameof(Version)]?.GetVal<string>() ?? "";
             this.SkipMinorUpdates = data[nameof(SkipMinorUpdates)]?.GetVal<bool>() ?? false;
+            this.UninstallPreviousVersionsOnUpdate = data[nameof(UninstallPreviousVersionsOnUpdate)]?.GetVal<bool>() ?? false;
 
             this.PreInstallCommand = data[nameof(PreInstallCommand)]?.GetVal<string>() ?? "";
             this.PreUpdateCommand = data[nameof(PreUpdateCommand)]?.GetVal<string>() ?? "";
@@ -143,6 +146,7 @@ namespace UniGetUI.PackageEngine.Serializable
                    AbortOnPreUpdateFail is not true ||
                    PreUninstallCommand.Any() ||
                    PostUninstallCommand.Any() ||
+                   UninstallPreviousVersionsOnUpdate is not false ||
                    AbortOnPreUninstallFail is not true;
             // OverridesNextLevelOpts does not need to be checked here, since
             // this method is invoked before this property has been set
@@ -179,6 +183,7 @@ namespace UniGetUI.PackageEngine.Serializable
                    $"AbortOnPreUpdateFail={AbortOnPreUpdateFail};" +
                    $"PreUninstallCommand={PreUninstallCommand};" +
                    $"PostUninstallCommand={PostUninstallCommand};" +
+                   $"UninstallPreviousVersionsOnUpdate={UninstallPreviousVersionsOnUpdate}" +
                    $"AbortOnPreUninstallFail={AbortOnPreUninstallFail};" +
                    $"PreRelease={PreRelease}>";
         }
