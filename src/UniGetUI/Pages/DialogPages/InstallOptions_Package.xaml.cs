@@ -477,6 +477,16 @@ namespace UniGetUI.Interface.Dialogs
             CommandLineViewBox.Visibility = SettingsTabBar.SelectedIndex < 3 ? Visibility.Visible : Visibility.Collapsed;
         }
 
+        public void HideCloseButton()
+        {
+            CloseButton.Visibility = Visibility.Collapsed;
+            CloseButton.IsEnabled = false;
+        }
+
+        internal void HideHeaderBar()
+        {
+            HeaderBar.Visibility = Visibility.Collapsed;
+        }
     }
 
     public class IOP_Proc
