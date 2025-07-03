@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11839,
-        "done": 5335,
-        "packages_with_icon": 5335,
-        "packages_with_screenshot": 703,
-        "total_screenshots": 2175
+        "total": 11841,
+        "done": 5342,
+        "packages_with_icon": 5342,
+        "packages_with_screenshot": 706,
+        "total_screenshots": 2178
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -1688,7 +1688,9 @@
         },
         "airparrot-3": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/5tb9BDxc/airparrot-bringt-grafische-bedienoberflaeche-welcher-euch-intuitiv-zurecht-finden-284446.png"
+            ]
         },
         "airserver": {
             "icon": "https://community.chocolatey.org/content/packageimages/airserver.5.6.3.png",
@@ -10065,7 +10067,7 @@
             "images": []
         },
         "deltachat": {
-            "icon": "",
+            "icon": "https://raw.githubusercontent.com/deltachat/deltachat-desktop/refs/heads/main/images/deltachat.png",
             "images": []
         },
         "deltarune": {
@@ -10162,6 +10164,10 @@
         },
         "deskfiler": {
             "icon": "",
+            "images": []
+        },
+        "deskflow": {
+            "icon": "https://raw.githubusercontent.com/deskflow/deskflow/refs/heads/master/deploy/linux/deskflow.png",
             "images": []
         },
         "deskgo": {
@@ -18022,8 +18028,10 @@
             "images": []
         },
         "harmonoid": {
-            "icon": "",
-            "images": []
+            "icon": "https://avatars.githubusercontent.com/u/75374037?s=200&v=4",
+            "images": [
+                "https://i.postimg.cc/QNTdQNjK/harmonoidscreenshot.png"
+            ]
         },
         "harmony": {
             "icon": "",
@@ -19367,6 +19375,10 @@
             "icon": "",
             "images": []
         },
+        "igclient": {
+            "icon": "https://i.postimg.cc/5Nct9sXC/Indie-Gala.png",
+            "images": []
+        },
         "igdm": {
             "icon": "https://community.chocolatey.org/content/packageimages/igdm.2.6.5.png",
             "images": []
@@ -19496,8 +19508,10 @@
             "images": []
         },
         "imageglass": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/ncpmLSDW/imageglass.png",
+            "images": [
+                "https://i.postimg.cc/PrXM752N/imageglassscreenshot.png"
+            ]
         },
         "imagej": {
             "icon": "https://community.chocolatey.org/content/packageimages/imagej.1.53.png",
@@ -38016,7 +38030,7 @@
             "images": []
         },
         "smartswitch": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/CKcNST5S/samsungsmartswitch.png",
             "images": []
         },
         "smartsynchronize": {
@@ -47772,7 +47786,7 @@
             "images": []
         },
         "winfsp": {
-            "icon": "",
+            "icon": "https://raw.githubusercontent.com/winfsp/winfsp/master/art/winfsp-glow.png",
             "images": []
         },
         "wing-101": {
