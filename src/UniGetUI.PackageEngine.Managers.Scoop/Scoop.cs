@@ -372,9 +372,9 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             logger.Close(p.ExitCode);
         }
 
-        public override HashSet<string> LoadAvailablePaths()
+        public override IReadOnlyList<string> LoadAvailablePaths()
         {
-            HashSet<string> Paths = new(CoreTools.WhichMultiple("scoop.ps1"));
+            var Paths = CoreTools.WhichMultiple("scoop.ps1");
             foreach (string Path in CoreTools.WhichMultiple("scoop"))
             {
                 string ps1Path = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Path) ?? "", "scoop.ps1");

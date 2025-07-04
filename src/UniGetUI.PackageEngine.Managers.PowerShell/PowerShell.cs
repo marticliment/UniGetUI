@@ -116,10 +116,10 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             return Packages;
         }
 
-        public override HashSet<string> LoadAvailablePaths()
+        public override List<string> LoadAvailablePaths()
         {
             string path = Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe");
-            HashSet<string> paths = new(CoreTools.WhichMultiple("powershell"));
+            var paths = CoreTools.WhichMultiple("powershell");
             if (File.Exists(path) && !paths.Contains(path, StringComparer.OrdinalIgnoreCase))
             {
                 paths.Add(path);

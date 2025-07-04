@@ -288,10 +288,10 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             return Packages;
         }
 
-        public override HashSet<string> LoadAvailablePaths()
+        public override IReadOnlyList<string> LoadAvailablePaths()
         {
             var FoundPaths = CoreTools.WhichMultiple("vcpkg");
-            HashSet<string> Paths = [];
+            List<string> Paths = [];
 
             if (FoundPaths.Any()) foreach (var Path in FoundPaths) Paths.Add(Path);
 

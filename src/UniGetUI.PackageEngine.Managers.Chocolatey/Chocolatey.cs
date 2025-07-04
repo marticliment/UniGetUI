@@ -193,9 +193,9 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
         private static readonly string old_choco_path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs\\WingetUI\\choco-cli");
         private static readonly string new_choco_path = Path.Join(CoreData.UniGetUIDataDirectory, "Chocolatey");
 
-        public override HashSet<string> LoadAvailablePaths()
+        public override IReadOnlyList<string> LoadAvailablePaths()
         {
-            HashSet<string> ChocoPaths = [];
+            List<string> ChocoPaths = [];
 
             var SystemPaths = CoreTools.WhichMultiple("choco");
             if (SystemPaths.Any()) foreach (var Path in SystemPaths) ChocoPaths.Add(Path);

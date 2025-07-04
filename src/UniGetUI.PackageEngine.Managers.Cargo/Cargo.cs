@@ -136,9 +136,9 @@ public partial class Cargo : PackageManager
         return GetPackages(LoggableTaskType.ListInstalledPackages);
     }
 
-    public override HashSet<string> LoadAvailablePaths()
+    public override IReadOnlyList<string> LoadAvailablePaths()
     {
-        return new(CoreTools.WhichMultiple("cargo"));
+        return CoreTools.WhichMultiple("cargo");
     }
 
     protected override ManagerStatus LoadManager()

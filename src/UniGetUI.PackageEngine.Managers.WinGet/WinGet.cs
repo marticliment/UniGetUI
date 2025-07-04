@@ -173,9 +173,9 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             return LocalPcSource;
         }
 
-        public override HashSet<string> LoadAvailablePaths()
+        public override IReadOnlyList<string> LoadAvailablePaths()
         {
-            return new(CoreTools.WhichMultiple("winget"));
+            return CoreTools.WhichMultiple("winget");
         }
 
         protected override ManagerStatus LoadManager()

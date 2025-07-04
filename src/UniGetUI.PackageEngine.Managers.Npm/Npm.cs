@@ -187,9 +187,9 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             return Packages;
         }
 
-        public override HashSet<string> LoadAvailablePaths()
+        public override IReadOnlyList<string> LoadAvailablePaths()
         {
-            HashSet<string> Paths = new(CoreTools.WhichMultiple("npm.ps1"));
+            var Paths = CoreTools.WhichMultiple("npm.ps1");
             foreach (string Path in CoreTools.WhichMultiple("npm"))
             {
                 string ps1Path = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Path) ?? "", "npm.ps1");
