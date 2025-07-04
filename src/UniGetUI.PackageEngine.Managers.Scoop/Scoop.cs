@@ -374,16 +374,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
         public override IReadOnlyList<string> LoadAvailablePaths()
         {
-            var Paths = CoreTools.WhichMultiple("scoop.ps1");
-            foreach (string Path in CoreTools.WhichMultiple("scoop"))
-            {
-                string ps1Path = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Path) ?? "", "scoop.ps1");
-                if (File.Exists(ps1Path) && !Paths.Contains(ps1Path, StringComparer.OrdinalIgnoreCase))
-                {
-                    Paths.Add(ps1Path);
-                }
-            }
-            return Paths;
+            return CoreTools.WhichMultiple("scoop.ps1");
         }
 
 
