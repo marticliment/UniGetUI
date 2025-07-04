@@ -197,8 +197,8 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
         {
             HashSet<string> ChocoPaths = [];
 
-            var (SystemFound, SystemPaths) = CoreTools.WhichMultiple("choco");
-            if (SystemFound) foreach (var Path in SystemPaths) ChocoPaths.Add(Path);
+            var SystemPaths = CoreTools.WhichMultiple("choco");
+            if (SystemPaths.Any()) foreach (var Path in SystemPaths) ChocoPaths.Add(Path);
             if (File.Exists(Path.Join(new_choco_path, "choco.exe"))) ChocoPaths.Add(Path.Join(new_choco_path, "choco.exe"));
             string EnvPath = Path.Join(Environment.GetEnvironmentVariable("ChocolateyInstall"), "choco.exe");
             if (File.Exists(EnvPath)) ChocoPaths.Add(EnvPath);
@@ -299,8 +299,8 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
 
             if (Settings.Get(Settings.K.UseSystemChocolatey) && !Settings.Get(Settings.K.TransferredSystemChocolatey))
             {
-                var (SystemFound, SystemPaths) = CoreTools.WhichMultiple("choco");
-                if (SystemFound && SystemPaths.Count > 0)
+                var SystemPaths = CoreTools.WhichMultiple("choco");
+                if (SystemPaths.Count > 0)
                 {
                     string SysPath = SystemPaths.ElementAt(0);
                     for (int idx = 1; idx < SystemPaths.Count; idx++)

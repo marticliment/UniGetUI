@@ -304,10 +304,10 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
 
         public override HashSet<string> LoadAvailablePaths()
         {
-            var (Found, FoundPaths) = CoreTools.WhichMultiple("python");
+            var FoundPaths = CoreTools.WhichMultiple("python");
             HashSet<string> Paths = [];
 
-            if (Found) foreach (var Path in FoundPaths) Paths.Add(Path);
+            if (FoundPaths.Any()) foreach (var Path in FoundPaths) Paths.Add(Path);
 
             try
             {

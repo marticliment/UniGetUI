@@ -109,10 +109,8 @@ namespace UniGetUI.Core.Tools
             return await Task.Run(() => Which(command));
         }
 
-        public static Tuple<bool, List<string>> WhichMultiple(string command, bool updateEnv = true)
+        public static List<string> WhichMultiple(string command, bool updateEnv = true)
         {
-            List<string> paths = [];
-
             command = command.Replace(";", "").Replace("&", "").Trim();
             Logger.Debug($"Begin \"which\" search for command {command}");
 
@@ -149,31 +147,29 @@ namespace UniGetUI.Core.Tools
 
                 process.WaitForExit();
 
-                if ((process.ExitCode != 0 || lines.Length == 0) && paths.Count == 0)
+                if (process.ExitCode is not 0)
+                    Logger.Warn($"Call to WhichMultiple with file {command} returned non-zero status {process.ExitCode}");
+
+                if (lines.Length is 0)
                 {
                     Logger.ImportantInfo($"Command {command} was not found on the system");
-                    return new Tuple<bool, List<string>>(false, []);
+                    return [];
                 }
 
-                foreach (var line in lines)
-                {
-                    Logger.Debug($"Command {command} was found on {line}{(line.Length > 1 ? $" (#{paths.Count + 1})" : "")}");
-                    paths.Add(line);
-                }
+                Logger.Debug($"Command {command} was found on {lines[0]} (with {lines.Length-1} more occurrences)");
+                return lines.ToList();
             }
             catch
             {
                 if (updateEnv) return WhichMultiple(command, false);
                 throw;
             }
-            return new Tuple<bool, List<string>>(true, paths);
         }
 
         public static Tuple<bool, string> Which(string command, bool updateEnv = true)
         {
-            var (found, paths) = WhichMultiple(command, updateEnv);
-            if (found && paths.Count > 0) return new Tuple<bool, string>(true, paths[0]);
-            else return new Tuple<bool, string>(false, "");
+            var paths = WhichMultiple(command, updateEnv);
+            return new(paths.Any(), paths.Any() ? paths[0]: "");
         }
 
         /// <summary>

@@ -119,7 +119,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
         public override HashSet<string> LoadAvailablePaths()
         {
             string path = Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe");
-            HashSet<string> paths = [.. CoreTools.WhichMultiple("powershell").Item2];
+            HashSet<string> paths = new(CoreTools.WhichMultiple("powershell"));
             if (File.Exists(path) && !paths.Contains(path, StringComparer.OrdinalIgnoreCase))
             {
                 paths.Add(path);

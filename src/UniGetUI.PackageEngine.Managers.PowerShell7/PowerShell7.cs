@@ -119,7 +119,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
 
         public override HashSet<string> LoadAvailablePaths()
         {
-            return [.. CoreTools.WhichMultiple("pwsh").Item2];
+            return new(CoreTools.WhichMultiple("pwsh"));
         }
 
         protected override ManagerStatus LoadManager()

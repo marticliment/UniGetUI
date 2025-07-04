@@ -290,10 +290,10 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
 
         public override HashSet<string> LoadAvailablePaths()
         {
-            var (Found, FoundPaths) = CoreTools.WhichMultiple("vcpkg");
+            var FoundPaths = CoreTools.WhichMultiple("vcpkg");
             HashSet<string> Paths = [];
 
-            if (Found) foreach (var Path in FoundPaths) Paths.Add(Path);
+            if (FoundPaths.Any()) foreach (var Path in FoundPaths) Paths.Add(Path);
 
             var (VcpkgRootFound, VcpkgRoot) = GetVcpkgRoot();
             if (VcpkgRootFound)
@@ -434,12 +434,12 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             {
                 // Unfortunately, we can't use `GetVcpkgPath` or `GetManagerExecutablePath`
                 // for this as it would become a bunch of functions calling each other
-                var (found, paths) = CoreTools.WhichMultiple("vcpkg");
+                var paths = CoreTools.WhichMultiple("vcpkg");
                 foreach (string path in paths)
                 {
                     string dir = Path.GetDirectoryName(path);
                     // Make sure the root is a valid root not just a random directory
-                    if (found && Path.Exists($"{dir}\\triplets"))
+                    if (Path.Exists($"{dir}\\triplets"))
                     {
                         vcpkgRoot = dir;
                         break;

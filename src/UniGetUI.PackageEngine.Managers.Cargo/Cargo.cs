@@ -138,7 +138,7 @@ public partial class Cargo : PackageManager
 
     public override HashSet<string> LoadAvailablePaths()
     {
-        return [.. CoreTools.WhichMultiple("cargo").Item2];
+        return new(CoreTools.WhichMultiple("cargo"));
     }
 
     protected override ManagerStatus LoadManager()

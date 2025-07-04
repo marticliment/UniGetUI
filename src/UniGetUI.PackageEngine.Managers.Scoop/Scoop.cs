@@ -374,8 +374,8 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
         public override HashSet<string> LoadAvailablePaths()
         {
-            HashSet<string> Paths = [.. CoreTools.WhichMultiple("scoop.ps1").Item2];
-            foreach (string Path in CoreTools.WhichMultiple("scoop").Item2)
+            HashSet<string> Paths = new(CoreTools.WhichMultiple("scoop.ps1"));
+            foreach (string Path in CoreTools.WhichMultiple("scoop"))
             {
                 string ps1Path = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Path) ?? "", "scoop.ps1");
                 if (File.Exists(ps1Path) && !Paths.Contains(ps1Path, StringComparer.OrdinalIgnoreCase))

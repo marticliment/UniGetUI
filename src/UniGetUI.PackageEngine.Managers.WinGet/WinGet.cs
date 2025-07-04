@@ -175,7 +175,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         public override HashSet<string> LoadAvailablePaths()
         {
-            return [.. CoreTools.WhichMultiple("winget").Item2];
+            return new(CoreTools.WhichMultiple("winget"));
         }
 
         protected override ManagerStatus LoadManager()
