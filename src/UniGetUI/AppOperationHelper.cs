@@ -80,7 +80,7 @@ public partial class MainApp
                 WinRT.Interop.InitializeWithWindow.Initialize(savePicker, hWnd);
                 savePicker.SuggestedStartLocation = PickerLocationId.Downloads;
 
-                string extension = details.InstallerUrl.ToString().Split('.')[^1];
+                string extension = CoreTools.MakeValidFileName(details.InstallerUrl.ToString().Split('.')[^1]);
                 if (package.Manager is Cargo) extension = "zip";
                 savePicker.SuggestedFileName = package.Id + " installer." + extension;
 
@@ -90,7 +90,15 @@ public partial class MainApp
                     savePicker.FileTypeChoices.Add("Compressed file", [".zip"]);
                 }
 
-                savePicker.FileTypeChoices.Add("Default", [$".{extension}"]);
+                savePicker.FileTypeChoices.Add("Automatic", [$".{extension}"]);
+                savePicker.FileTypeChoices.Add("Executable", [".exe"]);
+                savePicker.FileTypeChoices.Add("MSI", [".msi"]);
+                savePicker.FileTypeChoices.Add("ZIP file", [".zip"]);
+                savePicker.FileTypeChoices.Add("MSIX", [".msix"]);
+                savePicker.FileTypeChoices.Add("APPX", [".appx"]);
+                savePicker.FileTypeChoices.Add("Tarball", [".tar"]);
+                savePicker.FileTypeChoices.Add("Compressed Tarball", [".tgz"]);
+
 
                 StorageFile file = await savePicker.PickSaveFileAsync();
 
@@ -111,6 +119,7 @@ public partial class MainApp
             {
                 Logger.Error($"An error occurred while downloading the installer for the package {package.Id}");
                 Logger.Error(ex);
+                DialogHelper.HideLoadingDialog();
                 return null;
             }
         }

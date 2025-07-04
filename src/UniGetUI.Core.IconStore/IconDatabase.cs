@@ -49,11 +49,6 @@ namespace UniGetUI.Core.IconEngine
         /// <summary>
         /// Download the icon and screenshots database to a local file, and load it into memory
         /// </summary>
-        public async void LoadIconAndScreenshotsDatabase()
-        {
-            await LoadIconAndScreenshotsDatabaseAsync();
-        }
-
         public async Task LoadIconAndScreenshotsDatabaseAsync()
         {
             string IconsAndScreenshotsFile = Path.Join(CoreData.UniGetUICacheDirectory_Data, "Icon Database.json");
@@ -87,12 +82,20 @@ namespace UniGetUI.Core.IconEngine
                 return;
             }
 
+            // Update data with new cached file
+            await LoadFromCacheAsync();
+        }
+
+
+        public async Task LoadFromCacheAsync()
+        {
+            string IconsAndScreenshotsFile = Path.Join(CoreData.UniGetUICacheDirectory_Data, "Icon Database.json");
             try
             {
                 IconScreenshotDatabase_v2 JsonData = JsonSerializer.Deserialize<IconScreenshotDatabase_v2>(
                     await File.ReadAllTextAsync(IconsAndScreenshotsFile),
                     SerializationHelpers.DefaultOptions
-                    );
+                );
                 if (JsonData.icons_and_screenshots is not null)
                 {
                     IconDatabaseData = JsonData.icons_and_screenshots;

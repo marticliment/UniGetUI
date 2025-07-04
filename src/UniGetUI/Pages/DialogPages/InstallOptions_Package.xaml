@@ -11,6 +11,7 @@
     xmlns:media="using:CommunityToolkit.WinUI.Media"
     xmlns:widgets="using:UniGetUI.Interface.Widgets"
     MaxWidth="700"
+    HorizontalAlignment="Stretch"
     mc:Ignorable="d">
     <Page.Resources>
         <DataTemplate x:Key="ProcessTemplate" x:DataType="local:IOP_Proc">
@@ -22,17 +23,22 @@
             </StackPanel>
         </DataTemplate>
     </Page.Resources>
-    <Grid>
+    <Grid HorizontalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
         <ScrollViewer
             Name="Scroller"
             Grid.Row="0"
             Grid.Column="0"
+            HorizontalAlignment="Stretch"
             SizeChanged="LayoutGrid_SizeChanged">
             <Grid
                 Name="LayoutGrid"
+                HorizontalAlignment="Stretch"
                 RowSpacing="16"
                 SizeChanged="LayoutGrid_SizeChanged">
                 <Grid.RowDefinitions>
@@ -41,9 +47,13 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
 
                 <!--  Title, Package Icon and operation profile selector  -->
                 <Grid
+                    x:Name="HeaderBar"
                     Grid.Row="0"
                     Margin="8,0,16,0"
                     ColumnSpacing="8">
@@ -79,6 +89,7 @@
                 <Border
                     Grid.Row="1"
                     Padding="16,4,0,4"
+                    HorizontalAlignment="Stretch"
                     Background="{ThemeResource SystemChromeAltHighColor}"
                     CornerRadius="8">
                     <Grid
@@ -199,6 +210,9 @@
                                             </CheckBox>
                                             <CheckBox Name="HashCheckbox" Click="HashCheckbox_Click">
                                                 <widgets:TranslatedTextBlock HorizontalAlignment="Stretch" Text="Skip hash check" />
+                                            </CheckBox>
+                                            <CheckBox Name="UninstallPreviousOnUpdate">
+                                                <widgets:TranslatedTextBlock HorizontalAlignment="Stretch" Text="Uninstall previous versions when updated" />
                                             </CheckBox>
                                         </controls:WrapPanel>
                                         <Grid
@@ -684,6 +698,9 @@
             </Grid>
         </ScrollViewer>
         <!--  Close Button  -->
-        <widgets:DialogCloseButton Margin="0,-24,-24,0" Click="CloseButton_Click" />
+        <widgets:DialogCloseButton
+            x:Name="CloseButton"
+            Margin="0,-24,-24,0"
+            Click="CloseButton_Click" />
     </Grid>
 </Page>

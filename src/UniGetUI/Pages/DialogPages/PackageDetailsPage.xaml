@@ -251,21 +251,40 @@
                 </StackPanel>
 
                 <!--  Install Options  -->
-                <Border Name="InstallOptionsBorder" CornerRadius="8">
+                <Border Name="InstallOptionsBorder">
                     <Expander
                         Name="InstallOptionsExpander"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Top"
+                        HorizontalContentAlignment="Stretch"
+                        VerticalContentAlignment="Stretch"
                         CornerRadius="8">
                         <Expander.Header>
-                            <StackPanel Orientation="Horizontal" Spacing="12">
+                            <Grid ColumnSpacing="12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
                                 <widgets:LocalIcon Height="24" Icon="options" />
                                 <widgets:TranslatedTextBlock
+                                    Grid.Column="1"
                                     VerticalAlignment="Center"
                                     FontSize="16"
                                     FontWeight="SemiBold"
                                     Text="Installation options" />
-                            </StackPanel>
+                                <Button
+                                    x:Name="SaveInstallOptionsButton"
+                                    Grid.Column="2"
+                                    Height="34"
+                                    MinWidth="60"
+                                    Click="SaveInstallOptionsButton_Click"
+                                    CornerRadius="6"
+                                    IsEnabled="{x:Bind InstallOptionsExpander.IsExpanded, Mode=OneWay}"
+                                    Style="{ThemeResource AccentButtonStyle}">
+                                    <widgets:TranslatedTextBlock Text="Save" />
+                                </Button>
+                            </Grid>
                         </Expander.Header>
                     </Expander>
                 </Border>

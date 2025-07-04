@@ -97,6 +97,7 @@ namespace UniGetUI.Interface.Dialogs
             AdminCheckBox.IsChecked = Options.RunAsAdministrator;
             InteractiveCheckBox.IsChecked = Options.InteractiveInstallation;
             HashCheckbox.IsChecked = Options.SkipHashCheck;
+            UninstallPreviousOnUpdate.IsChecked = Options.UninstallPreviousVersionsOnUpdate;
 
             ArchitectureComboBox.Items.Add(CoreTools.Translate("Default"));
             ArchitectureComboBox.SelectedIndex = 0;
@@ -226,6 +227,9 @@ namespace UniGetUI.Interface.Dialogs
                     operation is not OperationType.Uninstall
                     && Package.Manager.Capabilities.CanSkipIntegrityChecks;
 
+                UninstallPreviousOnUpdate.IsEnabled = Package.Manager.Capabilities.CanUninstallPreviousVersionsAfterUpdate;
+                UninstallPreviousOnUpdate.Visibility = Package.Manager.Capabilities.CanUninstallPreviousVersionsAfterUpdate? Visibility.Visible: Visibility.Collapsed;
+
                 ArchitectureComboBox.IsEnabled =
                     operation is not OperationType.Uninstall
                     && Package.Manager.Capabilities.SupportsCustomArchitectures;
@@ -302,6 +306,7 @@ namespace UniGetUI.Interface.Dialogs
             Options.RunAsAdministrator = AdminCheckBox?.IsChecked ?? false;
             Options.InteractiveInstallation = InteractiveCheckBox?.IsChecked ?? false;
             Options.SkipHashCheck = HashCheckbox?.IsChecked ?? false;
+            Options.UninstallPreviousVersionsOnUpdate = UninstallPreviousOnUpdate?.IsChecked ?? false;
             Options.OverridesNextLevelOpts = !FollowGlobalOptionsSwitch.IsOn;
 
             Options.Architecture = "";
@@ -470,6 +475,17 @@ namespace UniGetUI.Interface.Dialogs
         private void SettingsTabBar_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             CommandLineViewBox.Visibility = SettingsTabBar.SelectedIndex < 3 ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        public void HideCloseButton()
+        {
+            CloseButton.Visibility = Visibility.Collapsed;
+            CloseButton.IsEnabled = false;
+        }
+
+        internal void HideHeaderBar()
+        {
+            HeaderBar.Visibility = Visibility.Collapsed;
         }
     }
 

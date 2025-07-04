@@ -23,7 +23,9 @@ using UniGetUI.Core.Classes;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.Pages.DialogPages;
+using WinUIEx;
 using TitleBar = WinUIEx.TitleBar;
+using WindowExtensions = H.NotifyIcon.WindowExtensions;
 
 namespace UniGetUI.Interface
 {
@@ -52,6 +54,9 @@ namespace UniGetUI.Interface
         public MainWindow()
         {
             DialogHelper.Window = this;
+
+            WindowManager.Get(this).IsMinimizable = false;
+            WindowManager.Get(this).IsMaximizable = false;
 
             InitializeComponent();
             DismissableNotification.CloseButtonContent = CoreTools.Translate("Close");
@@ -453,7 +458,7 @@ namespace UniGetUI.Interface
 
         public void HideWindow()
         {
-            this.Hide();
+            WindowExtensions.Hide(this);
         }
 
         private void LoadTrayMenu()
@@ -664,6 +669,9 @@ namespace UniGetUI.Interface
                 if(e.WindowActivationState is WindowActivationState.CodeActivated or WindowActivationState.PointerActivated)
                     MainContentFrame.Content = NavigationPage;
             };
+
+            WindowManager.Get(this).IsMinimizable = true;
+            WindowManager.Get(this).IsMaximizable = true;
         }
 
         public void ApplyTheme()
