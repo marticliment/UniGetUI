@@ -342,7 +342,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = status.ExecutablePath,
-                    Arguments = Status.ExecutableCallArgs + " version",
+                    Arguments = status.ExecutableCallArgs + " version",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,

@@ -202,11 +202,13 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
 
         protected override ManagerStatus LoadManager()
         {
+            var (found, executable) = GetManagerExecutablePath();
+
             ManagerStatus status = new()
             {
                 ExecutablePath = Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe"),
-                ExecutableCallArgs = $" -NoProfile -ExecutionPolicy Bypass -Command \"& \\\"{GetManagerExecutablePath().Item2}\\\"\"",
-                Found = GetManagerExecutablePath().Item1
+                ExecutableCallArgs = $"-NoProfile -ExecutionPolicy Bypass -Command \"{executable.Replace(" ", "` ")}\" ",
+                Found = found
             };
 
             if (!status.Found)
@@ -219,7 +221,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = status.ExecutablePath,
-                    Arguments = Status.ExecutableCallArgs + " --version",
+                    Arguments = status.ExecutableCallArgs + "--version",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,

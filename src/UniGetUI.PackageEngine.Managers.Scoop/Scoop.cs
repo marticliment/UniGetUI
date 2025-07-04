@@ -390,7 +390,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             ManagerStatus status = new()
             {
                 ExecutablePath = path,
-                ExecutableCallArgs = $" -NoProfile -ExecutionPolicy Bypass -Command \"& \\\"{GetManagerExecutablePath().Item2}\\\"\"",
+                ExecutableCallArgs = $"-NoProfile -ExecutionPolicy Bypass -Command \"& \\\"{GetManagerExecutablePath().Item2}\\\"\" ",
                 Found = GetManagerExecutablePath().Item1,
             };
 
@@ -399,7 +399,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = status.ExecutablePath,
-                    Arguments = Status.ExecutableCallArgs + " --version",
+                    Arguments = status.ExecutableCallArgs + "--version",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,

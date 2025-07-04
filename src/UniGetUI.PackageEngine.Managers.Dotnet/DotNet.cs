@@ -136,7 +136,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
             var (found, path) = GetManagerExecutablePath();
             status.ExecutablePath = path;
             status.Found = found;
-            status.ExecutableCallArgs = "tool";
+            status.ExecutableCallArgs = "tool ";
 
             if (!status.Found)
             {
@@ -148,7 +148,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = status.ExecutablePath,
-                    Arguments = "tool -h",
+                    Arguments = status.ExecutableCallArgs + "-h",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,

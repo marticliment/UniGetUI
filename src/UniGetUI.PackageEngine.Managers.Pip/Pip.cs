@@ -341,7 +341,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             var (found, path) = GetManagerExecutablePath();
             status.ExecutablePath = path;
             status.Found = found;
-            status.ExecutableCallArgs = " -m pip";
+            status.ExecutableCallArgs = "-m pip ";
 
             if (!status.Found)
             {
@@ -353,7 +353,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = status.ExecutablePath,
-                    Arguments = Status.ExecutableCallArgs + " --version " + GetProxyArgument(),
+                    Arguments = status.ExecutableCallArgs + "--version " + GetProxyArgument(),
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
