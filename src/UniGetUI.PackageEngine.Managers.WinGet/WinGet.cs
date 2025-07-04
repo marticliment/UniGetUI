@@ -71,7 +71,6 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 InstallVerb = "install",
                 UninstallVerb = "uninstall",
                 UpdateVerb = "update",
-                ExecutableCallArgs = "",
                 KnownSources = [ new ManagerSource(this, "winget", new Uri("https://cdn.winget.microsoft.com/cache")),
                                  new ManagerSource(this, "msstore", new Uri("https://storeedgefd.dsx.mp.microsoft.com/v9.0")) ],
                 DefaultSource = new ManagerSource(this, "winget", new Uri("https://cdn.winget.microsoft.com/cache"))
@@ -186,6 +185,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
             var (found, path) = GetManagerExecutablePath();
             status.ExecutablePath = path;
+            status.ExecutableCallArgs = "";
             status.Found = found;
 
             if (!status.Found)
@@ -212,7 +212,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " --version",
+                    Arguments = Status.ExecutableCallArgs + " --version",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
@@ -353,7 +353,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " source update --disable-interactivity " + GetProxyArgument(),
+                    Arguments = Status.ExecutableCallArgs + " source update --disable-interactivity " + GetProxyArgument(),
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,

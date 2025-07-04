@@ -64,7 +64,6 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 InstallVerb = "install",
                 UninstallVerb = "uninstall",
                 UpdateVerb = "install --upgrade",
-                ExecutableCallArgs = " -m pip",
                 DefaultSource = new ManagerSource(this, "pip", new Uri("https://pypi.org/")),
                 KnownSources = [new ManagerSource(this, "pip", new Uri("https://pypi.org/"))],
 
@@ -103,7 +102,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                     StartInfo = new ProcessStartInfo
                     {
                         FileName = Status.ExecutablePath,
-                        Arguments = Properties.ExecutableCallArgs + " install parse_pip_search " + GetProxyArgument(),
+                        Arguments = Status.ExecutableCallArgs + " install parse_pip_search " + GetProxyArgument(),
                         UseShellExecute = false,
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,
@@ -186,7 +185,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " list --outdated " + GetProxyArgument(),
+                    Arguments = Status.ExecutableCallArgs + " list --outdated " + GetProxyArgument(),
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
@@ -248,7 +247,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " list " + GetProxyArgument(),
+                    Arguments = Status.ExecutableCallArgs + " list " + GetProxyArgument(),
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
@@ -342,6 +341,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             var (found, path) = GetManagerExecutablePath();
             status.ExecutablePath = path;
             status.Found = found;
+            status.ExecutableCallArgs = " -m pip";
 
             if (!status.Found)
             {
@@ -353,7 +353,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " --version " + GetProxyArgument(),
+                    Arguments = Status.ExecutableCallArgs + " --version " + GetProxyArgument(),
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,

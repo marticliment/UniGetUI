@@ -62,7 +62,6 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 { "x86-windows", new ManagerSource(this, "x86-windows", URI_VCPKG_IO) }
             };
 
-            string vcpkgRoot = Settings.GetValue(Settings.K.CustomVcpkgRoot);
             Properties = new ManagerProperties
             {
                 Name = "vcpkg",
@@ -74,7 +73,6 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 InstallVerb = "install",
                 UninstallVerb = "remove",
                 UpdateVerb = "upgrade",
-                ExecutableCallArgs = vcpkgRoot == "" ? "" : $" --vcpkg-root=\"{vcpkgRoot}\"",
                 DefaultSource = new ManagerSource(this, DefaultTriplet, URI_VCPKG_IO),
                 KnownSources = [.. TripletSourceMap.Values],
             };
@@ -93,7 +91,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + $" search \"{CoreTools.EnsureSafeQueryString(query)}\"",
+                    Arguments = Status.ExecutableCallArgs + $" search \"{CoreTools.EnsureSafeQueryString(query)}\"",
                     // vcpkg has an --x-json flag that would list installed packages in JSON, but it doesn't work for this call (as of 2024-09-30-ab8988503c7cffabfd440b243a383c0a352a023d)
                     // TODO: Perhaps use --x-json when it is fixed
                     RedirectStandardOutput = true,
@@ -176,7 +174,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " update",
+                    Arguments = Status.ExecutableCallArgs + " update",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
@@ -230,7 +228,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " list",
+                    Arguments = Status.ExecutableCallArgs + " list",
                     // vcpkg has an --x-json flag that would list installed packages in JSON, but it's experimental
                     // TODO: Once --x-json is stable migrate to --x-json
                     RedirectStandardOutput = true,
@@ -344,7 +342,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " version",
+                    Arguments = Status.ExecutableCallArgs + " version",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
@@ -356,6 +354,9 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             process.Start();
             status.Version = process.StandardOutput.ReadLine()?.Trim() ?? "";
             status.Version += $"\n%VCPKG_ROOT% = {rootPath}";
+
+            string vcpkgRoot = Settings.GetValue(Settings.K.CustomVcpkgRoot);
+            status.ExecutableCallArgs = vcpkgRoot == "" ? "" : $" --vcpkg-root=\"{vcpkgRoot}\"";
 
             return status;
         }

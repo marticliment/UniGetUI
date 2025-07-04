@@ -70,7 +70,6 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 Description = CoreTools.Translate("Great repository of unknown but useful utilities and other interesting packages.<br>Contains: <b>Utilities, Command-line programs, General Software (extras bucket required)</b>"),
                 IconId = IconType.Scoop,
                 ColorIconId = "scoop_color",
-                ExecutableCallArgs = $" -NoProfile -ExecutionPolicy Bypass -Command \"& \\\"{GetManagerExecutablePath().Item2}\\\"\"",
                 ExecutableFriendlyName = "scoop",
                 InstallVerb = "install",
                 UpdateVerb = "update",
@@ -105,7 +104,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     StartInfo = new ProcessStartInfo
                     {
                         FileName = Status.ExecutablePath,
-                        Arguments = Properties.ExecutableCallArgs + " install main/scoop-search",
+                        Arguments = Status.ExecutableCallArgs + " install main/scoop-search",
                         UseShellExecute = false,
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,
@@ -200,7 +199,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " status",
+                    Arguments = Status.ExecutableCallArgs + " status",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
@@ -279,7 +278,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " list",
+                    Arguments = Status.ExecutableCallArgs + " list",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
@@ -355,7 +354,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             ProcessStartInfo StartInfo = new()
             {
                 FileName = Status.ExecutablePath,
-                Arguments = Properties.ExecutableCallArgs + " update",
+                Arguments = Status.ExecutableCallArgs + " update",
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
@@ -391,7 +390,8 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             ManagerStatus status = new()
             {
                 ExecutablePath = path,
-                Found = GetManagerExecutablePath().Item1
+                ExecutableCallArgs = $" -NoProfile -ExecutionPolicy Bypass -Command \"& \\\"{GetManagerExecutablePath().Item2}\\\"\"",
+                Found = GetManagerExecutablePath().Item1,
             };
 
             Process process = new()
@@ -399,7 +399,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " --version",
+                    Arguments = Status.ExecutableCallArgs + " --version",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
@@ -430,7 +430,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     StartInfo = new ProcessStartInfo
                     {
                         FileName = Status.ExecutablePath,
-                        Arguments = Properties.ExecutableCallArgs + " " + command,
+                        Arguments = Status.ExecutableCallArgs + " " + command,
                         UseShellExecute = false,
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,

@@ -64,7 +64,6 @@ public partial class Cargo : PackageManager
             InstallVerb = "binstall",
             UninstallVerb = "uninstall",
             UpdateVerb = "binstall",
-            ExecutableCallArgs = "",
             DefaultSource = cratesIo,
             KnownSources = [cratesIo]
         };
@@ -158,7 +157,7 @@ public partial class Cargo : PackageManager
             Logger.Error("cargo version error: " + error);
         }
 
-        return new() { ExecutablePath = executablePath, Found = found, Version = version };
+        return new() { ExecutablePath = executablePath, Found = found, Version = version, ExecutableCallArgs = ""};
     }
 
     private IReadOnlyList<Package> GetPackages(LoggableTaskType taskType)
@@ -209,7 +208,7 @@ public partial class Cargo : PackageManager
             StartInfo = new ProcessStartInfo
             {
                 FileName = fileName,
-                Arguments = Properties.ExecutableCallArgs + " " + extraArguments,
+                Arguments = Status.ExecutableCallArgs + " " + extraArguments,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,

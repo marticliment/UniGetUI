@@ -47,7 +47,6 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                 InstallVerb = "install",
                 UninstallVerb = "uninstall",
                 UpdateVerb = "update",
-                ExecutableCallArgs = "tool",
                 DefaultSource = new ManagerSource(this, "nuget.org", new Uri("https://www.nuget.org/api/v2")),
                 KnownSources = [new ManagerSource(this, "nuget.org", new Uri("https://www.nuget.org/api/v2"))],
             };
@@ -66,7 +65,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                     StartInfo = new ProcessStartInfo
                     {
                         FileName = Status.ExecutablePath,
-                        Arguments = Properties.ExecutableCallArgs + " list" + (options.Scope == PackageScope.Global ? " --global" : ""),
+                        Arguments = Status.ExecutableCallArgs + " list" + (options.Scope == PackageScope.Global ? " --global" : ""),
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,
                         UseShellExecute = false,
@@ -137,6 +136,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
             var (found, path) = GetManagerExecutablePath();
             status.ExecutablePath = path;
             status.Found = found;
+            status.ExecutableCallArgs = "tool";
 
             if (!status.Found)
             {

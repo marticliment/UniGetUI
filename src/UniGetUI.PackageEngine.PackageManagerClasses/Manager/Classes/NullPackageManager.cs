@@ -43,7 +43,6 @@ namespace UniGetUI.PackageEngine.Classes.Manager
                 Description = "Unset",
                 IconId = IconType.Help,
                 ColorIconId = "Unset",
-                ExecutableCallArgs = "Unset",
                 ExecutableFriendlyName = "Unset",
                 InstallVerb = "Unset",
                 UpdateVerb = "Unset",
@@ -55,6 +54,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager
             Status = new ManagerStatus
             {
                 ExecutablePath = "C:/file.exe",
+                ExecutableCallArgs = "Unset",
                 Found = false,
                 Version = "0"
             };

@@ -96,7 +96,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                                (Status.Found ?
                                "\n█ Fancy exe name: " + Properties.ExecutableFriendlyName +
                                "\n█ Executable path: " + Status.ExecutablePath +
-                               "\n█ Call arguments: " + Properties.ExecutableCallArgs +
+                               "\n█ Call arguments: " + Status.ExecutableCallArgs +
                                "\n█ Version: \n" + "█   " + Status.Version.Replace("\n", "\n█   ")
                                :
                                "\n█ THE MANAGER WAS NOT FOUND. PERHAPS IT IS NOT " +

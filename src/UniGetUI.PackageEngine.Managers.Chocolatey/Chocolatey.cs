@@ -54,7 +54,6 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 InstallVerb = "install",
                 UninstallVerb = "uninstall",
                 UpdateVerb = "upgrade",
-                ExecutableCallArgs = "",
                 KnownSources = [new ManagerSource(this, "community", new Uri("https://community.chocolatey.org/api/v2/"))],
                 DefaultSource = new ManagerSource(this, "community", new Uri("https://community.chocolatey.org/api/v2/")),
 
@@ -89,7 +88,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " outdated " + GetProxyArgument(),
+                    Arguments = Status.ExecutableCallArgs + " outdated " + GetProxyArgument(),
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     RedirectStandardInput = true,
@@ -143,7 +142,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " list " + GetProxyArgument(),
+                    Arguments = Status.ExecutableCallArgs + " list " + GetProxyArgument(),
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     RedirectStandardInput = true,
@@ -314,6 +313,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             }
 
             (status.Found, status.ExecutablePath) = GetManagerExecutablePath();
+            status.ExecutableCallArgs = "";
 
             if (!status.Found)
             {

@@ -47,7 +47,6 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 InstallVerb = "Install-Module",
                 UninstallVerb = "Uninstall-Module",
                 UpdateVerb = "Update-Module",
-                ExecutableCallArgs = " -NoProfile -Command",
                 KnownSources = [new ManagerSource(this, "PSGallery", new Uri("https://www.powershellgallery.com/api/v2")),
                                 new ManagerSource(this, "PoshTestGallery", new Uri("https://www.poshtestgallery.com/api/v2"))],
                 DefaultSource = new ManagerSource(this, "PSGallery", new Uri("https://www.powershellgallery.com/api/v2")),
@@ -65,7 +64,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " Get-InstalledModule",
+                    Arguments = Status.ExecutableCallArgs + " Get-InstalledModule",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     RedirectStandardInput = true,
@@ -134,7 +133,8 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             ManagerStatus status = new()
             {
                 ExecutablePath = path,
-                Found = found
+                Found = found,
+                ExecutableCallArgs = " -NoProfile -Command",
             };
 
             if (!status.Found)
@@ -147,7 +147,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " \"echo $PSVersionTable\"",
+                    Arguments = Status.ExecutableCallArgs + " \"echo $PSVersionTable\"",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,

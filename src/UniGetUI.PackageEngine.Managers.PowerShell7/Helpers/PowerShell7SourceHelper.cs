@@ -47,7 +47,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
                 StartInfo = new()
                 {
                     FileName = Manager.Status.ExecutablePath,
-                    Arguments = Manager.Properties.ExecutableCallArgs + " \"Get-PSRepository | Format-Table -Property " +
+                    Arguments = Manager.Status.ExecutableCallArgs + " \"Get-PSRepository | Format-Table -Property " +
                                 "Name,@{N='SourceLocation';E={If ($_.Uri) {$_.Uri.AbsoluteUri} Else {$_.SourceLocation}}}\"",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,

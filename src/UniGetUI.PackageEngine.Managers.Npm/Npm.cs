@@ -37,7 +37,6 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 InstallVerb = "install",
                 UninstallVerb = "uninstall",
                 UpdateVerb = "install",
-                ExecutableCallArgs = $" -NoProfile -ExecutionPolicy Bypass -Command \"& \\\"{GetManagerExecutablePath().Item2}\\\"\"",
                 DefaultSource = new ManagerSource(this, "npm", new Uri("https://www.npmjs.com/")),
                 KnownSources = [new ManagerSource(this, "npm", new Uri("https://www.npmjs.com/"))],
 
@@ -54,7 +53,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " search \"" + query + "\" --json",
+                    Arguments = Status.ExecutableCallArgs + " search \"" + query + "\" --json",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     RedirectStandardInput = true,
@@ -106,7 +105,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                     StartInfo = new ProcessStartInfo
                     {
                         FileName = Status.ExecutablePath,
-                        Arguments = Properties.ExecutableCallArgs + " outdated --json" + (options.Scope == PackageScope.Global ? " --global" : ""),
+                        Arguments = Status.ExecutableCallArgs + " outdated --json" + (options.Scope == PackageScope.Global ? " --global" : ""),
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,
                         RedirectStandardInput = true,
@@ -152,7 +151,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                     StartInfo = new ProcessStartInfo
                     {
                         FileName = Status.ExecutablePath,
-                        Arguments = Properties.ExecutableCallArgs + " list --json" + (options.Scope == PackageScope.Global ? " --global" : ""),
+                        Arguments = Status.ExecutableCallArgs + " list --json" + (options.Scope == PackageScope.Global ? " --global" : ""),
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,
                         RedirectStandardInput = true,
@@ -189,8 +188,8 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
 
         public override IReadOnlyList<string> LoadAvailablePaths()
         {
-            var Paths = CoreTools.WhichMultiple("npm.ps1");
-            foreach (string Path in CoreTools.WhichMultiple("npm"))
+            /*var Paths =*/ return CoreTools.WhichMultiple("npm.ps1");
+            /*foreach (string Path in CoreTools.WhichMultiple("npm"))
             {
                 string ps1Path = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Path) ?? "", "npm.ps1");
                 if (File.Exists(ps1Path) && !Paths.Contains(ps1Path, StringComparer.OrdinalIgnoreCase))
@@ -198,7 +197,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                     Paths.Add(ps1Path);
                 }
             }
-            return Paths;
+            return Paths;*/
         }
 
         protected override ManagerStatus LoadManager()
@@ -206,6 +205,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             ManagerStatus status = new()
             {
                 ExecutablePath = Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe"),
+                ExecutableCallArgs = $" -NoProfile -ExecutionPolicy Bypass -Command \"& \\\"{GetManagerExecutablePath().Item2}\\\"\"",
                 Found = GetManagerExecutablePath().Item1
             };
 
@@ -219,7 +219,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " --version",
+                    Arguments = Status.ExecutableCallArgs + " --version",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,

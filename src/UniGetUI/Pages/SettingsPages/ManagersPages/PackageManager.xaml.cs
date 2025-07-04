@@ -70,7 +70,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             LongVersionTextBlock.Text = Manager.Status.Version + "\n";
             SetManagerStatus(false);
 
-            LocationLabel.Text = Manager.Status.ExecutablePath + Manager.Properties.ExecutableCallArgs;
+            LocationLabel.Text = Manager.Status.ExecutablePath + Manager.Status.ExecutableCallArgs;
             if (LocationLabel.Text == "") LocationLabel.Text = CoreTools.Translate("The executable file for {0} was not found", Manager.DisplayName);
             EnableManager.KeyName = Manager.Name;
             EnableManager.Text = CoreTools.Translate("Enable {pm}").Replace("{pm}", Manager.DisplayName);
