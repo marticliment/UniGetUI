@@ -68,5 +68,11 @@ namespace UniGetUI.PackageEngine.Interfaces
         /// an example
         /// </summary>
         public void AttemptFastRepair();
+
+        /// <summary>
+        /// Find all available executable files that apply to this package manager
+        /// </summary>
+        /// <returns></returns>
+        public IReadOnlyList<string> LoadAvailablePaths();
     }
 }

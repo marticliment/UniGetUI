@@ -89,7 +89,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
 
             ManagerLogsLabel.Text = CoreTools.Translate("View {0} logs", Manager.DisplayName);
 
-            HashSet<string> Paths = ((PackageManager)Manager).LoadAvailablePaths();
+            var Paths = Manager.LoadAvailablePaths();
             var (CurrentlyExists, CurrentPath) = ((PackageManager)Manager).GetManagerExecutablePath();
             foreach (string Path in Paths)
             {
