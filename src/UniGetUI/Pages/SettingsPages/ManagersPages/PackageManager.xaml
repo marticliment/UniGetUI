@@ -60,7 +60,7 @@
                 ContentAlignment="Vertical"
                 CornerRadius="0,0,0,0">
                 <controls:SettingsCard.Header>
-                    <TextBlock Text="Select the executable to be used. Only executables found in path will be shown" />
+                    <TextBlock Text="Select the executable to be used. The following list shows the executables found by UniGetUI" />
                 </controls:SettingsCard.Header>
                 <controls:SettingsCard.Content>
                     <Grid HorizontalAlignment="Left" RowSpacing="4" ColumnSpacing="4">

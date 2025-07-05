@@ -153,17 +153,17 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                 }
 
                 // While technically executables that are not in the path should work,
-                // since detection of executables will be performed in the path only, it is more consistent
-                // to throw an error when a non-path executable is used. Furthermore, doing this we can filter out
-                // any invalid paths or files
+                // since detection of executables will be performed on the found paths, it is more consistent
+                // to throw an error when a non-found executable is used. Furthermore, doing this we can filter out
+                // any invalid paths or files.
                 if (candidates.Select(x => x.ToLower()).Contains(exeSelection.ToLower()))
                 {
                     return new(true, exeSelection);
                 }
                 else
                 {
-                    Logger.Error($"The selected executable path {exeSelection} for manager {Name} was not found in path " +
-                                 $"(executables found in path are [{string.Join(',', candidates)}]), the default will be used...");
+                    Logger.Error($"The selected executable path {exeSelection} for manager {Name} was not found among the candidates " +
+                                 $"(executables found are [{string.Join(',', candidates)}]), the default will be used...");
                     return new(true, candidates[0]);
                 }
 
