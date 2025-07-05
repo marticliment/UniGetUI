@@ -66,7 +66,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
 
             if (file != string.Empty)
             {
-                DialogHelper.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
+                await DialogHelper.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
                 await Task.Run(() => Settings.ImportFromJSON(file));
                 DialogHelper.HideLoadingDialog();
                 ShowRestartBanner(this, new());
@@ -82,7 +82,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
 
                 if (file != string.Empty)
                 {
-                    DialogHelper.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
+                    await DialogHelper.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
                     await Task.Run(() => Settings.ExportToJSON(file));
                     DialogHelper.HideLoadingDialog();
                     CoreTools.ShowFileOnExplorer(file);

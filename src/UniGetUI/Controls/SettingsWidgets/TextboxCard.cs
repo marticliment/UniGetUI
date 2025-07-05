@@ -31,7 +31,8 @@ namespace UniGetUI.Interface.Widgets
 
         public string Text
         {
-            set => Header = CoreTools.Translate(value);
+            get => _textbox.Text;
+            set => _textbox.Text = value;
         }
 
         public Uri HelpUrl

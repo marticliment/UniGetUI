@@ -56,7 +56,7 @@ public partial class MainApp
             if (package is null) return null;
             try
             {
-                DialogHelper.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
+                await DialogHelper.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
 
                 var details = package.Details;
                 await details.Load();

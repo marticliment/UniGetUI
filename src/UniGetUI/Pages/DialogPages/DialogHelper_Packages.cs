@@ -166,12 +166,12 @@ public static partial class DialogHelper
         });
     }
 
-    private static async void GetPackageFromIdAndManager(string id, string managerName, string sourceName, string eventSource)
+    private static async Task GetPackageFromIdAndManager(string id, string managerName, string sourceName, string eventSource)
     {
         try
         {
             Window.Activate();
-            ShowLoadingDialog(CoreTools.Translate("Please wait..."));
+            await ShowLoadingDialog(CoreTools.Translate("Please wait..."));
 
             var findResult = await Task.Run(() => PEInterface.DiscoveredPackagesLoader.GetPackageFromIdAndManager(id, managerName, sourceName));
 

@@ -98,8 +98,33 @@
                 SettingName="EnableBackupTimestamping"
                 Text="Add a timestamp to the backup file names" />
 
+            <widgets:TranslatedTextBlock
+                Margin="4,32,4,8"
+                FontWeight="SemiBold"
+                Text="Pantry Cloud Backup" />
 
+            <StackPanel Orientation="Vertical" Spacing="0">
+                <PasswordBox
+                    x:Name="PantryIdPasswordBox"
+                    MinWidth="200"
+                    Margin="0,0,0,8"
+                    IsEnabled="{x:Bind EnablePackageBackupCheckBox._checkbox.IsOn, Mode=OneWay}"
+                    PlaceholderText="Enter your Pantry ID" />
+            </StackPanel>
 
+            <widgets:ButtonCard
+                x:Name="BackupToPantryButton"
+                ButtonText="Backup to Pantry"
+                Click="BackupToPantry_Click"
+                CornerRadius="0,0,8,8"
+                Text="Backup settings to Pantry" />
+
+            <widgets:ButtonCard
+                x:Name="RestoreBundleFromPantryButton"
+                ButtonText="Restore Bundle from Pantry"
+                Click="RestoreBundleFromPantry_Click"
+                CornerRadius="0,0,8,8"
+                Text="Restore package bundle from Pantry" />
 
         </StackPanel>
     </ScrollViewer>

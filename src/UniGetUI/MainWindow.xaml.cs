@@ -979,6 +979,21 @@ namespace UniGetUI.Interface
         {
             NavigationPage?.NavigateBack();
         }
+
+        public Task ShowTeachingTipAsync(string title, string message, Symbol icon, TeachingTipTailVisibility tailVisibility)
+        {
+            DispatcherQueue.TryEnqueue(() =>
+            {
+                DismissableNotification.Title = title;
+                DismissableNotification.Subtitle = message;
+                DismissableNotification.IconSource = new SymbolIconSource { Symbol = icon };
+                DismissableNotification.PreferredPlacement = TeachingTipPlacementMode.Auto;
+                DismissableNotification.TailVisibility = tailVisibility;
+                DismissableNotification.IsOpen = true;
+            });
+            return Task.CompletedTask;
+        }
+
     }
 
     public static class NativeHelpers
