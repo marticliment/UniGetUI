@@ -5,6 +5,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers
         public string Version = "";
         public bool Found = false;
         public string ExecutablePath = "";
+        public string ExecutableCallArgs { get; set; } = "Unset";
         public ManagerStatus()
         { }
     }

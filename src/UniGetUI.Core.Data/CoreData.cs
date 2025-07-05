@@ -7,8 +7,8 @@ namespace UniGetUI.Core.Data
     {
         private static int? __code_page;
         public static int CODE_PAGE { get => __code_page ??= GetCodePage(); }
-        public const string VersionName = "3.2.1-beta2"; // Do not modify this line, use file scripts/apply_versions.py
-        public const int BuildNumber = 92; // Do not modify this line, use file scripts/apply_versions.py
+        public const string VersionName = "3.2.1-beta3"; // Do not modify this line, use file scripts/apply_versions.py
+        public const int BuildNumber = 93; // Do not modify this line, use file scripts/apply_versions.py
 
         public const string UserAgentString = $"UniGetUI/{VersionName} (https://marticliment.com/unigetui/; contact@marticliment.com)";
 
@@ -390,5 +390,6 @@ namespace UniGetUI.Core.Data
             }
         }
 
+        public static readonly string PowerShell5 = Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe");
     }
 }

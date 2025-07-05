@@ -75,6 +75,7 @@ public static partial class Settings
         DisableSuccessNotifications,
         DisableProgressNotifications,
         KillProcessesThatRefuseToDie,
+        ManagerPaths,
 
         Test1,
         Test2,
@@ -161,6 +162,7 @@ public static partial class Settings
             K.DisableSuccessNotifications => "DisableSuccessNotifications",
             K.DisableProgressNotifications => "DisableProgressNotifications",
             K.KillProcessesThatRefuseToDie => "KillProcessesThatRefuseToDie",
+            K.ManagerPaths => "ManagerPaths",
 
             K.Test1 => "TestSetting1",
             K.Test2 => "TestSetting2",

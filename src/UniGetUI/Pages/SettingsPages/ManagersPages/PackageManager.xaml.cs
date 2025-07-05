@@ -21,6 +21,10 @@ using UniGetUI.Interface.Widgets;
 using UniGetUI.Core.Data;
 using UniGetUI.Pages.DialogPages;
 using UniGetUI.Core.SettingsEngine;
+using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using UniGetUI.Core.Logging;
+using UniGetUI.Core.SettingsEngine.SecureSettings;
+using UniGetUI.Interface;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -37,7 +41,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         public event EventHandler<Type>? NavigationRequested;
         public event EventHandler? ReapplyProperties;
         public bool CanGoBack => true;
-        public string ShortTitle => Manager is null? "": CoreTools.Translate("{0} settings", Manager.DisplayName);
+        public string ShortTitle => Manager is null ? "" : CoreTools.Translate("{0} settings", Manager.DisplayName);
 
         public PackageManagerPage()
         {
@@ -67,7 +71,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             LongVersionTextBlock.Text = Manager.Status.Version + "\n";
             SetManagerStatus(false);
 
-            LocationLabel.Text = Manager.Status.ExecutablePath + Manager.Properties.ExecutableCallArgs;
+            LocationLabel.Text = Manager.Status.ExecutablePath + " " + Manager.Status.ExecutableCallArgs.Trim();
             if (LocationLabel.Text == "") LocationLabel.Text = CoreTools.Translate("The executable file for {0} was not found", Manager.DisplayName);
             EnableManager.KeyName = Manager.Name;
             EnableManager.Text = CoreTools.Translate("Enable {pm}").Replace("{pm}", Manager.DisplayName);
@@ -86,18 +90,39 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
 
             ManagerLogsLabel.Text = CoreTools.Translate("View {0} logs", Manager.DisplayName);
 
+            // ----------------- EXECUTABLE FILE PICKER -----------------
+            ExeFileWarningText.Visibility = SecureSettings.Get(SecureSettings.K.AllowCustomManagerPaths) ? Visibility.Collapsed : Visibility.Visible;
+            GoToSecureSettingsBtn.Visibility = SecureSettings.Get(SecureSettings.K.AllowCustomManagerPaths) ? Visibility.Collapsed : Visibility.Visible;
+            ExecutableComboBox.IsEnabled = SecureSettings.Get(SecureSettings.K.AllowCustomManagerPaths);
+            ExecutableComboBox.Items.Clear();
+            foreach(var path in Manager.FindCandidateExecutableFiles())
+            {
+                ExecutableComboBox.Items.Add(path);
+            }
+
+            string selectedValue = Settings.GetDictionaryItem<string, string>(Settings.K.ManagerPaths, Manager.Name) ?? "";
+            if (string.IsNullOrEmpty(selectedValue))
+            {
+                var exe = Manager.GetExecutableFile();
+                selectedValue = exe.Item1? exe.Item2: "";
+            }
+
+            ExecutableComboBox.SelectedValue = selectedValue;
+            ExecutableComboBox.SelectionChanged += ExecutableComboBox_SelectionChanged;
+
             InstallOptionsPanel.Description = new InstallOptions_Manager(Manager);
 
             // ----------------------- SOURCES CONTROL -------------------
 
             ExtraControls.Children.Clear();
 
-            if(Manager.Capabilities.SupportsCustomSources && Manager is not Vcpkg)
+            if (Manager.Capabilities.SupportsCustomSources && Manager is not Vcpkg)
             {
-                SettingsCard SourceManagerCard = new() {
+                SettingsCard SourceManagerCard = new()
+                {
                     Resources = { ["SettingsCardLeftIndention"] = 10 },
                     CornerRadius = new CornerRadius(8),
-                    Margin = new Thickness(0,0,0,16)
+                    Margin = new Thickness(0, 0, 0, 16)
                 };
                 var man = new SourceManager(Manager);
                 SourceManagerCard.Description = man;
@@ -334,7 +359,18 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 ExtraControls.Children.Add(DisableNotifsCard);
             }
 
-                base.OnNavigatedTo(e);
+            // Hide the AppExecutionAliasWarning element if Manager is not Pip
+            if (Manager is Pip)
+            {
+                ManagerLogs.CornerRadius = new CornerRadius(8, 8, 0, 0);
+                AppExecutionAliasWarningLabel.Text = "If Python cannot be found or is not listing packages but is installed on the system, you may need to disable the \"python.exe\" App Execution Alias in the settings.";
+            }
+            else
+            {
+                AppExecutionAliasWarning.Visibility = Visibility.Collapsed;
+            }
+
+            base.OnNavigatedTo(e);
         }
 
         private void ShowVersionHyperlink_Click(object sender, RoutedEventArgs e)
@@ -353,7 +389,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 if (!Manager.Status.Version.Contains('\n'))
                 {
                     ManagerStatusBar.Message =
-                        CoreTools.Translate("{pm} version:", new Dictionary<string, object?> {{ "pm", Manager.DisplayName }}) + $" {Manager.Status.Version}";
+                        CoreTools.Translate("{pm} version:", new Dictionary<string, object?> { { "pm", Manager.DisplayName } }) + $" {Manager.Status.Version}";
                 }
                 else if (ShowVersion)
                 {
@@ -397,6 +433,20 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         private void ManagerLogs_Click(object sender, RoutedEventArgs e)
         {
             MainApp.Instance.MainWindow.NavigationPage.OpenManagerLogs(Manager as IPackageManager);
+        }
+
+        private void ExecutableComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(ExecutableComboBox.SelectedValue.ToString()))
+                return;
+
+            Settings.SetDictionaryItem(Settings.K.ManagerPaths, Manager!.Name, ExecutableComboBox.SelectedValue.ToString());
+            RestartRequired?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void GoToSecureSettingsBtn_Click(object sender, RoutedEventArgs e)
+        {
+            MainApp.Instance.MainWindow.NavigationPage.OpenSettingsPage(typeof(Administrator));
         }
     }
 }

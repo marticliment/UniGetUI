@@ -53,8 +53,65 @@
                 </InfoBar.Content>
             </InfoBar>
             <controls:SettingsCard
+                x:Name="ManagerExecutable"
+                Padding="24,16,24,16"
+                HorizontalContentAlignment="Left"
+                BorderThickness="1,0,1,1"
+                ContentAlignment="Vertical"
+                CornerRadius="0,0,0,0">
+                <controls:SettingsCard.Header>
+                    <TextBlock Text="Select the executable to be used. The following list shows the executables found by UniGetUI" />
+                </controls:SettingsCard.Header>
+                <controls:SettingsCard.Content>
+                    <Grid HorizontalAlignment="Left" RowSpacing="4" ColumnSpacing="4">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <widgets:TranslatedTextBlock
+                            Grid.ColumnSpan="2"
+                            FontSize="12"
+                            FontWeight="SemiBold"
+                            Opacity="0.7"
+                            Text="Not finding the file you are looking for? Make sure it has been added to path." />
+                        <ComboBox
+                            x:Name="ExecutableComboBox"
+                            Grid.Row="1"
+                            Grid.ColumnSpan="2"
+                            HorizontalAlignment="Stretch" />
+                        <widgets:TranslatedTextBlock
+                            x:Name="ExeFileWarningText"
+                            Grid.Row="2"
+                            VerticalAlignment="Center"
+                            FontSize="12"
+                            FontWeight="SemiBold"
+                            Foreground="{ThemeResource SystemErrorTextColor}"
+                            Opacity="0.7"
+                            Text="For security reasons, changing the executable file is disabled by default"
+                            WrappingMode="Wrap" />
+                        <HyperlinkButton
+                            x:Name="GoToSecureSettingsBtn"
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            Padding="0"
+                            Click="GoToSecureSettingsBtn_Click">
+                            <widgets:TranslatedTextBlock
+                                FontSize="12"
+                                FontWeight="SemiBold"
+                                Text="Change this" />
+                        </HyperlinkButton>
+                    </Grid>
+                </controls:SettingsCard.Content>
+            </controls:SettingsCard>
+
+            <controls:SettingsCard
                 x:Name="ManagerPath"
-                Padding="24,0,0,0"
+                Padding="24,8,0,8"
                 BorderThickness="1,0,1,1"
                 Click="ManagerPath_Click"
                 CornerRadius="0,0,8,8"
@@ -69,6 +126,14 @@
                         Margin="0"
                         Symbol="Copy" />
                 </controls:SettingsCard.Content>
+                <controls:SettingsCard.Header>
+                    <TextBlock
+                        Grid.ColumnSpan="2"
+                        FontSize="12"
+                        FontWeight="SemiBold"
+                        Opacity="0.7"
+                        Text="Current executable file:" />
+                </controls:SettingsCard.Header>
                 <controls:SettingsCard.Description>
                     <TextBlock
                         Name="LocationLabel"
@@ -120,6 +185,24 @@
                 <controls:SettingsCard.Description>
                     <TextBlock
                         x:Name="ManagerLogsLabel"
+                        FontFamily="Consolas"
+                        FontSize="14"
+                        TextWrapping="Wrap" />
+                </controls:SettingsCard.Description>
+            </controls:SettingsCard>
+
+            <controls:SettingsCard
+                x:Name="AppExecutionAliasWarning"
+                BorderThickness="1,0,1,1"
+                CornerRadius="0,0,8,8"
+                IsClickEnabled="False">
+                <controls:SettingsCard.HeaderIcon>
+                    <widgets:LocalIcon Icon="Settings" />
+                </controls:SettingsCard.HeaderIcon>
+
+                <controls:SettingsCard.Description>
+                    <TextBlock
+                        x:Name="AppExecutionAliasWarningLabel"
                         FontFamily="Consolas"
                         FontSize="14"
                         TextWrapping="Wrap" />

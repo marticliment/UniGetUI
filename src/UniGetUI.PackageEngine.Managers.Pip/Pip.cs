@@ -24,7 +24,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 // parse_pip_search is required for pip package finding to work
                 new ManagerDependency(
                     "parse-pip-search",
-                    Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe"),
+                    CoreData.PowerShell5,
                     "-ExecutionPolicy Bypass -NoLogo -NoProfile -Command \"& {python.exe "
                         + "-m pip install parse_pip_search; if($error.count -ne 0){pause}}\"",
                     "python -m pip install parse_pip_search",
@@ -64,7 +64,6 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 InstallVerb = "install",
                 UninstallVerb = "uninstall",
                 UpdateVerb = "install --upgrade",
-                ExecutableCallArgs = " -m pip",
                 DefaultSource = new ManagerSource(this, "pip", new Uri("https://pypi.org/")),
                 KnownSources = [new ManagerSource(this, "pip", new Uri("https://pypi.org/"))],
 
@@ -103,7 +102,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                     StartInfo = new ProcessStartInfo
                     {
                         FileName = Status.ExecutablePath,
-                        Arguments = Properties.ExecutableCallArgs + " install parse_pip_search " + GetProxyArgument(),
+                        Arguments = Status.ExecutableCallArgs + " install parse_pip_search " + GetProxyArgument(),
                         UseShellExecute = false,
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,
@@ -186,7 +185,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " list --outdated " + GetProxyArgument(),
+                    Arguments = Status.ExecutableCallArgs + " list --outdated " + GetProxyArgument(),
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
@@ -248,7 +247,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " list " + GetProxyArgument(),
+                    Arguments = Status.ExecutableCallArgs + " list " + GetProxyArgument(),
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
@@ -302,13 +301,44 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             return Packages;
         }
 
+        public override IReadOnlyList<string> FindCandidateExecutableFiles()
+        {
+            var FoundPaths = CoreTools.WhichMultiple("python");
+            List<string> Paths = [];
+
+            if (FoundPaths.Any()) foreach (var Path in FoundPaths) Paths.Add(Path);
+
+            try
+            {
+                List<string> DirsToSearch = [];
+                string ProgramFiles = @"C:\Program Files";
+                string? UserPythonInstallDir = null;
+                string? AppData = Environment.GetEnvironmentVariable("APPDATA");
+
+                if (AppData != null)
+                    UserPythonInstallDir = Path.Combine(AppData, "Programs", "Python");
+
+                if (Directory.Exists(ProgramFiles)) DirsToSearch.Add(ProgramFiles);
+                if (Directory.Exists(UserPythonInstallDir)) DirsToSearch.Add(UserPythonInstallDir);
+
+                foreach (var Dir in DirsToSearch)
+                {
+                    string DirName = Path.GetFileName(Dir);
+                    string PythonPath = Path.Join(Dir, "python.exe");
+                    if (DirName.StartsWith("Python") && File.Exists(PythonPath))
+                        Paths.Add(PythonPath);
+                }
+            }
+            catch (Exception) { }
+
+            return Paths;
+        }
+
         protected override ManagerStatus LoadManager()
         {
-            ManagerStatus status = new();
+            var (found, path) = GetExecutableFile();
 
-            var (found, path) = CoreTools.Which("python.exe");
-            status.ExecutablePath = path;
-            status.Found = found;
+            ManagerStatus status = new() { ExecutablePath = path, Found = found, ExecutableCallArgs = "-m pip " };
 
             if (!status.Found)
             {
@@ -320,7 +350,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " --version " + GetProxyArgument(),
+                    Arguments = status.ExecutableCallArgs + "--version " + GetProxyArgument(),
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,

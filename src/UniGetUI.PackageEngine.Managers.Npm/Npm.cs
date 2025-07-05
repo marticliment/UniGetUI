@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Text.Json.Nodes;
+using UniGetUI.Core.Data;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Manager;
@@ -37,7 +38,6 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 InstallVerb = "install",
                 UninstallVerb = "uninstall",
                 UpdateVerb = "install",
-                ExecutableCallArgs = " -NoProfile -ExecutionPolicy Bypass -Command npm",
                 DefaultSource = new ManagerSource(this, "npm", new Uri("https://www.npmjs.com/")),
                 KnownSources = [new ManagerSource(this, "npm", new Uri("https://www.npmjs.com/"))],
 
@@ -54,7 +54,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " search \"" + query + "\" --json",
+                    Arguments = Status.ExecutableCallArgs + " search \"" + query + "\" --json",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     RedirectStandardInput = true,
@@ -106,7 +106,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                     StartInfo = new ProcessStartInfo
                     {
                         FileName = Status.ExecutablePath,
-                        Arguments = Properties.ExecutableCallArgs + " outdated --json" + (options.Scope == PackageScope.Global ? " --global" : ""),
+                        Arguments = Status.ExecutableCallArgs + " outdated --json" + (options.Scope == PackageScope.Global ? " --global" : ""),
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,
                         RedirectStandardInput = true,
@@ -152,7 +152,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                     StartInfo = new ProcessStartInfo
                     {
                         FileName = Status.ExecutablePath,
-                        Arguments = Properties.ExecutableCallArgs + " list --json" + (options.Scope == PackageScope.Global ? " --global" : ""),
+                        Arguments = Status.ExecutableCallArgs + " list --json" + (options.Scope == PackageScope.Global ? " --global" : ""),
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,
                         RedirectStandardInput = true,
@@ -187,12 +187,29 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             return Packages;
         }
 
+        public override IReadOnlyList<string> FindCandidateExecutableFiles()
+        {
+            /*var Paths =*/ return CoreTools.WhichMultiple("npm.ps1");
+            /*foreach (string Path in CoreTools.WhichMultiple("npm"))
+            {
+                string ps1Path = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Path) ?? "", "npm.ps1");
+                if (File.Exists(ps1Path) && !Paths.Contains(ps1Path, StringComparer.OrdinalIgnoreCase))
+                {
+                    Paths.Add(ps1Path);
+                }
+            }
+            return Paths;*/
+        }
+
         protected override ManagerStatus LoadManager()
         {
+            var (found, executable) = GetExecutableFile();
+
             ManagerStatus status = new()
             {
-                ExecutablePath = Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe"),
-                Found = CoreTools.Which("npm").Item1
+                ExecutablePath = CoreData.PowerShell5,
+                ExecutableCallArgs = $"-NoProfile -ExecutionPolicy Bypass -Command \"{executable.Replace(" ", "` ")}\" ",
+                Found = found
             };
 
             if (!status.Found)
@@ -205,7 +222,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " --version",
+                    Arguments = status.ExecutableCallArgs + "--version",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,

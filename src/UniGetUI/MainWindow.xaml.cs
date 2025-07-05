@@ -56,7 +56,7 @@ namespace UniGetUI.Interface
             DialogHelper.Window = this;
 
             WindowManager.Get(this).IsMinimizable = false;
-            WindowManager.Get(this).IsMaximizable = false;
+            // WindowManager.Get(this).IsMaximizable = false;
 
             InitializeComponent();
             DismissableNotification.CloseButtonContent = CoreTools.Translate("Close");

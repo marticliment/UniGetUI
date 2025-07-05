@@ -1,10 +1,10 @@
 {
     "package_count": {
         "total": 11841,
-        "done": 5342,
-        "packages_with_icon": 5342,
-        "packages_with_screenshot": 706,
-        "total_screenshots": 2178
+        "done": 5345,
+        "packages_with_icon": 5345,
+        "packages_with_screenshot": 709,
+        "total_screenshots": 2190
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -23195,7 +23195,7 @@
             "images": []
         },
         "librewolf": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/LibreWolf_icon.svg/480px-LibreWolf_icon.svg.png",
             "images": []
         },
         "libsndfile": {
@@ -24409,8 +24409,14 @@
             "images": []
         },
         "markdownmonster": {
-            "icon": "https://community.chocolatey.org/content/packageimages/MarkdownMonster.2.8.6.png",
-            "images": []
+            "icon": "https://markdownmonster.west-wind.com/Images/MarkdownMonster_Icon_256.png",
+            "images": [
+                "https://i.postimg.cc/dQ8ZNrLw/image.png",
+                "https://i.postimg.cc/fWKT0KVt/image.png",
+                "https://i.postimg.cc/pL924Mqz/image.png",
+                "https://i.postimg.cc/PqYdfzGq/image.png",
+                "https://i.postimg.cc/jSJbvQSh/image.png"
+            ]
         },
         "markdownmonster-portable": {
             "icon": "https://community.chocolatey.org/content/packageimages/MarkdownMonster.Portable.2.8.6.png",
@@ -35121,12 +35127,21 @@
             ]
         },
         "resourcetuner": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/nh3g2tjg/restuner.png",
+            "images": [
+                "https://i.postimg.cc/B66zk7Db/image.png",
+                "https://i.postimg.cc/Jn2FL3cq/image.png",
+                "https://i.postimg.cc/XXMDZVPB/image.png",
+                "https://i.postimg.cc/mZ0b37fC/image.png",
+                "https://i.postimg.cc/5NLfsjbG/image.png",
+                "https://i.postimg.cc/Z5L4hg9x/image.png"
+            ]
         },
         "resourcetunerconsole": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/rpvhZy8n/rtc.png",
+            "images": [
+                "https://i.postimg.cc/N0fYG4mq/image.png"
+            ]
         },
         "responsively": {
             "icon": "",
@@ -37528,7 +37543,7 @@
             ]
         },
         "signal": {
-            "icon": "https://community.chocolatey.org/content/packageimages/signal.portable.5.38.0.20221204.png",
+            "icon": "https://raw.githubusercontent.com/signalapp/Signal-Desktop/refs/heads/main/images/tray-icons/base/signal-tray-icon-256x256-base.png",
             "images": []
         },
         "signal-beta": {
@@ -50156,7 +50171,7 @@
                 "https://i.postimg.cc/mrLf665f/image.png"
             ]
         },
-        "fastpictureviewer.professional": {
+        "fastpictureviewer-professional": {
             "icon": "https://i.ibb.co/FLLTZ91c/Fast-Picture-Viewer.png",
             "images": [
                 "https://i.postimg.cc/RVfwPv88/image.png",
