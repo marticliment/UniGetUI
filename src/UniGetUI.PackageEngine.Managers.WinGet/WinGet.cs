@@ -30,11 +30,11 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         public LocalWinGetSource MicrosoftStoreSource { get; }
         public static bool NO_PACKAGES_HAVE_BEEN_LOADED { get; private set; }
 
-        public string WinGetBundledPath;
+        public string BundledWinGetPath;
 
         public WinGet()
         {
-            WinGetBundledPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "winget-cli_x64", "winget.exe");
+            BundledWinGetPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "winget-cli_x64", "winget.exe");
 
             Capabilities = new ManagerCapabilities
             {
@@ -174,30 +174,33 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         public override IReadOnlyList<string> FindCandidateExecutableFiles()
         {
-            return CoreTools.WhichMultiple("winget");
+            List<string> candidates = new();
+            if (!Settings.Get(Settings.K.ForceLegacyBundledWinGet))
+            {
+                candidates.AddRange(CoreTools.WhichMultiple("winget.exe"));
+            }
+
+            candidates.Add(BundledWinGetPath);
+            return candidates;
         }
 
         protected override ManagerStatus LoadManager()
         {
-            ManagerStatus status = new();
 
             bool FORCE_BUNDLED = Settings.Get(Settings.K.ForceLegacyBundledWinGet);
-
             var (found, path) = GetExecutableFile();
-            status.ExecutablePath = path;
-            status.ExecutableCallArgs = "";
-            status.Found = found;
 
-            if (!status.Found)
+            ManagerStatus status = new()
+            {
+                ExecutablePath = path,
+                ExecutableCallArgs = "",
+                Found = found,
+            };
+
+            if (found && status.ExecutablePath == BundledWinGetPath && !FORCE_BUNDLED)
             {
                 Logger.Error("User does not have WinGet installed, forcing bundled WinGet...");
                 FORCE_BUNDLED = true;
-            }
-
-            if (FORCE_BUNDLED)
-            {
-                status.ExecutablePath = WinGetBundledPath;
-                status.Found = File.Exists(WinGetBundledPath);
             }
 
             if (!status.Found)
