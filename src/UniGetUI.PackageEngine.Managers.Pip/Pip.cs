@@ -24,7 +24,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 // parse_pip_search is required for pip package finding to work
                 new ManagerDependency(
                     "parse-pip-search",
-                    Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe"),
+                    CoreData.PowerShell5,
                     "-ExecutionPolicy Bypass -NoLogo -NoProfile -Command \"& {python.exe "
                         + "-m pip install parse_pip_search; if($error.count -ne 0){pause}}\"",
                     "python -m pip install parse_pip_search",

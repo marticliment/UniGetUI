@@ -29,14 +29,14 @@ public partial class Cargo : PackageManager
             // cargo-update is required to check for installed and upgradable packages
             new ManagerDependency(
                 "cargo-update",
-                Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe"),
+                CoreData.PowerShell5,
                 "-ExecutionPolicy Bypass -NoLogo -NoProfile -Command \"& {cargo install cargo-update; if ($error.count -ne 0){pause}}\"",
                 "cargo install cargo-update",
                 async () => (await CoreTools.WhichAsync("cargo-install-update.exe")).Item1),
             // Cargo-binstall is required to install and update cargo binaries
             new ManagerDependency(
                 "cargo-binstall",
-                Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe"),
+                CoreData.PowerShell5,
                 "-ExecutionPolicy Bypass -NoLogo -NoProfile -Command \"& {Set-ExecutionPolicy Unrestricted -Scope Process; iex (iwr \\\"https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.ps1\\\").Content; if ($error.count -ne 0){pause}}\"",
                 "Set-ExecutionPolicy Unrestricted -Scope Process; iex (iwr \"https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.ps1\").Content",
                 async () => (await CoreTools.WhichAsync("cargo-binstall.exe")).Item1)

@@ -117,7 +117,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 
         public override List<string> LoadAvailablePaths()
         {
-            string path = Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe");
+            string path = CoreData.PowerShell5;
             var paths = CoreTools.WhichMultiple("powershell");
             if (File.Exists(path) && !paths.Contains(path, StringComparer.OrdinalIgnoreCase))
             {

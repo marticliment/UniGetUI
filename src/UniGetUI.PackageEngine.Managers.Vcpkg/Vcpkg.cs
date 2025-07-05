@@ -30,7 +30,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 // GIT is required for vcpkg updates to work
                 new ManagerDependency(
                     "Git",
-                    Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe"),
+                    CoreData.PowerShell5,
                     "-ExecutionPolicy Bypass -NoLogo -NoProfile -Command \"& {winget install --id Git.Git --exact "
                         + "--source winget --accept-source-agreements --accept-package-agreements --force; if($error.count -ne 0){pause}}\"",
                     "winget install --id Git.Git --exact --source winget",

@@ -32,14 +32,14 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 // Scoop-Search is required for search to work
                 new ManagerDependency(
                     "Scoop-Search",
-                    Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe"),
+                    CoreData.PowerShell5,
                     "-ExecutionPolicy Bypass -NoLogo -NoProfile -Command \"& {scoop install main/scoop-search; if($error.count -ne 0){pause}}\"",
                     "scoop install main/scoop-search",
                     async () => (await CoreTools.WhichAsync("scoop-search.exe")).Item1),
                 // GIT is required for scoop updates to work
                 new ManagerDependency(
                     "Git",
-                    Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe"),
+                    CoreData.PowerShell5,
                     "-ExecutionPolicy Bypass -NoLogo -NoProfile -Command \"& {scoop install main/git; if($error.count -ne 0){pause}}\"",
                     "scoop install main/git",
                     async () => (await CoreTools.WhichAsync("git.exe")).Item1)
@@ -379,7 +379,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
         protected override ManagerStatus LoadManager()
         {
-            string path = Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe");
+            string path = CoreData.PowerShell5;
             var pwsh7 = CoreTools.Which("pwsh.exe");
             if (pwsh7.Item1)
             {
