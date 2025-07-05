@@ -126,7 +126,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
 
         public override IReadOnlyList<string> FindCandidateExecutableFiles()
         {
-            return CoreTools.WhichMultiple("dotnet");
+            return CoreTools.WhichMultiple("dotnet.exe");
         }
 
         protected override ManagerStatus LoadManager()

@@ -289,20 +289,16 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
 
         public override IReadOnlyList<string> FindCandidateExecutableFiles()
         {
-            var FoundPaths = CoreTools.WhichMultiple("vcpkg");
-            List<string> Paths = [];
+            var candidates = CoreTools.WhichMultiple("vcpkg.exe");
 
-            if (FoundPaths.Any()) foreach (var Path in FoundPaths) Paths.Add(Path);
-
-            var (VcpkgRootFound, VcpkgRoot) = GetVcpkgRoot();
-            if (VcpkgRootFound)
+            var (rootFound, rootPath) = GetVcpkgRoot();
+            if (rootFound)
             {
-                string VcpkgLocation = Path.Join(VcpkgRoot, "vcpkg.exe");
-
-                if (File.Exists(VcpkgLocation)) Paths.Add(VcpkgLocation);
+                string VcpkgLocation = Path.Join(rootPath, "vcpkg.exe");
+                if (File.Exists(VcpkgLocation)) candidates.Add(VcpkgLocation);
             }
 
-            return Paths;
+            return candidates;
         }
 
         protected override ManagerStatus LoadManager()

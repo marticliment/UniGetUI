@@ -138,7 +138,7 @@ public partial class Cargo : PackageManager
 
     public override IReadOnlyList<string> FindCandidateExecutableFiles()
     {
-        return CoreTools.WhichMultiple("cargo");
+        return CoreTools.WhichMultiple("cargo.exe");
     }
 
     protected override ManagerStatus LoadManager()

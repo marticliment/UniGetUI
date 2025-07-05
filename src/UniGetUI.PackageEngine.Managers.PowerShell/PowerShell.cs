@@ -118,14 +118,9 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 
         public override List<string> FindCandidateExecutableFiles()
         {
-            string path = CoreData.PowerShell5;
-            var paths = CoreTools.WhichMultiple("powershell");
-            if (File.Exists(path) && !paths.Contains(path, StringComparer.OrdinalIgnoreCase))
-            {
-                paths.Add(path);
-            }
-
-            return paths;
+            var candidates = CoreTools.WhichMultiple("powershell.exe");
+            if(candidates.Count is 0) candidates.Add(CoreData.PowerShell5);
+            return candidates;
         }
 
         protected override ManagerStatus LoadManager()
