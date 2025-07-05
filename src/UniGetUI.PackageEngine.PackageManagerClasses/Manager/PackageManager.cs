@@ -126,41 +126,46 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
 
         public Tuple<bool, string> GetExecutableFile()
         {
-            var AvailablePaths = _findCandidateExecutableFiles();
-            string? Path = Settings.GetDictionaryItem<string, string>(Settings.K.ManagerPaths, Name);
-            if (!SecureSettings.Get(SecureSettings.K.AllowCustomManagerPaths))
+            var candidates = FindCandidateExecutableFiles();
+            if (candidates.Count == 0)
             {
-                if (Path != null)
-                {
-                    Logger.Info($"Available path {Path} found but not used as AllowCustomManagerPaths is turned off");
-                }
-                Path = null;
+                // No paths were found
+                return new (false, "");
             }
 
-            if (AvailablePaths.Count == 0)
+            // If custom package manager paths are DISABLED, get the first one (as old UniGetUI did) and return it.
+            if(!SecureSettings.Get(SecureSettings.K.AllowCustomManagerPaths))
             {
-                Logger.Warn("No available paths found for manager " + Name);
-
-                if (File.Exists(Path) && Path != null) Logger.Info("Using stored path " + Path);
-                else Logger.Error("Stored path " + Path + " is invalid");
-                return new Tuple<bool, string>(File.Exists(Path) && Path != null, Path ?? "");
-            }
-            else if (Path == null && File.Exists(AvailablePaths.ElementAt(0)))
-            {
-                Logger.Info("Stored path for " + Name + " is missing, using AvailablePaths[0]: " + AvailablePaths.ElementAt(0));
-                return new Tuple<bool, string>(true, AvailablePaths.ElementAt(0));
+                return new(true, candidates[0]);
             }
             else
             {
-                if (File.Exists(Path) && Path != null)
+                string? exeSelection = Settings.GetDictionaryItem<string, string>(Settings.K.ManagerPaths, Name);
+                // If there is no executable selection for this package manager
+                if (string.IsNullOrEmpty(exeSelection))
                 {
-                    Logger.Info("Using stored path " + Path);
-                    return new Tuple<bool, string>(true, Path);
+                    return new(true, candidates[0]);
                 }
-            }
+                else if (!File.Exists(exeSelection))
+                {
+                    Logger.Error($"The selected executable path {exeSelection} for manager {Name} is not valid, the default will be used...");
+                    return new(true, candidates[0]);
+                }
 
-            Logger.Info("No suitable path found for " + Name);
-            return new Tuple<bool, string>(false, "");
+                // While technically executables that are not in the path should work,
+                // since detection of executables will be performed in the path only, it is more consistent
+                // to throw an error when a non-path executable is used.
+                if (candidates.Select(x => x.ToLower()).Contains(exeSelection.ToLower()))
+                {
+                    return new(true, exeSelection);
+                }
+                else
+                {
+                    Logger.Error($"The selected executable path {exeSelection} for manager {Name} was not found in path, the default will be used...");
+                    return new(true, candidates[0]);
+                }
+
+            }
         }
 
         /// <summary>
