@@ -172,7 +172,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             return LocalPcSource;
         }
 
-        public override IReadOnlyList<string> _findCandidateExecutableFiles()
+        public override IReadOnlyList<string> FindCandidateExecutableFiles()
         {
             return CoreTools.WhichMultiple("winget");
         }

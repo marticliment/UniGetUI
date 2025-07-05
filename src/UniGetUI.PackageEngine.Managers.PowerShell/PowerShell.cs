@@ -116,7 +116,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             return Packages;
         }
 
-        public override List<string> _findCandidateExecutableFiles()
+        public override List<string> FindCandidateExecutableFiles()
         {
             string path = CoreData.PowerShell5;
             var paths = CoreTools.WhichMultiple("powershell");

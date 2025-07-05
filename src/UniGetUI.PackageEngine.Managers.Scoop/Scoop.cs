@@ -372,7 +372,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             logger.Close(p.ExitCode);
         }
 
-        public override IReadOnlyList<string> _findCandidateExecutableFiles()
+        public override IReadOnlyList<string> FindCandidateExecutableFiles()
         {
             return CoreTools.WhichMultiple("scoop.ps1");
         }

@@ -301,7 +301,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             return Packages;
         }
 
-        public override IReadOnlyList<string> _findCandidateExecutableFiles()
+        public override IReadOnlyList<string> FindCandidateExecutableFiles()
         {
             var FoundPaths = CoreTools.WhichMultiple("python");
             List<string> Paths = [];

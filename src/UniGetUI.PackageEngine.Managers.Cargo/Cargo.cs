@@ -136,7 +136,7 @@ public partial class Cargo : PackageManager
         return GetPackages(LoggableTaskType.ListInstalledPackages);
     }
 
-    public override IReadOnlyList<string> _findCandidateExecutableFiles()
+    public override IReadOnlyList<string> FindCandidateExecutableFiles()
     {
         return CoreTools.WhichMultiple("cargo");
     }

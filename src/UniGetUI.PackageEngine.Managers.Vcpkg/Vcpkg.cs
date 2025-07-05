@@ -287,7 +287,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             return Packages;
         }
 
-        public override IReadOnlyList<string> _findCandidateExecutableFiles()
+        public override IReadOnlyList<string> FindCandidateExecutableFiles()
         {
             var FoundPaths = CoreTools.WhichMultiple("vcpkg");
             List<string> Paths = [];

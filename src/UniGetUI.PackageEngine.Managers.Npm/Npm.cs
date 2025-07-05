@@ -187,7 +187,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             return Packages;
         }
 
-        public override IReadOnlyList<string> _findCandidateExecutableFiles()
+        public override IReadOnlyList<string> FindCandidateExecutableFiles()
         {
             /*var Paths =*/ return CoreTools.WhichMultiple("npm.ps1");
             /*foreach (string Path in CoreTools.WhichMultiple("npm"))

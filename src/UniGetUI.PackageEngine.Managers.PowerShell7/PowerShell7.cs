@@ -116,7 +116,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
             return Packages;
         }
 
-        public override IReadOnlyList<string> _findCandidateExecutableFiles()
+        public override IReadOnlyList<string> FindCandidateExecutableFiles()
         {
             return CoreTools.WhichMultiple("pwsh");
         }

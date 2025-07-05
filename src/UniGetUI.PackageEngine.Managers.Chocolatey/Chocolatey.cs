@@ -192,7 +192,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
         private static readonly string old_choco_path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs\\WingetUI\\choco-cli");
         private static readonly string new_choco_path = Path.Join(CoreData.UniGetUIDataDirectory, "Chocolatey");
 
-        public override IReadOnlyList<string> _findCandidateExecutableFiles()
+        public override IReadOnlyList<string> FindCandidateExecutableFiles()
         {
             List<string> ChocoPaths = [];
 

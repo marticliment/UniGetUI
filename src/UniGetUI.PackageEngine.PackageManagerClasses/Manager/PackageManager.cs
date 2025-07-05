@@ -122,7 +122,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// For example, if you have three Pythons installed on your system, this would return those three Pythons.
         /// </summary>
         /// <returns>A tuple containing: a boolean that represents whether the path was found or not; the path to the file if found.</returns>
-        public abstract IReadOnlyList<string> _findCandidateExecutableFiles();
+        public abstract IReadOnlyList<string> FindCandidateExecutableFiles();
 
         public Tuple<bool, string> GetExecutableFile()
         {
