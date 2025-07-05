@@ -19,7 +19,7 @@ namespace UniGetUI.PackageEngine.Managers.Choco
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Manager.Status.ExecutablePath,
-                    Arguments = Manager.Properties.ExecutableCallArgs + $" search {package.Id} --exact --all-versions " + Chocolatey.GetProxyArgument(),
+                    Arguments = Manager.Status.ExecutableCallArgs + $" search {package.Id} --exact --all-versions " + Chocolatey.GetProxyArgument(),
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,

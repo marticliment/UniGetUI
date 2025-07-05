@@ -75,6 +75,7 @@ public static partial class Settings
         DisableSuccessNotifications,
         DisableProgressNotifications,
         KillProcessesThatRefuseToDie,
+        ManagerPaths,
         PantryApiKey,
         PantryId,
 
@@ -163,6 +164,7 @@ public static partial class Settings
             K.DisableSuccessNotifications => "DisableSuccessNotifications",
             K.DisableProgressNotifications => "DisableProgressNotifications",
             K.KillProcessesThatRefuseToDie => "KillProcessesThatRefuseToDie",
+            K.ManagerPaths => "ManagerPaths",
             K.PantryApiKey => "PantryApiKey",
             K.PantryId => "PantryId",
 

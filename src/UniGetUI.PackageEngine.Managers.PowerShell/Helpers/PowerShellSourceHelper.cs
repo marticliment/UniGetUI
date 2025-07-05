@@ -47,7 +47,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 StartInfo = new()
                 {
                     FileName = Manager.Status.ExecutablePath,
-                    Arguments = Manager.Properties.ExecutableCallArgs + " Get-PSRepository",
+                    Arguments = Manager.Status.ExecutableCallArgs + " Get-PSRepository",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     RedirectStandardInput = true,

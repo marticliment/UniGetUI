@@ -96,12 +96,12 @@ namespace UniGetUI.PackageEngine.Operations
                 }
 
                 FileName = CoreData.ElevatorPath;
-                Arguments = $"\"{Package.Manager.Status.ExecutablePath}\" {Package.Manager.Properties.ExecutableCallArgs} {operation_args}";
+                Arguments = $"\"{Package.Manager.Status.ExecutablePath}\" {Package.Manager.Status.ExecutableCallArgs} {operation_args}";
             }
             else
             {
                 FileName = Package.Manager.Status.ExecutablePath;
-                Arguments = $"{Package.Manager.Properties.ExecutableCallArgs} {operation_args}";
+                Arguments = $"{Package.Manager.Status.ExecutableCallArgs} {operation_args}";
             }
 
             if (IsAdmin && Package.Manager is WinGet)
