@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
@@ -30,7 +31,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 // GIT is required for vcpkg updates to work
                 new ManagerDependency(
                     "Git",
-                    Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe"),
+                    CoreData.PowerShell5,
                     "-ExecutionPolicy Bypass -NoLogo -NoProfile -Command \"& {winget install --id Git.Git --exact "
                         + "--source winget --accept-source-agreements --accept-package-agreements --force; if($error.count -ne 0){pause}}\"",
                     "winget install --id Git.Git --exact --source winget",
@@ -62,7 +63,6 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 { "x86-windows", new ManagerSource(this, "x86-windows", URI_VCPKG_IO) }
             };
 
-            string vcpkgRoot = Settings.GetValue(Settings.K.CustomVcpkgRoot);
             Properties = new ManagerProperties
             {
                 Name = "vcpkg",
@@ -74,7 +74,6 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 InstallVerb = "install",
                 UninstallVerb = "remove",
                 UpdateVerb = "upgrade",
-                ExecutableCallArgs = vcpkgRoot == "" ? "" : $" --vcpkg-root=\"{vcpkgRoot}\"",
                 DefaultSource = new ManagerSource(this, DefaultTriplet, URI_VCPKG_IO),
                 KnownSources = [.. TripletSourceMap.Values],
             };
@@ -93,7 +92,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + $" search \"{CoreTools.EnsureSafeQueryString(query)}\"",
+                    Arguments = Status.ExecutableCallArgs + $" search \"{CoreTools.EnsureSafeQueryString(query)}\"",
                     // vcpkg has an --x-json flag that would list installed packages in JSON, but it doesn't work for this call (as of 2024-09-30-ab8988503c7cffabfd440b243a383c0a352a023d)
                     // TODO: Perhaps use --x-json when it is fixed
                     RedirectStandardOutput = true,
@@ -176,7 +175,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " update",
+                    Arguments = Status.ExecutableCallArgs + " update",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
@@ -230,7 +229,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " list",
+                    Arguments = Status.ExecutableCallArgs + " list",
                     // vcpkg has an --x-json flag that would list installed packages in JSON, but it's experimental
                     // TODO: Once --x-json is stable migrate to --x-json
                     RedirectStandardOutput = true,
@@ -288,9 +287,23 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             return Packages;
         }
 
+        public override IReadOnlyList<string> FindCandidateExecutableFiles()
+        {
+            var candidates = CoreTools.WhichMultiple("vcpkg.exe");
+
+            var (rootFound, rootPath) = GetVcpkgRoot();
+            if (rootFound)
+            {
+                string VcpkgLocation = Path.Join(rootPath, "vcpkg.exe");
+                if (File.Exists(VcpkgLocation)) candidates.Add(VcpkgLocation);
+            }
+
+            return candidates;
+        }
+
         protected override ManagerStatus LoadManager()
         {
-            var (exeFound, exePath) = GetVcpkgPath();
+            var (exeFound, exePath) = GetExecutableFile();
             var (rootFound, rootPath) = GetVcpkgRoot();
 
             if (!exeFound)
@@ -326,7 +339,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " version",
+                    Arguments = status.ExecutableCallArgs + " version",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
@@ -339,20 +352,22 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             status.Version = process.StandardOutput.ReadLine()?.Trim() ?? "";
             status.Version += $"\n%VCPKG_ROOT% = {rootPath}";
 
+            string vcpkgRoot = Settings.GetValue(Settings.K.CustomVcpkgRoot);
+            status.ExecutableCallArgs = vcpkgRoot == "" ? "" : $" --vcpkg-root=\"{vcpkgRoot}\"";
+
             return status;
         }
 
         public override void RefreshPackageIndexes()
         {
-            var (found, _) = GetVcpkgPath();
             var (vcpkgRootFound, vcpkgRoot) = GetVcpkgRoot();
             var (gitFound, gitPath) = CoreTools.Which("git");
 
-            if (!found || !gitFound || !vcpkgRootFound)
+            if (!Status.Found || !gitFound || !vcpkgRootFound)
             {
                 INativeTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes);
                 if (Settings.Get(Settings.K.DisableUpdateVcpkgGitPorts)) logger.Error("User has disabled updating sources");
-                if (!found) logger.Error("Vcpkg was not found???");
+                if (!Status.Found) logger.Error("Vcpkg was not found???");
                 if (!gitFound) logger.Error("Vcpkg sources won't be updated since git was not found");
                 if (!vcpkgRootFound) logger.Error("Cannot update vcpkg port files as requested: the VCPKG_ROOT environment variable or custom vcpkg root setting was not set");
                 logger.Close(Settings.Get(Settings.K.DisableUpdateVcpkgGitPorts) ? 0 : 1);
@@ -404,28 +419,6 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             }
         }
 
-        public static Tuple<bool, string> GetVcpkgPath()
-        {
-            var (found, path) = CoreTools.Which("vcpkg");
-            if (found)
-            {
-                return Tuple.Create(found, path);
-            }
-
-            var (vcpkgRootFound, vcpkgRoot) = GetVcpkgRoot();
-            if (vcpkgRootFound)
-            {
-                string vcpkgLocation = Path.Join(vcpkgRoot, "vcpkg.exe");
-
-                if (File.Exists(vcpkgLocation))
-                {
-                    return Tuple.Create(true, vcpkgLocation);
-                }
-            }
-
-            return Tuple.Create(false, "");
-        }
-
         public static Tuple<bool, string> GetVcpkgRoot()
         {
             string? vcpkgRoot = Settings.GetValue(Settings.K.CustomVcpkgRoot);
@@ -436,14 +429,18 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
 
             if (vcpkgRoot == null)
             {
-                // Unfortunately, we can't use `GetVcpkgPath` for this
-                // as it would become a bunch of functions calling each other
-                var (found, path) = CoreTools.Which("vcpkg");
-                path = Path.GetDirectoryName(path);
-                // Make sure the root is a valid root not just a random directory
-                if (found && Path.Exists($"{path}\\triplets"))
+                // Unfortunately, we can't use `GetVcpkgPath` or `GetExecutableFile`
+                // for this as it would become a bunch of functions calling each other
+                var paths = CoreTools.WhichMultiple("vcpkg");
+                foreach (string path in paths)
                 {
-                    vcpkgRoot = path;
+                    string dir = Path.GetDirectoryName(path);
+                    // Make sure the root is a valid root not just a random directory
+                    if (Path.Exists($"{dir}\\triplets"))
+                    {
+                        vcpkgRoot = dir;
+                        break;
+                    }
                 }
             }
 

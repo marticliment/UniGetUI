@@ -399,9 +399,7 @@ public static partial class DialogHelper
             {
                 StartInfo = new()
                 {
-                    FileName =
-                        Path.Join(Environment.SystemDirectory,
-                            "windowspowershell\\v1.0\\powershell.exe"),
+                    FileName = CoreData.PowerShell5,
                     Arguments =
                         "-ExecutionPolicy Bypass -NoLogo -NoProfile -Command \"& {" +
                         "cmd.exe /C \"rmdir /Q /S `\"%temp%\\WinGet`\"\"; " +

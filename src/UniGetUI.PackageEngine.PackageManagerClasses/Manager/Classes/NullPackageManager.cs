@@ -43,7 +43,6 @@ namespace UniGetUI.PackageEngine.Classes.Manager
                 Description = "Unset",
                 IconId = IconType.Help,
                 ColorIconId = "Unset",
-                ExecutableCallArgs = "Unset",
                 ExecutableFriendlyName = "Unset",
                 InstallVerb = "Unset",
                 UpdateVerb = "Unset",
@@ -55,54 +54,41 @@ namespace UniGetUI.PackageEngine.Classes.Manager
             Status = new ManagerStatus
             {
                 ExecutablePath = "C:/file.exe",
+                ExecutableCallArgs = "Unset",
                 Found = false,
                 Version = "0"
             };
             Dependencies = [];
         }
-
         public IReadOnlyList<IPackage> FindPackages(string query) => throw new NotImplementedException();
-
         public IReadOnlyList<IPackage> GetAvailableUpdates() => throw new NotImplementedException();
-
         public IReadOnlyList<IPackage> GetInstalledPackages() => throw new NotImplementedException();
-
         public void Initialize() => throw new NotImplementedException();
-
         public bool IsEnabled() => throw new NotImplementedException();
-
         public bool IsReady() => throw new NotImplementedException();
-
         public void RefreshPackageIndexes() => throw new NotImplementedException();
-
         public void AttemptFastRepair() => throw new NotImplementedException();
+        public IReadOnlyList<string> FindCandidateExecutableFiles() => throw new NotImplementedException();
+        public Tuple<bool, string> GetExecutableFile() => throw new NotImplementedException();
     }
 
     internal class NullSourceHelper : IMultiSourceHelper
     {
         public ISourceFactory Factory => throw new NotImplementedException();
-
         public string[] GetAddSourceParameters(IManagerSource source) => throw new NotImplementedException();
-
         public string[] GetRemoveSourceParameters(IManagerSource source) => throw new NotImplementedException();
-
         public OperationVeredict GetAddOperationVeredict(IManagerSource source, int ReturnCode, string[] Output) => throw new NotImplementedException();
-
         public OperationVeredict GetRemoveOperationVeredict(IManagerSource source, int ReturnCode, string[] Output) => throw new NotImplementedException();
-
         public IReadOnlyList<IManagerSource> GetSources() => throw new NotImplementedException();
+
     }
 
     internal sealed class NullPkgDetailsHelper : IPackageDetailsHelper
     {
         public void GetDetails(IPackageDetails details) => throw new NotImplementedException();
-
         public IReadOnlyList<string> GetVersions(IPackage package) => throw new NotImplementedException();
-
         public CacheableIcon? GetIcon(IPackage package) => throw new NotImplementedException();
-
         public IReadOnlyList<Uri> GetScreenshots(IPackage package) => throw new NotImplementedException();
-
         public string? GetInstallLocation(IPackage package) => throw new NotImplementedException();
     }
 

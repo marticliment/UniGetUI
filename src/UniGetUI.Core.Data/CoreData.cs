@@ -390,5 +390,6 @@ namespace UniGetUI.Core.Data
             }
         }
 
+        public static readonly string PowerShell5 = Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe");
     }
 }

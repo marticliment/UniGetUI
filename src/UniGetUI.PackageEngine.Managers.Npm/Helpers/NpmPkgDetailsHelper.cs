@@ -26,7 +26,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 p.StartInfo = new ProcessStartInfo
                 {
                     FileName = Manager.Status.ExecutablePath,
-                    Arguments = Manager.Properties.ExecutableCallArgs + " show " + details.Package.Id + " --json",
+                    Arguments = Manager.Status.ExecutableCallArgs + " show " + details.Package.Id + " --json",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
@@ -99,7 +99,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 {
                     FileName = Manager.Status.ExecutablePath,
                     Arguments =
-                        Manager.Properties.ExecutableCallArgs + " show " + package.Id + " versions --json",
+                        Manager.Status.ExecutableCallArgs + " show " + package.Id + " versions --json",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
