@@ -124,14 +124,14 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
             return Packages;
         }
 
-        public override IReadOnlyList<string> LoadAvailablePaths()
+        public override IReadOnlyList<string> _findCandidateExecutableFiles()
         {
             return CoreTools.WhichMultiple("dotnet");
         }
 
         protected override ManagerStatus LoadManager()
         {
-            var (found, path) = GetManagerExecutablePath();
+            var (found, path) = GetExecutableFile();
             ManagerStatus status = new()
             {
                 ExecutablePath = path,

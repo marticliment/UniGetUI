@@ -172,7 +172,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             return LocalPcSource;
         }
 
-        public override IReadOnlyList<string> LoadAvailablePaths()
+        public override IReadOnlyList<string> _findCandidateExecutableFiles()
         {
             return CoreTools.WhichMultiple("winget");
         }
@@ -183,7 +183,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
             bool FORCE_BUNDLED = Settings.Get(Settings.K.ForceLegacyBundledWinGet);
 
-            var (found, path) = GetManagerExecutablePath();
+            var (found, path) = GetExecutableFile();
             status.ExecutablePath = path;
             status.ExecutableCallArgs = "";
             status.Found = found;

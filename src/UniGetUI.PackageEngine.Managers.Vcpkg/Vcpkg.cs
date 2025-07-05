@@ -287,7 +287,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             return Packages;
         }
 
-        public override IReadOnlyList<string> LoadAvailablePaths()
+        public override IReadOnlyList<string> _findCandidateExecutableFiles()
         {
             var FoundPaths = CoreTools.WhichMultiple("vcpkg");
             List<string> Paths = [];
@@ -307,7 +307,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
 
         protected override ManagerStatus LoadManager()
         {
-            var (exeFound, exePath) = GetManagerExecutablePath();
+            var (exeFound, exePath) = GetExecutableFile();
             var (rootFound, rootPath) = GetVcpkgRoot();
 
             if (!exeFound)
@@ -433,7 +433,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
 
             if (vcpkgRoot == null)
             {
-                // Unfortunately, we can't use `GetVcpkgPath` or `GetManagerExecutablePath`
+                // Unfortunately, we can't use `GetVcpkgPath` or `GetExecutableFile`
                 // for this as it would become a bunch of functions calling each other
                 var paths = CoreTools.WhichMultiple("vcpkg");
                 foreach (string path in paths)

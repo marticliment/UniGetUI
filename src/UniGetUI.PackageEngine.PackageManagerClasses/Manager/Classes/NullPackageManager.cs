@@ -68,7 +68,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager
         public bool IsReady() => throw new NotImplementedException();
         public void RefreshPackageIndexes() => throw new NotImplementedException();
         public void AttemptFastRepair() => throw new NotImplementedException();
-        public IReadOnlyList<string> LoadAvailablePaths() => throw new NotImplementedException();
+        public IReadOnlyList<string> _findCandidateExecutableFiles() => throw new NotImplementedException();
     }
 
     internal class NullSourceHelper : IMultiSourceHelper

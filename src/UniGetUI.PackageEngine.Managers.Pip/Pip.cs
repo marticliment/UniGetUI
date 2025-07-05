@@ -301,7 +301,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             return Packages;
         }
 
-        public override IReadOnlyList<string> LoadAvailablePaths()
+        public override IReadOnlyList<string> _findCandidateExecutableFiles()
         {
             var FoundPaths = CoreTools.WhichMultiple("python");
             List<string> Paths = [];
@@ -336,7 +336,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
 
         protected override ManagerStatus LoadManager()
         {
-            var (found, path) = GetManagerExecutablePath();
+            var (found, path) = GetExecutableFile();
 
             ManagerStatus status = new() { ExecutablePath = path, Found = found, ExecutableCallArgs = "-m pip " };
 

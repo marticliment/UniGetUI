@@ -187,7 +187,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             return Packages;
         }
 
-        public override IReadOnlyList<string> LoadAvailablePaths()
+        public override IReadOnlyList<string> _findCandidateExecutableFiles()
         {
             /*var Paths =*/ return CoreTools.WhichMultiple("npm.ps1");
             /*foreach (string Path in CoreTools.WhichMultiple("npm"))
@@ -203,7 +203,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
 
         protected override ManagerStatus LoadManager()
         {
-            var (found, executable) = GetManagerExecutablePath();
+            var (found, executable) = GetExecutableFile();
 
             ManagerStatus status = new()
             {

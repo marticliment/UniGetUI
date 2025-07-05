@@ -73,6 +73,6 @@ namespace UniGetUI.PackageEngine.Interfaces
         /// Find all available executable files that apply to this package manager
         /// </summary>
         /// <returns></returns>
-        public IReadOnlyList<string> LoadAvailablePaths();
+        public IReadOnlyList<string> _findCandidateExecutableFiles();
     }
 }

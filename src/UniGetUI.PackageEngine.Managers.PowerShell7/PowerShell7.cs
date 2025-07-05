@@ -116,14 +116,14 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
             return Packages;
         }
 
-        public override IReadOnlyList<string> LoadAvailablePaths()
+        public override IReadOnlyList<string> _findCandidateExecutableFiles()
         {
             return CoreTools.WhichMultiple("pwsh");
         }
 
         protected override ManagerStatus LoadManager()
         {
-            var (found, path) = GetManagerExecutablePath();
+            var (found, path) = GetExecutableFile();
 
             ManagerStatus status = new()
             {

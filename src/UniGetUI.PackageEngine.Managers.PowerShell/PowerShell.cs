@@ -116,7 +116,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             return Packages;
         }
 
-        public override List<string> LoadAvailablePaths()
+        public override List<string> _findCandidateExecutableFiles()
         {
             string path = CoreData.PowerShell5;
             var paths = CoreTools.WhichMultiple("powershell");
@@ -130,7 +130,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 
         protected override ManagerStatus LoadManager()
         {
-            var (found, path) = GetManagerExecutablePath();
+            var (found, path) = GetExecutableFile();
             ManagerStatus status = new()
             {
                 ExecutablePath = path,

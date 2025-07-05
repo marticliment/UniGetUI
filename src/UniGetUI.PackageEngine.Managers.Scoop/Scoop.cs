@@ -372,7 +372,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             logger.Close(p.ExitCode);
         }
 
-        public override IReadOnlyList<string> LoadAvailablePaths()
+        public override IReadOnlyList<string> _findCandidateExecutableFiles()
         {
             return CoreTools.WhichMultiple("scoop.ps1");
         }
@@ -389,7 +389,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 path = pwsh7.Item2;
             }
 
-            var (found, executable) = GetManagerExecutablePath();
+            var (found, executable) = GetExecutableFile();
             ManagerStatus status = new()
             {
                 ExecutablePath = path,
