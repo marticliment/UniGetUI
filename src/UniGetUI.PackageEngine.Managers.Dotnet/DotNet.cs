@@ -131,12 +131,13 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
 
         protected override ManagerStatus LoadManager()
         {
-            ManagerStatus status = new();
-
             var (found, path) = GetManagerExecutablePath();
-            status.ExecutablePath = path;
-            status.Found = found;
-            status.ExecutableCallArgs = "tool ";
+            ManagerStatus status = new()
+            {
+                ExecutablePath = path,
+                Found = found,
+                ExecutableCallArgs = "tool "
+            };
 
             if (!status.Found)
             {

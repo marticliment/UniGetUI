@@ -207,8 +207,6 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
 
         protected override ManagerStatus LoadManager()
         {
-            ManagerStatus status = new();
-
             if (!Directory.Exists(old_choco_path))
             {
                 Logger.Debug("Old chocolatey path does not exist, not migrating Chocolatey");
@@ -312,8 +310,8 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 }
             }
 
-            (status.Found, status.ExecutablePath) = GetManagerExecutablePath();
-            status.ExecutableCallArgs = "";
+            var (found, executable) = GetManagerExecutablePath();
+            ManagerStatus status = new() { Found = found, ExecutablePath = executable, ExecutableCallArgs = "", };
 
             if (!status.Found)
             {

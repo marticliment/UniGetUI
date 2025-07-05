@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
@@ -363,15 +364,14 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
 
         public override void RefreshPackageIndexes()
         {
-            var (found, _) = GetManagerExecutablePath();
             var (vcpkgRootFound, vcpkgRoot) = GetVcpkgRoot();
             var (gitFound, gitPath) = CoreTools.Which("git");
 
-            if (!found || !gitFound || !vcpkgRootFound)
+            if (!Status.Found || !gitFound || !vcpkgRootFound)
             {
                 INativeTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes);
                 if (Settings.Get(Settings.K.DisableUpdateVcpkgGitPorts)) logger.Error("User has disabled updating sources");
-                if (!found) logger.Error("Vcpkg was not found???");
+                if (!Status.Found) logger.Error("Vcpkg was not found???");
                 if (!gitFound) logger.Error("Vcpkg sources won't be updated since git was not found");
                 if (!vcpkgRootFound) logger.Error("Cannot update vcpkg port files as requested: the VCPKG_ROOT environment variable or custom vcpkg root setting was not set");
                 logger.Close(Settings.Get(Settings.K.DisableUpdateVcpkgGitPorts) ? 0 : 1);

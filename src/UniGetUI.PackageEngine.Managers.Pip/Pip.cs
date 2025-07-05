@@ -336,12 +336,9 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
 
         protected override ManagerStatus LoadManager()
         {
-            ManagerStatus status = new();
-
             var (found, path) = GetManagerExecutablePath();
-            status.ExecutablePath = path;
-            status.Found = found;
-            status.ExecutableCallArgs = "-m pip ";
+
+            ManagerStatus status = new() { ExecutablePath = path, Found = found, ExecutableCallArgs = "-m pip " };
 
             if (!status.Found)
             {

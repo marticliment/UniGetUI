@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using UniGetUI.Core.Classes;
+using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
@@ -381,18 +382,25 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
         {
             string path = CoreData.PowerShell5;
             var pwsh7 = CoreTools.Which("pwsh.exe");
+
             if (pwsh7.Item1)
             {
                 Logger.Info("Scoop found PowerShell7, PowerShell7 will be used...");
                 path = pwsh7.Item2;
             }
 
+            var (found, executable) = GetManagerExecutablePath();
             ManagerStatus status = new()
             {
                 ExecutablePath = path,
-                ExecutableCallArgs = $"-NoProfile -ExecutionPolicy Bypass -Command \"& \\\"{GetManagerExecutablePath().Item2}\\\"\" ",
-                Found = GetManagerExecutablePath().Item1,
+                ExecutableCallArgs = $"-NoProfile -ExecutionPolicy Bypass -Command \"{executable.Replace(" ", "` ")}\" ",
+                Found = found,
             };
+
+            if (!status.Found)
+            {
+                return status;
+            }
 
             Process process = new()
             {
@@ -409,7 +417,6 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             };
             process.Start();
             status.Version = process.StandardOutput.ReadToEnd().Trim();
-            status.Found = CoreTools.Which("scoop").Item1;
 
             Status = status; // Wee need this for the RunCleanup method to get the executable path
             if (status.Found && IsEnabled() && Settings.Get(Settings.K.EnableScoopCleanup))
