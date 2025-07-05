@@ -75,7 +75,6 @@ public static partial class Settings
         DisableSuccessNotifications,
         DisableProgressNotifications,
         KillProcessesThatRefuseToDie,
-        TransferredSystemChocolatey,
         ManagerPaths,
 
         Test1,
@@ -163,7 +162,6 @@ public static partial class Settings
             K.DisableSuccessNotifications => "DisableSuccessNotifications",
             K.DisableProgressNotifications => "DisableProgressNotifications",
             K.KillProcessesThatRefuseToDie => "KillProcessesThatRefuseToDie",
-            K.TransferredSystemChocolatey => "TransferredSystemChocolatey",
             K.ManagerPaths => "ManagerPaths",
 
             K.Test1 => "TestSetting1",
