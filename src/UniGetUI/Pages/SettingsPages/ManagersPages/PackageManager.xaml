@@ -54,16 +54,16 @@
             </InfoBar>
             <controls:SettingsCard
                 x:Name="ManagerExecutable"
-                Padding="24,16,24,0"
+                Padding="24,16,24,16"
                 HorizontalContentAlignment="Left"
-                BorderThickness="1,0,1,0"
+                BorderThickness="1,0,1,1"
                 ContentAlignment="Vertical"
                 CornerRadius="0,0,0,0">
                 <controls:SettingsCard.Header>
                     <TextBlock Text="Select the executable to be used. Only executables found in path will be shown" />
                 </controls:SettingsCard.Header>
                 <controls:SettingsCard.Content>
-                    <Grid HorizontalAlignment="Left" RowSpacing="4">
+                    <Grid HorizontalAlignment="Left" RowSpacing="4" ColumnSpacing="4">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />

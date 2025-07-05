@@ -76,6 +76,18 @@
             <widgets:TranslatedTextBlock
                 Margin="4,32,4,8"
                 FontWeight="SemiBold"
+                Text="Restrictions on package managers" />
+
+            <widgets:SecureCheckboxCard
+                x:Name="AllowCustomManagerPaths"
+                CornerRadius="8"
+                SettingName="AllowCustomManagerPaths"
+                Text="Allow changing the paths for package manager executables"
+                WarningText="Turning this on enables changing the executable file used to interact with package managers. While this allows finer-grained customization of your install processes, it may also be dangerous" />
+
+            <widgets:TranslatedTextBlock
+                Margin="4,32,4,8"
+                FontWeight="SemiBold"
                 Text="Restrictions when importing package bundles" />
 
             <widgets:SecureCheckboxCard
@@ -95,12 +107,6 @@
                 Text="Allow importing custom pre-install and post-install commands when importing packages from a bundle"
                 WarningText="Pre and post install commands can do very nasty things to your device, if designed to do so. It can be very dangerous to import the commands from a bundle, unless you trust the source of that package bundle" />
 
-            <widgets:SecureCheckboxCard
-                x:Name="AllowCustomManagerPaths"
-                CornerRadius="8,8,0,0"
-                SettingName="AllowCustomManagerPaths"
-                Text="Allow UniGetUI to use customized paths for package manager executables"
-                WarningText="Turning this on enables the use of any executable defined in the user settings to be used as the package manager executable. While this allows finer-grained customization of your install processes, it can also allow a malicious actor to gain privelaged execution by changing your executable which is then elevated. Proceed with caution." />
         </StackPanel>
     </ScrollViewer>
 </Page>
