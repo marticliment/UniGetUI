@@ -69,6 +69,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager
         public void RefreshPackageIndexes() => throw new NotImplementedException();
         public void AttemptFastRepair() => throw new NotImplementedException();
         public IReadOnlyList<string> FindCandidateExecutableFiles() => throw new NotImplementedException();
+        public Tuple<bool, string> GetExecutableFile() => throw new NotImplementedException();
     }
 
     internal class NullSourceHelper : IMultiSourceHelper
@@ -79,6 +80,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager
         public OperationVeredict GetAddOperationVeredict(IManagerSource source, int ReturnCode, string[] Output) => throw new NotImplementedException();
         public OperationVeredict GetRemoveOperationVeredict(IManagerSource source, int ReturnCode, string[] Output) => throw new NotImplementedException();
         public IReadOnlyList<IManagerSource> GetSources() => throw new NotImplementedException();
+
     }
 
     internal sealed class NullPkgDetailsHelper : IPackageDetailsHelper
