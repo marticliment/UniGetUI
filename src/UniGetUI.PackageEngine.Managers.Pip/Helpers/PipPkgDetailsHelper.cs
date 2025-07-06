@@ -69,7 +69,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 {
                     details.InstallerType = url["url"]?.ToString().Split('.')[^1].Replace("whl", "Wheel");
                     details.InstallerUrl = installerUrl;
-                    details.InstallerSize = CoreTools.GetFileSize(installerUrl);
+                    details.InstallerSize = CoreTools.GetFileSizeAsLong(installerUrl);
                 }
 
                 details.UpdateDate = url["upload_time"]?.ToString();

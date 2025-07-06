@@ -49,7 +49,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 {
                     try
                     {
-                        details.InstallerSize = long.Parse(match.Groups[3].Value) / 1000000.0;
+                        details.InstallerSize = long.Parse(match.Groups[3].Value);
                         break;
                     }
                     catch (Exception ex)

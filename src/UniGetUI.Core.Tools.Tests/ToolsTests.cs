@@ -109,8 +109,8 @@ namespace UniGetUI.Core.Tools.Tests
         [InlineData("https://www.marticliment.com/unigetui/wingetui_size_test.txt", 460)]
         public async Task TestFileSizeLoader(string uri, long expectedSize)
         {
-            double size = await CoreTools.GetFileSizeAsync(uri != "" ? new Uri(uri) : null);
-            Assert.Equal(expectedSize / 1048576, size);
+            long size = await CoreTools.GetFileSizeAsLongAsync(uri != "" ? new Uri(uri) : null);
+            Assert.Equal(expectedSize, size);
         }
 
         [Theory]

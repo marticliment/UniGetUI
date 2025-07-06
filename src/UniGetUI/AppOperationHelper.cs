@@ -83,8 +83,8 @@ public partial class MainApp
                 string name = await CoreTools.GetFileNameAsync(details.InstallerUrl);
                 string extension;
                 if (!name.Where(x => x == '.').Any())
-                {
-                    extension = package.Manager is Cargo? "zip": "exe";
+                {   // As a last resort, we need an extension for the file picker to work
+                    extension = "unknown";
                     name = name + "." + extension;
                 }
                 else
@@ -98,13 +98,12 @@ public partial class MainApp
                 {
                     extension = "nupkg";
                     savePicker.FileTypeChoices.Add("NuGet package", [".nupkg"]);
-                    savePicker.FileTypeChoices.Add("Compressed file", [".zip"]);
                 }
 
                 savePicker.FileTypeChoices.Add("Automatic", [$".{extension}"]);
                 savePicker.FileTypeChoices.Add("Executable", [".exe"]);
                 savePicker.FileTypeChoices.Add("MSI", [".msi"]);
-                savePicker.FileTypeChoices.Add("ZIP file", [".zip"]);
+                savePicker.FileTypeChoices.Add("Compressed file", [".zip"]);
                 savePicker.FileTypeChoices.Add("MSIX", [".msix"]);
                 savePicker.FileTypeChoices.Add("APPX", [".appx"]);
                 savePicker.FileTypeChoices.Add("Tarball", [".tar"]);

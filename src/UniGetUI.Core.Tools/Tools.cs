@@ -244,34 +244,18 @@ namespace UniGetUI.Core.Tools
             }
         }
 
-        /// <summary>
-        /// Returns the size (in MB) of the file at the given URL
-        /// </summary>
-        /// <param name="url">a valid Uri object containing a URL to a file</param>
-        /// <returns>a double representing the size in MBs, 0 if the process fails</returns>
-        public static async Task<double> GetFileSizeAsync(Uri? url)
-        {
-            return await GetFileSizeAsyncAsLong(url) / 1048576d;
-        }
+        public static Task<long> GetFileSizeAsLongAsync(Uri? url)
+            => Task.Run(() => GetFileSizeAsLong(url));
 
-        /// <summary>
-        /// Returns the size (in MB) of the file at the given URL
-        /// </summary>
-        /// <param name="url">a valid Uri object containing a URL to a file</param>
-        /// <returns>a double representing the size in MBs, 0 if the process fails</returns>
-        public static double GetFileSize(Uri? url)
-        {
-            return GetFileSizeAsyncAsLong(url).GetAwaiter().GetResult() / 1048576d;
-        }
 
-        public static async Task<long> GetFileSizeAsyncAsLong(Uri? url)
+        public static long GetFileSizeAsLong(Uri? url)
         {
             if (url is null) return 0;
 
             try
             {
                 using HttpClient client = new(CoreTools.GenericHttpClientParameters);
-                HttpResponseMessage response = await client.SendAsync(new HttpRequestMessage(HttpMethod.Head, url));
+                HttpResponseMessage response = client.Send(new HttpRequestMessage(HttpMethod.Head, url));
                 return response.Content.Headers.ContentLength ?? 0;
             }
             catch (Exception e)

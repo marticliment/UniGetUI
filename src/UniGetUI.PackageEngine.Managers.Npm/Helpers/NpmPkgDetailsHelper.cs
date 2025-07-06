@@ -57,7 +57,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                     details.InstallerUrl = installerUrl;
 
                 if (int.TryParse(contents?["dist"]?["unpackedSize"]?.ToString() ?? "", NumberStyles.Any, CultureInfo.InvariantCulture, out int installerSize))
-                    details.InstallerSize = installerSize / 1048576d;
+                    details.InstallerSize = installerSize;
 
                 details.InstallerHash = contents?["dist"]?["integrity"]?.ToString();
 
