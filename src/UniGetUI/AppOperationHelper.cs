@@ -80,13 +80,24 @@ public partial class MainApp
                 WinRT.Interop.InitializeWithWindow.Initialize(savePicker, hWnd);
                 savePicker.SuggestedStartLocation = PickerLocationId.Downloads;
 
-                string extension = CoreTools.MakeValidFileName(details.InstallerUrl.ToString().Split('.')[^1]);
-                if (package.Manager is Cargo) extension = "zip";
-                savePicker.SuggestedFileName = package.Id + " installer." + extension;
+                string name = await CoreTools.GetFileNameAsync(details.InstallerUrl);
+                string extension;
+                if (!name.Where(x => x == '.').Any())
+                {
+                    extension = package.Manager is Cargo? "zip": "exe";
+                    name = name + "." + extension;
+                }
+                else
+                {
+                    extension = CoreTools.MakeValidFileName(name.Split('.')[^1]);
+                }
+
+                savePicker.SuggestedFileName = name;
 
                 if (package.Manager is BaseNuGet)
                 {
                     extension = "nupkg";
+                    savePicker.FileTypeChoices.Add("NuGet package", [".nupkg"]);
                     savePicker.FileTypeChoices.Add("Compressed file", [".zip"]);
                 }
 
