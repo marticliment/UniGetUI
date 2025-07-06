@@ -106,7 +106,7 @@ namespace UniGetUI.Core.Tools.Tests
         [Theory]
         [InlineData("", 0)]
         [InlineData("https://invalid.url.com/this/is/an/invalid.php?file=to_test&if=the&code_returns=zero", 0)]
-        [InlineData("https://www.marticliment.com/unigetui/wingetui_size_test.txt", 460)]
+        [InlineData("https://marticliment.com/resources/unigetui.png", 19788)]
         public async Task TestFileSizeLoader(string uri, long expectedSize)
         {
             long size = await CoreTools.GetFileSizeAsLongAsync(uri != "" ? new Uri(uri) : null);
