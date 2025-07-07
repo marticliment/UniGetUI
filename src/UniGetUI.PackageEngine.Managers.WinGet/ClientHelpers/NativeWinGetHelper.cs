@@ -396,6 +396,8 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
 
         logger.Error(process.StandardError.ReadToEnd());
 
+        bool capturingDependencies = false;
+        details.Dependencies.Clear();
         // Parse the output
         foreach (string __line in output)
         {
@@ -419,6 +421,20 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
                 {
                     details.InstallerType = line.Split(":")[1].Trim();
                 }
+                else if (line.Contains("- Package Dependencies"))
+                {
+                    capturingDependencies = true;
+                }
+                else if (__line.Contains("        ") && capturingDependencies)
+                {
+                    details.Dependencies.Add(new()
+                    {
+                        Name = line.Split(' ')[0],
+                        Version = line.Contains('[') ? line.Split('[')[1].TrimEnd(']'): "",
+                        Mandatory = true
+                    });
+                }
+                else if (!__line.Contains("        ")) capturingDependencies = false;
             }
             catch (Exception e)
             {

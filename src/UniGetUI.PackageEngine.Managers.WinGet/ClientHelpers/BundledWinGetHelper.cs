@@ -461,6 +461,8 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         bool IsLoadingDescription = false;
         bool IsLoadingReleaseNotes = false;
         bool IsLoadingTags = false;
+        bool capturingDependencies = false;
+        details.Dependencies.Clear();
         foreach (string __line in output)
         {
             try
@@ -556,6 +558,21 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
                     details.Tags = [];
                     IsLoadingTags = true;
                 }
+                else if (line.Contains("- Package Dependencies"))
+                {
+                    capturingDependencies = true;
+                }
+                else if (__line.Contains("        ") && capturingDependencies)
+                {
+                    details.Dependencies.Add(new()
+                    {
+                        Name = line.Split(' ')[0],
+                        Version = line.Contains('[') ? line.Split('[')[1].TrimEnd(']'): "",
+                        Mandatory = true
+                    });
+                }
+                else if (!__line.Contains("        ")) capturingDependencies = false;
+
             }
             catch (Exception e)
             {
