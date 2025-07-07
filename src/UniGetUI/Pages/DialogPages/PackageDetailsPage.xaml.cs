@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Text;
 using Windows.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -94,6 +95,8 @@ namespace UniGetUI.Interface.Dialogs
             SetTextToItem(DownloadInstaller_Button, CoreTools.Translate("Download installer"));
             SetTextToItem(UpdateDate_Label, CoreTools.Translate("Last updated:") + " ");
             SetTextToItem(UpdateDate_Content, LoadingString);
+            SetTextToItem(Dependencies_Label, CoreTools.Translate("Dependencies:") + " ");
+            SetTextToItem(Dependencies_Content, LoadingString);
             SetTextToItem(ReleaseNotes_Label, CoreTools.Translate("Release notes") + ": ");
             SetTextToItem(ReleaseNotes_Content, LoadingString);
             SetTextToItem(ReleaseNotesUrl_Label, CoreTools.Translate("Release notes URL") + ": ");
@@ -371,6 +374,26 @@ namespace UniGetUI.Interface.Dialogs
             SetTextToItem(UpdateDate_Content, details.UpdateDate);
             SetTextToItem(ReleaseNotes_Content, details.ReleaseNotes);
             SetTextToItem(ReleaseNotesUrl_Content, details.ReleaseNotesUrl);
+
+            if (false)
+            {
+                SetTextToItem(Dependencies_Content, CoreTools.Translate("Not available"));
+            }
+            else if (details.Dependencies.Any())
+            {
+                StringBuilder depsString = new("\n");
+                foreach (var dep in details.Dependencies)
+                {
+                    depsString.Append($"  • {dep.Name} (");
+                    if (dep.Version.Any()) depsString.Append(CoreTools.Translate("Version:") + $" {dep.Version}, ");
+                    depsString.Append($"{(dep.Mandatory ? CoreTools.Translate("mandatory") : CoreTools.Translate("optional"))})\n");
+                }
+                SetTextToItem(Dependencies_Content, depsString.ToString());
+            }
+            else
+            {
+                SetTextToItem(Dependencies_Content, CoreTools.Translate("No dependencies found"));
+            }
 
             ShowableTags.Clear();
             foreach (string tag in details.Tags)

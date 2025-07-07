@@ -327,6 +327,9 @@
                         <Run x:Name="UpdateDate_Label" FontWeight="Bold">Update date:</Run>
                         <Run x:Name="UpdateDate_Content">Helo</Run>
                         <LineBreak />
+                        <Run x:Name="Dependencies_Label" FontWeight="Bold">Dependencies:</Run>
+                        <Run x:Name="Dependencies_Content">Helo</Run>
+                        <LineBreak />
                         <Run x:Name="ReleaseNotes_Label" FontWeight="Bold">Release Notes:</Run>
                         <Run x:Name="ReleaseNotes_Content">Helo</Run>
                         <LineBreak />
