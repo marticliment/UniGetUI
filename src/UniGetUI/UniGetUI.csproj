@@ -87,6 +87,8 @@
     <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
     <PackageReference Include="WinUIEx" Version="2.6.0" />
     <PackageReference Include="YamlDotNet" Version="16.3.0" />
+    <PackageReference Include="IdentityModel.OidcClient" Version="6.0.0" />
+    <PackageReference Include="Octokit" Version="13.0.1" />
 
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>
