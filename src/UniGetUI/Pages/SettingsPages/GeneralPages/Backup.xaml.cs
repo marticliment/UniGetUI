@@ -22,6 +22,50 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         private readonly GitHubAuthService _authService;
         private readonly GitHubBackupService _backupService;
 
+        private void UpdateGitHubLoginStatus()
+        {
+            var userName = Settings.GetValue(Settings.K.GitHubUserLogin);
+            if (!string.IsNullOrEmpty(userName))
+            {
+                GitHubUserText.Text = $"Logged in as: {userName}";
+                LoginWithGitHubButton.Visibility = Visibility.Collapsed;
+                LogoutGitHubButton.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                GitHubUserText.Text = "Not logged in";
+                LoginWithGitHubButton.Visibility = Visibility.Visible;
+                LogoutGitHubButton.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private async void LoginWithGitHubButton_Click(object sender, RoutedEventArgs e)
+        {
+            LoginWithGitHubButton.IsEnabled = false;
+            bool success = await _authService.SignInAsync();
+            if (success)
+            {
+                Logger.Info("Successfully logged in with GitHub.");
+            }
+            else
+            {
+                Logger.Error("Failed to log in with GitHub.");
+                // Optionally, show an error message to the user via a ContentDialog or InfoBar
+                GitHubUserText.Text = "Login failed. See logs for details.";
+            }
+            UpdateBackupToGitHubButtonStatus();
+            LoginWithGitHubButton.IsEnabled = true;
+        }
+
+        private async void LogoutGitHubButton_Click(object sender, RoutedEventArgs e)
+        {
+            LogoutGitHubButton.IsEnabled = false;
+            await _authService.SignOutAsync();
+            UpdateBackupToGitHubButtonStatus();
+            Logger.Info("Successfully logged out from GitHub.");
+            LogoutGitHubButton.IsEnabled = true;
+        }
+
         public Backup()
         {
             this.InitializeComponent();
@@ -32,30 +76,18 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             EnablePackageBackupUI(Settings.Get(Settings.K.EnablePackageBackup));
             ResetBackupDirectory.Content = CoreTools.Translate("Reset");
             OpenBackupDirectory.Content = CoreTools.Translate("Open");
+            UpdateGitHubLoginStatus();
             UpdateBackupToGitHubButtonStatus();
         }
 
-        private void UpdateBackupToGitHubButtonStatus()
+        private async void UpdateBackupToGitHubButtonStatus()
         {
-            // Check if user is logged in to GitHub
-            // GitHubAuthService.IsAuthenticated() is synchronous for now, if it becomes async, this needs adjustment.
-            if (_authService.IsAuthenticated())
-            {
-                BackupToGitHubButton.IsEnabled = true;
-                BackupToGitHubButton.Description = CoreTools.Translate("Backup your settings to the linked GitHub Gist.");
-                RestoreFromGitHubButton.IsEnabled = true;
-                RestoreFromGitHubButton.Description = CoreTools.Translate("Restore your settings from the linked GitHub Gist. This will overwrite local settings.");
-            }
-            else
-            {
-                BackupToGitHubButton.IsEnabled = false;
-                BackupToGitHubButton.Description = CoreTools.Translate("Login with GitHub (on the Internet settings page) to enable cloud backup.");
-                RestoreFromGitHubButton.IsEnabled = false;
-                RestoreFromGitHubButton.Description = CoreTools.Translate("Login with GitHub (on the Internet settings page) to enable cloud restore.");
-            }
+            UpdateGitHubLoginStatus();
+            bool isAuthenticated = await _authService.IsAuthenticatedAsync();
+            BackupToGitHubButton.IsEnabled = isAuthenticated;
+            RestoreFromGitHubButton.IsEnabled = isAuthenticated;
         }
-
-        private async void RestoreFromGitHubButton_Click(object sender, RoutedEventArgs e)
+        private async void RestoreFromGitHubButton_Click(object sender, EventArgs e)
         {
             RestoreFromGitHubButton.IsEnabled = false;
             var confirmDialog = DialogHelper.DialogFactory.Create();
@@ -98,7 +130,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             UpdateBackupToGitHubButtonStatus(); // Re-enable button if still authenticated
         }
 
-        private async void BackupToGitHubButton_Click(object sender, RoutedEventArgs e)
+        private async void BackupToGitHubButton_Click(object sender, EventArgs e)
         {
             BackupToGitHubButton.IsEnabled = false;
             DialogHelper.ShowLoadingDialog(CoreTools.Translate("Backing up settings to GitHub Gist..."));

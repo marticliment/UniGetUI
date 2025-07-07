@@ -22,7 +22,7 @@ namespace UniGetUI.Pages.DialogPages;
 
 public static partial class DialogHelper
 {
-    private static class DialogFactory
+    internal static class DialogFactory
     {
         public static ContentDialog Create()
         {
@@ -61,7 +61,7 @@ public static partial class DialogHelper
         }
     }
 
-    public static MainWindow Window { private get; set; } = null!;
+    public static MainWindow Window { get; set; } = null!;
 
     public static void ShowLoadingDialog(string text)
     {

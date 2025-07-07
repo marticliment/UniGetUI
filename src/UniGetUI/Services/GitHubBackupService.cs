@@ -20,11 +20,9 @@ namespace UniGetUI.Services
             _authService = authService;
         }
 
-        private GitHubClient GetAuthenticatedClient()
+        private async Task<GitHubClient?> GetAuthenticatedClientAsync()
         {
-            var tokenTask = _authService.GetAccessTokenAsync();
-            tokenTask.Wait(); // Blocking, consider making GetAuthenticatedClient async if this is an issue
-            var token = tokenTask.Result;
+            var token = await _authService.GetAccessTokenAsync();
 
             if (string.IsNullOrEmpty(token))
             {
@@ -39,7 +37,7 @@ namespace UniGetUI.Services
 
         public async Task<bool> BackupSettingsAsync()
         {
-            var client = GetAuthenticatedClient();
+            var client = await GetAuthenticatedClientAsync();
             if (client == null) return false;
 
             string settingsContent;
@@ -118,7 +116,7 @@ namespace UniGetUI.Services
 
         public async Task<bool> RestoreSettingsAsync()
         {
-            var client = GetAuthenticatedClient();
+            var client = await GetAuthenticatedClientAsync();
             if (client == null) return false;
 
             string settingsContent = null;
@@ -159,7 +157,7 @@ namespace UniGetUI.Services
                 if (settingsContent == null) // If not found by ID or ID was invalid/missing
                 {
                     Logger.Info("Attempting to find settings Gist by description...");
-                    var gists = await client.Gist.GetAllForUser(); // Gets gists for the authenticated user
+                    var gists = await client.Gist.GetAll(); // Gets gists for the authenticated user
                     var settingsGist = gists.FirstOrDefault(g => g.Description == GistDescription && g.Files.ContainsKey(GistFileName));
 
                     if (settingsGist != null)

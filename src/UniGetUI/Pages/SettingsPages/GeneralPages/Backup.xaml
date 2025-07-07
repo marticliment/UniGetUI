@@ -103,6 +103,12 @@
                 FontWeight="SemiBold"
                 Text="Cloud Backup (GitHub Gist)" />
 
+            <StackPanel Orientation="Vertical" Spacing="8">
+                <TextBlock x:Name="GitHubUserText" Text="Not logged in" Margin="4,0,0,0"/>
+                <Button x:Name="LoginWithGitHubButton" Content="Login with GitHub" Click="LoginWithGitHubButton_Click" HorizontalAlignment="Left"/>
+                <Button x:Name="LogoutGitHubButton" Content="Logout from GitHub" Click="LogoutGitHubButton_Click" Visibility="Collapsed" HorizontalAlignment="Left"/>
+            </StackPanel>
+
             <widgets:ButtonCard
                 x:Name="BackupToGitHubButton"
                 ButtonText="Backup to Gist"

@@ -40,7 +40,6 @@ namespace UniGetUI.Services
                 Policy = new Policy
                 {
                     RequireIdentityTokenSignature = false, // GitHub doesn't always send id_token_hint
-                    ValidateIdentityTokenSignature = false,
                 }
             };
             _client = new OidcClient(_options);
@@ -117,14 +116,11 @@ namespace UniGetUI.Services
             return string.IsNullOrEmpty(storedLogin) ? null : storedLogin;
         }
 
-        public bool IsAuthenticated()
+        public async Task<bool> IsAuthenticatedAsync()
         {
-            // A more robust check would be to see if GetAccessTokenAsync returns a non-null token
-            // This is a quick check based on stored login, assuming it's cleared on logout.
-            // For now, let's rely on token presence.
-            var tokenTask = GetAccessTokenAsync();
-            tokenTask.Wait(); // Not ideal in async context, but for a quick sync check. Better to make IsAuthenticated async.
-            return !string.IsNullOrEmpty(tokenTask.Result);
+            // This is a quick check based on token presence.
+            var token = await GetAccessTokenAsync();
+            return !string.IsNullOrEmpty(token);
         }
 
 
