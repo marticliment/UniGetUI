@@ -157,7 +157,61 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     out var releaseNotesUrl))
                 details.ReleaseNotesUrl = releaseNotesUrl;
 
+            _getDepends(details, contents);
+            _getSuggests(details, contents);
+
             logger.Close(0);
+        }
+
+        private static void _getSuggests(IPackageDetails details, JsonObject? contents)
+        {
+            foreach (var rawDep in (contents?["suggest"]?.AsObject() ?? []))
+            {
+                List<string> innerDeps = [];
+
+                if(rawDep.Value is JsonValue value) innerDeps.Add(value.GetValue<string>());
+                else
+                {
+                    foreach (var iDep in rawDep.Value?.AsArray() ?? [])
+                    {
+                        string? val = iDep?.GetValue<string>();
+                        if(val is not null) innerDeps.Add(val);
+                    }
+                }
+
+                foreach(var val in innerDeps)
+                    details.Dependencies.Add(new()
+                    {
+                        Name = val,
+                        Version = "",
+                        Mandatory = false,
+                    });
+            }
+        }
+
+        private static void _getDepends(IPackageDetails details, JsonObject? contents)
+        {
+            var node = contents?["depends"];
+            List<string> innerDeps = [];
+
+
+            if(node is JsonValue value) innerDeps.Add(value.GetValue<string>());
+            else
+            {
+                foreach (var iDep in node?.AsArray() ?? [])
+                {
+                    string? val = iDep?.GetValue<string>();
+                    if(val is not null) innerDeps.Add(val);
+                }
+            }
+
+            foreach(var val in innerDeps)
+                details.Dependencies.Add(new()
+                {
+                    Name = val,
+                    Version = "",
+                    Mandatory = true,
+                });
         }
 
         protected override CacheableIcon? GetIcon_UnSafe(IPackage package)
