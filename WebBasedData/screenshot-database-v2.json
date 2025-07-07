@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11856,
+        "total": 11857,
         "done": 5356,
         "packages_with_icon": 5356,
-        "packages_with_screenshot": 740,
-        "total_screenshots": 2267
+        "packages_with_screenshot": 742,
+        "total_screenshots": 2273
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -2021,11 +2021,9 @@
             ]
         },
         "amarok": {
-            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Breezeicons-apps-48-amarok.svg/1200px-Breezeicons-apps-48-amarok.svg.png",
+            "icon": "https://i.postimg.cc/ydrZZ6pN/Amarok-icon.png",
             "images": [
-                "https://cdn.kde.org/screenshots/amarok/amarok.png",
-                "http://amarok.kde.org/files/Amarok-2_0_0-Magnatune.png",
-                "https://userbase.kde.org/images.userbase/thumb/8/8b/Amarok_2.8_Beta.png/600px-Amarok_2.8_Beta.png"
+                "https://i.postimg.cc/4dMY3Ln7/amarok.png"
             ]
         },
         "amass": {
@@ -8995,7 +8993,7 @@
             "images": []
         },
         "crowtranslate": {
-            "icon": "https://i.postimg.cc/dt36sNrG/48-apps-crow-translate.png",
+            "icon": "https://i.postimg.cc/cJSMxJPy/45773185.png",
             "images": [
                 "https://i.postimg.cc/28twVd7M/main-1.png"
             ]
@@ -23836,9 +23834,11 @@
             "icon": "https://community.chocolatey.org/content/packageimages/lokalise-cli-2.2.6.8.png",
             "images": []
         },
-        "lokalise2": {
-            "icon": "",
-            "images": []
+        "lokalise": {
+            "icon": "https://i.postimg.cc/NMvVwYk5/icon.png",
+            "images": [
+                "https://i.postimg.cc/505r4Gsp/lokalize.png"
+            ]
         },
         "loki": {
             "icon": "",
@@ -29530,7 +29530,7 @@
             "images": []
         },
         "opensearch-odbc": {
-            "icon": "https://opensearch.org/assets/brand/PNG/Mark/opensearch_mark_default.png",
+            "icon": "",
             "images": []
         },
         "openshark": {
@@ -33519,7 +33519,9 @@
         "qbittorrent": {
             "icon": "https://i.ibb.co/9mQ0y0MX/Image.png",
             "images": [
-                "https://i.postimg.cc/gkCHcnZG/image.png"
+                "https://i.postimg.cc/gkCHcnZG/image.png",
+                "https://i.postimg.cc/k4sdpppV/image.png",
+                "https://i.postimg.cc/s2bQ12B4/QBittorrent-4-3-9-screenshot.png"
             ]
         },
         "qbittorrent-enhanced": {
@@ -34995,7 +34997,7 @@
             "images": []
         },
         "renamemaster": {
-            "icon": "https://community.chocolatey.org/content/packageimages/renamemaster.3.16.png",
+            "icon": "https://www.joejoesoft.com/update2-48-fix.png",
             "images": []
         },
         "renamemytvseries": {
@@ -50344,6 +50346,16 @@
                 "https://i.postimg.cc/g2QhhNqR/image.png",
                 "https://i.postimg.cc/26fBcytS/image.png",
                 "https://i.postimg.cc/FzTdHZHY/image.png"
+            ]
+        },
+        "viceversa-pro": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/2yrxsyMG/image.png",
+                "https://i.postimg.cc/nV2KsH68/image.png",
+                "https://i.postimg.cc/kXhxcTJf/image.png",
+                "https://i.postimg.cc/L8cjdhZP/image.png",
+                "https://i.postimg.cc/W40gsjMH/image.png"
             ]
         }
     }
