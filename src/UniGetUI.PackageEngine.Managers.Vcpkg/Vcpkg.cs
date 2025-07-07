@@ -42,6 +42,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             {
                 CanRunAsAdmin = true,
                 SupportsCustomSources = true,
+                CanListDependencies = true,
                 SupportsProxy = ProxySupport.No,
                 SupportsProxyAuth = false,
             };
