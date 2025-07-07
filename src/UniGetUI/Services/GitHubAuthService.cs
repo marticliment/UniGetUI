@@ -24,9 +24,7 @@ namespace UniGetUI.Services
         private readonly OidcClient _client;
 
         // To store basic user info like login name
-        // Replace K.GitHubUserLogin with an actual enum from SettingsEngine_Names.cs later if created
-        // For now, assuming a setting key like "GitHubUserLogin" might be used.
-        private const Settings.K GitHubUserLoginSettingKey = Settings.K.None; // Placeholder
+        private const Settings.K GitHubUserLoginSettingKey = Settings.K.GitHubUserLogin;
 
         public static TaskCompletionSource<string> CallbackCompletionSource { get; private set; }
 
@@ -68,17 +66,17 @@ namespace UniGetUI.Services
                 // Optionally, fetch and store user's GitHub login name
                 // For now, we'll assume the Name claim from UserInfo might be sufficient if available
                 // Or use Octokit to fetch more details.
-                string? userName = loginResult.User?.FindFirst("name")?.Value ?? loginResult.User?.FindFirst("login")?.Value;
-                if (!string.IsNullOrEmpty(userName) && GitHubUserLoginSettingKey != Settings.K.None)
+                // Attempt to get 'login' (username) claim first, then 'name'
+                string? userName = loginResult.User?.FindFirst("login")?.Value ?? loginResult.User?.FindFirst("name")?.Value;
+                if (!string.IsNullOrEmpty(userName))
                 {
-                    // Settings.SetValue(GitHubUserLoginSettingKey, userName);
+                    Settings.SetValue(GitHubUserLoginSettingKey, userName);
                     Logger.Info($"Logged in as GitHub user: {userName}");
                 }
-                else if (GitHubUserLoginSettingKey == Settings.K.None)
+                else
                 {
-                    Logger.Warn("GitHubUserLoginSettingKey is not defined, cannot store username in settings.");
+                    Logger.Warn("Could not retrieve GitHub username from login result.");
                 }
-
 
                 return true;
             }
@@ -103,10 +101,7 @@ namespace UniGetUI.Services
         private async Task ClearAuthenticatedUserDataAsync()
         {
             await SecureTokenManager.DeleteTokenAsync();
-            if (GitHubUserLoginSettingKey != Settings.K.None)
-            {
-                // Settings.SetValue(GitHubUserLoginSettingKey, ""); // Clear stored username
-            }
+            Settings.SetValue(GitHubUserLoginSettingKey, ""); // Clear stored username
         }
 
         public async Task<string?> GetAccessTokenAsync()
@@ -116,13 +111,10 @@ namespace UniGetUI.Services
 
         public async Task<string?> GetAuthenticatedUserLoginAsync()
         {
-            if (GitHubUserLoginSettingKey != Settings.K.None)
-            {
-                // string storedLogin = Settings.GetValue(GitHubUserLoginSettingKey);
-                // return string.IsNullOrEmpty(storedLogin) ? null : storedLogin;
-                return null; // Placeholder until setting key is real
-            }
-            return null;
+            string? storedLogin = Settings.GetValue(GitHubUserLoginSettingKey);
+            // Ensure we await the task if GetValue becomes async in the future, for now it's synchronous
+            await Task.CompletedTask;
+            return string.IsNullOrEmpty(storedLogin) ? null : storedLogin;
         }
 
         public bool IsAuthenticated()

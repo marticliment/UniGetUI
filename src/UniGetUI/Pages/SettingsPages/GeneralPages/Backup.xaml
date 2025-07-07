@@ -98,8 +98,34 @@
                 SettingName="EnableBackupTimestamping"
                 Text="Add a timestamp to the backup file names" />
 
+            <widgets:TranslatedTextBlock
+                Margin="4,32,4,8"
+                FontWeight="SemiBold"
+                Text="Cloud Backup (GitHub Gist)" />
 
+            <widgets:ButtonCard
+                x:Name="BackupToGitHubButton"
+                ButtonText="Backup to Gist"
+                Click="BackupToGitHubButton_Click"
+                CornerRadius="8"
+                IsEnabled="False"
+                Text="Backup your settings to a private GitHub Gist">
+                <widgets:ButtonCard.Description>
+                    <widgets:TranslatedTextBlock Text="Requires you to be logged in with your GitHub account (see Internet settings)." />
+                </widgets:ButtonCard.Description>
+            </widgets:ButtonCard>
 
+            <widgets:ButtonCard
+                x:Name="RestoreFromGitHubButton"
+                ButtonText="Restore from Gist"
+                Click="RestoreFromGitHubButton_Click"
+                CornerRadius="8"
+                IsEnabled="False"
+                Text="Restore your settings from a private GitHub Gist">
+                <widgets:ButtonCard.Description>
+                    <widgets:TranslatedTextBlock Text="This will overwrite your current settings. A restart may be required." />
+                </widgets:ButtonCard.Description>
+            </widgets:ButtonCard>
 
         </StackPanel>
     </ScrollViewer>

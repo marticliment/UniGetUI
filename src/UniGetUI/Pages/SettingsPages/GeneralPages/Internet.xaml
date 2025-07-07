@@ -170,6 +170,16 @@
                 StateChanged="ShowRestartBanner"
                 Text="Wait for the device to be connected to the internet before attempting to do tasks that require internet connectivity." />
 
+            <widgets:TranslatedTextBlock
+                Margin="4,32,4,8"
+                FontWeight="SemiBold"
+                Text="GitHub Account for Settings Sync" />
+
+            <StackPanel Orientation="Vertical" Spacing="8">
+                <TextBlock x:Name="GitHubUserText" Text="Not logged in" Margin="4,0,0,0"/>
+                <Button x:Name="LoginWithGitHubButton" Content="Login with GitHub" Click="LoginWithGitHubButton_Click" HorizontalAlignment="Left"/>
+                <Button x:Name="LogoutGitHubButton" Content="Logout from GitHub" Click="LogoutGitHubButton_Click" Visibility="Collapsed" HorizontalAlignment="Left"/>
+            </StackPanel>
 
         </StackPanel>
     </ScrollViewer>

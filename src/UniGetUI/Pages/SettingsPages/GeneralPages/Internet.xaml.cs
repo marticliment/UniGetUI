@@ -6,6 +6,8 @@ using UniGetUI.Core.Tools;
 using UniGetUI.Interface;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using UniGetUI.Services; // Required for GitHubAuthService
+using UniGetUI.Core.Logging; // Required for Logger
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -17,9 +19,12 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
     /// </summary>
     public sealed partial class Internet : Page, ISettingsPage
     {
+        private GitHubAuthService _authService;
+
         public Internet()
         {
             this.InitializeComponent();
+            _authService = new GitHubAuthService();
 
             UsernameBox.PlaceholderText = CoreTools.Translate("Username");
             PasswordBox.PlaceholderText = CoreTools.Translate("Password");
@@ -82,6 +87,51 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 });
 
             }
+            UpdateGitHubLoginStatus();
+        }
+
+        private void UpdateGitHubLoginStatus()
+        {
+            var userName = Settings.GetValue(Settings.K.GitHubUserLogin);
+            if (!string.IsNullOrEmpty(userName))
+            {
+                GitHubUserText.Text = $"Logged in as: {userName}";
+                LoginWithGitHubButton.Visibility = Visibility.Collapsed;
+                LogoutGitHubButton.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                GitHubUserText.Text = "Not logged in";
+                LoginWithGitHubButton.Visibility = Visibility.Visible;
+                LogoutGitHubButton.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private async void LoginWithGitHubButton_Click(object sender, RoutedEventArgs e)
+        {
+            LoginWithGitHubButton.IsEnabled = false;
+            bool success = await _authService.SignInAsync();
+            if (success)
+            {
+                Logger.Info("Successfully logged in with GitHub.");
+            }
+            else
+            {
+                Logger.Error("Failed to log in with GitHub.");
+                // Optionally, show an error message to the user via a ContentDialog or InfoBar
+                GitHubUserText.Text = "Login failed. See logs for details.";
+            }
+            UpdateGitHubLoginStatus();
+            LoginWithGitHubButton.IsEnabled = true;
+        }
+
+        private async void LogoutGitHubButton_Click(object sender, RoutedEventArgs e)
+        {
+            LogoutGitHubButton.IsEnabled = false;
+            await _authService.SignOutAsync();
+            UpdateGitHubLoginStatus();
+            Logger.Info("Successfully logged out from GitHub.");
+            LogoutGitHubButton.IsEnabled = true;
         }
 
         public bool CanGoBack => true;
