@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11841,
-        "done": 5345,
-        "packages_with_icon": 5345,
-        "packages_with_screenshot": 709,
-        "total_screenshots": 2190
+        "total": 11857,
+        "done": 5356,
+        "packages_with_icon": 5356,
+        "packages_with_screenshot": 742,
+        "total_screenshots": 2273
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -387,12 +387,10 @@
         "8gadgetpack": {
             "icon": "https://cdn.lo4d.com/t/icon/128/8gadgetpack.png",
             "images": [
-                "https://8gadgetpack.net/Screen8GP.jpg",
-                "https://8gadgetpack.net/tut/tut1.jpg",
-                "https://8gadgetpack.net/tut/tut4.jpg",
-                "https://8gadgetpack.net/tut/tut6.jpg",
-                "https://8gadgetpack.net/tut/tut18.jpg",
-                "https://8gadgetpack.net/tut/tut20.jpg"
+                "https://i.postimg.cc/hhWcSRbp/image.png",
+                "https://i.postimg.cc/7PCzY1n2/image.png",
+                "https://i.postimg.cc/KcdMKK0s/image.png",
+                "https://i.postimg.cc/dtrTGqXQ/image.png"
             ]
         },
         "8x8virtualoffice": {
@@ -2023,11 +2021,9 @@
             ]
         },
         "amarok": {
-            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Breezeicons-apps-48-amarok.svg/1200px-Breezeicons-apps-48-amarok.svg.png",
+            "icon": "https://i.postimg.cc/ydrZZ6pN/Amarok-icon.png",
             "images": [
-                "https://cdn.kde.org/screenshots/amarok/amarok.png",
-                "http://amarok.kde.org/files/Amarok-2_0_0-Magnatune.png",
-                "https://userbase.kde.org/images.userbase/thumb/8/8b/Amarok_2.8_Beta.png/600px-Amarok_2.8_Beta.png"
+                "https://i.postimg.cc/4dMY3Ln7/amarok.png"
             ]
         },
         "amass": {
@@ -4982,7 +4978,7 @@
             "images": []
         },
         "beyondcompare-5": {
-            "icon": "https://www.scootersoftware.com/bc_icon.png",
+            "icon": "https://i.postimg.cc/HLscGbLj/Beyond-Compare5.png",
             "images": [
                 "https://www.scootersoftware.com/shot_FolderCompare_Dark.png",
                 "https://www.scootersoftware.com/shot_TextCompare_Dark.png",
@@ -4990,8 +4986,8 @@
                 "https://www.scootersoftware.com/shot_TextMerge_Dark.png"
             ]
         },
-        "beyondcompare4": {
-            "icon": "",
+        "beyondcompare-4": {
+            "icon": "https://i.postimg.cc/HLscGbLj/Beyond-Compare5.png",
             "images": []
         },
         "bfg": {
@@ -8997,7 +8993,7 @@
             "images": []
         },
         "crowtranslate": {
-            "icon": "https://i.postimg.cc/dt36sNrG/48-apps-crow-translate.png",
+            "icon": "https://i.postimg.cc/cJSMxJPy/45773185.png",
             "images": [
                 "https://i.postimg.cc/28twVd7M/main-1.png"
             ]
@@ -10378,8 +10374,10 @@
             "images": []
         },
         "dex": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/pVsYggXd/Samsung-De-X.png",
+            "images": [
+                "https://i.postimg.cc/dVHBx2Rt/image.png"
+            ]
         },
         "dex2jar": {
             "icon": "",
@@ -14246,11 +14244,15 @@
         },
         "fiddler": {
             "icon": "https://community.chocolatey.org/content/packageimages/fiddler.5.0.20211.51073.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/zvS7tnBp/image.png"
+            ]
         },
         "fiddler-classic": {
-            "icon": "",
-            "images": []
+            "icon": "https://community.chocolatey.org/content/packageimages/fiddler.5.0.20211.51073.png",
+            "images": [
+                "https://i.postimg.cc/zvS7tnBp/image.png"
+            ]
         },
         "fiddler-everywhere": {
             "icon": "https://i.postimg.cc/sgvn63Yy/fiddler-e.png",
@@ -15596,7 +15598,24 @@
         },
         "furmark": {
             "icon": "https://community.chocolatey.org/content/packageimages/furmark.1.33.0.0.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/nzFVC0GK/image.png",
+                "https://i.postimg.cc/4Nmd62kB/image.png"
+            ]
+        },
+        "furmark-1": {
+            "icon": "https://community.chocolatey.org/content/packageimages/furmark.1.33.0.0.png",
+            "images": [
+                "https://i.postimg.cc/nzFVC0GK/image.png",
+                "https://i.postimg.cc/4Nmd62kB/image.png"
+            ]
+        },
+        "furmark-2": {
+            "icon": "https://community.chocolatey.org/content/packageimages/furmark.1.33.0.0.png",
+            "images": [
+                "https://i.postimg.cc/pXJHnDyq/image.png",
+                "https://i.postimg.cc/wxJH9KzK/image.png"
+            ]
         },
         "fuse-nfs": {
             "icon": "https://community.chocolatey.org/content/packageimages/fuse-nfs.5.0.2.png",
@@ -17391,7 +17410,10 @@
         "gpu-z": {
             "icon": "https://tpucdn.com/images/news/tpu-v1669381101081.png",
             "images": [
-                "https://www.techpowerup.com/img/11-03-21/126a.jpg"
+                "https://i.postimg.cc/SRLwChQJ/image.png",
+                "https://i.postimg.cc/ZRv9Tfbf/image.png",
+                "https://i.postimg.cc/SRw3BxZT/image.png",
+                "https://i.postimg.cc/RFmDQYW8/image.png"
             ]
         },
         "gpxeditor": {
@@ -20577,7 +20599,10 @@
         },
         "javaruntimeenvironment": {
             "icon": "https://cdn-icons-png.flaticon.com/256/226/226777.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/BQz4ZDNX/image.png",
+                "https://i.postimg.cc/YS6HxP7W/image.png"
+            ]
         },
         "javascriptsnippetpack": {
             "icon": "",
@@ -22153,15 +22178,31 @@
         },
         "kombustor-2": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/nLT0thRF/image.png"
+            ]
         },
         "kombustor-3": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/nLT0thRF/image.png",
+                "https://i.postimg.cc/x8NRHy08/image.png",
+                "https://i.postimg.cc/056RZTjM/image.png",
+                "https://i.postimg.cc/52Vh4j3L/image.png",
+                "https://i.postimg.cc/8Ckxv3xC/image.png",
+                "https://i.postimg.cc/0Qb3WSkR/image.png"
+            ]
         },
         "kombustor-4": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/nLT0thRF/image.png",
+                "https://i.postimg.cc/x8NRHy08/image.png",
+                "https://i.postimg.cc/056RZTjM/image.png",
+                "https://i.postimg.cc/52Vh4j3L/image.png",
+                "https://i.postimg.cc/8Ckxv3xC/image.png",
+                "https://i.postimg.cc/0Qb3WSkR/image.png"
+            ]
         },
         "komga": {
             "icon": "",
@@ -23793,9 +23834,11 @@
             "icon": "https://community.chocolatey.org/content/packageimages/lokalise-cli-2.2.6.8.png",
             "images": []
         },
-        "lokalise2": {
-            "icon": "",
-            "images": []
+        "lokalise": {
+            "icon": "https://i.postimg.cc/NMvVwYk5/icon.png",
+            "images": [
+                "https://i.postimg.cc/505r4Gsp/lokalize.png"
+            ]
         },
         "loki": {
             "icon": "",
@@ -25706,6 +25749,10 @@
             "icon": "https://community.chocolatey.org/content/packageimages/modrealmslauncher.2.5.4.0000.png",
             "images": []
         },
+        "modrinth-app": {
+            "icon": "https://raw.githubusercontent.com/modrinth/code/refs/heads/main/apps/app/icons/icon.png",
+            "images": []
+        },
         "modsecurity": {
             "icon": "",
             "images": []
@@ -26837,7 +26884,11 @@
         },
         "mysqlworkbench": {
             "icon": "https://cdn.meowcat285.com/unigeticons/MySQLWorkbench.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/wTDYzPtb/image.png",
+                "https://i.postimg.cc/43NDzxWr/image.png",
+                "https://i.postimg.cc/5t7ZpWGj/image.png"
+            ]
         },
         "mysterium": {
             "icon": "",
@@ -27906,11 +27957,15 @@
         },
         "nodejs": {
             "icon": "https://raw.githubusercontent.com/nodejs/nodejs.org/main/apps/site/public/static/images/favicons/android-chrome-192x192.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/02RhVftG/Node-js-logo.png"
+            ]
         },
         "nodejs-lts": {
             "icon": "https://raw.githubusercontent.com/nodejs/nodejs.org/main/apps/site/public/static/images/favicons/android-chrome-192x192.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/02RhVftG/Node-js-logo.png"
+            ]
         },
         "nodejs-nightly": {
             "icon": "",
@@ -28015,8 +28070,10 @@
             "images": []
         },
         "notebookfancontrol": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/Sxm3hKbJ/fan.png",
+            "images": [
+                "https://i.postimg.cc/fR5FThM5/image.png"
+            ]
         },
         "noteexplorer": {
             "icon": "",
@@ -29473,7 +29530,7 @@
             "images": []
         },
         "opensearch-odbc": {
-            "icon": "https://opensearch.org/assets/brand/PNG/Mark/opensearch_mark_default.png",
+            "icon": "",
             "images": []
         },
         "openshark": {
@@ -32081,7 +32138,12 @@
         },
         "poweriso": {
             "icon": "https://www.gezginler.net/indir/resim-grafik/poweriso-1383913611.png",
-            "images": []
+            "images": [
+                "https://i.ibb.co/HfkMcLwT/Image.png",
+                "https://i.postimg.cc/8kwRvZfX/image.png",
+                "https://i.postimg.cc/QMk93MpY/image.png",
+                "https://i.postimg.cc/x8qcMyBB/image.png"
+            ]
         },
         "powerline-go": {
             "icon": "",
@@ -32926,11 +32988,19 @@
         },
         "pulseview": {
             "icon": "https://community.chocolatey.org/content/packageimages/pulseview.0.4.2.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/Nj0DD2w7/image.png",
+                "https://i.postimg.cc/VNrRQyvJ/image.png",
+                "https://i.postimg.cc/6qwLvy0Z/image.png"
+            ]
         },
-        "pulseview.nightly\n": {
+        "pulseview-nightly": {
             "icon": "https://community.chocolatey.org/content/packageimages/pulseview.0.4.2.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/Nj0DD2w7/image.png",
+                "https://i.postimg.cc/VNrRQyvJ/image.png",
+                "https://i.postimg.cc/6qwLvy0Z/image.png"
+            ]
         },
         "pulseway": {
             "icon": "https://community.chocolatey.org/content/packageimages/pulseway.4.7.0.png",
@@ -33039,6 +33109,8 @@
         "putty": {
             "icon": "https://i.postimg.cc/WzjtrBVC/putty-icon.png",
             "images": [
+                "https://i.ibb.co/JWq9ZZMp/Image.png",
+                "https://i.postimg.cc/yNZqgJfn/image.png",
                 "https://i.postimg.cc/qR2zNkP2/putty.png"
             ]
         },
@@ -33445,14 +33517,18 @@
             "images": []
         },
         "qbittorrent": {
-            "icon": "https://i.imgur.com/k5VTeab.png",
+            "icon": "https://i.ibb.co/9mQ0y0MX/Image.png",
             "images": [
+                "https://i.postimg.cc/gkCHcnZG/image.png",
+                "https://i.postimg.cc/k4sdpppV/image.png",
                 "https://i.postimg.cc/s2bQ12B4/QBittorrent-4-3-9-screenshot.png"
             ]
         },
         "qbittorrent-enhanced": {
-            "icon": "https://cdn.discordapp.com/attachments/697051532377456753/1145759395762950295/New_qBittorrent_Logo.png",
-            "images": []
+            "icon": "https://i.ibb.co/9mQ0y0MX/Image.png",
+            "images": [
+                "https://i.postimg.cc/gkCHcnZG/image.png"
+            ]
         },
         "qbittorrent-enhanced-editi\u2026": {
             "icon": "",
@@ -33905,7 +33981,7 @@
             "images": []
         },
         "quickcpu": {
-            "icon": "https://community.chocolatey.org/content/packageimages/quickcpu.4.5.1.0.png",
+            "icon": "https://i.postimg.cc/vB6bVmBG/QuickCPU.png",
             "images": []
         },
         "quicken": {
@@ -34921,7 +34997,7 @@
             "images": []
         },
         "renamemaster": {
-            "icon": "https://community.chocolatey.org/content/packageimages/renamemaster.3.16.png",
+            "icon": "https://www.joejoesoft.com/update2-48-fix.png",
             "images": []
         },
         "renamemytvseries": {
@@ -36147,10 +36223,6 @@
         },
         "sampler": {
             "icon": "",
-            "images": []
-        },
-        "samsung-dex": {
-            "icon": "https://i.postimg.cc/pVsYggXd/Samsung-De-X.png",
             "images": []
         },
         "samsung-magician": {
@@ -50176,6 +50248,114 @@
             "images": [
                 "https://i.postimg.cc/RVfwPv88/image.png",
                 "https://i.postimg.cc/kgmKzkP5/image.png"
+            ]
+        },
+        "artweaver-7-plus": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/T2HKzy83/art7plus.png",
+                "https://i.postimg.cc/gkZ21Nqg/image.png"
+            ]
+        },
+        "artweaver-8-plus": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/5N6CyB5z/art8plus.png",
+                "https://i.postimg.cc/k4vxN7Dt/image.png"
+            ]
+        },
+        "artweaver-7-free": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/rsdwVJ6F/art7free.png",
+                "https://i.postimg.cc/yd8N5KvR/image.png"
+            ]
+        },
+        "artweaver-8-free": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/yNzgL2Mh/art8free.png",
+                "https://i.postimg.cc/k4vxN7Dt/image.png"
+            ]
+        },
+        "passwordrecovery": {
+            "icon": "https://i.postimg.cc/SKJS7dsL/edpr.png",
+            "images": [
+                "https://i.postimg.cc/PrTdFTJ5/image.png",
+                "https://i.postimg.cc/RVd4kyJQ/image.png",
+                "https://i.postimg.cc/Bnv44pxW/image.png"
+            ]
+        },
+        "forensicdiskdecryptor": {
+            "icon": "https://i.postimg.cc/GhXn7D6X/efdd.png",
+            "images": [
+                "https://i.postimg.cc/0NwgyBj4/image.png",
+                "https://i.postimg.cc/26Rsb7BS/image.png",
+                "https://i.postimg.cc/NM6W1217/image.png",
+                "https://i.postimg.cc/Fss2LR13/image.png"
+            ]
+        },
+        "wirelesssecurityauditor": {
+            "icon": "https://i.postimg.cc/L8gQtZSY/ewsa.png",
+            "images": [
+                "https://i.postimg.cc/SQVPkhVs/image.png",
+                "https://i.postimg.cc/VL6VNVHF/image.png",
+                "https://i.postimg.cc/dtxSZjbc/image.png"
+            ]
+        },
+        "geekbenchai": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/KzG5H165/image.png",
+                "https://i.postimg.cc/1XYM6yYr/image.png"
+            ]
+        },
+        "familytreebuilder": {
+            "icon": "https://i.postimg.cc/HxvP00rM/My-Heritage.png",
+            "images": [
+                "https://i.ibb.co/5x84kGkK/Image.png"
+            ]
+        },
+        "quickcpux64": {
+            "icon": "https://i.postimg.cc/vB6bVmBG/QuickCPU.png",
+            "images": [
+                "https://i.ibb.co/XrMJW7hd/Image.png",
+                "https://i.ibb.co/chqQb4yy/Image.png",
+                "https://i.ibb.co/S774Zksk/Image.png"
+            ]
+        },
+        "radiantdicomviewer": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/C1Dzb0Lp/image.png",
+                "https://i.postimg.cc/zXYTtd9k/image.png",
+                "https://i.postimg.cc/X7KdTfW6/image.png"
+            ]
+        },
+        "reqview": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/rmYQRSmP/image.png",
+                "https://i.postimg.cc/tCGm3NkK/image.png",
+                "https://i.postimg.cc/J43YPHdG/image.png"
+            ]
+        },
+        "unraidusbcreator": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/g2QhhNqR/image.png",
+                "https://i.postimg.cc/26fBcytS/image.png",
+                "https://i.postimg.cc/FzTdHZHY/image.png"
+            ]
+        },
+        "viceversa-pro": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/2yrxsyMG/image.png",
+                "https://i.postimg.cc/nV2KsH68/image.png",
+                "https://i.postimg.cc/kXhxcTJf/image.png",
+                "https://i.postimg.cc/L8cjdhZP/image.png",
+                "https://i.postimg.cc/W40gsjMH/image.png"
             ]
         }
     }

@@ -15,12 +15,6 @@ namespace UniGetUI.Core.Tools
 {
     public static class CoreTools
     {
-
-        public static HttpClientHandler HttpClientConfig
-        {
-            get => new HttpClientHandler() { AutomaticDecompression = DecompressionMethods.All };
-        }
-
         public static HttpClientHandler GenericHttpClientParameters
         {
             get
@@ -250,45 +244,19 @@ namespace UniGetUI.Core.Tools
             }
         }
 
-        /// <summary>
-        /// Returns the size (in MB) of the file at the given URL
-        /// </summary>
-        /// <param name="url">a valid Uri object containing a URL to a file</param>
-        /// <returns>a double representing the size in MBs, 0 if the process fails</returns>
-        public static async Task<double> GetFileSizeAsync(Uri? url)
-        {
-            return await GetFileSizeAsyncAsLong(url) / 1048576d;
-        }
+        public static Task<long> GetFileSizeAsLongAsync(Uri? url)
+            => Task.Run(() => GetFileSizeAsLong(url));
 
-        /// <summary>
-        /// Returns the size (in MB) of the file at the given URL
-        /// </summary>
-        /// <param name="url">a valid Uri object containing a URL to a file</param>
-        /// <returns>a double representing the size in MBs, 0 if the process fails</returns>
-        public static double GetFileSize(Uri? url)
-        {
-            return GetFileSizeAsyncAsLong(url).GetAwaiter().GetResult() / 1048576d;
-        }
 
-        public static async Task<long> GetFileSizeAsyncAsLong(Uri? url)
+        public static long GetFileSizeAsLong(Uri? url)
         {
-            if (url is null)
-            {
-                return 0;
-            }
+            if (url is null) return 0;
 
             try
             {
-#pragma warning disable SYSLIB0014 // Type or member is obsolete
-                WebRequest req = WebRequest.Create(url);
-#pragma warning restore SYSLIB0014 // Type or member is obsolete
-                req.Method = "HEAD";
-                WebResponse resp = await req.GetResponseAsync();
-                if (long.TryParse(resp.Headers.Get("Content-Length"), out long ContentLength))
-                {
-                    return ContentLength;
-                }
-
+                using HttpClient client = new(CoreTools.GenericHttpClientParameters);
+                HttpResponseMessage response = client.Send(new HttpRequestMessage(HttpMethod.Head, url));
+                return response.Content.Headers.ContentLength ?? 0;
             }
             catch (Exception e)
             {
@@ -298,6 +266,36 @@ namespace UniGetUI.Core.Tools
 
             return 0;
         }
+
+        public static string GetFileName(Uri url)
+        {
+            try
+            {
+                var handler = CoreTools.GenericHttpClientParameters;
+                handler.AllowAutoRedirect = false;
+                using HttpClient client = new(handler);
+                HttpResponseMessage response = client.Send(new HttpRequestMessage(HttpMethod.Head, url));
+
+                if (response.StatusCode is HttpStatusCode.Moved or HttpStatusCode.Redirect
+                    or HttpStatusCode.RedirectMethod or HttpStatusCode.TemporaryRedirect
+                    or HttpStatusCode.PermanentRedirect)
+                {
+                    return GetFileName(response.Headers.Location ??
+                                       throw new HttpRequestException("A redirect code was returned but no new location was given"));
+                }
+
+                return response.Content.Headers.ContentDisposition?.FileName ?? Path.GetFileName(url.LocalPath);
+            }
+            catch (Exception e)
+            {
+                Logger.Warn($"Failed to retrieve file name for URL: {url}");
+                Logger.Warn(e);
+                return string.Empty;
+            }
+        }
+
+        public static Task<string> GetFileNameAsync(Uri url)
+            => Task.Run(() => GetFileName(url));
 
 
         public struct Version: IComparable

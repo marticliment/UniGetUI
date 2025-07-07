@@ -60,7 +60,7 @@ public class DownloadOperation : AbstractOperation
             }
 
             Line($"Download URL found at {downloadUrl} ", LineType.Information);
-            using var httpClient = new HttpClient(CoreTools.HttpClientConfig);
+            using var httpClient = new HttpClient(CoreTools.GenericHttpClientParameters);
             using var response = await httpClient.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead);
 
             response.EnsureSuccessStatusCode();

@@ -409,7 +409,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
                 else if (line.Contains("Installer Url:"))
                 {
                     details.InstallerUrl = new Uri(line.Replace("Installer Url:", "").Trim());
-                    details.InstallerSize = CoreTools.GetFileSize(details.InstallerUrl);
+                    details.InstallerSize = CoreTools.GetFileSizeAsLong(details.InstallerUrl);
                 }
                 else if (line.Contains("Release Date:"))
                 {

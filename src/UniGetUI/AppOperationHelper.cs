@@ -80,20 +80,30 @@ public partial class MainApp
                 WinRT.Interop.InitializeWithWindow.Initialize(savePicker, hWnd);
                 savePicker.SuggestedStartLocation = PickerLocationId.Downloads;
 
-                string extension = CoreTools.MakeValidFileName(details.InstallerUrl.ToString().Split('.')[^1]);
-                if (package.Manager is Cargo) extension = "zip";
-                savePicker.SuggestedFileName = package.Id + " installer." + extension;
+                string name = await CoreTools.GetFileNameAsync(details.InstallerUrl);
+                string extension;
+                if (!name.Where(x => x == '.').Any())
+                {   // As a last resort, we need an extension for the file picker to work
+                    extension = "unknown";
+                    name = name + "." + extension;
+                }
+                else
+                {
+                    extension = CoreTools.MakeValidFileName(name.Split('.')[^1]);
+                }
+
+                savePicker.SuggestedFileName = name;
 
                 if (package.Manager is BaseNuGet)
                 {
                     extension = "nupkg";
-                    savePicker.FileTypeChoices.Add("Compressed file", [".zip"]);
+                    savePicker.FileTypeChoices.Add("NuGet package", [".nupkg"]);
                 }
 
                 savePicker.FileTypeChoices.Add("Automatic", [$".{extension}"]);
                 savePicker.FileTypeChoices.Add("Executable", [".exe"]);
                 savePicker.FileTypeChoices.Add("MSI", [".msi"]);
-                savePicker.FileTypeChoices.Add("ZIP file", [".zip"]);
+                savePicker.FileTypeChoices.Add("Compressed file", [".zip"]);
                 savePicker.FileTypeChoices.Add("MSIX", [".msix"]);
                 savePicker.FileTypeChoices.Add("APPX", [".appx"]);
                 savePicker.FileTypeChoices.Add("Tarball", [".tar"]);

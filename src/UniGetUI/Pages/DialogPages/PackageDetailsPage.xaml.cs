@@ -358,7 +358,7 @@ namespace UniGetUI.Interface.Dialogs
             SetTextToItem(InstallerHash_Content, details.InstallerHash);
             if (Package.Manager.Capabilities.CanDownloadInstaller)
             {
-                SetTextToItem(InstallerSize_Content, details.InstallerSize > 0 ? $" ({CoreTools.FormatAsSize((long)(details.InstallerSize * 1024 * 1024), 2)})" : $" ({CoreTools.Translate("Unknown size")})");
+                SetTextToItem(InstallerSize_Content, details.InstallerSize > 0 ? $" ({CoreTools.FormatAsSize(details.InstallerSize, 2)})" : $" ({CoreTools.Translate("Unknown size")})");
                 SetTextToItem(DownloadInstaller_Button, CoreTools.Translate("Download installer"));
             }
             else

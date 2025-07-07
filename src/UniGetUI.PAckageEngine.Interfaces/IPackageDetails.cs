@@ -59,9 +59,9 @@ namespace UniGetUI.PackageEngine.Interfaces
         public string? InstallerType { get; set; }
 
         /// <summary>
-        /// The size, in **MEGABYTES**, of the installer
+        /// The size, in **BYTES**, of the installer
         /// </summary>
-        public double InstallerSize { get; set; }
+        public long InstallerSize { get; set; }
 
         /// <summary>
         /// A URL pointing to the Manifest File of the package

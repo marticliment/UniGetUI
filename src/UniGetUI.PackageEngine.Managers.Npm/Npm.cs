@@ -189,16 +189,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
 
         public override IReadOnlyList<string> FindCandidateExecutableFiles()
         {
-            /*var Paths =*/ return CoreTools.WhichMultiple("npm.ps1");
-            /*foreach (string Path in CoreTools.WhichMultiple("npm"))
-            {
-                string ps1Path = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Path) ?? "", "npm.ps1");
-                if (File.Exists(ps1Path) && !Paths.Contains(ps1Path, StringComparer.OrdinalIgnoreCase))
-                {
-                    Paths.Add(ps1Path);
-                }
-            }
-            return Paths;*/
+            return CoreTools.WhichMultiple("npm.ps1");
         }
 
         protected override ManagerStatus LoadManager()

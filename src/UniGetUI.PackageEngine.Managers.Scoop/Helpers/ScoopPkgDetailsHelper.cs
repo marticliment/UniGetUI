@@ -150,7 +150,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             }
 
             if (details.InstallerUrl is not null)
-                details.InstallerSize = CoreTools.GetFileSize(details.InstallerUrl);
+                details.InstallerSize = CoreTools.GetFileSizeAsLong(details.InstallerUrl);
 
             // Load release notes URL
             if (contents?["checkver"] is JsonObject checkver && Uri.TryCreate(checkver["url"]?.ToString(), UriKind.RelativeOrAbsolute,
