@@ -55,6 +55,18 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                     }
                     details.Tags = Tags.ToArray();
                 }
+
+                foreach (var rawDep in (info?["requires_dist"]?.AsArray() ?? []))
+                {
+                    string line = rawDep?.GetValue<string>().Split(';')[0] ?? "";
+                    string name = line.Split(['>', '<', '=', '!'])[0];
+                    details.Dependencies.Add(new()
+                    {
+                        Name = name,
+                        Version = line[name.Length..],
+                        Mandatory = true,
+                    });
+                }
             }
 
             JsonObject? url = contents?["url"] as JsonObject;

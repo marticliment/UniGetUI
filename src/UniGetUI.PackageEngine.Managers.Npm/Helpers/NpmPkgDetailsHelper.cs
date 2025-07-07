@@ -61,6 +61,48 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
 
                 details.InstallerHash = contents?["dist"]?["integrity"]?.ToString();
 
+                details.Dependencies.Clear();
+
+                HashSet<string> addedDeps = new();
+                foreach (var rawDep in (contents?["dependencies"]?.AsObject() ?? []))
+                {
+                    if(addedDeps.Contains(rawDep.Key)) continue;
+                    addedDeps.Add(rawDep.Key);
+
+                    details.Dependencies.Add(new()
+                    {
+                        Name = rawDep.Key,
+                        Version = rawDep.Value?.GetValue<string>() ?? "",
+                        Mandatory = true,
+                    });
+                }
+
+                foreach (var rawDep in (contents?["devDependencies"]?.AsObject() ?? []))
+                {
+                    if(addedDeps.Contains(rawDep.Key)) continue;
+                    addedDeps.Add(rawDep.Key);
+
+                    details.Dependencies.Add(new()
+                    {
+                        Name = rawDep.Key,
+                        Version = rawDep.Value?.GetValue<string>() ?? "",
+                        Mandatory = false,
+                    });
+                }
+
+                foreach (var rawDep in (contents?["peerDependencies"]?.AsObject() ?? []))
+                {
+                    if(addedDeps.Contains(rawDep.Key)) continue;
+                    addedDeps.Add(rawDep.Key);
+
+                    details.Dependencies.Add(new()
+                    {
+                        Name = rawDep.Key,
+                        Version = rawDep.Value?.GetValue<string>() ?? "",
+                        Mandatory = false,
+                    });
+                }
+
                 logger.AddToStdErr(p.StandardError.ReadToEnd());
                 p.WaitForExit();
                 logger.Close(p.ExitCode);

@@ -375,9 +375,9 @@ namespace UniGetUI.Interface.Dialogs
             SetTextToItem(ReleaseNotes_Content, details.ReleaseNotes);
             SetTextToItem(ReleaseNotesUrl_Content, details.ReleaseNotesUrl);
 
-            if (false)
+            if (!details.Package.Manager.Capabilities.CanListDependencies)
             {
-                SetTextToItem(Dependencies_Content, CoreTools.Translate("Not available"));
+                SetTextToItem(Dependencies_Content, null);
             }
             else if (details.Dependencies.Any())
             {
@@ -388,11 +388,11 @@ namespace UniGetUI.Interface.Dialogs
                     if (dep.Version.Any()) depsString.Append(CoreTools.Translate("Version:") + $" {dep.Version}, ");
                     depsString.Append($"{(dep.Mandatory ? CoreTools.Translate("mandatory") : CoreTools.Translate("optional"))})\n");
                 }
-                SetTextToItem(Dependencies_Content, depsString.ToString());
+                SetTextToItem(Dependencies_Content, depsString.ToString().TrimEnd('\n'));
             }
             else
             {
-                SetTextToItem(Dependencies_Content, CoreTools.Translate("No dependencies found"));
+                SetTextToItem(Dependencies_Content, CoreTools.Translate("No dependencies specified"));
             }
 
             ShowableTags.Clear();
