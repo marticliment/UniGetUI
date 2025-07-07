@@ -96,7 +96,8 @@ namespace UniGetUI.Interface.Dialogs
             SetTextToItem(UpdateDate_Label, CoreTools.Translate("Last updated:") + " ");
             SetTextToItem(UpdateDate_Content, LoadingString);
             SetTextToItem(Dependencies_Label, CoreTools.Translate("Dependencies:") + " ");
-            SetTextToItem(Dependencies_Content, LoadingString);
+            DependenciesParagraph.Inlines.Clear();
+            DependenciesParagraph.Inlines.Add(new Run() { Text = LoadingString, Foreground = new SolidColorBrush(color: Color.FromArgb(255, 127, 127, 127)), });
             SetTextToItem(ReleaseNotes_Label, CoreTools.Translate("Release notes") + ": ");
             SetTextToItem(ReleaseNotes_Content, LoadingString);
             SetTextToItem(ReleaseNotesUrl_Label, CoreTools.Translate("Release notes URL") + ": ");
@@ -377,22 +378,48 @@ namespace UniGetUI.Interface.Dialogs
 
             if (!details.Package.Manager.Capabilities.CanListDependencies)
             {
-                SetTextToItem(Dependencies_Content, null);
+                DependenciesParagraph.Inlines.Clear();
+                DependenciesParagraph.Inlines.Add(new Run()
+                {
+                    Text = CoreTools.Translate("Not available"),
+                    Foreground = new SolidColorBrush(color: Color.FromArgb(255, 127, 127, 127)),
+                });
             }
             else if (details.Dependencies.Any())
             {
-                StringBuilder depsString = new("\n");
+                DependenciesParagraph.Inlines.Clear();
+
                 foreach (var dep in details.Dependencies)
                 {
-                    depsString.Append($"  • {dep.Name} (");
-                    if (dep.Version.Any()) depsString.Append(CoreTools.Translate("Version:") + $" {dep.Version}, ");
-                    depsString.Append($"{(dep.Mandatory ? CoreTools.Translate("mandatory") : CoreTools.Translate("optional"))})\n");
+                    DependenciesParagraph.Inlines.Add(new Run()
+                    {
+                        Text = $"  • {dep.Name}",
+                        FontStyle = dep.Mandatory? FontStyle.Normal : FontStyle.Italic,
+                        FontWeight = new FontWeight(600)
+                    });
+
+                    string line = $" (";
+                    if (dep.Version.Any()) line += CoreTools.Translate("Version:") + $" {dep.Version}, ";
+                    line += $"{(dep.Mandatory ? CoreTools.Translate("mandatory") : CoreTools.Translate("optional"))})";
+
+                    DependenciesParagraph.Inlines.Add(new Run()
+                    {
+                        Text = line,
+                        FontStyle = dep.Mandatory? FontStyle.Normal : FontStyle.Italic,
+                    });
+                    DependenciesParagraph.Inlines.Add(new LineBreak());
                 }
-                SetTextToItem(Dependencies_Content, depsString.ToString().TrimEnd('\n'));
+                if(DependenciesParagraph.Inlines.Any() && DependenciesParagraph.Inlines.Last() is LineBreak)
+                    DependenciesParagraph.Inlines.RemoveAt(DependenciesParagraph.Inlines.Count-1);
             }
             else
             {
-                SetTextToItem(Dependencies_Content, CoreTools.Translate("No dependencies specified"));
+                DependenciesParagraph.Inlines.Clear();
+                DependenciesParagraph.Inlines.Add(new Run()
+                {
+                    Text = CoreTools.Translate("\tNo dependencies specified"),
+                    Foreground = new SolidColorBrush(color: Color.FromArgb(255, 127, 127, 127)),
+                });
             }
 
             ShowableTags.Clear();

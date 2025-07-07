@@ -113,7 +113,12 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 {
                     foreach (var dep in match.Groups[1].ToString().Split('|'))
                     {
-                        details.Dependencies.Add(new()
+                        if(string.IsNullOrEmpty(dep))
+                            continue;
+                        else if (dep.StartsWith("::"))
+                            details.Dependencies.Add(new() { Name = dep.TrimStart(':'), Version = "", Mandatory = true });
+                        else
+                            details.Dependencies.Add(new()
                         {
                             Name = dep.Split(':')[0], Version = dep.Split(':')[1].TrimEnd(':'), Mandatory = true
                         });
