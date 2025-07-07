@@ -30,6 +30,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                 SupportsCustomArchitectures = true,
                 SupportedCustomArchitectures = [Architecture.x86, Architecture.x64, Architecture.arm64, Architecture.arm32],
                 SupportsPreRelease = true,
+                CanListDependencies = true,
                 SupportsCustomLocations = true,
                 SupportsCustomPackageIcons = true,
                 SupportsCustomVersions = true,

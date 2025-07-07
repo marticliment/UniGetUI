@@ -94,6 +94,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// </summary>
         public string[] Tags { get; set; } = [];
 
+        public List<IPackageDetails.Dependency> Dependencies { get; set; } = [];
+
         public PackageDetails(IPackage package)
         {
             Package = package;
