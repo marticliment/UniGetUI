@@ -32,6 +32,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 CanSkipIntegrityChecks = true,
                 CanRunInteractively = true,
                 SupportsCustomVersions = true,
+                CanListDependencies = true,
                 SupportsCustomArchitectures = true,
                 SupportedCustomArchitectures = [Architecture.x86],
                 SupportsPreRelease = true,

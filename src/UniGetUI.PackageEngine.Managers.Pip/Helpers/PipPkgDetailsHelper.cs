@@ -56,6 +56,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                     details.Tags = Tags.ToArray();
                 }
 
+                details.Dependencies.Clear();
                 foreach (var rawDep in (info?["requires_dist"]?.AsArray() ?? []))
                 {
                     string line = rawDep?.GetValue<string>().Split(';')[0] ?? "";

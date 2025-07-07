@@ -107,6 +107,20 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                     break;
                 }
 
+                details.Dependencies.Clear();
+                foreach (Match match in Regex.Matches(PackageManifestContents,
+                             @"<d\:Dependencies>([^<]+)</d\:Dependencies>"))
+                {
+                    foreach (var dep in match.Groups[1].ToString().Split('|'))
+                    {
+                        details.Dependencies.Add(new()
+                        {
+                            Name = dep.Split(':')[0], Version = dep.Split(':')[1].TrimEnd(':'), Mandatory = true
+                        });
+                    }
+                }
+
+
                 logger.Close(0);
                 return;
             }

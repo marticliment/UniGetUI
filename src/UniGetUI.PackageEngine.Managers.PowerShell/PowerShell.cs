@@ -25,6 +25,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 SupportsCustomVersions = true,
                 CanDownloadInstaller = true,
                 SupportsCustomScopes = true,
+                CanListDependencies = true,
                 SupportsCustomSources = true,
                 SupportsPreRelease = true,
                 SupportsCustomPackageIcons = true,

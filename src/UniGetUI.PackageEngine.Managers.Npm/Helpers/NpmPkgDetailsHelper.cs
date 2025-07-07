@@ -62,7 +62,6 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 details.InstallerHash = contents?["dist"]?["integrity"]?.ToString();
 
                 details.Dependencies.Clear();
-
                 HashSet<string> addedDeps = new();
                 foreach (var rawDep in (contents?["dependencies"]?.AsObject() ?? []))
                 {

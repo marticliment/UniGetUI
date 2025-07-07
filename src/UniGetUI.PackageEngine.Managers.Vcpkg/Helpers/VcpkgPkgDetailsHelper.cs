@@ -54,6 +54,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
 
             details.Tags = Tags.ToArray();
 
+            details.Dependencies.Clear();
             foreach (var iDep in contents?["dependencies"]?.AsArray() ?? [])
             {
                 string? val = iDep?.GetValue<string>();

@@ -157,6 +157,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     out var releaseNotesUrl))
                 details.ReleaseNotesUrl = releaseNotesUrl;
 
+            details.Dependencies.Clear();
             _getDepends(details, contents);
             _getSuggests(details, contents);
 
