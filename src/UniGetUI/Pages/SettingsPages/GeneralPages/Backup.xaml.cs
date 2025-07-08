@@ -167,16 +167,16 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             BackupToGitHubButton.IsEnabled = false;
             DialogHelper.ShowLoadingDialog(CoreTools.Translate("Backing up settings and packages to GitHub Gist..."));
 
-            var settingsContent = await Task.Run(Settings.ExportToString_JSON);
+            // var settingsContent = await Task.Run(Settings.ExportToString_JSON);
             var packagesContent = await InstalledPackagesPage.GenerateBackupContents();
 
-            var filesToBackup = new Dictionary<string, string>
+            /*var filesToBackup = new Dictionary<string, string>
             {
                 { "unigetui.settings.json", settingsContent },
                 { "unigetui.packages.ubundle", packagesContent }
-            };
+            };*/
 
-            bool success = await _backupService.BackupAsync(filesToBackup);
+            bool success = await _backupService.UploadPackageBundle(packagesContent);
 
             DialogHelper.HideLoadingDialog();
 
