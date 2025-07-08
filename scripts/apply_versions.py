@@ -79,21 +79,6 @@ try:
 
     print("done!")
 
-    if "GHA_SECRET" in os.environ:
-        print("GHA_SECRET environment variable found. Generating Secrets.cs")
-        with open("src/UniGetUI/Services/Secrets.cs", "w") as f:
-            f.write("""namespace UniGetUI.Services
-    {
-        internal static class Secrets
-        {
-            public const string GitHubClientId = "Iv23libnfvYqGI2ubBvI";
-            public const string GitHubClientSecret = "{GHA_SECRET}";
-        }
-    }
-    """.replace("{GHA_SECRET}", os.environ["GHA_SECRET"]))
-    else:
-        print("GHA_SECRET environment variable not found. Skipping Secrets.cs generation.")
-
 except FileNotFoundError as e:
     print(f"Error: {e.strerror}: {e.filename}")
     os.system("pause")

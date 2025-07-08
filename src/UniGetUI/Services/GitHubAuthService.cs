@@ -12,8 +12,8 @@ namespace UniGetUI.Services
 {
     public class GitHubAuthService
     {
-        private const string GitHubClientId = Secrets.GitHubClientId;
-        private const string GitHubClientSecret = Secrets.GitHubClientSecret;
+        private readonly string GitHubClientId = Secrets.GetGitHubClientId();
+        private readonly string GitHubClientSecret = Secrets.GetGitHubClientSecret();
 
         private const string RedirectUri = "http://127.0.0.1:58642/";
 
