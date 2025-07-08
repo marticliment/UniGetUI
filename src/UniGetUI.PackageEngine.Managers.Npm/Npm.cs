@@ -23,6 +23,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 SupportsCustomVersions = true,
                 CanDownloadInstaller = true,
                 SupportsCustomScopes = true,
+                CanListDependencies = true,
                 SupportsPreRelease = true,
                 SupportsProxy = ProxySupport.No,
                 SupportsProxyAuth = false

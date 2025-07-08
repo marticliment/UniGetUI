@@ -54,6 +54,16 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
 
             details.Tags = Tags.ToArray();
 
+            details.Dependencies.Clear();
+            foreach (var iDep in contents?["dependencies"]?.AsArray() ?? [])
+            {
+                string? val = iDep?.GetValue<string>();
+                if (val is not null)
+                {
+                    details.Dependencies.Add(new() { Name = val, Version = "", Mandatory = true, });
+                }
+            }
+
             logger.Close(0);
         }
 
