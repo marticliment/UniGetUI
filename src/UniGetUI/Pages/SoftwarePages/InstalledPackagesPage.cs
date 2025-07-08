@@ -362,25 +362,24 @@ namespace UniGetUI.Interface.SoftwarePages
 
         }
 
-        public static async Task<string?> BackupPackages(bool returnContents = false)
+        public static Task<string> GenerateBackupContents()
         {
+            Logger.Debug("Starting package backup");
+            List<IPackage> packagesToExport = [];
+            foreach (IPackage package in PEInterface.InstalledPackagesLoader.Packages)
+            {
+                packagesToExport.Add(package);
+            }
 
+            return PackageBundlesPage.CreateBundle(packagesToExport.ToArray(), BundleFormatType.UBUNDLE);
+        }
+
+
+        public static async Task BackupPackages()
+        {
             try
             {
-                Logger.Debug("Starting package backup");
-                List<IPackage> packagesToExport = [];
-                foreach (IPackage package in PEInterface.InstalledPackagesLoader.Packages)
-                {
-                    packagesToExport.Add(package);
-                }
-
-                string BackupContents = await PackageBundlesPage.CreateBundle(packagesToExport.ToArray(), BundleFormatType.UBUNDLE);
-
-                if(returnContents)
-                {
-                    return BackupContents;
-                }
-
+                string backupContents = await GenerateBackupContents();
                 string dirName = Settings.GetValue(Settings.K.ChangeBackupOutputDirectory);
                 if (dirName == "")
                 {
@@ -406,16 +405,14 @@ namespace UniGetUI.Interface.SoftwarePages
                 fileName += ".ubundle";
 
                 string filePath = Path.Combine(dirName, fileName);
-                await File.WriteAllTextAsync(filePath, BackupContents);
+                await File.WriteAllTextAsync(filePath, backupContents);
                 HasDoneBackup = true;
                 Logger.ImportantInfo("Backup saved to " + filePath);
-                return null;
             }
             catch (Exception ex)
             {
                 Logger.Error("An error occurred while performing a backup");
                 Logger.Error(ex);
-                return null;
             }
         }
 

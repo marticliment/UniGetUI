@@ -114,7 +114,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             var settingsContent = await _backupService.RestoreFileAsync("unigetui.settings.json");
             if (settingsContent != null)
             {
-                await Settings.ImportSettingsFromStringAsync(settingsContent);
+                await Task.Run(() => Settings.ImportFromString_JSON(settingsContent));
                 DialogHelper.HideLoadingDialog();
                 Logger.Info("Successfully restored settings from GitHub Gist.");
                 DialogHelper.ShowDismissableBalloon(
@@ -180,8 +180,8 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             BackupToGitHubButton.IsEnabled = false;
             DialogHelper.ShowLoadingDialog(CoreTools.Translate("Backing up settings and packages to GitHub Gist..."));
 
-            var settingsContent = await Settings.ExportSettingsAsStringAsync();
-            var packagesContent = await InstalledPackagesPage.BackupPackages(true);
+            var settingsContent = await Task.Run(Settings.ExportToString_JSON);
+            var packagesContent = await InstalledPackagesPage.GenerateBackupContents();
 
             var filesToBackup = new Dictionary<string, string>
             {
