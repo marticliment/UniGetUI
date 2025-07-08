@@ -7,6 +7,8 @@ namespace UniGetUI;
 public static class CrashHandler
 {
     private const uint MB_ICONSTOP = 0x00000010;
+    private const uint MB_OKCANCEL = 0x00000001;
+    private const int IDCANCEL = 2;
 
     [System.Runtime.InteropServices.DllImport("user32.dll", CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
     private static extern int MessageBox(IntPtr hWnd, string lpText, string lpCaption, uint uType);
@@ -17,12 +19,11 @@ public static class CrashHandler
         {
             var errorMessage = "UniGetUI has detected that some required files are missing."
                              + "\n\nThis might be caused by an incomplete installation or corrupted files. Please reinstall UniGetUI."
-                             + "\n\nRun UniGetUI with the parameter '--no-corrupt-dialog' to get more details about the crash.";
+                             + "\n\nPress CANCEL to get more details about the crash.";
 
             var title = "UniGetUI - Missing Files";
 
-            MessageBox(IntPtr.Zero,  errorMessage, title, MB_ICONSTOP);
-            return true;
+            return MessageBox(IntPtr.Zero,  errorMessage, title, MB_ICONSTOP | MB_OKCANCEL) is not IDCANCEL;
         }
         catch
         {
@@ -40,7 +41,8 @@ public static class CrashHandler
             Exception? fileEx = e;
             while (fileEx is not null)
             {
-                if (fileEx.ToString().Contains("Could not load file or assembly"))
+                if (fileEx.ToString().Contains("Could not load file or assembly")
+                    || (uint)fileEx.HResult is 0x80070002 or 0x80004005)
                 {
                     if (_reportMissingFiles())
                     {

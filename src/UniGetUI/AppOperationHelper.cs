@@ -193,6 +193,17 @@ public partial class MainApp
         public static async Task<AbstractOperation?> Update(IPackage? package, bool? elevated = null, bool? interactive = null, bool? no_integrity = null, bool ignoreParallel = false, AbstractOperation? req = null)
         {
             if (package is null) return null;
+            if (package.NewerVersionIsInstalled())
+            {
+                Logger.Warn($"A newer version of {package.Id} has been detected, the update will not be performed!");
+                PEInterface.UpgradablePackagesLoader.Remove(package);
+                foreach (var eq in PEInterface.InstalledPackagesLoader.GetEquivalentPackages(package))
+                {   // Remove upgradable tag from all installed packages
+                    eq.Tag = PackageTag.Default;
+                }
+
+                return null;
+            }
 
             var options = await InstallOptionsFactory.LoadApplicableAsync(package, elevated, interactive, no_integrity);
             var operation = new UpdatePackageOperation(package, options, ignoreParallel, req);

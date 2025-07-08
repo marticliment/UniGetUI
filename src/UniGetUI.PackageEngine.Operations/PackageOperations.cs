@@ -242,7 +242,8 @@ namespace UniGetUI.PackageEngine.Operations
             bool IgnoreParallelInstalls = false,
             AbstractOperation? req = null)
             : base(package, options, OperationType.Update, IgnoreParallelInstalls, req)
-        { }
+        {
+        }
 
         protected override Task HandleFailure()
         {
