@@ -18,20 +18,19 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 
         public sealed override void Initialize()
         {
+            static void ThrowIC(string name)
+            {
+                throw new InvalidOperationException($"NuGet-based package managers must have Capabilities.{name} set to true");
+            }
+
             if (DetailsHelper is not BaseNuGetDetailsHelper)
             {
                 throw new InvalidOperationException("NuGet-based package managers must not reassign the PackageDetailsProvider property");
             }
 
-            if (!Capabilities.SupportsCustomVersions)
-            {
-                throw new InvalidOperationException("NuGet-based package managers must support custom versions");
-            }
-
-            if (!Capabilities.SupportsCustomPackageIcons)
-            {
-                throw new InvalidOperationException("NuGet-based package managers must support custom versions");
-            }
+            if (!Capabilities.SupportsCustomVersions) ThrowIC(nameof(Capabilities.SupportsCustomVersions));
+            if (!Capabilities.SupportsCustomPackageIcons) ThrowIC(nameof(Capabilities.SupportsCustomPackageIcons));
+            if (!Capabilities.CanListDependencies) ThrowIC(nameof(Capabilities.CanListDependencies));
 
             base.Initialize();
         }

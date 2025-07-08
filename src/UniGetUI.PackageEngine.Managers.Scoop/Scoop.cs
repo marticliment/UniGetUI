@@ -51,6 +51,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 CanRunAsAdmin = true,
                 CanSkipIntegrityChecks = true,
                 CanDownloadInstaller = true,
+                CanListDependencies = true,
                 CanRemoveDataOnUninstall = true,
                 SupportsCustomArchitectures = true,
                 SupportedCustomArchitectures = [Architecture.x86, Architecture.x64, Architecture.arm64],
