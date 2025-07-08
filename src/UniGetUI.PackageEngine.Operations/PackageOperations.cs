@@ -242,7 +242,16 @@ namespace UniGetUI.PackageEngine.Operations
             bool IgnoreParallelInstalls = false,
             AbstractOperation? req = null)
             : base(package, options, OperationType.Update, IgnoreParallelInstalls, req)
-        { }
+        { 
+            OperationStarting += (s, e) =>
+            {
+                if (package.NewerVersionIsInstalled())
+                {
+                    Line($"Package {package.Name} is already up-to-date, skipping update.", Core.Tools.LineType.Information);
+                    Cancel();
+                }
+            };
+        }
 
         protected override Task HandleFailure()
         {
