@@ -409,9 +409,10 @@ namespace UniGetUI
                 if (rawArgs.Data is Windows.ApplicationModel.Activation.IProtocolActivatedEventArgs protocolArgs)
                 {
                     Logger.Info($"Protocol activation received: {protocolArgs.Uri}");
-            }
+                }
 
-            MainWindow.DispatcherQueue.TryEnqueue(MainWindow.Activate);
+                MainWindow.DispatcherQueue.TryEnqueue(MainWindow.Activate);
+            }
         }
 
         public async void DisposeAndQuit(int outputCode = 0)
