@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11857,
-        "done": 5356,
-        "packages_with_icon": 5356,
-        "packages_with_screenshot": 742,
-        "total_screenshots": 2273
+        "total": 11858,
+        "done": 5358,
+        "packages_with_icon": 5358,
+        "packages_with_screenshot": 747,
+        "total_screenshots": 2286
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -37752,7 +37752,10 @@
         },
         "simplewall": {
             "icon": "https://community.chocolatey.org/content/packageimages/simplewall.install.3.6.7.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/Qxwdpt9F/image.png",
+                "https://i.postimg.cc/4xcNwgVB/image.png"
+            ]
         },
         "simplewavsplitter-avalonia": {
             "icon": "",
@@ -39489,8 +39492,13 @@
             "images": []
         },
         "ssh-client": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/28K8Xzkv/Icon.png",
+            "images": [
+                "https://i.postimg.cc/fRcjfgsG/image.png",
+                "https://i.postimg.cc/Sxht49xp/image.png",
+                "https://i.postimg.cc/g2Ht20xL/image.png",
+                "https://i.postimg.cc/FzSD5FtR/image.png"
+            ]
         },
         "ssh-copy-id": {
             "icon": "",
@@ -39498,7 +39506,11 @@
         },
         "ssh-server": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.ibb.co/9M8JH3X/Image.png",
+                "https://i.ibb.co/bjH7g8mr/Image.png",
+                "https://i.ibb.co/xtpk799R/Image.png"
+            ]
         },
         "sshfs-win": {
             "icon": "",
@@ -40057,7 +40069,10 @@
         },
         "studio3t": {
             "icon": "https://community.chocolatey.org/content/packageimages/studio3t.2023.1.1.png",
-            "images": []
+            "images": [
+                "https://i.ibb.co/TnGC4QP/Image.png",
+                "https://i.ibb.co/CpvbCrLC/image.png"
+            ]
         },
         "studiorack": {
             "icon": "",
@@ -50349,13 +50364,20 @@
             ]
         },
         "viceversa-pro": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/VsFydCfY/Vice-Versa.png",
             "images": [
+                "https://i.postimg.cc/MKZCRpH1/Bitmap-665.png",
                 "https://i.postimg.cc/2yrxsyMG/image.png",
                 "https://i.postimg.cc/nV2KsH68/image.png",
                 "https://i.postimg.cc/kXhxcTJf/image.png",
                 "https://i.postimg.cc/L8cjdhZP/image.png",
                 "https://i.postimg.cc/W40gsjMH/image.png"
+            ]
+        },
+        "autorunorganizer": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/XqYSYZbs/image.png"
             ]
         }
     }
