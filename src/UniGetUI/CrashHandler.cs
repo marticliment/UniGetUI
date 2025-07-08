@@ -40,7 +40,8 @@ public static class CrashHandler
             Exception? fileEx = e;
             while (fileEx is not null)
             {
-                if (fileEx.ToString().Contains("Could not load file or assembly"))
+                if (fileEx.ToString().Contains("Could not load file or assembly")
+                    || (uint)fileEx.HResult is 0x80070002)
                 {
                     if (_reportMissingFiles())
                     {
