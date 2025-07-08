@@ -404,7 +404,7 @@ namespace UniGetUI.Interface
                     {
                         // Handle potential JSON files
                         Logger.ImportantInfo("Begin attempt to open the package bundle " + param);
-                        NavigationPage.LoadBundleFile(param);
+                        NavigationPage.LoadBundleFromFile(param);
                     }
                     else if (param.EndsWith("UniGetUI.exe") || param.EndsWith("UniGetUI.dll"))
                     {

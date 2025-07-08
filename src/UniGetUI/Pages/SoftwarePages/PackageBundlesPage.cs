@@ -266,11 +266,7 @@ namespace UniGetUI.Interface.SoftwarePages
             };
 
             HelpButton.Click += (_, _) => { MainApp.Instance.MainWindow.NavigationPage.ShowHelp(); };
-
-            NewBundle.Click += (s, e) =>
-            {
-                _ = AskForNewBundle();
-            };
+            NewBundle.Click += async (s, e) => await AskForNewBundle();
 
             RemoveSelected.Click += (_, _) =>
             {
@@ -282,16 +278,8 @@ namespace UniGetUI.Interface.SoftwarePages
             InstallSkipHash.Click += async (_, _) => await ImportAndInstallPackage(FilteredPackages.GetCheckedPackages(), skiphash: true);
             InstallInteractive.Click += async (_, _) => await ImportAndInstallPackage(FilteredPackages.GetCheckedPackages(), interactive: true);
             InstallAsAdmin.Click += async (_, _) => await ImportAndInstallPackage(FilteredPackages.GetCheckedPackages(), elevated: true);
-
-            OpenBundle.Click += async (_, _) =>
-            {
-                await OpenFromFile();
-            };
-
-            SaveBundle.Click += async (_, _) =>
-            {
-                await SaveFile();
-            };
+            OpenBundle.Click += async (_, _) => await AskOpenFromFile();
+            SaveBundle.Click += async (_, _) => await SaveFile();
 
             SharePackage.Click += (_, _) =>
             {
@@ -449,25 +437,32 @@ namespace UniGetUI.Interface.SoftwarePages
             Loader.Remove(package);
         }
 
-        public async Task OpenFromFile(string? file = null)
+        public async Task OpenFromString(string payload, BundleFormatType format, string source)
+        {
+            if (await AskForNewBundle() is false)
+                return;
+
+            DialogHelper.ShowLoadingDialog(CoreTools.Translate("Loading packages, please wait..."));
+
+            double open_version = await AddFromBundle(payload, format);
+            TelemetryHandler.ImportBundle(format);
+            HasUnsavedChanges = false;
+
+            DialogHelper.HideLoadingDialog();
+            if ((int)(open_version*10) != (int)(SerializableBundle.ExpectedVersion*10))
+            {   // Check only up to first decimal digit, prevent floating point precision error.
+                Logger.Warn($"The loaded bundle \"{source}\" is based on schema version {open_version}, " +
+                            $"while this UniGetUI build expects version {SerializableBundle.ExpectedVersion}." +
+                            $"\nThis should not be a problem if packages show up, but be careful");
+            }
+
+        }
+
+        public async Task OpenFromFile(string file)
         {
             try
             {
-                if (await AskForNewBundle() == false)
-                    return;
-
-                if (file is null)
-                {
-                    // Select file
-                    FileOpenPicker picker = new(MainApp.Instance.MainWindow.GetWindowHandle());
-                    file = picker.Show(["*.ubundle", "*.json", "*.yaml", "*.xml"]);
-                    if (file == String.Empty)
-                        return;
-                }
-
                 DialogHelper.ShowLoadingDialog(CoreTools.Translate("Loading packages, please wait..."));
-
-                // Read file
                 BundleFormatType formatType;
                 string EXT = file.Split('.')[^1].ToLower();
                 if (EXT == "yaml")
@@ -482,19 +477,8 @@ namespace UniGetUI.Interface.SoftwarePages
                     formatType = BundleFormatType.UBUNDLE;
 
                 string fileContent = await File.ReadAllTextAsync(file);
-
-                double open_version = await AddFromBundle(fileContent, formatType);
-                TelemetryHandler.ImportBundle(formatType);
-                HasUnsavedChanges = false;
-
                 DialogHelper.HideLoadingDialog();
-
-                if ((int)(open_version*10) != (int)(SerializableBundle.ExpectedVersion*10))
-                {   // Check only up to first decimal digit, prevent floating point precision error.
-                    Logger.Warn($"The loaded bundle \"{file}\" is based on schema version {open_version}, " +
-                                $"while this UniGetUI build expects version {SerializableBundle.ExpectedVersion}." +
-                                $"\nThis should not be a problem if packages show up, but be careful");
-                }
+                await OpenFromString(fileContent, formatType, file);
             }
             catch (Exception ex)
             {
@@ -513,6 +497,19 @@ namespace UniGetUI.Interface.SoftwarePages
                 DialogHelper.HideLoadingDialog();
                 await MainApp.Instance.MainWindow.ShowDialogAsync(warningDialog);
             }
+        }
+
+        public async Task AskOpenFromFile()
+        {
+            if (await AskForNewBundle() is false)
+                return;
+
+            FileOpenPicker picker = new(MainApp.Instance.MainWindow.GetWindowHandle());
+            string file = picker.Show(["*.ubundle", "*.json", "*.yaml", "*.xml"]);
+            if (file == String.Empty)
+                return;
+
+            await OpenFromFile(file);
         }
 
         public async Task SaveFile()

@@ -13,6 +13,7 @@ using System;
 using System.Threading.Tasks;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.Interface;
+using UniGetUI.PackageEngine.Enums;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -111,7 +112,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             }
 
             DialogHelper.ShowLoadingDialog(CoreTools.Translate("Restoring settings from GitHub Gist..."));
-            var settingsContent = await _backupService.RestoreFileAsync("unigetui.settings.json");
+            var settingsContent = await _backupService.RetrieveFileAsync("unigetui.settings.json");
             if (settingsContent != null)
             {
                 await Task.Run(() => Settings.ImportFromString_JSON(settingsContent));
@@ -138,27 +139,13 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         private async void RestorePackagesFromGitHubButton_Click(object sender, EventArgs e)
         {
             RestorePackagesFromGitHubButton.IsEnabled = false;
-            DialogHelper.ShowLoadingDialog(CoreTools.Translate("Loading package bundle from GitHub Gist..."));
-            var packagesContent = await _backupService.RestoreFileAsync("unigetui.packages.ubundle");
+            var packagesContent = await _backupService.RetrieveFileAsync("unigetui.packages.ubundle");
             if (packagesContent != null)
             {
-                var page = MainApp.Instance.MainWindow.NavigationPage.BundlesPage;
-                if (page != null)
-                {
-                    if (await page.AskForNewBundle() == false)
-                    {
-                        DialogHelper.HideLoadingDialog();
-                        UpdateBackupToGitHubButtonStatus();
-                        return;
-                    }
-                    await page.AddFromBundle(packagesContent, UniGetUI.PackageEngine.Enums.BundleFormatType.UBUNDLE);
-                    MainApp.Instance.MainWindow.NavigationPage.NavigateTo(PageType.Bundles);
-                }
-
-                DialogHelper.HideLoadingDialog();
+                MainApp.Instance.MainWindow.NavigationPage.LoadBundleFromString(packagesContent, BundleFormatType.UBUNDLE, "GitHub Gist");
                 Logger.Info("Successfully loaded package bundle from GitHub Gist.");
                 DialogHelper.ShowDismissableBalloon(
-                    CoreTools.Translate("Bundle loaded"),
+                    CoreTools.Translate("Backup retrieved successfully!"),
                     CoreTools.Translate("The package bundle has been loaded into the Package Bundles page."));
             }
             else

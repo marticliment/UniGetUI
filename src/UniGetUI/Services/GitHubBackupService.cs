@@ -103,7 +103,7 @@ namespace UniGetUI.Services
             }
         }
 
-        public async Task<string?> RestoreFileAsync(string fileName)
+        public async Task<string?> RetrieveFileAsync(string fileName)
         {
             var client = await GetAuthenticatedClientAsync();
             if (client == null) return null;
