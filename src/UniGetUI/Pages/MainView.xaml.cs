@@ -45,7 +45,7 @@ namespace UniGetUI.Interface
         private DiscoverSoftwarePage DiscoverPage;
         private SoftwareUpdatesPage UpdatesPage;
         private InstalledPackagesPage InstalledPage;
-        private PackageBundlesPage BundlesPage;
+        public PackageBundlesPage BundlesPage;
         private SettingsBasePage? SettingsPage;
         private SettingsBasePage? ManagersPage;
         private UniGetUILogPage? UniGetUILogPage;

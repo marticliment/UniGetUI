@@ -1,87 +1,137 @@
 using System;
 using System.Threading.Tasks;
-using IdentityModel.OidcClient;
-using IdentityModel.OidcClient.Browser;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SecureSettings;
-using UniGetUI.Core.SettingsEngine; // For potentially storing username
+using UniGetUI.Core.SettingsEngine;
 using Windows.System;
-
-// Octokit might be needed here later for user info fetching
-// using Octokit;
+using Octokit;
+using System.Net;
+using System.Text;
 
 namespace UniGetUI.Services
 {
     public class GitHubAuthService
     {
-        private const string GitHubClientId = "Iv23libnfvYqGI2ubBvI";
-        private const string GitHubAuthority = "https://github.com/";
-        // This must be registered in App.xaml.cs for protocol activation
-        // And also in the GitHub OAuth App settings
-        public const string RedirectUri = "unigetui-auth://callback";
+        private const string GitHubClientId = Secrets.GitHubClientId;
+        private const string GitHubClientSecret = Secrets.GitHubClientSecret;
 
-        private readonly OidcClientOptions _options;
-        private readonly OidcClient _client;
+        private const string RedirectUri = "http://127.0.0.1:58642/";
 
-        // To store basic user info like login name
+        private readonly GitHubClient _client;
         private const Settings.K GitHubUserLoginSettingKey = Settings.K.GitHubUserLogin;
-
-        public static TaskCompletionSource<string> CallbackCompletionSource { get; private set; }
 
         public GitHubAuthService()
         {
-            _options = new OidcClientOptions
-            {
-                Authority = GitHubAuthority,
-                ClientId = GitHubClientId,
-                RedirectUri = RedirectUri,
-                Scope = "read:user gist", // For reading user profile and creating Gists
-                Browser = new WinUIBrowser(),
-                Policy = new Policy
-                {
-                    RequireIdentityTokenSignature = false, // GitHub doesn't always send id_token_hint
-                }
-            };
-            _client = new OidcClient(_options);
+            _client = new GitHubClient(new ProductHeaderValue("UniGetUI"));
         }
 
         public async Task<bool> SignInAsync()
         {
+            HttpListener httpListener = null;
             try
             {
-                Logger.Info("Initiating GitHub sign-in process...");
-                LoginResult loginResult = await _client.LoginAsync(new LoginRequest());
+                Logger.Info("Initiating GitHub sign-in process using loopback redirect...");
 
-                if (loginResult.IsError)
+                httpListener = new HttpListener();
+                httpListener.Prefixes.Add(RedirectUri);
+                httpListener.Start();
+                Logger.Info($"Listening for GitHub callback on {RedirectUri}");
+
+                var request = new OauthLoginRequest(GitHubClientId)
                 {
-                    Logger.Error($"GitHub login failed: {loginResult.ErrorDescription}");
-                    await ClearAuthenticatedUserDataAsync(); // Clear any partial data
+                    Scopes = { "read:user", "gist" },
+                    RedirectUri = new Uri(RedirectUri)
+                };
+
+                var oauthLoginUrl = _client.Oauth.GetGitHubLoginUrl(request);
+
+                await Launcher.LaunchUriAsync(oauthLoginUrl);
+
+                var context = await httpListener.GetContextAsync();
+
+                var response = context.Response;
+                string responseString = "<html><head><title>Auth Success</title></head><body><h1>Authentication successful!</h1><p>You can now close this window and return to the UniGetUI application.</p></body></html>";
+                var buffer = Encoding.UTF8.GetBytes(responseString);
+                response.ContentLength64 = buffer.Length;
+                var output = response.OutputStream;
+                await output.WriteAsync(buffer, 0, buffer.Length);
+                output.Close();
+
+                httpListener.Stop();
+                Logger.Info("GitHub callback received and processed.");
+
+                var code = context.Request.QueryString["code"];
+                if (string.IsNullOrEmpty(code))
+                {
+                    var error = context.Request.QueryString["error"];
+                    var errorDescription = context.Request.QueryString["error_description"];
+                    Logger.Error($"GitHub OAuth callback returned an error: {error} - {errorDescription}");
+                    return false;
+                }
+
+                return await CompleteSignInAsync(code);
+            }
+            catch (HttpListenerException ex) when (ex.ErrorCode == 5) // Access Denied
+            {
+                Logger.Error("Access denied to the http listener. Please run the following command in an administrator terminal:");
+                Logger.Error($"netsh http add urlacl url={RedirectUri} user=Everyone");
+                // Optionally, you could try to run this command for the user.
+                // For now, just logging the instruction.
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Exception during GitHub sign-in process:");
+                Logger.Error(ex);
+                await ClearAuthenticatedUserDataAsync();
+                return false;
+            }
+            finally
+            {
+                httpListener?.Stop();
+            }
+        }
+
+        private async Task<bool> CompleteSignInAsync(string code)
+        {
+            try
+            {
+                var tokenRequest = new OauthTokenRequest(GitHubClientId, GitHubClientSecret, code)
+                {
+                    RedirectUri = new Uri(RedirectUri) // The same redirect_uri must be sent
+                };
+                var token = await _client.Oauth.CreateAccessToken(tokenRequest);
+
+                if (string.IsNullOrEmpty(token.AccessToken))
+                {
+                    Logger.Error("Failed to obtain GitHub access token.");
                     return false;
                 }
 
                 Logger.Info("GitHub login successful. Storing access token.");
-                await SecureTokenManager.StoreTokenAsync(loginResult.AccessToken);
+                await SecureTokenManager.StoreTokenAsync(token.AccessToken);
 
-                // Optionally, fetch and store user's GitHub login name
-                // For now, we'll assume the Name claim from UserInfo might be sufficient if available
-                // Or use Octokit to fetch more details.
-                // Attempt to get 'login' (username) claim first, then 'name'
-                string? userName = loginResult.User?.FindFirst("login")?.Value ?? loginResult.User?.FindFirst("name")?.Value;
-                if (!string.IsNullOrEmpty(userName))
+                var userClient = new GitHubClient(new ProductHeaderValue("UniGetUI"))
                 {
-                    Settings.SetValue(GitHubUserLoginSettingKey, userName);
-                    Logger.Info($"Logged in as GitHub user: {userName}");
+                    Credentials = new Credentials(token.AccessToken)
+                };
+
+                var user = await userClient.User.Current();
+                if (user != null)
+                {
+                    Settings.SetValue(GitHubUserLoginSettingKey, user.Login);
+                    Logger.Info($"Logged in as GitHub user: {user.Login}");
                 }
                 else
                 {
-                    Logger.Warn("Could not retrieve GitHub username from login result.");
+                    Logger.Warn("Could not retrieve GitHub user information after login.");
                 }
 
                 return true;
             }
             catch (Exception ex)
             {
-                Logger.Error("Exception during GitHub sign-in process:");
+                Logger.Error("Exception during GitHub token exchange:");
                 Logger.Error(ex);
                 await ClearAuthenticatedUserDataAsync();
                 return false;
@@ -92,8 +142,6 @@ namespace UniGetUI.Services
         {
             Logger.Info("Signing out from GitHub...");
             await ClearAuthenticatedUserDataAsync();
-            // Optionally: Add token revocation logic here if GitHub supports it for this flow
-            // await _client.RevokeTokenAsync( ... ); // This would need the token and potentially client secret for confidential clients
             Logger.Info("GitHub sign-out complete.");
         }
 
@@ -111,51 +159,14 @@ namespace UniGetUI.Services
         public async Task<string?> GetAuthenticatedUserLoginAsync()
         {
             string? storedLogin = Settings.GetValue(GitHubUserLoginSettingKey);
-            // Ensure we await the task if GetValue becomes async in the future, for now it's synchronous
             await Task.CompletedTask;
             return string.IsNullOrEmpty(storedLogin) ? null : storedLogin;
         }
 
         public async Task<bool> IsAuthenticatedAsync()
         {
-            // This is a quick check based on token presence.
             var token = await GetAccessTokenAsync();
             return !string.IsNullOrEmpty(token);
-        }
-
-
-        private class WinUIBrowser : IBrowser
-        {
-            public async Task<BrowserResult> InvokeAsync(BrowserOptions options, System.Threading.CancellationToken cancellationToken = default)
-            {
-                try
-                {
-                    Logger.Debug($"Launching browser for GitHub authentication at URL: {options.StartUrl}");
-                    CallbackCompletionSource = new TaskCompletionSource<string>();
-
-                    await Launcher.LaunchUriAsync(new Uri(options.StartUrl));
-
-                    // Wait for the protocol activation to complete and provide the callback URL
-                    string callbackUrl = await CallbackCompletionSource.Task;
-
-                    if (string.IsNullOrEmpty(callbackUrl))
-                    {
-                        return new BrowserResult { ResultType = BrowserResultType.UserCancel };
-                    }
-
-                    return new BrowserResult
-                    {
-                        ResultType = BrowserResultType.Success,
-                        Response = callbackUrl
-                    };
-                }
-                catch (Exception ex)
-                {
-                    Logger.Error($"Browser invocation error: {ex.Message}");
-                    Logger.Error(ex);
-                    return new BrowserResult { ResultType = BrowserResultType.UnknownError, Error = ex.ToString() };
-                }
-            }
         }
     }
 }

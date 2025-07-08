@@ -101,35 +101,47 @@
             <widgets:TranslatedTextBlock
                 Margin="4,32,4,8"
                 FontWeight="SemiBold"
-                Text="Cloud Backup (GitHub Gist)" />
+                Text="Cloud Backup and Restore" />
 
-            <StackPanel Orientation="Vertical" Spacing="8">
-                <TextBlock x:Name="GitHubUserText" Text="Not logged in" Margin="4,0,0,0"/>
-                <Button x:Name="LoginWithGitHubButton" Content="Login with GitHub" Click="LoginWithGitHubButton_Click" HorizontalAlignment="Left"/>
-                <Button x:Name="LogoutGitHubButton" Content="Logout from GitHub" Click="LogoutGitHubButton_Click" Visibility="Collapsed" HorizontalAlignment="Left"/>
+            <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                <TextBlock x:Name="GitHubUserText" Text="Not logged in" VerticalAlignment="Center"/>
+                <Button x:Name="LoginWithGitHubButton" Content="Login with GitHub" Click="LoginWithGitHubButton_Click" />
+                <Button x:Name="LogoutGitHubButton" Content="Logout from GitHub" Click="LogoutGitHubButton_Click" Visibility="Collapsed" />
             </StackPanel>
 
             <widgets:ButtonCard
                 x:Name="BackupToGitHubButton"
-                ButtonText="Backup to Gist"
+                ButtonText="Backup settings and packages"
                 Click="BackupToGitHubButton_Click"
                 CornerRadius="8"
                 IsEnabled="False"
-                Text="Backup your settings to a private GitHub Gist">
+                Text="Backup your settings and packages to a private GitHub Gist">
                 <widgets:ButtonCard.Description>
-                    <widgets:TranslatedTextBlock Text="Requires you to be logged in with your GitHub account (see Internet settings)." />
+                    <widgets:TranslatedTextBlock Text="Requires you to be logged in with your GitHub account." />
                 </widgets:ButtonCard.Description>
             </widgets:ButtonCard>
 
             <widgets:ButtonCard
-                x:Name="RestoreFromGitHubButton"
-                ButtonText="Restore from Gist"
-                Click="RestoreFromGitHubButton_Click"
+                x:Name="RestoreSettingsFromGitHubButton"
+                ButtonText="Restore settings"
+                Click="RestoreSettingsFromGitHubButton_Click"
                 CornerRadius="8"
                 IsEnabled="False"
                 Text="Restore your settings from a private GitHub Gist">
                 <widgets:ButtonCard.Description>
                     <widgets:TranslatedTextBlock Text="This will overwrite your current settings. A restart may be required." />
+                </widgets:ButtonCard.Description>
+            </widgets:ButtonCard>
+
+            <widgets:ButtonCard
+                x:Name="RestorePackagesFromGitHubButton"
+                ButtonText="Restore packages"
+                Click="RestorePackagesFromGitHubButton_Click"
+                CornerRadius="8"
+                IsEnabled="False"
+                Text="Restore your packages from a private GitHub Gist">
+                <widgets:ButtonCard.Description>
+                    <widgets:TranslatedTextBlock Text="This will install the packages from the backup." />
                 </widgets:ButtonCard.Description>
             </widgets:ButtonCard>
 

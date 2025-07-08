@@ -362,7 +362,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         }
 
-        public static async Task BackupPackages()
+        public static async Task<string?> BackupPackages(bool returnContents = false)
         {
 
             try
@@ -375,6 +375,11 @@ namespace UniGetUI.Interface.SoftwarePages
                 }
 
                 string BackupContents = await PackageBundlesPage.CreateBundle(packagesToExport.ToArray(), BundleFormatType.UBUNDLE);
+
+                if(returnContents)
+                {
+                    return BackupContents;
+                }
 
                 string dirName = Settings.GetValue(Settings.K.ChangeBackupOutputDirectory);
                 if (dirName == "")
@@ -404,11 +409,13 @@ namespace UniGetUI.Interface.SoftwarePages
                 await File.WriteAllTextAsync(filePath, BackupContents);
                 HasDoneBackup = true;
                 Logger.ImportantInfo("Backup saved to " + filePath);
+                return null;
             }
             catch (Exception ex)
             {
                 Logger.Error("An error occurred while performing a backup");
                 Logger.Error(ex);
+                return null;
             }
         }
 

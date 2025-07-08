@@ -404,26 +404,11 @@ namespace UniGetUI
                 Logger.Warn("REDIRECTOR ACTIVATOR: args.Kind is not Launch but rather " + kind);
             }
 
-            // Handle Protocol Activation for GitHub OAuth
             if (kind == ExtendedActivationKind.Protocol)
             {
                 if (rawArgs.Data is Windows.ApplicationModel.Activation.IProtocolActivatedEventArgs protocolArgs)
                 {
                     Logger.Info($"Protocol activation received: {protocolArgs.Uri}");
-                    if (protocolArgs.Uri.Scheme.Equals("unigetui-auth", StringComparison.OrdinalIgnoreCase))
-                    {
-                        // Pass the URI to the GitHubAuthService if it's waiting
-                        if (Services.GitHubAuthService.CallbackCompletionSource != null && !Services.GitHubAuthService.CallbackCompletionSource.Task.IsCompleted)
-                        {
-                            Services.GitHubAuthService.CallbackCompletionSource.TrySetResult(protocolArgs.Uri.ToString());
-                            Logger.Info("GitHub OAuth callback URI passed to AuthService.");
-                        }
-                        else
-                        {
-                            Logger.Warn("GitHubAuthService.CallbackCompletionSource was null or already completed. Callback URI not passed.");
-                        }
-                    }
-                }
             }
 
             MainWindow.DispatcherQueue.TryEnqueue(MainWindow.Activate);

@@ -1,19 +1,17 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Octokit;
 using UniGetUI.Core.Logging;
-using UniGetUI.Core.SettingsEngine; // For Settings.K.GitHubGistId and potentially settings export
-// It's likely SettingsEngine_ImportExport.cs will be needed, but its path is still uncertain.
-// Assuming it's in UniGetUI.Core.Settings for now.
+using UniGetUI.Core.SettingsEngine;
 
 namespace UniGetUI.Services
 {
     public class GitHubBackupService
     {
         private readonly GitHubAuthService _authService;
-        private const string GistDescription = "UniGetUI Settings Backup";
-        private const string GistFileName = "unigetui.settings.json"; // Or .yaml if YAML is preferred
+        private const string GistDescription = "UniGetUI Backup";
 
         public GitHubBackupService(GitHubAuthService authService)
         {
@@ -35,23 +33,10 @@ namespace UniGetUI.Services
             };
         }
 
-        public async Task<bool> BackupSettingsAsync()
+        public async Task<bool> BackupAsync(Dictionary<string, string> filesToBackup)
         {
             var client = await GetAuthenticatedClientAsync();
             if (client == null) return false;
-
-            string settingsContent;
-            try
-            {
-                settingsContent = await Settings.ExportSettingsAsStringAsync();
-                Logger.Info("Successfully exported settings for GitHub Gist backup.");
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("Failed to export settings for backup:");
-                Logger.Error(ex);
-                return false;
-            }
 
             try
             {
@@ -68,14 +53,12 @@ namespace UniGetUI.Services
                     catch (NotFoundException)
                     {
                         Logger.Warn($"Previously stored Gist ID {gistId} not found. Will create a new Gist.");
-                        Settings.SetValue(Settings.K.GitHubGistId, ""); // Clear invalid Gist ID
+                        Settings.SetValue(Settings.K.GitHubGistId, ""); 
                         gistId = null;
                     }
                     catch (Exception ex)
                     {
                         Logger.Error($"Error fetching Gist ID {gistId}: {ex.Message}");
-                        // Decide if we should proceed to create a new one or fail.
-                        // For now, let's try creating a new one if fetching fails for reasons other than NotFound.
                         Settings.SetValue(Settings.K.GitHubGistId, "");
                         gistId = null;
                     }
@@ -87,7 +70,10 @@ namespace UniGetUI.Services
                     {
                         Description = GistDescription
                     };
-                    update.Files[GistFileName] = new GistFileUpdate { Content = settingsContent };
+                    foreach(var file in filesToBackup)
+                    {
+                        update.Files[file.Key] = new GistFileUpdate { Content = file.Value };
+                    }
                     await client.Gist.Edit(gistId, update);
                     Logger.Info($"Successfully updated Gist ID: {gistId}");
                 }
@@ -96,9 +82,12 @@ namespace UniGetUI.Services
                     var newGist = new NewGist
                     {
                         Description = GistDescription,
-                        Public = false // Private Gist
+                        Public = false
                     };
-                    newGist.Files.Add(GistFileName, settingsContent);
+                    foreach (var file in filesToBackup)
+                    {
+                        newGist.Files.Add(file.Key, file.Value);
+                    }
 
                     var createdGist = await client.Gist.Create(newGist);
                     Settings.SetValue(Settings.K.GitHubGistId, createdGist.Id);
@@ -108,18 +97,18 @@ namespace UniGetUI.Services
             }
             catch (Exception ex)
             {
-                Logger.Error("Failed to backup settings to GitHub Gist:");
+                Logger.Error("Failed to backup to GitHub Gist:");
                 Logger.Error(ex);
                 return false;
             }
         }
 
-        public async Task<bool> RestoreSettingsAsync()
+        public async Task<string?> RestoreFileAsync(string fileName)
         {
             var client = await GetAuthenticatedClientAsync();
-            if (client == null) return false;
+            if (client == null) return null;
 
-            string settingsContent = null;
+            string fileContent = null;
             string gistId = Settings.GetValue(Settings.K.GitHubGistId);
 
             try
@@ -129,77 +118,70 @@ namespace UniGetUI.Services
                     try
                     {
                         var gist = await client.Gist.Get(gistId);
-                        if (gist.Files.TryGetValue(GistFileName, out var file) && file != null)
+                        if (gist.Files.TryGetValue(fileName, out var file) && file != null)
                         {
-                            settingsContent = file.Content;
-                            Logger.Info($"Successfully retrieved settings content from Gist ID: {gistId}");
+                            fileContent = file.Content;
+                            Logger.Info($"Successfully retrieved file '{fileName}' content from Gist ID: {gistId}");
                         }
                         else
                         {
-                            Logger.Error($"Gist ID {gistId} does not contain the expected file: {GistFileName}");
-                            // Attempt to find by description as a fallback
+                            Logger.Error($"Gist ID {gistId} does not contain the expected file: {fileName}");
                         }
                     }
                     catch (NotFoundException)
                     {
                         Logger.Warn($"Stored Gist ID {gistId} not found. Will try to find by description.");
-                        Settings.SetValue(Settings.K.GitHubGistId, ""); // Clear invalid Gist ID
-                        gistId = null; // Force search by description
+                        Settings.SetValue(Settings.K.GitHubGistId, ""); 
+                        gistId = null; 
                     }
                     catch (Exception ex)
                     {
                         Logger.Error($"Error fetching Gist ID {gistId}: {ex.Message}. Will try to find by description.");
                         Settings.SetValue(Settings.K.GitHubGistId, "");
-                        gistId = null; // Force search by description
+                        gistId = null; 
                     }
                 }
 
-                if (settingsContent == null) // If not found by ID or ID was invalid/missing
+                if (fileContent == null) 
                 {
                     Logger.Info("Attempting to find settings Gist by description...");
-                    var gists = await client.Gist.GetAll(); // Gets gists for the authenticated user
-                    var settingsGist = gists.FirstOrDefault(g => g.Description == GistDescription && g.Files.ContainsKey(GistFileName));
+                    var gists = await client.Gist.GetAll(); 
+                    var settingsGist = gists.FirstOrDefault(g => g.Description == GistDescription && g.Files.ContainsKey(fileName));
 
                     if (settingsGist != null)
                     {
-                        // Fetch the full Gist to get content, as GetAllForUser might not include it
                         var fullGist = await client.Gist.Get(settingsGist.Id);
-                        if (fullGist.Files.TryGetValue(GistFileName, out var file) && file != null)
+                        if (fullGist.Files.TryGetValue(fileName, out var file) && file != null)
                         {
-                            settingsContent = file.Content;
-                            Settings.SetValue(Settings.K.GitHubGistId, fullGist.Id); // Store the found Gist ID
+                            fileContent = file.Content;
+                            Settings.SetValue(Settings.K.GitHubGistId, fullGist.Id); 
                             Logger.Info($"Found settings Gist by description. ID: {fullGist.Id}");
                         }
                         else
                         {
-                             Logger.Error($"Found Gist by description (ID: {settingsGist.Id}) but it's missing file {GistFileName}.");
+                             Logger.Error($"Found Gist by description (ID: {settingsGist.Id}) but it's missing file {fileName}.");
                         }
                     }
                     else
                     {
-                        Logger.Warn("No UniGetUI settings Gist found for the user by description.");
-                        return false; // No Gist found to restore from
+                        Logger.Warn($"No UniGetUI settings Gist found for the user with file {fileName}.");
+                        return null; 
                     }
                 }
 
-                if (string.IsNullOrEmpty(settingsContent))
+                if (string.IsNullOrEmpty(fileContent))
                 {
-                    Logger.Error("Settings content is empty or could not be retrieved from Gist.");
-                    return false;
+                    Logger.Error($"File content for '{fileName}' is empty or could not be retrieved from Gist.");
+                    return null;
                 }
 
-                // TODO: Replace with actual settings import call
-                // Example: await Core.Settings.SettingsEngine_ImportExport.ImportSettingsFromStringAsync(settingsContent);
-                // This will be a key part of step 4 (Refine Settings Engine).
-                await Settings.ImportSettingsFromStringAsync(settingsContent);
-                Logger.Info("Successfully imported settings from Gist content.");
-                return true;
+                return fileContent;
             }
             catch (Exception ex)
             {
-                Logger.Error("Failed to restore settings from GitHub Gist:");
+                Logger.Error($"Failed to restore file '{fileName}' from GitHub Gist:");
                 Logger.Error(ex);
-                return false;
+                return null;
             }
         }
     }

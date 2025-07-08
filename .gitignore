@@ -87,5 +87,6 @@ UniGetUI.Installer.ms-store-test.exe
 UniGetUI Installer_winget-fix-test.exe
 InstallerExtras/uninst-*.e32
 
-# YoYo AI version control directory
-.yoyo/
+
+# Secrets file for GitHub OAuth
+src/UniGetUI/Services/Secrets.cs
