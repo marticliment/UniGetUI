@@ -27,8 +27,8 @@ namespace UniGetUI.Services
         public GitHubBackupService(GitHubAuthService authService)
         {
             _authService = authService;
-            DeviceUserUniqueIdentifier = $"{Environment.MachineName}\\{Environment.UserName}";
-            GistFileKey = $"{DeviceUserUniqueIdentifier}";
+            DeviceUserUniqueIdentifier = $"{Environment.MachineName}\\{Environment.UserName}".Replace(" ", "");
+            GistFileKey = $"PACKAGES {DeviceUserUniqueIdentifier}";
         }
 
         private async Task<GitHubClient?> CreateClientAsync()
