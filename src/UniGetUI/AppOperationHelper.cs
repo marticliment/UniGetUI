@@ -198,7 +198,7 @@ public partial class MainApp
                 Logger.Warn($"A newer version of {package.Id} has been detected, the update will not be performed!");
                 PEInterface.UpgradablePackagesLoader.Remove(package);
                 foreach (var eq in PEInterface.InstalledPackagesLoader.GetEquivalentPackages(package))
-                {   // Remove upgradable tag
+                {   // Remove upgradable tag from all installed packages
                     eq.Tag = PackageTag.Default;
                 }
 
