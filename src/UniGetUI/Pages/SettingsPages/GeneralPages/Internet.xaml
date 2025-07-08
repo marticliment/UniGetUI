@@ -170,7 +170,6 @@
                 StateChanged="ShowRestartBanner"
                 Text="Wait for the device to be connected to the internet before attempting to do tasks that require internet connectivity." />
 
-            
 
         </StackPanel>
     </ScrollViewer>

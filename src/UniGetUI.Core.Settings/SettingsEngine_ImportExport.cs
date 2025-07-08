@@ -35,8 +35,7 @@ public partial class Settings
 
     public static async Task ImportSettingsFromStringAsync(string jsonContent)
     {
-        ResetSettings(); // Consider if a full reset is always desired before import.
-                        // For cloud sync, usually yes.
+        ResetSettings();
         Dictionary<string, string> settings = JsonSerializer.Deserialize<Dictionary<string, string>>(jsonContent, SerializationOptions) ?? [];
         foreach (KeyValuePair<string, string> entry in settings)
         {
@@ -46,8 +45,6 @@ public partial class Settings
             await File.WriteAllTextAsync(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, entry.Key), entry.Value);
         }
         Logger.Info("Settings successfully imported from string content.");
-        // A restart might be needed for all settings to take effect.
-        // This method itself won't trigger it, but the calling UI should inform the user.
     }
 
     public static void ImportFromJSON(string path)

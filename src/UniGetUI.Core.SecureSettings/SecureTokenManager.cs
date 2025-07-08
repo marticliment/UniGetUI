@@ -22,25 +22,21 @@ namespace UniGetUI.Core.SecureSettings
 
             try
             {
-                // Attempt to remove existing credential first to ensure clean add/update
                 try
                 {
-                    // Retrieve can throw if not found, so FindAllByResource is safer for removal logic
                     var existingCredentials = vault.FindAllByResource(GitHubResourceName);
                     foreach (var cred in existingCredentials)
                     {
-                        if (cred.UserName == "default_user") // Ensure we only remove the one we manage
+                        if (cred.UserName == "default_user")
                         {
                             vault.Remove(cred);
                             Logger.Debug("Removed existing GitHub token before storing the new one.");
-                            break; // Assuming only one credential per user for this resource
+                            break;
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    // This might happen if no credential exists, or other PasswordVault issues.
-                    // If it's just "not found", that's fine for an add operation.
                     Logger.Debug($"Info during pre-removal attempt (might be okay if adding new): {ex.Message}");
                 }
 
@@ -49,7 +45,6 @@ namespace UniGetUI.Core.SecureSettings
             }
             catch (Exception ex)
             {
-                // This catch is for errors during vault.Add() mainly.
                 Logger.Error($"Error storing/updating token in PasswordVault: {ex.Message}");
                 Logger.Error(ex);
             }
@@ -67,7 +62,6 @@ namespace UniGetUI.Core.SecureSettings
             }
             catch (Exception ex)
             {
-                // Typically means the credential was not found
                 Logger.Warn($"Could not retrieve token (it may not exist): {ex.Message}");
                 return null;
             }

@@ -6,8 +6,6 @@ using UniGetUI.Core.Tools;
 using UniGetUI.Interface;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
-using UniGetUI.Services; // Required for GitHubAuthService
-using UniGetUI.Core.Logging; // Required for Logger
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
