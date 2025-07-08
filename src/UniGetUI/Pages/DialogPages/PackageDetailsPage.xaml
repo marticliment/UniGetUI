@@ -120,6 +120,9 @@
                         <Run x:Name="License_Content_Text">Helo</Run>
                         <Hyperlink x:Name="License_Content_Uri" NavigateUri="about:blank">(Helo)</Hyperlink>
                         <LineBreak />
+                        <Run x:Name="UpdateDate_Label" FontWeight="Bold">Update date:</Run>
+                        <Run x:Name="UpdateDate_Content">Helo</Run>
+                        <LineBreak />
                         <Run x:Name="Source_Label" FontWeight="Bold">SOURCE_LABEL:</Run>
                         <Run x:Name="Source_Content">Helo</Run>
                     </Paragraph>
@@ -324,8 +327,10 @@
                         <Run x:Name="InstallerSize_Content" />
                         <LineBreak />
                         <LineBreak />
-                        <Run x:Name="UpdateDate_Label" FontWeight="Bold">Update date:</Run>
-                        <Run x:Name="UpdateDate_Content">Helo</Run>
+                        <Run x:Name="Dependencies_Label" FontWeight="Bold">Dependencies:</Run>
+                    </Paragraph>
+                    <Paragraph x:Name="DependenciesParagraph"/>
+                    <Paragraph>
                         <LineBreak />
                         <Run x:Name="ReleaseNotes_Label" FontWeight="Bold">Release Notes:</Run>
                         <Run x:Name="ReleaseNotes_Content">Helo</Run>
