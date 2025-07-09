@@ -18,7 +18,6 @@ namespace UniGetUI.Services
         private const string RedirectUri = "http://127.0.0.1:58642/";
 
         private readonly GitHubClient _client;
-        private const Settings.K GitHubUserLoginSettingKey = Settings.K.GitHubUserLogin;
 
         public GitHubAuthService()
         {
@@ -119,7 +118,7 @@ namespace UniGetUI.Services
                 var user = await userClient.User.Current();
                 if (user != null)
                 {
-                    Settings.SetValue(GitHubUserLoginSettingKey, user.Login);
+                    Settings.SetValue(Settings.K.GitHubUserLogin, user.Login);
                     Logger.Info($"Logged in as GitHub user: {user.Login}");
                 }
                 else
@@ -145,10 +144,10 @@ namespace UniGetUI.Services
             Logger.Info("GitHub sign-out complete.");
         }
 
-        private async Task ClearAuthenticatedUserDataAsync()
+        private static async Task ClearAuthenticatedUserDataAsync()
         {
             await SecureTokenManager.DeleteTokenAsync();
-            Settings.SetValue(GitHubUserLoginSettingKey, ""); // Clear stored username
+            Settings.SetValue(Settings.K.GitHubUserLogin, ""); // Clear stored username
         }
 
         public async Task<string?> GetAccessTokenAsync()
@@ -158,7 +157,7 @@ namespace UniGetUI.Services
 
         public async Task<string?> GetAuthenticatedUserLoginAsync()
         {
-            string? storedLogin = Settings.GetValue(GitHubUserLoginSettingKey);
+            string? storedLogin = Settings.GetValue(Settings.K.GitHubUserLogin);
             await Task.CompletedTask;
             return string.IsNullOrEmpty(storedLogin) ? null : storedLogin;
         }

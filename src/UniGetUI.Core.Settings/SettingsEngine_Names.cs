@@ -77,7 +77,6 @@ public static partial class Settings
         KillProcessesThatRefuseToDie,
         ManagerPaths,
         GitHubUserLogin,
-        GitHubGistId,
 
         Test1,
         Test2,
@@ -166,7 +165,6 @@ public static partial class Settings
             K.KillProcessesThatRefuseToDie => "KillProcessesThatRefuseToDie",
             K.ManagerPaths => "ManagerPaths",
             K.GitHubUserLogin => "GitHubUserLogin",
-            K.GitHubGistId => "GitHubGistId",
 
             K.Test1 => "TestSetting1",
             K.Test2 => "TestSetting2",
