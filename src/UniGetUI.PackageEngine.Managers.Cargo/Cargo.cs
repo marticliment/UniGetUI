@@ -150,6 +150,8 @@ public partial class Cargo : PackageManager
             return new(){ ExecutablePath = executablePath, Found = false, Version = ""};
         }
 
+        Status = new() { ExecutablePath = executablePath, Found = found, Version = "", ExecutableCallArgs = ""};
+
         using Process p = GetProcess(executablePath, "--version");
         p.Start();
         string version = p.StandardOutput.ReadToEnd().Trim();
