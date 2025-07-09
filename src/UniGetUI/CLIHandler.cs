@@ -62,7 +62,7 @@ public static class CLIHandler
 
         try
         {
-            Settings.ImportFromJSON(file);
+            Settings.ImportFromFile_JSON(file);
         }
         catch (Exception ex)
         {
@@ -87,7 +87,7 @@ public static class CLIHandler
 
         try
         {
-            Settings.ExportToJSON(file);
+            Settings.ExportToFile_JSON(file);
         }
         catch (Exception ex)
         {

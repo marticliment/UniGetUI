@@ -18,11 +18,28 @@
     <PublishTrimmed>true</PublishTrimmed>
     <TrimMode>partial</TrimMode>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+</PropertyGroup>    
+    
+    
+    
+    <PropertyGroup>
+      <GeneratedBuildInfoFile>$(IntermediateOutputPath)\Generated Files\Secrets.Generated.cs</GeneratedBuildInfoFile>
   </PropertyGroup>
+    
+    <Target Name="GenerateBuildInfo" BeforeTargets="BeforeBuild">
+        <Exec Command="pwsh -File Services/generate-secrets.ps1 $(IntermediateOutputPath)" />
+        <ItemGroup>
+            <Compile Include="**/*$(DefaultLanguageSourceExtension)"
+                     Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder);$(BaseIntermediateOutputPath)**;$(BaseOutputPath)**;@(Compile)" />
+        </ItemGroup>
+    </Target>
 
-  <ItemGroup>
-    <Content Include="icon.ico" />
-  </ItemGroup>
+
+
+
+    <ItemGroup>
+      <Content Include="icon.ico" />
+    </ItemGroup>
   <ItemGroup>
     <Compile Remove="Intereface\**" />
     <EmbeddedResource Remove="Intereface\**" />
@@ -87,6 +104,8 @@
     <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
     <PackageReference Include="WinUIEx" Version="2.6.0" />
     <PackageReference Include="YamlDotNet" Version="16.3.0" />
+    <PackageReference Include="IdentityModel.OidcClient" Version="6.0.0" />
+    <PackageReference Include="Octokit" Version="13.0.1" />
 
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>
@@ -326,5 +345,9 @@
     <Resource Remove="Interface\Widgets\DialogCloseButton.xaml" />
     <Resource Remove="SoftwarePages\AbstractPackagesPage.xaml" />
     <Resource Remove="PackageOperations\OperationControl.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Generated Files\" />
   </ItemGroup>
 </Project>

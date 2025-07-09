@@ -41,7 +41,7 @@ public static class TelemetryHandler
         Settings.K.DisableAutoCheckforUpdates,
         Settings.K.AutomaticallyUpdatePackages,
         Settings.K.AskToDeleteNewDesktopShortcuts,
-        Settings.K.EnablePackageBackup,
+        Settings.K.EnablePackageBackup_LOCAL,
         Settings.K.DoCacheAdminRights,
         Settings.K.DoCacheAdminRightsForBatches,
         Settings.K.ForceLegacyBundledWinGet,

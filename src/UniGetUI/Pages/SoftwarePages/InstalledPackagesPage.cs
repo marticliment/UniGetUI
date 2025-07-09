@@ -12,6 +12,7 @@ using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Managers.WingetManager;
 using UniGetUI.Pages.DialogPages;
+using UniGetUI.Services;
 
 namespace UniGetUI.Interface.SoftwarePages
 {
@@ -286,9 +287,14 @@ namespace UniGetUI.Interface.SoftwarePages
         {
             if (!HasDoneBackup)
             {
-                if (Settings.Get(Settings.K.EnablePackageBackup))
+                if (Settings.Get(Settings.K.EnablePackageBackup_LOCAL))
                 {
-                    _ = BackupPackages();
+                    _ = BackupPackages_LOCAL();
+                }
+
+                if (Settings.Get(Settings.K.EnablePackageBackup_CLOUD))
+                {
+                    _ = BackupPackages_CLOUD();
                 }
             }
 
@@ -362,20 +368,40 @@ namespace UniGetUI.Interface.SoftwarePages
 
         }
 
-        public static async Task BackupPackages()
+        public static Task<string> GenerateBackupContents()
         {
+            Logger.Debug("Starting package backup");
+            List<IPackage> packagesToExport = [];
+            foreach (IPackage package in PEInterface.InstalledPackagesLoader.Packages)
+            {
+                packagesToExport.Add(package);
+            }
 
+            return PackageBundlesPage.CreateBundle(packagesToExport.ToArray(), BundleFormatType.UBUNDLE);
+        }
+
+        public static async Task BackupPackages_CLOUD()
+        {
             try
             {
-                Logger.Debug("Starting package backup");
-                List<IPackage> packagesToExport = [];
-                foreach (IPackage package in PEInterface.InstalledPackagesLoader.Packages)
-                {
-                    packagesToExport.Add(package);
-                }
+                string backupContents = await GenerateBackupContents();
+                var authService = new GitHubAuthService();
+                var backupService = new GitHubBackupService(authService);
+                await backupService.UploadPackageBundle(backupContents);
+                Logger.ImportantInfo("Cloud backup succeeded");
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("An error occurred while performing a CLOUD backup");
+                Logger.Error(ex);
+            }
+        }
 
-                string BackupContents = await PackageBundlesPage.CreateBundle(packagesToExport.ToArray(), BundleFormatType.UBUNDLE);
-
+        public static async Task BackupPackages_LOCAL()
+        {
+            try
+            {
+                string backupContents = await GenerateBackupContents();
                 string dirName = Settings.GetValue(Settings.K.ChangeBackupOutputDirectory);
                 if (dirName == "")
                 {
@@ -401,13 +427,13 @@ namespace UniGetUI.Interface.SoftwarePages
                 fileName += ".ubundle";
 
                 string filePath = Path.Combine(dirName, fileName);
-                await File.WriteAllTextAsync(filePath, BackupContents);
+                await File.WriteAllTextAsync(filePath, backupContents);
                 HasDoneBackup = true;
                 Logger.ImportantInfo("Backup saved to " + filePath);
             }
             catch (Exception ex)
             {
-                Logger.Error("An error occurred while performing a backup");
+                Logger.Error("An error occurred while performing a LOCAL backup");
                 Logger.Error(ex);
             }
         }
