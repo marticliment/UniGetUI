@@ -27,6 +27,16 @@ namespace UniGetUI.PackageEngine.Classes.Serializable
             this.Source = data[nameof(Source)]?.GetVal<string>() ?? "";
         }
 
+        public override JsonNode AsJsonNode()
+        {
+            JsonObject obj = new();
+            obj.Add(nameof(Id), Id);
+            obj.Add(nameof(Name), Name);
+            obj.Add(nameof(Version), Version);
+            obj.Add(nameof(Source), Source);
+            return obj;
+        }
+
         public SerializableIncompatiblePackage(JsonNode data) : base(data)
         {
         }

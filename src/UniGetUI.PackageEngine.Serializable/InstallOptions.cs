@@ -1,3 +1,4 @@
+using System.Text.Json;
 using System.Text.Json.Nodes;
 using UniGetUI.Core.Data;
 
@@ -111,6 +112,92 @@ namespace UniGetUI.PackageEngine.Serializable
             // This entry shall be checked the last one, to ensure all other properties are set
             this.OverridesNextLevelOpts =
                 data[nameof(OverridesNextLevelOpts)]?.GetValue<bool>() ?? DiffersFromDefault();
+        }
+
+        public override JsonNode AsJsonNode()
+        {
+            JsonObject obj = new();
+
+            if (OverridesNextLevelOpts is not false)
+                obj.Add(nameof(OverridesNextLevelOpts), OverridesNextLevelOpts);
+
+            if(SkipHashCheck is not false)
+                obj.Add(nameof(SkipHashCheck), SkipHashCheck);
+
+            if(InteractiveInstallation is not false)
+                obj.Add(nameof(InteractiveInstallation), InteractiveInstallation);
+
+            if(RunAsAdministrator is not false)
+                obj.Add(nameof(RunAsAdministrator), RunAsAdministrator);
+
+            if(PreRelease is not false)
+                obj.Add(nameof(PreRelease), PreRelease);
+
+            if(SkipMinorUpdates is not false)
+                obj.Add(nameof(SkipMinorUpdates), SkipMinorUpdates);
+
+            if(Architecture.Any())
+                obj.Add(nameof(Architecture), Architecture);
+
+            if(InstallationScope.Any())
+                obj.Add(nameof(InstallationScope), InstallationScope);
+
+            if(CustomParameters_Install.Where(x => x.Any()).Any())
+                obj.Add(nameof(CustomParameters_Install),
+                    new JsonArray(CustomParameters_Install.Select(x => JsonValue.Create(x) as JsonNode).ToArray()));
+
+            if(CustomParameters_Update.Where(x => x.Any()).Any())
+                obj.Add(nameof(CustomParameters_Update),
+                    new JsonArray(CustomParameters_Update.Select(x => JsonValue.Create(x) as JsonNode).ToArray()));
+
+            if(CustomParameters_Uninstall.Where(x => x.Any()).Any())
+                obj.Add(nameof(CustomParameters_Uninstall),
+                    new JsonArray(CustomParameters_Uninstall.Select(x => JsonValue.Create(x) as JsonNode).ToArray()));
+
+            if(KillBeforeOperation.Where(x => x.Any()).Any())
+                obj.Add(nameof(KillBeforeOperation),
+                    new JsonArray(KillBeforeOperation.Select(x => JsonValue.Create(x) as JsonNode).ToArray()));
+
+            if(CustomInstallLocation.Any())
+                obj.Add(nameof(CustomInstallLocation), CustomInstallLocation);
+
+            if(RemoveDataOnUninstall is not false)
+                obj.Add(nameof(RemoveDataOnUninstall), RemoveDataOnUninstall);
+
+            if(Version.Any())
+                obj.Add(nameof(Version), Version);
+
+            if(PreInstallCommand.Any())
+                obj.Add(nameof(PreInstallCommand), PreInstallCommand);
+
+            if(PostInstallCommand.Any())
+                obj.Add(nameof(PostInstallCommand), PostInstallCommand);
+
+            if(AbortOnPreInstallFail is not true)
+                obj.Add(nameof(AbortOnPreInstallFail), AbortOnPreInstallFail);
+
+            if(PreUpdateCommand.Any())
+                obj.Add(nameof(PreUpdateCommand), PreUpdateCommand);
+
+            if(PostUpdateCommand.Any())
+                obj.Add(nameof(PostUpdateCommand), PostUpdateCommand);
+
+            if(AbortOnPreUpdateFail is not true)
+                obj.Add(nameof(AbortOnPreUpdateFail), AbortOnPreUpdateFail);
+
+            if(PreUninstallCommand.Any())
+                obj.Add(nameof(PreUninstallCommand), PreUninstallCommand);
+
+            if(PostUninstallCommand.Any())
+                obj.Add(nameof(PostUninstallCommand), PostUninstallCommand);
+
+            if(UninstallPreviousVersionsOnUpdate is not false)
+                obj.Add(nameof(UninstallPreviousVersionsOnUpdate), UninstallPreviousVersionsOnUpdate);
+
+            if(AbortOnPreUninstallFail is not true)
+                obj.Add(nameof(AbortOnPreUninstallFail), AbortOnPreUninstallFail);
+
+            return obj;
         }
 
         private static List<string> ReadArrayFromJson(JsonNode data, string name)

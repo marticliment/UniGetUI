@@ -41,6 +41,19 @@ namespace UniGetUI.PackageEngine.Classes.Serializable
             this.Updates = new(data[nameof(Updates)] ?? new JsonObject());
         }
 
+        public override JsonNode AsJsonNode()
+        {
+            JsonObject obj = new();
+            obj.Add(nameof(Id), Id);
+            obj.Add(nameof(Name), Name);
+            obj.Add(nameof(Version), Version);
+            obj.Add(nameof(Source), Source);
+            obj.Add(nameof(ManagerName), ManagerName);
+            obj.Add(nameof(InstallationOptions), InstallationOptions.AsJsonNode());
+            obj.Add(nameof(Updates), Updates.AsJsonNode());
+            return obj;
+        }
+
         public SerializablePackage() : base()
         {
         }
