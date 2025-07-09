@@ -122,7 +122,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         private async void DoBackup_LOCAL_Click(object sender, EventArgs e)
         {
             DialogHelper.ShowLoadingDialog(CoreTools.Translate("Performing backup, please wait..."));
-            await InstalledPackagesPage.BackupPackages();
+            await InstalledPackagesPage.BackupPackages_LOCAL();
             DialogHelper.HideLoadingDialog();
         }
 

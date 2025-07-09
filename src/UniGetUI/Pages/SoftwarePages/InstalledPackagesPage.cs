@@ -1,5 +1,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Octokit;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
@@ -12,6 +13,7 @@ using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Managers.WingetManager;
 using UniGetUI.Pages.DialogPages;
+using UniGetUI.Services;
 
 namespace UniGetUI.Interface.SoftwarePages
 {
@@ -288,7 +290,12 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 if (Settings.Get(Settings.K.EnablePackageBackup_LOCAL))
                 {
-                    _ = BackupPackages();
+                    _ = BackupPackages_LOCAL();
+                }
+
+                if (Settings.Get(Settings.K.EnablePackageBackup_CLOUD))
+                {
+                    _ = BackupPackages_CLOUD();
                 }
             }
 
@@ -374,8 +381,24 @@ namespace UniGetUI.Interface.SoftwarePages
             return PackageBundlesPage.CreateBundle(packagesToExport.ToArray(), BundleFormatType.UBUNDLE);
         }
 
+        public static async Task BackupPackages_CLOUD()
+        {
+            try
+            {
+                string backupContents = await GenerateBackupContents();
+                var authService = new GitHubAuthService();
+                var backupService = new GitHubBackupService(authService);
+                await backupService.UploadPackageBundle(backupContents);
+                Logger.ImportantInfo("Cloud backup succeeded");
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("An error occurred while performing a CLOUD backup");
+                Logger.Error(ex);
+            }
+        }
 
-        public static async Task BackupPackages()
+        public static async Task BackupPackages_LOCAL()
         {
             try
             {
@@ -411,7 +434,7 @@ namespace UniGetUI.Interface.SoftwarePages
             }
             catch (Exception ex)
             {
-                Logger.Error("An error occurred while performing a backup");
+                Logger.Error("An error occurred while performing a LOCAL backup");
                 Logger.Error(ex);
             }
         }
