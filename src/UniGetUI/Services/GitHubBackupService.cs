@@ -6,8 +6,8 @@ namespace UniGetUI.Services
 {
     public class GitHubBackupService
     {
-        private const string GistDescription_EndingKey = "#[UNIGETUI_BACKUP_V1]";
-        private const string PackageBackup_StartingKey = "#[PACKAGES]";
+        private const string GistDescription_EndingKey = "@[UNIGETUI_BACKUP_V1]";
+        private const string PackageBackup_StartingKey = "@[PACKAGES]";
 
         private const string GistDescription = $"UniGetUI package backups - DO NOT RENAME OR MODIFY {GistDescription_EndingKey}";
         private const string ReadMeContents = "" +

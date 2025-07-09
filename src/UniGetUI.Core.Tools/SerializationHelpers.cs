@@ -83,7 +83,7 @@ public static class SerializationHelpers
     {
         TypeInfoResolver = new DefaultJsonTypeInfoResolver(),
         AllowTrailingCommas = true,
-        WriteIndented = true,
+        WriteIndented = false,
     };
 }
 
