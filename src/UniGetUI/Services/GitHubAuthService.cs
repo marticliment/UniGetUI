@@ -1,12 +1,14 @@
 using System;
+using System.Net;
+using System.Text;
 using System.Threading.Tasks;
+using Octokit;
+using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SecureSettings;
 using UniGetUI.Core.SettingsEngine;
 using Windows.System;
-using Octokit;
-using System.Net;
-using System.Text;
+using YamlDotNet.Core.Tokens;
 
 namespace UniGetUI.Services
 {
@@ -22,6 +24,22 @@ namespace UniGetUI.Services
         public GitHubAuthService()
         {
             _client = new GitHubClient(new ProductHeaderValue("UniGetUI"));
+        }
+
+        public async Task<GitHubClient?> CreateGitHubClientAsync()
+        {
+            var token = await GetAccessTokenAsync();
+
+            if (string.IsNullOrEmpty(token))
+            {
+                Logger.Error("GitHub access token is not available. Cannot perform Gist operation.");
+                return null;
+            }
+
+            return new GitHubClient(new ProductHeaderValue("UniGetUI", CoreData.VersionName))
+            {
+                Credentials = new Credentials(token)
+            };
         }
 
         public async Task<bool> SignInAsync()

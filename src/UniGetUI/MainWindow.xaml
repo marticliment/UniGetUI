@@ -8,7 +8,7 @@
     xmlns:local="using:UniGetUI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:widgets="using:UniGetUI.Interface.Widgets"
-    xmlns:winex="using:WinUIEx"
+    xmlns:winex="using:WinUIEx" xmlns:services="using:UniGetUI.Services"
     Title="UniGetUI"
     mc:Ignorable="d">
 
@@ -32,11 +32,11 @@
             x:Name="TitleBar"
             Title="UniGetUI"
             Grid.Row="0"
-            Margin="0,4"
+            Margin="0,0,0,-4"
+            BackRequested="TitleBar_OnBackRequested"
+            IsBackButtonVisible="False"
             IsPaneToggleButtonVisible="True"
             PaneToggleRequested="TitleBar_PaneToggleRequested"
-            IsBackButtonVisible="False"
-            BackRequested="TitleBar_OnBackRequested"
             Visibility="Collapsed">
             <winex:TitleBar.IconSource>
                 <ImageIconSource ImageSource="ms-appx:///Assets/Images/icon.png" />
@@ -44,6 +44,9 @@
             <!--winex:TitleBar.Content>
                 <UserControl Height="10" />
             </winex:TitleBar.Content-->
+            <winex:TitleBar.Footer>
+                <services:UserAvatar x:Name="UserAvatar" />
+            </winex:TitleBar.Footer>
         </winex:TitleBar>
         <StackPanel
             Grid.Row="1"

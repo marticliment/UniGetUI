@@ -35,22 +35,6 @@ namespace UniGetUI.Services
             GistFileKey = $"{PackageBackup_StartingKey} {DeviceUserUniqueIdentifier}";
         }
 
-        private async Task<GitHubClient?> CreateClientAsync()
-        {
-            var token = await _authService.GetAccessTokenAsync();
-
-            if (string.IsNullOrEmpty(token))
-            {
-                Logger.Error("GitHub access token is not available. Cannot perform Gist operation.");
-                return null;
-            }
-
-            return new GitHubClient(new ProductHeaderValue("UniGetUI", CoreData.VersionName))
-            {
-                Credentials = new Credentials(token)
-            };
-        }
-
         /// <summary>
         /// Assuming authentication is set up, upload the given bundleContents to GitHub
         /// </summary>
@@ -58,7 +42,7 @@ namespace UniGetUI.Services
         /// <returns>A boolean representing the success of the operation</returns>
         public async Task UploadPackageBundle(string bundleContents)
         {
-            var GHClient = await CreateClientAsync();
+            var GHClient = await _authService.CreateGitHubClientAsync();
             if (GHClient is null)
                 throw new Exception("The GitHub user is not authenticated");
 
@@ -122,7 +106,7 @@ namespace UniGetUI.Services
         /// <returns></returns>
         public async Task<IEnumerable<string>> GetAvailableBackups()
         {
-            var GHClient = await CreateClientAsync();
+            var GHClient = await _authService.CreateGitHubClientAsync();
             if (GHClient is null)
                 throw new Exception("The GitHub user is not authenticated");
 
@@ -145,7 +129,7 @@ namespace UniGetUI.Services
         /// <exception cref="Exception"></exception>
         public async Task<string?> GetBackupContents(string backupName)
         {
-            var GHClient = await CreateClientAsync();
+            var GHClient = await _authService.CreateGitHubClientAsync();
             if (GHClient is null)
                 throw new Exception("The GitHub user is not authenticated");
 
