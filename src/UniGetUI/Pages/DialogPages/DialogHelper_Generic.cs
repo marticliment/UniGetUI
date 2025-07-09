@@ -624,4 +624,42 @@ public static partial class DialogHelper
         Window.DismissableNotification.Content = new TextBlock() { Text = message, TextWrapping = TextWrapping.Wrap };
         Window.DismissableNotification.IsOpen = true;
     }
+
+    public static async Task<string?> AskForBackupSelection(IEnumerable<string> availableBackups)
+    {
+        var dialog = DialogFactory.Create();
+        dialog.Title = CoreTools.Translate("Which backup do you want to open?");
+        dialog.PrimaryButtonText = CoreTools.Translate("Open");
+        dialog.SecondaryButtonText = CoreTools.Translate("Cancel");
+        dialog.DefaultButton = ContentDialogButton.Primary;
+        dialog.IsPrimaryButtonEnabled = false;
+
+        RadioButtons buttons = new RadioButtons();
+        foreach(var name in availableBackups) buttons.Items.Add(name);
+        buttons.SelectionChanged += (_, _) => dialog.IsPrimaryButtonEnabled = true;
+
+        dialog.Content = new StackPanel()
+        {
+            Orientation = Orientation.Vertical,
+            Spacing = 4,
+            Children =
+            {
+                new TextBlock() {
+                    Text = CoreTools.Translate(
+                        "Select the backup you want to open. Later, you will be able to review which packages you want to install."),
+                    TextWrapping = TextWrapping.Wrap
+                },
+                new ScrollViewer()
+                {
+                    Content = buttons,
+                    HorizontalScrollMode = ScrollMode.Disabled
+                }
+            }
+        };
+
+        if(await Window.ShowDialogAsync(dialog) is ContentDialogResult.Primary)
+            return buttons.SelectedItem.ToString() ?? null;
+
+        return null;
+    }
 }

@@ -94,79 +94,48 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             RestorePackagesFromGitHubButton.IsEnabled = isAuthenticated;
         }
 
-        /*private async void RestoreSettingsFromGitHubButton_Click(object sender, EventArgs e)
-        {
-            RestoreSettingsFromGitHubButton.IsEnabled = false;
-            var confirmDialog = DialogHelper.DialogFactory.Create();
-            confirmDialog.Title = CoreTools.Translate("Confirm Restore");
-            confirmDialog.Content = CoreTools.Translate("Restoring settings from GitHub Gist will overwrite your current local settings. Are you sure you want to continue?");
-            confirmDialog.PrimaryButtonText = CoreTools.Translate("Yes, Restore");
-            confirmDialog.CloseButtonText = CoreTools.Translate("Cancel");
-            confirmDialog.DefaultButton = ContentDialogButton.Close;
-
-            var result = await DialogHelper.Window.ShowDialogAsync(confirmDialog);
-            if (result != ContentDialogResult.Primary)
-            {
-                UpdateBackupToGitHubButtonStatus();
-                return;
-            }
-
-            DialogHelper.ShowLoadingDialog(CoreTools.Translate("Restoring settings from GitHub Gist..."));
-            var settingsContent = "";//await _backupService.RetrieveFileAsync("unigetui.settings.json");
-            if (settingsContent != null)
-            {
-                await Task.Run(() => Settings.ImportFromString_JSON(settingsContent));
-                DialogHelper.HideLoadingDialog();
-                Logger.Info("Successfully restored settings from GitHub Gist.");
-                DialogHelper.ShowDismissableBalloon(
-                    CoreTools.Translate("Restore Successful"),
-                    CoreTools.Translate("Your settings have been successfully restored from GitHub Gist. A restart is recommended to apply all changes."));
-            }
-            else
-            {
-                DialogHelper.HideLoadingDialog();
-                Logger.Error("Failed to restore settings from GitHub Gist.");
-                var errorDialog = DialogHelper.DialogFactory.Create();
-                errorDialog.Title = CoreTools.Translate("Restore Failed");
-                errorDialog.Content = CoreTools.Translate("Could not restore settings from GitHub Gist. Please check the logs for more details, or ensure a backup exists.");
-                errorDialog.PrimaryButtonText = CoreTools.Translate("OK");
-                errorDialog.DefaultButton = ContentDialogButton.Primary;
-                _ = DialogHelper.Window.ShowDialogAsync(errorDialog);
-            }
-            UpdateBackupToGitHubButtonStatus();
-        }*/
-
         private async void RestorePackagesFromGitHubButton_Click(object sender, EventArgs e)
         {
             RestorePackagesFromGitHubButton.IsEnabled = false;
             try
             {
-                var b = await _backupService.GetAvailableBackups();
+                DialogHelper.ShowLoadingDialog(CoreTools.Translate("Fetching available backups..."));
+                var availableBackups = await _backupService.GetAvailableBackups();
+                DialogHelper.HideLoadingDialog();
 
-                var errorDialog = DialogHelper.DialogFactory.Create();
-                errorDialog.Title = CoreTools.Translate("Select backup:");
-                errorDialog.Content = CoreTools.Translate(" - " + (string.Join("\n - ", b)));
-                errorDialog.PrimaryButtonText = CoreTools.Translate("OK");
-                errorDialog.DefaultButton = ContentDialogButton.Primary;
-                await DialogHelper.Window.ShowDialogAsync(errorDialog);
-                RestorePackagesFromGitHubButton.IsEnabled = true;
-                return;
+                var selectedBackup = await DialogHelper.AskForBackupSelection(availableBackups);
+                if (selectedBackup is null)
+                {
+                    RestorePackagesFromGitHubButton.IsEnabled = true;
+                    return;
+                }
+                selectedBackup = selectedBackup.Split(' ')[0];
 
+                DialogHelper.ShowLoadingDialog(CoreTools.Translate("Downloading backup..."));
+                var backupContents = await _backupService.GetBackupContents(selectedBackup);
+                DialogHelper.HideLoadingDialog();
+                await Task.Delay(500); // Prevent race conditions with dialogs
 
-                MainApp.Instance.MainWindow.NavigationPage.LoadBundleFromString("", BundleFormatType.UBUNDLE, "GitHub Gist");
+                if (backupContents is null)
+                    throw new Exception($"The backupContents for backup {selectedBackup} returned null");
 
                 Logger.Info("Successfully loaded package bundle from GitHub Gist.");
                 DialogHelper.ShowDismissableBalloon(
-                    CoreTools.Translate("Backup loaded successfully!"),
-                    CoreTools.Translate("The package bundle has been loaded into the Package Bundles page."));
+                    CoreTools.Translate("Done!"),
+                    CoreTools.Translate("The cloud backup has been loaded successfully."));
+
+                MainApp.Instance.MainWindow.NavigationPage.LoadBundleFromString(
+                    backupContents, BundleFormatType.UBUNDLE, $"GitHub Gist {selectedBackup}");
             }
             catch (Exception ex)
             {
+                Logger.Error("An error occurred while loading a backup:");
+                Logger.Error(ex);
+
                 DialogHelper.HideLoadingDialog();
-                Logger.Error("Failed to restore packages from GitHub Gist.");
                 var errorDialog = DialogHelper.DialogFactory.Create();
-                errorDialog.Title = CoreTools.Translate("Restore Failed");
-                errorDialog.Content = CoreTools.Translate("Could not restore packages from GitHub Gist. Please check the logs for more details, or ensure a backup exists.");
+                errorDialog.Title = CoreTools.Translate("An error occurred");
+                errorDialog.Content = CoreTools.Translate("An error occurred while loading a backup: ") + ex.Message;
                 errorDialog.PrimaryButtonText = CoreTools.Translate("OK");
                 errorDialog.DefaultButton = ContentDialogButton.Primary;
                 await DialogHelper.Window.ShowDialogAsync(errorDialog);
