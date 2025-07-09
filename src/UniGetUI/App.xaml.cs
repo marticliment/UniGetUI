@@ -404,15 +404,14 @@ namespace UniGetUI
                 Logger.Warn("REDIRECTOR ACTIVATOR: args.Kind is not Launch but rather " + kind);
             }
 
-            if (kind == ExtendedActivationKind.Protocol)
+            /*if (kind == ExtendedActivationKind.Protocol)
             {
-                if (rawArgs.Data is Windows.ApplicationModel.Activation.IProtocolActivatedEventArgs protocolArgs)
+                if (rawArgs.Data is IProtocolActivatedEventArgs protocolArgs)
                 {
                     Logger.Info($"Protocol activation received: {protocolArgs.Uri}");
                 }
-
                 MainWindow.DispatcherQueue.TryEnqueue(MainWindow.Activate);
-            }
+            }*/
         }
 
         public async void DisposeAndQuit(int outputCode = 0)
