@@ -21,10 +21,7 @@ using UniGetUI.Interface.Widgets;
 using UniGetUI.Core.Data;
 using UniGetUI.Pages.DialogPages;
 using UniGetUI.Core.SettingsEngine;
-using UniGetUI.PackageEngine.ManagerClasses.Manager;
-using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine.SecureSettings;
-using UniGetUI.Interface;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.

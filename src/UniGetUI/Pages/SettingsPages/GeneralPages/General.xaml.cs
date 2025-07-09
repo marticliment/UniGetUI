@@ -67,7 +67,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             if (file != string.Empty)
             {
                 DialogHelper.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
-                await Task.Run(() => Settings.ImportFromJSON(file));
+                await Task.Run(() => Settings.ImportFromFile_JSON(file));
                 DialogHelper.HideLoadingDialog();
                 ShowRestartBanner(this, new());
             }
@@ -83,7 +83,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 if (file != string.Empty)
                 {
                     DialogHelper.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
-                    await Task.Run(() => Settings.ExportToJSON(file));
+                    await Task.Run(() => Settings.ExportToFile_JSON(file));
                     DialogHelper.HideLoadingDialog();
                     CoreTools.ShowFileOnExplorer(file);
                 }
