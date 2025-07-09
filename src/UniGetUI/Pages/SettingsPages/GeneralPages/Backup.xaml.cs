@@ -90,7 +90,6 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             UpdateGitHubLoginStatus();
             bool isAuthenticated = await _authService.IsAuthenticatedAsync();
             BackupToGitHubButton.IsEnabled = isAuthenticated;
-            // nRestoreSettingsFromGitHubButton.IsEnabled = isAuthenticated;
             RestorePackagesFromGitHubButton.IsEnabled = isAuthenticated;
         }
 
