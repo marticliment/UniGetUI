@@ -5,6 +5,7 @@ using System.Security.Authentication;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.UI;
+using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -17,6 +18,14 @@ using UniGetUI.Pages.SettingsPages.GeneralPages;
 
 namespace UniGetUI.Services
 {
+    public class PointButton: Button
+    {
+        public PointButton()
+        {
+            ProtectedCursor = InputSystemCursor.Create(InputSystemCursorShape.Hand);
+        }
+    }
+
     public partial class UserAvatar: UserControl
     {
         public UserAvatar()
@@ -95,7 +104,7 @@ namespace UniGetUI.Services
             this.Content = new ProgressRing() { IsIndeterminate = true, Width = 24, Height = 24 };
         }
 
-        private Button GenerateLoginControl()
+        private PointButton GenerateLoginControl()
         {
             var personPicture = new PersonPicture
             {
@@ -120,7 +129,7 @@ namespace UniGetUI.Services
                 FontSize = 12
             };
 
-            var loginButton = new Button
+            var loginButton = new PointButton
             {
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 Content = CoreTools.Translate("Log in")
@@ -145,7 +154,7 @@ namespace UniGetUI.Services
                 Content = stackPanel
             };
 
-            return new Button
+            return new PointButton
             {
                 Margin = new Thickness(0),
                 Padding = new Thickness(4),
@@ -157,7 +166,7 @@ namespace UniGetUI.Services
             };
         }
 
-        private async Task<Button> GenerateLogoutControl()
+        private async Task<PointButton> GenerateLogoutControl()
         {
             var authClient = new GitHubAuthService();
             var token = await authClient.GetAccessTokenAsync();
@@ -202,11 +211,11 @@ namespace UniGetUI.Services
             };
             hyperlinkButton.Click += (_, _) => MainApp.Instance.MainWindow.NavigationPage.OpenSettingsPage(typeof(Backup));
 
-            var loginButton = new Button
+            var loginButton = new PointButton
             {
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 Content = "Log out",
-                Background = new SolidColorBrush(ActualTheme is ElementTheme.Dark? Colors.DarkRed: Colors.Red),
+                Background = new SolidColorBrush(ActualTheme is ElementTheme.Dark? Colors.DarkRed: Colors.PaleVioletRed),
                 BorderThickness = new(0)
             };
             loginButton.Click += LogoutButton_Click;
@@ -230,7 +239,7 @@ namespace UniGetUI.Services
                 Content = stackPanel
             };
 
-            return new Button
+            return new PointButton
             {
                 Margin = new Thickness(0),
                 Padding = new Thickness(4),
