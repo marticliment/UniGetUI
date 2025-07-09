@@ -21,8 +21,6 @@ namespace UniGetUI.Services
               "Please DO NOT EDIT the contents or the description of this gist, or unexpected behaviours may occur.\n" +
               "Learn more about UniGetUI at https://github.com/marticliment/UniGetUI\n";
 
-
-
         private readonly GitHubAuthService _authService;
 
         private readonly string DeviceUserUniqueIdentifier;
@@ -38,11 +36,9 @@ namespace UniGetUI.Services
         /// <summary>
         /// Assuming authentication is set up, upload the given bundleContents to GitHub
         /// </summary>
-        /// <param name="bundleContents"></param>
-        /// <returns>A boolean representing the success of the operation</returns>
         public async Task UploadPackageBundle(string bundleContents)
         {
-            var GHClient = await _authService.CreateGitHubClientAsync();
+            var GHClient = _authService.CreateGitHubClient();
             if (GHClient is null)
                 throw new Exception("The GitHub user is not authenticated");
 
@@ -65,9 +61,6 @@ namespace UniGetUI.Services
         /// Upload the given payload to the given gist.
         /// Updates the existing file if GistFileKey exists, creates a new one otherwhise.
         /// </summary>
-        /// <param name="client"></param>
-        /// <param name="gist"></param>
-        /// <param name="payload"></param>
         private async Task _updateBackupGistAsync(GitHubClient client, Gist gist, string payload)
         {
             var update = new GistUpdate { Description = GistDescription };
@@ -86,8 +79,6 @@ namespace UniGetUI.Services
         /// <summary>
         /// Creates a new Gist, prepared to be detectable by UniGetUI, and with the base readme file
         /// </summary>
-        /// <param name="client"></param>
-        /// <returns></returns>
         private static Task<Gist> _createBackupGistAsync(GitHubClient client)
         {
             var newGist = new NewGist
@@ -102,11 +93,9 @@ namespace UniGetUI.Services
         /// <summary>
         /// Retrieves a list of available backups to import
         /// </summary>
-        /// <param name="client"></param>
-        /// <returns></returns>
         public async Task<IEnumerable<string>> GetAvailableBackups()
         {
-            var GHClient = await _authService.CreateGitHubClientAsync();
+            var GHClient = _authService.CreateGitHubClient();
             if (GHClient is null)
                 throw new Exception("The GitHub user is not authenticated");
 
@@ -124,12 +113,9 @@ namespace UniGetUI.Services
         /// <summary>
         /// For the given backupName, retrieve the backup contents
         /// </summary>
-        /// <param name="backupName"></param>
-        /// <returns></returns>
-        /// <exception cref="Exception"></exception>
         public async Task<string?> GetBackupContents(string backupName)
         {
-            var GHClient = await _authService.CreateGitHubClientAsync();
+            var GHClient = _authService.CreateGitHubClient();
             if (GHClient is null)
                 throw new Exception("The GitHub user is not authenticated");
 

@@ -27,9 +27,9 @@ namespace UniGetUI.Services
             _client = new GitHubClient(new ProductHeaderValue("UniGetUI"));
         }
 
-        public async Task<GitHubClient?> CreateGitHubClientAsync()
+        public GitHubClient? CreateGitHubClient()
         {
-            var token = await GetAccessTokenAsync();
+            var token = GetAccessToken();
 
             if (string.IsNullOrEmpty(token))
             {
@@ -103,7 +103,7 @@ namespace UniGetUI.Services
             {
                 Logger.Error("Exception during GitHub sign-in process:");
                 Logger.Error(ex);
-                await ClearAuthenticatedUserDataAsync();
+                ClearAuthenticatedUserData();
                 AuthStatusChanged?.Invoke(this, EventArgs.Empty);
                 return false;
             }
@@ -131,7 +131,7 @@ namespace UniGetUI.Services
                 }
 
                 Logger.Info("GitHub login successful. Storing access token.");
-                await SecureTokenManager.StoreTokenAsync(token.AccessToken);
+                SecureGHTokenManager.StoreToken(token.AccessToken);
 
                 var userClient = new GitHubClient(new ProductHeaderValue("UniGetUI"))
                 {
@@ -156,29 +156,29 @@ namespace UniGetUI.Services
             {
                 Logger.Error("Exception during GitHub token exchange:");
                 Logger.Error(ex);
-                await ClearAuthenticatedUserDataAsync();
+                ClearAuthenticatedUserData();
                 AuthStatusChanged?.Invoke(this, EventArgs.Empty);
                 return false;
             }
         }
 
-        public async Task SignOutAsync()
+        public void SignOut()
         {
             Logger.Info("Signing out from GitHub...");
-            await ClearAuthenticatedUserDataAsync();
+            ClearAuthenticatedUserData();
             AuthStatusChanged?.Invoke(this, EventArgs.Empty);
             Logger.Info("GitHub sign-out complete.");
         }
 
-        private static async Task ClearAuthenticatedUserDataAsync()
+        private static void ClearAuthenticatedUserData()
         {
-            await SecureTokenManager.DeleteTokenAsync();
+            SecureGHTokenManager.DeleteToken();
             Settings.SetValue(Settings.K.GitHubUserLogin, ""); // Clear stored username
         }
 
-        public async Task<string?> GetAccessTokenAsync()
+        public string? GetAccessToken()
         {
-            return await SecureTokenManager.GetTokenAsync();
+            return SecureGHTokenManager.GetToken();
         }
 
         public async Task<string?> GetAuthenticatedUserLoginAsync()
@@ -188,9 +188,9 @@ namespace UniGetUI.Services
             return string.IsNullOrEmpty(storedLogin) ? null : storedLogin;
         }
 
-        public async Task<bool> IsAuthenticatedAsync()
+        public bool IsAuthenticated()
         {
-            var token = await GetAccessTokenAsync();
+            var token = GetAccessToken();
             return !string.IsNullOrEmpty(token);
         }
     }

@@ -48,7 +48,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             _ = UpdateGitHubLoginStatus();
         }
 
-        
+
 
         public bool CanGoBack => true;
 
@@ -57,7 +57,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         public event EventHandler? RestartRequired;
         public event EventHandler<Type>? NavigationRequested;
 
-        public void ShowRestartBanner(object sender, EventArgs e)
+        public void ShowRestartBanner(object? sender, EventArgs e)
             => RestartRequired?.Invoke(this, e);
 
         private void ChangeBackupDirectory_Click(object sender, EventArgs e)
@@ -134,9 +134,9 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         private async Task UpdateGitHubLoginStatus()
         {
             GitHubAuthService authService = new();
-            if (await authService.IsAuthenticatedAsync())
+            if (authService.IsAuthenticated())
             {
-                var client = await authService.CreateGitHubClientAsync();
+                var client = authService.CreateGitHubClient();
                 if (client is null) throw new AuthenticationException("How can it be authenticated and fail to create a client?");
                 var user = await client.User.Current();
 
@@ -195,12 +195,12 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             UpdateCloudControlsEnabled();
         }
 
-        private async void LogoutGitHubButton_Click(object sender, RoutedEventArgs e)
+        private void LogoutGitHubButton_Click(object sender, RoutedEventArgs e)
         {
             _isLoading = true;
             UpdateCloudControlsEnabled();
 
-            await _authService.SignOutAsync();
+            _authService.SignOut();
 
             _isLoading = false;
             UpdateCloudControlsEnabled();
@@ -285,7 +285,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             }
         }
 
-        private void EnablePackageBackupCheckBox_CLOUD_StateChanged(object sender, EventArgs e)
+        private void EnablePackageBackupCheckBox_CLOUD_StateChanged(object? sender, EventArgs e)
         {
             ShowRestartBanner(sender, e);
             UpdateCloudControlsEnabled();

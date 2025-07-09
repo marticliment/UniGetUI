@@ -18,7 +18,7 @@ using UniGetUI.Pages.SettingsPages.GeneralPages;
 
 namespace UniGetUI.Services
 {
-    public class PointButton: Button
+    public partial class PointButton: Button
     {
         public PointButton()
         {
@@ -46,7 +46,7 @@ namespace UniGetUI.Services
             SetLoading();
             var client = new GitHubAuthService();
             // await Task.Delay(1000);
-            if (await client.IsAuthenticatedAsync())
+            if (client.IsAuthenticated())
             {
                 Content = await GenerateLogoutControl();
             }
@@ -62,7 +62,7 @@ namespace UniGetUI.Services
             try
             {
                 var client = new GitHubAuthService();
-                if (await client.IsAuthenticatedAsync())
+                if (client.IsAuthenticated())
                 {
                     Logger.Warn("Login invoked when the client was already logged in!");
                     return;
@@ -79,15 +79,15 @@ namespace UniGetUI.Services
             }
         }
 
-        private async void LogoutButton_Click(object sender, RoutedEventArgs e)
+        private void LogoutButton_Click(object sender, RoutedEventArgs e)
         {
             SetLoading();
             try
             {
                 var client = new GitHubAuthService();
-                if (await client.IsAuthenticatedAsync())
+                if (client.IsAuthenticated())
                 {
-                    await client.SignOutAsync();
+                    client.SignOut();
                 }
             }
             catch (Exception ex)
@@ -168,8 +168,7 @@ namespace UniGetUI.Services
         private async Task<PointButton> GenerateLogoutControl()
         {
             var authClient = new GitHubAuthService();
-            var token = await authClient.GetAccessTokenAsync();
-            var GHClient = await authClient.CreateGitHubClientAsync();
+            var GHClient = authClient.CreateGitHubClient();
             if(GHClient is null)
             {
                 Logger.Error("Client did not report valid authentication");
@@ -249,7 +248,5 @@ namespace UniGetUI.Services
                 Flyout = flyout
             };
         }
-
-        
     }
 }
