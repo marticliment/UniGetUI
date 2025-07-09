@@ -6,6 +6,43 @@ namespace UniGetUI.PackageEngine.Serializable
 {
     public class InstallOptions: SerializableComponent<InstallOptions>
     {
+        private readonly IReadOnlyDictionary<string, bool> DefaultBoolValues = new Dictionary<string, bool>()
+        {   // OverridesNextLevelOpts is deliberately skipped here
+            { "SkipHashCheck", false },
+            { "InteractiveInstallation", false },
+            { "RunAsAdministrator", false },
+            { "PreRelease", false },
+            { "SkipMinorUpdates", false },
+            { "RemoveDataOnUninstall", false },
+            { "UninstallPreviousVersionsOnUpdate", false },
+            { "AbortOnPreInstallFail", true },
+            { "AbortOnPreUpdateFail", true },
+            { "AbortOnPreUninstallFail", true },
+        };
+
+        private readonly IReadOnlyDictionary<string, string> DefaultStringValues = new Dictionary<string, string>()
+        {
+            {"Architecture", ""},
+            {"InstallationScope", ""},
+            {"CustomInstallLocation", ""},
+            {"Version", ""},
+            {"PreInstallCommand", ""},
+            {"PostInstallCommand", ""},
+            {"PreUpdateCommand", ""},
+            {"PostUpdateCommand", ""},
+            {"PreUninstallCommand", ""},
+            {"PostUninstallCommand", ""},
+        };
+
+        private readonly IReadOnlyList<string> DefaultListValues = new List<string>()
+        {
+            "CustomParameters_Install",
+            "CustomParameters_Update",
+            "CustomParameters_Uninstall",
+            "KillBeforeOperation",
+        };
+
+
         public bool SkipHashCheck { get; set; }
         public bool InteractiveInstallation { get; set; }
         public bool RunAsAdministrator { get; set; }
@@ -18,7 +55,6 @@ namespace UniGetUI.PackageEngine.Serializable
         public string CustomInstallLocation { get; set; } = "";
         public string Version { get; set; } = "";
         public bool SkipMinorUpdates { get; set; }
-        public bool OverridesNextLevelOpts { get; set; }
         public bool RemoveDataOnUninstall { get; set; }
         public bool UninstallPreviousVersionsOnUpdate { get; set; }
         public List<string> KillBeforeOperation { get; set; } = [];
@@ -33,53 +69,54 @@ namespace UniGetUI.PackageEngine.Serializable
         public string PostUninstallCommand { get; set; } = "";
         public bool AbortOnPreUninstallFail { get; set; } = true;
 
+        public bool OverridesNextLevelOpts { get; set; }
 
         public override InstallOptions Copy()
         {
-            return new()
-            {
-                SkipHashCheck = SkipHashCheck,
-                Architecture = Architecture,
-                CustomInstallLocation = CustomInstallLocation,
-                CustomParameters_Install = CustomParameters_Install.ToList(),
-                CustomParameters_Update = CustomParameters_Update.ToList(),
-                CustomParameters_Uninstall = CustomParameters_Uninstall.ToList(),
-                InstallationScope = InstallationScope,
-                InteractiveInstallation = InteractiveInstallation,
-                PreRelease = PreRelease,
-                RunAsAdministrator = RunAsAdministrator,
-                Version = Version,
-                SkipMinorUpdates = SkipMinorUpdates,
-                OverridesNextLevelOpts = OverridesNextLevelOpts,
-                RemoveDataOnUninstall = RemoveDataOnUninstall,
-                KillBeforeOperation = KillBeforeOperation.ToList(),
-                PreInstallCommand = PreInstallCommand,
-                PreUpdateCommand = PreUpdateCommand,
-                PreUninstallCommand = PreUninstallCommand,
-                PostInstallCommand = PostInstallCommand,
-                PostUpdateCommand = PostUpdateCommand,
-                PostUninstallCommand = PostUninstallCommand,
-                AbortOnPreInstallFail = AbortOnPreInstallFail,
-                AbortOnPreUpdateFail = AbortOnPreUpdateFail,
-                AbortOnPreUninstallFail = AbortOnPreUninstallFail,
-                UninstallPreviousVersionsOnUpdate = UninstallPreviousVersionsOnUpdate,
-            };
+            var copy = new InstallOptions();
+
+            foreach (var (boolKey, _) in DefaultBoolValues)
+                copy.SetValueToProperty(boolKey, GetValueFromProperty<bool>(boolKey));
+
+            foreach (var (stringKey, _) in DefaultStringValues)
+                copy.SetValueToProperty(stringKey, GetValueFromProperty<string>(stringKey));
+
+            foreach (var listKey in DefaultListValues)
+                copy.SetValueToProperty(listKey, GetValueFromProperty<IReadOnlyList<string>>(listKey).ToList());
+
+            // Handle non-automated OverridesNextLevelOpts
+            copy.OverridesNextLevelOpts = OverridesNextLevelOpts;
+            return copy;
+        }
+
+        public void SetValueToProperty<T>(string name, T value)
+        {
+            var property = this.GetType().GetProperty(name);
+            property?.SetValue(this, value);
+        }
+
+        public T GetValueFromProperty<T>(string name)
+        {
+            var property = this.GetType().GetProperty(name);
+            return (T)(property?.GetValue(this) ?? throw new InvalidDataException($"Invalid datatype for property {name} (expected {nameof(T)})"));
         }
 
         public override void LoadFromJson(JsonNode data)
         {
-            // RemoveDataOnUninstall should not be loaded from disk
+            foreach (var (boolKey, defValue) in DefaultBoolValues)
+            {
+                // RemoveDataOnUninstall should not be loaded from disk
+                if(boolKey == "RemoveDataOnUninstall") continue;
+                SetValueToProperty(boolKey, data[boolKey]?.GetVal<bool>() ?? defValue);
+            }
 
-            this.SkipHashCheck = data[nameof(SkipHashCheck)]?.GetVal<bool>() ?? false;
-            this.InteractiveInstallation = data[nameof(InteractiveInstallation)]?.GetVal<bool>() ?? false;
-            this.RunAsAdministrator = data[nameof(RunAsAdministrator)]?.GetVal<bool>() ?? false;
-            this.Architecture = data[nameof(Architecture)]?.GetVal<string>() ?? "";
-            this.InstallationScope = data[nameof(InstallationScope)]?.GetVal<string>() ?? "";
+            foreach (var (stringKey, defValue) in DefaultStringValues)
+                SetValueToProperty(stringKey, data[stringKey]?.GetVal<string>() ?? defValue);
 
-            this.CustomParameters_Install = ReadArrayFromJson(data, nameof(CustomParameters_Install));
-            this.CustomParameters_Update = ReadArrayFromJson(data, nameof(CustomParameters_Update));
-            this.CustomParameters_Uninstall = ReadArrayFromJson(data, nameof(CustomParameters_Uninstall));
+            foreach (var listKey in DefaultListValues)
+                SetValueToProperty(listKey, ReadArrayFromJson(data, listKey));
 
+            // Handle case where setting has not been migrated yet
             if (this.CustomParameters_Install.Count is 0 &&
                 this.CustomParameters_Update.Count  is 0 &&
                 this.CustomParameters_Uninstall.Count is 0 &&
@@ -90,28 +127,10 @@ namespace UniGetUI.PackageEngine.Serializable
                 this.CustomParameters_Uninstall = ReadArrayFromJson(data, "CustomParameters");
             }
 
-            this.KillBeforeOperation = ReadArrayFromJson(data, nameof(KillBeforeOperation));
-            this.PreRelease = data[nameof(PreRelease)]?.GetVal<bool>() ?? false;
-            this.CustomInstallLocation = data[nameof(CustomInstallLocation)]?.GetVal<string>() ?? "";
-            this.Version = data[nameof(Version)]?.GetVal<string>() ?? "";
-            this.SkipMinorUpdates = data[nameof(SkipMinorUpdates)]?.GetVal<bool>() ?? false;
-            this.UninstallPreviousVersionsOnUpdate = data[nameof(UninstallPreviousVersionsOnUpdate)]?.GetVal<bool>() ?? false;
-
-            this.PreInstallCommand = data[nameof(PreInstallCommand)]?.GetVal<string>() ?? "";
-            this.PreUpdateCommand = data[nameof(PreUpdateCommand)]?.GetVal<string>() ?? "";
-            this.PreUninstallCommand = data[nameof(PreUninstallCommand)]?.GetVal<string>() ?? "";
-            this.PostInstallCommand = data[nameof(PostInstallCommand)]?.GetVal<string>() ?? "";
-            this.PostUpdateCommand = data[nameof(PostUpdateCommand)]?.GetVal<string>() ?? "";
-            this.PostUninstallCommand = data[nameof(PostUninstallCommand)]?.GetVal<string>() ?? "";
-            this.AbortOnPreInstallFail = data[nameof(AbortOnPreInstallFail)]?.GetVal<bool>() ?? true;
-            this.AbortOnPreUpdateFail = data[nameof(AbortOnPreUpdateFail)]?.GetVal<bool>() ?? true;
-            this.AbortOnPreUninstallFail = data[nameof(AbortOnPreUninstallFail)]?.GetVal<bool>() ?? true;
-
             // if OverridesNextLevelOpts is not found on the JSON, set it to true or false depending
             // on whether the current settings instances are different from the default values.
             // This entry shall be checked the last one, to ensure all other properties are set
-            this.OverridesNextLevelOpts =
-                data[nameof(OverridesNextLevelOpts)]?.GetValue<bool>() ?? DiffersFromDefault();
+            this.OverridesNextLevelOpts = data[nameof(OverridesNextLevelOpts)]?.GetValue<bool>() ?? DiffersFromDefault();
         }
 
         public override JsonNode AsJsonNode()
@@ -121,81 +140,27 @@ namespace UniGetUI.PackageEngine.Serializable
             if (OverridesNextLevelOpts is not false)
                 obj.Add(nameof(OverridesNextLevelOpts), OverridesNextLevelOpts);
 
-            if(SkipHashCheck is not false)
-                obj.Add(nameof(SkipHashCheck), SkipHashCheck);
+            foreach (var (boolKey, defValue) in DefaultBoolValues)
+            {
+                bool currentValue = GetValueFromProperty<bool>(boolKey);
+                if (currentValue != defValue) obj.Add(boolKey, currentValue);
+            }
 
-            if(InteractiveInstallation is not false)
-                obj.Add(nameof(InteractiveInstallation), InteractiveInstallation);
+            foreach (var (stringKey, defValue) in DefaultStringValues)
+            {
+                string currentValue = GetValueFromProperty<string>(stringKey);
+                if (currentValue != defValue) obj.Add(stringKey, currentValue);
+            }
 
-            if(RunAsAdministrator is not false)
-                obj.Add(nameof(RunAsAdministrator), RunAsAdministrator);
+            foreach (var listKey in DefaultListValues)
+            {
+                IReadOnlyList<string> currentValue = GetValueFromProperty<IReadOnlyList<string>>(listKey);
 
-            if(PreRelease is not false)
-                obj.Add(nameof(PreRelease), PreRelease);
-
-            if(SkipMinorUpdates is not false)
-                obj.Add(nameof(SkipMinorUpdates), SkipMinorUpdates);
-
-            if(Architecture.Any())
-                obj.Add(nameof(Architecture), Architecture);
-
-            if(InstallationScope.Any())
-                obj.Add(nameof(InstallationScope), InstallationScope);
-
-            if(CustomParameters_Install.Where(x => x.Any()).Any())
-                obj.Add(nameof(CustomParameters_Install),
-                    new JsonArray(CustomParameters_Install.Select(x => JsonValue.Create(x) as JsonNode).ToArray()));
-
-            if(CustomParameters_Update.Where(x => x.Any()).Any())
-                obj.Add(nameof(CustomParameters_Update),
-                    new JsonArray(CustomParameters_Update.Select(x => JsonValue.Create(x) as JsonNode).ToArray()));
-
-            if(CustomParameters_Uninstall.Where(x => x.Any()).Any())
-                obj.Add(nameof(CustomParameters_Uninstall),
-                    new JsonArray(CustomParameters_Uninstall.Select(x => JsonValue.Create(x) as JsonNode).ToArray()));
-
-            if(KillBeforeOperation.Where(x => x.Any()).Any())
-                obj.Add(nameof(KillBeforeOperation),
-                    new JsonArray(KillBeforeOperation.Select(x => JsonValue.Create(x) as JsonNode).ToArray()));
-
-            if(CustomInstallLocation.Any())
-                obj.Add(nameof(CustomInstallLocation), CustomInstallLocation);
-
-            if(RemoveDataOnUninstall is not false)
-                obj.Add(nameof(RemoveDataOnUninstall), RemoveDataOnUninstall);
-
-            if(Version.Any())
-                obj.Add(nameof(Version), Version);
-
-            if(PreInstallCommand.Any())
-                obj.Add(nameof(PreInstallCommand), PreInstallCommand);
-
-            if(PostInstallCommand.Any())
-                obj.Add(nameof(PostInstallCommand), PostInstallCommand);
-
-            if(AbortOnPreInstallFail is not true)
-                obj.Add(nameof(AbortOnPreInstallFail), AbortOnPreInstallFail);
-
-            if(PreUpdateCommand.Any())
-                obj.Add(nameof(PreUpdateCommand), PreUpdateCommand);
-
-            if(PostUpdateCommand.Any())
-                obj.Add(nameof(PostUpdateCommand), PostUpdateCommand);
-
-            if(AbortOnPreUpdateFail is not true)
-                obj.Add(nameof(AbortOnPreUpdateFail), AbortOnPreUpdateFail);
-
-            if(PreUninstallCommand.Any())
-                obj.Add(nameof(PreUninstallCommand), PreUninstallCommand);
-
-            if(PostUninstallCommand.Any())
-                obj.Add(nameof(PostUninstallCommand), PostUninstallCommand);
-
-            if(UninstallPreviousVersionsOnUpdate is not false)
-                obj.Add(nameof(UninstallPreviousVersionsOnUpdate), UninstallPreviousVersionsOnUpdate);
-
-            if(AbortOnPreUninstallFail is not true)
-                obj.Add(nameof(AbortOnPreUninstallFail), AbortOnPreUninstallFail);
+                if (currentValue.Where(x => x.Any()).Any())
+                {
+                    obj.Add(listKey, new JsonArray(currentValue.Select(x => JsonValue.Create(x) as JsonNode).ToArray()));
+                }
+            }
 
             return obj;
         }
@@ -211,30 +176,19 @@ namespace UniGetUI.PackageEngine.Serializable
 
         public bool DiffersFromDefault()
         {
-            return SkipHashCheck is not false ||
-                   InteractiveInstallation is not false ||
-                   RunAsAdministrator is not false ||
-                   PreRelease is not false ||
-                   SkipMinorUpdates is not false ||
-                   Architecture.Any() ||
-                   InstallationScope.Any() ||
-                   CustomParameters_Install.Where(x => x.Any()).Any() ||
-                   CustomParameters_Update.Where(x => x.Any()).Any() ||
-                   CustomParameters_Uninstall.Where(x => x.Any()).Any() ||
-                   KillBeforeOperation.Where(x => x.Any()).Any() ||
-                   CustomInstallLocation.Any() ||
-                   RemoveDataOnUninstall is not false ||
-                   Version.Any() ||
-                   PreInstallCommand.Any() ||
-                   PostInstallCommand.Any() ||
-                   AbortOnPreInstallFail is not true ||
-                   PreUpdateCommand.Any() ||
-                   PostUpdateCommand.Any() ||
-                   AbortOnPreUpdateFail is not true ||
-                   PreUninstallCommand.Any() ||
-                   PostUninstallCommand.Any() ||
-                   UninstallPreviousVersionsOnUpdate is not false ||
-                   AbortOnPreUninstallFail is not true;
+            foreach (var (boolKey, defValue) in DefaultBoolValues)
+                if (GetValueFromProperty<bool>(boolKey) != defValue) return true;
+
+            foreach (var (stringKey, defValue) in DefaultStringValues)
+                if (GetValueFromProperty<string>(stringKey) != defValue) return true;
+
+            foreach (var listKey in DefaultListValues)
+            {
+                IReadOnlyList<string> currentValue = GetValueFromProperty<IReadOnlyList<string>>(listKey);
+                if (currentValue.Where(x => x.Any()).Any()) return true;
+            }
+
+            return false;
             // OverridesNextLevelOpts does not need to be checked here, since
             // this method is invoked before this property has been set
         }
