@@ -14,6 +14,30 @@ namespace UniGetUI.Services
         private readonly string GitHubClientId = Secrets.GetGitHubClientId();
         private readonly string GitHubClientSecret = Secrets.GetGitHubClientSecret();
 
+        private const string DataReceivedWebsite = """
+           <html>
+               <style>
+                   div {
+                       display: flex;
+                       flex-direction: column;
+                       align-items: center;
+                       justify-content: center;
+                       height: 100vh;
+                       font-family: sans-serif;
+                       text-align: center;
+                   }
+               </style>
+               <script>
+                   window.close();
+               </script>
+               <div>
+                   <title>UniGetUI authentication</title>
+                   <h1>Authentication successful</h1>
+                   <p>You can now close this window and return to UniGetUI</p>
+               </div>
+           </html>
+           """;
+
         private const string RedirectUri = "http://127.0.0.1:58642/";
 
         private readonly GitHubClient _client;
@@ -65,8 +89,7 @@ namespace UniGetUI.Services
                 var context = await httpListener.GetContextAsync();
 
                 var response = context.Response;
-                string responseString = "<html><head><title>Auth Success</title></head><body><h1>Authentication successful!</h1><p>You can now close this window and return to the UniGetUI application.</p></body></html>";
-                var buffer = Encoding.UTF8.GetBytes(responseString);
+                var buffer = Encoding.UTF8.GetBytes(DataReceivedWebsite);
                 response.ContentLength64 = buffer.Length;
                 var output = response.OutputStream;
                 await output.WriteAsync(buffer, 0, buffer.Length);
