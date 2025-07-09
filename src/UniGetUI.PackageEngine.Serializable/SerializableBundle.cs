@@ -58,6 +58,16 @@ namespace UniGetUI.PackageEngine.Classes.Serializable
             }
         }
 
+        public override JsonNode AsJsonNode()
+        {
+            JsonObject obj = new();
+            obj.Add(nameof(export_version), export_version);
+            obj.Add(nameof(packages), new JsonArray(packages.Select(p => p.AsJsonNode()).ToArray()));
+            obj.Add(nameof(incompatible_packages_info), incompatible_packages_info);
+            obj.Add(nameof(incompatible_packages), new JsonArray(incompatible_packages.Select(p => p.AsJsonNode()).ToArray()));
+            return obj;
+        }
+
         public SerializableBundle() : base()
         {
         }

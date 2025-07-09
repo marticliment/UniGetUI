@@ -600,9 +600,7 @@ namespace UniGetUI.Interface.SoftwarePages
             string ExportableData;
 
             if (formatType is BundleFormatType.JSON or BundleFormatType.UBUNDLE)
-                ExportableData = JsonSerializer.Serialize(
-                    exportable,
-                    SerializationHelpers.DefaultOptions);
+                ExportableData = exportable.AsJsonString();
 
             else if (formatType is BundleFormatType.YAML)
             {
