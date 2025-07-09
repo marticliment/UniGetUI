@@ -113,7 +113,7 @@
                 x:Name="BackupToGitHubButton"
                 ButtonText="Backup settings and packages"
                 Click="BackupToGitHubButton_Click"
-                CornerRadius="8"
+                CornerRadius="8,8,0,0"
                 IsEnabled="False"
                 Text="Backup your settings and packages to a private GitHub Gist">
                 <widgets:ButtonCard.Description>
@@ -121,7 +121,7 @@
                 </widgets:ButtonCard.Description>
             </widgets:ButtonCard>
 
-            <widgets:ButtonCard
+            <!--widgets:ButtonCard
                 x:Name="RestoreSettingsFromGitHubButton"
                 ButtonText="Restore settings"
                 Click="RestoreSettingsFromGitHubButton_Click"
@@ -131,13 +131,14 @@
                 <widgets:ButtonCard.Description>
                     <widgets:TranslatedTextBlock Text="This will overwrite your current settings. A restart may be required." />
                 </widgets:ButtonCard.Description>
-            </widgets:ButtonCard>
+            </widgets:ButtonCard-->
 
             <widgets:ButtonCard
                 x:Name="RestorePackagesFromGitHubButton"
                 ButtonText="Restore packages"
                 Click="RestorePackagesFromGitHubButton_Click"
-                CornerRadius="8"
+                CornerRadius="0,0,8,8"
+                BorderThickness="1,0,1,1"
                 IsEnabled="False"
                 Text="Restore your packages from a private GitHub Gist">
                 <widgets:ButtonCard.Description>

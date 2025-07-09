@@ -90,11 +90,11 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             UpdateGitHubLoginStatus();
             bool isAuthenticated = await _authService.IsAuthenticatedAsync();
             BackupToGitHubButton.IsEnabled = isAuthenticated;
-            RestoreSettingsFromGitHubButton.IsEnabled = isAuthenticated;
+            // nRestoreSettingsFromGitHubButton.IsEnabled = isAuthenticated;
             RestorePackagesFromGitHubButton.IsEnabled = isAuthenticated;
         }
 
-        private async void RestoreSettingsFromGitHubButton_Click(object sender, EventArgs e)
+        /*private async void RestoreSettingsFromGitHubButton_Click(object sender, EventArgs e)
         {
             RestoreSettingsFromGitHubButton.IsEnabled = false;
             var confirmDialog = DialogHelper.DialogFactory.Create();
@@ -112,7 +112,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             }
 
             DialogHelper.ShowLoadingDialog(CoreTools.Translate("Restoring settings from GitHub Gist..."));
-            var settingsContent = await _backupService.RetrieveFileAsync("unigetui.settings.json");
+            var settingsContent = "";//await _backupService.RetrieveFileAsync("unigetui.settings.json");
             if (settingsContent != null)
             {
                 await Task.Run(() => Settings.ImportFromString_JSON(settingsContent));
@@ -134,21 +134,33 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 _ = DialogHelper.Window.ShowDialogAsync(errorDialog);
             }
             UpdateBackupToGitHubButtonStatus();
-        }
+        }*/
 
         private async void RestorePackagesFromGitHubButton_Click(object sender, EventArgs e)
         {
             RestorePackagesFromGitHubButton.IsEnabled = false;
-            var packagesContent = await _backupService.RetrieveFileAsync("unigetui.packages.ubundle");
-            if (packagesContent != null)
+            try
             {
-                MainApp.Instance.MainWindow.NavigationPage.LoadBundleFromString(packagesContent, BundleFormatType.UBUNDLE, "GitHub Gist");
+                var b = await _backupService.GetAvailableBackups();
+
+                var errorDialog = DialogHelper.DialogFactory.Create();
+                errorDialog.Title = CoreTools.Translate("Select backup:");
+                errorDialog.Content = CoreTools.Translate(" - " + (string.Join("\n - ", b)));
+                errorDialog.PrimaryButtonText = CoreTools.Translate("OK");
+                errorDialog.DefaultButton = ContentDialogButton.Primary;
+                await DialogHelper.Window.ShowDialogAsync(errorDialog);
+                RestorePackagesFromGitHubButton.IsEnabled = true;
+                return;
+
+
+                MainApp.Instance.MainWindow.NavigationPage.LoadBundleFromString("", BundleFormatType.UBUNDLE, "GitHub Gist");
+
                 Logger.Info("Successfully loaded package bundle from GitHub Gist.");
                 DialogHelper.ShowDismissableBalloon(
-                    CoreTools.Translate("Backup retrieved successfully!"),
+                    CoreTools.Translate("Backup loaded successfully!"),
                     CoreTools.Translate("The package bundle has been loaded into the Package Bundles page."));
             }
-            else
+            catch (Exception ex)
             {
                 DialogHelper.HideLoadingDialog();
                 Logger.Error("Failed to restore packages from GitHub Gist.");
@@ -157,7 +169,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 errorDialog.Content = CoreTools.Translate("Could not restore packages from GitHub Gist. Please check the logs for more details, or ensure a backup exists.");
                 errorDialog.PrimaryButtonText = CoreTools.Translate("OK");
                 errorDialog.DefaultButton = ContentDialogButton.Primary;
-                _ = DialogHelper.Window.ShowDialogAsync(errorDialog);
+                await DialogHelper.Window.ShowDialogAsync(errorDialog);
             }
             UpdateBackupToGitHubButtonStatus();
         }
@@ -165,37 +177,32 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         private async void BackupToGitHubButton_Click(object sender, EventArgs e)
         {
             BackupToGitHubButton.IsEnabled = false;
-            DialogHelper.ShowLoadingDialog(CoreTools.Translate("Backing up settings and packages to GitHub Gist..."));
+            DialogHelper.ShowLoadingDialog(CoreTools.Translate("Backing up packages to GitHub Gist..."));
 
-            // var settingsContent = await Task.Run(Settings.ExportToString_JSON);
             var packagesContent = await InstalledPackagesPage.GenerateBackupContents();
 
-            /*var filesToBackup = new Dictionary<string, string>
+            try
             {
-                { "unigetui.settings.json", settingsContent },
-                { "unigetui.packages.ubundle", packagesContent }
-            };*/
-
-            bool success = await _backupService.UploadPackageBundle(packagesContent);
-
-            DialogHelper.HideLoadingDialog();
-
-            if (success)
-            {
+                await _backupService.UploadPackageBundle(packagesContent);
+                DialogHelper.HideLoadingDialog();
                 Logger.Info("Successfully backed up settings and packages to GitHub Gist.");
                 DialogHelper.ShowDismissableBalloon(
                     CoreTools.Translate("Backup Successful"),
                     CoreTools.Translate("Your settings and packages have been successfully backed up to GitHub Gist."));
             }
-            else
+            catch (Exception ex)
             {
-                Logger.Error("Failed to backup settings or packages to GitHub Gist.");
+                DialogHelper.HideLoadingDialog();
+
+                Logger.Error("An error occurred while uploading the backup:");
+                Logger.Error(ex);
+
                 var dialog = DialogHelper.DialogFactory.Create();
                 dialog.Title = CoreTools.Translate("Backup Failed");
-                dialog.Content = CoreTools.Translate("Could not back up settings and/or packages to GitHub Gist. Please check the logs for more details.");
+                dialog.Content = CoreTools.Translate("Could not back up packages to GitHub Gist: ") + ex.Message;
                 dialog.PrimaryButtonText = CoreTools.Translate("OK");
                 dialog.DefaultButton = ContentDialogButton.Primary;
-                _ = DialogHelper.Window.ShowDialogAsync(dialog);
+                await DialogHelper.Window.ShowDialogAsync(dialog);
             }
             UpdateBackupToGitHubButtonStatus();
         }
