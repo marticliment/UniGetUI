@@ -1,14 +1,11 @@
-using System;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
 using Octokit;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SecureSettings;
 using UniGetUI.Core.SettingsEngine;
 using Windows.System;
-using YamlDotNet.Core.Tokens;
 
 namespace UniGetUI.Services
 {
@@ -24,7 +21,7 @@ namespace UniGetUI.Services
         public static event EventHandler<EventArgs>? AuthStatusChanged;
         public GitHubAuthService()
         {
-            _client = new GitHubClient(new ProductHeaderValue("UniGetUI"));
+            _client = new GitHubClient(new ProductHeaderValue("UniGetUI", CoreData.VersionName));
         }
 
         public GitHubClient? CreateGitHubClient()
@@ -45,7 +42,7 @@ namespace UniGetUI.Services
 
         public async Task<bool> SignInAsync()
         {
-            HttpListener httpListener = null;
+            HttpListener? httpListener = null;
             try
             {
                 Logger.Info("Initiating GitHub sign-in process using loopback redirect...");
@@ -88,7 +85,7 @@ namespace UniGetUI.Services
                     return false;
                 }
 
-                return await CompleteSignInAsync(code);
+                return await _completeSignInAsync(code);
             }
             catch (HttpListenerException ex) when (ex.ErrorCode == 5) // Access Denied
             {
@@ -113,7 +110,7 @@ namespace UniGetUI.Services
             }
         }
 
-        private async Task<bool> CompleteSignInAsync(string code)
+        private async Task<bool> _completeSignInAsync(string code)
         {
             try
             {
@@ -165,7 +162,16 @@ namespace UniGetUI.Services
         public void SignOut()
         {
             Logger.Info("Signing out from GitHub...");
-            ClearAuthenticatedUserData();
+            try
+            {
+                ClearAuthenticatedUserData();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Failed to log out:");
+                Logger.Error(ex);
+            }
+
             AuthStatusChanged?.Invoke(this, EventArgs.Empty);
             Logger.Info("GitHub sign-out complete.");
         }

@@ -1,5 +1,4 @@
 using System.Collections.ObjectModel;
-using System.Text;
 using Windows.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;

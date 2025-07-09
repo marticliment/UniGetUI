@@ -1,11 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Octokit;
-using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
-using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 
 namespace UniGetUI.Services
@@ -23,14 +17,13 @@ namespace UniGetUI.Services
 
         private readonly GitHubAuthService _authService;
 
-        private readonly string DeviceUserUniqueIdentifier;
         private readonly string GistFileKey;
 
         public GitHubBackupService(GitHubAuthService authService)
         {
             _authService = authService;
-            DeviceUserUniqueIdentifier = $"{Environment.MachineName}\\{Environment.UserName}".Replace(" ", "");
-            GistFileKey = $"{PackageBackup_StartingKey} {DeviceUserUniqueIdentifier}";
+            string deviceUserUniqueIdentifier = $"{Environment.MachineName}\\{Environment.UserName}".Replace(" ", "");
+            GistFileKey = $"{PackageBackup_StartingKey} {deviceUserUniqueIdentifier}";
         }
 
         /// <summary>

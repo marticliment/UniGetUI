@@ -3,7 +3,6 @@ using Microsoft.UI.Xaml.Navigation;
 using UniGetUI.Core.Tools;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
-using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.Core.SettingsEngine;
 using System.Diagnostics;
 

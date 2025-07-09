@@ -1,9 +1,6 @@
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Security.Authentication;
-using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
@@ -11,10 +8,8 @@ using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
-using UniGetUI.Interface;
 using UniGetUI.Interface.SoftwarePages;
 using UniGetUI.PackageEngine.Enums;
-using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.Pages.DialogPages;
 using UniGetUI.Services;
 
