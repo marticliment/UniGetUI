@@ -286,7 +286,7 @@ namespace UniGetUI.Interface.SoftwarePages
         {
             if (!HasDoneBackup)
             {
-                if (Settings.Get(Settings.K.EnablePackageBackup))
+                if (Settings.Get(Settings.K.EnablePackageBackup_LOCAL))
                 {
                     _ = BackupPackages();
                 }

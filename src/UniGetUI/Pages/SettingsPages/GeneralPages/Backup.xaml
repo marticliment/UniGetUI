@@ -27,13 +27,7 @@
                 FontWeight="SemiBold"
                 Text="Package backup" />
 
-            <widgets:CheckboxCard
-                x:Name="EnablePackageBackupCheckBox"
-                CornerRadius="8,8,0,0"
-                SettingName="EnablePackageBackup"
-                StateChanged="ShowRestartBanner"
-                Text="Periodically perform a backup of the installed packages" />
-            <Toolkit:SettingsCard BorderThickness="1,0,1,1" CornerRadius="0,0,8,8">
+            <Toolkit:SettingsCard CornerRadius="8">
                 <Toolkit:SettingsCard.Description>
                     <StackPanel Orientation="Vertical">
                         <widgets:TranslatedTextBlock Prefix=" ● " Text="The backup will include the complete list of the installed packages and their installation options. Ignored updates and skipped versions will also be saved." />
@@ -44,29 +38,100 @@
                 </Toolkit:SettingsCard.Description>
             </Toolkit:SettingsCard>
 
-            <UserControl Height="16" />
-
-
-            <widgets:ButtonCard
-                x:Name="BackupNowButton"
-                ButtonText="Backup"
-                Click="DoBackup_Click"
-                CornerRadius="8"
-                IsEnabled="{x:Bind EnablePackageBackupCheckBox._checkbox.IsOn, Mode=OneWay}"
-                Text="Perform a backup now" />
-
 
             <widgets:TranslatedTextBlock
                 Margin="4,32,4,8"
+                FontSize="16"
                 FontWeight="SemiBold"
-                Text="Backup location" />
+                Text="Cloud package backup" />
+
+            <widgets:CheckboxCard
+                x:Name="EnablePackageBackupCheckBox_CLOUD"
+                BorderThickness="1,1,1,0"
+                CornerRadius="8,8,0,0"
+                SettingName="EnablePackageBackup_CLOUD"
+                StateChanged="ShowRestartBanner"
+                Text="Periodically perform a cloud backup of the installed packages">
+                <widgets:CheckboxCard.Description>
+                    <widgets:TranslatedTextBlock Text="Cloud backup uses a private GitHub Gist to store a list of installed packages" />
+                </widgets:CheckboxCard.Description>
+            </widgets:CheckboxCard>
+
+            <Toolkit:SettingsCard>
+
+                <StackPanel
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal"
+                    Spacing="8">
+                    <TextBlock
+                        x:Name="GitHubUserText"
+                        VerticalAlignment="Center"
+                        Text="Not logged in" />
+                    <Button
+                        x:Name="LoginWithGitHubButton"
+                        Click="LoginWithGitHubButton_Click"
+                        Content="Login with GitHub" />
+                    <Button
+                        x:Name="LogoutGitHubButton"
+                        Click="LogoutGitHubButton_Click"
+                        Content="Logout from GitHub"
+                        Visibility="Collapsed" />
+                </StackPanel>
+            </Toolkit:SettingsCard>
+
+            <UserControl Height="16" />
+
+            <widgets:ButtonCard
+                x:Name="BackupNowButton_Local"
+                ButtonText="Backup"
+                Click="BackupNowButton_Local_Click"
+                CornerRadius="8,8,0,0"
+                IsEnabled="{x:Bind EnablePackageBackupCheckBox_CLOUD._checkbox.IsOn, Mode=OneWay}"
+                Text="Perform a cloud backup now" />
+
+            <widgets:ButtonCard
+                x:Name="RestorePackagesFromGitHubButton"
+                BorderThickness="1,0,1,1"
+                ButtonText="Select backup"
+                Click="RestorePackagesFromGitHubButton_Click"
+                CornerRadius="0,0,8,8"
+                Text="Restore a backup from the cloud">
+                <widgets:ButtonCard.Description>
+                    <widgets:TranslatedTextBlock Text="Begin the process to select a cloud backup and review which packages to restore" />
+                </widgets:ButtonCard.Description>
+            </widgets:ButtonCard>
+
+            <widgets:TranslatedTextBlock
+                Margin="4,32,4,8"
+                FontSize="16"
+                FontWeight="SemiBold"
+                Text="Local package backup" />
+
+            <widgets:CheckboxCard
+                x:Name="EnablePackageBackupCheckBox_LOCAL"
+                BorderThickness="1,1,1,0"
+                CornerRadius="8,8,0,0"
+                SettingName="EnablePackageBackup_LOCAL"
+                StateChanged="ShowRestartBanner"
+                Text="Periodically perform a local backup of the installed packages" />
+
+            <widgets:ButtonCard
+                x:Name="BackupNowButton_LOCAL"
+                ButtonText="Backup"
+                Click="BackupNowButton_LOCAL_Click_1"
+                CornerRadius="0,0,8,8"
+                IsEnabled="{x:Bind EnablePackageBackupCheckBox_LOCAL._checkbox.IsOn, Mode=OneWay}"
+                Text="Perform a local backup now" />
+
+            <UserControl Height="16" />
+
 
             <widgets:ButtonCard
                 x:Name="ChangeBackupDirectory"
                 ButtonText="Select"
                 Click="ChangeBackupDirectory_Click"
                 CornerRadius="8"
-                IsEnabled="{x:Bind EnablePackageBackupCheckBox._checkbox.IsOn, Mode=OneWay}"
+                IsEnabled="{x:Bind EnablePackageBackupCheckBox_LOCAL._checkbox.IsOn, Mode=OneWay}"
                 Text="Change backup output directory">
                 <Toolkit:SettingsCard.Description>
                     <StackPanel Orientation="Horizontal" Spacing="5">
@@ -80,12 +145,12 @@
             <widgets:TranslatedTextBlock
                 Margin="4,32,4,8"
                 FontWeight="SemiBold"
-                Text="Advanced options" />
+                Text="Local backup advanced options" />
 
             <widgets:TextboxCard
                 x:Name="ChangeBackupFileNameTextBox"
                 CornerRadius="8,8,0,0"
-                IsEnabled="{x:Bind EnablePackageBackupCheckBox._checkbox.IsOn, Mode=OneWay}"
+                IsEnabled="{x:Bind EnablePackageBackupCheckBox_LOCAL._checkbox.IsOn, Mode=OneWay}"
                 Placeholder="Leave empty for default"
                 SettingName="ChangeBackupFileName"
                 Text="Set a custom backup file name" />
@@ -94,58 +159,9 @@
                 x:Name="EnableBackupTimestampingCheckBox"
                 BorderThickness="1,0,1,1"
                 CornerRadius="0,0,8,8"
-                IsEnabled="{x:Bind EnablePackageBackupCheckBox._checkbox.IsOn, Mode=OneWay}"
+                IsEnabled="{x:Bind EnablePackageBackupCheckBox_LOCAL._checkbox.IsOn, Mode=OneWay}"
                 SettingName="EnableBackupTimestamping"
                 Text="Add a timestamp to the backup file names" />
-
-            <widgets:TranslatedTextBlock
-                Margin="4,32,4,8"
-                FontWeight="SemiBold"
-                Text="Cloud Backup and Restore" />
-
-            <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                <TextBlock x:Name="GitHubUserText" Text="Not logged in" VerticalAlignment="Center"/>
-                <Button x:Name="LoginWithGitHubButton" Content="Login with GitHub" Click="LoginWithGitHubButton_Click" />
-                <Button x:Name="LogoutGitHubButton" Content="Logout from GitHub" Click="LogoutGitHubButton_Click" Visibility="Collapsed" />
-            </StackPanel>
-
-            <widgets:ButtonCard
-                x:Name="BackupToGitHubButton"
-                ButtonText="Backup settings and packages"
-                Click="BackupToGitHubButton_Click"
-                CornerRadius="8,8,0,0"
-                IsEnabled="False"
-                Text="Backup your settings and packages to a private GitHub Gist">
-                <widgets:ButtonCard.Description>
-                    <widgets:TranslatedTextBlock Text="Requires you to be logged in with your GitHub account." />
-                </widgets:ButtonCard.Description>
-            </widgets:ButtonCard>
-
-            <!--widgets:ButtonCard
-                x:Name="RestoreSettingsFromGitHubButton"
-                ButtonText="Restore settings"
-                Click="RestoreSettingsFromGitHubButton_Click"
-                CornerRadius="8"
-                IsEnabled="False"
-                Text="Restore your settings from a private GitHub Gist">
-                <widgets:ButtonCard.Description>
-                    <widgets:TranslatedTextBlock Text="This will overwrite your current settings. A restart may be required." />
-                </widgets:ButtonCard.Description>
-            </widgets:ButtonCard-->
-
-            <widgets:ButtonCard
-                x:Name="RestorePackagesFromGitHubButton"
-                ButtonText="Restore packages"
-                Click="RestorePackagesFromGitHubButton_Click"
-                CornerRadius="0,0,8,8"
-                BorderThickness="1,0,1,1"
-                IsEnabled="False"
-                Text="Restore your packages from a private GitHub Gist">
-                <widgets:ButtonCard.Description>
-                    <widgets:TranslatedTextBlock Text="This will install the packages from the backup." />
-                </widgets:ButtonCard.Description>
-            </widgets:ButtonCard>
-
         </StackPanel>
     </ScrollViewer>
 </Page>

@@ -35,7 +35,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             _authService = new GitHubAuthService();
             _backupService = new GitHubBackupService(_authService);
 
-            EnablePackageBackupUI(Settings.Get(Settings.K.EnablePackageBackup));
+            EnablePackageBackupUI(Settings.Get(Settings.K.EnablePackageBackup_LOCAL));
             ResetBackupDirectory.Content = CoreTools.Translate("Reset");
             OpenBackupDirectory.Content = CoreTools.Translate("Open");
             UpdateGitHubLoginStatus();
@@ -89,7 +89,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         {
             UpdateGitHubLoginStatus();
             bool isAuthenticated = await _authService.IsAuthenticatedAsync();
-            BackupToGitHubButton.IsEnabled = isAuthenticated;
+            // BackupToGitHubButton.IsEnabled = isAuthenticated;
             RestorePackagesFromGitHubButton.IsEnabled = isAuthenticated;
         }
 
@@ -144,7 +144,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
 
         private async void BackupToGitHubButton_Click(object sender, EventArgs e)
         {
-            BackupToGitHubButton.IsEnabled = false;
+            // BackupToGitHubButton.IsEnabled = false;
             DialogHelper.ShowLoadingDialog(CoreTools.Translate("Backing up packages to GitHub Gist..."));
 
             var packagesContent = await InstalledPackagesPage.GenerateBackupContents();
@@ -202,7 +202,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             EnableBackupTimestampingCheckBox.IsEnabled = enabled;
             ChangeBackupFileNameTextBox.IsEnabled = enabled;
             ChangeBackupDirectory.IsEnabled = enabled;
-            BackupNowButton.IsEnabled = enabled;
+            // BackupNowButton.IsEnabled = enabled;
 
             if (enabled)
             {
@@ -249,6 +249,16 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             DialogHelper.ShowLoadingDialog(CoreTools.Translate("Performing backup, please wait..."));
             await InstalledPackagesPage.BackupPackages();
             DialogHelper.HideLoadingDialog();
+        }
+
+        private void BackupNowButton_Local_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void BackupNowButton_LOCAL_Click_1(object sender, EventArgs e)
+        {
+
         }
     }
 }
