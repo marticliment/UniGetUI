@@ -7,8 +7,9 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:UniGetUI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:services="using:UniGetUI.Services"
     xmlns:widgets="using:UniGetUI.Interface.Widgets"
-    xmlns:winex="using:WinUIEx" xmlns:services="using:UniGetUI.Services"
+    xmlns:winex="using:WinUIEx"
     Title="UniGetUI"
     mc:Ignorable="d">
 
@@ -45,7 +46,7 @@
                 <UserControl Height="10" />
             </winex:TitleBar.Content-->
             <winex:TitleBar.Footer>
-                <services:UserAvatar x:Name="UserAvatar" />
+                <services:UserAvatar />
             </winex:TitleBar.Footer>
         </winex:TitleBar>
         <StackPanel

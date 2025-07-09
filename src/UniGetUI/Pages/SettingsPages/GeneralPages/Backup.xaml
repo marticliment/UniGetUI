@@ -7,6 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:UniGetUI.Pages.SettingsPages.GeneralPages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:services="using:UniGetUI.Services"
     xmlns:widgets="using:UniGetUI.Interface.Widgets"
     Background="Transparent"
     mc:Ignorable="d">
@@ -45,48 +46,81 @@
                 FontWeight="SemiBold"
                 Text="Cloud package backup" />
 
+            <Toolkit:SettingsCard
+                x:Name="GithubIdentityCard"
+                ContentAlignment="Left"
+                CornerRadius="8,8,0,0">
+
+                <Grid ColumnSpacing="8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="48" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <PersonPicture
+                        x:Name="GitHubImage"
+                        Grid.RowSpan="2"
+                        Width="48" />
+                    <TextBlock
+                        x:Name="GitHubUserTitle"
+                        Grid.Column="1"
+                        VerticalAlignment="Bottom"
+                        Text="Loading..."
+                        TextWrapping="WrapWholeWords" />
+                    <TextBlock
+                        x:Name="GitHubUserSubtitle"
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        VerticalAlignment="Top"
+                        FontSize="12"
+                        FontWeight="SemiBold"
+                        Opacity="0.8"
+                        Text="Please wait..."
+                        TextWrapping="WrapWholeWords" />
+                    <Button
+                        x:Name="LogInButton"
+                        Grid.RowSpan="2"
+                        Grid.Column="2"
+                        VerticalAlignment="Stretch"
+                        Click="LoginWithGitHubButton_Click"
+                        Style="{ThemeResource AccentButtonStyle}"
+                        Visibility="Collapsed">
+                        <widgets:TranslatedTextBlock Text="Log in with GitHub" WrappingMode="WrapWholeWords" />
+                    </Button>
+                    <Button
+                        x:Name="LogOutButton"
+                        Grid.RowSpan="2"
+                        Grid.Column="2"
+                        VerticalAlignment="Stretch"
+                        Click="LogoutGitHubButton_Click"
+                        Visibility="Collapsed">
+                        <widgets:TranslatedTextBlock Text="Log out from GitHub" WrappingMode="WrapWholeWords" />
+                    </Button>
+                </Grid>
+            </Toolkit:SettingsCard>
+
             <widgets:CheckboxCard
                 x:Name="EnablePackageBackupCheckBox_CLOUD"
-                BorderThickness="1,1,1,0"
-                CornerRadius="8,8,0,0"
+                BorderThickness="1,0,1,1"
+                CornerRadius="0,0,8,8"
                 SettingName="EnablePackageBackup_CLOUD"
-                StateChanged="ShowRestartBanner"
                 Text="Periodically perform a cloud backup of the installed packages">
                 <widgets:CheckboxCard.Description>
                     <widgets:TranslatedTextBlock Text="Cloud backup uses a private GitHub Gist to store a list of installed packages" />
                 </widgets:CheckboxCard.Description>
             </widgets:CheckboxCard>
 
-            <Toolkit:SettingsCard>
-
-                <StackPanel
-                    VerticalAlignment="Center"
-                    Orientation="Horizontal"
-                    Spacing="8">
-                    <TextBlock
-                        x:Name="GitHubUserText"
-                        VerticalAlignment="Center"
-                        Text="Not logged in" />
-                    <Button
-                        x:Name="LoginWithGitHubButton"
-                        Click="LoginWithGitHubButton_Click"
-                        Content="Login with GitHub" />
-                    <Button
-                        x:Name="LogoutGitHubButton"
-                        Click="LogoutGitHubButton_Click"
-                        Content="Logout from GitHub"
-                        Visibility="Collapsed" />
-                </StackPanel>
-            </Toolkit:SettingsCard>
-
             <UserControl Height="16" />
 
             <widgets:ButtonCard
-                x:Name="BackupNowButton_Local"
+                x:Name="BackupNowButton_Cloud"
                 ButtonText="Backup"
-                Click="BackupNowButton_Local_Click"
+                Click="BackupToGitHubButton_Click"
                 CornerRadius="8,8,0,0"
-                IsEnabled="{x:Bind EnablePackageBackupCheckBox_CLOUD._checkbox.IsOn, Mode=OneWay}"
                 Text="Perform a cloud backup now" />
 
             <widgets:ButtonCard
@@ -100,6 +134,10 @@
                     <widgets:TranslatedTextBlock Text="Begin the process to select a cloud backup and review which packages to restore" />
                 </widgets:ButtonCard.Description>
             </widgets:ButtonCard>
+
+
+            <!--  END CLOUD, BEGIN LOCAL  -->
+
 
             <widgets:TranslatedTextBlock
                 Margin="4,32,4,8"
@@ -118,7 +156,7 @@
             <widgets:ButtonCard
                 x:Name="BackupNowButton_LOCAL"
                 ButtonText="Backup"
-                Click="BackupNowButton_LOCAL_Click_1"
+                Click="DoBackup_LOCAL_Click"
                 CornerRadius="0,0,8,8"
                 IsEnabled="{x:Bind EnablePackageBackupCheckBox_LOCAL._checkbox.IsOn, Mode=OneWay}"
                 Text="Perform a local backup now" />

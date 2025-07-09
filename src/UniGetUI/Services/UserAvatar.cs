@@ -33,13 +33,19 @@ namespace UniGetUI.Services
             VerticalContentAlignment = VerticalAlignment.Center;
             HorizontalContentAlignment = HorizontalAlignment.Center;
             _ = RefreshStatus();
+            GitHubAuthService.AuthStatusChanged += GitHubAuthService_AuthStatusChanged;
+        }
+
+        private void GitHubAuthService_AuthStatusChanged(object? sender, EventArgs e)
+        {
+            _ = RefreshStatus();
         }
 
         public async Task RefreshStatus()
         {
             SetLoading();
             var client = new GitHubAuthService();
-            await Task.Delay(1000);
+            // await Task.Delay(1000);
             if (await client.IsAuthenticatedAsync())
             {
                 Content = await GenerateLogoutControl();
@@ -59,12 +65,10 @@ namespace UniGetUI.Services
                 if (await client.IsAuthenticatedAsync())
                 {
                     Logger.Warn("Login invoked when the client was already logged in!");
-                    await RefreshStatus();
                     return;
                 }
 
                 await client.SignInAsync();
-                await RefreshStatus();
             }
             catch (Exception ex)
             {
@@ -72,7 +76,6 @@ namespace UniGetUI.Services
                     CoreTools.Translate("Error"),
                     CoreTools.Translate("Log in failed: ") + ex.Message
                 );
-                await RefreshStatus();
             }
         }
 
@@ -86,8 +89,6 @@ namespace UniGetUI.Services
                 {
                     await client.SignOutAsync();
                 }
-
-                await RefreshStatus();
             }
             catch (Exception ex)
             {
@@ -95,7 +96,6 @@ namespace UniGetUI.Services
                     CoreTools.Translate("Error"),
                     CoreTools.Translate("Log out failed: ") + ex.Message
                 );
-                await RefreshStatus();
             }
         }
 
@@ -110,7 +110,6 @@ namespace UniGetUI.Services
             {
                 Width = 36,
                 Height = 36,
-                Initials = "?"
             };
 
             var translatedTextBlock = new TextBlock

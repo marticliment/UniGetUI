@@ -1,19 +1,22 @@
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Diagnostics;
+using System.Security.Authentication;
+using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using UniGetUI.Core.Tools;
-using UniGetUI.Core.SettingsEngine;
+using Microsoft.UI.Xaml.Media.Imaging;
 using UniGetUI.Core.Data;
-using System.Diagnostics;
-using UniGetUI.Pages.DialogPages;
-using UniGetUI.Interface.SoftwarePages;
-using UniGetUI.Services;
 using UniGetUI.Core.Logging;
-using System.Collections.Generic;
-using System;
-using System.Threading.Tasks;
-using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.Core.SettingsEngine;
+using UniGetUI.Core.Tools;
 using UniGetUI.Interface;
+using UniGetUI.Interface.SoftwarePages;
 using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.Pages.DialogPages;
+using UniGetUI.Services;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -27,7 +30,8 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
     {
         private readonly GitHubAuthService _authService;
         private readonly GitHubBackupService _backupService;
-
+        private bool _isLoggedIn;
+        private bool _isLoading;
         public Backup()
         {
             this.InitializeComponent();
@@ -38,142 +42,13 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             EnablePackageBackupUI(Settings.Get(Settings.K.EnablePackageBackup_LOCAL));
             ResetBackupDirectory.Content = CoreTools.Translate("Reset");
             OpenBackupDirectory.Content = CoreTools.Translate("Open");
-            UpdateGitHubLoginStatus();
-            UpdateBackupToGitHubButtonStatus();
+
+            GitHubAuthService.AuthStatusChanged += (_, _) => _ = UpdateGitHubLoginStatus();
+            EnablePackageBackupCheckBox_CLOUD.StateChanged += EnablePackageBackupCheckBox_CLOUD_StateChanged;
+            _ = UpdateGitHubLoginStatus();
         }
 
-        private void UpdateGitHubLoginStatus()
-        {
-            var userName = Settings.GetValue(Settings.K.GitHubUserLogin);
-            if (!string.IsNullOrEmpty(userName))
-            {
-                GitHubUserText.Text = $"Logged in as: {userName}";
-                LoginWithGitHubButton.Visibility = Visibility.Collapsed;
-                LogoutGitHubButton.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                GitHubUserText.Text = "Not logged in";
-                LoginWithGitHubButton.Visibility = Visibility.Visible;
-                LogoutGitHubButton.Visibility = Visibility.Collapsed;
-            }
-        }
-
-        private async void LoginWithGitHubButton_Click(object sender, RoutedEventArgs e)
-        {
-            LoginWithGitHubButton.IsEnabled = false;
-            bool success = await _authService.SignInAsync();
-            if (success)
-            {
-                Logger.Info("Successfully logged in with GitHub.");
-            }
-            else
-            {
-                Logger.Error("Failed to log in with GitHub.");
-                GitHubUserText.Text = "Login failed. See logs for details.";
-            }
-            UpdateBackupToGitHubButtonStatus();
-            LoginWithGitHubButton.IsEnabled = true;
-        }
-
-        private async void LogoutGitHubButton_Click(object sender, RoutedEventArgs e)
-        {
-            LogoutGitHubButton.IsEnabled = false;
-            await _authService.SignOutAsync();
-            UpdateBackupToGitHubButtonStatus();
-            Logger.Info("Successfully logged out from GitHub.");
-            LogoutGitHubButton.IsEnabled = true;
-        }
-
-        private async void UpdateBackupToGitHubButtonStatus()
-        {
-            UpdateGitHubLoginStatus();
-            bool isAuthenticated = await _authService.IsAuthenticatedAsync();
-            // BackupToGitHubButton.IsEnabled = isAuthenticated;
-            RestorePackagesFromGitHubButton.IsEnabled = isAuthenticated;
-        }
-
-        private async void RestorePackagesFromGitHubButton_Click(object sender, EventArgs e)
-        {
-            RestorePackagesFromGitHubButton.IsEnabled = false;
-            try
-            {
-                DialogHelper.ShowLoadingDialog(CoreTools.Translate("Fetching available backups..."));
-                var availableBackups = await _backupService.GetAvailableBackups();
-                DialogHelper.HideLoadingDialog();
-
-                var selectedBackup = await DialogHelper.AskForBackupSelection(availableBackups);
-                if (selectedBackup is null)
-                {
-                    RestorePackagesFromGitHubButton.IsEnabled = true;
-                    return;
-                }
-                selectedBackup = selectedBackup.Split(' ')[0];
-
-                DialogHelper.ShowLoadingDialog(CoreTools.Translate("Downloading backup..."));
-                var backupContents = await _backupService.GetBackupContents(selectedBackup);
-                DialogHelper.HideLoadingDialog();
-                await Task.Delay(500); // Prevent race conditions with dialogs
-
-                if (backupContents is null)
-                    throw new Exception($"The backupContents for backup {selectedBackup} returned null");
-
-                Logger.Info("Successfully loaded package bundle from GitHub Gist.");
-                DialogHelper.ShowDismissableBalloon(
-                    CoreTools.Translate("Done!"),
-                    CoreTools.Translate("The cloud backup has been loaded successfully."));
-
-                MainApp.Instance.MainWindow.NavigationPage.LoadBundleFromString(
-                    backupContents, BundleFormatType.UBUNDLE, $"GitHub Gist {selectedBackup}");
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("An error occurred while loading a backup:");
-                Logger.Error(ex);
-
-                DialogHelper.HideLoadingDialog();
-                var errorDialog = DialogHelper.DialogFactory.Create();
-                errorDialog.Title = CoreTools.Translate("An error occurred");
-                errorDialog.Content = CoreTools.Translate("An error occurred while loading a backup: ") + ex.Message;
-                errorDialog.PrimaryButtonText = CoreTools.Translate("OK");
-                errorDialog.DefaultButton = ContentDialogButton.Primary;
-                await DialogHelper.Window.ShowDialogAsync(errorDialog);
-            }
-            UpdateBackupToGitHubButtonStatus();
-        }
-
-        private async void BackupToGitHubButton_Click(object sender, EventArgs e)
-        {
-            // BackupToGitHubButton.IsEnabled = false;
-            DialogHelper.ShowLoadingDialog(CoreTools.Translate("Backing up packages to GitHub Gist..."));
-
-            var packagesContent = await InstalledPackagesPage.GenerateBackupContents();
-
-            try
-            {
-                await _backupService.UploadPackageBundle(packagesContent);
-                DialogHelper.HideLoadingDialog();
-                Logger.Info("Successfully backed up settings and packages to GitHub Gist.");
-                DialogHelper.ShowDismissableBalloon(
-                    CoreTools.Translate("Backup Successful"),
-                    CoreTools.Translate("Your settings and packages have been successfully backed up to GitHub Gist."));
-            }
-            catch (Exception ex)
-            {
-                DialogHelper.HideLoadingDialog();
-
-                Logger.Error("An error occurred while uploading the backup:");
-                Logger.Error(ex);
-
-                var dialog = DialogHelper.DialogFactory.Create();
-                dialog.Title = CoreTools.Translate("Backup Failed");
-                dialog.Content = CoreTools.Translate("Could not back up packages to GitHub Gist: ") + ex.Message;
-                dialog.PrimaryButtonText = CoreTools.Translate("OK");
-                dialog.DefaultButton = ContentDialogButton.Primary;
-                await DialogHelper.Window.ShowDialogAsync(dialog);
-            }
-            UpdateBackupToGitHubButtonStatus();
-        }
+        
 
         public bool CanGoBack => true;
 
@@ -202,7 +77,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             EnableBackupTimestampingCheckBox.IsEnabled = enabled;
             ChangeBackupFileNameTextBox.IsEnabled = enabled;
             ChangeBackupDirectory.IsEnabled = enabled;
-            // BackupNowButton.IsEnabled = enabled;
+            BackupNowButton_LOCAL.IsEnabled = enabled;
 
             if (enabled)
             {
@@ -244,21 +119,176 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             Process.Start("explorer.exe", directory);
         }
 
-        private async void DoBackup_Click(object sender, EventArgs e)
+        private async void DoBackup_LOCAL_Click(object sender, EventArgs e)
         {
             DialogHelper.ShowLoadingDialog(CoreTools.Translate("Performing backup, please wait..."));
             await InstalledPackagesPage.BackupPackages();
             DialogHelper.HideLoadingDialog();
         }
 
-        private void BackupNowButton_Local_Click(object sender, EventArgs e)
+        /*
+         *
+         *       BEGIN CLOUD BACKUP METHODS
+         *
+         */
+        private async Task UpdateGitHubLoginStatus()
         {
+            GitHubAuthService authService = new();
+            if (await authService.IsAuthenticatedAsync())
+            {
+                var client = await authService.CreateGitHubClientAsync();
+                if (client is null) throw new AuthenticationException("How can it be authenticated and fail to create a client?");
+                var user = await client.User.Current();
 
+                _isLoggedIn = true;
+                LogInButton.Visibility = Visibility.Collapsed;
+                LogOutButton.Visibility = Visibility.Visible;
+                GitHubUserTitle.Text = CoreTools.Translate("You are logged in as {0} (@{1})", user.Name, user.Login);
+                GitHubUserSubtitle.Text = CoreTools.Translate("Nice! Backups will be uploaded to a private gist on your acount");
+                GitHubImage.Initials = "";
+                GitHubImage.ProfilePicture = new BitmapImage(new Uri(user.AvatarUrl));
+            }
+            else
+            {
+                _isLoggedIn = false;
+                LogInButton.Visibility = Visibility.Visible;
+                LogOutButton.Visibility = Visibility.Collapsed;
+                GitHubUserTitle.Text = CoreTools.Translate("Current status: Not logged in");
+                GitHubUserSubtitle.Text = CoreTools.Translate("Log in to enable cloud backup");
+                GitHubImage.ProfilePicture = null;
+            }
+            UpdateCloudControlsEnabled();
         }
 
-        private void BackupNowButton_LOCAL_Click_1(object sender, EventArgs e)
+        private void UpdateCloudControlsEnabled()
         {
+            LogInButton.IsEnabled = !_isLoading;
+            LogOutButton.IsEnabled = !_isLoading;
+            if (_isLoggedIn && !_isLoading)
+            {
+                EnablePackageBackupCheckBox_CLOUD.IsEnabled = true;
+                RestorePackagesFromGitHubButton.IsEnabled = true;
+                BackupNowButton_Cloud.IsEnabled = Settings.Get(Settings.K.EnablePackageBackup_CLOUD);
+            }
+            else
+            {
+                EnablePackageBackupCheckBox_CLOUD.IsEnabled = false;
+                BackupNowButton_Cloud.IsEnabled = false;
+                RestorePackagesFromGitHubButton.IsEnabled = false;
+            }
+        }
 
+        private async void LoginWithGitHubButton_Click(object sender, RoutedEventArgs e)
+        {
+            _isLoading = true;
+            UpdateCloudControlsEnabled();
+
+            bool success = await _authService.SignInAsync();
+            if (!success)
+            {
+                DialogHelper.ShowDismissableBalloon(
+                    CoreTools.Translate("Failed"),
+                    CoreTools.Translate("An error occurred while logging in: ")
+                );
+            }
+            _isLoading = false;
+            UpdateCloudControlsEnabled();
+        }
+
+        private async void LogoutGitHubButton_Click(object sender, RoutedEventArgs e)
+        {
+            _isLoading = true;
+            UpdateCloudControlsEnabled();
+
+            await _authService.SignOutAsync();
+
+            _isLoading = false;
+            UpdateCloudControlsEnabled();
+        }
+
+        private async void RestorePackagesFromGitHubButton_Click(object sender, EventArgs e)
+        {
+            RestorePackagesFromGitHubButton.IsEnabled = false;
+            try
+            {
+                DialogHelper.ShowLoadingDialog(CoreTools.Translate("Fetching available backups..."));
+                var availableBackups = await _backupService.GetAvailableBackups();
+                DialogHelper.HideLoadingDialog();
+
+                var selectedBackup = await DialogHelper.AskForBackupSelection(availableBackups);
+                if (selectedBackup is null)
+                {
+                    RestorePackagesFromGitHubButton.IsEnabled = true;
+                    return;
+                }
+                selectedBackup = selectedBackup.Split(' ')[0];
+
+                DialogHelper.ShowLoadingDialog(CoreTools.Translate("Downloading backup..."));
+                var backupContents = await _backupService.GetBackupContents(selectedBackup);
+                DialogHelper.HideLoadingDialog();
+                await Task.Delay(500); // Prevent race conditions with dialogs
+
+                if (backupContents is null)
+                    throw new DataException($"The backupContents for backup {selectedBackup} returned null");
+
+                Logger.Info("Successfully loaded package bundle from GitHub Gist.");
+                DialogHelper.ShowDismissableBalloon(
+                    CoreTools.Translate("Done!"),
+                    CoreTools.Translate("The cloud backup has been loaded successfully."));
+
+                MainApp.Instance.MainWindow.NavigationPage.LoadBundleFromString(
+                    backupContents, BundleFormatType.UBUNDLE, $"GitHub Gist {selectedBackup}");
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("An error occurred while loading a backup:");
+                Logger.Error(ex);
+
+                DialogHelper.HideLoadingDialog();
+                var errorDialog = DialogHelper.DialogFactory.Create();
+                errorDialog.Title = CoreTools.Translate("An error occurred");
+                errorDialog.Content = CoreTools.Translate("An error occurred while loading a backup: ") + ex.Message;
+                errorDialog.PrimaryButtonText = CoreTools.Translate("OK");
+                errorDialog.DefaultButton = ContentDialogButton.Primary;
+                await DialogHelper.Window.ShowDialogAsync(errorDialog);
+            }
+        }
+
+        private async void BackupToGitHubButton_Click(object sender, EventArgs e)
+        {
+            DialogHelper.ShowLoadingDialog(CoreTools.Translate("Backing up packages to GitHub Gist..."));
+
+            var packagesContent = await InstalledPackagesPage.GenerateBackupContents();
+
+            try
+            {
+                await _backupService.UploadPackageBundle(packagesContent);
+                DialogHelper.HideLoadingDialog();
+                Logger.Info("Successfully backed up settings and packages to GitHub Gist.");
+                DialogHelper.ShowDismissableBalloon(
+                    CoreTools.Translate("Backup Successful"),
+                    CoreTools.Translate("Your settings and packages have been successfully backed up to GitHub Gist."));
+            }
+            catch (Exception ex)
+            {
+                DialogHelper.HideLoadingDialog();
+
+                Logger.Error("An error occurred while uploading the backup:");
+                Logger.Error(ex);
+
+                var dialog = DialogHelper.DialogFactory.Create();
+                dialog.Title = CoreTools.Translate("Backup Failed");
+                dialog.Content = CoreTools.Translate("Could not back up packages to GitHub Gist: ") + ex.Message;
+                dialog.PrimaryButtonText = CoreTools.Translate("OK");
+                dialog.DefaultButton = ContentDialogButton.Primary;
+                await DialogHelper.Window.ShowDialogAsync(dialog);
+            }
+        }
+
+        private void EnablePackageBackupCheckBox_CLOUD_StateChanged(object sender, EventArgs e)
+        {
+            ShowRestartBanner(sender, e);
+            UpdateCloudControlsEnabled();
         }
     }
 }

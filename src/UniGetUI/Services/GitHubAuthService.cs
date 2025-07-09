@@ -21,6 +21,7 @@ namespace UniGetUI.Services
 
         private readonly GitHubClient _client;
 
+        public static event EventHandler<EventArgs>? AuthStatusChanged;
         public GitHubAuthService()
         {
             _client = new GitHubClient(new ProductHeaderValue("UniGetUI"));
@@ -83,6 +84,7 @@ namespace UniGetUI.Services
                     var error = context.Request.QueryString["error"];
                     var errorDescription = context.Request.QueryString["error_description"];
                     Logger.Error($"GitHub OAuth callback returned an error: {error} - {errorDescription}");
+                    AuthStatusChanged?.Invoke(this, EventArgs.Empty);
                     return false;
                 }
 
@@ -94,6 +96,7 @@ namespace UniGetUI.Services
                 Logger.Error($"netsh http add urlacl url={RedirectUri} user=Everyone");
                 // Optionally, you could try to run this command for the user.
                 // For now, just logging the instruction.
+                AuthStatusChanged?.Invoke(this, EventArgs.Empty);
                 return false;
             }
             catch (Exception ex)
@@ -101,6 +104,7 @@ namespace UniGetUI.Services
                 Logger.Error("Exception during GitHub sign-in process:");
                 Logger.Error(ex);
                 await ClearAuthenticatedUserDataAsync();
+                AuthStatusChanged?.Invoke(this, EventArgs.Empty);
                 return false;
             }
             finally
@@ -122,6 +126,7 @@ namespace UniGetUI.Services
                 if (string.IsNullOrEmpty(token.AccessToken))
                 {
                     Logger.Error("Failed to obtain GitHub access token.");
+                    AuthStatusChanged?.Invoke(this, EventArgs.Empty);
                     return false;
                 }
 
@@ -144,6 +149,7 @@ namespace UniGetUI.Services
                     Logger.Warn("Could not retrieve GitHub user information after login.");
                 }
 
+                AuthStatusChanged?.Invoke(this, EventArgs.Empty);
                 return true;
             }
             catch (Exception ex)
@@ -151,6 +157,7 @@ namespace UniGetUI.Services
                 Logger.Error("Exception during GitHub token exchange:");
                 Logger.Error(ex);
                 await ClearAuthenticatedUserDataAsync();
+                AuthStatusChanged?.Invoke(this, EventArgs.Empty);
                 return false;
             }
         }
@@ -159,6 +166,7 @@ namespace UniGetUI.Services
         {
             Logger.Info("Signing out from GitHub...");
             await ClearAuthenticatedUserDataAsync();
+            AuthStatusChanged?.Invoke(this, EventArgs.Empty);
             Logger.Info("GitHub sign-out complete.");
         }
 
