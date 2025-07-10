@@ -6,7 +6,7 @@ namespace UniGetUI.PackageEngine.Serializable
 {
     public class InstallOptions: SerializableComponent<InstallOptions>
     {
-        private readonly IReadOnlyDictionary<string, bool> DefaultBoolValues = new Dictionary<string, bool>()
+        public readonly IReadOnlyDictionary<string, bool> _defaultBoolValues = new Dictionary<string, bool>()
         {   // OverridesNextLevelOpts is deliberately skipped here
             { "SkipHashCheck", false },
             { "InteractiveInstallation", false },
@@ -20,7 +20,7 @@ namespace UniGetUI.PackageEngine.Serializable
             { "AbortOnPreUninstallFail", true },
         };
 
-        private readonly IReadOnlyDictionary<string, string> DefaultStringValues = new Dictionary<string, string>()
+        public readonly IReadOnlyDictionary<string, string> _defaultStringValues = new Dictionary<string, string>()
         {
             {"Architecture", ""},
             {"InstallationScope", ""},
@@ -34,7 +34,7 @@ namespace UniGetUI.PackageEngine.Serializable
             {"PostUninstallCommand", ""},
         };
 
-        private readonly IReadOnlyList<string> DefaultListValues = new List<string>()
+        public readonly IReadOnlyList<string> _defaultListValues = new List<string>()
         {
             "CustomParameters_Install",
             "CustomParameters_Update",
@@ -75,13 +75,13 @@ namespace UniGetUI.PackageEngine.Serializable
         {
             var copy = new InstallOptions();
 
-            foreach (var (boolKey, _) in DefaultBoolValues)
+            foreach (var (boolKey, _) in _defaultBoolValues)
                 copy.SetValueToProperty(boolKey, GetValueFromProperty<bool>(boolKey));
 
-            foreach (var (stringKey, _) in DefaultStringValues)
+            foreach (var (stringKey, _) in _defaultStringValues)
                 copy.SetValueToProperty(stringKey, GetValueFromProperty<string>(stringKey));
 
-            foreach (var listKey in DefaultListValues)
+            foreach (var listKey in _defaultListValues)
                 copy.SetValueToProperty(listKey, GetValueFromProperty<IReadOnlyList<string>>(listKey).ToList());
 
             // Handle non-automated OverridesNextLevelOpts
@@ -103,17 +103,13 @@ namespace UniGetUI.PackageEngine.Serializable
 
         public override void LoadFromJson(JsonNode data)
         {
-            foreach (var (boolKey, defValue) in DefaultBoolValues)
-            {
-                // RemoveDataOnUninstall should not be loaded from disk
-                if(boolKey == "RemoveDataOnUninstall") continue;
+            foreach (var (boolKey, defValue) in _defaultBoolValues)
                 SetValueToProperty(boolKey, data[boolKey]?.GetVal<bool>() ?? defValue);
-            }
 
-            foreach (var (stringKey, defValue) in DefaultStringValues)
+            foreach (var (stringKey, defValue) in _defaultStringValues)
                 SetValueToProperty(stringKey, data[stringKey]?.GetVal<string>() ?? defValue);
 
-            foreach (var listKey in DefaultListValues)
+            foreach (var listKey in _defaultListValues)
                 SetValueToProperty(listKey, ReadArrayFromJson(data, listKey));
 
             // Handle case where setting has not been migrated yet
@@ -137,22 +133,22 @@ namespace UniGetUI.PackageEngine.Serializable
         {
             JsonObject obj = new();
 
-            if (OverridesNextLevelOpts is not false)
+            if (OverridesNextLevelOpts is not false || DiffersFromDefault())
                 obj.Add(nameof(OverridesNextLevelOpts), OverridesNextLevelOpts);
 
-            foreach (var (boolKey, defValue) in DefaultBoolValues)
+            foreach (var (boolKey, defValue) in _defaultBoolValues)
             {
                 bool currentValue = GetValueFromProperty<bool>(boolKey);
                 if (currentValue != defValue) obj.Add(boolKey, currentValue);
             }
 
-            foreach (var (stringKey, defValue) in DefaultStringValues)
+            foreach (var (stringKey, defValue) in _defaultStringValues)
             {
                 string currentValue = GetValueFromProperty<string>(stringKey);
                 if (currentValue != defValue) obj.Add(stringKey, currentValue);
             }
 
-            foreach (var listKey in DefaultListValues)
+            foreach (var listKey in _defaultListValues)
             {
                 IReadOnlyList<string> currentValue = GetValueFromProperty<IReadOnlyList<string>>(listKey);
 
@@ -176,13 +172,13 @@ namespace UniGetUI.PackageEngine.Serializable
 
         public bool DiffersFromDefault()
         {
-            foreach (var (boolKey, defValue) in DefaultBoolValues)
+            foreach (var (boolKey, defValue) in _defaultBoolValues)
                 if (GetValueFromProperty<bool>(boolKey) != defValue) return true;
 
-            foreach (var (stringKey, defValue) in DefaultStringValues)
+            foreach (var (stringKey, defValue) in _defaultStringValues)
                 if (GetValueFromProperty<string>(stringKey) != defValue) return true;
 
-            foreach (var listKey in DefaultListValues)
+            foreach (var listKey in _defaultListValues)
             {
                 IReadOnlyList<string> currentValue = GetValueFromProperty<IReadOnlyList<string>>(listKey);
                 if (currentValue.Where(x => x.Any()).Any()) return true;

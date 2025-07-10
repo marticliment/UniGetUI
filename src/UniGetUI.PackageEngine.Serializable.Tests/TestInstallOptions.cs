@@ -1,4 +1,6 @@
 using System.Text.Json.Nodes;
+using WinRT.Interop;
+using Xunit.Sdk;
 
 namespace UniGetUI.PackageEngine.Serializable.Tests;
 
@@ -37,13 +39,13 @@ public class TestInstallOptions
         var jsonContent = JsonNode.Parse(contents);
         Assert.NotNull(jsonContent);
         object2.LoadFromJson(jsonContent);
-        AreEqual(originalObject1, object2);
+        AssertAreEqual(originalObject1, object2);
 
         var object3 = new InstallOptions(originalObject1.AsJsonNode());
-        AreEqual(originalObject1, object3);
+        AssertAreEqual(originalObject1, object3);
 
         var object4 = originalObject1.Copy();
-        AreEqual(originalObject1, object4);
+        AssertAreEqual(originalObject1, object4);
     }
 
     [Theory]
@@ -99,19 +101,80 @@ public class TestInstallOptions
         Assert.Equal(ver, o2.Version);
     }
 
-    internal static void AreEqual(InstallOptions o1, InstallOptions o2)
+    [Theory]
+    [InlineData(13345)]
+    [InlineData(219574)]
+    [InlineData(-3453)]
+    [InlineData(15820753)]
+    [InlineData(9026)]
+    [InlineData(12783)]
+    [InlineData(87432574)]
+    [InlineData(34)]
+    [InlineData(86578312)]
+    public void RandomPropertyAssignTester(int seed)
     {
-        Assert.Equal(o1.SkipHashCheck, o2.SkipHashCheck);
-        Assert.Equal(o1.Architecture, o2.Architecture);
-        Assert.Equal(o1.CustomInstallLocation, o2.CustomInstallLocation);
-        Assert.Equal(o1.CustomParameters_Install.Where(x => x.Any()).ToList(), o2.CustomParameters_Install.Where(x => x.Any()).ToList());
-        Assert.Equal(o1.CustomParameters_Uninstall.Where(x => x.Any()).ToList(), o2.CustomParameters_Uninstall.Where(x => x.Any()).ToList());
-        Assert.Equal(o1.CustomParameters_Update.Where(x => x.Any()).ToList(), o2.CustomParameters_Update.Where(x => x.Any()).ToList());
-        Assert.Equal(o1.InstallationScope, o2.InstallationScope);
-        Assert.Equal(o1.InteractiveInstallation, o2.InteractiveInstallation);
-        Assert.Equal(o1.PreRelease, o2.PreRelease);
-        Assert.Equal(o1.RunAsAdministrator, o2.RunAsAdministrator);
-        Assert.Equal(o1.SkipMinorUpdates, o2.SkipMinorUpdates);
-        Assert.Equal(o1.Version, o2.Version);
+        InstallOptions o1 = GenerateRandom(seed);
+        InstallOptions o2 = o1.Copy();
+        Assert.True(o2.DiffersFromDefault());
+        AssertAreEqual(o1, o2);
+        var c1 = o1.AsJsonString();
+        var c2 = o2.AsJsonString();
+        Assert.Equal(c1, c2);
+        InstallOptions o3 = new();
+        o3.LoadFromJson(JsonNode.Parse(c1) ?? throw new ArgumentException("null"));
+        AssertAreEqual(o1, o2);
+        AssertAreEqual(o2, o3);
+        AssertAreEqual(o1, o3); // Yeah, it is redundant
+        Assert.Equal(c1, o3.AsJsonString());
+    }
+
+    private static InstallOptions GenerateRandom(int seed)
+    {
+        Random r = new(seed);
+
+        InstallOptions o1 = new();
+        foreach (var (key, _) in o1._defaultBoolValues)
+            o1.SetValueToProperty(key, r.Next(2) is 0);
+
+        o1.OverridesNextLevelOpts = r.Next(2) is 0;
+
+        foreach (var (key, _) in o1._defaultStringValues)
+            o1.SetValueToProperty(key, r.Next().ToString());
+
+        foreach (var key in o1._defaultListValues)
+        {
+            var randomList = Enumerable.Range(0, r.Next(0, 11))
+                .Select(_ => r.Next().ToString())
+                .ToList();
+            o1.SetValueToProperty(key, randomList);
+        }
+
+        return o1;
+    }
+
+    internal static void AssertAreEqual(InstallOptions o1, InstallOptions o2)
+    {
+        Assert.Equal(o1.OverridesNextLevelOpts, o2.OverridesNextLevelOpts);
+
+        foreach (var (key, _) in o1._defaultBoolValues)
+        {
+            Assert.Equal(
+                o1.GetValueFromProperty<bool>(key),
+                o2.GetValueFromProperty<bool>(key));
+        }
+
+        foreach (var (key, _) in o1._defaultStringValues)
+        {
+            Assert.Equal(
+                o1.GetValueFromProperty<string>(key),
+                o2.GetValueFromProperty<string>(key));
+        }
+
+        foreach (var key in o1._defaultListValues)
+        {
+            Assert.Equal(
+                o1.GetValueFromProperty<IReadOnlyList<string>>(key).Where(x => x.Any()),
+                o2.GetValueFromProperty<IReadOnlyList<string>>(key).Where(x => x.Any()));
+        }
     }
 }
