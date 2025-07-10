@@ -34,19 +34,27 @@
             Title="UniGetUI"
             Grid.Row="0"
             Margin="0,0,0,-4"
+            HorizontalContentAlignment="Center"
             BackRequested="TitleBar_OnBackRequested"
             IsBackButtonVisible="False"
             IsPaneToggleButtonVisible="True"
             PaneToggleRequested="TitleBar_PaneToggleRequested"
+            SizeChanged="TitleBar_SizeChanged"
             Visibility="Collapsed">
             <winex:TitleBar.IconSource>
                 <ImageIconSource ImageSource="ms-appx:///Assets/Images/icon.png" />
             </winex:TitleBar.IconSource>
-            <!--winex:TitleBar.Content>
-                <UserControl Height="10" />
-            </winex:TitleBar.Content-->
+            <winex:TitleBar.Content>
+                <AutoSuggestBox
+                    x:Name="GlobalSearchBox"
+                    Width="400"
+                    Height="32"
+                    HorizontalAlignment="Stretch"
+                    x:FieldModifier="public"
+                    QueryIcon="Find" />
+            </winex:TitleBar.Content>
             <winex:TitleBar.Footer>
-                <services:UserAvatar />
+                <services:UserAvatar Margin="0,0,-44,0" />
             </winex:TitleBar.Footer>
         </winex:TitleBar>
         <StackPanel

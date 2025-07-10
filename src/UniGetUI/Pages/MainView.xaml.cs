@@ -19,6 +19,7 @@ using UniGetUI.Pages.SettingsPages;
 using UniGetUI.Controls;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.PackageLoader;
+using UniGetUI.Pages.PageInterfaces;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -57,11 +58,13 @@ namespace UniGetUI.Interface
         private PageType CurrentPage_t = PageType.Null;
         private List<PageType> NavigationHistory = new();
 
+        AutoSuggestBox MainTextBlock;
         public event EventHandler<bool>? CanGoBackChanged;
 
-        public MainView()
+        public MainView(AutoSuggestBox mainTextBlock)
         {
             InitializeComponent();
+            MainTextBlock = mainTextBlock;
             OperationList.ItemContainerTransitions = null;
             OperationList.ItemsSource = MainApp.Operations._operationList;
             DiscoverPage = new DiscoverSoftwarePage();
@@ -278,6 +281,13 @@ namespace UniGetUI.Interface
             CurrentPage_t = NewPage_t;
 
             (oldPage as IEnterLeaveListener)?.OnLeave();
+            if(oldPage is ISearchBoxPage oldSPage)
+            {
+                MainTextBlock.TextChanged -= oldSPage.SearchBox_TextChanged;
+                MainTextBlock.QuerySubmitted -= oldSPage.SearchBox_QuerySubmitted;
+                oldSPage.QueryBackup = MainTextBlock.Text;
+            }
+
             if (toHistory && OldPage_t is not PageType.Null)
             {
                 NavigationHistory.Add(OldPage_t);
@@ -287,6 +297,21 @@ namespace UniGetUI.Interface
             (NewPage as AbstractPackagesPage)?.FocusPackageList();
             (NewPage as AbstractPackagesPage)?.FilterPackages();
             (NewPage as IEnterLeaveListener)?.OnEnter();
+
+            if (NewPage is ISearchBoxPage newSPage)
+            {
+                MainTextBlock.TextChanged += newSPage.SearchBox_TextChanged;
+                MainTextBlock.QuerySubmitted += newSPage.SearchBox_QuerySubmitted;
+                MainTextBlock.Text = newSPage.QueryBackup;
+                MainTextBlock.PlaceholderText = newSPage.SearchBoxPlaceholder;
+                MainTextBlock.IsEnabled = true;
+            }
+            else
+            {
+                MainTextBlock.Text = "";
+                MainTextBlock.PlaceholderText = "";
+                MainTextBlock.IsEnabled = false;
+            }
         }
 
         public void NavigateBack()

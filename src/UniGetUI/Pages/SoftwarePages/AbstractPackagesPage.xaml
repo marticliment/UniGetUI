@@ -16,7 +16,6 @@
     NavigationCacheMode="Required"
     SizeChanged="ABSTRACT_PAGE_SizeChanged"
     mc:Ignorable="d">
-    <!--  PreviewKeyDown="{x:Bind PackageList_PreviewKeyDown}"  -->
 
     <animations:Implicit.ShowAnimations>
         <animations:TranslationAnimation
@@ -36,11 +35,10 @@
                 AutomationProperties.Name="{x:Bind Package.AutomationName}"
                 CornerRadius="4"
                 DoubleTapped="{x:Bind PackageItemContainer_DoubleTapped}"
+                Package="{x:Bind Package}"
                 PreviewKeyDown="{x:Bind PackageItemContainer_PreviewKeyDown}"
                 RightTapped="{x:Bind PackageItemContainer_RightTapped}"
-
-                Wrapper="{x:Bind Self}"
-                Package="{x:Bind Package}">
+                Wrapper="{x:Bind Self}">
 
                 <Grid
                     Padding="12,3,8,3"
@@ -212,10 +210,9 @@
                 Background="{ThemeResource ControlFillColorDefaultBrush}"
                 CornerRadius="4"
                 DoubleTapped="{x:Bind PackageItemContainer_DoubleTapped}"
+                Package="{x:Bind Package}"
                 PreviewKeyDown="{x:Bind PackageItemContainer_PreviewKeyDown}"
                 RightTapped="{x:Bind PackageItemContainer_RightTapped}"
-
-                Package="{x:Bind Package}"
                 Wrapper="{x:Bind Self}">
 
                 <Grid
@@ -331,10 +328,9 @@
                 Background="{ThemeResource ControlFillColorDefaultBrush}"
                 CornerRadius="4"
                 DoubleTapped="{x:Bind PackageItemContainer_DoubleTapped}"
+                Package="{x:Bind Package}"
                 PreviewKeyDown="{x:Bind PackageItemContainer_PreviewKeyDown}"
                 RightTapped="{x:Bind PackageItemContainer_RightTapped}"
-
-                Package="{x:Bind Package}"
                 Wrapper="{x:Bind Self}">
 
                 <Grid
@@ -456,10 +452,10 @@
         <UniformGridLayout
             x:Key="Layout_Icons"
             ItemsJustification="Start"
-            MinItemWidth="128"
-            MinItemHeight="134"
             MinColumnSpacing="8"
-            MinRowSpacing="8"/>
+            MinItemHeight="134"
+            MinItemWidth="128"
+            MinRowSpacing="8" />
 
         <StackLayout x:Key="Layout_List" Spacing="3" />
 
@@ -480,7 +476,8 @@
         <Grid
             Name="MainHeader"
             Grid.Row="0"
-            Grid.Column="1">
+            Grid.Column="1"
+            ColumnSpacing="8">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="80" />
                 <ColumnDefinition Width="*" />
@@ -496,6 +493,7 @@
                 Grid.Column="0"
                 Width="60"
                 MinHeight="60"
+                Margin="0,0,-8,0"
                 FontSize="50"
                 FontWeight="Normal" />
 
@@ -506,123 +504,97 @@
                 Spacing="0">
                 <TextBlock
                     x:Name="MainTitle"
+                    MaxHeight="70"
                     HorizontalAlignment="Left"
                     x:FieldModifier="protected"
                     FontFamily="Segoe UI Variable Display"
                     FontSize="30"
                     FontWeight="Bold"
-                    MaxHeight="70"
                     TextWrapping="Wrap" />
                 <TextBlock
                     x:Name="MainSubtitle"
+                    MaxHeight="40"
                     HorizontalAlignment="Left"
                     x:FieldModifier="protected"
                     FontSize="11"
-                    MaxHeight="40"
                     FontWeight="Normal"
                     Foreground="{ThemeResource AppBarItemDisabledForegroundThemeBrush}"
                     TextWrapping="Wrap" />
             </StackPanel>
 
-            <StackPanel
+            <Grid
                 Grid.Row="0"
                 Grid.Column="2"
-                Margin="0,0,4,0"
-                HorizontalAlignment="Stretch"
-                Orientation="Vertical"
-                Spacing="8">
-
-                <Grid HorizontalAlignment="Stretch">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-
-
-                    <TextBox
-                        x:Name="QueryBlock"
-                        Grid.Column="0"
-                        Height="30"
-                        Padding="7,5,5,5"
-                        VerticalContentAlignment="Center"
-                        x:FieldModifier="protected"
-                        CornerRadius="4,0,0,4" />
-
-                    <Button
-                        x:Name="FindButton"
-                        Grid.Column="1"
-                        Width="32"
-                        Height="32"
-                        Padding="4"
-                        x:FieldModifier="protected"
-                        AutomationProperties.HelpText="Search"
-                        CornerRadius="0,4,4,0">
-                        <AnimatedIcon>
-                            <AnimatedIcon.Source>
-                                <animatedvisuals:AnimatedFindVisualSource />
-                            </AnimatedIcon.Source>
-                            <AnimatedIcon.FallbackIconSource>
-                                <SymbolIconSource Symbol="Find" />
-                            </AnimatedIcon.FallbackIconSource>
-                        </AnimatedIcon>
-                    </Button>
-
-                    <Button
-                        x:Name="ReloadButton"
-                        Grid.Column="2"
-                        Width="32"
-                        Height="32"
-                        Margin="6,0,0,0"
-                        Padding="0"
-                        x:FieldModifier="protected"
-                        AutomationProperties.HelpText="Reload packages"
-                        CornerRadius="4">
-                        <FontIcon FontSize="16" Glyph="&#xE72C;" />
-                    </Button>
-                </Grid>
-
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                ColumnSpacing="8"
+                RowSpacing="8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
                 <StackPanel
-                    Name="SearchBoxPanel"
-                    HorizontalAlignment="Right"
-                    Orientation="Vertical"
-                    Spacing="8">
-
-                    <StackPanel Orientation="Horizontal" Spacing="4">
-                        <widgets:TranslatedTextBlock VerticalAlignment="Center" Text="Order by:" />
-                        <DropDownButton x:Name="OrderByButton">
-                            <DropDownButton.Flyout>
-                                <widgets:BetterMenu Placement="Bottom">
-                                    <widgets:BetterToggleMenuItem x:Name="OrderByName_Menu" Text="Name" />
-                                    <widgets:BetterToggleMenuItem x:Name="OrderById_Menu" Text="Id" />
-                                    <widgets:BetterToggleMenuItem x:Name="OrderByVer_Menu" Text="Version" />
-                                    <widgets:BetterToggleMenuItem
-                                        x:Name="OrderByNewVer_Menu"
-                                        Text="New version"
-                                        Visibility="{x:Bind RoleIsUpdateLike}" />
-                                    <widgets:BetterToggleMenuItem x:Name="OrderBySrc_Menu" Text="Source" />
-                                    <MenuFlyoutSeparator />
-                                    <widgets:BetterToggleMenuItem x:Name="OrderAsc_Menu" Text="Ascendant" />
-                                    <widgets:BetterToggleMenuItem x:Name="OrderDesc_Menu" Text="Descendant" />
-                                </widgets:BetterMenu>
-                            </DropDownButton.Flyout>
-                        </DropDownButton>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Spacing="4">
-
-                        <widgets:TranslatedTextBlock VerticalAlignment="Center" Text="View mode:" />
-                        <Toolkit:Segmented
-                            x:Name="ViewModeSelector"
-                            SelectionChanged="ViewModeSelector_SelectionChanged"
-                            SelectionMode="Single">
-                            <Toolkit:SegmentedItem Icon="{ui:FontIcon Glyph=&#xE8FD;}" x:Name="Selector_List" />
-                            <Toolkit:SegmentedItem Icon="{ui:FontIcon Glyph=&#xF168;}" x:Name="Selector_Grid" />
-                            <Toolkit:SegmentedItem Icon="{ui:FontIcon Glyph=&#xF0E2;}" x:Name="Selector_Icons" />
-                        </Toolkit:Segmented>
-                    </StackPanel>
+                    x:Name="OrderByContainer"
+                    Grid.Column="0"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal"
+                    Spacing="4">
+                    <widgets:TranslatedTextBlock VerticalAlignment="Center" Text="Order by:" />
+                    <DropDownButton x:Name="OrderByButton">
+                        <DropDownButton.Flyout>
+                            <widgets:BetterMenu Placement="Bottom">
+                                <widgets:BetterToggleMenuItem x:Name="OrderByName_Menu" Text="Name" />
+                                <widgets:BetterToggleMenuItem x:Name="OrderById_Menu" Text="Id" />
+                                <widgets:BetterToggleMenuItem x:Name="OrderByVer_Menu" Text="Version" />
+                                <widgets:BetterToggleMenuItem
+                                    x:Name="OrderByNewVer_Menu"
+                                    Text="New version"
+                                    Visibility="{x:Bind RoleIsUpdateLike}" />
+                                <widgets:BetterToggleMenuItem x:Name="OrderBySrc_Menu" Text="Source" />
+                                <MenuFlyoutSeparator />
+                                <widgets:BetterToggleMenuItem x:Name="OrderAsc_Menu" Text="Ascendant" />
+                                <widgets:BetterToggleMenuItem x:Name="OrderDesc_Menu" Text="Descendant" />
+                            </widgets:BetterMenu>
+                        </DropDownButton.Flyout>
+                    </DropDownButton>
                 </StackPanel>
-            </StackPanel>
+                <StackPanel
+                    x:Name="ViewModeContainer"
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="2"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal"
+                    Spacing="4">
+                    <widgets:TranslatedTextBlock VerticalAlignment="Center" Text="View mode:" />
+                    <Toolkit:Segmented
+                        x:Name="ViewModeSelector"
+                        SelectionChanged="ViewModeSelector_SelectionChanged"
+                        SelectionMode="Single">
+                        <Toolkit:SegmentedItem x:Name="Selector_List" Icon="{ui:FontIcon Glyph=&#xE8FD;}" />
+                        <Toolkit:SegmentedItem x:Name="Selector_Grid" Icon="{ui:FontIcon Glyph=&#xF168;}" />
+                        <Toolkit:SegmentedItem x:Name="Selector_Icons" Icon="{ui:FontIcon Glyph=&#xF0E2;}" />
+                    </Toolkit:Segmented>
+                </StackPanel>
+                <Button
+                    x:Name="ReloadButton"
+                    Grid.Column="1"
+                    Width="32"
+                    Height="32"
+                    Padding="0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    x:FieldModifier="protected"
+                    AutomationProperties.HelpText="Reload packages"
+                    CornerRadius="4">
+                    <FontIcon FontSize="16" Glyph="&#xE72C;" />
+                </Button>
+            </Grid>
 
             <Grid
                 Grid.Row="3"

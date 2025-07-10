@@ -26,6 +26,8 @@ using UniGetUI.Pages.DialogPages;
 using WinUIEx;
 using TitleBar = WinUIEx.TitleBar;
 using WindowExtensions = H.NotifyIcon.WindowExtensions;
+using System.Diagnostics;
+using Windows.UI.Text.Core;
 
 namespace UniGetUI.Interface
 {
@@ -62,7 +64,7 @@ namespace UniGetUI.Interface
             DismissableNotification.CloseButtonContent = CoreTools.Translate("Close");
 
             ExtendsContentIntoTitleBar = true;
-            // AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
+            AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
             try
             {
                 SetTitleBar(MainContentGrid);
@@ -213,10 +215,11 @@ namespace UniGetUI.Interface
 
         private void AddToSubtitle(string line)
         {
-            if (TitleBar.Subtitle.Length > 0)
-                TitleBar.Subtitle += " - ";
-            TitleBar.Subtitle += line;
-            Title = "UniGetUI - " + TitleBar.Subtitle;
+            if (subtitleBackup.Length > 0)
+                subtitleBackup += " - ";
+            subtitleBackup += line;
+            Title = "UniGetUI - " + subtitleBackup;
+            TitleBar.Subtitle = subtitleCollapsed is true? "": subtitleBackup;
         }
 
         private void ClearSubtitle()
@@ -649,7 +652,7 @@ namespace UniGetUI.Interface
             TitleBar.Visibility = Visibility.Visible;
             SetTitleBar(TitleBar);
 
-            NavigationPage = new MainView();
+            NavigationPage = new MainView(GlobalSearchBox);
             NavigationPage.CanGoBackChanged += (_, can) => TitleBar.IsBackButtonVisible = can;
 
             object? control = MainContentFrame.Content as Grid;
@@ -786,7 +789,9 @@ namespace UniGetUI.Interface
                 }
 
                 dialog.RequestedTheme = MainContentGrid.RequestedTheme;
+                AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Standard;
                 ContentDialogResult result = await dialog.ShowAsync();
+                AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
                 DialogQueue.Remove(dialog);
                 return result;
             }
@@ -978,6 +983,44 @@ namespace UniGetUI.Interface
         private void TitleBar_OnBackRequested(TitleBar sender, object args)
         {
             NavigationPage?.NavigateBack();
+        }
+
+
+        private bool? subtitleCollapsed;
+        private bool? titleCollapsed;
+        private string subtitleBackup = "";
+        private void TitleBar_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if(TitleBar.ActualWidth <= 750)
+            {
+                GlobalSearchBox.Width = Math.Max(50, 400 - (750 - TitleBar.ActualWidth));
+            }
+
+            if (TitleBar.ActualWidth < 870 && titleCollapsed is not true)
+            {
+                TitleBar.Title = "";
+                titleCollapsed = true;
+            }
+            else if (TitleBar.ActualWidth > 870 && titleCollapsed is not false)
+            {
+                TitleBar.Title = "UniGetUI";
+                GlobalSearchBox.Width = 400;
+                titleCollapsed = false;
+            }
+
+            if (TitleBar.ActualWidth < 1200 && subtitleCollapsed is not true)
+            {
+                subtitleBackup = TitleBar.Subtitle;
+                TitleBar.Subtitle = "";
+                subtitleCollapsed = true;
+            }
+            else if (TitleBar.ActualWidth > 1200 && subtitleCollapsed is not false)
+            {
+                TitleBar.Subtitle = subtitleBackup;
+                GlobalSearchBox.Width = 400;
+                subtitleCollapsed = false;
+            }
+            // Debug.WriteLine(TitleBar.ActualWidth);
         }
     }
 

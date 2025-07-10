@@ -73,7 +73,8 @@ public class TestSerializablePackage
                     "UNKNOWN_VAL3": 22,
                     "UNKNOWN_VAL4": "hehe",
                     "InstallationOptions" : {
-                        "SkipHashCheck": true
+                        "SkipHashCheck": true,
+                        "OverridesNextLevelOpts": false
                     }
                 }
                 """, "", "", "false", "Rodolfo Chikilicuatre", "lol", true, "")]
