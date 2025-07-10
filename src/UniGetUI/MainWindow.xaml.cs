@@ -219,7 +219,7 @@ namespace UniGetUI.Interface
                 subtitleBackup += " - ";
             subtitleBackup += line;
             Title = "UniGetUI - " + subtitleBackup;
-            TitleBar.Subtitle = subtitleCollapsed is false? "": subtitleBackup;
+            TitleBar.Subtitle = subtitleCollapsed is true? "": subtitleBackup;
         }
 
         private void ClearSubtitle()
