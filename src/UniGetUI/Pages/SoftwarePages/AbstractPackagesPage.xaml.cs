@@ -1325,21 +1325,40 @@ namespace UniGetUI.Interface
         }
 
         private bool? _pageIsWide;
+        private bool? _titleHidden;
         private void ABSTRACT_PAGE_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if(ActualWidth < 700)
+            if (ActualWidth < 500)
+            {
+                if (_titleHidden != false)
+                {
+                    _titleHidden = false;
+                    MainSubtitle.Visibility = Visibility.Collapsed;
+                }
+            }
+            else
+            {
+                if (_titleHidden != true)
+                {
+                    _titleHidden = true;
+                    MainSubtitle.Visibility = Visibility.Visible;
+                    
+                }
+            }
+
+            if (ActualWidth < 700)
             {
                 if (_pageIsWide != false)
                 {
-                    SearchBoxPanel.Orientation = Orientation.Vertical;
                     _pageIsWide = false;
+                    MainTitle.FontSize = 20;
                 }
             }
             else
             {
                 if (_pageIsWide != true)
                 {
-                    SearchBoxPanel.Orientation = Orientation.Horizontal;
+                    MainTitle.FontSize = 30;
                     _pageIsWide = true;
                 }
             }

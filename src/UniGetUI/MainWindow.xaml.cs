@@ -64,7 +64,7 @@ namespace UniGetUI.Interface
             DismissableNotification.CloseButtonContent = CoreTools.Translate("Close");
 
             ExtendsContentIntoTitleBar = true;
-            // AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
+            AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
             try
             {
                 SetTitleBar(MainContentGrid);
@@ -989,9 +989,9 @@ namespace UniGetUI.Interface
         private string subtitleBackup = "";
         private void TitleBar_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if(TitleBar.ActualWidth <= 700)
+            if(TitleBar.ActualWidth <= 750)
             {
-                GlobalSearchBox.Width = Math.Max(50, 400 - (700 - TitleBar.ActualWidth));
+                GlobalSearchBox.Width = Math.Max(50, 400 - (750 - TitleBar.ActualWidth));
             }
 
             if (TitleBar.ActualWidth < 870 && titleCollapsed is not true)
@@ -1002,6 +1002,7 @@ namespace UniGetUI.Interface
             else if (TitleBar.ActualWidth > 870 && titleCollapsed is not false)
             {
                 TitleBar.Title = "UniGetUI";
+                GlobalSearchBox.Width = 400;
                 titleCollapsed = false;
             }
 
@@ -1014,6 +1015,7 @@ namespace UniGetUI.Interface
             else if (TitleBar.ActualWidth > 1200 && subtitleCollapsed is not false)
             {
                 TitleBar.Subtitle = subtitleBackup;
+                GlobalSearchBox.Width = 400;
                 subtitleCollapsed = false;
             }
             // Debug.WriteLine(TitleBar.ActualWidth);
