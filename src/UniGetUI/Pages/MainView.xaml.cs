@@ -361,8 +361,11 @@ namespace UniGetUI.Interface
         private void HelpMenu_Click(object sender, RoutedEventArgs e)
             => ShowHelp();
 
-        public void ShowHelp()
-            => NavigateTo(PageType.Help);
+        public void ShowHelp(string uriAttachment = "")
+        {
+            NavigateTo(PageType.Help);
+            HelpPage?.NavigateTo(uriAttachment);
+        }
 
         private void QuitUniGetUI_Click(object sender, RoutedEventArgs e)
             => MainApp.Instance.DisposeAndQuit();

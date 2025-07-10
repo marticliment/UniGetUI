@@ -118,9 +118,9 @@ namespace UniGetUI.Services
                 Padding = new Thickness(0),
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 Content = CoreTools.Translate("More details"),
-                NavigateUri = new Uri("https://www.marticliment.com/unigetui/help/cloud-backup-overview/"),
                 FontSize = 12
             };
+            hyperlinkButton.Click += (_, _) => MainApp.Instance.MainWindow.NavigationPage.ShowHelp("cloud-backup-overview/");
 
             var loginButton = new PointButton
             {
