@@ -36,11 +36,10 @@
                 AutomationProperties.Name="{x:Bind Package.AutomationName}"
                 CornerRadius="4"
                 DoubleTapped="{x:Bind PackageItemContainer_DoubleTapped}"
+                Package="{x:Bind Package}"
                 PreviewKeyDown="{x:Bind PackageItemContainer_PreviewKeyDown}"
                 RightTapped="{x:Bind PackageItemContainer_RightTapped}"
-
-                Wrapper="{x:Bind Self}"
-                Package="{x:Bind Package}">
+                Wrapper="{x:Bind Self}">
 
                 <Grid
                     Padding="12,3,8,3"
@@ -212,10 +211,9 @@
                 Background="{ThemeResource ControlFillColorDefaultBrush}"
                 CornerRadius="4"
                 DoubleTapped="{x:Bind PackageItemContainer_DoubleTapped}"
+                Package="{x:Bind Package}"
                 PreviewKeyDown="{x:Bind PackageItemContainer_PreviewKeyDown}"
                 RightTapped="{x:Bind PackageItemContainer_RightTapped}"
-
-                Package="{x:Bind Package}"
                 Wrapper="{x:Bind Self}">
 
                 <Grid
@@ -331,10 +329,9 @@
                 Background="{ThemeResource ControlFillColorDefaultBrush}"
                 CornerRadius="4"
                 DoubleTapped="{x:Bind PackageItemContainer_DoubleTapped}"
+                Package="{x:Bind Package}"
                 PreviewKeyDown="{x:Bind PackageItemContainer_PreviewKeyDown}"
                 RightTapped="{x:Bind PackageItemContainer_RightTapped}"
-
-                Package="{x:Bind Package}"
                 Wrapper="{x:Bind Self}">
 
                 <Grid
@@ -456,10 +453,10 @@
         <UniformGridLayout
             x:Key="Layout_Icons"
             ItemsJustification="Start"
-            MinItemWidth="128"
-            MinItemHeight="134"
             MinColumnSpacing="8"
-            MinRowSpacing="8"/>
+            MinItemHeight="134"
+            MinItemWidth="128"
+            MinRowSpacing="8" />
 
         <StackLayout x:Key="Layout_List" Spacing="3" />
 
@@ -506,19 +503,19 @@
                 Spacing="0">
                 <TextBlock
                     x:Name="MainTitle"
+                    MaxHeight="70"
                     HorizontalAlignment="Left"
                     x:FieldModifier="protected"
                     FontFamily="Segoe UI Variable Display"
                     FontSize="30"
                     FontWeight="Bold"
-                    MaxHeight="70"
                     TextWrapping="Wrap" />
                 <TextBlock
                     x:Name="MainSubtitle"
+                    MaxHeight="40"
                     HorizontalAlignment="Left"
                     x:FieldModifier="protected"
                     FontSize="11"
-                    MaxHeight="40"
                     FontWeight="Normal"
                     Foreground="{ThemeResource AppBarItemDisabledForegroundThemeBrush}"
                     TextWrapping="Wrap" />
@@ -540,7 +537,7 @@
                     </Grid.ColumnDefinitions>
 
 
-                    <TextBox
+                    <!--TextBox
                         x:Name="QueryBlock"
                         Grid.Column="0"
                         Height="30"
@@ -566,7 +563,7 @@
                                 <SymbolIconSource Symbol="Find" />
                             </AnimatedIcon.FallbackIconSource>
                         </AnimatedIcon>
-                    </Button>
+                    </Button-->
 
                     <Button
                         x:Name="ReloadButton"
@@ -616,9 +613,9 @@
                             x:Name="ViewModeSelector"
                             SelectionChanged="ViewModeSelector_SelectionChanged"
                             SelectionMode="Single">
-                            <Toolkit:SegmentedItem Icon="{ui:FontIcon Glyph=&#xE8FD;}" x:Name="Selector_List" />
-                            <Toolkit:SegmentedItem Icon="{ui:FontIcon Glyph=&#xF168;}" x:Name="Selector_Grid" />
-                            <Toolkit:SegmentedItem Icon="{ui:FontIcon Glyph=&#xF0E2;}" x:Name="Selector_Icons" />
+                            <Toolkit:SegmentedItem x:Name="Selector_List" Icon="{ui:FontIcon Glyph=&#xE8FD;}" />
+                            <Toolkit:SegmentedItem x:Name="Selector_Grid" Icon="{ui:FontIcon Glyph=&#xF168;}" />
+                            <Toolkit:SegmentedItem x:Name="Selector_Icons" Icon="{ui:FontIcon Glyph=&#xF0E2;}" />
                         </Toolkit:Segmented>
                     </StackPanel>
                 </StackPanel>

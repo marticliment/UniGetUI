@@ -11,6 +11,7 @@ using UniGetUI.PackageEngine.PackageLoader;
 using Windows.System;
 using UniGetUI.Interface.Telemetry;
 using UniGetUI.Pages.DialogPages;
+using Microsoft.UI.Xaml.Input;
 
 namespace UniGetUI.Interface.SoftwarePages
 {
@@ -48,11 +49,14 @@ namespace UniGetUI.Interface.SoftwarePages
             InstantSearchCheckbox.IsEnabled = false;
             InstantSearchCheckbox.Visibility = Visibility.Collapsed;
 
-            FindButton.Click += Event_SearchPackages;
             MegaFindButton.Click += Event_SearchPackages;
-
-            QueryBlock.KeyUp += (s, e) => { if (e.Key == VirtualKey.Enter) { Event_SearchPackages(s, e); } };
             MegaQueryBlock.KeyUp += (s, e) => { if (e.Key == VirtualKey.Enter) { Event_SearchPackages(s, e); } };
+        }
+
+        public override void SearchBox_QuerySubmitted(object? sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+        {
+            base.SearchBox_QuerySubmitted(sender, args);
+            Event_SearchPackages(sender, new());
         }
 
         public override BetterMenu GenerateContextMenu()

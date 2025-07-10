@@ -26,6 +26,8 @@ using UniGetUI.Pages.DialogPages;
 using WinUIEx;
 using TitleBar = WinUIEx.TitleBar;
 using WindowExtensions = H.NotifyIcon.WindowExtensions;
+using System.Diagnostics;
+using Windows.UI.Text.Core;
 
 namespace UniGetUI.Interface
 {
@@ -213,10 +215,11 @@ namespace UniGetUI.Interface
 
         private void AddToSubtitle(string line)
         {
-            if (TitleBar.Subtitle.Length > 0)
-                TitleBar.Subtitle += " - ";
-            TitleBar.Subtitle += line;
-            Title = "UniGetUI - " + TitleBar.Subtitle;
+            if (subtitleBackup.Length > 0)
+                subtitleBackup += " - ";
+            subtitleBackup += line;
+            Title = "UniGetUI - " + subtitleBackup;
+            TitleBar.Subtitle = subtitleCollapsed is false? "": subtitleBackup;
         }
 
         private void ClearSubtitle()
@@ -649,7 +652,7 @@ namespace UniGetUI.Interface
             TitleBar.Visibility = Visibility.Visible;
             SetTitleBar(TitleBar);
 
-            NavigationPage = new MainView();
+            NavigationPage = new MainView(GlobalSearchBox);
             NavigationPage.CanGoBackChanged += (_, can) => TitleBar.IsBackButtonVisible = can;
 
             object? control = MainContentFrame.Content as Grid;
@@ -978,6 +981,42 @@ namespace UniGetUI.Interface
         private void TitleBar_OnBackRequested(TitleBar sender, object args)
         {
             NavigationPage?.NavigateBack();
+        }
+
+
+        private bool? subtitleCollapsed;
+        private bool? titleCollapsed;
+        private string subtitleBackup = "";
+        private void TitleBar_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if(TitleBar.ActualWidth <= 700)
+            {
+                GlobalSearchBox.Width = Math.Max(50, 400 - (700 - TitleBar.ActualWidth));
+            }
+
+            if (TitleBar.ActualWidth < 870 && titleCollapsed is not true)
+            {
+                TitleBar.Title = "";
+                titleCollapsed = true;
+            }
+            else if (TitleBar.ActualWidth > 870 && titleCollapsed is not false)
+            {
+                TitleBar.Title = "UniGetUI";
+                titleCollapsed = false;
+            }
+
+            if (TitleBar.ActualWidth < 1200 && subtitleCollapsed is not true)
+            {
+                subtitleBackup = TitleBar.Subtitle;
+                TitleBar.Subtitle = "";
+                subtitleCollapsed = true;
+            }
+            else if (TitleBar.ActualWidth > 1200 && subtitleCollapsed is not false)
+            {
+                TitleBar.Subtitle = subtitleBackup;
+                subtitleCollapsed = false;
+            }
+            // Debug.WriteLine(TitleBar.ActualWidth);
         }
     }
 
