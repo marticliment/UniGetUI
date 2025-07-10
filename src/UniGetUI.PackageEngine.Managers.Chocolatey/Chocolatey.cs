@@ -18,8 +18,8 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
 {
     public class Chocolatey : BaseNuGet
     {
-        public static readonly string[] FALSE_PACKAGE_IDS = ["Directory", "", "Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "Output is package name ", "operable", "Invalid"];
-        public static readonly string[] FALSE_PACKAGE_VERSIONS = ["", "of", "Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "packages", "current version", "installed version", "is", "program", "validations", "argument", "no"];
+        public static readonly string[] FALSE_PACKAGE_IDS = ["Directory", "Output is Id", "", "Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "Output is package name ", "operable", "Invalid"];
+        public static readonly string[] FALSE_PACKAGE_VERSIONS = ["", "Version", "of", "Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "packages", "current version", "installed version", "is", "program", "validations", "argument", "no"];
         private static readonly string OldChocoPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs\\WingetUI\\choco-cli");
         private static readonly string NewChocoPath = Path.Join(CoreData.UniGetUIDataDirectory, "Chocolatey");
 
