@@ -511,12 +511,14 @@
                     FontFamily="Segoe UI Variable Display"
                     FontSize="30"
                     FontWeight="Bold"
+                    MaxHeight="70"
                     TextWrapping="Wrap" />
                 <TextBlock
                     x:Name="MainSubtitle"
                     HorizontalAlignment="Left"
                     x:FieldModifier="protected"
                     FontSize="11"
+                    MaxHeight="40"
                     FontWeight="Normal"
                     Foreground="{ThemeResource AppBarItemDisabledForegroundThemeBrush}"
                     TextWrapping="Wrap" />

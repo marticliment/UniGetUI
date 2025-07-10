@@ -198,7 +198,7 @@ namespace UniGetUI.Services
             {
                 Padding = new Thickness(0),
                 HorizontalAlignment = HorizontalAlignment.Stretch,
-                Content = "Backup settings",
+                Content = CoreTools.Translate("Package backup settings"),
                 FontSize = 12
             };
             hyperlinkButton.Click += (_, _) => MainApp.Instance.MainWindow.NavigationPage.OpenSettingsPage(typeof(Backup));
