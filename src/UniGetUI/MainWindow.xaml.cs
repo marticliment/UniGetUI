@@ -789,7 +789,9 @@ namespace UniGetUI.Interface
                 }
 
                 dialog.RequestedTheme = MainContentGrid.RequestedTheme;
+                AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Standard;
                 ContentDialogResult result = await dialog.ShowAsync();
+                AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
                 DialogQueue.Remove(dialog);
                 return result;
             }
