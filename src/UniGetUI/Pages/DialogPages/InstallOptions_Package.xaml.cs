@@ -90,7 +90,7 @@ namespace UniGetUI.Interface.Dialogs
             PlaceholderText.Text = CoreTools.Translate("{0} Install options are currently locked because {0} follows the default install options.", package.Name);
 
             KillProcessesLabel.Text = CoreTools.Translate("Select the processes that should be closed before this package is installed, updated or uninstalled.");
-            KillProcessesBox.PlaceholderText = CoreTools.Translate("Write here the process names here, separed by commas (,)");
+            KillProcessesBox.PlaceholderText = CoreTools.Translate("Write here the process names here, separated by commas (,)");
 
             packageInstallLocation = Package.Manager.DetailsHelper.GetInstallLocation(package) ?? CoreTools.Translate("Unset or unknown");
 

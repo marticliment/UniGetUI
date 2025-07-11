@@ -206,7 +206,7 @@ namespace UniGetUI.Services
             var loginButton = new PointButton
             {
                 HorizontalAlignment = HorizontalAlignment.Stretch,
-                Content = "Log out",
+                Content = CoreTools.Translate("Log out"),
                 Background = new SolidColorBrush(ActualTheme is ElementTheme.Dark? Colors.DarkRed: Colors.PaleVioletRed),
                 BorderThickness = new(0)
             };

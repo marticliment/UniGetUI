@@ -139,7 +139,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 LogInButton.Visibility = Visibility.Collapsed;
                 LogOutButton.Visibility = Visibility.Visible;
                 GitHubUserTitle.Text = CoreTools.Translate("You are logged in as {0} (@{1})", user.Name, user.Login);
-                GitHubUserSubtitle.Text = CoreTools.Translate("Nice! Backups will be uploaded to a private gist on your acount");
+                GitHubUserSubtitle.Text = CoreTools.Translate("Nice! Backups will be uploaded to a private gist on your account");
                 GitHubImage.Initials = "";
                 GitHubImage.ProfilePicture = new BitmapImage(new Uri(user.AvatarUrl));
             }
@@ -259,10 +259,10 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             {
                 await _backupService.UploadPackageBundle(packagesContent);
                 DialogHelper.HideLoadingDialog();
-                Logger.Info("Successfully backed up settings and packages to GitHub Gist.");
+                Logger.Info("Successfully backed up packages to GitHub Gist.");
                 DialogHelper.ShowDismissableBalloon(
                     CoreTools.Translate("Backup Successful"),
-                    CoreTools.Translate("Your settings and packages have been successfully backed up to GitHub Gist."));
+                    CoreTools.Translate("The cloud backup completed successfully."));
             }
             catch (Exception ex)
             {

@@ -252,7 +252,7 @@ public static partial class DialogHelper
                         Inlines = {
                             new Run()
                             {
-                                Text = CoreTools.Translate("This package bundle had some settings that are potetially dangerous, and may be ignored by default.")
+                                Text = CoreTools.Translate("This package bundle had some settings that are potentially dangerous, and may be ignored by default.")
                             },
                             new Run()
                             {
@@ -266,7 +266,7 @@ public static partial class DialogHelper
                             },
                             new Run()
                             {
-                                Text = "\n" + CoreTools.Translate("You can change this behaviour on UniGetUI security settings.") + " "
+                                Text = "\n" + CoreTools.Translate("You can change this behavior on UniGetUI security settings.") + " "
                             },
                             (a = new Hyperlink
                             {

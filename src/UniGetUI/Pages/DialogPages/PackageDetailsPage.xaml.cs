@@ -416,7 +416,7 @@ namespace UniGetUI.Interface.Dialogs
                 DependenciesParagraph.Inlines.Clear();
                 DependenciesParagraph.Inlines.Add(new Run()
                 {
-                    Text = CoreTools.Translate("\tNo dependencies specified"),
+                    Text = "\t" + CoreTools.Translate("No dependencies specified"),
                     Foreground = new SolidColorBrush(color: Color.FromArgb(255, 127, 127, 127)),
                 });
             }
