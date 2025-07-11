@@ -134,19 +134,19 @@ public class TestInstallOptions
 
         InstallOptions o1 = new();
         foreach (var (key, _) in o1._defaultBoolValues)
-            o1.SetValueToProperty(key, r.Next(2) is 0);
+            o1._boolVal[key] = r.Next(2) is 0;
 
         o1.OverridesNextLevelOpts = r.Next(2) is 0;
 
-        foreach (var (key, _) in o1._defaultStringValues)
-            o1.SetValueToProperty(key, r.Next().ToString());
+        foreach (var key in o1._stringKeys)
+            o1._strVal[key] = r.Next().ToString();
 
-        foreach (var key in o1._defaultListValues)
+        foreach (var key in o1._listKeys)
         {
             var randomList = Enumerable.Range(0, r.Next(0, 11))
                 .Select(_ => r.Next().ToString())
                 .ToList();
-            o1.SetValueToProperty(key, randomList);
+            o1._listVal[key] = randomList;
         }
 
         return o1;
@@ -159,22 +159,22 @@ public class TestInstallOptions
         foreach (var (key, _) in o1._defaultBoolValues)
         {
             Assert.Equal(
-                o1.GetValueFromProperty<bool>(key),
-                o2.GetValueFromProperty<bool>(key));
+                o1._boolVal[key],
+                o2._boolVal[key]);
         }
 
-        foreach (var (key, _) in o1._defaultStringValues)
+        foreach (var key in o1._stringKeys)
         {
             Assert.Equal(
-                o1.GetValueFromProperty<string>(key),
-                o2.GetValueFromProperty<string>(key));
+                o1._strVal[key],
+                o2._strVal[key]);
         }
 
-        foreach (var key in o1._defaultListValues)
+        foreach (var key in o1._listKeys)
         {
             Assert.Equal(
-                o1.GetValueFromProperty<IReadOnlyList<string>>(key).Where(x => x.Any()),
-                o2.GetValueFromProperty<IReadOnlyList<string>>(key).Where(x => x.Any()));
+                o1._listVal[key].Where(x => x.Any()),
+                o2._listVal[key].Where(x => x.Any()));
         }
     }
 }
