@@ -126,10 +126,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 var filePath = Path.Join(CoreData.UniGetUIInstallationOptionsDirectory, key);
                 _optionsCache[key] = options.Copy();
 
-                string fileContents = JsonSerializer.Serialize(
-                    options,
-                    SerializationHelpers.DefaultOptions
-                );
+                string fileContents = options.AsJsonString();
                 File.WriteAllText(filePath, fileContents);
             }
             catch (Exception ex)
