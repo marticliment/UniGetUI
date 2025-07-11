@@ -41,7 +41,7 @@ namespace UniGetUI.PackageEngine.Classes.Serializable
             this.Updates = new(data[nameof(Updates)] ?? new JsonObject());
         }
 
-        public override JsonNode AsJsonNode()
+        public override JsonObject AsJsonNode()
         {
             JsonObject obj = new();
             obj.Add(nameof(Id), Id);
@@ -49,8 +49,19 @@ namespace UniGetUI.PackageEngine.Classes.Serializable
             obj.Add(nameof(Version), Version);
             obj.Add(nameof(Source), Source);
             obj.Add(nameof(ManagerName), ManagerName);
-            obj.Add(nameof(InstallationOptions), InstallationOptions.AsJsonNode());
-            obj.Add(nameof(Updates), Updates.AsJsonNode());
+
+            var ioNode = InstallationOptions.AsJsonNode();
+            if (ioNode.Count > 0)
+            {
+                obj.Add(nameof(InstallationOptions), InstallationOptions.AsJsonNode());
+            }
+
+            var updNode = Updates.AsJsonNode();
+            if (updNode.Count > 0)
+            {
+                obj.Add(nameof(Updates), updNode);
+            }
+
             return obj;
         }
 

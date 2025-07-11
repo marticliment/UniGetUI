@@ -27,7 +27,7 @@ namespace UniGetUI.PackageEngine.Classes.Serializable
             this.Source = data[nameof(Source)]?.GetVal<string>() ?? "";
         }
 
-        public override JsonNode AsJsonNode()
+        public override JsonObject AsJsonNode()
         {
             JsonObject obj = new();
             obj.Add(nameof(Id), Id);

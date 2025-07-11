@@ -17,12 +17,12 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
     /// </summary>
     public sealed partial class Internet : Page, ISettingsPage
     {
-        
+
 
         public Internet()
         {
             this.InitializeComponent();
-            
+
 
             UsernameBox.PlaceholderText = CoreTools.Translate("Username");
             PasswordBox.PlaceholderText = CoreTools.Translate("Password");
@@ -85,7 +85,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 });
 
             }
-            
+
         }
 
         public bool CanGoBack => true;

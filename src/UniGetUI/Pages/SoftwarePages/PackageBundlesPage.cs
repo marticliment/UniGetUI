@@ -518,7 +518,7 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 // Get file
                 string defaultName = CoreTools.Translate("Package bundle") + ".ubundle";
-                string file = (new FileSavePicker(MainApp.Instance.MainWindow.GetWindowHandle())).Show(["*.ubundle", "*.json", "*.yaml", "*.xml"], defaultName);
+                string file = (new FileSavePicker(MainApp.Instance.MainWindow.GetWindowHandle())).Show(["*.ubundle", "*.json"], defaultName);
                 if (file != String.Empty)
                 {
                     // Loading dialog
@@ -527,11 +527,7 @@ namespace UniGetUI.Interface.SoftwarePages
                     // Select appropriate format
                     BundleFormatType formatType;
                     string EXT = file.Split('.')[^1].ToLower();
-                    if (EXT == "yaml")
-                        formatType = BundleFormatType.YAML;
-                    else if (EXT == "xml")
-                        formatType = BundleFormatType.XML;
-                    else if (EXT == "json")
+                    if (EXT == "json")
                         formatType = BundleFormatType.JSON;
                     else if (EXT == "ubundle")
                         formatType = BundleFormatType.UBUNDLE;
@@ -539,7 +535,7 @@ namespace UniGetUI.Interface.SoftwarePages
                         formatType = BundleFormatType.UBUNDLE;
 
                     // Save serialized data
-                    await File.WriteAllTextAsync(file, await CreateBundle(Loader.Packages, formatType));
+                    await File.WriteAllTextAsync(file, await CreateBundle(Loader.Packages));
                     TelemetryHandler.ExportBundle(formatType);
 
                     DialogHelper.HideLoadingDialog();
@@ -574,9 +570,9 @@ namespace UniGetUI.Interface.SoftwarePages
             }
         }
 
-        public static async Task<string> CreateBundle(IReadOnlyList<IPackage> unsorted_packages, BundleFormatType formatType = BundleFormatType.UBUNDLE)
+        public static async Task<string> CreateBundle(IReadOnlyList<IPackage> unsorted_packages)
         {
-            SerializableBundle exportable = new();
+            SerializableBundle exportableData = new();
 
             List<IPackage> packages = unsorted_packages.ToList();
             packages.Sort(Comparison);
@@ -591,37 +587,15 @@ namespace UniGetUI.Interface.SoftwarePages
             foreach (IPackage package in packages)
             {
                 if (package is Package && !package.Source.IsVirtualManager)
-                    exportable.packages.Add(await package.AsSerializableAsync());
+                    exportableData.packages.Add(await package.AsSerializableAsync());
                 else
-                    exportable.incompatible_packages.Add(package.AsSerializable_Incompatible());
+                    exportableData.incompatible_packages.Add(package.AsSerializable_Incompatible());
             }
 
-            Logger.Debug("Finished loading serializable objects. Serializing with format " + formatType);
-            string ExportableData;
-
-            if (formatType is BundleFormatType.JSON or BundleFormatType.UBUNDLE)
-                ExportableData = exportable.AsJsonString();
-
-            else if (formatType is BundleFormatType.YAML)
-            {
-                ISerializer serializer = new SerializerBuilder()
-                    .Build();
-                ExportableData = serializer.Serialize(exportable);
-            }
-            else
-            {
-                string tempfile = Path.GetTempFileName();
-                StreamWriter writer = new(tempfile);
-                XmlSerializer serializer = new(typeof(SerializableBundle));
-                serializer.Serialize(writer, exportable);
-                writer.Close();
-                ExportableData = await File.ReadAllTextAsync(tempfile);
-                File.Delete(tempfile);
-            }
-
+            Logger.Debug("Finished loading serializable objects.");
+            string exportablePayload = exportableData.AsJsonString();
             Logger.Debug("Serialization finished successfully");
-
-            return ExportableData;
+            return exportablePayload;
         }
 
         public async Task<double> AddFromBundle(string content, BundleFormatType format)

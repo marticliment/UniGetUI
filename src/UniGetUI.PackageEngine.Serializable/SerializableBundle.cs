@@ -58,7 +58,7 @@ namespace UniGetUI.PackageEngine.Classes.Serializable
             }
         }
 
-        public override JsonNode AsJsonNode()
+        public override JsonObject AsJsonNode()
         {
             JsonObject obj = new();
             obj.Add(nameof(export_version), export_version);

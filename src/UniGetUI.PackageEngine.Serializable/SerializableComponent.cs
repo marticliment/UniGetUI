@@ -31,7 +31,7 @@ public abstract class SerializableComponent<T> where T: class
     /// Serializes this object into a JsonNode object
     /// </summary>
     /// <returns>A pretty-formatted JSON string representing the current data</returns>
-    public abstract JsonNode AsJsonNode();
+    public abstract JsonObject AsJsonNode();
 
     /// <summary>
     /// Creates an instance of this object with the default data

@@ -1342,7 +1342,7 @@ namespace UniGetUI.Interface
                 {
                     _titleHidden = true;
                     MainSubtitle.Visibility = Visibility.Visible;
-                    
+
                 }
             }
 

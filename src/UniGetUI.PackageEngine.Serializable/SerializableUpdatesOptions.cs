@@ -20,7 +20,7 @@ namespace UniGetUI.PackageEngine.Classes.Serializable
             this.IgnoredVersion = data[nameof(IgnoredVersion)]?.GetVal<string>() ?? "";
         }
 
-        public override JsonNode AsJsonNode()
+        public override JsonObject AsJsonNode()
         {
             JsonObject obj = new();
             if(UpdatesIgnored is not false) obj.Add(nameof(UpdatesIgnored), UpdatesIgnored);

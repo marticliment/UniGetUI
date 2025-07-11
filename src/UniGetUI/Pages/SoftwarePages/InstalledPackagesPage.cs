@@ -377,7 +377,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 packagesToExport.Add(package);
             }
 
-            return PackageBundlesPage.CreateBundle(packagesToExport.ToArray(), BundleFormatType.UBUNDLE);
+            return PackageBundlesPage.CreateBundle(packagesToExport.ToArray());
         }
 
         public static async Task BackupPackages_CLOUD()

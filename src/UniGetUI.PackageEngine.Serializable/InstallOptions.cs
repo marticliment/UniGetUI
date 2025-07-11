@@ -148,7 +148,7 @@ namespace UniGetUI.PackageEngine.Serializable
             this.OverridesNextLevelOpts = data[nameof(OverridesNextLevelOpts)]?.GetValue<bool>() ?? DiffersFromDefault();
         }
 
-        public override JsonNode AsJsonNode()
+        public override JsonObject AsJsonNode()
         {
             JsonObject obj = new();
 
