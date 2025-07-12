@@ -127,7 +127,7 @@
                 x:Name="RestorePackagesFromGitHubButton"
                 BorderThickness="1,0,1,1"
                 ButtonText="Select backup"
-                Click="RestorePackagesFromGitHubButton_Click"
+                Click="RestoreFromGitHubButton_Click"
                 CornerRadius="0,0,8,8"
                 Text="Restore a backup from the cloud">
                 <widgets:ButtonCard.Description>

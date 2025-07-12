@@ -428,7 +428,8 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             return status;
         }
 
-        private async void RunCleanup()
+        private void RunCleanup() => _ = _runCleanup();
+        private async Task _runCleanup()
         {
             Logger.Info("Starting scoop cleanup...");
             foreach (string command in new[] { " cache rm *", " cleanup --all --cache", " cleanup --all --global --cache" })

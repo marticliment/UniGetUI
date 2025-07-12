@@ -104,7 +104,8 @@ public partial class OperationControl: INotifyPropertyChanged
         }
     }
 
-    private async void OnOperationSucceeded(object? sender, EventArgs e)
+    private void OnOperationSucceeded(object? sender, EventArgs e) => _ = _onOperationSucceeded();
+    private async Task _onOperationSucceeded()
     {
         // Success notification
         ShowSuccessToast();
@@ -121,7 +122,8 @@ public partial class OperationControl: INotifyPropertyChanged
         ShowErrorToast();
     }
 
-    private async void OnOperationFinished(object? sender, EventArgs e)
+    private void OnOperationFinished(object? sender, EventArgs e) => _ = _onOperationFinished();
+    private async Task _onOperationFinished()
     {
         // Remove progress notification (if any)
         AppNotificationManager.Default.RemoveByTagAsync(Operation.Metadata.Identifier + "progress");

@@ -50,7 +50,8 @@ namespace UniGetUI.Services
             }
         }
 
-        private async void LoginButton_Click(object sender, RoutedEventArgs e)
+        private void LoginButton_Click(object sender, RoutedEventArgs e) => _ = _loginButton_Click();
+        private async Task _loginButton_Click()
         {
             SetLoading();
             try

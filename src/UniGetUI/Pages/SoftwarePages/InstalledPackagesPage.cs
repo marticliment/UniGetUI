@@ -362,13 +362,13 @@ namespace UniGetUI.Interface.SoftwarePages
             }
         }
 
-        private async void ExportSelection_Click(object sender, RoutedEventArgs e)
+        private void ExportSelection_Click(object sender, RoutedEventArgs e) => _ = _exportSelection_Click();
+        private async Task _exportSelection_Click()
         {
             MainApp.Instance.MainWindow.NavigationPage.NavigateTo(PageType.Bundles);
             DialogHelper.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
             await PEInterface.PackageBundlesLoader.AddPackagesAsync(FilteredPackages.GetCheckedPackages());
             DialogHelper.HideLoadingDialog();
-
         }
 
         public static Task<string> GenerateBackupContents()
@@ -459,7 +459,8 @@ namespace UniGetUI.Interface.SoftwarePages
         private void MenuUninstallThenReinstall_Invoked(object sender, RoutedEventArgs args)
             => _ = MainApp.Operations.UninstallThenReinstall(SelectedItem, TEL_InstallReferral.ALREADY_INSTALLED);
 
-        private async void MenuIgnorePackage_Invoked(object sender, RoutedEventArgs args)
+        private void MenuIgnorePackage_Invoked(object sender, RoutedEventArgs args) => _ = _menuIgnorePackage_Invoked();
+        private async Task _menuIgnorePackage_Invoked()
         {
             IPackage? package = SelectedItem;
             if (package is null) return;

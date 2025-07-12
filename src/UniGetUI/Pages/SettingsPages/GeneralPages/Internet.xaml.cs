@@ -97,7 +97,8 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         public void ShowRestartBanner(object sender, EventArgs e)
             => RestartRequired?.Invoke(this, e);
 
-        private async void UsernameBox_TextChanged(object sender, RoutedEventArgs e)
+        private void UsernameBox_TextChanged(object sender, RoutedEventArgs e) => _ = _usernameBox_TextChanged();
+        private async Task _usernameBox_TextChanged()
         {
             SavingUserName.Opacity = 1;
             string oldusername = UsernameBox.Text;

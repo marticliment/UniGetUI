@@ -95,7 +95,7 @@ namespace UniGetUI.Interface
             ConfirmResetFlyout.Hide();
         }
 
-        private async void HandleAllDesktop_Checked(object sender, RoutedEventArgs e)
+        private void HandleAllDesktop_Checked(object sender, RoutedEventArgs e)
         {
             SaveChanges();
             Close?.Invoke(this, new());

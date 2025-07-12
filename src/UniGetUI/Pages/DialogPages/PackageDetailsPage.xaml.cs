@@ -660,7 +660,8 @@ namespace UniGetUI.Interface.Dialogs
             }
         }
 
-        private async void SaveInstallOptionsButton_Click(object sender, RoutedEventArgs e)
+        private void SaveInstallOptionsButton_Click(object sender, RoutedEventArgs e) => _ = _saveInstallOptionsButton_Click();
+        private async Task _saveInstallOptionsButton_Click()
         {
             try
             {

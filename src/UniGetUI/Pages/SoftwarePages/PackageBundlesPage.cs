@@ -383,28 +383,28 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuDownloadInstaller.IsEnabled = IS_VALID && package.Manager.Capabilities.CanDownloadInstaller;
         }
 
-        private async void MenuInstall_Invoked(object sender, RoutedEventArgs args)
+        private void MenuInstall_Invoked(object sender, RoutedEventArgs args)
         {
             if (SelectedItem is null) return;
-            await ImportAndInstallPackage([SelectedItem]);
+            _ = ImportAndInstallPackage([SelectedItem]);
         }
 
-        private async void MenuAsAdmin_Invoked(object sender, RoutedEventArgs args)
+        private void MenuAsAdmin_Invoked(object sender, RoutedEventArgs args)
         {
             if (SelectedItem is null) return;
-            await ImportAndInstallPackage([SelectedItem], elevated: true);
+            _ = ImportAndInstallPackage([SelectedItem], elevated: true);
         }
 
-        private async void MenuInteractive_Invoked(object sender, RoutedEventArgs args)
+        private void MenuInteractive_Invoked(object sender, RoutedEventArgs args)
         {
             if (SelectedItem is null) return;
-            await ImportAndInstallPackage([SelectedItem], interactive: true);
+            _ = ImportAndInstallPackage([SelectedItem], interactive: true);
         }
 
-        private async void MenuSkipHash_Invoked(object sender, RoutedEventArgs args)
+        private void MenuSkipHash_Invoked(object sender, RoutedEventArgs args)
         {
             if (SelectedItem is null) return;
-            await ImportAndInstallPackage([SelectedItem], skiphash: true);
+            _ = ImportAndInstallPackage([SelectedItem], skiphash: true);
         }
 
         private void MenuShare_Invoked(object sender, RoutedEventArgs args)
@@ -418,13 +418,13 @@ namespace UniGetUI.Interface.SoftwarePages
             ShowDetailsForPackage(SelectedItem, TEL_InstallReferral.FROM_BUNDLE);
         }
 
-        private async void MenuInstallSettings_Invoked(object sender, RoutedEventArgs e)
+        private void MenuInstallSettings_Invoked(object sender, RoutedEventArgs e)
         {
             IPackage? package = SelectedItem;
             if (package is ImportedPackage imported)
             {
                 HasUnsavedChanges = true;
-                await DialogHelper.ShowInstallOptions_ImportedPackage(imported);
+                _ = DialogHelper.ShowInstallOptions_ImportedPackage(imported);
             }
         }
 

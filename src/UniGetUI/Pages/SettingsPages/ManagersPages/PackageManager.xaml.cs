@@ -419,7 +419,8 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             }
         }
 
-        private async void ManagerPath_Click(object sender, RoutedEventArgs e)
+        private void ManagerPath_Click(object sender, RoutedEventArgs e) => _ = _managerPath_Click();
+        private async Task _managerPath_Click()
         {
             WindowsClipboard.SetText(LocationLabel.Text);
             CopyButtonIcon.Symbol = Symbol.Accept;

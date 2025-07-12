@@ -267,7 +267,8 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuDownloadInstaller.IsEnabled = package.Manager.Capabilities.CanDownloadInstaller;
         }
 
-        private async void ExportSelection_Click(object sender, RoutedEventArgs e)
+        private void ExportSelection_Click(object sender, RoutedEventArgs e) => _ = _exportSelection_Click();
+        private async Task _exportSelection_Click()
         {
             MainApp.Instance.MainWindow.NavigationPage.NavigateTo(PageType.Bundles);
             DialogHelper.ShowLoadingDialog(CoreTools.Translate("Please wait..."));

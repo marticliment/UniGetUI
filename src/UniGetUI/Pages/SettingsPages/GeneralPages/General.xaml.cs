@@ -59,7 +59,8 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         private void ManageTelemetrySettings_Click(object sender, EventArgs e)
             => _ = DialogHelper.ShowTelemetryDialog();
 
-        private async void ImportSettings(object sender, EventArgs e)
+        private void ImportSettings_Click(object sender, EventArgs e) => _ = _importSettings();
+        private async Task _importSettings()
         {
             ExternalLibraries.Pickers.FileOpenPicker picker = new(MainApp.Instance.MainWindow.GetWindowHandle());
             string file = picker.Show(["*.json"]);
@@ -73,7 +74,8 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             }
         }
 
-        private async void ExportSettings(object sender, EventArgs e)
+        private void ExportSettings_Click(object sender, EventArgs e) => _ = _exportSettings();
+        private static async Task _exportSettings()
         {
             try
             {

@@ -262,7 +262,7 @@ namespace UniGetUI.Interface
         /// <summary>
         /// Handle the window closing event, and divert it when the window must be hidden.
         /// </summary>
-        public async void HandleClosingEvent(AppWindow sender, AppWindowClosingEventArgs args)
+        public void HandleClosingEvent(AppWindow sender, AppWindowClosingEventArgs args)
         {
             try
             {
@@ -289,32 +289,34 @@ namespace UniGetUI.Interface
                 }
                 else
                 {
-                    if (MainApp.Operations.AreThereRunningOperations())
-                    {
-                        args.Cancel = true;
-                        ContentDialog d = new()
-                        {
-                            XamlRoot = NavigationPage.XamlRoot,
-                            Title = CoreTools.Translate("Operation in progress"),
-                            Content =
-                                CoreTools.Translate(
-                                    "There are ongoing operations. Quitting WingetUI may cause them to fail. Do you want to continue?"),
-                            PrimaryButtonText = CoreTools.Translate("Quit"),
-                            SecondaryButtonText = CoreTools.Translate("Cancel"),
-                            DefaultButton = ContentDialogButton.Secondary
-                        };
-
-                        ContentDialogResult result = await ShowDialogAsync(d);
-                        if (result == ContentDialogResult.Primary)
-                        {
-                            MainApp.Instance.DisposeAndQuit();
-                        }
-                    }
+                    if (MainApp.Operations.AreThereRunningOperations()) _ = AskUserToQuit(args);
                 }
             }
             catch (Exception ex)
             {
                 Logger.Error(ex);
+            }
+        }
+
+        private async Task AskUserToQuit(AppWindowClosingEventArgs args)
+        {
+            args.Cancel = true;
+            ContentDialog d = new()
+            {
+                XamlRoot = NavigationPage.XamlRoot,
+                Title = CoreTools.Translate("Operation in progress"),
+                Content =
+                    CoreTools.Translate(
+                        "There are ongoing operations. Quitting WingetUI may cause them to fail. Do you want to continue?"),
+                PrimaryButtonText = CoreTools.Translate("Quit"),
+                SecondaryButtonText = CoreTools.Translate("Cancel"),
+                DefaultButton = ContentDialogButton.Secondary
+            };
+
+            ContentDialogResult result = await ShowDialogAsync(d);
+            if (result == ContentDialogResult.Primary)
+            {
+                MainApp.Instance.DisposeAndQuit();
             }
         }
 

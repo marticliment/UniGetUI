@@ -452,7 +452,8 @@ namespace UniGetUI.Interface.Dialogs
             }
         }
 
-        private async void KillProcessesBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+        private void KillProcessesBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args) => _ = _killProcessesBox_TextChanged();
+        private async Task _killProcessesBox_TextChanged()
         {
             var text = KillProcessesBox.Text;
             await Task.Delay(100);

@@ -114,7 +114,8 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             Process.Start("explorer.exe", directory);
         }
 
-        private async void DoBackup_LOCAL_Click(object sender, EventArgs e)
+        private void DoBackup_LOCAL_Click(object sender, EventArgs e) => _ = _doBackup_LOCAL_Click();
+        private static async Task _doBackup_LOCAL_Click()
         {
             DialogHelper.ShowLoadingDialog(CoreTools.Translate("Performing backup, please wait..."));
             await InstalledPackagesPage.BackupPackages_LOCAL();
@@ -204,7 +205,8 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             UpdateCloudControlsEnabled();
         }
 
-        private async void RestorePackagesFromGitHubButton_Click(object sender, EventArgs e)
+        private void RestoreFromGitHubButton_Click(object sender, EventArgs e) => _ = _restoreFromGitHubButton_Click();
+        private async Task _restoreFromGitHubButton_Click()
         {
             RestorePackagesFromGitHubButton.IsEnabled = false;
             try
@@ -252,7 +254,8 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             }
         }
 
-        private async void BackupToGitHubButton_Click(object sender, EventArgs e)
+        private void BackupToGitHubButton_Click(object sender, EventArgs e) => _ = _backupToGitHubButton_Click();
+        private async Task _backupToGitHubButton_Click()
         {
             DialogHelper.ShowLoadingDialog(CoreTools.Translate("Backing up packages to GitHub Gist..."));
 
