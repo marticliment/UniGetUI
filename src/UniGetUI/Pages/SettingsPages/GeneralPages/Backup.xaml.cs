@@ -173,7 +173,10 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             }
         }
 
-        private async void LoginWithGitHubButton_Click(object sender, RoutedEventArgs e)
+        private void LoginWithGitHubButton_Click(object sender, RoutedEventArgs e)
+            => _ = _loginWithGitHubButton_Click(sender, e);
+
+        private async Task _loginWithGitHubButton_Click(object sender, RoutedEventArgs e)
         {
             _isLoading = true;
             UpdateCloudControlsEnabled();

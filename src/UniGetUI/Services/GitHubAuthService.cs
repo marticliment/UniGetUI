@@ -64,17 +64,24 @@ namespace UniGetUI.Services
             };
         }
 
+        private static HttpListener? httpListener;
         public async Task<bool> SignInAsync()
         {
-            HttpListener? httpListener = null;
             try
             {
                 Logger.Info("Initiating GitHub sign-in process using loopback redirect...");
 
-                httpListener = new HttpListener();
-                httpListener.Prefixes.Add(RedirectUri);
-                httpListener.Start();
-                Logger.Info($"Listening for GitHub callback on {RedirectUri}");
+                if (httpListener is null)
+                {
+                    httpListener = new HttpListener();
+                    httpListener.Prefixes.Add(RedirectUri);
+                    httpListener.Start();
+                    Logger.Info($"Listening for GitHub callback on {RedirectUri}");
+                }
+                else
+                {
+                    Logger.Warn("Http listener already existed");
+                }
 
                 var request = new OauthLoginRequest(GitHubClientId)
                 {
@@ -96,6 +103,7 @@ namespace UniGetUI.Services
                 output.Close();
 
                 httpListener.Stop();
+                httpListener = null;
                 Logger.Info("GitHub callback received and processed.");
 
                 var code = context.Request.QueryString["code"];
@@ -129,7 +137,10 @@ namespace UniGetUI.Services
             }
             finally
             {
-                httpListener?.Stop();
+                try {
+                    httpListener?.Stop();
+                } catch {  /*ignore */ }
+                httpListener = null;
             }
         }
 
@@ -201,8 +212,16 @@ namespace UniGetUI.Services
 
         private static void ClearAuthenticatedUserData()
         {
-            SecureGHTokenManager.DeleteToken();
-            Settings.SetValue(Settings.K.GitHubUserLogin, ""); // Clear stored username
+            try
+            {
+                Settings.SetValue(Settings.K.GitHubUserLogin, ""); // Clear stored username
+                SecureGHTokenManager.DeleteToken();
+            }
+            catch (Exception ex)
+            {
+                Logger.Warn("Authenticated user data could not be cleared!");
+                Logger.Warn(ex);
+            }
         }
 
         public string? GetAccessToken()
