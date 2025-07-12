@@ -43,7 +43,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            LoadIconCacheSize();
+            _ = LoadIconCacheSize();
         }
 
         public bool CanGoBack => true;
@@ -70,10 +70,10 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             ShowRestartBanner(this, new());
             // PackageWrapper.ResetIconCache();
             // Package.ResetIconCache();
-            LoadIconCacheSize();
+            _ = LoadIconCacheSize();
         }
 
-        private async void LoadIconCacheSize()
+        private async Task LoadIconCacheSize()
         {
             double realSize = (await Task.Run(() =>
             {

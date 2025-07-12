@@ -814,7 +814,7 @@ namespace UniGetUI.Interface
             }
             else
             {
-                ForceRedrawByScroll();
+                _ = ForceRedrawByScroll();
             }
 
             if (!Settings.Get(Settings.K.DisableIconsOnPackageLists))
@@ -935,7 +935,7 @@ namespace UniGetUI.Interface
                 return;
             }
 
-            DialogHelper.ShowPackageDetails(package, PAGE_ROLE, referral);
+            _ = DialogHelper.ShowPackageDetails(package, PAGE_ROLE, referral);
         }
 
         protected void OpenPackageInstallLocation(IPackage? package)
@@ -959,7 +959,7 @@ namespace UniGetUI.Interface
             MainApp.Instance.MainWindow.SharePackage(package);
         }
 
-        protected async void ShowInstallationOptionsForPackage(IPackage? package)
+        protected async Task ShowInstallationOptionsForPackage(IPackage? package)
         {
             if (package is null)
                 return;
@@ -1014,7 +1014,7 @@ namespace UniGetUI.Interface
             }
             else // if (PageRole == OperationType.Uninstall)
             {
-                MainApp.Operations.ConfirmAndUninstall(package);
+                _ = MainApp.Operations.ConfirmAndUninstall(package);
             }
         }
 
@@ -1067,7 +1067,7 @@ namespace UniGetUI.Interface
             }
         }
 
-        private async void ForceRedrawByScroll()
+        private async Task ForceRedrawByScroll()
         {
             if (CurrentPackageList is not null)
             {
@@ -1215,7 +1215,7 @@ namespace UniGetUI.Interface
             {
                 if (IS_ALT_PRESSED)
                 {
-                    ShowInstallationOptionsForPackage(package);
+                    _ = ShowInstallationOptionsForPackage(package);
                     e.Handled = true;
                 }
                 else if (IS_CONTROL_PRESSED)
@@ -1242,7 +1242,7 @@ namespace UniGetUI.Interface
             }
         }
 
-        private async void SetFilterMode_Overlay()
+        private void SetFilterMode_Overlay()
         {
             if (_filterPanelCurrentMode == SplitViewDisplayMode.Overlay)
                 return;
@@ -1253,7 +1253,7 @@ namespace UniGetUI.Interface
             FiltersResizer.Opacity = 0;
             ToggleFiltersButton.IsChecked = false;
 
-            await Task.Delay(200);
+            // await Task.Delay(200);
             FilteringPanel.Shadow = new ThemeShadow();
             SidePanel.BorderThickness = new Thickness(0, 1, 1, 1);
 

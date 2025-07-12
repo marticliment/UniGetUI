@@ -74,7 +74,7 @@ namespace UniGetUI.Interface
                 MainApp.Instance.DisposeAndQuit(-1);
             }
 
-            SizeChanged += (_, _) => { SaveGeometry(); };
+            SizeChanged += (_, _) => _ = SaveGeometry();
             AppWindow.SetIcon(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Images", "icon.ico"));
 
             LoadTrayMenu();
@@ -235,7 +235,7 @@ namespace UniGetUI.Interface
 
             if (action == NotificationArguments.UpdateAllPackages)
             {
-                MainApp.Operations.UpdateAll();
+                _ = MainApp.Operations.UpdateAll();
             }
             else if (action == NotificationArguments.ShowOnUpdatesTab)
             {
@@ -264,50 +264,57 @@ namespace UniGetUI.Interface
         /// </summary>
         public async void HandleClosingEvent(AppWindow sender, AppWindowClosingEventArgs args)
         {
-            AutoUpdater.ReleaseLockForAutoupdate_Window = true;
-            SaveGeometry(Force: true);
-            if (!Settings.Get(Settings.K.DisableSystemTray) || AutoUpdater.UpdateReadyToBeInstalled)
+            try
             {
-                args.Cancel = true;
-                DWMThreadHelper.ChangeState_DWM(true);
-                DWMThreadHelper.ChangeState_XAML(true);
-
-                try
-                {
-                    EfficiencyModeUtilities.SetEfficiencyMode(true);
-                }
-                catch (Exception ex)
-                {
-                    Logger.Error("Could not disable efficiency mode");
-                    Logger.Error(ex);
-                }
-
-                MainContentFrame.Content = null;
-                AppWindow.Hide();
-            }
-            else
-            {
-                if (MainApp.Operations.AreThereRunningOperations())
+                AutoUpdater.ReleaseLockForAutoupdate_Window = true;
+                _ = SaveGeometry(Force: true);
+                if (!Settings.Get(Settings.K.DisableSystemTray) || AutoUpdater.UpdateReadyToBeInstalled)
                 {
                     args.Cancel = true;
-                    ContentDialog d = new()
-                    {
-                        XamlRoot = NavigationPage.XamlRoot,
-                        Title = CoreTools.Translate("Operation in progress"),
-                        Content =
-                            CoreTools.Translate(
-                                "There are ongoing operations. Quitting WingetUI may cause them to fail. Do you want to continue?"),
-                        PrimaryButtonText = CoreTools.Translate("Quit"),
-                        SecondaryButtonText = CoreTools.Translate("Cancel"),
-                        DefaultButton = ContentDialogButton.Secondary
-                    };
+                    DWMThreadHelper.ChangeState_DWM(true);
+                    DWMThreadHelper.ChangeState_XAML(true);
 
-                    ContentDialogResult result = await ShowDialogAsync(d);
-                    if (result == ContentDialogResult.Primary)
+                    try
                     {
-                        MainApp.Instance.DisposeAndQuit();
+                        EfficiencyModeUtilities.SetEfficiencyMode(true);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error("Could not disable efficiency mode");
+                        Logger.Error(ex);
+                    }
+
+                    MainContentFrame.Content = null;
+                    AppWindow.Hide();
+                }
+                else
+                {
+                    if (MainApp.Operations.AreThereRunningOperations())
+                    {
+                        args.Cancel = true;
+                        ContentDialog d = new()
+                        {
+                            XamlRoot = NavigationPage.XamlRoot,
+                            Title = CoreTools.Translate("Operation in progress"),
+                            Content =
+                                CoreTools.Translate(
+                                    "There are ongoing operations. Quitting WingetUI may cause them to fail. Do you want to continue?"),
+                            PrimaryButtonText = CoreTools.Translate("Quit"),
+                            SecondaryButtonText = CoreTools.Translate("Cancel"),
+                            DefaultButton = ContentDialogButton.Secondary
+                        };
+
+                        ContentDialogResult result = await ShowDialogAsync(d);
+                        if (result == ContentDialogResult.Primary)
+                        {
+                            MainApp.Instance.DisposeAndQuit();
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
             }
         }
 
@@ -827,38 +834,45 @@ namespace UniGetUI.Interface
             LoadingIndicator.Visibility = Visibility.Visible;
         }
 
-        private async void SaveGeometry(bool Force = false)
+        private async Task SaveGeometry(bool Force = false)
         {
-            if (!Force)
+            try
             {
-                int old_width = AppWindow.Size.Width;
-                int old_height = AppWindow.Size.Height;
-                await Task.Delay(100);
-
-                if (old_height != AppWindow.Size.Height || old_width != AppWindow.Size.Width)
+                if (!Force)
                 {
-                    return;
-                }
-            }
+                    int old_width = AppWindow.Size.Width;
+                    int old_height = AppWindow.Size.Height;
+                    await Task.Delay(100);
 
-            int windowState = 0;
-            if (AppWindow.Presenter is OverlappedPresenter presenter)
-            {
-                if (presenter.State == OverlappedPresenterState.Maximized)
+                    if (old_height != AppWindow.Size.Height || old_width != AppWindow.Size.Width)
+                    {
+                        return;
+                    }
+                }
+
+                int windowState = 0;
+                if (AppWindow.Presenter is OverlappedPresenter presenter)
                 {
-                    windowState = 1;
+                    if (presenter.State == OverlappedPresenterState.Maximized)
+                    {
+                        windowState = 1;
+                    }
                 }
+                else
+                {
+                    Logger.Warn("MainWindow.AppWindow.Presenter is not OverlappedPresenter presenter!");
+                }
+
+                string geometry =
+                    $"{AppWindow.Position.X},{AppWindow.Position.Y},{AppWindow.Size.Width},{AppWindow.Size.Height},{windowState}";
+
+                Logger.Debug($"Saving window geometry {geometry}");
+                Settings.SetValue(Settings.K.WindowGeometry, geometry);
             }
-            else
+            catch (Exception ex)
             {
-                Logger.Warn("MainWindow.AppWindow.Presenter is not OverlappedPresenter presenter!");
+                Logger.Error(ex);
             }
-
-            string geometry =
-                $"{AppWindow.Position.X},{AppWindow.Position.Y},{AppWindow.Size.Width},{AppWindow.Size.Height},{windowState}";
-
-            Logger.Debug($"Saving window geometry {geometry}");
-            Settings.SetValue(Settings.K.WindowGeometry, geometry);
         }
 
         private void RestoreGeometry()

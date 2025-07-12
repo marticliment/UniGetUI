@@ -128,6 +128,7 @@ namespace UniGetUI
         {
             UnhandledException += (_, e) =>
             {
+                if (Debugger.IsAttached) Debugger.Break();
                 string message = $"Unhandled Exception raised: {e.Message}";
                 string stackTrace = $"Stack Trace: \n{e.Exception.StackTrace}";
                 Logger.Error(" -");
@@ -147,17 +148,45 @@ namespace UniGetUI
                     MainWindow.ErrorBanner.Title = CoreTools.Translate("Something went wrong");
                     MainWindow.ErrorBanner.Message = CoreTools.Translate("An interal error occurred. Please view the log for further details.");
                     MainWindow.ErrorBanner.IsOpen = true;
-                    Button button = new()
-                    {
-                        Content = CoreTools.Translate("WingetUI Log"),
-                    };
-                    button.Click += (sender, args) =>
-                    {
-                        MainWindow.NavigationPage.UniGetUILogs_Click(sender, args);
-                    };
+                    Button button = new() { Content = CoreTools.Translate("WingetUI Log"), };
+                    button.Click += (sender, args) => MainWindow.NavigationPage.UniGetUILogs_Click(sender, args);
                     MainWindow.ErrorBanner.ActionButton = button;
                     e.Handled = true;
                 }
+            };
+
+            TaskScheduler.UnobservedTaskException += (sender, args) =>
+            {
+                Logger.Error($"An unhandled exception occurred in a Task (sender: {sender?.GetType().ToString() ?? "null"})");
+                Exception? e = args.Exception.InnerException;
+                Logger.Error(args.Exception);
+                while (e is not null)
+                {
+                    Logger.Error("------------------------------");
+                    Logger.Error(e);
+                    e = e.InnerException;
+                }
+                if (Debugger.IsAttached) Debugger.Break();
+
+                Dispatcher.TryEnqueue(() =>
+                {
+                    try
+                    {
+                        MainWindow.ErrorBanner.Title = CoreTools.Translate("Something went wrong");
+                        MainWindow.ErrorBanner.Message =
+                            CoreTools.Translate("An interal error occurred. Please view the log for further details.");
+                        MainWindow.ErrorBanner.IsOpen = true;
+                        Button button = new() { Content = CoreTools.Translate("WingetUI Log"), };
+                        button.Click += (s, a) => MainWindow.NavigationPage.UniGetUILogs_Click(s, a);
+                        MainWindow.ErrorBanner.ActionButton = button;
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error(ex);
+                    }
+                });
+
+                args.SetObserved();
             };
         }
 
@@ -301,18 +330,18 @@ namespace UniGetUI
 
                     BackgroundApi.OnUpgradeAll += (_, _) => MainWindow.DispatcherQueue.TryEnqueue(() =>
                     {
-                        Operations.UpdateAll();
+                        _ = Operations.UpdateAll();
                     });
 
-                    BackgroundApi.OnUpgradeAllForManager += (_, managerName) =>
-                        MainWindow.DispatcherQueue.TryEnqueue(async () =>
+                    BackgroundApi.OnUpgradeAllForManager += (s, managerName) =>
+                        MainWindow.DispatcherQueue.TryEnqueue(() =>
                         {
-                            Operations.UpdateAllForManager(managerName);
+                            _ = Operations.UpdateAllForManager(managerName);
                         });
 
-                    BackgroundApi.OnUpgradePackage += (_, packageId) => MainWindow.DispatcherQueue.TryEnqueue(() =>
+                    BackgroundApi.OnUpgradePackage += (s, packageId) => MainWindow.DispatcherQueue.TryEnqueue(() =>
                     {
-                        Operations.UpdateForId(packageId);
+                        _ = Operations.UpdateForId(packageId);
                     });
 
                     await BackgroundApi.Start();
@@ -410,7 +439,7 @@ namespace UniGetUI
             }
         }
 
-        public async void DisposeAndQuit(int outputCode = 0)
+        public void DisposeAndQuit(int outputCode = 0)
         {
             Logger.Warn("Quitting UniGetUI");
             DWMThreadHelper.ChangeState_DWM(false);

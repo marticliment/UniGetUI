@@ -149,7 +149,7 @@ namespace UniGetUI.Interface
             if (CoreTools.IsAdministrator() && !Settings.Get(Settings.K.AlreadyWarnedAboutAdmin))
             {
                 Settings.Set(Settings.K.AlreadyWarnedAboutAdmin, true);
-                DialogHelper.WarnAboutAdminRights();
+                _= DialogHelper.WarnAboutAdminRights();
             }
 
             UpdateOperationsLayout();
@@ -331,7 +331,7 @@ namespace UniGetUI.Interface
         }
 
         private void ReleaseNotesMenu_Click(object sender, RoutedEventArgs e)
-            => DialogHelper.ShowReleaseNotes();
+            => _ = DialogHelper.ShowReleaseNotes();
 
         private void OperationHistoryMenu_Click(object sender, RoutedEventArgs e)
             => NavigateTo(PageType.OperationHistory);

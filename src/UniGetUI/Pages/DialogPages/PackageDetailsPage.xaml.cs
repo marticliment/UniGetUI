@@ -172,9 +172,9 @@ namespace UniGetUI.Interface.Dialogs
                 IsEnabled = Package.Manager.Capabilities.CanSkipIntegrityChecks
             };
 
-            AsAdmin.Click += (_, _) => DoAction(Package, OperationType.Install, AsAdmin: true);
-            Interactive.Click += (_, _) => DoAction(Package, OperationType.Install, Interactive: true);
-            SkipHash.Click += (_, _) => DoAction(Package, OperationType.Install, SkipHash: true);
+            AsAdmin.Click += (_, _) => _ = DoAction(Package, OperationType.Install, AsAdmin: true);
+            Interactive.Click += (_, _) => _ = DoAction(Package, OperationType.Install, Interactive: true);
+            SkipHash.Click += (_, _) => _ = DoAction(Package, OperationType.Install, SkipHash: true);
 
             ExtendedActionsMenu.Items.Add(AsAdmin);
             ExtendedActionsMenu.Items.Add(Interactive);
@@ -188,7 +188,7 @@ namespace UniGetUI.Interface.Dialogs
                     Text = CoreTools.Translate("Update to version {0}", UpgradablePackage.NewVersionString),
                     IconName = IconType.Update
                 };
-                Upgrade.Click += (_, _) => DoAction(UpgradablePackage, OperationType.Update);
+                Upgrade.Click += (_, _) => _ = DoAction(UpgradablePackage, OperationType.Update);
                 ExtendedActionsMenu.Items.Add(Upgrade);
             }
 
@@ -200,7 +200,7 @@ namespace UniGetUI.Interface.Dialogs
                     Text = CoreTools.Translate("Uninstall"),
                     IconName = IconType.Delete
                 };
-                Uninstall.Click += (_, _) => DoAction(InstalledPackage, OperationType.Uninstall);
+                Uninstall.Click += (_, _) => _ = DoAction(InstalledPackage, OperationType.Uninstall);
                 ExtendedActionsMenu.Items.Add(Uninstall);
             }
         }
@@ -226,9 +226,9 @@ namespace UniGetUI.Interface.Dialogs
                 IsEnabled = Package.Manager.Capabilities.CanSkipIntegrityChecks
             };
 
-            AsAdmin.Click += (_, _) => DoAction(Package, OperationType.Update, AsAdmin: true);
-            Interactive.Click += (_, _) => DoAction(Package, OperationType.Update, Interactive: true);
-            SkipHash.Click += (_, _) => DoAction(Package, OperationType.Update, SkipHash: true);
+            AsAdmin.Click += (_, _) => _ = DoAction(Package, OperationType.Update, AsAdmin: true);
+            Interactive.Click += (_, _) => _ = DoAction(Package, OperationType.Update, Interactive: true);
+            SkipHash.Click += (_, _) => _ = DoAction(Package, OperationType.Update, SkipHash: true);
 
             ExtendedActionsMenu.Items.Add(AsAdmin);
             ExtendedActionsMenu.Items.Add(Interactive);
@@ -241,7 +241,7 @@ namespace UniGetUI.Interface.Dialogs
                 {
                     Text = CoreTools.Translate("Uninstall"), IconName = IconType.Delete
                 };
-                Uninstall.Click += (_, _) => DoAction(InstalledPackage, OperationType.Uninstall);
+                Uninstall.Click += (_, _) => _ = DoAction(InstalledPackage, OperationType.Uninstall);
                 ExtendedActionsMenu.Items.Add(Uninstall);
             }
 
@@ -251,7 +251,7 @@ namespace UniGetUI.Interface.Dialogs
                 Text = CoreTools.Translate("Reinstall"),
                 IconName = IconType.Download
             };
-            Reinstall.Click += (_, _) => DoAction(Package, OperationType.Install);
+            Reinstall.Click += (_, _) => _ = DoAction(Package, OperationType.Install);
             ExtendedActionsMenu.Items.Add(Reinstall);
         }
 
@@ -276,9 +276,9 @@ namespace UniGetUI.Interface.Dialogs
                 IsEnabled = Package.Manager.Capabilities.CanRemoveDataOnUninstall
             };
 
-            AsAdmin.Click += (_, _) => DoAction(Package, OperationType.Uninstall, AsAdmin: true);
-            Interactive.Click += (_, _) => DoAction(Package, OperationType.Uninstall, Interactive: true);
-            RemoveData.Click += (_, _) => DoAction(Package, OperationType.Uninstall, RemoveData: true);
+            AsAdmin.Click += (_, _) => _ = DoAction(Package, OperationType.Uninstall, AsAdmin: true);
+            Interactive.Click += (_, _) => _ = DoAction(Package, OperationType.Uninstall, Interactive: true);
+            RemoveData.Click += (_, _) => _ = DoAction(Package, OperationType.Uninstall, RemoveData: true);
 
             ExtendedActionsMenu.Items.Add(AsAdmin);
             ExtendedActionsMenu.Items.Add(Interactive);
@@ -292,7 +292,7 @@ namespace UniGetUI.Interface.Dialogs
                     Text = CoreTools.Translate("Update to version {0}", UpgradablePackage.NewVersionString),
                     IconName = IconType.Update
                 };
-                Upgrade.Click += (_, _) => DoAction(UpgradablePackage, OperationType.Update);
+                Upgrade.Click += (_, _) => _ = DoAction(UpgradablePackage, OperationType.Update);
                 ExtendedActionsMenu.Items.Add(Upgrade);
             }
 
@@ -301,7 +301,7 @@ namespace UniGetUI.Interface.Dialogs
             {
                 Text = CoreTools.Translate("Reinstall"), IconName = IconType.Download
             };
-            Reinstall.Click += (_, _) => DoAction(Package, OperationType.Install);
+            Reinstall.Click += (_, _) => _ = DoAction(Package, OperationType.Install);
             ExtendedActionsMenu.Items.Add(Reinstall);
         }
 
@@ -309,8 +309,8 @@ namespace UniGetUI.Interface.Dialogs
         {
             LoadingIndicator.Visibility = Visibility.Visible;
 
-            LoadIcon();
-            LoadScreenshots();
+            _ = LoadIcon();
+            _ = LoadScreenshots();
 
             IPackageDetails details = Package.Details;
             if (!details.IsPopulated)
@@ -474,7 +474,7 @@ namespace UniGetUI.Interface.Dialogs
             h.NavigateUri = null;
         }
 
-        public async void LoadIcon()
+        public async Task LoadIcon()
         {
             PackageIcon.Source = new BitmapImage
             {
@@ -482,7 +482,7 @@ namespace UniGetUI.Interface.Dialogs
             };
         }
 
-        public async void LoadScreenshots()
+        public async Task LoadScreenshots()
         {
             IReadOnlyList<Uri> screenshots = await Task.Run(Package.GetScreenshots);
             PackageHasScreenshots = screenshots.Any();
@@ -621,10 +621,10 @@ namespace UniGetUI.Interface.Dialogs
 
         public void ActionButton_Click(object sender, RoutedEventArgs e)
         {
-            DoAction(Package, OperationRole);
+            _ = DoAction(Package, OperationRole);
         }
 
-        public async void DoAction(
+        public async Task DoAction(
             IPackage package,
             OperationType action,
             bool? AsAdmin = null,
@@ -648,7 +648,7 @@ namespace UniGetUI.Interface.Dialogs
             }
             else if (action is OperationType.Uninstall)
             {
-                MainApp.Operations.ConfirmAndUninstall(package, AsAdmin, Interactive, RemoveData);
+                _ = MainApp.Operations.ConfirmAndUninstall(package, AsAdmin, Interactive, RemoveData);
             }
             else if (action is OperationType.Update)
             {

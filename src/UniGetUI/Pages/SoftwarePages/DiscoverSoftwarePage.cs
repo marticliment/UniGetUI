@@ -217,7 +217,7 @@ namespace UniGetUI.Interface.SoftwarePages
             PackageDetails.Click += (_, _) => ShowDetailsForPackage(SelectedItem, TEL_InstallReferral.DIRECT_SEARCH);
             ExportSelection.Click += ExportSelection_Click;
             HelpButton.Click += (_, _) => MainApp.Instance.MainWindow.NavigationPage.ShowHelp();
-            InstallationSettings.Click += (_, _) => ShowInstallationOptionsForPackage(SelectedItem);
+            InstallationSettings.Click += (_, _) => _ = ShowInstallationOptionsForPackage(SelectedItem);
 
             InstallSelected.Click += (_, _) => MainApp.Operations.Install(FilteredPackages.GetCheckedPackages(), TEL_InstallReferral.DIRECT_SEARCH);
             InstallAsAdmin.Click += (_, _) => MainApp.Operations.Install(FilteredPackages.GetCheckedPackages(), TEL_InstallReferral.DIRECT_SEARCH, elevated: true);
@@ -301,7 +301,7 @@ namespace UniGetUI.Interface.SoftwarePages
             => _ = MainApp.Operations.Install(SelectedItem, TEL_InstallReferral.DIRECT_SEARCH, elevated: true);
 
         private void MenuInstallSettings_Invoked(object sender, RoutedEventArgs e)
-            => ShowInstallationOptionsForPackage(SelectedItem);
+            => _ = ShowInstallationOptionsForPackage(SelectedItem);
 
     }
 }

@@ -188,7 +188,7 @@ namespace UniGetUI.Interface.Dialogs
 
             _uiLoaded = true;
             EnableDisableControls(operation);
-            LoadIgnoredUpdates();
+            _ = LoadIgnoredUpdates();
             _ = _loadProcesses();
         }
 
@@ -272,10 +272,10 @@ namespace UniGetUI.Interface.Dialogs
             GoToPrePostSettings.Visibility = IsPrePostOpEnabled ? Visibility.Collapsed : Visibility.Visible;
             PrePostDisabled.Visibility = IsPrePostOpEnabled ? Visibility.Collapsed : Visibility.Visible;
 
-            GenerateCommand();
+            _ = GenerateCommand();
         }
 
-        private async void LoadIgnoredUpdates()
+        private async Task LoadIgnoredUpdates()
         {
             IgnoreUpdatesCheckbox.IsChecked = await Package.GetIgnoredUpdatesVersionAsync() == "*";
         }
@@ -381,13 +381,13 @@ namespace UniGetUI.Interface.Dialogs
             {
                 CustomInstallLocation.Text = folder;
             }
-            GenerateCommand();
+            _ = GenerateCommand();
         }
 
         private void ResetDir_Click(object sender, RoutedEventArgs e)
         {
             CustomInstallLocation.Text = packageInstallLocation;
-            GenerateCommand();
+            _ = GenerateCommand();
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
@@ -395,15 +395,15 @@ namespace UniGetUI.Interface.Dialogs
             Close?.Invoke(this, EventArgs.Empty);
         }
 
-        private void CustomParameters_TextChanged(object sender, TextChangedEventArgs e) => GenerateCommand();
-        private void ScopeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e) => GenerateCommand();
-        private void VersionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e) => GenerateCommand();
-        private void AdminCheckBox_Click(object sender, RoutedEventArgs e) => GenerateCommand();
-        private void InteractiveCheckBox_Click(object sender, RoutedEventArgs e) => GenerateCommand();
-        private void HashCheckbox_Click(object sender, RoutedEventArgs e) => GenerateCommand();
-        private void ArchitectureComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e) => GenerateCommand();
+        private void CustomParameters_TextChanged(object sender, TextChangedEventArgs e) => _ = GenerateCommand();
+        private void ScopeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e) => _ = GenerateCommand();
+        private void VersionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e) => _ = GenerateCommand();
+        private void AdminCheckBox_Click(object sender, RoutedEventArgs e) => _ = GenerateCommand();
+        private void InteractiveCheckBox_Click(object sender, RoutedEventArgs e) => _ = GenerateCommand();
+        private void HashCheckbox_Click(object sender, RoutedEventArgs e) => _ = GenerateCommand();
+        private void ArchitectureComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e) => _ = GenerateCommand();
 
-        private async void GenerateCommand()
+        private async Task GenerateCommand()
         {
             if (!_uiLoaded) return;
             InstallOptions options = await GetUpdatedOptions(updateDetachedOptions: false);

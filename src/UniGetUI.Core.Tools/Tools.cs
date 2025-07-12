@@ -213,16 +213,23 @@ namespace UniGetUI.Core.Tools
         /// <param name="path">The path of the batch file</param>
         /// <param name="WindowTitle">The title of the window</param>
         /// <param name="RunAsAdmin">Whether the batch file should be launched elevated or not</param>
-        public static async void LaunchBatchFile(string path, string WindowTitle = "", bool RunAsAdmin = false)
+        public static async Task LaunchBatchFile(string path, string WindowTitle = "", bool RunAsAdmin = false)
         {
-            using Process p = new();
-            p.StartInfo.FileName = "cmd.exe";
-            p.StartInfo.Arguments = "/C start \"" + WindowTitle + "\" \"" + path + "\"";
-            p.StartInfo.UseShellExecute = true;
-            p.StartInfo.CreateNoWindow = true;
-            p.StartInfo.Verb = RunAsAdmin ? "runas" : "";
-            p.Start();
-            await p.WaitForExitAsync();
+            try
+            {
+                using Process p = new();
+                p.StartInfo.FileName = "cmd.exe";
+                p.StartInfo.Arguments = "/C start \"" + WindowTitle + "\" \"" + path + "\"";
+                p.StartInfo.UseShellExecute = true;
+                p.StartInfo.CreateNoWindow = true;
+                p.StartInfo.Verb = RunAsAdmin ? "runas" : "";
+                p.Start();
+                await p.WaitForExitAsync();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
         }
 
         /// <summary>
@@ -675,23 +682,30 @@ namespace UniGetUI.Core.Tools
             return $"{number} Bytes";
         }
 
-        public static async void ShowFileOnExplorer(string path)
+        public static async Task ShowFileOnExplorer(string path)
         {
-            if (!File.Exists(path)) throw new FileNotFoundException($"The file {path} was not found");
-
-            Process p = new()
+            try
             {
-                StartInfo = new()
+                if (!File.Exists(path)) throw new FileNotFoundException($"The file {path} was not found");
+
+                Process p = new()
                 {
-                    FileName = "explorer.exe",
-                    Arguments = $"/select, \"{path}\"",
-                    UseShellExecute = true,
-                    CreateNoWindow = true,
-                }
-            };
-            p.Start();
-            await p.WaitForExitAsync();
-            p.Dispose();
+                    StartInfo = new()
+                    {
+                        FileName = "explorer.exe",
+                        Arguments = $"/select, \"{path}\"",
+                        UseShellExecute = true,
+                        CreateNoWindow = true,
+                    }
+                };
+                p.Start();
+                await p.WaitForExitAsync();
+                p.Dispose();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
         }
 
         public static string GetCurrentLocale()

@@ -258,7 +258,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             ExportSelection.Click += ExportSelection_Click;
             HelpButton.Click += (_, _) => MainApp.Instance.MainWindow.NavigationPage.ShowHelp();
-            InstallationSettings.Click += (_, _) => ShowInstallationOptionsForPackage(SelectedItem);
+            InstallationSettings.Click += (_, _) => _ = ShowInstallationOptionsForPackage(SelectedItem);
             ManageIgnored.Click += async (_, _) => await DialogHelper.ManageIgnoredUpdates();
             IgnoreSelected.Click += async (_, _) =>
             {
@@ -272,9 +272,9 @@ namespace UniGetUI.Interface.SoftwarePages
                 }
             };
 
-            UninstallSelected.Click += (_, _) => MainApp.Operations.ConfirmAndUninstall(FilteredPackages.GetCheckedPackages());
-            UninstallAsAdmin.Click += (_, _) => MainApp.Operations.ConfirmAndUninstall(FilteredPackages.GetCheckedPackages(), elevated: true);
-            UninstallInteractive.Click += (_, _) => MainApp.Operations.ConfirmAndUninstall(FilteredPackages.GetCheckedPackages(), interactive: true);
+            UninstallSelected.Click += (_, _) => _ = MainApp.Operations.ConfirmAndUninstall(FilteredPackages.GetCheckedPackages());
+            UninstallAsAdmin.Click += (_, _) => _ = MainApp.Operations.ConfirmAndUninstall(FilteredPackages.GetCheckedPackages(), elevated: true);
+            UninstallInteractive.Click += (_, _) => _ = MainApp.Operations.ConfirmAndUninstall(FilteredPackages.GetCheckedPackages(), interactive: true);
             SharePackage.Click += (_, _) => MainApp.Instance.MainWindow.SharePackage(SelectedItem);
         }
 
@@ -306,11 +306,14 @@ namespace UniGetUI.Interface.SoftwarePages
                 infoBar.Message = CoreTools.Translate("It looks like WinGet is not working properly. Do you want to attempt to repair WinGet?");
                 var button = new Button { Content = CoreTools.Translate("Repair WinGet") };
                 infoBar.ActionButton = button;
-                button.Click += (_, _) => DialogHelper.HandleBrokenWinGet();
+                button.Click += (_, _) => _ = DialogHelper.HandleBrokenWinGet();
             }
         }
 
-        protected override async void WhenShowingContextMenu(IPackage package)
+        protected override void WhenShowingContextMenu(IPackage package)
+            => _ = _whenShowingContextMenu(package);
+
+        private async Task _whenShowingContextMenu(IPackage package)
         {
             if (MenuAsAdmin is null
                 || MenuInteractive is null
@@ -439,16 +442,16 @@ namespace UniGetUI.Interface.SoftwarePages
         }
 
         private void MenuUninstall_Invoked(object sender, RoutedEventArgs args)
-            => MainApp.Operations.ConfirmAndUninstall(SelectedItem);
+            => _ = MainApp.Operations.ConfirmAndUninstall(SelectedItem);
 
         private void MenuAsAdmin_Invoked(object sender, RoutedEventArgs args)
-            => MainApp.Operations.ConfirmAndUninstall(SelectedItem, elevated: true);
+            => _ = MainApp.Operations.ConfirmAndUninstall(SelectedItem, elevated: true);
 
         private void MenuInteractive_Invoked(object sender, RoutedEventArgs args)
-            => MainApp.Operations.ConfirmAndUninstall(SelectedItem, interactive: true);
+            => _ = MainApp.Operations.ConfirmAndUninstall(SelectedItem, interactive: true);
 
         private void MenuRemoveData_Invoked(object sender, RoutedEventArgs args)
-            => MainApp.Operations.ConfirmAndUninstall(SelectedItem, remove_data: true);
+            => _ = MainApp.Operations.ConfirmAndUninstall(SelectedItem, remove_data: true);
 
         private void MenuReinstall_Invoked(object sender, RoutedEventArgs args)
             => _ = MainApp.Operations.Install(SelectedItem, TEL_InstallReferral.ALREADY_INSTALLED);
@@ -487,7 +490,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private void MenuInstallSettings_Invoked(object sender, RoutedEventArgs e)
         {
-            ShowInstallationOptionsForPackage(SelectedItem);
+            _ = ShowInstallationOptionsForPackage(SelectedItem);
         }
     }
 }

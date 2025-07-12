@@ -141,7 +141,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                     ButtonText = CoreTools.AutoTranslated("Reset"),
                     CornerRadius = new CornerRadius(0)
                 };
-                WinGet_ResetWindowsIPackageManager.Click += (_, _) => { DialogHelper.HandleBrokenWinGet(); };
+                WinGet_ResetWindowsIPackageManager.Click += (_, _) => _ = DialogHelper.HandleBrokenWinGet();
                 ExtraControls.Children.Add(WinGet_ResetWindowsIPackageManager);
 
                 CheckboxCard WinGet_UseBundled = new()
@@ -207,7 +207,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 };
                 Scoop_Install.Click += (_, _) =>
                 {
-                    CoreTools.LaunchBatchFile(
+                    _ = CoreTools.LaunchBatchFile(
                         Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "install_scoop.cmd"),
                         CoreTools.Translate("Scoop Installer - WingetUI"));
                     RestartRequired?.Invoke(this, new());
@@ -223,7 +223,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 };
                 Scoop_Uninstall.Click += (_, _) =>
                 {
-                    CoreTools.LaunchBatchFile(
+                    _ = CoreTools.LaunchBatchFile(
                         Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "uninstall_scoop.cmd"),
                         CoreTools.Translate("Scoop Uninstaller - WingetUI"));
                     RestartRequired?.Invoke(this, new());
@@ -238,7 +238,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 };
                 Scoop_ResetAppCache.Click += (_, _) =>
                 {
-                    CoreTools.LaunchBatchFile(
+                    _ = CoreTools.LaunchBatchFile(
                         Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "scoop_cleanup.cmd"),
                         CoreTools.Translate("Clearing Scoop cache - WingetUI"), RunAsAdmin: true);
                 };

@@ -84,7 +84,7 @@ public static partial class DialogHelper
         return (await OptionsPage.GetUpdatedOptions(), result);
     }
 
-    public static async void ShowPackageDetails(IPackage package, OperationType operation, TEL_InstallReferral referral)
+    public static async Task ShowPackageDetails(IPackage package, OperationType operation, TEL_InstallReferral referral)
     {
         PackageDetailsPage DetailsPage = new(package, operation, referral);
 
@@ -155,18 +155,18 @@ public static partial class DialogHelper
         string managerName = contents[0];
         string sourceName = "";
         if (contents.Length > 1) sourceName = contents[1];
-        GetPackageFromIdAndManager(id, managerName, sourceName, "LEGACY_COMBINEDSOURCE");
+        _ = GetPackageFromIdAndManager(id, managerName, sourceName, "LEGACY_COMBINEDSOURCE");
     }
 
     public static void ShowSharedPackage_ThreadSafe(string id, string managerName, string sourceName)
     {
         MainApp.Instance.MainWindow.DispatcherQueue.TryEnqueue(() =>
         {
-            GetPackageFromIdAndManager(id, managerName, sourceName, "DEFAULT");
+            _ = GetPackageFromIdAndManager(id, managerName, sourceName, "DEFAULT");
         });
     }
 
-    private static async void GetPackageFromIdAndManager(string id, string managerName, string sourceName, string eventSource)
+    private static async Task GetPackageFromIdAndManager(string id, string managerName, string sourceName, string eventSource)
     {
         try
         {
@@ -180,7 +180,7 @@ public static partial class DialogHelper
             if (findResult.Item1 is null) throw new KeyNotFoundException(findResult.Item2 ?? "Unknown error");
 
             TelemetryHandler.SharedPackage(findResult.Item1, eventSource);
-            ShowPackageDetails(findResult.Item1, OperationType.Install, TEL_InstallReferral.FROM_WEB_SHARE);
+            _ = ShowPackageDetails(findResult.Item1, OperationType.Install, TEL_InstallReferral.FROM_WEB_SHARE);
 
         }
         catch (Exception ex)

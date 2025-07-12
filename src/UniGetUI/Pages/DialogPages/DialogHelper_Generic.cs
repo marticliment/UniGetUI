@@ -64,11 +64,12 @@ public static partial class DialogHelper
     public static MainWindow Window { get; set; } = null!;
 
     public static void ShowLoadingDialog(string text)
-    {
-        ShowLoadingDialog(text, "");
-    }
+        => ShowLoadingDialog(text, "");
 
-    public static async void ShowLoadingDialog(string title, string description)
+    public static void ShowLoadingDialog(string title, string description)
+        => _ = _showLoadingDialog(title, description);
+
+    private static async Task _showLoadingDialog(string title, string description)
     {
         while (Window.LoadingDialogCount == 0 && Window.DialogQueue.Count != 0) await Task.Delay(100);
 
@@ -342,7 +343,7 @@ public static partial class DialogHelper
         await ManageDesktopShortcuts(unknownShortcuts);
     }
 
-    public static async void WarnAboutAdminRights()
+    public static async Task WarnAboutAdminRights()
     {
         ContentDialog AdminDialog = new()
         {
@@ -374,7 +375,7 @@ public static partial class DialogHelper
         await Window.ShowDialogAsync(AboutDialog);
     }
 
-    public static async void ShowReleaseNotes()
+    public static async Task ShowReleaseNotes()
     {
         ContentDialog NotesDialog = DialogFactory.Create_AsWindow(true);
 
@@ -386,7 +387,7 @@ public static partial class DialogHelper
         notes.Dispose();
     }
 
-    public static async void HandleBrokenWinGet()
+    public static async Task HandleBrokenWinGet()
     {
         bool bannerWasOpen = false;
         try
@@ -466,7 +467,7 @@ public static partial class DialogHelper
 
     }
 
-    public static async void ShowTelemetryDialog()
+    public static async Task ShowTelemetryDialog()
     {
         var dialog = DialogFactory.Create();
         dialog.Title = CoreTools.Translate("Share anonymous usage data");
@@ -552,7 +553,7 @@ public static partial class DialogHelper
         {
             Window.TelemetryWarner.Visibility = Visibility.Collapsed;
             Window.TelemetryWarner.IsOpen = false;
-            ShowTelemetryDialog();
+            _ = ShowTelemetryDialog();
             Settings.Set(Settings.K.ShownTelemetryBanner, true);
         };
 

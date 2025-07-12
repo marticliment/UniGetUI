@@ -57,7 +57,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         }
 
         private void ManageTelemetrySettings_Click(object sender, EventArgs e)
-            => DialogHelper.ShowTelemetryDialog();
+            => _ = DialogHelper.ShowTelemetryDialog();
 
         private async void ImportSettings(object sender, EventArgs e)
         {
@@ -85,7 +85,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                     DialogHelper.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
                     await Task.Run(() => Settings.ExportToFile_JSON(file));
                     DialogHelper.HideLoadingDialog();
-                    CoreTools.ShowFileOnExplorer(file);
+                    _ = CoreTools.ShowFileOnExplorer(file);
                 }
             }
             catch (Exception ex)
