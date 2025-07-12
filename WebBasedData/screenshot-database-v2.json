@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11860,
-        "done": 5360,
-        "packages_with_icon": 5360,
-        "packages_with_screenshot": 763,
-        "total_screenshots": 2353
+        "total": 11867,
+        "done": 5366,
+        "packages_with_icon": 5366,
+        "packages_with_screenshot": 772,
+        "total_screenshots": 2386
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -7106,7 +7106,10 @@
         },
         "chocolatey": {
             "icon": "https://community.chocolatey.org/content/packageimages/chocolatey.1.3.0.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/kgYGgPdD/image.png",
+                "https://i.postimg.cc/d0FdGKx6/image.png"
+            ]
         },
         "chocolatey-appstore-chrome": {
             "icon": "",
@@ -47975,7 +47978,9 @@
         },
         "wingetcreate": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/g0n2QSQR/image.png"
+            ]
         },
         "wingetui": {
             "icon": "https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/icon.png",
@@ -50469,6 +50474,71 @@
                 "https://i.postimg.cc/LsqRnZxD/image.png",
                 "https://i.postimg.cc/ZYPmBmxG/image.png",
                 "https://i.postimg.cc/VkhPQkzC/image.png"
+            ]
+        },
+        "modbusslave": {
+            "icon": "https://i.postimg.cc/KcgxbyR0/slave.png",
+            "images": [
+                "https://i.postimg.cc/YCLSymQC/image.png",
+                "https://i.postimg.cc/BZhQSCgv/image.png",
+                "https://i.postimg.cc/8P9pWPxQ/image.png",
+                "https://i.postimg.cc/mg9bSWGc/image.png"
+            ]
+        },
+        "modbuspoll": {
+            "icon": "https://i.postimg.cc/3x3T249q/poll.png",
+            "images": [
+                "https://i.postimg.cc/Jh9Z2Ls9/image.png",
+                "https://i.postimg.cc/prv8PJYC/image.png",
+                "https://i.postimg.cc/13XFRt6k/image.png",
+                "https://i.postimg.cc/t4cxsjNY/image.png"
+            ]
+        },
+        "modbusmasteremulator": {
+            "icon": "https://i.postimg.cc/Jz1dxSvr/mme.png",
+            "images": [
+                "https://i.postimg.cc/DfXDwr1T/image.png",
+                "https://i.postimg.cc/DfXDwr1T/image.png",
+                "https://i.postimg.cc/DfXDwr1T/image.png",
+                "https://i.postimg.cc/DfXDwr1T/image.png",
+                "https://i.postimg.cc/DfXDwr1T/image.png",
+                "https://i.postimg.cc/DfXDwr1T/image.png"
+            ]
+        },
+        "modbustool": {
+            "icon": "https://i.postimg.cc/7ZFJwy4D/image.png",
+            "images": [
+                "https://i.postimg.cc/q72h7ZBK/image.png",
+                "https://i.postimg.cc/TwGy5qh4/image.png"
+            ]
+        },
+        "modbusslaveemulator": {
+            "icon": "https://i.postimg.cc/wBPpS6Yc/mse.png",
+            "images": [
+                "https://i.postimg.cc/PrB58zRQ/image.png",
+                "https://i.postimg.cc/PrB58zRQ/image.png",
+                "https://i.postimg.cc/PrB58zRQ/image.png",
+                "https://i.postimg.cc/PrB58zRQ/image.png",
+                "https://i.postimg.cc/PrB58zRQ/image.png"
+            ]
+        },
+        "gs-base\n": {
+            "icon": "https://i.postimg.cc/hvFwcvjg/gsbase.png",
+            "images": [
+                "https://i.postimg.cc/NMyqQZk8/image.png",
+                "https://i.postimg.cc/SQMF3Fsk/image.png",
+                "https://i.postimg.cc/WbmRpGgy/image.png",
+                "https://i.postimg.cc/KYzC5CwX/image.png"
+            ]
+        },
+        "gs-calc": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/SRWPs429/image.png",
+                "https://i.postimg.cc/gcRQ4VS0/image.png",
+                "https://i.postimg.cc/J4LgFsv5/image.png",
+                "https://i.postimg.cc/4dcLLG10/image.png",
+                "https://i.postimg.cc/0jqth4Wy/image.png"
             ]
         }
     }
