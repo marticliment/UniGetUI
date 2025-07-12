@@ -98,7 +98,10 @@ public partial class OperationControl: INotifyPropertyChanged
     private void OnOperationStarting(object? sender, EventArgs e)
     {
         ShowProgressToast();
-        MainApp.Instance.MainWindow.NavigationPage.OperationList.SmoothScrollIntoViewWithItemAsync(this);
+        if (MainApp.Instance.MainWindow.NavigationPage.OperationList.Items.Contains(this))
+        {
+            MainApp.Instance.MainWindow.NavigationPage.OperationList.SmoothScrollIntoViewWithItemAsync(this);
+        }
     }
 
     private async void OnOperationSucceeded(object? sender, EventArgs e)
