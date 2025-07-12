@@ -802,6 +802,7 @@ namespace UniGetUI.Interface
                 ContentDialogResult result = await dialog.ShowAsync();
                 AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
                 DialogQueue.Remove(dialog);
+                if (!DialogQueue.Any()) DialogHelper._showNextLoadingDialogIfPossible();
                 return result;
             }
             catch (Exception e)

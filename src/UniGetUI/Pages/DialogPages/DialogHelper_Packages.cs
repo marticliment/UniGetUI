@@ -168,14 +168,14 @@ public static partial class DialogHelper
 
     private static async Task GetPackageFromIdAndManager(string id, string managerName, string sourceName, string eventSource)
     {
+        int loadingId = ShowLoadingDialog(CoreTools.Translate("Please wait..."));
         try
         {
             Window.Activate();
-            ShowLoadingDialog(CoreTools.Translate("Please wait..."));
 
             var findResult = await Task.Run(() => PEInterface.DiscoveredPackagesLoader.GetPackageFromIdAndManager(id, managerName, sourceName));
 
-            HideLoadingDialog();
+            HideLoadingDialog(loadingId);
 
             if (findResult.Item1 is null) throw new KeyNotFoundException(findResult.Item2 ?? "Unknown error");
 
@@ -186,6 +186,8 @@ public static partial class DialogHelper
         catch (Exception ex)
         {
             Logger.Error($"An error occurred while attempting to show the package with id {id}");
+            HideLoadingDialog(loadingId);
+
             var warningDialog = new ContentDialog
             {
                 Title = CoreTools.Translate("Package not found"),
@@ -195,7 +197,6 @@ public static partial class DialogHelper
                 XamlRoot = MainApp.Instance.MainWindow.Content.XamlRoot // Ensure the dialog is shown in the correct context
             };
 
-            HideLoadingDialog();
             await Window.ShowDialogAsync(warningDialog);
 
         }

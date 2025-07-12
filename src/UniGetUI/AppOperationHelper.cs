@@ -53,16 +53,16 @@ public partial class MainApp
         public static async Task<AbstractOperation?> AskLocationAndDownload(IPackage? package, TEL_InstallReferral referral)
         {
             if (package is null) return null;
+            int loadingId = DialogHelper.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
             try
             {
-                DialogHelper.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
 
                 var details = package.Details;
                 await details.Load();
 
                 if (details.InstallerUrl is null)
                 {
-                    DialogHelper.HideLoadingDialog();
+                    DialogHelper.HideLoadingDialog(loadingId);
                     var dialog = new ContentDialog { Title = CoreTools.Translate("Download failed"),
                         Content = CoreTools.Translate("No applicable installer was found for the package {0}", package.Name),
                         PrimaryButtonText = CoreTools.Translate("Ok"),
@@ -111,7 +111,7 @@ public partial class MainApp
 
                 StorageFile file = await savePicker.PickSaveFileAsync();
 
-                DialogHelper.HideLoadingDialog();
+                DialogHelper.HideLoadingDialog(loadingId);
                 if (file is not null)
                 {
                     var op = new DownloadOperation(package, file.Path);
@@ -128,7 +128,7 @@ public partial class MainApp
             {
                 Logger.Error($"An error occurred while downloading the installer for the package {package.Id}");
                 Logger.Error(ex);
-                DialogHelper.HideLoadingDialog();
+                DialogHelper.HideLoadingDialog(loadingId);
                 return null;
             }
         }

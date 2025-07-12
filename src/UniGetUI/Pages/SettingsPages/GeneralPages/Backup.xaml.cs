@@ -117,9 +117,9 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         private void DoBackup_LOCAL_Click(object sender, EventArgs e) => _ = _doBackup_LOCAL_Click();
         private static async Task _doBackup_LOCAL_Click()
         {
-            DialogHelper.ShowLoadingDialog(CoreTools.Translate("Performing backup, please wait..."));
+            int loadingId = DialogHelper.ShowLoadingDialog(CoreTools.Translate("Performing backup, please wait..."));
             await InstalledPackagesPage.BackupPackages_LOCAL();
-            DialogHelper.HideLoadingDialog();
+            DialogHelper.HideLoadingDialog(loadingId);
         }
 
         /*
@@ -211,9 +211,9 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             RestorePackagesFromGitHubButton.IsEnabled = false;
             try
             {
-                DialogHelper.ShowLoadingDialog(CoreTools.Translate("Fetching available backups..."));
+                int loadingId = DialogHelper.ShowLoadingDialog(CoreTools.Translate("Fetching available backups..."));
                 var availableBackups = await _backupService.GetAvailableBackups();
-                DialogHelper.HideLoadingDialog();
+                DialogHelper.HideLoadingDialog(loadingId);
 
                 var selectedBackup = await DialogHelper.AskForBackupSelection(availableBackups);
                 if (selectedBackup is null)
@@ -223,9 +223,9 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 }
                 selectedBackup = selectedBackup.Split(' ')[0];
 
-                DialogHelper.ShowLoadingDialog(CoreTools.Translate("Downloading backup..."));
+                loadingId = DialogHelper.ShowLoadingDialog(CoreTools.Translate("Downloading backup..."));
                 var backupContents = await _backupService.GetBackupContents(selectedBackup);
-                DialogHelper.HideLoadingDialog();
+                DialogHelper.HideLoadingDialog(loadingId);
                 await Task.Delay(500); // Prevent race conditions with dialogs
 
                 if (backupContents is null)
@@ -244,7 +244,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 Logger.Error("An error occurred while loading a backup:");
                 Logger.Error(ex);
 
-                DialogHelper.HideLoadingDialog();
+                DialogHelper.HideAllLoadingDialogs();
                 var errorDialog = DialogHelper.DialogFactory.Create();
                 errorDialog.Title = CoreTools.Translate("An error occurred");
                 errorDialog.Content = CoreTools.Translate("An error occurred while loading a backup: ") + ex.Message;
@@ -257,14 +257,14 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         private void BackupToGitHubButton_Click(object sender, EventArgs e) => _ = _backupToGitHubButton_Click();
         private async Task _backupToGitHubButton_Click()
         {
-            DialogHelper.ShowLoadingDialog(CoreTools.Translate("Backing up packages to GitHub Gist..."));
+            int loadingId = DialogHelper.ShowLoadingDialog(CoreTools.Translate("Backing up packages to GitHub Gist..."));
 
             var packagesContent = await InstalledPackagesPage.GenerateBackupContents();
 
             try
             {
                 await _backupService.UploadPackageBundle(packagesContent);
-                DialogHelper.HideLoadingDialog();
+                DialogHelper.HideLoadingDialog(loadingId);
                 Logger.Info("Successfully backed up packages to GitHub Gist.");
                 DialogHelper.ShowDismissableBalloon(
                     CoreTools.Translate("Backup Successful"),
@@ -272,7 +272,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             }
             catch (Exception ex)
             {
-                DialogHelper.HideLoadingDialog();
+                DialogHelper.HideLoadingDialog(loadingId);
 
                 Logger.Error("An error occurred while uploading the backup:");
                 Logger.Error(ex);

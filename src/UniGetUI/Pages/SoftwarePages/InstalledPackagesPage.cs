@@ -366,9 +366,9 @@ namespace UniGetUI.Interface.SoftwarePages
         private async Task _exportSelection_Click()
         {
             MainApp.Instance.MainWindow.NavigationPage.NavigateTo(PageType.Bundles);
-            DialogHelper.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
+            int loadingId = DialogHelper.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
             await PEInterface.PackageBundlesLoader.AddPackagesAsync(FilteredPackages.GetCheckedPackages());
-            DialogHelper.HideLoadingDialog();
+            DialogHelper.HideLoadingDialog(loadingId);
         }
 
         public static Task<string> GenerateBackupContents()

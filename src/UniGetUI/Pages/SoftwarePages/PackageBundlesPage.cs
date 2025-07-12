@@ -329,7 +329,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         public async Task ImportAndInstallPackage(IReadOnlyList<IPackage> packages, bool? elevated = null, bool? interactive = null, bool? skiphash = null)
         {
-            DialogHelper.ShowLoadingDialog(CoreTools.Translate("Preparing packages, please wait..."));
+            int loadingId = DialogHelper.ShowLoadingDialog(CoreTools.Translate("Preparing packages, please wait..."));
             List<Package> packages_to_install = [];
             foreach (IPackage package in packages)
             {
@@ -344,7 +344,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 }
             }
 
-            DialogHelper.HideLoadingDialog();
+            DialogHelper.HideLoadingDialog(loadingId);
             MainApp.Operations.Install(packages_to_install, TEL_InstallReferral.FROM_BUNDLE, elevated, interactive, skiphash);
         }
 
@@ -440,27 +440,26 @@ namespace UniGetUI.Interface.SoftwarePages
             if (await AskForNewBundle() is false)
                 return;
 
-            DialogHelper.ShowLoadingDialog(CoreTools.Translate("Loading packages, please wait..."));
+            int loadingId = DialogHelper.ShowLoadingDialog(CoreTools.Translate("Loading packages, please wait..."));
 
             double open_version = await AddFromBundle(payload, format);
             TelemetryHandler.ImportBundle(format);
             HasUnsavedChanges = false;
 
-            DialogHelper.HideLoadingDialog();
+            DialogHelper.HideLoadingDialog(loadingId);
             if ((int)(open_version*10) != (int)(SerializableBundle.ExpectedVersion*10))
             {   // Check only up to first decimal digit, prevent floating point precision error.
                 Logger.Warn($"The loaded bundle \"{source}\" is based on schema version {open_version}, " +
                             $"while this UniGetUI build expects version {SerializableBundle.ExpectedVersion}." +
                             $"\nThis should not be a problem if packages show up, but be careful");
             }
-
         }
 
         public async Task OpenFromFile(string file)
         {
+            int loadingId = DialogHelper.ShowLoadingDialog(CoreTools.Translate("Loading packages, please wait..."));
             try
             {
-                DialogHelper.ShowLoadingDialog(CoreTools.Translate("Loading packages, please wait..."));
                 BundleFormatType formatType;
                 string EXT = file.Split('.')[^1].ToLower();
                 if (EXT == "yaml")
@@ -475,7 +474,7 @@ namespace UniGetUI.Interface.SoftwarePages
                     formatType = BundleFormatType.UBUNDLE;
 
                 string fileContent = await File.ReadAllTextAsync(file);
-                DialogHelper.HideLoadingDialog();
+                DialogHelper.HideLoadingDialog(loadingId);
                 await OpenFromString(fileContent, formatType, file);
             }
             catch (Exception ex)
@@ -492,7 +491,7 @@ namespace UniGetUI.Interface.SoftwarePages
                     XamlRoot = MainApp.Instance.MainWindow.Content.XamlRoot // Ensure the dialog is shown in the correct context
                 };
 
-                DialogHelper.HideLoadingDialog();
+                DialogHelper.HideLoadingDialog(loadingId);
                 await MainApp.Instance.MainWindow.ShowDialogAsync(warningDialog);
             }
         }
@@ -520,7 +519,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 if (file != String.Empty)
                 {
                     // Loading dialog
-                    DialogHelper.ShowLoadingDialog(CoreTools.Translate("Saving packages, please wait..."));
+                    int loadingId = DialogHelper.ShowLoadingDialog(CoreTools.Translate("Saving packages, please wait..."));
 
                     // Select appropriate format
                     BundleFormatType formatType;
@@ -536,7 +535,7 @@ namespace UniGetUI.Interface.SoftwarePages
                     await File.WriteAllTextAsync(file, await CreateBundle(Loader.Packages));
                     TelemetryHandler.ExportBundle(formatType);
 
-                    DialogHelper.HideLoadingDialog();
+                    DialogHelper.HideLoadingDialog(loadingId);
 
                     // Launch file
                     Process.Start(new ProcessStartInfo
@@ -563,7 +562,7 @@ namespace UniGetUI.Interface.SoftwarePages
                     XamlRoot = MainApp.Instance.MainWindow.Content.XamlRoot // Ensure the dialog is shown in the correct context
                 };
 
-                DialogHelper.HideLoadingDialog();
+                DialogHelper.HideAllLoadingDialogs();
                 await MainApp.Instance.MainWindow.ShowDialogAsync(warningDialog);
             }
         }

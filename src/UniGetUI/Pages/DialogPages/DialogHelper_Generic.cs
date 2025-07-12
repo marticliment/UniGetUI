@@ -63,15 +63,32 @@ public static partial class DialogHelper
 
     public static MainWindow Window { get; set; } = null!;
 
-    public static void ShowLoadingDialog(string text)
-        => ShowLoadingDialog(text, "");
 
-    public static void ShowLoadingDialog(string title, string description)
-        => _ = _showLoadingDialog(title, description);
-
-    private static async Task _showLoadingDialog(string title, string description)
+    public struct LoadingDialog
     {
-        while (Window.LoadingDialogCount == 0 && Window.DialogQueue.Count != 0) await Task.Delay(100);
+        public readonly int Id;
+        public readonly string Title;
+        public readonly string Text;
+
+        public LoadingDialog(string title, string text)
+        {
+            Title = title;
+            Text = text;
+            Id = new Random().Next();
+        }
+    }
+    private static List<LoadingDialog> _loadingDialogQueue = new();
+    private static int _currentLoadingDialogId = 0;
+
+    public static int ShowLoadingDialog(string text) => ShowLoadingDialog(text, "");
+    public static int ShowLoadingDialog(string title, string description)
+    {
+        var dialogData = new LoadingDialog(title, description);
+        _loadingDialogQueue.Add(dialogData);
+        _showNextLoadingDialogIfPossible();
+        return dialogData.Id;
+
+        /*while (Window.LoadingDialogCount == 0 && Window.DialogQueue.Count != 0) await Task.Delay(100);
 
         if (Window.LoadingDialogCount == 0 && Window.DialogQueue.Count == 0)
         {
@@ -81,21 +98,41 @@ public static partial class DialogHelper
             _ = Window.ShowDialogAsync(Window.LoadingSthDalog, HighPriority: true);
         }
 
-        Window.LoadingDialogCount++;
+        Window.LoadingDialogCount++;*/
     }
 
-    public static void HideLoadingDialog()
+    public static void _showNextLoadingDialogIfPossible()
     {
-        Window.LoadingDialogCount--;
-        if (Window.LoadingDialogCount <= 0)
+        if (!_loadingDialogQueue.Any()) return;
+        var data = _loadingDialogQueue.First();
+
+        if (Window.LoadingDialogCount == 0 && Window.DialogQueue.Count == 0)
+        {
+            _currentLoadingDialogId = data.Id;
+            Window.LoadingSthDalog.Title = data.Title;
+            Window.LoadingSthDalogText.Text = data.Text;
+            Window.LoadingSthDalog.XamlRoot = Window.NavigationPage.XamlRoot;
+            _ = Window.ShowDialogAsync(Window.LoadingSthDalog, HighPriority: true);
+        }
+    }
+
+    public static void HideLoadingDialog(int id)
+    {
+        _loadingDialogQueue.RemoveAll(d => d.Id == id);
+        if (_currentLoadingDialogId == id)
         {
             Window.LoadingSthDalog.Hide();
+            _currentLoadingDialogId = 0;
         }
 
-        if (Window.LoadingDialogCount < 0)
-        {
-            Window.LoadingDialogCount = 0;
-        }
+        _showNextLoadingDialogIfPossible();
+    }
+
+    public static void HideAllLoadingDialogs()
+    {
+        _loadingDialogQueue.Clear();
+        Window.LoadingSthDalog.Hide();
+        _currentLoadingDialogId = 0;
     }
 
     public static async Task ShowMissingDependency(string dep_name, string exe_name, string exe_args,
@@ -392,7 +429,7 @@ public static partial class DialogHelper
         bool bannerWasOpen = false;
         try
         {
-            ShowLoadingDialog("Attempting to repair WinGet...",
+            int loadingId = ShowLoadingDialog("Attempting to repair WinGet...",
                 "WinGet is being repaired. Please wait until the process finishes.");
             bannerWasOpen = Window.WinGetWarningBanner.IsOpen;
             Window.WinGetWarningBanner.IsOpen = false;
@@ -419,7 +456,7 @@ public static partial class DialogHelper
             };
             p.Start();
             await p.WaitForExitAsync();
-            HideLoadingDialog();
+            HideLoadingDialog(loadingId);
 
             // Toggle bundled WinGet
             if (Settings.Get(Settings.K.ForceLegacyBundledWinGet))
@@ -452,7 +489,7 @@ public static partial class DialogHelper
             Window.WinGetWarningBanner.IsOpen = bannerWasOpen;
             Logger.Error("An error occurred while trying to repair WinGet");
             Logger.Error(ex);
-            HideLoadingDialog();
+            HideAllLoadingDialogs();
 
             var c = DialogFactory.Create();
             c.Title = CoreTools.Translate("WinGet could not be repaired");
