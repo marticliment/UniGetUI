@@ -308,15 +308,13 @@ namespace UniGetUI.Interface.SoftwarePages
             p.Inlines.Add(new LineBreak());
             p.Inlines.Add(new Run {Text = CoreTools.Translate("Any unsaved changes will be lost"), FontWeight = FontWeights.Bold});
 
-            ContentDialog dialog = new()
-            {
-                Title = CoreTools.Translate("Warning!"),
-                Content = rtb,
-                DefaultButton = ContentDialogButton.Secondary,
-                PrimaryButtonText = CoreTools.Translate("Yes"),
-                SecondaryButtonText = CoreTools.Translate("No"),
-                XamlRoot = MainApp.Instance.MainWindow.Content.XamlRoot
-            };
+            ContentDialog dialog = DialogHelper.DialogFactory.Create();
+            dialog.Title = CoreTools.Translate("Warning!");
+            dialog.Content = rtb;
+            dialog.DefaultButton = ContentDialogButton.Secondary;
+            dialog.PrimaryButtonText = CoreTools.Translate("Yes");
+            dialog.SecondaryButtonText = CoreTools.Translate("No");
+            dialog.XamlRoot = MainApp.Instance.MainWindow.Content.XamlRoot;
 
             ContentDialogResult result = await MainApp.Instance.MainWindow.ShowDialogAsync(dialog);
             if (result == ContentDialogResult.Primary)
