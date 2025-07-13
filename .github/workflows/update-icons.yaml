@@ -23,6 +23,15 @@ jobs:
           git commit WebBasedData/screenshot-database.json -m "Update icons and screenshots"
           exit 0
 
+      - name: Prepare PR Body with Images
+        id: prepare_pr_body
+        run: |
+          echo "## New Images" > pr_body.md
+          while IFS= read -r url; do
+            if [ ! -z "$url" ]; then
+              echo "<img src=\"$url\" width=\"300\" height=\"300\" />" >> pr_body.md
+            fi
+          done < WebBasedData/new_urls.txt
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v7
         with:
@@ -33,3 +42,4 @@ jobs:
           author: "Excel Bot <excel-bot@users.noreply.github.com>"
           commit-message: "Update icons and screenshots from the excel file"
           branch: pull-request/update-icons-and-screenshots
+          body-path: pr_body.md

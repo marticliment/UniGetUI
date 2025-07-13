@@ -104,9 +104,44 @@ jsoncontent["package_count"]["packages_with_icon"] = packagesWithIcon
 jsoncontent["package_count"]["packages_with_screenshot"] = packagesWithScreenshot
 jsoncontent["package_count"]["total_screenshots"] = screenshotCount
 
+oldcontent = ""
+newcontent = ""
+if os.path.exists("screenshot-database-v2.json"):
+    with open("screenshot-database-v2.json", "r") as infile:
+        oldcontent = infile.read()
+
 with open("screenshot-database-v2.json", "w") as outfile:
-    json.dump(jsoncontent, outfile, indent=4)
+    newcontent = json.dumps(jsoncontent, indent=4)
+    outfile.write(newcontent)
 
+    old_urls = set()
+    new_urls = set()
 
+    if oldcontent:
+        try:
+            old_json = json.loads(oldcontent)
+            for pkg in old_json.get("icons_and_screenshots", {}).values():
+                if pkg.get("icon"):
+                    old_urls.add(pkg["icon"])
+                for img_url in pkg.get("images", []):
+                    old_urls.add(img_url)
+        except Exception:
+            pass
+
+    try:
+        new_json = json.loads(newcontent)
+        for pkg in new_json.get("icons_and_screenshots", {}).values():
+            if pkg.get("icon"):
+                new_urls.add(pkg["icon"])
+            for img_url in pkg.get("images", []):
+                new_urls.add(img_url)
+    except Exception:
+        pass
+
+    diff_urls = new_urls - old_urls
+
+    with open("new_urls.txt", "w") as f:
+        for url in diff_urls:
+            f.write(url + "\n")
 
 os.system("pause")
