@@ -8,14 +8,6 @@ import xlrd
 root_dir = os.path.join(os.path.dirname(__file__), "..")
 os.chdir(os.path.join(root_dir, "WebBasedData"))
 
-try:
-    os.remove("screenshot-database-v2.json")
-except FileNotFoundError:
-    pass
-try:
-    os.remove("screenshot_database.xlsx")
-except FileNotFoundError:
-    pass
 
 with open("screenshot_database.xlsx", "wb") as f:
     f.write(urlopen("https://docs.google.com/spreadsheets/d/1Zxgzs1BiTZipC7EiwNEb9cIchistIdr5/export?format=xlsx").read())
@@ -23,7 +15,7 @@ with open("screenshot_database.xlsx", "wb") as f:
 try:
     workbook = xlrd.open_workbook('screenshot_database.xlsx')
 except:
-    os.system("python -m pip install xlrd==1.0.0")
+    os.system("python -m pip install xlrd==1.2.0")
     import xlrd
     workbook = xlrd.open_workbook('screenshot_database.xlsx')
 
@@ -107,22 +99,25 @@ jsoncontent["package_count"]["total_screenshots"] = screenshotCount
 
 oldcontent = ""
 newcontent = ""
-if os.path.exists("screenshot-database-v2.json"):
-    with open("screenshot-database-v2.json", "r") as infile:
+
+FILE = "screenshot-database-v2.json"
+
+if os.path.exists(FILE):
+    with open(FILE, "r") as infile:
         oldcontent = infile.read()
     # Extract URLs from oldcontent for proper comparison
     old_urls = re.findall(r'https?://[^\s",]+', oldcontent)
 else:
     old_urls = []
 
-with open("screenshot-database-v2.json", "w") as outfile:
+with open(FILE, "w") as outfile:
     newcontent = json.dumps(jsoncontent, indent=4)
     outfile.write(newcontent)
 
 new_urls = []
 # Find all URLs in newcontent
 new_urls = re.findall(r'https?://[^\s",]+', newcontent)
-diff_urls = [url for url in new_urls if url not in forbidden_string and url not in old_urls]
+diff_urls = [url for url in new_urls if url not in old_urls]
 
 with open("new_urls.txt", "w") as f:
     for url in diff_urls:
