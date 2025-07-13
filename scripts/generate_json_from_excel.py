@@ -110,18 +110,22 @@ newcontent = ""
 if os.path.exists("screenshot-database-v2.json"):
     with open("screenshot-database-v2.json", "r") as infile:
         oldcontent = infile.read()
+    # Extract URLs from oldcontent for proper comparison
+    old_urls = re.findall(r'https?://[^\s",]+', oldcontent)
+else:
+    old_urls = []
 
 with open("screenshot-database-v2.json", "w") as outfile:
     newcontent = json.dumps(jsoncontent, indent=4)
     outfile.write(newcontent)
 
-    new_urls = []
-    # Find all URLs in newcontent
-    new_urls = re.findall(r'https?://[^\s",]+', newcontent)
-    diff_urls = [url for url in new_urls if url not in forbidden_string and not url in oldcontent]
-    
-    with open("new_urls.txt", "w") as f:
-        for url in diff_urls:
-            f.write(url + "\n")
+new_urls = []
+# Find all URLs in newcontent
+new_urls = re.findall(r'https?://[^\s",]+', newcontent)
+diff_urls = [url for url in new_urls if url not in forbidden_string and url not in old_urls]
+
+with open("new_urls.txt", "w") as f:
+    for url in diff_urls:
+        f.write(url + "\n")
 
 os.system("pause")
