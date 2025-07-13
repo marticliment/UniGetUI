@@ -1,6 +1,7 @@
 import json
 import os
 from urllib.request import urlopen
+import re
 
 import xlrd
 
@@ -114,32 +115,11 @@ with open("screenshot-database-v2.json", "w") as outfile:
     newcontent = json.dumps(jsoncontent, indent=4)
     outfile.write(newcontent)
 
-    old_urls = set()
-    new_urls = set()
-
-    if oldcontent:
-        try:
-            old_json = json.loads(oldcontent)
-            for pkg in old_json.get("icons_and_screenshots", {}).values():
-                if pkg.get("icon"):
-                    old_urls.add(pkg["icon"])
-                for img_url in pkg.get("images", []):
-                    old_urls.add(img_url)
-        except Exception:
-            pass
-
-    try:
-        new_json = json.loads(newcontent)
-        for pkg in new_json.get("icons_and_screenshots", {}).values():
-            if pkg.get("icon"):
-                new_urls.add(pkg["icon"])
-            for img_url in pkg.get("images", []):
-                new_urls.add(img_url)
-    except Exception:
-        pass
-
-    diff_urls = new_urls - old_urls
-
+    new_urls = []
+    # Find all URLs in newcontent
+    new_urls = re.findall(r'https?://[^\s",]+', newcontent)
+    diff_urls = [url for url in new_urls if url not in forbidden_string and not url in oldcontent]
+    
     with open("new_urls.txt", "w") as f:
         for url in diff_urls:
             f.write(url + "\n")
