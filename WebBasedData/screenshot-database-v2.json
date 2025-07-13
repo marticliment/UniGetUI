@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11867,
-        "done": 5366,
-        "packages_with_icon": 5366,
-        "packages_with_screenshot": 772,
-        "total_screenshots": 2386
+        "total": 11870,
+        "done": 5368,
+        "packages_with_icon": 5368,
+        "packages_with_screenshot": 775,
+        "total_screenshots": 2396
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -50539,6 +50539,31 @@
                 "https://i.postimg.cc/J4LgFsv5/image.png",
                 "https://i.postimg.cc/4dcLLG10/image.png",
                 "https://i.postimg.cc/0jqth4Wy/image.png"
+            ]
+        },
+        "wavepad": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/DzNLMYf4/image.png",
+                "https://i.postimg.cc/BQCD0vQ0/image.png"
+            ]
+        },
+        "xftp": {
+            "icon": "https://i.postimg.cc/y8s02ZmB/Xftp.png",
+            "images": [
+                "https://i.postimg.cc/TwYmhMks/image.png",
+                "https://i.postimg.cc/w3K7XSVg/image.png",
+                "https://i.postimg.cc/tRskzW5M/image.png",
+                "https://i.postimg.cc/FFwZCzCs/image.png"
+            ]
+        },
+        "xshell": {
+            "icon": "https://i.postimg.cc/Jz55hqrG/Xshell.png",
+            "images": [
+                "https://i.postimg.cc/bJCntCWw/image.png",
+                "https://i.postimg.cc/j55wt620/image.png",
+                "https://i.postimg.cc/mD5cDc1c/image.png",
+                "https://i.postimg.cc/NF2KrgRd/image.png"
             ]
         }
     }
