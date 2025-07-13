@@ -54,7 +54,7 @@ namespace UniGetUI.PackageEngine.Operations
            {
                 if (Settings.Get(Settings.K.DoCacheAdminRights) || Settings.Get(Settings.K.DoCacheAdminRightsForBatches))
                 {
-                    CoreTools.CacheUACForCurrentProcess().GetAwaiter().GetResult();
+                    RequestCachingOfUACPrompt();
                 }
 
                 if (Source.Manager is WinGet)
@@ -107,7 +107,7 @@ namespace UniGetUI.PackageEngine.Operations
             {
                 if (Settings.Get(Settings.K.DoCacheAdminRights) || Settings.Get(Settings.K.DoCacheAdminRightsForBatches))
                 {
-                    CoreTools.CacheUACForCurrentProcess().GetAwaiter().GetResult();
+                    RequestCachingOfUACPrompt();
                 }
 
                 if (Source.Manager is WinGet)
