@@ -53,13 +53,6 @@
 
             <UserControl Height="16" />
 
-            <!--widgets:CheckboxCard
-                x:Name="DisableUniGetUIElevatorToggle"
-                BorderThickness="1,1,1,0"
-                CornerRadius="8"
-                SettingName="DisableUniGetUIElevator"
-                StateChanged="ShowRestartBanner"
-                Text="Enable the new UniGetUI-Branded UAC Elevator" /-->
             <widgets:SecureCheckboxCard
                 x:Name="UseUserGSudoToggle"
                 CornerRadius="8"
@@ -67,6 +60,12 @@
                 StateChanged="ShowRestartBanner"
                 Text="Use installed GSudo instead of UniGetUI Elevator" />
 
+            <UserControl Height="16" />
+
+            <widgets:CheckboxCard
+                CornerRadius="8"
+                SettingName="DisableNewProcessLineHandler"
+                Text="Enable the new process input handler (StdIn automated closer)" />
             <UserControl Height="16" />
 
             <widgets:CheckboxCard
