@@ -29,7 +29,7 @@ jobs:
           echo "## New Images" > pr_body.md
           Get-Content WebBasedData/new_urls.txt | ForEach-Object {
             if (![string]::IsNullOrWhiteSpace($_)) {
-              Add-Content pr_body.md "<img src='$_' width='300' height='300' />"
+              Add-Content pr_body.md "<img src='$_' width='200' height='200' />" -NoNewline
             }
           }
       - name: Create Pull Request
