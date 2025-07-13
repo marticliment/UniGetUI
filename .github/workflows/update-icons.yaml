@@ -27,11 +27,11 @@ jobs:
         id: prepare_pr_body
         run: |
           echo "## New Images" > pr_body.md
-          while IFS= read -r url; do
-            if [ ! -z "$url" ]; then
-              echo "<img src=\"$url\" width=\"300\" height=\"300\" />" >> pr_body.md
-            fi
-          done < WebBasedData/new_urls.txt
+          Get-Content WebBasedData/new_urls.txt | ForEach-Object {
+            if (![string]::IsNullOrWhiteSpace($_)) {
+              Add-Content pr_body.md "<img src='$_' width='300' height='300' />"
+            }
+          }
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v7
         with:
