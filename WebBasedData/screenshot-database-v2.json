@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11867,
-        "done": 5366,
-        "packages_with_icon": 5366,
-        "packages_with_screenshot": 772,
-        "total_screenshots": 2386
+        "total": 11882,
+        "done": 5381,
+        "packages_with_icon": 5381,
+        "packages_with_screenshot": 785,
+        "total_screenshots": 2438
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -2920,6 +2920,33 @@
                 "https://www.graebert.com/wp-content/uploads/2022/03/sheet_list_2023_2.jpg"
             ]
         },
+        "arescommander-2024": {
+            "icon": "https://cad.com.au/wp-content/uploads/2020/11/ares-logo-red.png",
+            "images": [
+                "https://www.graebert.com/wp-content/uploads/2021/02/ARES-Commander-2020-tower-transparent-with-logo-1.jpg",
+                "https://www.graebert.com/wp-content/uploads/2021/08/ARES_Kudo2.jpg",
+                "https://windows-cdn.softpedia.com/screenshots/ARES-Commander-Edition_3.png",
+                "https://www.graebert.com/wp-content/uploads/2022/03/sheet_list_2023_2.jpg"
+            ]
+        },
+        "arescommander-2025": {
+            "icon": "https://cad.com.au/wp-content/uploads/2020/11/ares-logo-red.png",
+            "images": [
+                "https://www.graebert.com/wp-content/uploads/2021/02/ARES-Commander-2020-tower-transparent-with-logo-1.jpg",
+                "https://www.graebert.com/wp-content/uploads/2021/08/ARES_Kudo2.jpg",
+                "https://windows-cdn.softpedia.com/screenshots/ARES-Commander-Edition_3.png",
+                "https://www.graebert.com/wp-content/uploads/2022/03/sheet_list_2023_2.jpg"
+            ]
+        },
+        "arescommander-2026": {
+            "icon": "https://cad.com.au/wp-content/uploads/2020/11/ares-logo-red.png",
+            "images": [
+                "https://www.graebert.com/wp-content/uploads/2021/02/ARES-Commander-2020-tower-transparent-with-logo-1.jpg",
+                "https://www.graebert.com/wp-content/uploads/2021/08/ARES_Kudo2.jpg",
+                "https://windows-cdn.softpedia.com/screenshots/ARES-Commander-Edition_3.png",
+                "https://www.graebert.com/wp-content/uploads/2022/03/sheet_list_2023_2.jpg"
+            ]
+        },
         "aresmap-2022": {
             "icon": "https://www.graebert.com/wp-content/uploads/2022/03/New_Prod_ARES_Map_256x256_183w_2x.png",
             "images": [
@@ -2953,6 +2980,22 @@
                 "https://www.graebert.com/wp-content/uploads/2018/06/02_ares_mech_n.jpg",
                 "https://www.graebert.com/wp-content/uploads/2017/11/aresmech_screen-1_2017.png"
             ]
+        },
+        "aresmechanical-2024": {
+            "icon": "",
+            "images": []
+        },
+        "aresmechanical-2025": {
+            "icon": "",
+            "images": []
+        },
+        "aresmechanical-2026": {
+            "icon": "https://i.postimg.cc/xdj0j7hc/aresm2026.png",
+            "images": []
+        },
+        "areselectrical-2026": {
+            "icon": "",
+            "images": []
         },
         "argo": {
             "icon": "",
@@ -3328,8 +3371,11 @@
             "images": []
         },
         "atlauncher": {
-            "icon": "",
-            "images": []
+            "icon": "https://atlauncher.com/assets/images/logo-named.png",
+            "images": [
+                "https://i.imgur.com/W06uViG.png",
+                "https://i.imgur.com/fTnYjus.png"
+            ]
         },
         "atnow": {
             "icon": "https://community.chocolatey.org/content/packageimages/atnow.1.1.png",
@@ -19072,15 +19118,25 @@
             "images": []
         },
         "hwinfo": {
-            "icon": "https://community.chocolatey.org/content/packageimages/hwinfo.install.8.0.0.png",
+            "icon": "https://i.postimg.cc/MKfynM2J/HWiNFO64.png",
             "images": [
-                "https://www.sqlskills.com/blogs/glenn/wp-content/uploads/2016/12/image_thumb.png"
+                "https://i.postimg.cc/6Qrcy7Zp/image.png",
+                "https://i.postimg.cc/3R3BpKjC/image.png",
+                "https://i.postimg.cc/D0ZPjBMS/image.png",
+                "https://i.postimg.cc/KjHrdB6J/image.png",
+                "https://i.postimg.cc/MGm0zCkc/image.png",
+                "https://i.postimg.cc/TPfmNtyT/image.png"
             ]
         },
         "hwinfo32": {
-            "icon": "https://community.chocolatey.org/content/packageimages/HWiNFO32.4.18.1930.1.png",
+            "icon": "https://i.postimg.cc/MKfynM2J/HWiNFO64.png",
             "images": [
-                "https://www.sqlskills.com/blogs/glenn/wp-content/uploads/2016/12/image_thumb.png"
+                "https://i.postimg.cc/6Qrcy7Zp/image.png",
+                "https://i.postimg.cc/3R3BpKjC/image.png",
+                "https://i.postimg.cc/D0ZPjBMS/image.png",
+                "https://i.postimg.cc/KjHrdB6J/image.png",
+                "https://i.postimg.cc/MGm0zCkc/image.png",
+                "https://i.postimg.cc/TPfmNtyT/image.png"
             ]
         },
         "hwmonitor": {
@@ -48448,7 +48504,7 @@
             "images": []
         },
         "wizfile": {
-            "icon": "",
+            "icon": "https://antibodysoftware-17031.kxcdn.com/wizfile/images/wizfile445x.png",
             "images": []
         },
         "wizkey": {
@@ -48473,7 +48529,9 @@
         },
         "wiztree": {
             "icon": "https://antibodysoftware-17031.kxcdn.com/images/wiztree445x.png",
-            "images": []
+            "images": [
+                "https://i.imgur.com/Sf1hKhj.png"
+            ]
         },
         "wkhtmltopdf": {
             "icon": "",
@@ -50415,7 +50473,7 @@
             ]
         },
         "radiantdicomviewer": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/Ls5qXnZd/radiant.png",
             "images": [
                 "https://i.postimg.cc/C1Dzb0Lp/image.png",
                 "https://i.postimg.cc/zXYTtd9k/image.png",
@@ -50423,7 +50481,7 @@
             ]
         },
         "reqview": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/RFcvVBG5/reqview.png",
             "images": [
                 "https://i.postimg.cc/rmYQRSmP/image.png",
                 "https://i.postimg.cc/tCGm3NkK/image.png",
@@ -50431,7 +50489,7 @@
             ]
         },
         "unraidusbcreator": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/h4TXfFhG/unraid.png",
             "images": [
                 "https://i.postimg.cc/g2QhhNqR/image.png",
                 "https://i.postimg.cc/26fBcytS/image.png",
@@ -50539,6 +50597,73 @@
                 "https://i.postimg.cc/J4LgFsv5/image.png",
                 "https://i.postimg.cc/4dcLLG10/image.png",
                 "https://i.postimg.cc/0jqth4Wy/image.png"
+            ]
+        },
+        "wavepad": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/DzNLMYf4/image.png",
+                "https://i.postimg.cc/BQCD0vQ0/image.png"
+            ]
+        },
+        "xftp": {
+            "icon": "https://i.postimg.cc/y8s02ZmB/Xftp.png",
+            "images": [
+                "https://i.postimg.cc/TwYmhMks/image.png",
+                "https://i.postimg.cc/w3K7XSVg/image.png",
+                "https://i.postimg.cc/tRskzW5M/image.png",
+                "https://i.postimg.cc/FFwZCzCs/image.png"
+            ]
+        },
+        "xshell": {
+            "icon": "https://i.postimg.cc/Jz55hqrG/Xshell.png",
+            "images": [
+                "https://i.postimg.cc/bJCntCWw/image.png",
+                "https://i.postimg.cc/j55wt620/image.png",
+                "https://i.postimg.cc/mD5cDc1c/image.png",
+                "https://i.postimg.cc/NF2KrgRd/image.png"
+            ]
+        },
+        "xlightftp": {
+            "icon": "https://i.postimg.cc/zvBRg18V/image.png",
+            "images": [
+                "https://i.postimg.cc/wvzvhYc9/image.png",
+                "https://i.postimg.cc/K8Ys8162/image.png",
+                "https://i.postimg.cc/6p1b29KG/image.png",
+                "https://i.postimg.cc/W4FW0QpY/image.png"
+            ]
+        },
+        "talktype": {
+            "icon": "https://i.postimg.cc/g0fRtjdP/image.png",
+            "images": [
+                "https://i.postimg.cc/28zWKPp3/image.png",
+                "https://i.postimg.cc/L5vJS8d5/image.png"
+            ]
+        },
+        "zetaresourceeditor": {
+            "icon": "https://i.postimg.cc/T1mFZpZM/paint-brush.png",
+            "images": [
+                "https://i.postimg.cc/15rYwhSH/image.png",
+                "https://i.postimg.cc/L8yCQtng/image.png",
+                "https://i.postimg.cc/bvW6pq0z/image.png",
+                "https://i.postimg.cc/Y0wbL8yZ/image.png"
+            ]
+        },
+        "ultrastarworldparty": {
+            "icon": "https://i.postimg.cc/1t4ZYRms/World-Party.png",
+            "images": [
+                "https://i.postimg.cc/fyLkCQF9/image.png",
+                "https://i.postimg.cc/y8qYgRV9/image.png",
+                "https://i.postimg.cc/BZkJkFPy/image.png"
+            ]
+        },
+        "onewarestudio": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/pT0KRCMK/image.png",
+                "https://i.postimg.cc/JnRQ1tDC/image.png",
+                "https://i.postimg.cc/wTnc1wyV/image.png",
+                "https://i.postimg.cc/SKfWtqZT/image.png"
             ]
         }
     }

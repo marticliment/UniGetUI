@@ -1,20 +1,13 @@
 import json
 import os
 from urllib.request import urlopen
+import re
 
 import xlrd
 
 root_dir = os.path.join(os.path.dirname(__file__), "..")
 os.chdir(os.path.join(root_dir, "WebBasedData"))
 
-try:
-    os.remove("screenshot-database-v2.json")
-except FileNotFoundError:
-    pass
-try:
-    os.remove("screenshot_database.xlsx")
-except FileNotFoundError:
-    pass
 
 with open("screenshot_database.xlsx", "wb") as f:
     f.write(urlopen("https://docs.google.com/spreadsheets/d/1Zxgzs1BiTZipC7EiwNEb9cIchistIdr5/export?format=xlsx").read())
@@ -22,7 +15,7 @@ with open("screenshot_database.xlsx", "wb") as f:
 try:
     workbook = xlrd.open_workbook('screenshot_database.xlsx')
 except:
-    os.system("python -m pip install xlrd==1.0.0")
+    os.system("python -m pip install xlrd==1.2.0")
     import xlrd
     workbook = xlrd.open_workbook('screenshot_database.xlsx')
 
@@ -104,9 +97,30 @@ jsoncontent["package_count"]["packages_with_icon"] = packagesWithIcon
 jsoncontent["package_count"]["packages_with_screenshot"] = packagesWithScreenshot
 jsoncontent["package_count"]["total_screenshots"] = screenshotCount
 
-with open("screenshot-database-v2.json", "w") as outfile:
-    json.dump(jsoncontent, outfile, indent=4)
+oldcontent = ""
+newcontent = ""
 
+FILE = "screenshot-database-v2.json"
 
+if os.path.exists(FILE):
+    with open(FILE, "r") as infile:
+        oldcontent = infile.read()
+    # Extract URLs from oldcontent for proper comparison
+    old_urls = re.findall(r'https?://[^\s",]+', oldcontent)
+else:
+    old_urls = []
+
+with open(FILE, "w") as outfile:
+    newcontent = json.dumps(jsoncontent, indent=4)
+    outfile.write(newcontent)
+
+new_urls = []
+# Find all URLs in newcontent
+new_urls = re.findall(r'https?://[^\s",]+', newcontent)
+diff_urls = [url for url in new_urls if url not in old_urls]
+
+with open("new_urls.txt", "w") as f:
+    for url in diff_urls:
+        f.write(url + "\n")
 
 os.system("pause")
