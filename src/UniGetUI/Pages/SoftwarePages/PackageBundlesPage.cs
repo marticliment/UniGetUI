@@ -479,7 +479,6 @@ namespace UniGetUI.Interface.SoftwarePages
                     formatType = BundleFormatType.UBUNDLE;
 
                 string fileContent = await File.ReadAllTextAsync(file);
-                await Task.Delay(1000);
                 await OpenFromString(fileContent, formatType, file, loadingId);
             }
             catch (Exception ex)
