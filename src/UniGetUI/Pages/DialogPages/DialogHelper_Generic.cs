@@ -87,18 +87,6 @@ public static partial class DialogHelper
         _loadingDialogQueue.Add(dialogData);
         _showNextLoadingDialogIfPossible();
         return dialogData.Id;
-
-        /*while (Window.LoadingDialogCount == 0 && Window.DialogQueue.Count != 0) await Task.Delay(100);
-
-        if (Window.LoadingDialogCount == 0 && Window.DialogQueue.Count == 0)
-        {
-            Window.LoadingSthDalog.Title = title;
-            Window.LoadingSthDalogText.Text = description;
-            Window.LoadingSthDalog.XamlRoot = Window.NavigationPage.XamlRoot;
-            _ = Window.ShowDialogAsync(Window.LoadingSthDalog, HighPriority: true);
-        }
-
-        Window.LoadingDialogCount++;*/
     }
 
     public static void _showNextLoadingDialogIfPossible()

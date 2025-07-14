@@ -46,6 +46,8 @@ namespace UniGetUI.Interface
         public bool BlockLoading;
         public readonly TextBlock LoadingSthDalogText;
         public readonly ContentDialog LoadingSthDalog;
+        private string _currentSubtitle = "";
+        private int _currentSubtitlePxLength;
 
         public int LoadingDialogCount;
 
@@ -215,16 +217,19 @@ namespace UniGetUI.Interface
 
         private void AddToSubtitle(string line)
         {
-            if (subtitleBackup.Length > 0)
-                subtitleBackup += " - ";
-            subtitleBackup += line;
-            Title = "UniGetUI - " + subtitleBackup;
-            TitleBar.Subtitle = subtitleCollapsed is true? "": subtitleBackup;
+            if (_currentSubtitle.Length > 0)
+                _currentSubtitle += " - ";
+            _currentSubtitle += line;
+            _currentSubtitlePxLength = _currentSubtitle.Length * 4;
+            Title = "UniGetUI - " + _currentSubtitle;
+            TitleBar.Subtitle = subtitleCollapsed is true? "": _currentSubtitle;
         }
 
         private void ClearSubtitle()
         {
             TitleBar.Subtitle = "";
+            _currentSubtitle = "";
+            _currentSubtitlePxLength = 0;
             Title = "UniGetUI";
         }
 
@@ -1005,39 +1010,40 @@ namespace UniGetUI.Interface
 
         private bool? subtitleCollapsed;
         private bool? titleCollapsed;
-        private string subtitleBackup = "";
+        private const int DYNAMIC_SEARCHBOX_LIMIT = 750;
+        private const int HIDE_TITLE_LIMIT = 870;
+        private const int MIN_SEARCHBOX_W = 50;
+        private const int MAX_SEARCHBOX_W = 400;
         private void TitleBar_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if(TitleBar.ActualWidth <= 750)
+            if(TitleBar.ActualWidth <= DYNAMIC_SEARCHBOX_LIMIT)
             {
-                GlobalSearchBox.Width = Math.Max(50, 400 - (750 - TitleBar.ActualWidth));
+                GlobalSearchBox.Width = Math.Max(MIN_SEARCHBOX_W, MAX_SEARCHBOX_W - (DYNAMIC_SEARCHBOX_LIMIT - TitleBar.ActualWidth));
             }
 
-            if (TitleBar.ActualWidth < 870 && titleCollapsed is not true)
+            if (titleCollapsed is not true && TitleBar.ActualWidth < HIDE_TITLE_LIMIT)
             {
                 TitleBar.Title = "";
                 titleCollapsed = true;
             }
-            else if (TitleBar.ActualWidth > 870 && titleCollapsed is not false)
+            else if (titleCollapsed is not false && TitleBar.ActualWidth > HIDE_TITLE_LIMIT)
             {
                 TitleBar.Title = "UniGetUI";
-                GlobalSearchBox.Width = 400;
+                GlobalSearchBox.Width = MAX_SEARCHBOX_W;
                 titleCollapsed = false;
             }
 
-            if (TitleBar.ActualWidth < 1200 && subtitleCollapsed is not true)
+            if (subtitleCollapsed is not true && TitleBar.ActualWidth < (HIDE_TITLE_LIMIT + _currentSubtitlePxLength))
             {
-                subtitleBackup = TitleBar.Subtitle;
                 TitleBar.Subtitle = "";
                 subtitleCollapsed = true;
             }
-            else if (TitleBar.ActualWidth > 1200 && subtitleCollapsed is not false)
+            else if (subtitleCollapsed is not false && TitleBar.ActualWidth > (HIDE_TITLE_LIMIT + _currentSubtitlePxLength))
             {
-                TitleBar.Subtitle = subtitleBackup;
-                GlobalSearchBox.Width = 400;
+                TitleBar.Subtitle = _currentSubtitle;
+                GlobalSearchBox.Width = MAX_SEARCHBOX_W;
                 subtitleCollapsed = false;
             }
-            // Debug.WriteLine(TitleBar.ActualWidth);
         }
     }
 
