@@ -225,7 +225,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
 
                 loadingId = DialogHelper.ShowLoadingDialog(CoreTools.Translate("Downloading backup..."));
                 var backupContents = await _backupService.GetBackupContents(selectedBackup);
-                DialogHelper.HideLoadingDialog(loadingId);
+                // DialogHelper.HideLoadingDialog(loadingId);
                 await Task.Delay(500); // Prevent race conditions with dialogs
 
                 if (backupContents is null)
@@ -237,7 +237,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                     CoreTools.Translate("The cloud backup has been loaded successfully."));
 
                 MainApp.Instance.MainWindow.NavigationPage.LoadBundleFromString(
-                    backupContents, BundleFormatType.UBUNDLE, $"GitHub Gist {selectedBackup}");
+                    backupContents, BundleFormatType.UBUNDLE, $"GitHub Gist {selectedBackup}", loadingId);
             }
             catch (Exception ex)
             {

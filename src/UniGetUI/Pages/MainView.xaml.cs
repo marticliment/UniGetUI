@@ -500,10 +500,10 @@ namespace UniGetUI.Interface
             BundlesPage?.OpenFromFile(param);
         }
 
-        internal void LoadBundleFromString(string payload, BundleFormatType format, string source)
+        internal void LoadBundleFromString(string payload, BundleFormatType format, string source, int loadingId)
         {
             NavigateTo(PageType.Bundles);
-            BundlesPage?.OpenFromString(payload, format, source);
+            BundlesPage?.OpenFromString(payload, format, source, loadingId);
         }
 
         private void ClearAllFinished_OnClick(object sender, RoutedEventArgs e)

@@ -435,23 +435,28 @@ namespace UniGetUI.Interface.SoftwarePages
             Loader.Remove(package);
         }
 
-        public async Task OpenFromString(string payload, BundleFormatType format, string source)
+        public async Task OpenFromString(string payload, BundleFormatType format, string source, int? loadingId)
         {
             if (await AskForNewBundle() is false)
                 return;
 
-            int loadingId = DialogHelper.ShowLoadingDialog(CoreTools.Translate("Loading packages, please wait..."));
+            loadingId ??= DialogHelper.ShowLoadingDialog(CoreTools.Translate("Loading packages, please wait..."));
 
-            double open_version = await AddFromBundle(payload, format);
+            var (open_version, report) = await AddFromBundle(payload, format);
             TelemetryHandler.ImportBundle(format);
             HasUnsavedChanges = false;
 
-            DialogHelper.HideLoadingDialog(loadingId);
             if ((int)(open_version*10) != (int)(SerializableBundle.ExpectedVersion*10))
             {   // Check only up to first decimal digit, prevent floating point precision error.
                 Logger.Warn($"The loaded bundle \"{source}\" is based on schema version {open_version}, " +
                             $"while this UniGetUI build expects version {SerializableBundle.ExpectedVersion}." +
                             $"\nThis should not be a problem if packages show up, but be careful");
+            }
+
+            DialogHelper.HideLoadingDialog(loadingId.Value);
+            if (!report.IsEmpty)
+            {
+                await DialogHelper.ShowBundleSecurityReport(report.Contents);
             }
         }
 
@@ -474,8 +479,8 @@ namespace UniGetUI.Interface.SoftwarePages
                     formatType = BundleFormatType.UBUNDLE;
 
                 string fileContent = await File.ReadAllTextAsync(file);
-                DialogHelper.HideLoadingDialog(loadingId);
-                await OpenFromString(fileContent, formatType, file);
+                await Task.Delay(1000);
+                await OpenFromString(fileContent, formatType, file, loadingId);
             }
             catch (Exception ex)
             {
@@ -595,7 +600,7 @@ namespace UniGetUI.Interface.SoftwarePages
             return exportablePayload;
         }
 
-        public async Task<double> AddFromBundle(string content, BundleFormatType format)
+        public async Task<(double, BundleReport)> AddFromBundle(string content, BundleFormatType format)
         {
             // Deserialize data
             SerializableBundle? DeserializedData;
@@ -621,9 +626,9 @@ namespace UniGetUI.Interface.SoftwarePages
 
             List<IPackage> packages = [];
 
+            var report = new BundleReport();
+            report.IsEmpty = true;
 
-            bool showReport = false;
-            var packageReport = new Dictionary<string, List<BundleReportEntry>>();
             bool AllowCLIParameters =
                 SecureSettings.Get(SecureSettings.K.AllowCLIArguments) &&
                 SecureSettings.Get(SecureSettings.K.AllowImportingCLIArguments);
@@ -639,66 +644,66 @@ namespace UniGetUI.Interface.SoftwarePages
 
                 if (opts.CustomParameters_Install.Where(x => x.Any()).Any())
                 {
-                    showReport = true;
-                    if (!packageReport.ContainsKey(pkg.Id)) packageReport[pkg.Id] = new();
-                    packageReport[pkg.Id].Add(new($"Custom install arguments: [{string.Join(", ", opts.CustomParameters_Install)}]", AllowCLIParameters));
+                    report.IsEmpty = false;
+                    if (!report.Contents.ContainsKey(pkg.Id)) report.Contents[pkg.Id] = new();
+                    report.Contents[pkg.Id].Add(new($"Custom install arguments: [{string.Join(", ", opts.CustomParameters_Install)}]", AllowCLIParameters));
                     if(!AllowCLIParameters) opts.CustomParameters_Install.Clear();
                 }
                 if (opts.CustomParameters_Update.Where(x => x.Any()).Any())
                 {
-                    showReport = true;
-                    if (!packageReport.ContainsKey(pkg.Id)) packageReport[pkg.Id] = new();
-                    packageReport[pkg.Id].Add(new($"Custom update arguments: [{string.Join(", ", opts.CustomParameters_Update)}]", AllowCLIParameters));
+                    report.IsEmpty = false;
+                    if (!report.Contents.ContainsKey(pkg.Id)) report.Contents[pkg.Id] = new();
+                    report.Contents[pkg.Id].Add(new($"Custom update arguments: [{string.Join(", ", opts.CustomParameters_Update)}]", AllowCLIParameters));
                     if(!AllowCLIParameters) opts.CustomParameters_Update.Clear();
                 }
                 if (opts.CustomParameters_Uninstall.Where(x => x.Any()).Any())
                 {
-                    showReport = true;
-                    if (!packageReport.ContainsKey(pkg.Id)) packageReport[pkg.Id] = new();
-                    packageReport[pkg.Id].Add(new($"Custom uninstall arguments: [{string.Join(", ", opts.CustomParameters_Uninstall)}]", AllowCLIParameters));
+                    report.IsEmpty = false;
+                    if (!report.Contents.ContainsKey(pkg.Id)) report.Contents[pkg.Id] = new();
+                    report.Contents[pkg.Id].Add(new($"Custom uninstall arguments: [{string.Join(", ", opts.CustomParameters_Uninstall)}]", AllowCLIParameters));
                     if(!AllowCLIParameters) opts.CustomParameters_Uninstall.Clear();
                 }
 
                 if (opts.PreInstallCommand.Any())
                 {
-                    showReport = true;
-                    if (!packageReport.ContainsKey(pkg.Id)) packageReport[pkg.Id] = new();
-                    packageReport[pkg.Id].Add(new($"Pre-install command: {opts.PreInstallCommand}", AllowPrePostOps));
+                    report.IsEmpty = false;
+                    if (!report.Contents.ContainsKey(pkg.Id)) report.Contents[pkg.Id] = new();
+                    report.Contents[pkg.Id].Add(new($"Pre-install command: {opts.PreInstallCommand}", AllowPrePostOps));
                     if (!AllowPrePostOps) opts.PreInstallCommand = "";
                 }
                 if (opts.PostInstallCommand.Any())
                 {
-                    showReport = true;
-                    if (!packageReport.ContainsKey(pkg.Id)) packageReport[pkg.Id] = new();
-                    packageReport[pkg.Id].Add(new($"Post-install command: {opts.PostInstallCommand}", AllowPrePostOps));
+                    report.IsEmpty = false;
+                    if (!report.Contents.ContainsKey(pkg.Id)) report.Contents[pkg.Id] = new();
+                    report.Contents[pkg.Id].Add(new($"Post-install command: {opts.PostInstallCommand}", AllowPrePostOps));
                     if (!AllowPrePostOps) opts.PostInstallCommand = "";
                 }
                 if (opts.PreUpdateCommand.Any())
                 {
-                    showReport = true;
-                    if (!packageReport.ContainsKey(pkg.Id)) packageReport[pkg.Id] = new();
-                    packageReport[pkg.Id].Add(new($"Pre-update command: {opts.PreUpdateCommand}", AllowPrePostOps));
+                    report.IsEmpty = false;
+                    if (!report.Contents.ContainsKey(pkg.Id)) report.Contents[pkg.Id] = new();
+                    report.Contents[pkg.Id].Add(new($"Pre-update command: {opts.PreUpdateCommand}", AllowPrePostOps));
                     if (!AllowPrePostOps) opts.PreUpdateCommand = "";
                 }
                 if (opts.PostUpdateCommand.Any())
                 {
-                    showReport = true;
-                    if (!packageReport.ContainsKey(pkg.Id)) packageReport[pkg.Id] = new();
-                    packageReport[pkg.Id].Add(new($"Post-update command: {opts.PostUpdateCommand}", AllowPrePostOps));
+                    report.IsEmpty = false;
+                    if (!report.Contents.ContainsKey(pkg.Id)) report.Contents[pkg.Id] = new();
+                    report.Contents[pkg.Id].Add(new($"Post-update command: {opts.PostUpdateCommand}", AllowPrePostOps));
                     if (!AllowPrePostOps) opts.PostUpdateCommand = "";
                 }
                 if (opts.PreUninstallCommand.Any())
                 {
-                    showReport = true;
-                    if (!packageReport.ContainsKey(pkg.Id)) packageReport[pkg.Id] = new();
-                    packageReport[pkg.Id].Add(new($"Pre-uninstall command: {opts.PreUninstallCommand}", AllowPrePostOps));
+                    report.IsEmpty = false;
+                    if (!report.Contents.ContainsKey(pkg.Id)) report.Contents[pkg.Id] = new();
+                    report.Contents[pkg.Id].Add(new($"Pre-uninstall command: {opts.PreUninstallCommand}", AllowPrePostOps));
                     if (!AllowPrePostOps) opts.PreUninstallCommand = "";
                 }
                 if (opts.PostUninstallCommand.Any())
                 {
-                    showReport = true;
-                    if (!packageReport.ContainsKey(pkg.Id)) packageReport[pkg.Id] = new();
-                    packageReport[pkg.Id].Add(new($"Post-uninstall command: {opts.PostUninstallCommand}", AllowPrePostOps));
+                    report.IsEmpty = false;
+                    if (!report.Contents.ContainsKey(pkg.Id)) report.Contents[pkg.Id] = new();
+                    report.Contents[pkg.Id].Add(new($"Post-uninstall command: {opts.PostUninstallCommand}", AllowPrePostOps));
                     if (!AllowPrePostOps) opts.PostUninstallCommand = "";
                 }
 
@@ -711,8 +716,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             await PEInterface.PackageBundlesLoader.AddPackagesAsync(packages);
 
-            if(showReport) _ = DialogHelper.ShowBundleSecurityReport(packageReport);
-            return DeserializedData.export_version;
+            return (DeserializedData.export_version, report);
         }
 
         public static IPackage DeserializePackage(SerializablePackage raw_package)
