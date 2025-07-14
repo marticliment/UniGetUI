@@ -57,23 +57,25 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         }
 
         private void ManageTelemetrySettings_Click(object sender, EventArgs e)
-            => DialogHelper.ShowTelemetryDialog();
+            => _ = DialogHelper.ShowTelemetryDialog();
 
-        private async void ImportSettings(object sender, EventArgs e)
+        private void ImportSettings_Click(object sender, EventArgs e) => _ = _importSettings();
+        private async Task _importSettings()
         {
             ExternalLibraries.Pickers.FileOpenPicker picker = new(MainApp.Instance.MainWindow.GetWindowHandle());
             string file = picker.Show(["*.json"]);
 
             if (file != string.Empty)
             {
-                DialogHelper.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
+                int loadingId = DialogHelper.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
                 await Task.Run(() => Settings.ImportFromFile_JSON(file));
-                DialogHelper.HideLoadingDialog();
+                DialogHelper.HideLoadingDialog(loadingId);
                 ShowRestartBanner(this, new());
             }
         }
 
-        private async void ExportSettings(object sender, EventArgs e)
+        private void ExportSettings_Click(object sender, EventArgs e) => _ = _exportSettings();
+        private static async Task _exportSettings()
         {
             try
             {
@@ -82,15 +84,15 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
 
                 if (file != string.Empty)
                 {
-                    DialogHelper.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
+                    int loadingId = DialogHelper.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
                     await Task.Run(() => Settings.ExportToFile_JSON(file));
-                    DialogHelper.HideLoadingDialog();
-                    CoreTools.ShowFileOnExplorer(file);
+                    DialogHelper.HideLoadingDialog(loadingId);
+                    _ = CoreTools.ShowFileOnExplorer(file);
                 }
             }
             catch (Exception ex)
             {
-                DialogHelper.HideLoadingDialog();
+                DialogHelper.HideAllLoadingDialogs();
                 Logger.Error("An error occurred when exporting settings");
                 Logger.Error(ex);
             }

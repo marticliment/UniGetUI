@@ -105,4 +105,12 @@ namespace UniGetUI.Interface.Enums
             Allowed = allowed;
         }
     }
+
+    public struct BundleReport
+    {
+        public bool IsEmpty = false;
+        public Dictionary<string, List<BundleReportEntry>> Contents = new();
+        public BundleReport()
+        {}
+    }
 }

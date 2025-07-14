@@ -72,7 +72,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 IconName = IconType.Options,
                 KeyboardAcceleratorTextOverride = "Alt+Enter"
             };
-            menuInstallSettings.Click += (_, _) => ShowInstallationOptionsForPackage(SelectedItem);
+            menuInstallSettings.Click += (_, _) => _ = ShowInstallationOptionsForPackage(SelectedItem);
 
             MenuOpenInstallLocation = new()
             {
@@ -302,7 +302,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             PackageDetails.Click += (_, _) => ShowDetailsForPackage(SelectedItem, TEL_InstallReferral.ALREADY_INSTALLED);
             HelpButton.Click += (_, _) => MainApp.Instance.MainWindow.NavigationPage.ShowHelp();
-            InstallationSettings.Click += (_, _) => ShowInstallationOptionsForPackage(SelectedItem);
+            InstallationSettings.Click += (_, _) => _ = ShowInstallationOptionsForPackage(SelectedItem);
             ManageIgnored.Click += async (_, _) => await DialogHelper.ManageIgnoredUpdates();
             IgnoreSelected.Click += async (_, _) =>
             {
@@ -366,9 +366,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
 
                 if(EnableAutoUpdate)
-                {
-                    MainApp.Operations.UpdateAll();
-                }
+                    _ = MainApp.Operations.UpdateAll();
 
                 if (Settings.AreUpdatesNotificationsDisabled())
                     return;
@@ -536,7 +534,7 @@ namespace UniGetUI.Interface.SoftwarePages
         {
         }
 
-        public async void UpdateAllPackagesForManager(string manager)
+        public void UpdateAllPackagesForManager(string manager)
         {
         }
     }

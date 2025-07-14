@@ -149,10 +149,9 @@ public static class TelemetryHandler
 
     private static async void PackageEndpoint(IPackage package, string endpoint, TEL_OP_RESULT? result = null, string? eventSource = null)
     {
-        if (result is null && eventSource is null) throw new NullReferenceException("result and eventSource cannot be both null!");
-
         try
         {
+            if (result is null && eventSource is null) throw new NullReferenceException("result and eventSource cannot be both null!");
             if (Settings.Get(Settings.K.DisableTelemetry)) return;
             await CoreTools.WaitForInternetConnection();
             string ID = GetRandomizedId();

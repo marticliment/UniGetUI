@@ -132,7 +132,7 @@ namespace UniGetUI.Interface.Widgets
                             op = new AddSourceOperation(new ManagerSource(this.Manager, SourceNameTextBox.Text, new Uri(SourceUrlTextBox.Text)));
 
                         MainApp.Operations.Add(op);
-                        op.OperationSucceeded += (_, _) => LoadSources();
+                        op.OperationSucceeded += (_, _) => _ = LoadSources();
                     }
                 }
                 catch (Exception ex)
@@ -153,10 +153,10 @@ namespace UniGetUI.Interface.Widgets
             this.Manager = Manager;
             _datagrid = DataList;
             DataList.ItemTemplate = (DataTemplate)Resources["ManagerSourceTemplate"];
-            LoadSources();
+            _ = LoadSources();
         }
 
-        public async void LoadSources()
+        public async Task LoadSources()
         {
             if (!Manager.IsReady())
             {
@@ -184,8 +184,6 @@ namespace UniGetUI.Interface.Widgets
         }
 
         private void ReloadButton_Click(object sender, RoutedEventArgs e)
-        {
-            LoadSources();
-        }
+            => _ = LoadSources();
     }
 }

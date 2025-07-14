@@ -50,7 +50,8 @@ namespace UniGetUI.Services
             }
         }
 
-        private async void LoginButton_Click(object sender, RoutedEventArgs e)
+        private void LoginButton_Click(object sender, RoutedEventArgs e) => _ = _loginButton_Click();
+        private async Task _loginButton_Click()
         {
             SetLoading();
             try
@@ -109,7 +110,7 @@ namespace UniGetUI.Services
             var translatedTextBlock = new TextBlock
             {
                 Margin = new Thickness(4),
-                TextWrapping = TextWrapping.WrapWholeWords,
+                TextWrapping = TextWrapping.Wrap,
                 Text = CoreTools.Translate("Log in with GitHub to enable cloud package backup.")
             };
 
@@ -117,7 +118,11 @@ namespace UniGetUI.Services
             {
                 Padding = new Thickness(0),
                 HorizontalAlignment = HorizontalAlignment.Stretch,
-                Content = CoreTools.Translate("More details"),
+                Content = new TextBlock()
+                {
+                    Text = CoreTools.Translate("More details"),
+                    TextWrapping = TextWrapping.Wrap,
+                },
                 FontSize = 12
             };
             hyperlinkButton.Click += (_, _) => MainApp.Instance.MainWindow.NavigationPage.ShowHelp("cloud-backup-overview/");
@@ -181,14 +186,14 @@ namespace UniGetUI.Services
             var text1 = new TextBlock
             {
                 Margin = new Thickness(4),
-                TextWrapping = TextWrapping.WrapWholeWords,
+                TextWrapping = TextWrapping.Wrap,
                 Text = CoreTools.Translate("You are logged in as {0} (@{1})", user.Name, user.Login)
             };
 
             var text2 = new TextBlock
             {
                 Margin = new Thickness(4),
-                TextWrapping = TextWrapping.WrapWholeWords,
+                TextWrapping = TextWrapping.Wrap,
                 FontSize = 12,
                 FontWeight = new(500),
                 Text = CoreTools.Translate("If you have cloud backup enabled, it will be saved as a GitHub Gist on this account")
@@ -198,7 +203,11 @@ namespace UniGetUI.Services
             {
                 Padding = new Thickness(0),
                 HorizontalAlignment = HorizontalAlignment.Stretch,
-                Content = CoreTools.Translate("Package backup settings"),
+                Content = new TextBlock()
+                {
+                    Text = CoreTools.Translate("Package backup settings"),
+                    TextWrapping = TextWrapping.Wrap,
+                },
                 FontSize = 12
             };
             hyperlinkButton.Click += (_, _) => MainApp.Instance.MainWindow.NavigationPage.OpenSettingsPage(typeof(Backup));

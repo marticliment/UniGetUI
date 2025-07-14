@@ -70,7 +70,8 @@ namespace UniGetUI.Interface.Pages
             LogTextBox.Select(LogTextBox.SelectionStart, LogTextBox.SelectionStart);
         }
 
-        public async void ExportButton_Click(object sender, RoutedEventArgs e)
+        public void ExportButton_Click(object sender, RoutedEventArgs e) => _ = _exportButton_Click();
+        public async Task _exportButton_Click()
         {
             FileSavePicker savePicker = new()
             {

@@ -90,7 +90,7 @@ public partial class OperationControl: INotifyPropertyChanged
         _liveLine = operation.GetOutput().Any()? operation.GetOutput()[operation.GetOutput().Count - 1].Item1 : CoreTools.Translate("Please wait...");
         _buttonText = "";
         OnOperationStatusChanged(this, operation.Status);
-        LoadIcon();
+        _ = LoadIcon();
         if (!operation.Started)
             _ = operation.MainThread();
     }
@@ -98,10 +98,14 @@ public partial class OperationControl: INotifyPropertyChanged
     private void OnOperationStarting(object? sender, EventArgs e)
     {
         ShowProgressToast();
-        MainApp.Instance.MainWindow.NavigationPage.OperationList.SmoothScrollIntoViewWithItemAsync(this);
+        if (MainApp.Instance.MainWindow.NavigationPage.OperationList.Items.Contains(this))
+        {
+            MainApp.Instance.MainWindow.NavigationPage.OperationList.SmoothScrollIntoViewWithItemAsync(this);
+        }
     }
 
-    private async void OnOperationSucceeded(object? sender, EventArgs e)
+    private void OnOperationSucceeded(object? sender, EventArgs e) => _ = _onOperationSucceeded();
+    private async Task _onOperationSucceeded()
     {
         // Success notification
         ShowSuccessToast();
@@ -118,7 +122,8 @@ public partial class OperationControl: INotifyPropertyChanged
         ShowErrorToast();
     }
 
-    private async void OnOperationFinished(object? sender, EventArgs e)
+    private void OnOperationFinished(object? sender, EventArgs e) => _ = _onOperationFinished();
+    private async Task _onOperationFinished()
     {
         // Remove progress notification (if any)
         AppNotificationManager.Default.RemoveByTagAsync(Operation.Metadata.Identifier + "progress");
@@ -174,7 +179,7 @@ public partial class OperationControl: INotifyPropertyChanged
         }
     }
 
-    private async void LoadIcon()
+    private async Task LoadIcon()
     {
         Icon = await Operation.GetOperationIcon();
     }
@@ -601,7 +606,7 @@ public partial class OperationControl: INotifyPropertyChanged
             };
             details.Click += (_, _) =>
             {
-                DialogHelper.ShowPackageDetails(packageOp.Package, OperationType.None, TEL_InstallReferral.DIRECT_SEARCH);
+                _ = DialogHelper.ShowPackageDetails(packageOp.Package, OperationType.None, TEL_InstallReferral.DIRECT_SEARCH);
             };
             optionsMenu.Add(details);
 

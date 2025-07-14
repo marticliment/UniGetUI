@@ -84,7 +84,7 @@ public static partial class DialogHelper
         return (await OptionsPage.GetUpdatedOptions(), result);
     }
 
-    public static async void ShowPackageDetails(IPackage package, OperationType operation, TEL_InstallReferral referral)
+    public static async Task ShowPackageDetails(IPackage package, OperationType operation, TEL_InstallReferral referral)
     {
         PackageDetailsPage DetailsPage = new(package, operation, referral);
 
@@ -155,37 +155,39 @@ public static partial class DialogHelper
         string managerName = contents[0];
         string sourceName = "";
         if (contents.Length > 1) sourceName = contents[1];
-        GetPackageFromIdAndManager(id, managerName, sourceName, "LEGACY_COMBINEDSOURCE");
+        _ = GetPackageFromIdAndManager(id, managerName, sourceName, "LEGACY_COMBINEDSOURCE");
     }
 
     public static void ShowSharedPackage_ThreadSafe(string id, string managerName, string sourceName)
     {
         MainApp.Instance.MainWindow.DispatcherQueue.TryEnqueue(() =>
         {
-            GetPackageFromIdAndManager(id, managerName, sourceName, "DEFAULT");
+            _ = GetPackageFromIdAndManager(id, managerName, sourceName, "DEFAULT");
         });
     }
 
-    private static async void GetPackageFromIdAndManager(string id, string managerName, string sourceName, string eventSource)
+    private static async Task GetPackageFromIdAndManager(string id, string managerName, string sourceName, string eventSource)
     {
+        int loadingId = ShowLoadingDialog(CoreTools.Translate("Please wait..."));
         try
         {
             Window.Activate();
-            ShowLoadingDialog(CoreTools.Translate("Please wait..."));
 
             var findResult = await Task.Run(() => PEInterface.DiscoveredPackagesLoader.GetPackageFromIdAndManager(id, managerName, sourceName));
 
-            HideLoadingDialog();
+            HideLoadingDialog(loadingId);
 
             if (findResult.Item1 is null) throw new KeyNotFoundException(findResult.Item2 ?? "Unknown error");
 
             TelemetryHandler.SharedPackage(findResult.Item1, eventSource);
-            ShowPackageDetails(findResult.Item1, OperationType.Install, TEL_InstallReferral.FROM_WEB_SHARE);
+            _ = ShowPackageDetails(findResult.Item1, OperationType.Install, TEL_InstallReferral.FROM_WEB_SHARE);
 
         }
         catch (Exception ex)
         {
             Logger.Error($"An error occurred while attempting to show the package with id {id}");
+            HideLoadingDialog(loadingId);
+
             var warningDialog = new ContentDialog
             {
                 Title = CoreTools.Translate("Package not found"),
@@ -195,7 +197,6 @@ public static partial class DialogHelper
                 XamlRoot = MainApp.Instance.MainWindow.Content.XamlRoot // Ensure the dialog is shown in the correct context
             };
 
-            HideLoadingDialog();
             await Window.ShowDialogAsync(warningDialog);
 
         }

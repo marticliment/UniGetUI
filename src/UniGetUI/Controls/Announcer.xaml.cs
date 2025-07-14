@@ -31,20 +31,20 @@ namespace UniGetUI.Interface.Widgets
             nameof(UrlProperty),
             typeof(Uri),
             typeof(CheckboxCard),
-            new PropertyMetadata(default(Uri), new PropertyChangedCallback((_, _) => { LoadAnnouncements(); })));
+            new PropertyMetadata(default(Uri), new PropertyChangedCallback((_, _) => _ = LoadAnnouncements())));
 
             InitializeComponent();
             DefaultStyleKey = typeof(Announcer);
-            BringIntoViewRequested += (_, _) => { LoadAnnouncements(); };
+            BringIntoViewRequested += (_, _) => _ = LoadAnnouncements();
 
             int i = 0;
-            PointerPressed += (_, _) => { if (i++ % 3 != 0) { LoadAnnouncements(); } };
+            PointerPressed += (_, _) => { if (i++ % 3 != 0) { _ = LoadAnnouncements(); } };
 
             SetText(CoreTools.Translate("Fetching latest announcements, please wait..."));
             _textblock.TextWrapping = TextWrapping.Wrap;
         }
 
-        public async void LoadAnnouncements(bool retry = false)
+        public async Task LoadAnnouncements(bool retry = false)
         {
             try
             {
@@ -72,7 +72,7 @@ namespace UniGetUI.Interface.Widgets
                     SetImage(new Uri("ms-appx:///Assets/Images/warn.png"));
                     if (!retry)
                     {
-                        LoadAnnouncements(true);
+                        _ = LoadAnnouncements(true);
                     }
                 }
             }

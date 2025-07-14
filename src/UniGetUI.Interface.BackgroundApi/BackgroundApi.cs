@@ -268,10 +268,18 @@ namespace UniGetUI.Interface
             await context.Response.Body.WriteAsync(bytes, 0, bytes.Length);
         }
 
-        public async void Stop()
+        public async Task Stop()
         {
-            await _host.StopAsync();
-            Logger.Info("Api was shut down");
+            try
+            {
+                ArgumentNullException.ThrowIfNull(_host);
+                await _host.StopAsync();
+                Logger.Info("Api was shut down");
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
         }
     }
 }

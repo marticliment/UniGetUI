@@ -217,7 +217,7 @@ namespace UniGetUI.Interface.SoftwarePages
             PackageDetails.Click += (_, _) => ShowDetailsForPackage(SelectedItem, TEL_InstallReferral.DIRECT_SEARCH);
             ExportSelection.Click += ExportSelection_Click;
             HelpButton.Click += (_, _) => MainApp.Instance.MainWindow.NavigationPage.ShowHelp();
-            InstallationSettings.Click += (_, _) => ShowInstallationOptionsForPackage(SelectedItem);
+            InstallationSettings.Click += (_, _) => _ = ShowInstallationOptionsForPackage(SelectedItem);
 
             InstallSelected.Click += (_, _) => MainApp.Operations.Install(FilteredPackages.GetCheckedPackages(), TEL_InstallReferral.DIRECT_SEARCH);
             InstallAsAdmin.Click += (_, _) => MainApp.Operations.Install(FilteredPackages.GetCheckedPackages(), TEL_InstallReferral.DIRECT_SEARCH, elevated: true);
@@ -267,12 +267,13 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuDownloadInstaller.IsEnabled = package.Manager.Capabilities.CanDownloadInstaller;
         }
 
-        private async void ExportSelection_Click(object sender, RoutedEventArgs e)
+        private void ExportSelection_Click(object sender, RoutedEventArgs e) => _ = _exportSelection_Click();
+        private async Task _exportSelection_Click()
         {
             MainApp.Instance.MainWindow.NavigationPage.NavigateTo(PageType.Bundles);
-            DialogHelper.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
+            int loadingId = DialogHelper.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
             await PEInterface.PackageBundlesLoader.AddPackagesAsync(FilteredPackages.GetCheckedPackages());
-            DialogHelper.HideLoadingDialog();
+            DialogHelper.HideLoadingDialog(loadingId);
         }
 
         private void MenuDetails_Invoked(object sender, RoutedEventArgs e)
@@ -301,7 +302,7 @@ namespace UniGetUI.Interface.SoftwarePages
             => _ = MainApp.Operations.Install(SelectedItem, TEL_InstallReferral.DIRECT_SEARCH, elevated: true);
 
         private void MenuInstallSettings_Invoked(object sender, RoutedEventArgs e)
-            => ShowInstallationOptionsForPackage(SelectedItem);
+            => _ = ShowInstallationOptionsForPackage(SelectedItem);
 
     }
 }

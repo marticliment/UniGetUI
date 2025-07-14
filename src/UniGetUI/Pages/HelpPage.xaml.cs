@@ -54,7 +54,10 @@ namespace UniGetUI.Interface.Dialogs
             Initialized = true;
         }
 
-        public async void NavigateTo(string piece, bool skipWait = false)
+        public void NavigateTo(string piece, bool skipWait = false)
+            => _ = _navigateTo(piece, skipWait);
+
+        private async Task _navigateTo(string piece, bool skipWait)
         {
             while (!Initialized && !skipWait) await Task.Delay(50);
             ArgumentNullException.ThrowIfNull(webView);

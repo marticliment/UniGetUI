@@ -149,7 +149,7 @@ namespace UniGetUI.Interface
             if (CoreTools.IsAdministrator() && !Settings.Get(Settings.K.AlreadyWarnedAboutAdmin))
             {
                 Settings.Set(Settings.K.AlreadyWarnedAboutAdmin, true);
-                DialogHelper.WarnAboutAdminRights();
+                _= DialogHelper.WarnAboutAdminRights();
             }
 
             UpdateOperationsLayout();
@@ -260,7 +260,8 @@ namespace UniGetUI.Interface
             _lastNavItemSelectionWasAuto = false;
         }
 
-        private async void AboutNavButton_Click(object sender, RoutedEventArgs e)
+        private void AboutNavButton_Click(object sender, RoutedEventArgs e) => _ = _aboutNavButton_Click();
+        private async Task _aboutNavButton_Click()
         {
             SelectNavButtonForPage(PageType.Null);
             await DialogHelper.ShowAboutUniGetUI();
@@ -331,7 +332,7 @@ namespace UniGetUI.Interface
         }
 
         private void ReleaseNotesMenu_Click(object sender, RoutedEventArgs e)
-            => DialogHelper.ShowReleaseNotes();
+            => _ = DialogHelper.ShowReleaseNotes();
 
         private void OperationHistoryMenu_Click(object sender, RoutedEventArgs e)
             => NavigateTo(PageType.OperationHistory);
@@ -414,7 +415,7 @@ namespace UniGetUI.Interface
             ResizingOPLayout = false;
         }
 
-        private async void OperationScrollView_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void OperationScrollView_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (ResizingOPLayout)
                 return;
@@ -422,7 +423,6 @@ namespace UniGetUI.Interface
             if (OpListChanges > 0)
             {
                 OpListChanges--;
-                return;
             }
         }
 
@@ -500,10 +500,10 @@ namespace UniGetUI.Interface
             BundlesPage?.OpenFromFile(param);
         }
 
-        internal void LoadBundleFromString(string payload, BundleFormatType format, string source)
+        internal void LoadBundleFromString(string payload, BundleFormatType format, string source, int loadingId)
         {
             NavigateTo(PageType.Bundles);
-            BundlesPage?.OpenFromString(payload, format, source);
+            BundlesPage?.OpenFromString(payload, format, source, loadingId);
         }
 
         private void ClearAllFinished_OnClick(object sender, RoutedEventArgs e)

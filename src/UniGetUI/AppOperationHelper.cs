@@ -53,16 +53,16 @@ public partial class MainApp
         public static async Task<AbstractOperation?> AskLocationAndDownload(IPackage? package, TEL_InstallReferral referral)
         {
             if (package is null) return null;
+            int loadingId = DialogHelper.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
             try
             {
-                DialogHelper.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
 
                 var details = package.Details;
                 await details.Load();
 
                 if (details.InstallerUrl is null)
                 {
-                    DialogHelper.HideLoadingDialog();
+                    DialogHelper.HideLoadingDialog(loadingId);
                     var dialog = new ContentDialog { Title = CoreTools.Translate("Download failed"),
                         Content = CoreTools.Translate("No applicable installer was found for the package {0}", package.Name),
                         PrimaryButtonText = CoreTools.Translate("Ok"),
@@ -111,7 +111,7 @@ public partial class MainApp
 
                 StorageFile file = await savePicker.PickSaveFileAsync();
 
-                DialogHelper.HideLoadingDialog();
+                DialogHelper.HideLoadingDialog(loadingId);
                 if (file is not null)
                 {
                     var op = new DownloadOperation(package, file.Path);
@@ -128,7 +128,7 @@ public partial class MainApp
             {
                 Logger.Error($"An error occurred while downloading the installer for the package {package.Id}");
                 Logger.Error(ex);
-                DialogHelper.HideLoadingDialog();
+                DialogHelper.HideLoadingDialog(loadingId);
                 return null;
             }
         }
@@ -221,14 +221,14 @@ public partial class MainApp
             }
         }
 
-        public static async void UpdateAll()
+        public static async Task UpdateAll()
         {
             foreach (IPackage package in PEInterface.UpgradablePackagesLoader.Packages)
                 if (package.Tag is not PackageTag.BeingProcessed and not PackageTag.OnQueue)
                     await Update(package);
         }
 
-        public static async void UpdateAllForManager(string managerName)
+        public static async Task UpdateAllForManager(string managerName)
         {
             foreach (IPackage package in PEInterface.UpgradablePackagesLoader.Packages)
             {
@@ -238,14 +238,14 @@ public partial class MainApp
             }
         }
 
-        public static async void UpdateForId(string packageId)
+        public static async Task UpdateForId(string packageId)
         {
             foreach (IPackage package in PEInterface.UpgradablePackagesLoader.Packages)
             {
                 if (package.Id == packageId)
                 {
-                    await Update(package);
                     Logger.Info($"[WIDGETS] Updating package with id {packageId}");
+                    await Update(package);
                     return;
                 }
             }
@@ -280,20 +280,20 @@ public partial class MainApp
          *
          */
 
-        public static async void ConfirmAndUninstall(IReadOnlyList<IPackage> packages, bool? elevated = null, bool? interactive = null, bool? remove_data = null)
+        public static async Task ConfirmAndUninstall(IReadOnlyList<IPackage> packages, bool? elevated = null, bool? interactive = null, bool? remove_data = null)
         {
             if (!await DialogHelper.ConfirmUninstallation(packages))
                 return;
 
-            Uninstall(packages, elevated, interactive, remove_data);
+            await Uninstall(packages, elevated, interactive, remove_data);
         }
 
-        public static async void ConfirmAndUninstall(IPackage? package, bool? elevated = null, bool? interactive = null, bool? remove_data = null)
+        public static async Task ConfirmAndUninstall(IPackage? package, bool? elevated = null, bool? interactive = null, bool? remove_data = null)
         {
             if (package is null) return;
             if (!await DialogHelper.ConfirmUninstallation(package)) return;
 
-            _ = Uninstall(package, elevated, interactive, remove_data);
+            await Uninstall(package, elevated, interactive, remove_data);
         }
 
         public static async Task<AbstractOperation?> Uninstall(IPackage? package, bool? elevated = null, bool? interactive = null, bool? remove_data = null, bool ignoreParallel = false, AbstractOperation? req = null)
@@ -309,11 +309,11 @@ public partial class MainApp
             return operation;
         }
 
-        public static void Uninstall(IReadOnlyList<IPackage> packages, bool? elevated = null, bool? interactive = null, bool? remove_data = null)
+        public static async Task Uninstall(IReadOnlyList<IPackage> packages, bool? elevated = null, bool? interactive = null, bool? remove_data = null)
         {
             foreach (var package in packages)
             {
-                _ = Uninstall(package, elevated, interactive, remove_data);
+                await Uninstall(package, elevated, interactive, remove_data);
             }
         }
     }

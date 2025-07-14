@@ -365,10 +365,9 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// Refreshes the Package Manager sources/indexes
         /// Each manager MUST implement this method.
         /// </summary>
-        public virtual async void RefreshPackageIndexes()
+        public virtual void RefreshPackageIndexes()
         {
             Logger.Debug($"Manager {Name} has not implemented RefreshPackageIndexes");
-            await Task.CompletedTask;
         }
 
         public virtual void AttemptFastRepair()
