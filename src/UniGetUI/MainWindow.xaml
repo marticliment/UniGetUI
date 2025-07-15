@@ -49,6 +49,7 @@
                     x:Name="GlobalSearchBox"
                     Width="400"
                     Height="32"
+                    BorderBrush="{ThemeResource ButtonBorderBrush}"
                     HorizontalAlignment="Stretch"
                     x:FieldModifier="public"
                     QueryIcon="Find" />
