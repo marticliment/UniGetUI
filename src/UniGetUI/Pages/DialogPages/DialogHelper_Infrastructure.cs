@@ -153,7 +153,12 @@ public static partial class DialogHelper
                         TextWrapping = TextWrapping.Wrap,
                         Text = data.Text
                     },
-                    new ProgressBar { IsIndeterminate = true, HorizontalAlignment = HorizontalAlignment.Stretch }
+                    new ProgressRing()
+                    {
+                        IsIndeterminate = true,
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        VerticalAlignment = VerticalAlignment.Center,
+                    }
                 }
             };
             _ = ShowDialogAsync(_currentLoadingDialog, HighPriority: true);
