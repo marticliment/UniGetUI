@@ -126,68 +126,86 @@ namespace UniGetUI
 
         private void RegisterErrorHandling()
         {
-            UnhandledException += (_, e) =>
+            try
             {
-                if (Debugger.IsAttached) Debugger.Break();
-                string message = $"Unhandled Exception raised: {e.Message}";
-                string stackTrace = $"Stack Trace: \n{e.Exception.StackTrace}";
-                Logger.Error(" -");
-                Logger.Error(" -");
-                Logger.Error("  ⚠️⚠️⚠️ START OF UNHANDLED ERROR TRACE ⚠️⚠️⚠️");
-                Logger.Error(message);
-                Logger.Error(stackTrace);
-                Logger.Error("  ⚠️⚠️⚠️  END OF UNHANDLED ERROR TRACE  ⚠️⚠️⚠️");
-                Logger.Error(" -");
-                Logger.Error(" -");
-                if (Environment.GetCommandLineArgs().Contains("--report-all-errors") || RaiseExceptionAsFatal || MainWindow is null)
+                UnhandledException += (_, e) =>
                 {
-                    CrashHandler.ReportFatalException(e.Exception);
-                }
-                else
-                {
-                    MainWindow.ErrorBanner.Title = CoreTools.Translate("Something went wrong");
-                    MainWindow.ErrorBanner.Message = CoreTools.Translate("An interal error occurred. Please view the log for further details.");
-                    MainWindow.ErrorBanner.IsOpen = true;
-                    Button button = new() { Content = CoreTools.Translate("WingetUI Log"), };
-                    button.Click += (sender, args) => MainWindow.NavigationPage.UniGetUILogs_Click(sender, args);
-                    MainWindow.ErrorBanner.ActionButton = button;
-                    e.Handled = true;
-                }
-            };
-
-            TaskScheduler.UnobservedTaskException += (sender, args) =>
-            {
-                Logger.Error($"An unhandled exception occurred in a Task (sender: {sender?.GetType().ToString() ?? "null"})");
-                Exception? e = args.Exception.InnerException;
-                Logger.Error(args.Exception);
-                while (e is not null)
-                {
-                    Logger.Error("------------------------------");
-                    Logger.Error(e);
-                    e = e.InnerException;
-                }
-                if (Debugger.IsAttached) Debugger.Break();
-
-                Dispatcher.TryEnqueue(() =>
-                {
-                    try
+                    if (Debugger.IsAttached) Debugger.Break();
+                    string message = $"Unhandled Exception raised: {e.Message}";
+                    string stackTrace = $"Stack Trace: \n{e.Exception.StackTrace}";
+                    Logger.Error(" -");
+                    Logger.Error(" -");
+                    Logger.Error("  ⚠️⚠️⚠️ START OF UNHANDLED ERROR TRACE ⚠️⚠️⚠️");
+                    Logger.Error(message);
+                    Logger.Error(stackTrace);
+                    Logger.Error("  ⚠️⚠️⚠️  END OF UNHANDLED ERROR TRACE  ⚠️⚠️⚠️");
+                    Logger.Error(" -");
+                    Logger.Error(" -");
+                    if (Environment.GetCommandLineArgs().Contains("--report-all-errors") || RaiseExceptionAsFatal || MainWindow is null)
+                    {
+                        CrashHandler.ReportFatalException(e.Exception);
+                    }
+                    else
                     {
                         MainWindow.ErrorBanner.Title = CoreTools.Translate("Something went wrong");
                         MainWindow.ErrorBanner.Message =
                             CoreTools.Translate("An interal error occurred. Please view the log for further details.");
                         MainWindow.ErrorBanner.IsOpen = true;
                         Button button = new() { Content = CoreTools.Translate("WingetUI Log"), };
-                        button.Click += (s, a) => MainWindow.NavigationPage.UniGetUILogs_Click(s, a);
+                        button.Click += (sender, args) => MainWindow.NavigationPage.UniGetUILogs_Click(sender, args);
                         MainWindow.ErrorBanner.ActionButton = button;
+                        e.Handled = true;
                     }
-                    catch (Exception ex)
-                    {
-                        Logger.Error(ex);
-                    }
-                });
+                };
+            }
+            catch (Exception ex)
+            {
+                if(Debugger.IsAttached) Debugger.Break();
+                Logger.Error(ex);
+            }
 
-                args.SetObserved();
-            };
+            try
+            {
+                TaskScheduler.UnobservedTaskException += (sender, args) =>
+                {
+                    Logger.Error($"An unhandled exception occurred in a Task (sender: {sender?.GetType().ToString() ?? "null"})");
+                    Exception? e = args.Exception.InnerException;
+                    Logger.Error(args.Exception);
+                    while (e is not null)
+                    {
+                        Logger.Error("------------------------------");
+                        Logger.Error(e);
+                        e = e.InnerException;
+                    }
+
+                    if (Debugger.IsAttached) Debugger.Break();
+
+                    Dispatcher.TryEnqueue(() =>
+                    {
+                        try
+                        {
+                            MainWindow.ErrorBanner.Title = CoreTools.Translate("Something went wrong");
+                            MainWindow.ErrorBanner.Message = CoreTools.Translate(
+                                    "An interal error occurred. Please view the log for further details.");
+                            MainWindow.ErrorBanner.IsOpen = true;
+                            Button button = new() { Content = CoreTools.Translate("WingetUI Log"), };
+                            button.Click += (s, a) => MainWindow.NavigationPage.UniGetUILogs_Click(s, a);
+                            MainWindow.ErrorBanner.ActionButton = button;
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.Error(ex);
+                        }
+                    });
+
+                    args.SetObserved();
+                };
+            }
+            catch (Exception ex)
+            {
+                if (Debugger.IsAttached) Debugger.Break();
+                Logger.Error(ex);
+            }
         }
 
         private static void SetUpWebViewUserDataFolder()
