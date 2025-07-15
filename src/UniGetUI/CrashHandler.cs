@@ -1,4 +1,6 @@
 using System.Diagnostics;
+using System.Text;
+using Microsoft.UI.Xaml.Markup;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Tools;
 
@@ -62,6 +64,25 @@ public static class CrashHandler
             // ignored
         }
 
+        string GetExceptionData(Exception e)
+        {
+            try
+            {
+                StringBuilder b = new();
+                foreach (var key in e.Data.Keys)
+                {
+                    b.AppendLine($"{key}: {e.Data[key]}");
+                }
+
+                string r = b.ToString();
+                return r.Any()? r: "No extra data was provided";
+            }
+            catch (Exception ex)
+            {
+                return $"Failed to get exception Data with exception {ex.Message}";
+            }
+        }
+
         string Error_String = $$"""
             Environment details:
                     Windows version: {{Environment.OSVersion.VersionString}}
@@ -74,6 +95,9 @@ public static class CrashHandler
             Exception details:
                 Crash HResult: 0x{{(uint)e.HResult:X}} ({{(uint)e.HResult}}, {{e.HResult}})
                 Crash Message: {{e.Message}}
+
+                Crash Data:
+                    {{GetExceptionData(e).Replace("\n", "\n        ")}}
 
                 Crash Trace:
                     {{e.StackTrace?.Replace("\n", "\n        ")}}
@@ -91,6 +115,9 @@ public static class CrashHandler
                     Inner exception details (depth level: {{i}})
                         Crash HResult: 0x{{(uint)e.HResult:X}} ({{(uint)e.HResult}}, {{e.HResult}})
                         Crash Message: {{e.Message}}
+
+                        Crash Data:
+                            {{GetExceptionData(e).Replace("\n", "\n        ")}}
 
                         Crash Traceback:
                             {{e.StackTrace?.Replace("\n", "\n        ")}}
