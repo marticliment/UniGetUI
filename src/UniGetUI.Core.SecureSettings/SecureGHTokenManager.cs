@@ -16,23 +16,21 @@ namespace UniGetUI.Core.SecureSettings
                 return;
             }
 
-            var vault = new PasswordVault();
-            var newCredential = new PasswordCredential(GitHubResourceName, UserName, token);
-
             try
             {
+                var vault = new PasswordVault();
+                var newCredential = new PasswordCredential(GitHubResourceName, UserName, token);
                 if (GetToken() is not null)
-                {
-                    DeleteToken();
-                }
-            }
-            catch
-            {
-                // ignore
-            }
+                    DeleteToken(); // Delete any old token(s)
 
-            vault.Add(newCredential);
-            Logger.Info("GitHub access token stored/updated securely.");
+                vault.Add(newCredential);
+                Logger.Info("GitHub access token stored/updated securely.");
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("An error occurred while attempting to delete the currently stored GitHub Token");
+                Logger.Error(ex);
+            }
         }
 
         public static string? GetToken()
@@ -54,19 +52,20 @@ namespace UniGetUI.Core.SecureSettings
 
         public static void DeleteToken()
         {
-            var vault = new PasswordVault();
-            var credentials = vault.FindAllByResource(GitHubResourceName);
-            if (credentials.Count > 0)
+            try
             {
+                var vault = new PasswordVault();
+                var credentials = vault.FindAllByResource(GitHubResourceName) ?? [];
                 foreach (var cred in credentials)
                 {
                     vault.Remove(cred);
+                    Logger.Info("GitHub access token deleted.");
                 }
-                Logger.Info("GitHub access token deleted.");
             }
-            else
+            catch (Exception ex)
             {
-                Logger.Info("No GitHub access token found to delete.");
+                Logger.Error("An error occurred while attempting to delete the currently stored GitHub Token");
+                Logger.Error(ex);
             }
         }
     }

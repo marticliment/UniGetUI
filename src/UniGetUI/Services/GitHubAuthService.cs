@@ -50,8 +50,7 @@ namespace UniGetUI.Services
 
         public GitHubClient? CreateGitHubClient()
         {
-            var token = GetAccessToken();
-
+            var token = SecureGHTokenManager.GetToken();
             if (string.IsNullOrEmpty(token))
             {
                 Logger.Error("GitHub access token is not available. Cannot perform Gist operation.");
@@ -139,7 +138,7 @@ namespace UniGetUI.Services
             {
                 try {
                     httpListener?.Stop();
-                } catch {  /*ignore */ }
+                } catch { /* ignore */ }
                 httpListener = null;
             }
         }
@@ -212,33 +211,13 @@ namespace UniGetUI.Services
 
         private static void ClearAuthenticatedUserData()
         {
-            try
-            {
-                Settings.SetValue(Settings.K.GitHubUserLogin, ""); // Clear stored username
-                SecureGHTokenManager.DeleteToken();
-            }
-            catch (Exception ex)
-            {
-                Logger.Warn("Authenticated user data could not be cleared!");
-                Logger.Warn(ex);
-            }
-        }
-
-        public string? GetAccessToken()
-        {
-            return SecureGHTokenManager.GetToken();
-        }
-
-        public async Task<string?> GetAuthenticatedUserLoginAsync()
-        {
-            string? storedLogin = Settings.GetValue(Settings.K.GitHubUserLogin);
-            await Task.CompletedTask;
-            return string.IsNullOrEmpty(storedLogin) ? null : storedLogin;
+            Settings.SetValue(Settings.K.GitHubUserLogin, ""); // Clear stored username
+            SecureGHTokenManager.DeleteToken();
         }
 
         public bool IsAuthenticated()
         {
-            var token = GetAccessToken();
+            var token = SecureGHTokenManager.GetToken();
             return !string.IsNullOrEmpty(token);
         }
     }
