@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11882,
-        "done": 5381,
-        "packages_with_icon": 5381,
-        "packages_with_screenshot": 785,
-        "total_screenshots": 2438
+        "total": 11887,
+        "done": 5386,
+        "packages_with_icon": 5386,
+        "packages_with_screenshot": 792,
+        "total_screenshots": 2454
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -13276,8 +13276,16 @@
             "images": []
         },
         "emclient": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/xdQ8sMDS/emclient.png",
+            "images": [
+                "https://i.postimg.cc/9M6Q77BS/image.png",
+                "https://i.postimg.cc/nL1zNrp9/image.png",
+                "https://i.postimg.cc/nhbhzBLQ/image.png",
+                "https://i.postimg.cc/sfL2ktdm/image.png",
+                "https://i.postimg.cc/rmFmTTwn/image.png",
+                "https://i.postimg.cc/tTSgCc1X/image.png",
+                "https://i.postimg.cc/d3gtGTmp/image.png"
+            ]
         },
         "emdb": {
             "icon": "https://community.chocolatey.org/content/packageimages/EMDB.5.17.png",
@@ -39810,16 +39818,25 @@
             ]
         },
         "staruml": {
-            "icon": "https://community.chocolatey.org/content/packageimages/StarUML.5.0.2.png",
-            "images": []
+            "icon": "https://i.postimg.cc/DyQGRZNr/image.png",
+            "images": [
+                "https://i.postimg.cc/ZKmBPmqC/image.png",
+                "https://i.postimg.cc/FHWYQJVL/image.png"
+            ]
         },
         "staruml2": {
-            "icon": "https://community.chocolatey.org/content/packageimages/staruml2.2.8.1.png",
-            "images": []
+            "icon": "https://i.postimg.cc/DyQGRZNr/image.png",
+            "images": [
+                "https://i.postimg.cc/ZKmBPmqC/image.png",
+                "https://i.postimg.cc/FHWYQJVL/image.png"
+            ]
         },
         "staruml3": {
-            "icon": "https://community.chocolatey.org/content/packageimages/staruml3.4.0.1.png",
-            "images": []
+            "icon": "https://i.postimg.cc/DyQGRZNr/image.png",
+            "images": [
+                "https://i.postimg.cc/ZKmBPmqC/image.png",
+                "https://i.postimg.cc/FHWYQJVL/image.png"
+            ]
         },
         "stash": {
             "icon": "",
@@ -50664,6 +50681,32 @@
                 "https://i.postimg.cc/JnRQ1tDC/image.png",
                 "https://i.postimg.cc/wTnc1wyV/image.png",
                 "https://i.postimg.cc/SKfWtqZT/image.png"
+            ]
+        },
+        "profiler": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/HsKg7VyQ/image.png"
+            ]
+        },
+        "i1profiler": {
+            "icon": "https://i.postimg.cc/D01LJF1r/i1-Profiler.png",
+            "images": []
+        },
+        "zepra": {
+            "icon": "https://i.postimg.cc/GtLSzMzs/zepra.png",
+            "images": []
+        },
+        "hexworkshop": {
+            "icon": "https://i.postimg.cc/fbdFbSJk/hexworkshop.png",
+            "images": [
+                "https://i.postimg.cc/sXhZqy6k/image.png"
+            ]
+        },
+        "gerbview": {
+            "icon": "https://i.postimg.cc/76xVy5zF/gerbview.png",
+            "images": [
+                "https://i.postimg.cc/52svFsQR/gerbview.png"
             ]
         }
     }
