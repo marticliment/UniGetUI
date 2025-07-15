@@ -182,6 +182,8 @@ namespace UniGetUI
 
                     Dispatcher.TryEnqueue(() =>
                     {
+                        if (MainWindow is null)
+                            return; // MainWindow could have not been loaded yet
                         try
                         {
                             MainWindow.ErrorBanner.Title = CoreTools.Translate("Something went wrong");
@@ -189,7 +191,10 @@ namespace UniGetUI
                                     "An interal error occurred. Please view the log for further details.");
                             MainWindow.ErrorBanner.IsOpen = true;
                             Button button = new() { Content = CoreTools.Translate("WingetUI Log"), };
-                            button.Click += (s, a) => MainWindow.NavigationPage.UniGetUILogs_Click(s, a);
+                            if (MainWindow.NavigationPage is not null)
+                            {   // MainWindow.NavigationPage could have not been loaded yet
+                                button.Click += (s, a) => MainWindow.NavigationPage.UniGetUILogs_Click(s, a);
+                            }
                             MainWindow.ErrorBanner.ActionButton = button;
                         }
                         catch (Exception ex)
