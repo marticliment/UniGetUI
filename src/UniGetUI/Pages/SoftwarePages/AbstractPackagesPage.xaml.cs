@@ -956,7 +956,7 @@ namespace UniGetUI.Interface
             if (package is null)
                 return;
 
-            MainApp.Instance.MainWindow.SharePackage(package);
+            DialogHelper.SharePackage(package);
         }
 
         protected async Task ShowInstallationOptionsForPackage(IPackage? package)

@@ -69,7 +69,7 @@ public partial class MainApp
                         DefaultButton = ContentDialogButton.Primary,
                         XamlRoot = Instance.MainWindow.Content.XamlRoot,
                     };
-                    await Instance.MainWindow.ShowDialogAsync(dialog);
+                    await DialogHelper.ShowDialogAsync(dialog);
                     return null;
                 }
 

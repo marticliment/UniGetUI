@@ -22,107 +22,6 @@ namespace UniGetUI.Pages.DialogPages;
 
 public static partial class DialogHelper
 {
-    internal static class DialogFactory
-    {
-        public static ContentDialog Create()
-        {
-            var dialog = new ContentDialog()
-            {
-                XamlRoot = Window.MainContentGrid.XamlRoot,
-                Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
-            };
-            return dialog;
-        }
-
-        public static ContentDialog Create_AsWindow(bool hasTitle, bool hasButtons = false)
-        {
-            var dialog = Create();
-            dialog.Resources["ContentDialogMaxWidth"] = 8192;
-            dialog.Resources["ContentDialogMaxHeight"] = 4096;
-            dialog.SizeChanged += (_, _) =>
-            {
-                if (dialog.Content is FrameworkElement page)
-                {
-                    double maxW, maxH;
-                    int tresholdW = 1300, tresholdH = 1300;
-                    if (Window.NavigationPage.ActualWidth < tresholdW) maxW = 100;
-                    else if (Window.NavigationPage.ActualWidth >= tresholdW + 200) maxW = 300;
-                    else maxW = Window.NavigationPage.ActualWidth - (tresholdW - 100);
-
-                    if (Window.NavigationPage.ActualHeight < tresholdH) maxH = (hasTitle? 104: 64) + (hasButtons? 80: 0);
-                    else if (Window.NavigationPage.ActualHeight >= tresholdH + 200) maxH = (hasTitle ? 320 : 280) + (hasButtons ? 80 : 0);
-                    else maxH = Window.NavigationPage.ActualHeight - (tresholdH - (hasTitle ? 120 : 80)) + (hasButtons ? 80 : 0);
-
-                    page.Width = Math.Min(Math.Abs(Window.NavigationPage.ActualWidth - maxW), 8192);
-                    page.Height = Math.Min(Math.Abs(Window.NavigationPage.ActualHeight - maxH), 4096);
-                }
-            };
-            return dialog;
-        }
-    }
-
-    public static MainWindow Window { get; set; } = null!;
-
-
-    public struct LoadingDialog
-    {
-        public readonly int Id;
-        public readonly string Title;
-        public readonly string Text;
-
-        public LoadingDialog(string title, string text)
-        {
-            Title = title;
-            Text = text;
-            Id = new Random().Next();
-        }
-    }
-    private static List<LoadingDialog> _loadingDialogQueue = new();
-    private static int _currentLoadingDialogId = 0;
-
-    public static int ShowLoadingDialog(string text) => ShowLoadingDialog(text, "");
-    public static int ShowLoadingDialog(string title, string description)
-    {
-        var dialogData = new LoadingDialog(title, description);
-        _loadingDialogQueue.Add(dialogData);
-        _showNextLoadingDialogIfPossible();
-        return dialogData.Id;
-    }
-
-    public static void _showNextLoadingDialogIfPossible()
-    {
-        if (!_loadingDialogQueue.Any()) return;
-        var data = _loadingDialogQueue.First();
-
-        if (Window.LoadingDialogCount == 0 && Window.DialogQueue.Count == 0)
-        {
-            _currentLoadingDialogId = data.Id;
-            Window.LoadingSthDalog.Title = data.Title;
-            Window.LoadingSthDalogText.Text = data.Text;
-            Window.LoadingSthDalog.XamlRoot = Window.NavigationPage.XamlRoot;
-            _ = Window.ShowDialogAsync(Window.LoadingSthDalog, HighPriority: true);
-        }
-    }
-
-    public static void HideLoadingDialog(int id)
-    {
-        _loadingDialogQueue.RemoveAll(d => d.Id == id);
-        if (_currentLoadingDialogId == id)
-        {
-            Window.LoadingSthDalog.Hide();
-            _currentLoadingDialogId = 0;
-        }
-
-        _showNextLoadingDialogIfPossible();
-    }
-
-    public static void HideAllLoadingDialogs()
-    {
-        _loadingDialogQueue.Clear();
-        Window.LoadingSthDalog.Hide();
-        _currentLoadingDialogId = 0;
-    }
-
     public static async Task ShowMissingDependency(string dep_name, string exe_name, string exe_args,
         string fancy_command, int current, int total)
     {
@@ -284,7 +183,7 @@ public static partial class DialogHelper
             block_closing = false;
         };
         dialog.Content = p;
-        await Window.ShowDialogAsync(dialog);
+        await ShowDialogAsync(dialog);
     }
 
     public static async Task ManageIgnoredUpdates()
@@ -296,7 +195,7 @@ public static partial class DialogHelper
         IgnoredUpdatesManager IgnoredUpdatesPage = new();
         dialog.Content = IgnoredUpdatesPage;
         IgnoredUpdatesPage.Close += (_, _) => dialog.Hide();
-        await Window.ShowDialogAsync(dialog);
+        await ShowDialogAsync(dialog);
     }
 
     public static async Task ManageDesktopShortcuts(IReadOnlyList<string>? NewShortucts  = null)
@@ -310,7 +209,7 @@ public static partial class DialogHelper
         dialog.Title = CoreTools.Translate("Automatic desktop shortcut remover");
         dialog.Content = DesktopShortcutsPage;
 
-        await Window.ShowDialogAsync(dialog);
+        await ShowDialogAsync(dialog);
     }
 
     public static async Task HandleNewDesktopShortcuts()
@@ -387,7 +286,7 @@ public static partial class DialogHelper
         AdminDialog.Content = CoreTools.Translate(
             "WingetUI has been ran as administrator, which is not recommended. When running WingetUI as administrator, EVERY operation launched from WingetUI will have administrator privileges. You can still use the program, but we highly recommend not running WingetUI with administrator privileges.");
 
-        await Window.ShowDialogAsync(AdminDialog);
+        await ShowDialogAsync(AdminDialog);
     }
 
     public static async Task ShowAboutUniGetUI()
@@ -397,7 +296,7 @@ public static partial class DialogHelper
         AboutDialog.Content = AboutPage;
         AboutPage.Close += (_, _) => AboutDialog.Hide();
 
-        await Window.ShowDialogAsync(AboutDialog);
+        await ShowDialogAsync(AboutDialog);
     }
 
     public static async Task ShowReleaseNotes()
@@ -408,7 +307,7 @@ public static partial class DialogHelper
         ReleaseNotes notes = new();
         notes.Close += (_, _) => NotesDialog.Hide();
         NotesDialog.Content = notes;
-        await Window.ShowDialogAsync(NotesDialog);
+        await ShowDialogAsync(NotesDialog);
         notes.Dispose();
     }
 
@@ -461,7 +360,7 @@ public static partial class DialogHelper
             c.DefaultButton = ContentDialogButton.Secondary;
 
             // Restart UniGetUI or reload packages depending on the user's choice
-            if (await Window.ShowDialogAsync(c) == ContentDialogResult.Secondary)
+            if (await ShowDialogAsync(c) == ContentDialogResult.Secondary)
             {
                 MainApp.Instance.KillAndRestart();
             }
@@ -487,7 +386,7 @@ public static partial class DialogHelper
                             "NOTE: This troubleshooter can be disabled from UniGetUI Settings, on the WinGet section");
             c.PrimaryButtonText = CoreTools.Translate("Close");
             c.DefaultButton = ContentDialogButton.None;
-            await Window.ShowDialogAsync(c);
+            await ShowDialogAsync(c);
         }
 
     }
@@ -537,7 +436,7 @@ public static partial class DialogHelper
             if (e.Result == ContentDialogResult.None) e.Cancel = true;
         };
 
-        var res = await Window.ShowDialogAsync(dialog);
+        var res = await ShowDialogAsync(dialog);
 
         if (res is ContentDialogResult.Primary)
         {
@@ -609,7 +508,7 @@ public static partial class DialogHelper
         dialog.PrimaryButtonText = CoreTools.Translate("Yes");
         dialog.CloseButtonText = CoreTools.Translate("No");
         dialog.DefaultButton = ContentDialogButton.Close;
-        if (await Window.ShowDialogAsync(dialog) is ContentDialogResult.Primary)
+        if (await ShowDialogAsync(dialog) is ContentDialogResult.Primary)
         {
             Settings.Set(Settings.K.RemoveAllDesktopShortcuts, true);
         }
@@ -623,7 +522,7 @@ public static partial class DialogHelper
         dialog.Content = CoreTools.Translate("No new shortcuts were found during the scan.");
         dialog.PrimaryButtonText = CoreTools.Translate("Ok");
         dialog.DefaultButton = ContentDialogButton.Primary;
-        await Window.ShowDialogAsync(dialog);
+        await ShowDialogAsync(dialog);
     }*/
 
     public static async Task HowToAddPackagesToBundle()
@@ -639,7 +538,7 @@ public static partial class DialogHelper
         dialog.SecondaryButtonText = CoreTools.Translate("Installed packages");
         dialog.CloseButtonText = CoreTools.Translate("Close");
         dialog.DefaultButton = ContentDialogButton.None;
-        var result = await Window.ShowDialogAsync(dialog);
+        var result = await ShowDialogAsync(dialog);
         if(result is ContentDialogResult.Primary) Window.NavigationPage.NavigateTo(PageType.Discover);
         else if(result is ContentDialogResult.Secondary) Window.NavigationPage.NavigateTo(PageType.Installed);
     }
@@ -683,9 +582,25 @@ public static partial class DialogHelper
             }
         };
 
-        if(await Window.ShowDialogAsync(dialog) is ContentDialogResult.Primary)
+        if(await ShowDialogAsync(dialog) is ContentDialogResult.Primary)
             return buttons.SelectedItem.ToString() ?? null;
 
         return null;
+    }
+
+
+    /// <summary>
+    /// Asks the user whether to quit or not (there are running operations)
+    /// </summary>
+    /// <returns>True if the user wants to quit, false otherwhise</returns>
+    public static async Task<bool> AskContinueClosing_RunningOps()
+    {
+        var d = DialogFactory.Create();
+        d.Title = CoreTools.Translate("Operation in progress");
+        d.Content = CoreTools.Translate("There are ongoing operations. Quitting WingetUI may cause them to fail. Do you want to continue?");
+        d.PrimaryButtonText = CoreTools.Translate("Quit");
+        d.SecondaryButtonText = CoreTools.Translate("Cancel");
+        d.DefaultButton = ContentDialogButton.Secondary;
+        return await ShowDialogAsync(d) is ContentDialogResult.Primary;
     }
 }

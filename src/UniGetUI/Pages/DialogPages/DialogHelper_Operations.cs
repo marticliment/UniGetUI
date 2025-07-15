@@ -16,7 +16,7 @@ public static partial class DialogHelper
         dialog.Content = contents;
         contents.Close += (_, _) => dialog.Hide();
 
-        await Window.ShowDialogAsync(dialog);
+        await ShowDialogAsync(dialog);
     }
 
     public static async Task ShowLiveLogDialog(AbstractOperation operation)
@@ -28,7 +28,7 @@ public static partial class DialogHelper
         OutputDialog.Content = viewer;
 
         operation.LogLineAdded += viewer.AddLine_ThreadSafe;
-        await MainApp.Instance.MainWindow.ShowDialogAsync(OutputDialog);
+        await DialogHelper.ShowDialogAsync(OutputDialog);
         operation.LogLineAdded -= viewer.AddLine_ThreadSafe;
     }
 }

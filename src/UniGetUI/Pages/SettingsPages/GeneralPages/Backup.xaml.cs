@@ -250,7 +250,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 errorDialog.Content = CoreTools.Translate("An error occurred while loading a backup: ") + ex.Message;
                 errorDialog.PrimaryButtonText = CoreTools.Translate("OK");
                 errorDialog.DefaultButton = ContentDialogButton.Primary;
-                await DialogHelper.Window.ShowDialogAsync(errorDialog);
+                await DialogHelper.ShowDialogAsync(errorDialog);
             }
         }
 
@@ -282,7 +282,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 dialog.Content = CoreTools.Translate("Could not back up packages to GitHub Gist: ") + ex.Message;
                 dialog.PrimaryButtonText = CoreTools.Translate("OK");
                 dialog.DefaultButton = ContentDialogButton.Primary;
-                await DialogHelper.Window.ShowDialogAsync(dialog);
+                await DialogHelper.ShowDialogAsync(dialog);
             }
         }
 

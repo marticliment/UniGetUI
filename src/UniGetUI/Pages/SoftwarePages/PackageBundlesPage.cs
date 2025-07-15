@@ -284,7 +284,7 @@ namespace UniGetUI.Interface.SoftwarePages
             SharePackage.Click += (_, _) =>
             {
                 IPackage? package = SelectedItem;
-                if (package is not null) MainApp.Instance.MainWindow.SharePackage(package);
+                if (package is not null) DialogHelper.SharePackage(package);
             };
 
             AddPackagesToBundle.Click += (_, _) => _ = DialogHelper.HowToAddPackagesToBundle();
@@ -316,7 +316,7 @@ namespace UniGetUI.Interface.SoftwarePages
             dialog.SecondaryButtonText = CoreTools.Translate("No");
             dialog.XamlRoot = MainApp.Instance.MainWindow.Content.XamlRoot;
 
-            ContentDialogResult result = await MainApp.Instance.MainWindow.ShowDialogAsync(dialog);
+            ContentDialogResult result = await DialogHelper.ShowDialogAsync(dialog);
             if (result == ContentDialogResult.Primary)
             {
                 Loader.ClearPackages();
@@ -408,7 +408,7 @@ namespace UniGetUI.Interface.SoftwarePages
         private void MenuShare_Invoked(object sender, RoutedEventArgs args)
         {
             if (SelectedItem is null) return;
-            MainApp.Instance.MainWindow.SharePackage(SelectedItem);
+            DialogHelper.SharePackage(SelectedItem);
         }
 
         private void MenuDetails_Invoked(object sender, RoutedEventArgs args)
@@ -496,7 +496,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 };
 
                 DialogHelper.HideLoadingDialog(loadingId);
-                await MainApp.Instance.MainWindow.ShowDialogAsync(warningDialog);
+                await DialogHelper.ShowDialogAsync(warningDialog);
             }
         }
 
@@ -567,7 +567,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 };
 
                 DialogHelper.HideAllLoadingDialogs();
-                await MainApp.Instance.MainWindow.ShowDialogAsync(warningDialog);
+                await DialogHelper.ShowDialogAsync(warningDialog);
             }
         }
 

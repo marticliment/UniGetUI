@@ -15,6 +15,7 @@ using UniGetUI.Interface.Enums;
 using UniGetUI.Interface.Telemetry;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.Core.Logging;
+using UniGetUI.Pages.DialogPages;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -504,7 +505,7 @@ namespace UniGetUI.Interface.Dialogs
 
         public void ShareButton_Click(object sender, RoutedEventArgs e)
         {
-            MainApp.Instance.MainWindow.SharePackage(Package);
+            DialogHelper.SharePackage(Package);
         }
 
         public void DownloadInstallerButton_Click(object sender, RoutedEventArgs e)

@@ -7,6 +7,7 @@ using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Operations;
+using UniGetUI.Pages.DialogPages;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -123,7 +124,7 @@ namespace UniGetUI.Interface.Widgets
                     d.SecondaryButtonText = CoreTools.Translate("Cancel");
                     d.DefaultButton = ContentDialogButton.Primary;
 
-                    if (await MainApp.Instance.MainWindow.ShowDialogAsync(d) == ContentDialogResult.Primary)
+                    if (await DialogHelper.ShowDialogAsync(d) == ContentDialogResult.Primary)
                     {
                         PackageOperations.AbstractOperation op;
                         if (CoreTools.Translate("Other") != SourcesCombo.SelectedValue.ToString())
@@ -144,7 +145,7 @@ namespace UniGetUI.Interface.Widgets
                         Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
                         Content = CoreTools.Translate("An error occurred when adding the source: ") + ex.Message
                     };
-                    _ = MainApp.Instance.MainWindow.ShowDialogAsync(d, HighPriority: true);
+                    _ = DialogHelper.ShowDialogAsync(d, HighPriority: true);
                     d.PrimaryButtonText = CoreTools.Translate("Close");
                     Logger.Error("An error occurred when adding the source");
                     Logger.Error(ex);

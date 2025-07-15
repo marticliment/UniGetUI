@@ -1,3 +1,5 @@
+using System.Web;
+using Windows.ApplicationModel.DataTransfer;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -80,7 +82,7 @@ public static partial class DialogHelper
 
         OptionsPage.Close += (_, _) => { OptionsDialog.Hide(); };
 
-        ContentDialogResult result = await Window.ShowDialogAsync(OptionsDialog);
+        ContentDialogResult result = await ShowDialogAsync(OptionsDialog);
         return (await OptionsPage.GetUpdatedOptions(), result);
     }
 
@@ -92,7 +94,7 @@ public static partial class DialogHelper
         DetailsDialog.Content = DetailsPage;
         DetailsPage.Close += (_, _) => { DetailsDialog.Hide(); };
 
-        await Window.ShowDialogAsync(DetailsDialog);
+        await ShowDialogAsync(DetailsDialog);
     }
 
     public static async Task<bool> ConfirmUninstallation(IPackage package)
@@ -104,7 +106,7 @@ public static partial class DialogHelper
         dialog.DefaultButton = ContentDialogButton.Secondary;
         dialog.Content = CoreTools.Translate("Do you really want to uninstall {0}?", package.Name);
 
-        return await Window.ShowDialogAsync(dialog) is ContentDialogResult.Primary;
+        return await ShowDialogAsync(dialog) is ContentDialogResult.Primary;
     }
 
     public static async Task<bool> ConfirmUninstallation(IReadOnlyList<IPackage> packages)
@@ -146,7 +148,7 @@ public static partial class DialogHelper
 
         dialog.Content = p;
 
-        return await Window.ShowDialogAsync(dialog) is ContentDialogResult.Primary;
+        return await ShowDialogAsync(dialog) is ContentDialogResult.Primary;
     }
 
     public static void ShowSharedPackage_ThreadSafe(string id, string combinedSourceName)
@@ -197,7 +199,7 @@ public static partial class DialogHelper
                 XamlRoot = MainApp.Instance.MainWindow.Content.XamlRoot // Ensure the dialog is shown in the correct context
             };
 
-            await Window.ShowDialogAsync(warningDialog);
+            await ShowDialogAsync(warningDialog);
 
         }
     }
@@ -293,6 +295,50 @@ public static partial class DialogHelper
             Window.NavigationPage.OpenSettingsPage(typeof(Administrator));
         };
         dialog.SecondaryButtonText = CoreTools.Translate("Close");
-        await Window.ShowDialogAsync(dialog);
+        await ShowDialogAsync(dialog);
     }
+
+    public static void SharePackage(IPackage? package)
+        {
+            if (package is null)
+                return;
+
+            if (package.Source.IsVirtualManager || package is InvalidImportedPackage)
+            {
+                DialogHelper.ShowDismissableBalloon(
+                    CoreTools.Translate("Something went wrong"),
+                    CoreTools.Translate("\"{0}\" is a local package and can't be shared", package.Name)
+                );
+                return;
+            }
+
+            IntPtr hWnd = Window.GetWindowHandle();
+
+            NativeHelpers.IDataTransferManagerInterop interop =
+                DataTransferManager.As<NativeHelpers.IDataTransferManagerInterop>();
+
+            IntPtr result = interop.GetForWindow(hWnd, NativeHelpers._dtm_iid);
+            DataTransferManager dataTransferManager = WinRT.MarshalInterface
+                <DataTransferManager>.FromAbi(result);
+
+            dataTransferManager.DataRequested += (_, args) =>
+            {
+                DataRequest dataPackage = args.Request;
+                Uri ShareUrl = new("https://marticliment.com/unigetui/share?"
+                                   + "name=" + HttpUtility.UrlEncode(package.Name)
+                                   + "&id=" + HttpUtility.UrlEncode(package.Id)
+                                   + "&sourceName=" + HttpUtility.UrlEncode(package.Source.Name)
+                                   + "&managerName=" + HttpUtility.UrlEncode(package.Manager.DisplayName));
+
+                dataPackage.Data.SetWebLink(ShareUrl);
+                dataPackage.Data.Properties.Title = "Sharing " + package.Name;
+                dataPackage.Data.Properties.ApplicationName = "WingetUI";
+                dataPackage.Data.Properties.ContentSourceWebLink = ShareUrl;
+                dataPackage.Data.Properties.Description = "Share " + package.Name + " with your friends";
+                dataPackage.Data.Properties.PackageFamilyName = "WingetUI";
+            };
+
+            interop.ShowShareUIForWindow(hWnd);
+
+        }
 }
