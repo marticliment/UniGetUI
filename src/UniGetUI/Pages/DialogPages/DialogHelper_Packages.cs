@@ -1,5 +1,7 @@
 using System.Web;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.UI.Text;
+using ABI.Microsoft.UI.Text;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -299,46 +301,70 @@ public static partial class DialogHelper
     }
 
     public static void SharePackage(IPackage? package)
+    {
+        if (package is null)
+            return;
+
+        if (package.Source.IsVirtualManager || package is InvalidImportedPackage)
         {
-            if (package is null)
-                return;
-
-            if (package.Source.IsVirtualManager || package is InvalidImportedPackage)
-            {
-                DialogHelper.ShowDismissableBalloon(
-                    CoreTools.Translate("Something went wrong"),
-                    CoreTools.Translate("\"{0}\" is a local package and can't be shared", package.Name)
-                );
-                return;
-            }
-
-            IntPtr hWnd = Window.GetWindowHandle();
-
-            NativeHelpers.IDataTransferManagerInterop interop =
-                DataTransferManager.As<NativeHelpers.IDataTransferManagerInterop>();
-
-            IntPtr result = interop.GetForWindow(hWnd, NativeHelpers._dtm_iid);
-            DataTransferManager dataTransferManager = WinRT.MarshalInterface
-                <DataTransferManager>.FromAbi(result);
-
-            dataTransferManager.DataRequested += (_, args) =>
-            {
-                DataRequest dataPackage = args.Request;
-                Uri ShareUrl = new("https://marticliment.com/unigetui/share?"
-                                   + "name=" + HttpUtility.UrlEncode(package.Name)
-                                   + "&id=" + HttpUtility.UrlEncode(package.Id)
-                                   + "&sourceName=" + HttpUtility.UrlEncode(package.Source.Name)
-                                   + "&managerName=" + HttpUtility.UrlEncode(package.Manager.DisplayName));
-
-                dataPackage.Data.SetWebLink(ShareUrl);
-                dataPackage.Data.Properties.Title = "Sharing " + package.Name;
-                dataPackage.Data.Properties.ApplicationName = "WingetUI";
-                dataPackage.Data.Properties.ContentSourceWebLink = ShareUrl;
-                dataPackage.Data.Properties.Description = "Share " + package.Name + " with your friends";
-                dataPackage.Data.Properties.PackageFamilyName = "WingetUI";
-            };
-
-            interop.ShowShareUIForWindow(hWnd);
-
+            DialogHelper.ShowDismissableBalloon(
+                CoreTools.Translate("Something went wrong"),
+                CoreTools.Translate("\"{0}\" is a local package and can't be shared", package.Name)
+            );
+            return;
         }
+
+        IntPtr hWnd = Window.GetWindowHandle();
+
+        NativeHelpers.IDataTransferManagerInterop interop =
+            DataTransferManager.As<NativeHelpers.IDataTransferManagerInterop>();
+
+        IntPtr result = interop.GetForWindow(hWnd, NativeHelpers._dtm_iid);
+        DataTransferManager dataTransferManager = WinRT.MarshalInterface
+            <DataTransferManager>.FromAbi(result);
+
+        dataTransferManager.DataRequested += (_, args) =>
+        {
+            DataRequest dataPackage = args.Request;
+            Uri ShareUrl = new("https://marticliment.com/unigetui/share?"
+                               + "name=" + HttpUtility.UrlEncode(package.Name)
+                               + "&id=" + HttpUtility.UrlEncode(package.Id)
+                               + "&sourceName=" + HttpUtility.UrlEncode(package.Source.Name)
+                               + "&managerName=" + HttpUtility.UrlEncode(package.Manager.DisplayName));
+
+            dataPackage.Data.SetWebLink(ShareUrl);
+            dataPackage.Data.Properties.Title = "Sharing " + package.Name;
+            dataPackage.Data.Properties.ApplicationName = "WingetUI";
+            dataPackage.Data.Properties.ContentSourceWebLink = ShareUrl;
+            dataPackage.Data.Properties.Description = "Share " + package.Name + " with your friends";
+            dataPackage.Data.Properties.PackageFamilyName = "WingetUI";
+        };
+
+        interop.ShowShareUIForWindow(hWnd);
+    }
+
+    /// <summary>
+    /// Returns true if the user confirms to lose unsaved changes, and wants to proceed with the creation of a new bundle
+    /// </summary>
+    /// <returns></returns>
+    public static async Task<bool> AskLoseChangesAndCreateBundle()
+    {
+        RichTextBlock rtb = new();
+        var p = new Paragraph();
+        rtb.Blocks.Add(p);
+        p.Inlines.Add(new Run {Text = CoreTools.Translate("Are you sure you want to create a new package bundle? ")});
+        p.Inlines.Add(new LineBreak());
+        p.Inlines.Add(new Run {Text = CoreTools.Translate("Any unsaved changes will be lost"), FontWeight = new FontWeight(600)});
+
+        ContentDialog dialog = DialogFactory.Create();
+        dialog.Title = CoreTools.Translate("Warning!");
+        dialog.Content = rtb;
+        dialog.DefaultButton = ContentDialogButton.Secondary;
+        dialog.PrimaryButtonText = CoreTools.Translate("Yes");
+        dialog.SecondaryButtonText = CoreTools.Translate("No");
+
+        return await DialogHelper.ShowDialogAsync(dialog) is ContentDialogResult.Primary;
+    }
+
+
 }

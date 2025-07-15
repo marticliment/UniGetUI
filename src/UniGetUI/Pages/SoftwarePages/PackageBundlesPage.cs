@@ -288,37 +288,13 @@ namespace UniGetUI.Interface.SoftwarePages
             };
 
             AddPackagesToBundle.Click += (_, _) => _ = DialogHelper.HowToAddPackagesToBundle();
-
         }
 
         public async Task<bool> AskForNewBundle()
         {
-            if (!Loader.Any() || !HasUnsavedChanges)
+            if (!Loader.Any() || !HasUnsavedChanges || await DialogHelper.AskLoseChangesAndCreateBundle())
             {
                 // Need to call ClearPackages, this method also clears internal caches
-                Loader.ClearPackages();
-                HasUnsavedChanges = false;
-                return true;
-            }
-
-            RichTextBlock rtb = new();
-            var p = new Paragraph();
-            rtb.Blocks.Add(p);
-            p.Inlines.Add(new Run {Text = CoreTools.Translate("Are you sure you want to create a new package bundle? ")});
-            p.Inlines.Add(new LineBreak());
-            p.Inlines.Add(new Run {Text = CoreTools.Translate("Any unsaved changes will be lost"), FontWeight = FontWeights.Bold});
-
-            ContentDialog dialog = DialogHelper.DialogFactory.Create();
-            dialog.Title = CoreTools.Translate("Warning!");
-            dialog.Content = rtb;
-            dialog.DefaultButton = ContentDialogButton.Secondary;
-            dialog.PrimaryButtonText = CoreTools.Translate("Yes");
-            dialog.SecondaryButtonText = CoreTools.Translate("No");
-            dialog.XamlRoot = MainApp.Instance.MainWindow.Content.XamlRoot;
-
-            ContentDialogResult result = await DialogHelper.ShowDialogAsync(dialog);
-            if (result == ContentDialogResult.Primary)
-            {
                 Loader.ClearPackages();
                 HasUnsavedChanges = false;
                 return true;
