@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11887,
-        "done": 5386,
-        "packages_with_icon": 5386,
-        "packages_with_screenshot": 792,
-        "total_screenshots": 2454
+        "total": 11899,
+        "done": 5400,
+        "packages_with_icon": 5400,
+        "packages_with_screenshot": 808,
+        "total_screenshots": 2502
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -13131,11 +13131,11 @@
             "images": []
         },
         "element": {
-            "icon": "",
+            "icon": "https://raw.githubusercontent.com/element-hq/element-desktop/refs/heads/develop/res/img/element.png",
             "images": []
         },
         "element-desktop": {
-            "icon": "https://community.chocolatey.org/content/packageimages/element-desktop.1.11.23.png",
+            "icon": "https://raw.githubusercontent.com/element-hq/element-desktop/refs/heads/develop/res/img/element.png",
             "images": []
         },
         "elements": {
@@ -13240,8 +13240,16 @@
             "images": []
         },
         "em-client": {
-            "icon": "https://community.chocolatey.org/content/packageimages/em-client.9.2.1628.png",
-            "images": []
+            "icon": "https://i.postimg.cc/xdQ8sMDS/emclient.png",
+            "images": [
+                "https://i.postimg.cc/9M6Q77BS/image.png",
+                "https://i.postimg.cc/nL1zNrp9/image.png",
+                "https://i.postimg.cc/nhbhzBLQ/image.png",
+                "https://i.postimg.cc/sfL2ktdm/image.png",
+                "https://i.postimg.cc/rmFmTTwn/image.png",
+                "https://i.postimg.cc/tTSgCc1X/image.png",
+                "https://i.postimg.cc/d3gtGTmp/image.png"
+            ]
         },
         "em-n-en": {
             "icon": "https://community.chocolatey.org/content/packageimages/em-n-en.1.0.0.png",
@@ -17716,8 +17724,12 @@
             "images": []
         },
         "grepwin": {
-            "icon": "https://community.chocolatey.org/content/packageimages/grepwin.2.0.13.png",
-            "images": []
+            "icon": "https://github.com/stefankueng/grepWin/raw/main/src/Resources/grepwin_256.png",
+            "images": [
+                "https://i.postimg.cc/BnWJLR2M/image.png",
+                "https://i.postimg.cc/ht9c9Mrg/image.png",
+                "https://i.postimg.cc/q740QnbK/image.png"
+            ]
         },
         "gretl": {
             "icon": "https://community.chocolatey.org/content/packageimages/gretl.2022.221101.png",
@@ -20802,16 +20814,58 @@
             "images": []
         },
         "jdk-17": {
-            "icon": "https://dl2.macupdate.com/images/icons256/63569.png?time=1642696591",
-            "images": []
+            "icon": "https://cdn-icons-png.flaticon.com/256/226/226777.png",
+            "images": [
+                "https://www.oracle.com/a/pr/img/rc24-java-17.jpg"
+            ]
         },
         "jdk-18": {
-            "icon": "https://dl2.macupdate.com/images/icons256/63569.png?time=1642696591",
-            "images": []
+            "icon": "https://cdn-icons-png.flaticon.com/256/226/226777.png",
+            "images": [
+                "https://www.oracle.com/a/pr/img/rc24-java-18.jpg"
+            ]
         },
         "jdk-19": {
-            "icon": "https://dl2.macupdate.com/images/icons256/63569.png?time=1642696591",
-            "images": []
+            "icon": "https://cdn-icons-png.flaticon.com/256/226/226777.png",
+            "images": [
+                "https://www.oracle.com/a/pr/img/rc24-java-19.jpg"
+            ]
+        },
+        "jdk-20": {
+            "icon": "https://cdn-icons-png.flaticon.com/256/226/226777.png",
+            "images": [
+                "https://www.oracle.com/a/pr/img/rc24-java20.jpg"
+            ]
+        },
+        "jdk-21": {
+            "icon": "https://cdn-icons-png.flaticon.com/256/226/226777.png",
+            "images": [
+                "https://www.oracle.com/a/pr/img/rc24-java21.jpg"
+            ]
+        },
+        "jdk-22": {
+            "icon": "https://cdn-icons-png.flaticon.com/256/226/226777.png",
+            "images": [
+                "https://www.oracle.com/a/pr/img/rc24-java22.jpg"
+            ]
+        },
+        "jdk-23": {
+            "icon": "https://cdn-icons-png.flaticon.com/256/226/226777.png",
+            "images": [
+                "https://www.oracle.com/a/pr/img/rc24-java23.jpg"
+            ]
+        },
+        "jdk-24": {
+            "icon": "https://cdn-icons-png.flaticon.com/256/226/226777.png",
+            "images": [
+                "https://www.oracle.com/a/pr/img/rc24-java24.jpg"
+            ]
+        },
+        "jdk-25": {
+            "icon": "https://cdn-icons-png.flaticon.com/256/226/226777.png",
+            "images": [
+                "https://www.oracle.com/a/pr/img/rc24-java24.jpg"
+            ]
         },
         "jdminecraftlauncher": {
             "icon": "",
@@ -24072,11 +24126,11 @@
             "images": []
         },
         "lua": {
-            "icon": "https://community.chocolatey.org/content/packageimages/Lua.5.1.5.52.png",
+            "icon": "https://i.postimg.cc/jjhXJWkv/lua.png",
             "images": []
         },
         "lua-for-windows": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/jjhXJWkv/lua.png",
             "images": []
         },
         "lua-language-server": {
@@ -24084,11 +24138,11 @@
             "images": []
         },
         "lua51": {
-            "icon": "https://community.chocolatey.org/content/packageimages/lua51.5.1.5.png",
+            "icon": "https://i.postimg.cc/jjhXJWkv/lua.png",
             "images": []
         },
         "lua52": {
-            "icon": "https://community.chocolatey.org/content/packageimages/lua52.5.2.4.png",
+            "icon": "https://i.postimg.cc/jjhXJWkv/lua.png",
             "images": []
         },
         "luabuglight": {
@@ -25234,7 +25288,7 @@
             "images": []
         },
         "micaforeveryone": {
-            "icon": "",
+            "icon": "https://raw.githubusercontent.com/MicaForEveryone/MicaForEveryone/refs/heads/reset-winui3/MicaForEveryone.App/Assets/Square44x44Logo.altform-lightunplated_targetsize-256.png",
             "images": []
         },
         "micmonitor": {
@@ -50572,12 +50626,12 @@
         "modbusmasteremulator": {
             "icon": "https://i.postimg.cc/Jz1dxSvr/mme.png",
             "images": [
-                "https://i.postimg.cc/DfXDwr1T/image.png",
-                "https://i.postimg.cc/DfXDwr1T/image.png",
-                "https://i.postimg.cc/DfXDwr1T/image.png",
-                "https://i.postimg.cc/DfXDwr1T/image.png",
-                "https://i.postimg.cc/DfXDwr1T/image.png",
-                "https://i.postimg.cc/DfXDwr1T/image.png"
+                "https://i.postimg.cc/LsbZXhgY/image.png",
+                "https://i.postimg.cc/fy4tcFKM/image.png",
+                "https://i.postimg.cc/d3874BHr/image.png",
+                "https://i.postimg.cc/SQ8zSSSR/image.png",
+                "https://i.postimg.cc/pXJhjsnt/image.png",
+                "https://i.postimg.cc/K8cKDtn3/image.png"
             ]
         },
         "modbustool": {
@@ -50704,9 +50758,67 @@
             ]
         },
         "gerbview": {
-            "icon": "https://i.postimg.cc/76xVy5zF/gerbview.png",
+            "icon": "https://i.postimg.cc/ZnL1DDWz/gerbview.png",
             "images": [
                 "https://i.postimg.cc/52svFsQR/gerbview.png"
+            ]
+        },
+        "jprofiler-14": {
+            "icon": "https://i.postimg.cc/C54dpKjQ/jprofiler.png",
+            "images": [
+                "https://i.postimg.cc/DzqTMMQC/image.png",
+                "https://i.postimg.cc/nzbLsm2W/image.png",
+                "https://i.postimg.cc/8kyV9WWV/image.png",
+                "https://i.postimg.cc/28MN8D2c/image.png",
+                "https://i.postimg.cc/2SWR1Ktz/image.png",
+                "https://i.postimg.cc/zf1mKkmT/image.png",
+                "https://i.postimg.cc/CKC3NfYX/image.png"
+            ]
+        },
+        "jprofiler-15": {
+            "icon": "https://i.postimg.cc/C54dpKjQ/jprofiler.png",
+            "images": [
+                "https://i.postimg.cc/DzqTMMQC/image.png",
+                "https://i.postimg.cc/nzbLsm2W/image.png",
+                "https://i.postimg.cc/8kyV9WWV/image.png",
+                "https://i.postimg.cc/28MN8D2c/image.png",
+                "https://i.postimg.cc/2SWR1Ktz/image.png",
+                "https://i.postimg.cc/zf1mKkmT/image.png",
+                "https://i.postimg.cc/CKC3NfYX/image.png"
+            ]
+        },
+        "jprofiler-13": {
+            "icon": "https://i.postimg.cc/9XgvJ25m/jprofiler13.png",
+            "images": [
+                "https://i.postimg.cc/qqKSNtm1/jprofiler-box.png",
+                "https://i.postimg.cc/nzbLsm2W/image.png",
+                "https://i.postimg.cc/8kyV9WWV/image.png",
+                "https://i.postimg.cc/28MN8D2c/image.png",
+                "https://i.postimg.cc/2SWR1Ktz/image.png",
+                "https://i.postimg.cc/zf1mKkmT/image.png",
+                "https://i.postimg.cc/CKC3NfYX/image.png"
+            ]
+        },
+        "perfino-4": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/QN7ykTbb/image.png",
+                "https://i.postimg.cc/m2G6dgpG/image.png",
+                "https://i.postimg.cc/pLWcH1tG/image.png"
+            ]
+        },
+        "eclipseideforjavadevelopers": {
+            "icon": "https://i.postimg.cc/pLsbYd7V/eclipse.png",
+            "images": []
+        },
+        "photovariants": {
+            "icon": "https://i.postimg.cc/VkxWdxBf/pv.png",
+            "images": [
+                "https://i.postimg.cc/s2KxtS2k/image.png",
+                "https://i.postimg.cc/W33zj3Fh/image.png",
+                "https://i.postimg.cc/RqrZcLPH/image.png",
+                "https://i.postimg.cc/13QpSG9X/image.png",
+                "https://i.postimg.cc/bvYkDqSj/image.png"
             ]
         }
     }
