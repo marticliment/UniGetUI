@@ -92,6 +92,14 @@
                 SettingName="DisableDMWThreadOptimizations"
                 Text="Enable background CPU Usage optimizations (see Pull Request #3278)" />
 
+            <UserControl Height="16" />
+
+            <widgets:CheckboxCard
+                Name="InstallInstalledPackagesBundlesPage"
+                CornerRadius="8"
+                SettingName="InstallInstalledPackagesBundlesPage"
+                Text="When batch installing packages from a bundle, install also packages that are already installed" />
+
 
         </StackPanel>
     </ScrollViewer>

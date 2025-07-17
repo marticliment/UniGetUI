@@ -9,6 +9,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
+using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.SettingsEngine.SecureSettings;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
@@ -20,7 +21,6 @@ using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.Pages.DialogPages;
-using YamlDotNet.Serialization;
 
 namespace UniGetUI.Interface.SoftwarePages
 {
@@ -274,10 +274,18 @@ namespace UniGetUI.Interface.SoftwarePages
                 PEInterface.PackageBundlesLoader.RemoveRange(FilteredPackages.GetCheckedPackages());
             };
 
-            InstallPackages.Click += async (_, _) => await ImportAndInstallPackage(FilteredPackages.GetCheckedPackages());
-            InstallSkipHash.Click += async (_, _) => await ImportAndInstallPackage(FilteredPackages.GetCheckedPackages(), skiphash: true);
-            InstallInteractive.Click += async (_, _) => await ImportAndInstallPackage(FilteredPackages.GetCheckedPackages(), interactive: true);
-            InstallAsAdmin.Click += async (_, _) => await ImportAndInstallPackage(FilteredPackages.GetCheckedPackages(), elevated: true);
+            IReadOnlyList<IPackage> GetCheckedNonInstalledPackages()
+            {
+                if(Settings.Get(Settings.K.InstallInstalledPackagesBundlesPage))
+                    return FilteredPackages.GetCheckedPackages().ToList();
+                else
+                    return FilteredPackages.GetCheckedPackages().Where(p => p.Tag is not PackageTag.AlreadyInstalled).ToList();
+            }
+
+            InstallPackages.Click += async (_, _) => await ImportAndInstallPackage(GetCheckedNonInstalledPackages());
+            InstallSkipHash.Click += async (_, _) => await ImportAndInstallPackage(GetCheckedNonInstalledPackages(), skiphash: true);
+            InstallInteractive.Click += async (_, _) => await ImportAndInstallPackage(GetCheckedNonInstalledPackages(), interactive: true);
+            InstallAsAdmin.Click += async (_, _) => await ImportAndInstallPackage(GetCheckedNonInstalledPackages(), elevated: true);
             OpenBundle.Click += async (_, _) => await AskOpenFromFile();
             SaveBundle.Click += async (_, _) => await SaveFile();
 

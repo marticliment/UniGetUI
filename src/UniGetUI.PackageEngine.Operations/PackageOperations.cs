@@ -8,6 +8,7 @@ using UniGetUI.PackageEngine.Classes.Packages.Classes;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Managers.WingetManager;
+using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.PackageLoader;
 using UniGetUI.PackageEngine.Serializable;
 using UniGetUI.PackageOperations;
@@ -201,16 +202,23 @@ namespace UniGetUI.PackageEngine.Operations
             return Task.CompletedTask;
         }
 
-        protected override Task HandleSuccess()
+        protected override async Task HandleSuccess()
         {
             Package.SetTag(PackageTag.AlreadyInstalled);
-            InstalledPackagesLoader.Instance.AddForeign(Package);
+            var copy = new Package(
+                Package.Name,
+                Package.Id,
+                Package.VersionString,
+                Package.Source,
+                Package.Manager,
+                Package.OverridenOptions
+            );
+            await InstalledPackagesLoader.Instance.AddForeign(copy);
 
             if (Settings.Get(Settings.K.AskToDeleteNewDesktopShortcuts))
             {
                 DesktopShortcutsDatabase.HandleNewShortcuts(DesktopShortcutsBeforeStart);
             }
-            return Task.CompletedTask;
         }
 
         protected override void Initialize()

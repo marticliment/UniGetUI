@@ -79,6 +79,7 @@ public static partial class Settings
         ManagerPaths,
         GitHubUserLogin,
         DisableNewProcessLineHandler,
+        InstallInstalledPackagesBundlesPage,
 
         Test1,
         Test2,
@@ -169,6 +170,7 @@ public static partial class Settings
             K.ManagerPaths => "ManagerPaths",
             K.GitHubUserLogin => "GitHubUserLogin",
             K.DisableNewProcessLineHandler => "DisableNewProcessLineHandler",
+            K.InstallInstalledPackagesBundlesPage => "InstallInstalledPackagesBundlesPage",
 
             K.Test1 => "TestSetting1",
             K.Test2 => "TestSetting2",

@@ -136,7 +136,7 @@ namespace UniGetUI.Interface
             if (PEInterface.UpgradablePackagesLoader.IgnoredPackages.TryRemove(Id, out IPackage? nativePackage)
                 && nativePackage.NewVersionString != nativePackage.VersionString)
             {
-                PEInterface.UpgradablePackagesLoader.AddForeign(nativePackage);
+                await PEInterface.UpgradablePackagesLoader.AddForeign(nativePackage);
             }
 
             foreach (IPackage package in PEInterface.InstalledPackagesLoader.Packages)

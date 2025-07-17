@@ -78,8 +78,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
                                 if (!Contains(package))
                                 {
                                     Logger.ImportantInfo($"Adding missing package {package.Id} to installed packages list");
-                                    AddPackage(package);
-                                    await WhenAddingPackage(package);
+                                    await AddPackage(package);
                                 }
                             }
                             InvokePackagesChangedEvent(true, task.Result.ToArray(), []);
