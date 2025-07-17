@@ -719,6 +719,7 @@ namespace UniGetUI.Interface.SoftwarePages
             if (manager?.Capabilities.SupportsCustomSources == true)
             {
                 if (raw_package.Source.Contains(": ")) // Add compatibility with previons 2.0 bundles
+                    // where SourceName is $"{ManagerName}: {SourceName}"
                     raw_package.Source = raw_package.Source.Split(": ")[^1];
 
                 source = manager?.SourcesHelper?.Factory.GetSourceIfExists(raw_package.Source);
