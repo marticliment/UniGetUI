@@ -387,6 +387,7 @@ namespace UniGetUI.Interface.SoftwarePages
         {
             try
             {
+                await CoreTools.WaitForInternetConnection();
                 string backupContents = await GenerateBackupContents();
                 var authService = new GitHubAuthService();
                 var backupService = new GitHubBackupService(authService);
