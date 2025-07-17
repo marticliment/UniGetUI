@@ -55,8 +55,8 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="48" />
                         <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" MaxWidth="70"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
@@ -105,10 +105,9 @@
                         x:Name="MoreInfoBtn"
                         Grid.RowSpan="2"
                         Grid.Column="3"
-                        MaxWidth="60"
+                        Padding="0"
                         VerticalAlignment="Stretch"
-                        Click="MoreInfoBtn_OnClick"
-                        Visibility="Collapsed">
+                        Click="MoreInfoBtn_OnClick">
                         <widgets:TranslatedTextBlock Text="More details" WrappingMode="WrapWholeWords" />
                     </HyperlinkButton>
                 </Grid>
