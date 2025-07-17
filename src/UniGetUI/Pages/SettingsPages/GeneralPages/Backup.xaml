@@ -55,7 +55,8 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="48" />
                         <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
@@ -100,6 +101,16 @@
                         Visibility="Collapsed">
                         <widgets:TranslatedTextBlock Text="Log out from GitHub" WrappingMode="WrapWholeWords" />
                     </Button>
+                    <HyperlinkButton
+                        x:Name="MoreInfoBtn"
+                        Grid.RowSpan="2"
+                        Grid.Column="3"
+                        MaxWidth="60"
+                        VerticalAlignment="Stretch"
+                        Click="MoreInfoBtn_OnClick"
+                        Visibility="Collapsed">
+                        <widgets:TranslatedTextBlock Text="More details" WrappingMode="WrapWholeWords" />
+                    </HyperlinkButton>
                 </Grid>
             </Toolkit:SettingsCard>
 

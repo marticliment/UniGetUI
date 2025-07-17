@@ -291,5 +291,10 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             ShowRestartBanner(sender, e);
             UpdateCloudControlsEnabled();
         }
+
+        private void MoreInfoBtn_OnClick(object sender, RoutedEventArgs e)
+        {
+            MainApp.Instance.MainWindow.NavigationPage.ShowHelp("cloud-backup-overview/");
+        }
     }
 }

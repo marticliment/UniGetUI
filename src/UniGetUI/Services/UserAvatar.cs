@@ -205,12 +205,25 @@ namespace UniGetUI.Services
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 Content = new TextBlock()
                 {
+                    Text = CoreTools.Translate("More details"),
+                    TextWrapping = TextWrapping.Wrap,
+                },
+                FontSize = 12
+            };
+            hyperlinkButton.Click += (_, _) => MainApp.Instance.MainWindow.NavigationPage.ShowHelp("cloud-backup-overview/");
+
+            var hyperlinkButton2 = new HyperlinkButton
+            {
+                Padding = new Thickness(0),
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                Content = new TextBlock()
+                {
                     Text = CoreTools.Translate("Package backup settings"),
                     TextWrapping = TextWrapping.Wrap,
                 },
                 FontSize = 12
             };
-            hyperlinkButton.Click += (_, _) => MainApp.Instance.MainWindow.NavigationPage.OpenSettingsPage(typeof(Backup));
+            hyperlinkButton2.Click += (_, _) => MainApp.Instance.MainWindow.NavigationPage.OpenSettingsPage(typeof(Backup));
 
             var loginButton = new PointButton
             {
@@ -231,6 +244,7 @@ namespace UniGetUI.Services
             stackPanel.Children.Add(text1);
             stackPanel.Children.Add(text2);
             stackPanel.Children.Add(hyperlinkButton);
+            stackPanel.Children.Add(hyperlinkButton2);
             stackPanel.Children.Add(loginButton);
 
             var flyout = new Flyout
