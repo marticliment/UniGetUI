@@ -709,7 +709,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             foreach (var possible_manager in PEInterface.Managers)
             {
-                if (possible_manager.Name == raw_package.ManagerName)
+                if (possible_manager.Name == raw_package.ManagerName || possible_manager.DisplayName == raw_package.ManagerName)
                 {
                     manager = possible_manager;
                     break;
@@ -718,6 +718,9 @@ namespace UniGetUI.Interface.SoftwarePages
 
             if (manager?.Capabilities.SupportsCustomSources == true)
             {
+                if (raw_package.Source.Contains(": ")) // Add compatibility with previons 2.0 bundles
+                    raw_package.Source = raw_package.Source.Split(": ")[^1];
+
                 source = manager?.SourcesHelper?.Factory.GetSourceIfExists(raw_package.Source);
             }
             else
