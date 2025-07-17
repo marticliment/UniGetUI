@@ -1,20 +1,20 @@
-:: Code generously provided by @beatcracker: https://github.com/beatcracker/detect-batch-subshell
 @echo off
+REM Code generously provided by @beatcracker: https://github.com/beatcracker/detect-batch-subshell
 
 setlocal EnableDelayedExpansion
 
-:: Dequote path to command processor and this script path
+REM Dequote path to command processor and this script path
 set ScriptPath=%~0
 set CmdPath=%COMSPEC:"=%
 
-:: Get command processor filename and filename with extension
+REM Get command processor filename and filename with extension
 for %%c in (!CmdPath!) do (
     set CmdExeName=%%~nxc
     set CmdName=%%~nc
 )
 
-:: Get this process' PID
-:: Adapted from: http://www.dostips.com/forum/viewtopic.php?p=22675#p22675
+REM Get this process' PID
+REM Adapted from: http://www.dostips.com/forum/viewtopic.php?p=22675#p22675
 set "uid="
 for /l %%i in (1 1 128) do (
     set /a "bit=!random!&1"
@@ -59,32 +59,48 @@ if !IsExternal!==1 (
     exit 1
 )
 
-endlocal
-:: End code from @beatcracker
+REM End code from @beatcracker
 @echo off
-::
-:: RefreshEnv.cmd
-::
-:: Batch file to read environment variables from registry and
-:: set session variables to these values.
-::
-:: With this batch file, there should be no need to reload command
-:: environment every time you want environment changes to propagate
+REM
+REM RefreshEnv.cmd
+REM
+REM Batch file to read environment variables from registry and
+REM set session variables to these values.
+REM
+REM With this batch file, there should be no need to reload command
+REM environment every time you want environment changes to propagate
 
-::echo "RefreshEnv.cmd only works from cmd.exe, please install the Chocolatey Profile to take advantage of refreshenv from PowerShell"
+REM echo "RefreshEnv.cmd only works from cmd.exe, please install the Chocolatey Profile to take advantage of refreshenv from PowerShell"
 echo | set /p dummy="Refreshing environment variables from registry for cmd.exe. Please wait..."
 
 goto main
 
-:: Set one environment variable from registry key
+REM Set one environment variable from registry key
 :SetFromReg
     "%WinDir%\System32\Reg" QUERY "%~1" /v "%~2" > "%TEMP%\_envset.tmp" 2>NUL
     for /f "usebackq skip=2 tokens=2,*" %%A IN ("%TEMP%\_envset.tmp") do (
-        echo/set "%~3=%%B"
+        set "tempvar=%%B"
+        REM Remove double quotes from temporary value
+        set "__tempvar=!tempvar:"=!"
+
+        REM Only escape percentage signs when the value type
+        REM is not defined as an expandable string.
+        if /I NOT "%%~A"=="REG_EXPAND_SZ" (
+            set "tempvar=!tempvar:%%=%%%%!"
+        )
+
+        REM If the dequoted string differs from the original string, the variable contains double quotes.
+        REM Escape the | and & in the variable to avoid errors.
+        if NOT "!__tempvar!" == "!tempvar!" (
+            set "tempvar=!tempvar:|=^|!"
+            set "tempvar=!tempvar:&=^&!"
+        )
+
+        echo/set "%~3=!tempvar!"
     )
     goto :EOF
 
-:: Get a list of environment variables from registry
+REM Get a list of environment variables from registry
 :GetRegEnv
     "%WinDir%\System32\Reg" QUERY "%~1" > "%TEMP%\_envget.tmp"
     for /f "usebackq skip=2" %%A IN ("%TEMP%\_envget.tmp") do (
@@ -97,32 +113,34 @@ goto main
 :main
     echo/@echo off >"%TEMP%\_env.cmd"
 
-    :: Slowly generating final file
+    REM Slowly generating final file
     call :GetRegEnv "HKLM\System\CurrentControlSet\Control\Session Manager\Environment" >> "%TEMP%\_env.cmd"
     call :GetRegEnv "HKCU\Environment">>"%TEMP%\_env.cmd" >> "%TEMP%\_env.cmd"
 
-    :: Special handling for PATH - mix both User and System
+    REM Special handling for PATH - mix both User and System
     call :SetFromReg "HKLM\System\CurrentControlSet\Control\Session Manager\Environment" Path Path_HKLM >> "%TEMP%\_env.cmd"
     call :SetFromReg "HKCU\Environment" Path Path_HKCU >> "%TEMP%\_env.cmd"
 
-    :: Caution: do not insert space-chars before >> redirection sign
+    endlocal
+
+    REM Caution: do not insert space-chars before >> redirection sign
     echo/set "Path=%%Path_HKLM%%;%%Path_HKCU%%" >> "%TEMP%\_env.cmd"
 
-    :: Cleanup
+    REM Cleanup
     del /f /q "%TEMP%\_envset.tmp" 2>nul
     del /f /q "%TEMP%\_envget.tmp" 2>nul
 
-    :: capture user / architecture
+    REM capture user / architecture
     SET "OriginalUserName=%USERNAME%"
     SET "OriginalArchitecture=%PROCESSOR_ARCHITECTURE%"
 
-    :: Set these variables
+    REM Set these variables
     call "%TEMP%\_env.cmd"
 
-    :: Cleanup
+    REM Cleanup
     del /f /q "%TEMP%\_env.cmd" 2>nul
 
-    :: reset user / architecture
+    REM reset user / architecture
     SET "USERNAME=%OriginalUserName%"
     SET "PROCESSOR_ARCHITECTURE=%OriginalArchitecture%"
 
