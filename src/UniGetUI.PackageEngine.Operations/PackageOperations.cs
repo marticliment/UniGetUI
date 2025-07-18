@@ -56,7 +56,8 @@ namespace UniGetUI.PackageEngine.Operations
         }
 
         private bool RequiresAdminRights()
-            => Package.OverridenOptions.RunAsAdministrator is true || Options.RunAsAdministrator;
+            => !Settings.Get(Settings.K.ProhibitElevation)
+               && (Package.OverridenOptions.RunAsAdministrator is true || Options.RunAsAdministrator);
 
         protected override void ApplyRetryAction(string retryMode)
         {
