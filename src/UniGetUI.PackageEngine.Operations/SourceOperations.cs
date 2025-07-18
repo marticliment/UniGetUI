@@ -30,6 +30,10 @@ namespace UniGetUI.PackageEngine.Operations
             return Task.FromResult(new Uri($"ms-appx:///Assets/Images/{Source.Manager.Properties.ColorIconId}.png"));
         }
 
+        protected bool RequiresAdminRights()
+            => !Settings.Get(Settings.K.ProhibitElevation)
+               && (ForceAsAdministrator || Source.Manager.Capabilities.Sources.MustBeInstalledAsAdmin);
+
         protected override void ApplyRetryAction(string retryMode)
         {
             switch (retryMode)
@@ -79,12 +83,10 @@ namespace UniGetUI.PackageEngine.Operations
             }
 
             bool admin = false;
-            if (ForceAsAdministrator || Source.Manager.Capabilities.Sources.MustBeInstalledAsAdmin)
+            if (RequiresAdminRights())
             {
                 if (Settings.Get(Settings.K.DoCacheAdminRights) || Settings.Get(Settings.K.DoCacheAdminRightsForBatches))
-                {
                     RequestCachingOfUACPrompt();
-                }
 
                 if (Source.Manager is WinGet)
                     RedirectWinGetTempFolder();
@@ -141,12 +143,10 @@ namespace UniGetUI.PackageEngine.Operations
                 exePath = WinGet.BundledWinGetPath;
             }
             bool admin = false;
-            if (ForceAsAdministrator || Source.Manager.Capabilities.Sources.MustBeInstalledAsAdmin)
+            if (RequiresAdminRights())
             {
                 if (Settings.Get(Settings.K.DoCacheAdminRights) || Settings.Get(Settings.K.DoCacheAdminRightsForBatches))
-                {
                     RequestCachingOfUACPrompt();
-                }
 
                 if (Source.Manager is WinGet)
                     RedirectWinGetTempFolder();

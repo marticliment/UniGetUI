@@ -463,6 +463,12 @@ namespace UniGetUI.Core.Tools
         private static bool _isCaching;
         public static async Task CacheUACForCurrentProcess()
         {
+            if (Settings.Get(Settings.K.ProhibitElevation))
+            {
+                Logger.Error("Elevation is prohibited, CacheUACForCurrentProcess() call will be ignored");
+                return;
+            }
+
             while (_isCaching) await Task.Delay(100);
 
             try
@@ -499,6 +505,12 @@ namespace UniGetUI.Core.Tools
         /// </summary>
         public static async Task ResetUACForCurrentProcess()
         {
+            if (Settings.Get(Settings.K.ProhibitElevation))
+            {
+                Logger.Error("Elevation is prohibited, ResetUACForCurrentProcess() call will be ignored");
+                return;
+            }
+
             Logger.Info("Resetting administrator rights cache for process id " + Environment.ProcessId);
             using Process p = new()
             {

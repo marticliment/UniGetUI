@@ -41,7 +41,7 @@
                 x:Name="DoCacheAdminRightsForBatches"
                 BorderThickness="1,1,1,0"
                 CornerRadius="8,8,0,0"
-                IsEnabled="{x:Bind DoCacheAdminRights._checkbox.IsOn, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
+                IsEnabled="{x:Bind ProhibitElevator._checkbox.IsOn, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
                 SettingName="DoCacheAdminRightsForBatches"
                 StateChanged="RestartCache"
                 Text="Ask for administrator privileges once for each batch of operations" />
@@ -50,9 +50,24 @@
                 x:Name="DoCacheAdminRights"
                 CornerRadius="0,0,8,8"
                 SettingName="DoCacheAdminRights"
+                IsEnabled="{x:Bind ProhibitElevator._checkbox.IsOn, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
                 StateChanged="RestartCache"
                 Text="Ask only once for administrator privileges" />
 
+            <UserControl Height="16" />
+
+            <widgets:CheckboxCard
+                x:Name="ProhibitElevator"
+                CornerRadius="8"
+                SettingName="ProhibitElevation"
+                StateChanged="ShowRestartBanner"
+                Text="Prohibit any kind of Elevation via UniGetUI Elevator or GSudo">
+                <widgets:CheckboxCard.Description>
+                    <widgets:TranslatedTextBlock
+                        Foreground="{ThemeResource SystemControlErrorTextForegroundBrush}"
+                        Text="This option WILL cause issues. Any operation incapable of elevating itself WILL FAIL. Install/update/uninstall as administrator will NOT WORK."/>
+                </widgets:CheckboxCard.Description>
+            </widgets:CheckboxCard>
             <widgets:TranslatedTextBlock
                 Margin="4,32,4,8"
                 FontWeight="SemiBold"

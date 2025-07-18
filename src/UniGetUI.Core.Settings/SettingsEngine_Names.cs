@@ -80,6 +80,7 @@ public static partial class Settings
         GitHubUserLogin,
         DisableNewProcessLineHandler,
         InstallInstalledPackagesBundlesPage,
+        ProhibitElevation,
 
         Test1,
         Test2,
@@ -171,6 +172,7 @@ public static partial class Settings
             K.GitHubUserLogin => "GitHubUserLogin",
             K.DisableNewProcessLineHandler => "DisableNewProcessLineHandler",
             K.InstallInstalledPackagesBundlesPage => "InstallInstalledPackagesBundlesPage",
+            K.ProhibitElevation => "ProhibitElevation",
 
             K.Test1 => "TestSetting1",
             K.Test2 => "TestSetting2",

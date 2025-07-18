@@ -97,6 +97,11 @@ namespace UniGetUI
         {
             try
             {
+                if (Settings.Get(Settings.K.ProhibitElevation))
+                {
+                    Logger.Warn("UniGetUI Elevator has been disabled since elevation is prohibited!");
+                }
+
                 if (SecureSettings.Get(SecureSettings.K.ForceUserGSudo))
                 {
                     var res = await CoreTools.WhichAsync("gsudo.exe");
