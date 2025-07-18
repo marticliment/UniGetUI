@@ -1,3 +1,4 @@
+using System.Reflection.Metadata;
 using UniGetUI.PackageEngine.Classes.Manager.Providers;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
@@ -33,22 +34,25 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             return ["source", "remove", "--name", source.Name, "--disable-interactivity"];
         }
 
-        protected override OperationVeredict _getAddSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
+        protected override OperationVeredict _getAddSourceOperationVeredict(IManagerSource source, int ReturnCode,
+            string[] Output)
         {
-            if ((uint)ReturnCode is 0x8A150045 or 0x801901F4)
-            {
-                int sourceIndex = _attemptedSourceTypes.GetValueOrDefault(source.Name);
-                if (sourceIndex + 1 >= _sourceTypes.Length)
-                {
-                    _attemptedSourceTypes[source.Name] = 0;
-                    return OperationVeredict.Failure;
-                }
+            // If operation succeeded, or the source already exists
+            if ((uint)ReturnCode is 0 or 0x8A15000C)
+                return OperationVeredict.Success;
 
-                _attemptedSourceTypes[source.Name] = sourceIndex + 1;
-                return OperationVeredict.AutoRetry;
+            // Failed? Let's guess another source type and try again
+            int sourceIndex = _attemptedSourceTypes.GetValueOrDefault(source.Name);
+            if (sourceIndex + 1 >= _sourceTypes.Length)
+            {
+                // If we have tested all available sources?
+                _attemptedSourceTypes[source.Name] = 0;
+                return OperationVeredict.Failure;
             }
 
-            return ReturnCode == 0 ? OperationVeredict.Success : OperationVeredict.Failure;
+            // Attempt another source type
+            _attemptedSourceTypes[source.Name] = sourceIndex + 1;
+            return OperationVeredict.AutoRetry;
         }
 
         protected override OperationVeredict _getRemoveSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
