@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11899,
-        "done": 5400,
-        "packages_with_icon": 5400,
-        "packages_with_screenshot": 808,
-        "total_screenshots": 2502
+        "total": 11902,
+        "done": 5406,
+        "packages_with_icon": 5406,
+        "packages_with_screenshot": 815,
+        "total_screenshots": 2520
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -25853,8 +25853,11 @@
             "images": []
         },
         "mobaxterm": {
-            "icon": "https://community.chocolatey.org/content/packageimages/MobaXTerm.23.0.0.png",
-            "images": []
+            "icon": "https://i.postimg.cc/1XxHfxyp/xterm-logo.png",
+            "images": [
+                "https://i.postimg.cc/ZK48gxnK/image.png",
+                "https://i.postimg.cc/KjrnjRq2/Cool-features.png"
+            ]
         },
         "mobilecloud": {
             "icon": "",
@@ -48503,12 +48506,21 @@
             "images": []
         },
         "wisecare365": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/wjpdV2xp/wc.png",
+            "images": [
+                "https://i.postimg.cc/brVsnMfp/image.png",
+                "https://i.postimg.cc/kXhbRV7K/image.png",
+                "https://i.postimg.cc/qMgtrk2R/image.png",
+                "https://i.postimg.cc/VN9vg5P7/image.png",
+                "https://i.postimg.cc/FR9RBm9h/image.png",
+                "https://i.postimg.cc/Wzy1zk04/image.png"
+            ]
         },
         "wisedatarecovery": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/rFMW2CzV/wdr.png",
+            "images": [
+                "https://i.postimg.cc/tCz6qrMS/image.png"
+            ]
         },
         "wisediskcleaner": {
             "icon": "",
@@ -48534,13 +48546,38 @@
             "icon": "",
             "images": []
         },
+        "wisevideoconverter": {
+            "icon": "https://i.postimg.cc/m2qKXwbD/wvc.png",
+            "images": [
+                "https://i.postimg.cc/76sKCHh6/image.png",
+                "https://i.postimg.cc/vTCXz0Ww/image.png"
+            ]
+        },
+        "wiseimagex": {
+            "icon": "https://i.postimg.cc/HkvnPFrM/ix.png",
+            "images": [
+                "https://i.postimg.cc/bY0JjZGp/image.png",
+                "https://i.postimg.cc/SNDxJH7P/image.png",
+                "https://i.postimg.cc/FHzscGTH/image.png",
+                "https://i.postimg.cc/FRy9m6HD/image.png"
+            ]
+        },
+        "wisenote": {
+            "icon": "https://i.postimg.cc/MZYWFg4G/wnote.png",
+            "images": [
+                "https://i.postimg.cc/4y4TGNMx/image.png",
+                "https://i.postimg.cc/d08MTyc0/image.png"
+            ]
+        },
         "wisemo": {
             "icon": "https://community.chocolatey.org/content/packageimages/wisemo.3.51.png",
             "images": []
         },
         "wiseprogramuninstaller": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/Jn61Yk6Q/wpu.png",
+            "images": [
+                "https://i.postimg.cc/CxkxMd5F/image.png"
+            ]
         },
         "wiser": {
             "icon": "",
