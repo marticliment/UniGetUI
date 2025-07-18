@@ -30,7 +30,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         public LocalWinGetSource MicrosoftStoreSource { get; }
         public static bool NO_PACKAGES_HAVE_BEEN_LOADED { get; private set; }
 
-        public string BundledWinGetPath;
+        public static string BundledWinGetPath = "";
 
         public WinGet()
         {
