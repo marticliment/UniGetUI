@@ -43,15 +43,8 @@ namespace UniGetUI.Interface
 
         public async Task Start()
         {
-
-            if (Settings.Get("DisableWidgetsApi"))
-            {
-                Logger.Warn("Widgets API is disabled");
-                return;
-            }
-
             ApiTokenHolder.Token = CoreTools.RandomString(64);
-            Settings.SetValue("CurrentSessionToken", ApiTokenHolder.Token);
+            Settings.SetValue(Settings.K.CurrentSessionToken, ApiTokenHolder.Token);
             Logger.Info("Randomly-generated background API auth token: " + ApiTokenHolder.Token);
 
             var builder = Host.CreateDefaultBuilder();
@@ -275,10 +268,18 @@ namespace UniGetUI.Interface
             await context.Response.Body.WriteAsync(bytes, 0, bytes.Length);
         }
 
-        public async void Stop()
+        public async Task Stop()
         {
-            await _host.StopAsync();
-            Logger.Info("Api was shut down");
+            try
+            {
+                ArgumentNullException.ThrowIfNull(_host);
+                await _host.StopAsync();
+                Logger.Info("Api was shut down");
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
         }
     }
 }

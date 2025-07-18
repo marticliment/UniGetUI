@@ -35,34 +35,34 @@ function script:chocoCmdOperations($commands, $command, $filter, $currentArgumen
         Where-Object { $_ -like "$filter*" }
 }
 
-$script:chocoCommands = @('-?','search','list','info','install','outdated','upgrade','uninstall','new','pack','push','-h','--help','pin','source','config','feature','apikey','export','help','template','cache','--version','rule')
+$script:chocoCommands = @('apikey','cache','config','export','feature','help','info','install','license','list','new','outdated','pack','pin','push','rule','search','source','support','template','uninstall','upgrade','--help','--version')
 
 # ensure these all have a space to start, or they will cause issues
-$allcommands = " --debug --verbose --trace --noop --help -? --online --accept-license --confirm --limit-output --no-progress --log-file='' --execution-timeout='' --cache-location='' --proxy='' --proxy-user='' --proxy-password='' --proxy-bypass-list='' --proxy-bypass-on-local --force --no-color --skip-compatibility-checks --ignore-http-cache"
+$allCommands = " --accept-license --cache-location='' --debug --fail-on-standard-error --force --help --ignore-http-cache --include-headers --limit-output --log-file='' --no-color --no-progress --noop --online --proxy='' --proxy-bypass-list='' --proxy-bypass-on-local --proxy-password='' --proxy-user='' --skip-compatibility-checks --timeout='' --trace --use-system-powershell --verbose --yes"
 
 $commandOptions = @{
-    list      = "--id-only --pre --exact --by-id-only --id-starts-with --detailed --prerelease --include-programs --source='' --page='' --page-size=''"
-    search    = "--id-only --pre --exact --by-id-only --id-starts-with --detailed --approved-only --not-broken --source='' --user='' --password='' --prerelease --include-programs --page='' --page-size='' --order-by-popularity --download-cache-only --disable-package-repository-optimizations --include-configured-sources"
-    info      = "--source='' --local-only --version='' --prerelease --user='' --password='' --cert='' --certpassword='' --disable-package-repository-optimizations --include-configured-sources"
-    install   = "-y -whatif --pre --version='' --params='' --install-arguments='' --override-arguments --ignore-dependencies --source='' --source='windowsfeatures' --user='' --password='' --prerelease --forcex86 --not-silent --package-parameters='' --exit-when-reboot-detected --ignore-detected-reboot --allow-downgrade --force-dependencies --require-checksums --use-package-exit-codes --ignore-package-exit-codes --skip-automation-scripts --ignore-checksums --allow-empty-checksums --allow-empty-checksums-secure --download-checksum='' --download-checksum-type='' --download-checksum-x64='' --download-checksum-type-x64='' --stop-on-first-package-failure --disable-package-repository-optimizations --pin --include-configured-sources"
-    pin       = "--name='' --version=''"
-    outdated  = "--source='' --user='' --password='' --ignore-pinned --ignore-unfound --pre --prerelease --disable-package-repository-optimizations --include-configured-sources"
-    upgrade   = "-y -whatif --pre --version='' --except='' --params='' --install-arguments='' --override-arguments --ignore-dependencies --source='' --source='windowsfeatures' --user='' --password='' --prerelease --forcex86 --not-silent --package-parameters='' --exit-when-reboot-detected --ignore-detected-reboot --allow-downgrade --require-checksums --use-package-exit-codes --ignore-package-exit-codes --skip-automation-scripts --fail-on-unfound --fail-on-not-installed --ignore-checksums --allow-empty-checksums --allow-empty-checksums-secure --download-checksum='' --download-checksum-type='' --download-checksum-x64='' --download-checksum-type-x64='' --exclude-prerelease --stop-on-first-package-failure --use-remembered-options --ignore-remembered-options --skip-when-not-installed --install-if-not-installed --disable-package-repository-optimizations --pin --ignore-pinned --include-configured-sources"
-    uninstall = "-y -whatif --force-dependencies --remove-dependencies --all-versions --source='windowsfeatures' --version='' --uninstall-arguments='' --override-arguments --not-silent --params='' --package-parameters='' --exit-when-reboot-detected --ignore-detected-reboot --use-package-exit-codes --ignore-package-exit-codes --skip-automation-scripts --use-autouninstaller --skip-autouninstaller --fail-on-autouninstaller --ignore-autouninstaller-failure --stop-on-first-package-failure"
-    new       = "--template-name='' --output-directory='' --automaticpackage --version='' --maintainer='' packageversion='' maintainername='' maintainerrepo='' installertype='' url='' url64='' silentargs='' --use-built-in-template"
-    pack      = "--version='' --output-directory=''"
-    push      = "--source='' --api-key='' --timeout=''"
-    source    = "--name='' --source='' --user='' --password='' --priority='' --bypass-proxy --allow-self-service"
-    config    = "--name='' --value=''"
-    feature   = "--name=''"
-    apikey    = "--source='' --api-key='' --remove"
-    export    = "--include-version-numbers --output-file-path=''"
-    template  = "--name=''"
+    apikey    = "--api-key='' --source=''"
     cache     = "--expired"
+    config    = "--name='' --value=''"
+    export    = "--include-version --output-file-path=''"
+    feature   = "--name=''"
+    info      = "--cert='' --certpassword='' --disable-repository-optimizations --include-configured-sources --local-only --password='' --prerelease --source='' --user='' --version=''"
+    install   = "--allow-downgrade --allow-empty-checksums --allow-empty-checksums-secure --apply-args-to-dependencies --apply-package-parameters-to-dependencies --cert='' --certpassword='' --disable-repository-optimizations --download-checksum='' --download-checksum-x64='' --download-checksum-type='' --download-checksum-type-x64='' --exit-when-reboot-detected --force-dependencies --forcex86 --ignore-checksum --ignore-dependencies --ignore-detected-reboot --ignore-package-exit-codes --include-configured-sources --install-arguments='' --not-silent --override-arguments --package-parameters='' --password='' --pin --prerelease --require-checksums --skip-hooks --skip-scripts --source='' --stop-on-first-failure --use-package-exit-codes --user='' --version=''"
+    license   = ""
+    list      = "--by-id-only --by-tag-only --detail --exact --id-only --id-starts-with --ignore-pinned --include-programs --page='' --page-size='' --prerelease --source='' --version=''"
+    new       = "--automaticpackage --download-checksum='' --download-checksum-x64='' --download-checksum-type='' --maintainer='' --name='' --output-directory='' --template='' --use-built-in-template --version=''"
+    outdated  = "--cert='' --certpassword='' --disable-repository-optimizations --ignore-pinned --ignore-unfound --include-configured-sources --password='' --prerelease --source='' --user=''"
+    pack      = "--output-directory='' --version=''"
+    pin       = "--name='' --version=''"
+    push      = "--api-key='' --source=''"
     rule      = "--name=''"
+    search    = "--all-versions --approved-only --by-id-only --by-tag-only --cert='' --certpassword='' --detail --disable-repository-optimizations --download-cache-only --exact --id-only --id-starts-with --include-configured-sources --include-programs --not-broken --order-by='' --order-by-popularity --page='' --page-size='' --password='' --prerelease --source='' --user=''"
+    source    = "--admin-only --allow-self-service --bypass-proxy --cert='' --certpassword='' --name='' --password='' --priority='' --source='' --user=''"
+    support   = ""
+    template  = "--name=''"
+    uninstall = "--all-versions --apply-args-to-dependencies --apply-package-parameters-to-dependencies --exit-when-reboot-detected --fail-on-autouninstaller --force-dependencies --ignore-autouninstaller-failure --ignore-detected-reboot --ignore-package-exit-codes --not-silent --override-arguments --package-parameters='' --skip-autouninstaller --skip-hooks --skip-scripts --source='' --stop-on-first-failure --uninstall-arguments='' --use-autouninstaller --use-package-exit-codes --version=''"
+    upgrade   = "--allow-downgrade --allow-empty-checksums --allow-empty-checksums-secure --apply-args-to-dependencies --apply-package-parameters-to-dependencies --cert='' --certpassword='' --disable-repository-optimizations --download-checksum='' --download-checksum-x64='' --download-checksum-type='' --download-checksum-type-x64='' --except='' --exclude-prerelease --exit-when-reboot-detected --fail-on-not-installed --fail-on-unfound --forcex86 --ignore-checksums --ignore-dependencies --ignore-detected-reboot --ignore-package-exit-codes --ignore-pinned --ignore-remembered-arguments --ignore-unfound --include-configured-sources --install-arguments='' --install-if-not-installed --not-silent --override-arguments --package-parameters='' --password='' --pin --prerelease --require-checksums --skip-hooks --skip-if-not-installed --skip-scripts --source='' --stop-on-first-failure --use-package-exit-codes --use-remembered-arguments --user='' --version=''"
 }
-
-$commandOptions['find'] = $commandOptions['search']
 
 $licenseFile = "$env:ChocolateyInstall\license\chocolatey.license.xml"
 
@@ -74,17 +74,16 @@ if (Test-Path $licenseFile) {
         'optimize'
     )
 
-    $commandOptions.download = "--internalize --internalize-all-urls --ignore-dependencies --installed-packages --ignore-unfound-packages --resources-location='' --download-location='' --outputdirectory='' --source='' --version='' --prerelease --user='' --password='' --cert='' --certpassword='' --append-use-original-location --recompile --disable-package-repository-optimizations"
-    $commandOptions.sync = "--output-directory='' --id='' --package-id=''"
-    $commandOptions.optimize = "--deflate-nupkg-only --id=''"
+    $commandOptions.download = "--append-use-original-location --cert='' --certpassword='' --disable-repository-optimizations --download-location='' --ignore-dependencies --ignore-unfound --installed-packages --internalize --internalize-all-urls --output-directory='' --password='' --prerelease --resources-location='' --skip-download-cache --skip-virus-check --source='' --use-download-cache --user='' --version='' --virus-check --virus-positives-minimum=''"
+    $commandOptions.optimize = "--id='' --reduce-nupkg-only"
 
     # Add pro switches to commands that have additional switches on Pro
-    $proInstallUpgradeOptions = " --install-directory='' --package-parameters-sensitive='' --max-download-rate='' --install-arguments-sensitive='' --skip-download-cache --use-download-cache --skip-virus-check --virus-check --virus-positives-minimum='' --deflate-package-size --no-deflate-package-size --deflate-nupkg-only"
+    $proInstallUpgradeOptions = " --install-arguments-sensitive='' --install-directory='' --max-download-bits-per-second='' --no-reduce-package-size --package-parameters-sensitive='' --reason='' --reduce-package-size --reduce-nupkg-only --skip-download-cache --skip-virus-check --use-download-cache --virus-check --virus-positives-minimum=''"
 
     $commandOptions.install += $proInstallUpgradeOptions
+    $commandOptions.new += " --build-package --pause-on-error --use-original-location"
+    $commandOptions.pin += " --reason=''"
     $commandOptions.upgrade += $proInstallUpgradeOptions + " --exclude-chocolatey-packages-during-upgrade-all --include-chocolatey-packages-during-upgrade-all"
-    $commandOptions.new += " --build-package --use-original-location --keep-remote --url='' --url64='' --checksum='' --checksum64='' --checksumtype='' --pause-on-error"
-    $commandOptions.pin += " --note=''"
 
     # Add Business-only commands and options if the license is a Business or Trial license
     [xml]$xml = Get-Content -Path $licenseFile -ErrorAction Stop
@@ -95,16 +94,19 @@ if (Test-Path $licenseFile) {
         # Add business-only commands
         $script:chocoCommands = @(
             $script:chocoCommands
-            'support'
+            'convert'
             'sync'
         )
 
-        $commandOptions.list += " --audit"
+        $commandOptions.convert = "--ignore-dependencies --include-all --to-format=''"
+        $commandOptions.list += " --show-audit"
+        $commandOptions.new += " --file='' --file64='' --from-programs-and-features --include-architecture-in-name --remove-architecture-from-name --url='' --url64=''"
+        $commandOptions.push += " --client-code='' --endpoint='' redirect-url='' --skip-cleanup"
+        $commandOptions.sync = "--id='' --output-directory='' --package-id=''"
         $commandOptions.uninstall += " --from-programs-and-features"
-        $commandOptions.new += " --file='' --file64='' --from-programs-and-features --remove-architecture-from-name --include-architecture-in-name"
 
         # Add --use-self-service to commands that support it
-        $selfServiceCommands = 'list', 'find', 'search', 'info', 'install', 'upgrade', 'uninstall', 'pin', 'outdated', 'push', 'download', 'sync', 'optimize'
+        $selfServiceCommands = 'download', 'info', 'install', 'list', 'optimize', 'outdated', 'pin', 'push', 'search', 'sync', 'uninstall', 'upgrade'
         foreach ($command in $selfServiceCommands) {
             $commandOptions.$command += ' --use-self-service'
         }
@@ -112,7 +114,7 @@ if (Test-Path $licenseFile) {
 }
 
 foreach ($key in @($commandOptions.Keys)) {
-    $commandOptions.$key += $allcommands
+    $commandOptions.$key = ($commandOptions.$key + $allCommands).Trim()
 }
 
 # Consistent ordering for commands so the added pro commands aren't weirdly out of order
@@ -124,7 +126,7 @@ function script:chocoCommands($filter) {
         $cmdList += $script:chocoCommands -like "$filter*"
     }
     else {
-        $cmdList += (& $script:choco -h) |
+        $cmdList += (& $script:choco --help) |
             Where-Object { $_ -match '^  \S.*' } |
             ForEach-Object { $_.Split(' ', [StringSplitOptions]::RemoveEmptyEntries) } |
             Where-Object { $_ -like "$filter*" }
@@ -133,29 +135,94 @@ function script:chocoCommands($filter) {
     $cmdList #| sort
 }
 
+function script:chocoApiKeysList() {
+    @(& $script:choco apikey list --limit-output --include-headers) |
+        ConvertFrom-Csv -Delimiter '|' |
+        Select-Object -ExpandProperty Source
+}
+
+function script:chocoConfigsList() {
+    @(& $script:choco config list --limit-output --include-headers) |
+        ConvertFrom-Csv -Delimiter '|' |
+        Select-Object -ExpandProperty Name
+}
+
+function script:chocoFeaturesList() {
+    @(& $script:choco feature list --limit-output --include-headers) |
+        ConvertFrom-Csv -Delimiter '|' |
+        Select-Object -ExpandProperty Name
+}
+
+function script:chocoLocalNonPinnedPackages() {
+    @(& $script:choco list --limit-output --ignore-pinned --include-headers) |
+        ConvertFrom-Csv -Delimiter '|' |
+        Select-Object -ExpandProperty Id
+}
+
 function script:chocoLocalPackages($filter) {
     if ($filter -and $filter.StartsWith(".")) {
         return;
     } #file search
-    @(& $script:choco list $filter -r --id-starts-with) | ForEach-Object { $_.Split('|')[0] }
+    @(& $script:choco list $filter --limit-output --id-starts-with --include-headers) |
+        ConvertFrom-Csv -Delimiter '|' |
+        Select-Object -ExpandProperty Id
 }
 
 function script:chocoLocalPackagesUpgrade($filter) {
     if ($filter -and $filter.StartsWith(".")) {
         return;
     } #file search
-    @('all|') + @(& $script:choco list $filter -r --id-starts-with) |
+    @('all|') + @(& $script:choco list $filter --limit-output --id-starts-with --include-headers) |
+        ConvertFrom-Csv -Delimiter '|' |
+        Select-Object -ExpandProperty Id
         Where-Object { $_ -like "$filter*" } |
         ForEach-Object { $_.Split('|')[0] }
+}
+
+function script:chocoLocalPinnedPackages() {
+    @(& $script:choco pin list --limit-output --include-headers) |
+        ConvertFrom-Csv -Delimiter '|' |
+        Select-Object -ExpandProperty Id
 }
 
 function script:chocoRemotePackages($filter) {
     if ($filter -and $filter.StartsWith(".")) {
         return;
     } #file search
-    @('packages.config|') + @(& $script:choco search $filter --page='0' --page-size='30' -r --id-starts-with --order-by-popularity) |
+    @('packages.config|') + @(& $script:choco search $filter --page='0' --page-size='30' --limit-output --id-starts-with --include-headers --order-by='popularity') |
+        ConvertFrom-Csv -Delimiter '|' |
+        Select-Object -ExpandProperty Id
         Where-Object { $_ -like "$filter*" } |
         ForEach-Object { $_.Split('|')[0] }
+}
+
+function script:chocoRemotePackageVersions($Name, $Version) {
+        $packageVersions = & $script:choco search $Name --exact --all-versions --limit-output --include-headers --order-by='LastPublished' |
+            ConvertFrom-Csv -Delimiter '|'
+
+        if ($Version -and $packageVersions) {
+            $packageVersions | Where-Object Version -Like "$Version*" | Select-Object -ExpandProperty Version -First 30
+        } else {
+            $packageVersions | Select-Object -ExpandProperty Version -First 30
+        }
+}
+
+function script:chocoRulesList() {
+    @(& $script:choco rule list --limit-output --include-headers) |
+        ConvertFrom-Csv -Delimiter '|' |
+        Select-Object -ExpandProperty Id
+}
+
+function script:chocoSourcesList() {
+    @(& $script:choco source list --limit-output --include-headers) |
+        ConvertFrom-Csv -Delimiter '|' |
+        Select-Object -ExpandProperty Name
+}
+
+function script:chocoTemplatesList() {
+    @(& $script:choco template list --limit-output --include-headers) |
+        ConvertFrom-Csv -Delimiter '|' |
+        Select-Object -ExpandProperty Name
 }
 
 function Get-AliasPattern($exe) {
@@ -164,12 +231,66 @@ function Get-AliasPattern($exe) {
     "($($aliases -join '|'))"
 }
 
+function Get-ChocoOrderByOptions {
+    <#
+        .SYNOPSIS
+        Returns the list of canonical --order-by values for Chocolatey.
+
+        .DESCRIPTION
+        These values correspond to the distinct, non-aliased entries in the
+        PackageOrder enum. They are sorted alphabetically and must be updated
+        manually when the enum changes.
+
+        .OUTPUTS
+        A string in the format "Id|LastPublished|Popularity|Title|Unsorted"
+    #>
+    return @("Id", "LastPublished", "Popularity", "Title", "Unsorted")
+}
+
 function ChocolateyTabExpansion($lastBlock) {
     switch -regex ($lastBlock -replace "^$(Get-AliasPattern choco) ", "") {
 
-        # Handles uninstall package names
-        "^uninstall\s+(?<package>[^\.][^-\s]*)$" {
-            chocoLocalPackages $matches['package']
+        # Handles apikey first tab
+        "^(apikey)\s+(?<subcommand>[^-\s]*)$" {
+            @('add', 'list', 'remove', '--help') | Where-Object { $_ -like "$($matches['subcommand'])*" }
+        }
+
+        # Custom completion choco apikey remove
+        "^apikey remove.*--source='?(?<source>.*)'?$" {
+            $name = $matches['source']
+            return chocoApiKeysList | Where-Object { $_ -like "*$source*" } | ForEach-Object { "--source='$_'"}
+        }
+
+        # Handles cache first tab
+        "^(cache)\s+(?<subcommand>[^-\s]*)$" {
+            @('list', 'remove', '--help') | Where-Object { $_ -like "$($matches['subcommand'])*" }
+        }
+
+        # Handles config first tab
+        "^(config)\s+(?<subcommand>[^-\s]*)$" {
+            @('get', 'list', 'set', 'unset', '--help') | Where-Object { $_ -like "$($matches['subcommand'])*" }
+        }
+
+        # Custom completion choco config get/set/unset
+        "^config (get|set|unset).*--name='?(?<name>.*)'?$" {
+            $name = $matches['name']
+            return chocoConfigsList | Where-Object { $_ -like "*$name*" } | ForEach-Object { "--name='$_'"}
+        }
+
+        # Handles feature first tab
+        "^(feature)\s+(?<subcommand>[^-\s]*)$" {
+            @('disable', 'enable', 'get', 'list', '--help') | Where-Object { $_ -like "$($matches['subcommand'])*" }
+        }
+
+        # Custom completion choco feature get/enable/disable
+        "^feature (get|disable|enable).*--name='?(?<name>.*)'?$" {
+            $name = $matches['name']
+            return chocoFeaturesList | Where-Object { $_ -like "*$name*" } | ForEach-Object { "--name='$_'"}
+        }
+
+        # Handles install/upgrade package versions for a specific package
+        "^(install|upgrade)\s+(?<package>[^\.\-][^\s]+).*--version='?(?<version>[^\s']*)'?$" {
+            chocoRemotePackageVersions -Name $matches['package'] -Version $matches['version'] | ForEach-Object { "--version='$_'" }
         }
 
         # Handles install package names
@@ -177,58 +298,100 @@ function ChocolateyTabExpansion($lastBlock) {
             chocoRemotePackages $matches['package']
         }
 
+        # Handles license first tab
+        "^(license)\s+(?<subcommand>[^-\s]*)$" {
+            @('info', '--help') | Where-Object { $_ -like "$($matches['subcommand'])*" }
+        }
+
+        # Handles list first tab
+        "^(list)\s+(?<subcommand>[^-\s]*)$" {
+            @('<filter>', '--help') | Where-Object { $_ -like "$($matches['subcommand'])*" }
+        }
+
+        # Handles new first tab
+        "^(new)\s+(?<subcommand>[^-\s]*)$" {
+            @('<name>', '--help') | Where-Object { $_ -like "$($matches['subcommand'])*" }
+        }
+
+        # Handles pack first tab
+        "^(pack)\s+(?<subcommand>[^-\s]*)$" {
+            @('<PathtoNuspec>', '--help') | Where-Object { $_ -like "$($matches['subcommand'])*" }
+        }
+
+        # Handles pin first tab
+        "^(pin)\s+(?<subcommand>[^-\s]*)$" {
+            @('add', 'list', 'remove', '--help') | Where-Object { $_ -like "$($matches['subcommand'])*" }
+        }
+
+        # Custom completion choco pin add
+        "^pin add.*--name='?(?<name>.*)'?$" {
+            $name = $matches['name']
+            return chocoLocalNonPinnedPackages | Where-Object { $_ -like "*$name*" } | ForEach-Object { "--name='$_'"}
+        }
+
+        # Custom completion choco pin remove
+        "^pin remove.*--name='?(?<name>.*)'?$" {
+            $name = $matches['name']
+            return chocoLocalPinnedPackages | Where-Object { $_ -like "*$name*" } | ForEach-Object { "--name='$_'"}
+        }
+
+        # Handles push first tab
+        "^(push)\s+(?<subcommand>[^-\s]*)$" {
+            @('<PathtoNupkg>', '--help') | Where-Object { $_ -like "$($matches['subcommand'])*" }
+        }
+
+        # Handles rule first tab
+        "^(rule)\s+(?<subcommand>[^-\s]*)$" {
+            @('get', 'list', '--help') | Where-Object { $_ -like "$($matches['subcommand'])*" }
+        }
+
+        # Custom completion choco rule get
+        "^rule get.*--name='?(?<name>.*)'?$" {
+            $name = $matches['name']
+            return chocoRulesList | Where-Object { $_ -like "*$name*" } | ForEach-Object { "--name='$_'"}
+        }
+
+        # Handles search first tab
+        "^(search)\s+(?<subcommand>[^-\s]*)$" {
+            @('<filter>', '--help') | Where-Object { $_ -like "$($matches['subcommand'])*" }
+        }
+
+        # Handles source first tab
+        "^(source)\s+(?<subcommand>[^-\s]*)$" {
+            @('add', 'disable', 'enable', 'list', 'remove', '--help') | Where-Object { $_ -like "$($matches['subcommand'])*" }
+        }
+
+        # Custom completion choco source disable/enable/remove
+        "^source (disable|enable|remove).*--name='?(?<name>.*)'?$" {
+            $name = $matches['name']
+            return chocoSourcesList | Where-Object { $_ -like "*$name*" } | ForEach-Object { "--name='$_'"}
+        }
+
+        # Handles template first tab
+        "^(template)\s+(?<subcommand>[^-\s]*)$" {
+            @('info', 'list', '--help') | Where-Object { $_ -like "$($matches['subcommand'])*" }
+        }
+
+        # Custom completion choco template info
+        "^template info.*--name='?(?<name>.*)'?$" {
+            $name = $matches['name']
+            return chocoTemplatesList | Where-Object { $_ -like "*$name*" } | ForEach-Object { "--name='$_'"}
+        }
+
+        # Handles uninstall package names
+        "^uninstall\s+(?<package>[^\.][^-\s]*)$" {
+            chocoLocalPackages $matches['package']
+        }
+
         # Handles upgrade / uninstall package names
         "^upgrade\s+(?<package>[^\.][^-\s]*)$" {
             chocoLocalPackagesUpgrade $matches['package']
         }
 
-        # Handles list/search first tab
-        "^(list|search|find)\s+(?<subcommand>[^-\s]*)$" {
-            @('<filter>', '-?') | Where-Object { $_ -like "$($matches['subcommand'])*" }
-        }
-
-        # Handles new first tab
-        "^(new)\s+(?<subcommand>[^-\s]*)$" {
-            @('<name>', '-?') | Where-Object { $_ -like "$($matches['subcommand'])*" }
-        }
-
-        # Handles pack first tab
-        "^(pack)\s+(?<subcommand>[^-\s]*)$" {
-            @('<PathtoNuspec>', '-?') | Where-Object { $_ -like "$($matches['subcommand'])*" }
-        }
-
-        # Handles push first tab
-        "^(push)\s+(?<subcommand>[^-\s]*)$" {
-            @('<PathtoNupkg>', '-?') | Where-Object { $_ -like "$($matches['subcommand'])*" }
-        }
-
-        # Handles source first tab
-        "^(source)\s+(?<subcommand>[^-\s]*)$" {
-            @('list', 'add', 'remove', 'disable', 'enable', '-?') | Where-Object { $_ -like "$($matches['subcommand'])*" }
-        }
-
-        # Handles pin first tab
-        "^(pin)\s+(?<subcommand>[^-\s]*)$" {
-            @('list', 'add', 'remove', '-?') | Where-Object { $_ -like "$($matches['subcommand'])*" }
-        }
-
-        # Handles feature first tab
-        "^(feature)\s+(?<subcommand>[^-\s]*)$" {
-            @('list', 'get', 'disable', 'enable', '-?') | Where-Object { $_ -like "$($matches['subcommand'])*" }
-        }
-        # Handles config first tab
-        "^(config)\s+(?<subcommand>[^-\s]*)$" {
-            @('list', 'get', 'set', 'unset', '-?') | Where-Object { $_ -like "$($matches['subcommand'])*" }
-        }
-
-        # Handles template first tab
-        "^(template)\s+(?<subcommand>[^-\s]*)$" {
-            @('list', 'info', '-?') | Where-Object { $_ -like "$($matches['subcommand'])*" }
-        }
-
-        # Handles cache first tab
-        "^(cache)\s+(?<subcommand>[^-\s]*)$" {
-            @('list', 'remove', '-?') | Where-Object { $_ -like "$($matches['subcommand'])*" }
+        # Custom completion for --order-by values
+        "^search.*--order-by='?(?<prefix>.*)'?$" {
+            $prefix = $matches['prefix']
+            return Get-ChocoOrderByOptions | Where-Object { $_ -like "$prefix*" } | ForEach-Object { "--order-by='$_'"}
         }
 
         # Handles more options after others
@@ -265,21 +428,21 @@ if ($PowerTab_RegisterTabExpansion) {
 }
 
 # PowerShell up to v5.x: use a custom TabExpansion function.
-if ($PSVersionTable.PSVersion.Major -lt 5) { 
+if ($PSVersionTable.PSVersion.Major -lt 5) {
     if (Test-Path Function:\TabExpansion) {
         Rename-Item Function:\TabExpansion TabExpansionBackup
     }
 
     function TabExpansion($line, $lastWord) {
         $lastBlock = [System.Text.RegularExpressions.Regex]::Split($line, '[|;]')[-1].TrimStart()
-    
+
 
         switch -regex ($lastBlock) {
             # Execute Chocolatey tab completion for all choco-related commands
             "^$(Get-AliasPattern choco) (.*)" {
                 ChocolateyTabExpansion $lastBlock
             }
-    
+
             # Fall back on existing tab expansion
             default {
                 if (Test-Path Function:\TabExpansionBackup) {
@@ -293,10 +456,10 @@ else { # PowerShell v5+: use the Register-ArgumentCompleter cmdlet (PowerShell n
     function script:Get-AliasNames($exe) {
         @($exe) + @(Get-Alias | Where-Object { $_.Definition -eq $exe } | Select-Object -Exp Name)
     }
-    
+
     Register-ArgumentCompleter -Native -CommandName (Get-AliasNames choco) -ScriptBlock {
         param($wordToComplete, $commandAst, $cursorColumn)
-    
+
         # NOTE:
         # * The stringified form of $commandAst is the command's own command line (irrespective of
         #   whether other statements are on the same line or whether it is part of a pipeline).
@@ -306,7 +469,7 @@ else { # PowerShell v5+: use the Register-ArgumentCompleter cmdlet (PowerShell n
         $ownCommandLine = [string] $commandAst
         $ownCommandLine = $ownCommandLine.Substring(0, [Math]::Min($ownCommandLine.Length, $cursorColumn))
         $ownCommandLine += ' ' * ($cursorColumn - $ownCommandLine.Length)
-    
+
         ChocolateyTabExpansion $ownCommandLine
     }
 }
@@ -314,8 +477,8 @@ else { # PowerShell v5+: use the Register-ArgumentCompleter cmdlet (PowerShell n
 # SIG # Begin signature block
 # MIInJQYJKoZIhvcNAQcCoIInFjCCJxICAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCCrrVVd0TkryWd/
-# lQnstQWAiB3jLfsm+MkIv62xgjw9RaCCIKgwggWNMIIEdaADAgECAhAOmxiO+dAt
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCC7CBFgLXOxbhFU
+# jelLmAobz/9S4h05UhOX1ThKj1lgzKCCIKgwggWNMIIEdaADAgECAhAOmxiO+dAt
 # 5+/bUOIIQBhaMA0GCSqGSIb3DQEBDAUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0yMjA4MDEwMDAwMDBa
@@ -495,30 +658,30 @@ else { # PowerShell v5+: use the Register-ArgumentCompleter cmdlet (PowerShell n
 # NCAyMDIxIENBMQIQBNI793flHTneCMtwLiiYFTANBglghkgBZQMEAgEFAKCBhDAY
 # BgorBgEEAYI3AgEMMQowCKACgAChAoAAMBkGCSqGSIb3DQEJAzEMBgorBgEEAYI3
 # AgEEMBwGCisGAQQBgjcCAQsxDjAMBgorBgEEAYI3AgEVMC8GCSqGSIb3DQEJBDEi
-# BCACwVrD35kTKywCVz7zjbwM/lhq6QqjIzS0Czl9d+q76DANBgkqhkiG9w0BAQEF
-# AASCAYCw2061YTLAjaZ1gBIYpmTs57O7Y+mAs0W9QmGgi7/JAESQV69EWtvkG4EW
-# eT7k1F0N4CwO96MhakffLcPkUaZFyCDDqLnzUTQ0xbPw+hxNKm2RcpCCTtBcibP6
-# jkfYTpRS7SzCd0SAyqkxJ/moBEItQDJebMIUUaFgsW82YVyXYRz55khKS9zBykPj
-# W1qxg2j0s9IvxOQIYjb6j8P8M1LMsJqDiNFMHwludh/MYFXZH1ydQWCXypJla9ZU
-# MyP8csLQVa+LldIA7luoXbY1RPaCv1wkf7EGUCuYTc/rk5Dx4zg3s3Dp/QvvHMtJ
-# B/l0vEX7VYs+jMbGpGcigfQ0DhQ7xrmmZht6ROw70EyigUxVKppf+ZwydoecUwcX
-# 3K40gj4FFPwCV7y5TyN0MWCwRP9O4N4of6Bcfa1cioBd6qTXlCbEXZIGVfTjJLS6
-# WWojePxIx+Ee0DCcQxwZkDiSE/kLpF0qzq96orQ3utyHVJwsVKOM9Xdjm1we1T0p
-# s1Vu6aOhggMgMIIDHAYJKoZIhvcNAQkGMYIDDTCCAwkCAQEwdzBjMQswCQYDVQQG
+# BCDt0pZR9uNdi0kB2NcN8oEb0MJzuaA/+MrfPjBI71PaKzANBgkqhkiG9w0BAQEF
+# AASCAYA4cK66HcdQveoHC7i1Eroy7awuEyTl6/0VOXFUcNftjUF5e4rZwLFqi1gc
+# 47b5sFaeG0DQkJQCNP/AJD86hAmGFjTN9/BFOvWbW8EG/l94Jofo2rjivPjchSR8
+# 1lf4IJR1suzxVlp1hAyy2GKa1musFdYYGr2PECKsq1qeJATNklQDMDIvsRFwUP/3
+# BviwhmHpzU1R3dFExGkYrKQK1iK/mbvreYtFoov1YcVkkU5Y3pH0vOjqiJjrVIoH
+# cd+S9j36u2Lo9P3KGv4tYqb9/b0oA59jOm7yiRGwQ0gOTkCTU2Dd0pVMgzFKDCyQ
+# wdlkzpRKOtExgzYtjuDclXbzA8OLgDliTDXeF1Cq/d1C7NnWX8+DomMuUmHzws7k
+# +/kqcCVDmK4F/U5FUINc6ft0J3wJcSveoFE8aN/aktDUnpvT5T9t92FOvnT/Vvba
+# j2GaQBTaMSVyZPLwwiSq3a9j9Dfbi6ITzjsF75i5ftVtltvpbumMuSIc6bAW7OhO
+# kGj8lK+hggMgMIIDHAYJKoZIhvcNAQkGMYIDDTCCAwkCAQEwdzBjMQswCQYDVQQG
 # EwJVUzEXMBUGA1UEChMORGlnaUNlcnQsIEluYy4xOzA5BgNVBAMTMkRpZ2lDZXJ0
 # IFRydXN0ZWQgRzQgUlNBNDA5NiBTSEEyNTYgVGltZVN0YW1waW5nIENBAhALrma8
 # Wrp/lYfG+ekE4zMEMA0GCWCGSAFlAwQCAQUAoGkwGAYJKoZIhvcNAQkDMQsGCSqG
-# SIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMjQxMTA0MTkxOTQ2WjAvBgkqhkiG9w0B
-# CQQxIgQgP8WSnvRLZUYfjuZAFxkdIQhswpxyr+rtr/LU0oR+DIQwDQYJKoZIhvcN
-# AQEBBQAEggIArauuS+N1yx86sAFt/6HemR0XsMsy9dS6ZeKpcPn+S8BsbOT9JIHW
-# /lFfNtzb7abHS2Ol4MFkY60fG6qKZ4uOD8pNIRO7sHD044rtPAk7YhTcbJp2GPxJ
-# dgLIpdL9tSYDqdvH/LFO95VhOWFmHkqy0maeI2WK9xy7ZLwziDrEz7qMPF+TaQc3
-# bGIV8RhYPy1AAfklb4pwKi5+kKPR5lX5qV4933rjpLnugSG1/GMI7mE1L+55KBiD
-# PmvW8EwcEKoEezEs5idusmh6F4pMYiyEO8/1rCcRMkbGmLeGnB85X+aHvsgTVq5f
-# +YdjSYPRfBAXtiosPAvpHobeM0lfpCoeSU7A7z64gSkW1Fsv2GKTZjzbceNro/bW
-# XRchT9BMArT3oHcAePb9wOH3hldkZ3tKuprh0TSUzzcYnCGIhlHE48atpkP/sVZU
-# bhucTsVY8RuJyzAA4daAIvZ0xN/ca0V9KdeOsjSdTYw0grcnkiicsmitVYgonvnp
-# 8SRjhWU9YUIniJRuUMITTBy2dOYCXYpE0vTPYr+LmZKkdG9SF6H74DBLjQmfSPP/
-# x6Wg7ZKia1WDVJezMOH77Lstr5pTs7GdSixphs+LvrCrkmjxYrBZ2EnJXcKHzPOX
-# d7unSsvjYZzfmNot9e6W+vCWjV2EWmJNzFS2H01h+6CB5molbvlVZUw=
+# SIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMjUwNzAyMTE0NDAxWjAvBgkqhkiG9w0B
+# CQQxIgQg9O3AxexOleseUfc0G/4dx1bimWJ4+wt+21na57bqbeAwDQYJKoZIhvcN
+# AQEBBQAEggIASiZtXYYr9sPEo7uWHy05+Jypj/zQOMIl2SlUns0kl2PVTi6RcYQT
+# fXBD8v0zxnXmLwYTOuHB9PlzY0VCF4U+2IRNC6tWhCrLgV+nPdGD9d3bguPMdJhF
+# uefySJrv/YageXZ1jev8bAF8uGNKs3F8WEYRZP53Knpu92oF88OUlHAy+Qoyq4q1
+# JCuBuI+kjX3135YYRs99LdGTzr9uOmWq8G5OAwY8DDuP0916sWpC3rzGTw6U+V5k
+# EzN81/dEFsrS2YpzQqoewjqxx3Rvp3DhDXe2Z1kbERibpRYfGFJj86hf5qphVlL+
+# gYbxJJlv7nPxKSuwUYsy7Uql9e0L2jPiUwGGI3DjV81CaLDauKoA+pons9N4wHNT
+# tuY0MKNuzqB2vhVigsG/wGsQFVG+dQ92AHyZuf2g1VpYYFo2VtaEFTX/r/SwHv2H
+# MtIBxrqOo9b/kH2/PrKAfQpFm+s/k+E6b40mSWEYwaydPHDTZb3QkGX4tp+OMXzi
+# jk4GfFkXnJAs8akE3WJKfwpOsChvldE/KRvMfv+EsyO+SO+A6wu+qNtBuSz7Q+tm
+# BIezlca+KZcTh2ZzmO2XKnPXaZxS7oZ0hjEZ1rKc27kRv+8PLdb/dAcT9d+NqLKw
+# YZMaPLXQfH3QyG1Y/KgdTFWaLyazL2L/Ug59DOGW1sF1QXtM9k+9gso=
 # SIG # End signature block

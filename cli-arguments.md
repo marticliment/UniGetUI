@@ -12,11 +12,14 @@
 | `--help` | Opens this page | 3.2.0+ |
 | `--import-settings file` | Imports UniGetUI settings from json file _file_. The file must exist. The old settings will be lost* | 3.2.0+ |
 | `--export-settings file` |  Exports UniGetUI settings to json file _file_. The file will be created or overwritten* | 3.2.0+ |
-| `--[enable\|disable]-setting key` | Enables/disables the boolean setting _key_* | 3.2.0+ |
-| `--set-setting-value key value` | Sets the value _value_ to the non-boolean setting _key_. To clear a non-boolean setting, `--disable-setting` can be used* | 3.2.0+ |
+| `--[enable\|disable]-setting key` | Enables/disables the boolean setting _key<sup>1</sup>_ | 3.2.0+ |
+| `--set-setting-value key value` | Sets the value _value_ to the non-boolean setting _key<sup>1</sup>_. To clear a non-boolean setting, `--disable-setting` can be used* | 3.2.0+ |
 | `--no-corrupt-dialog` | Will show a verbose error message (the error report) instead of a simplified message dialog | 3.2.1+ |
-| `--[enable\|disable]-secure-setting-for-user username key` | Enables/disables the given secure setting for the given username. Requires administrator rights.  | 3.2.1+ | 
-| `--[enable\|disable]-secure-setting key` | Enables/disables the given secure setting for current user. This will generate a UAC prompt  | 3.2.1+ | 
+| `--[enable\|disable]-secure-setting-for-user username key` | Enables/disables the given secure setting for the given key<sup>2</sup> and username. Requires administrator rights.  | 3.2.1+ | 
+| `--[enable\|disable]-secure-setting key` | Enables/disables the given secure setting<sup>2</sup> for current user. This will generate a UAC prompt  | 3.2.1+ | 
+
+1. See the available list of setting keys [here](https://github.com/marticliment/UniGetUI/blob/fc98f312a72b80e14a8ac10687f4fc506a5c9cc4/src/UniGetUI.Core.Settings/SettingsEngine_Names.cs#L89)
+2. See the available list of secure settings keys [here](https://github.com/marticliment/UniGetUI/blob/fc98f312a72b80e14a8ac10687f4fc506a5c9cc4/src/UniGetUI.Core.SecureSettings/SecureSettings.cs#L20)
 
 
 \*After modifying the settings, you must ensure that any running instance of UniGetUI is restarted for the changes to take effect
@@ -45,6 +48,7 @@ The installer is inno-setup based. It supports [all Inno Setup command-line para
 | `/NoVCRedist` | Will not install MS Visual C++ Redistributable x64 (v3.1.2+) |
 | `/NoEdgeWebView` | Will not install Microsoft Edge WebView Runtime (v3.1.2+) |
 | `/NoChocolatey` | Do NOT install chocolatey within UniGetUI | 
+| `/EnableSystemChocolatey` | Force UniGetUI to use system chocolatey |
 | `/NoWinGet` | Do NOT install WinGet and Microsoft.WinGet.Client if not installed **(not recommended)** | 
 | `/ALLUSERS` | Will force the installer to install per-machine (requires administrator privileges) |
 | `/CURRENTUSER` | Will force the installer to install per-user | 

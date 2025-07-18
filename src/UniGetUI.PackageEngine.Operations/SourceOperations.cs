@@ -16,7 +16,10 @@ namespace UniGetUI.PackageEngine.Operations
         protected IManagerSource Source;
         public bool ForceAsAdministrator { get; private set; }
 
-        public SourceOperation(IManagerSource source) : base(false, null)
+        public SourceOperation(
+            IManagerSource source,
+            IReadOnlyList<InnerOperation>? preOps)
+            : base(false, preOps)
         {
             Source = source;
             Initialize();
@@ -26,6 +29,10 @@ namespace UniGetUI.PackageEngine.Operations
         {
             return Task.FromResult(new Uri($"ms-appx:///Assets/Images/{Source.Manager.Properties.ColorIconId}.png"));
         }
+
+        protected bool RequiresAdminRights()
+            => !Settings.Get(Settings.K.ProhibitElevation)
+               && (ForceAsAdministrator || Source.Manager.Capabilities.Sources.MustBeInstalledAsAdmin);
 
         protected override void ApplyRetryAction(string retryMode)
         {
@@ -40,35 +47,59 @@ namespace UniGetUI.PackageEngine.Operations
                     throw new InvalidOperationException($"Retry mode {retryMode} is not supported in this context");
             }
         }
+
+        public static IReadOnlyList<InnerOperation> CreateInstallPreOps(IManagerSource source, bool forceLocalWinGet)
+        {
+            if (forceLocalWinGet) return [];
+            if (source.Manager.Status.ExecutablePath == WinGet.BundledWinGetPath) return [];
+            return [new(new AddSourceOperation(source, true), mustSucceed: true)];
+        }
+
+        public static IReadOnlyList<InnerOperation> CreateUninstallPreOps(IManagerSource source, bool forceLocalWinGet)
+        {
+            if (forceLocalWinGet) return [];
+            if (source.Manager.Status.ExecutablePath == WinGet.BundledWinGetPath) return [];
+            // In this case, must succeed is set to false since we cannot ensure that bundled WinGet will
+            // have this source added
+            return [new(new RemoveSourceOperation(source, true), mustSucceed: false)];
+        }
     }
 
     public class AddSourceOperation : SourceOperation
     {
-        public AddSourceOperation(IManagerSource source) : base(source)
-        { }
+        private readonly bool _forceLocalWinGet;
+        public AddSourceOperation(IManagerSource source, bool forceLocalWinGet = false)
+            : base(source, CreateInstallPreOps(source, forceLocalWinGet))
+        {
+            _forceLocalWinGet = forceLocalWinGet;
+        }
 
         protected override void PrepareProcessStartInfo()
         {
+            var exePath = Source.Manager.Status.ExecutablePath;
+            if (Source.Manager is WinGet && _forceLocalWinGet)
+            {
+                exePath = WinGet.BundledWinGetPath;
+            }
+
             bool admin = false;
-           if (ForceAsAdministrator || Source.Manager.Capabilities.Sources.MustBeInstalledAsAdmin)
-           {
-                if (Settings.Get("DoCacheAdminRights") || Settings.Get("DoCacheAdminRightsForBatches"))
-                {
-                    CoreTools.CacheUACForCurrentProcess().GetAwaiter().GetResult();
-                }
+            if (RequiresAdminRights())
+            {
+                if (Settings.Get(Settings.K.DoCacheAdminRights) || Settings.Get(Settings.K.DoCacheAdminRightsForBatches))
+                    RequestCachingOfUACPrompt();
 
                 if (Source.Manager is WinGet)
                     RedirectWinGetTempFolder();
 
                 admin = true;
                 process.StartInfo.FileName = CoreData.ElevatorPath;
-                process.StartInfo.Arguments = $"\"{Source.Manager.Status.ExecutablePath}\" " + Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Source.Manager.SourcesHelper.GetAddSourceParameters(Source));
+                process.StartInfo.Arguments = $"\"{exePath}\" " + Source.Manager.Status.ExecutableCallArgs + " " + string.Join(" ", Source.Manager.SourcesHelper.GetAddSourceParameters(Source));
 
             }
             else
             {
-                process.StartInfo.FileName = Source.Manager.Status.ExecutablePath;
-                process.StartInfo.Arguments = Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Source.Manager.SourcesHelper.GetAddSourceParameters(Source));
+                process.StartInfo.FileName = exePath;
+                process.StartInfo.Arguments = Source.Manager.Status.ExecutableCallArgs + " " + string.Join(" ", Source.Manager.SourcesHelper.GetAddSourceParameters(Source));
             }
 
            ApplyCapabilities(admin, false, false, null);
@@ -97,30 +128,37 @@ namespace UniGetUI.PackageEngine.Operations
 
     public class RemoveSourceOperation : SourceOperation
     {
-        public RemoveSourceOperation(IManagerSource source) : base(source)
-        { }
+        private readonly bool _forceLocalWinGet;
+        public RemoveSourceOperation(IManagerSource source, bool forceLocalWinGet = false)
+            : base(source, CreateUninstallPreOps(source, forceLocalWinGet))
+        {
+            _forceLocalWinGet = forceLocalWinGet;
+        }
 
         protected override void PrepareProcessStartInfo()
         {
-            bool admin = false;
-            if (ForceAsAdministrator || Source.Manager.Capabilities.Sources.MustBeInstalledAsAdmin)
+            var exePath = Source.Manager.Status.ExecutablePath;
+            if (Source.Manager is WinGet && _forceLocalWinGet)
             {
-                if (Settings.Get("DoCacheAdminRights") || Settings.Get("DoCacheAdminRightsForBatches"))
-                {
-                    CoreTools.CacheUACForCurrentProcess().GetAwaiter().GetResult();
-                }
+                exePath = WinGet.BundledWinGetPath;
+            }
+            bool admin = false;
+            if (RequiresAdminRights())
+            {
+                if (Settings.Get(Settings.K.DoCacheAdminRights) || Settings.Get(Settings.K.DoCacheAdminRightsForBatches))
+                    RequestCachingOfUACPrompt();
 
                 if (Source.Manager is WinGet)
                     RedirectWinGetTempFolder();
 
                 admin = true;
                 process.StartInfo.FileName = CoreData.ElevatorPath;
-                process.StartInfo.Arguments = $"\"{Source.Manager.Status.ExecutablePath}\" " + Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Source.Manager.SourcesHelper.GetRemoveSourceParameters(Source));
+                process.StartInfo.Arguments = $"\"{exePath}\" " + Source.Manager.Status.ExecutableCallArgs + " " + string.Join(" ", Source.Manager.SourcesHelper.GetRemoveSourceParameters(Source));
             }
             else
             {
-                process.StartInfo.FileName = Source.Manager.Status.ExecutablePath;
-                process.StartInfo.Arguments = Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Source.Manager.SourcesHelper.GetRemoveSourceParameters(Source));
+                process.StartInfo.FileName = exePath;
+                process.StartInfo.Arguments = Source.Manager.Status.ExecutableCallArgs + " " + string.Join(" ", Source.Manager.SourcesHelper.GetRemoveSourceParameters(Source));
             }
             ApplyCapabilities(admin, false, false, null);
         }

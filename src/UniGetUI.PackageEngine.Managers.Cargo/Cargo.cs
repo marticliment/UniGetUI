@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
 using UniGetUI.Core.Classes;
+using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager;
@@ -29,14 +30,14 @@ public partial class Cargo : PackageManager
             // cargo-update is required to check for installed and upgradable packages
             new ManagerDependency(
                 "cargo-update",
-                Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe"),
+                CoreData.PowerShell5,
                 "-ExecutionPolicy Bypass -NoLogo -NoProfile -Command \"& {cargo install cargo-update; if ($error.count -ne 0){pause}}\"",
                 "cargo install cargo-update",
                 async () => (await CoreTools.WhichAsync("cargo-install-update.exe")).Item1),
             // Cargo-binstall is required to install and update cargo binaries
             new ManagerDependency(
                 "cargo-binstall",
-                Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe"),
+                CoreData.PowerShell5,
                 "-ExecutionPolicy Bypass -NoLogo -NoProfile -Command \"& {Set-ExecutionPolicy Unrestricted -Scope Process; iex (iwr \\\"https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.ps1\\\").Content; if ($error.count -ne 0){pause}}\"",
                 "Set-ExecutionPolicy Unrestricted -Scope Process; iex (iwr \"https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.ps1\").Content",
                 async () => (await CoreTools.WhichAsync("cargo-binstall.exe")).Item1)
@@ -48,6 +49,7 @@ public partial class Cargo : PackageManager
             CanSkipIntegrityChecks = true,
             SupportsCustomVersions = true,
             SupportsCustomLocations = true,
+            CanDownloadInstaller = true,
             SupportsProxy = ProxySupport.Partially,
             SupportsProxyAuth = true
         };
@@ -64,7 +66,6 @@ public partial class Cargo : PackageManager
             InstallVerb = "binstall",
             UninstallVerb = "uninstall",
             UpdateVerb = "binstall",
-            ExecutableCallArgs = "",
             DefaultSource = cratesIo,
             KnownSources = [cratesIo]
         };
@@ -136,13 +137,20 @@ public partial class Cargo : PackageManager
         return GetPackages(LoggableTaskType.ListInstalledPackages);
     }
 
+    public override IReadOnlyList<string> FindCandidateExecutableFiles()
+    {
+        return CoreTools.WhichMultiple("cargo.exe");
+    }
+
     protected override ManagerStatus LoadManager()
     {
-        var (found, executablePath) = CoreTools.Which("cargo");
+        var (found, executablePath) = GetExecutableFile();
         if (!found)
         {
             return new(){ ExecutablePath = executablePath, Found = false, Version = ""};
         }
+
+        Status = new() { ExecutablePath = executablePath, Found = found, Version = "", ExecutableCallArgs = ""};
 
         using Process p = GetProcess(executablePath, "--version");
         p.Start();
@@ -153,7 +161,7 @@ public partial class Cargo : PackageManager
             Logger.Error("cargo version error: " + error);
         }
 
-        return new() { ExecutablePath = executablePath, Found = found, Version = version };
+        return new() { ExecutablePath = executablePath, Found = found, Version = version, ExecutableCallArgs = ""};
     }
 
     private IReadOnlyList<Package> GetPackages(LoggableTaskType taskType)
@@ -204,7 +212,7 @@ public partial class Cargo : PackageManager
             StartInfo = new ProcessStartInfo
             {
                 FileName = fileName,
-                Arguments = Properties.ExecutableCallArgs + " " + extraArguments,
+                Arguments = Status.ExecutableCallArgs + " " + extraArguments,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,

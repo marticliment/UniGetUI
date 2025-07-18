@@ -15,12 +15,6 @@ namespace UniGetUI.Core.Tools
 {
     public static class CoreTools
     {
-
-        public static readonly HttpClientHandler HttpClientConfig = new()
-        {
-            AutomaticDecompression = DecompressionMethods.All
-        };
-
         public static HttpClientHandler GenericHttpClientParameters
         {
             get
@@ -29,8 +23,8 @@ namespace UniGetUI.Core.Tools
                 IWebProxy? proxy = null;
                 ICredentials? creds = null;
 
-                if (Settings.Get("EnableProxy")) proxyUri = Settings.GetProxyUrl();
-                if (Settings.Get("EnableProxyAuth")) creds = Settings.GetProxyCredentials();
+                if (Settings.Get(Settings.K.EnableProxy)) proxyUri = Settings.GetProxyUrl();
+                if (Settings.Get(Settings.K.EnableProxyAuth)) creds = Settings.GetProxyCredentials();
                 if (proxyUri is not null) proxy = new WebProxy()
                 {
                     Address = proxyUri,
@@ -103,13 +97,13 @@ namespace UniGetUI.Core.Tools
         /// Finds an executable in path and returns its location
         /// </summary>
         /// <param name="command">The executable alias to find</param>
-        /// <returns>A tuple containing: a boolean hat represents whether the path was found or not; the path to the file if found.</returns>
+        /// <returns>A tuple containing: a boolean that represents whether the path was found or not; the path to the file if found.</returns>
         public static async Task<Tuple<bool, string>> WhichAsync(string command)
         {
             return await Task.Run(() => Which(command));
         }
 
-        public static Tuple<bool, string> Which(string command, bool updateEnv = true)
+        public static List<string> WhichMultiple(string command, bool updateEnv = true)
         {
             command = command.Replace(";", "").Replace("&", "").Trim();
             Logger.Debug($"Begin \"which\" search for command {command}");
@@ -142,28 +136,34 @@ namespace UniGetUI.Core.Tools
             try
             {
                 process.Start();
-                string? line = process.StandardOutput.ReadLine();
-                string output;
-
-                if (line is null) output = "";
-                else output = line.Trim();
+                string[] lines = process.StandardOutput.ReadToEnd()
+                    .Split(["\r\n", "\n"], StringSplitOptions.RemoveEmptyEntries);
 
                 process.WaitForExit();
 
-                if (process.ExitCode != 0 || output == "")
+                if (process.ExitCode is not 0)
+                    Logger.Warn($"Call to WhichMultiple with file {command} returned non-zero status {process.ExitCode}");
+
+                if (lines.Length is 0)
                 {
                     Logger.ImportantInfo($"Command {command} was not found on the system");
-                    return new Tuple<bool, string>(false, "");
+                    return [];
                 }
 
-                Logger.Debug($"Command {command} was found on {output}");
-                return new Tuple<bool, string>(File.Exists(output), output);
+                Logger.Debug($"Command {command} was found on {lines[0]} (with {lines.Length-1} more occurrences)");
+                return lines.ToList();
             }
             catch
             {
-                if (updateEnv) return Which(command, false);
+                if (updateEnv) return WhichMultiple(command, false);
                 throw;
             }
+        }
+
+        public static Tuple<bool, string> Which(string command, bool updateEnv = true)
+        {
+            var paths = WhichMultiple(command, updateEnv);
+            return new(paths.Any(), paths.Any() ? paths[0]: "");
         }
 
         /// <summary>
@@ -213,16 +213,23 @@ namespace UniGetUI.Core.Tools
         /// <param name="path">The path of the batch file</param>
         /// <param name="WindowTitle">The title of the window</param>
         /// <param name="RunAsAdmin">Whether the batch file should be launched elevated or not</param>
-        public static async void LaunchBatchFile(string path, string WindowTitle = "", bool RunAsAdmin = false)
+        public static async Task LaunchBatchFile(string path, string WindowTitle = "", bool RunAsAdmin = false)
         {
-            using Process p = new();
-            p.StartInfo.FileName = "cmd.exe";
-            p.StartInfo.Arguments = "/C start \"" + WindowTitle + "\" \"" + path + "\"";
-            p.StartInfo.UseShellExecute = true;
-            p.StartInfo.CreateNoWindow = true;
-            p.StartInfo.Verb = RunAsAdmin ? "runas" : "";
-            p.Start();
-            await p.WaitForExitAsync();
+            try
+            {
+                using Process p = new();
+                p.StartInfo.FileName = "cmd.exe";
+                p.StartInfo.Arguments = "/C start \"" + WindowTitle + "\" \"" + path + "\"";
+                p.StartInfo.UseShellExecute = true;
+                p.StartInfo.CreateNoWindow = true;
+                p.StartInfo.Verb = RunAsAdmin ? "runas" : "";
+                p.Start();
+                await p.WaitForExitAsync();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
         }
 
         /// <summary>
@@ -244,45 +251,19 @@ namespace UniGetUI.Core.Tools
             }
         }
 
-        /// <summary>
-        /// Returns the size (in MB) of the file at the given URL
-        /// </summary>
-        /// <param name="url">a valid Uri object containing a URL to a file</param>
-        /// <returns>a double representing the size in MBs, 0 if the process fails</returns>
-        public static async Task<double> GetFileSizeAsync(Uri? url)
-        {
-            return await GetFileSizeAsyncAsLong(url) / 1048576d;
-        }
+        public static Task<long> GetFileSizeAsLongAsync(Uri? url)
+            => Task.Run(() => GetFileSizeAsLong(url));
 
-        /// <summary>
-        /// Returns the size (in MB) of the file at the given URL
-        /// </summary>
-        /// <param name="url">a valid Uri object containing a URL to a file</param>
-        /// <returns>a double representing the size in MBs, 0 if the process fails</returns>
-        public static double GetFileSize(Uri? url)
-        {
-            return GetFileSizeAsyncAsLong(url).GetAwaiter().GetResult() / 1048576d;
-        }
 
-        public static async Task<long> GetFileSizeAsyncAsLong(Uri? url)
+        public static long GetFileSizeAsLong(Uri? url)
         {
-            if (url is null)
-            {
-                return 0;
-            }
+            if (url is null) return 0;
 
             try
             {
-#pragma warning disable SYSLIB0014 // Type or member is obsolete
-                WebRequest req = WebRequest.Create(url);
-#pragma warning restore SYSLIB0014 // Type or member is obsolete
-                req.Method = "HEAD";
-                WebResponse resp = await req.GetResponseAsync();
-                if (long.TryParse(resp.Headers.Get("Content-Length"), out long ContentLength))
-                {
-                    return ContentLength;
-                }
-
+                using HttpClient client = new(CoreTools.GenericHttpClientParameters);
+                HttpResponseMessage response = client.Send(new HttpRequestMessage(HttpMethod.Head, url));
+                return response.Content.Headers.ContentLength ?? 0;
             }
             catch (Exception e)
             {
@@ -292,6 +273,36 @@ namespace UniGetUI.Core.Tools
 
             return 0;
         }
+
+        public static string GetFileName(Uri url)
+        {
+            try
+            {
+                var handler = CoreTools.GenericHttpClientParameters;
+                handler.AllowAutoRedirect = false;
+                using HttpClient client = new(handler);
+                HttpResponseMessage response = client.Send(new HttpRequestMessage(HttpMethod.Head, url));
+
+                if (response.StatusCode is HttpStatusCode.Moved or HttpStatusCode.Redirect
+                    or HttpStatusCode.RedirectMethod or HttpStatusCode.TemporaryRedirect
+                    or HttpStatusCode.PermanentRedirect)
+                {
+                    return GetFileName(response.Headers.Location ??
+                                       throw new HttpRequestException("A redirect code was returned but no new location was given"));
+                }
+
+                return response.Content.Headers.ContentDisposition?.FileName ?? Path.GetFileName(url.LocalPath);
+            }
+            catch (Exception e)
+            {
+                Logger.Warn($"Failed to retrieve file name for URL: {url}");
+                Logger.Warn(e);
+                return string.Empty;
+            }
+        }
+
+        public static Task<string> GetFileNameAsync(Uri url)
+            => Task.Run(() => GetFileName(url));
 
 
         public struct Version: IComparable
@@ -452,6 +463,12 @@ namespace UniGetUI.Core.Tools
         private static bool _isCaching;
         public static async Task CacheUACForCurrentProcess()
         {
+            if (Settings.Get(Settings.K.ProhibitElevation))
+            {
+                Logger.Error("Elevation is prohibited, CacheUACForCurrentProcess() call will be ignored");
+                return;
+            }
+
             while (_isCaching) await Task.Delay(100);
 
             try
@@ -488,6 +505,12 @@ namespace UniGetUI.Core.Tools
         /// </summary>
         public static async Task ResetUACForCurrentProcess()
         {
+            if (Settings.Get(Settings.K.ProhibitElevation))
+            {
+                Logger.Error("Elevation is prohibited, ResetUACForCurrentProcess() call will be ignored");
+                return;
+            }
+
             Logger.Info("Resetting administrator rights cache for process id " + Environment.ProcessId);
             using Process p = new()
             {
@@ -608,7 +631,7 @@ namespace UniGetUI.Core.Tools
 
         public static void _waitForInternetConnection()
         {
-            if (Settings.Get("DisableWaitForInternetConnection")) return;
+            if (Settings.Get(Settings.K.DisableWaitForInternetConnection)) return;
 
             Logger.Debug("Checking for internet connectivity...");
             bool internetLost = false;
@@ -671,23 +694,30 @@ namespace UniGetUI.Core.Tools
             return $"{number} Bytes";
         }
 
-        public static async void ShowFileOnExplorer(string path)
+        public static async Task ShowFileOnExplorer(string path)
         {
-            if (!File.Exists(path)) throw new FileNotFoundException($"The file {path} was not found");
-
-            Process p = new()
+            try
             {
-                StartInfo = new()
+                if (!File.Exists(path)) throw new FileNotFoundException($"The file {path} was not found");
+
+                Process p = new()
                 {
-                    FileName = "explorer.exe",
-                    Arguments = $"/select, \"{path}\"",
-                    UseShellExecute = true,
-                    CreateNoWindow = true,
-                }
-            };
-            p.Start();
-            await p.WaitForExitAsync();
-            p.Dispose();
+                    StartInfo = new()
+                    {
+                        FileName = "explorer.exe",
+                        Arguments = $"/select, \"{path}\"",
+                        UseShellExecute = true,
+                        CreateNoWindow = true,
+                    }
+                };
+                p.Start();
+                await p.WaitForExitAsync();
+                p.Dispose();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
         }
 
         public static string GetCurrentLocale()

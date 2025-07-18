@@ -1,5 +1,6 @@
 using UniGetUI.Core.Classes;
 using UniGetUI.Core.Data;
+using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
@@ -7,6 +8,7 @@ using UniGetUI.PackageEngine.Classes.Packages.Classes;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Managers.WingetManager;
+using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.PackageLoader;
 using UniGetUI.PackageEngine.Serializable;
 using UniGetUI.PackageOperations;
@@ -31,7 +33,7 @@ namespace UniGetUI.PackageEngine.Operations
             OperationType role,
             bool IgnoreParallelInstalls = false,
             AbstractOperation? req = null)
-            : base(!IgnoreParallelInstalls, req)
+            : base(!IgnoreParallelInstalls, _getPreInstallOps(options, role, package, req), _getPostInstallOps(options, role, package))
         {
             Package = package;
             Options = options;
@@ -54,7 +56,8 @@ namespace UniGetUI.PackageEngine.Operations
         }
 
         private bool RequiresAdminRights()
-            => Package.OverridenOptions.RunAsAdministrator is true || Options.RunAsAdministrator;
+            => !Settings.Get(Settings.K.ProhibitElevation)
+               && (Package.OverridenOptions.RunAsAdministrator is true || Options.RunAsAdministrator);
 
         protected override void ApplyRetryAction(string retryMode)
         {
@@ -89,18 +92,18 @@ namespace UniGetUI.PackageEngine.Operations
             if (RequiresAdminRights() && IsAdmin is false)
             {
                 IsAdmin = true;
-                if (Settings.Get("DoCacheAdminRights") || Settings.Get("DoCacheAdminRightsForBatches"))
+                if (Settings.Get(Settings.K.DoCacheAdminRights) || Settings.Get(Settings.K.DoCacheAdminRightsForBatches))
                 {
                     RequestCachingOfUACPrompt();
                 }
 
                 FileName = CoreData.ElevatorPath;
-                Arguments = $"\"{Package.Manager.Status.ExecutablePath}\" {Package.Manager.Properties.ExecutableCallArgs} {operation_args}";
+                Arguments = $"\"{Package.Manager.Status.ExecutablePath}\" {Package.Manager.Status.ExecutableCallArgs} {operation_args}";
             }
             else
             {
                 FileName = Package.Manager.Status.ExecutablePath;
-                Arguments = $"{Package.Manager.Properties.ExecutableCallArgs} {operation_args}";
+                Arguments = $"{Package.Manager.Status.ExecutableCallArgs} {operation_args}";
             }
 
             if (IsAdmin && Package.Manager is WinGet)
@@ -128,11 +131,64 @@ namespace UniGetUI.PackageEngine.Operations
         {
             return TaskRecycler<Uri>.RunOrAttachAsync(Package.GetIconUrl);
         }
+
+        private static IReadOnlyList<InnerOperation> _getPreInstallOps(InstallOptions opts, OperationType role, IPackage package, AbstractOperation? preReq = null)
+        {
+            List<InnerOperation> l = new();
+            if(preReq is not null) l.Add(new(preReq, true));
+
+            foreach (var process in opts.KillBeforeOperation)
+                l.Add(new InnerOperation(
+                    new KillProcessOperation(process),
+                    mustSucceed: false));
+
+            if (role is OperationType.Install && opts.PreInstallCommand.Any())
+                l.Add(new(new PrePostOperation(opts.PreInstallCommand), opts.AbortOnPreInstallFail));
+            else if (role is OperationType.Update && opts.PreUpdateCommand.Any())
+                l.Add(new(new PrePostOperation(opts.PreUpdateCommand), opts.AbortOnPreUpdateFail));
+            else if (role is OperationType.Uninstall && opts.PreUninstallCommand.Any())
+                l.Add(new(new PrePostOperation(opts.PreUninstallCommand), opts.AbortOnPreUninstallFail));
+
+            return l;
+        }
+
+        private static IReadOnlyList<InnerOperation> _getPostInstallOps(InstallOptions opts, OperationType role, IPackage package)
+        {
+            List<InnerOperation> l = new();
+
+            if (role is OperationType.Install && opts.PostInstallCommand.Any())
+                l.Add(new(new PrePostOperation(opts.PostInstallCommand), false));
+            else if (role is OperationType.Update && opts.PostUpdateCommand.Any())
+                l.Add(new(new PrePostOperation(opts.PostUpdateCommand), false));
+            else if (role is OperationType.Uninstall && opts.PostUninstallCommand.Any())
+                l.Add(new(new PrePostOperation(opts.PostUninstallCommand), false));
+
+            if (role is OperationType.Update && opts.UninstallPreviousVersionsOnUpdate)
+            {
+                var matches = InstalledPackagesLoader.Instance.Packages.Where(
+                    p => p.IsEquivalentTo(package) && p.NormalizedVersion < package.NormalizedNewVersion);
+                foreach (var match in matches)
+                {
+                    Logger.Info($"Queuing {match} version {match.VersionString} for automatic uninstall after update...");
+                    l.Add(new(new UninstallPackageOperation(match, opts.Copy()), false));
+                }
+            }
+
+            return l;
+        }
     }
 
+    /*
+     *
+     *
+     *
+     * PER-OPERATION PACKAGE OPERATIONS
+     *
+     *
+     *
+     */
     public class InstallPackageOperation : PackageOperation
     {
-
         public InstallPackageOperation(
             IPackage package,
             InstallOptions options,
@@ -147,16 +203,23 @@ namespace UniGetUI.PackageEngine.Operations
             return Task.CompletedTask;
         }
 
-        protected override Task HandleSuccess()
+        protected override async Task HandleSuccess()
         {
             Package.SetTag(PackageTag.AlreadyInstalled);
-            InstalledPackagesLoader.Instance.AddForeign(Package);
+            var copy = new Package(
+                Package.Name,
+                Package.Id,
+                Package.VersionString,
+                Package.Source,
+                Package.Manager,
+                Package.OverridenOptions
+            );
+            await InstalledPackagesLoader.Instance.AddForeign(copy);
 
-            if (Settings.Get("AskToDeleteNewDesktopShortcuts"))
+            if (Settings.Get(Settings.K.AskToDeleteNewDesktopShortcuts))
             {
                 DesktopShortcutsDatabase.HandleNewShortcuts(DesktopShortcutsBeforeStart);
             }
-            return Task.CompletedTask;
         }
 
         protected override void Initialize()
@@ -172,7 +235,7 @@ namespace UniGetUI.PackageEngine.Operations
             Metadata.FailureTitle = CoreTools.Translate("Installation failed", new Dictionary<string, object?> { { "package", Package.Name } });
             Metadata.FailureMessage = CoreTools.Translate("{package} could not be installed", new Dictionary<string, object?> { { "package", Package.Name } });
 
-            if (Settings.Get("AskToDeleteNewDesktopShortcuts"))
+            if (Settings.Get(Settings.K.AskToDeleteNewDesktopShortcuts))
             {
                 DesktopShortcutsBeforeStart = DesktopShortcutsDatabase.GetShortcutsOnDisk();
             }
@@ -188,7 +251,8 @@ namespace UniGetUI.PackageEngine.Operations
             bool IgnoreParallelInstalls = false,
             AbstractOperation? req = null)
             : base(package, options, OperationType.Update, IgnoreParallelInstalls, req)
-        { }
+        {
+        }
 
         protected override Task HandleFailure()
         {
@@ -204,7 +268,7 @@ namespace UniGetUI.PackageEngine.Operations
 
             UpgradablePackagesLoader.Instance.Remove(Package);
 
-            if (Settings.Get("AskToDeleteNewDesktopShortcuts"))
+            if (Settings.Get(Settings.K.AskToDeleteNewDesktopShortcuts))
             {
                 DesktopShortcutsDatabase.HandleNewShortcuts(DesktopShortcutsBeforeStart);
             }
@@ -217,7 +281,8 @@ namespace UniGetUI.PackageEngine.Operations
         {
             Metadata.OperationInformation = "Package update operation for Package=" + Package.Id + " with Manager=" +
                                             Package.Manager.Name + "\nInstallation options: " + Options.ToString()
-                                            + "\nOverriden options: " + Package.OverridenOptions.ToString();
+                                            + "\nOverriden options: " + Package.OverridenOptions.ToString() +
+                                            "\nVersion: " + Package.VersionString + " -> " + Package.NewVersionString;
 
             Metadata.Title = CoreTools.Translate("{package} Update", new Dictionary<string, object?> { { "package", Package.Name } });
             Metadata.Status = CoreTools.Translate("{0} is being updated to version {1}", Package.Name, Package.NewVersionString);
@@ -226,7 +291,7 @@ namespace UniGetUI.PackageEngine.Operations
             Metadata.FailureTitle = CoreTools.Translate("Update failed", new Dictionary<string, object?> { { "package", Package.Name } });
             Metadata.FailureMessage = CoreTools.Translate("{package} could not be updated", new Dictionary<string, object?> { { "package", Package.Name } });
 
-            if (Settings.Get("AskToDeleteNewDesktopShortcuts"))
+            if (Settings.Get(Settings.K.AskToDeleteNewDesktopShortcuts))
             {
                 DesktopShortcutsBeforeStart = DesktopShortcutsDatabase.GetShortcutsOnDisk();
             }

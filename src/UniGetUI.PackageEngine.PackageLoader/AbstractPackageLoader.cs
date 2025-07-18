@@ -169,8 +169,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
                                 }
 
                                 toAdd.Add(package);
-                                AddPackage(package);
-                                await WhenAddingPackage(package);
+                                await AddPackage(package);
                             }
                             InvokePackagesChangedEvent(true, toAdd, []);
                         }
@@ -238,14 +237,13 @@ namespace UniGetUI.PackageEngine.PackageLoader
             return ALLOW_MULTIPLE_PACKAGE_VERSIONS ? package.GetVersionedHash() : package.GetHash();
         }
 
-        protected void AddPackage(IPackage package)
+        protected async Task AddPackage(IPackage package)
         {
             if (Contains(package))
-            {
                 return;
-            }
 
             package.IsChecked = PACKAGES_CHECKED_BY_DEFAULT;
+            await WhenAddingPackage(package);
             PackageReference.TryAdd(HashPackage(package), package);
         }
 
@@ -253,14 +251,14 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// Adds a foreign package to the current loader. Perhaps a package has been recently installed and it needs to be added to the installed packages loader
         /// </summary>
         /// <param name="package">The package to add</param>
-        public void AddForeign(IPackage? package)
+        public async Task AddForeign(IPackage? package)
         {
             if (package is null)
             {
                 return;
             }
 
-            AddPackage(package);
+            await AddPackage(package);
             InvokePackagesChangedEvent(true, [package], []);
         }
 

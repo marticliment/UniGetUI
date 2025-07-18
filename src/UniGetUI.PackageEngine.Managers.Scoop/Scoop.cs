@@ -1,7 +1,7 @@
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using UniGetUI.Core.Classes;
+using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
@@ -33,14 +33,14 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 // Scoop-Search is required for search to work
                 new ManagerDependency(
                     "Scoop-Search",
-                    Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe"),
+                    CoreData.PowerShell5,
                     "-ExecutionPolicy Bypass -NoLogo -NoProfile -Command \"& {scoop install main/scoop-search; if($error.count -ne 0){pause}}\"",
                     "scoop install main/scoop-search",
                     async () => (await CoreTools.WhichAsync("scoop-search.exe")).Item1),
                 // GIT is required for scoop updates to work
                 new ManagerDependency(
                     "Git",
-                    Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe"),
+                    CoreData.PowerShell5,
                     "-ExecutionPolicy Bypass -NoLogo -NoProfile -Command \"& {scoop install main/git; if($error.count -ne 0){pause}}\"",
                     "scoop install main/git",
                     async () => (await CoreTools.WhichAsync("git.exe")).Item1)
@@ -51,6 +51,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 CanRunAsAdmin = true,
                 CanSkipIntegrityChecks = true,
                 CanDownloadInstaller = true,
+                CanListDependencies = true,
                 CanRemoveDataOnUninstall = true,
                 SupportsCustomArchitectures = true,
                 SupportedCustomArchitectures = [Architecture.x86, Architecture.x64, Architecture.arm64],
@@ -71,7 +72,6 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 Description = CoreTools.Translate("Great repository of unknown but useful utilities and other interesting packages.<br>Contains: <b>Utilities, Command-line programs, General Software (extras bucket required)</b>"),
                 IconId = IconType.Scoop,
                 ColorIconId = "scoop_color",
-                ExecutableCallArgs = " -NoProfile -ExecutionPolicy Bypass -Command scoop",
                 ExecutableFriendlyName = "scoop",
                 InstallVerb = "install",
                 UpdateVerb = "update",
@@ -106,7 +106,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     StartInfo = new ProcessStartInfo
                     {
                         FileName = Status.ExecutablePath,
-                        Arguments = Properties.ExecutableCallArgs + " install main/scoop-search",
+                        Arguments = Status.ExecutableCallArgs + " install main/scoop-search",
                         UseShellExecute = false,
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,
@@ -201,7 +201,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " status",
+                    Arguments = Status.ExecutableCallArgs + " status",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
@@ -280,7 +280,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " list",
+                    Arguments = Status.ExecutableCallArgs + " list",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
@@ -356,7 +356,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             ProcessStartInfo StartInfo = new()
             {
                 FileName = Status.ExecutablePath,
-                Arguments = Properties.ExecutableCallArgs + " update",
+                Arguments = Status.ExecutableCallArgs + " update",
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
@@ -373,19 +373,42 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             logger.Close(p.ExitCode);
         }
 
+        public override IReadOnlyList<string> FindCandidateExecutableFiles()
+        {
+            return CoreTools.WhichMultiple("scoop.ps1");
+        }
+
+
         protected override ManagerStatus LoadManager()
         {
+            string path = CoreData.PowerShell5;
+            var pwsh7 = CoreTools.Which("pwsh.exe");
+
+            if (pwsh7.Item1)
+            {
+                Logger.Info("Scoop found PowerShell7, PowerShell7 will be used...");
+                path = pwsh7.Item2;
+            }
+
+            var (found, executable) = GetExecutableFile();
             ManagerStatus status = new()
             {
-                ExecutablePath = Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe")
+                ExecutablePath = path,
+                ExecutableCallArgs = $"-NoProfile -ExecutionPolicy Bypass -Command \"{executable.Replace(" ", "` ")}\" ",
+                Found = found,
             };
+
+            if (!status.Found)
+            {
+                return status;
+            }
 
             Process process = new()
             {
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " --version",
+                    Arguments = status.ExecutableCallArgs + "--version",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
@@ -395,10 +418,9 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             };
             process.Start();
             status.Version = process.StandardOutput.ReadToEnd().Trim();
-            status.Found = CoreTools.Which("scoop").Item1;
 
             Status = status; // Wee need this for the RunCleanup method to get the executable path
-            if (status.Found && IsEnabled() && Settings.Get("EnableScoopCleanup"))
+            if (status.Found && IsEnabled() && Settings.Get(Settings.K.EnableScoopCleanup))
             {
                 RunCleanup();
             }
@@ -406,7 +428,8 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             return status;
         }
 
-        private async void RunCleanup()
+        private void RunCleanup() => _ = _runCleanup();
+        private async Task _runCleanup()
         {
             Logger.Info("Starting scoop cleanup...");
             foreach (string command in new[] { " cache rm *", " cleanup --all --cache", " cleanup --all --global --cache" })
@@ -416,7 +439,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     StartInfo = new ProcessStartInfo
                     {
                         FileName = Status.ExecutablePath,
-                        Arguments = Properties.ExecutableCallArgs + " " + command,
+                        Arguments = Status.ExecutableCallArgs + " " + command,
                         UseShellExecute = false,
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,

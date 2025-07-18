@@ -3,7 +3,6 @@ using Microsoft.UI.Xaml.Navigation;
 using UniGetUI.Core.Tools;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
-using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.Core.SettingsEngine;
 using System.Diagnostics;
 
@@ -21,9 +20,9 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         {
             this.InitializeComponent();
 
-            if (Settings.GetValue("PreferredTheme") == "")
+            if (Settings.GetValue(Settings.K.PreferredTheme) == "")
             {
-                Settings.SetValue("PreferredTheme", "auto");
+                Settings.SetValue(Settings.K.PreferredTheme, "auto");
             }
 
             ThemeSelector.AddItem(CoreTools.AutoTranslated("Light"), "light");
@@ -44,7 +43,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            LoadIconCacheSize();
+            _ = LoadIconCacheSize();
         }
 
         public bool CanGoBack => true;
@@ -69,12 +68,12 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 Logger.Error(ex);
             }
             ShowRestartBanner(this, new());
-            PackageWrapper.ResetIconCache();
-            Package.ResetIconCache();
-            LoadIconCacheSize();
+            // PackageWrapper.ResetIconCache();
+            // Package.ResetIconCache();
+            _ = LoadIconCacheSize();
         }
 
-        private async void LoadIconCacheSize()
+        private async Task LoadIconCacheSize()
         {
             double realSize = (await Task.Run(() =>
             {

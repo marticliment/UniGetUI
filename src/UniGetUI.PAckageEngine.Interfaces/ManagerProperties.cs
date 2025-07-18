@@ -11,7 +11,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         public string Description { get; set; } = "Unset";
         public IconType IconId { get; set; } = IconType.Help;
         public string ColorIconId { get; set; } = "Unset";
-        public string ExecutableCallArgs { get; set; } = "Unset";
+        // public string ExecutableCallArgs { get; set; } = "Unset";
         public string ExecutableFriendlyName { get; set; } = "Unset";
         public string InstallVerb { get; set; } = "Unset";
         public string UpdateVerb { get; set; } = "Unset";

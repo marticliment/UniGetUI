@@ -1,5 +1,6 @@
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
+using UniGetUI.Core.SettingsEngine.SecureSettings;
 using UniGetUI.PackageEngine.Classes.Manager;
 using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
@@ -59,7 +60,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             // END integrity check
 
             Properties.DefaultSource.RefreshSourceNames();
-            foreach(var source in Properties.KnownSources)
+            foreach (var source in Properties.KnownSources)
             {
                 source.RefreshSourceNames();
             }
@@ -95,7 +96,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                                (Status.Found ?
                                "\n█ Fancy exe name: " + Properties.ExecutableFriendlyName +
                                "\n█ Executable path: " + Status.ExecutablePath +
-                               "\n█ Call arguments: " + Properties.ExecutableCallArgs +
+                               "\n█ Call arguments: " + Status.ExecutableCallArgs +
                                "\n█ Version: \n" + "█   " + Status.Version.Replace("\n", "\n█   ")
                                :
                                "\n█ THE MANAGER WAS NOT FOUND. PERHAPS IT IS NOT " +
@@ -117,6 +118,59 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         }
 
         /// <summary>
+        /// Returns a list of paths that could be used for this package manager.
+        /// For example, if you have three Pythons installed on your system, this would return those three Pythons.
+        /// </summary>
+        /// <returns>A tuple containing: a boolean that represents whether the path was found or not; the path to the file if found.</returns>
+        public abstract IReadOnlyList<string> FindCandidateExecutableFiles();
+
+        public Tuple<bool, string> GetExecutableFile()
+        {
+            var candidates = FindCandidateExecutableFiles();
+            if (candidates.Count == 0)
+            {
+                // No paths were found
+                return new (false, "");
+            }
+
+            // If custom package manager paths are DISABLED, get the first one (as old UniGetUI did) and return it.
+            if(!SecureSettings.Get(SecureSettings.K.AllowCustomManagerPaths))
+            {
+                return new(true, candidates[0]);
+            }
+            else
+            {
+                string? exeSelection = Settings.GetDictionaryItem<string, string>(Settings.K.ManagerPaths, Name);
+                // If there is no executable selection for this package manager
+                if (string.IsNullOrEmpty(exeSelection))
+                {
+                    return new(true, candidates[0]);
+                }
+                else if (!File.Exists(exeSelection))
+                {
+                    Logger.Error($"The selected executable path {exeSelection} for manager {Name} does not exist, the default one will be used...");
+                    return new(true, candidates[0]);
+                }
+
+                // While technically executables that are not in the path should work,
+                // since detection of executables will be performed on the found paths, it is more consistent
+                // to throw an error when a non-found executable is used. Furthermore, doing this we can filter out
+                // any invalid paths or files.
+                if (candidates.Select(x => x.ToLower()).Contains(exeSelection.ToLower()))
+                {
+                    return new(true, exeSelection);
+                }
+                else
+                {
+                    Logger.Error($"The selected executable path {exeSelection} for manager {Name} was not found among the candidates " +
+                                 $"(executables found are [{string.Join(',', candidates)}]), the default will be used...");
+                    return new(true, candidates[0]);
+                }
+
+            }
+        }
+
+        /// <summary>
         /// Returns a ManagerStatus object representing the current status of the package manager. This method runs asynchronously.
         /// </summary>
         protected abstract ManagerStatus LoadManager();
@@ -126,7 +180,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// </summary>
         public bool IsEnabled()
         {
-            return !Settings.GetDictionaryItem<string, bool>("DisabledManagers", Name);
+            return !Settings.GetDictionaryItem<string, bool>(Settings.K.DisabledManagers, Name);
         }
 
         /// <summary>
@@ -152,7 +206,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                 var task = Task.Run(() => FindPackages_UnSafe(query));
                 if (!task.Wait(TimeSpan.FromSeconds(PackageListingTaskTimeout)))
                 {
-                    if (!Settings.Get("DisableTimeoutOnPackageListingTasks"))
+                    if (!Settings.Get(Settings.K.DisableTimeoutOnPackageListingTasks))
                         throw new TimeoutException($"Task _getInstalledPackages for manager {Name} did not finish after " +
                                                    $"{PackageListingTaskTimeout} seconds, aborting.  You may disable " +
                                                    $"timeouts from UniGetUI Advanced Settings");
@@ -202,7 +256,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                 var task = Task.Run(GetAvailableUpdates_UnSafe);
                 if (!task.Wait(TimeSpan.FromSeconds(PackageListingTaskTimeout)))
                 {
-                    if (!Settings.Get("DisableTimeoutOnPackageListingTasks"))
+                    if (!Settings.Get(Settings.K.DisableTimeoutOnPackageListingTasks))
                         throw new TimeoutException($"Task _getInstalledPackages for manager {Name} did not finish after " +
                                                    $"{PackageListingTaskTimeout} seconds, aborting.  You may disable " +
                                                    $"timeouts from UniGetUI Advanced Settings");
@@ -251,7 +305,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                 var task = Task.Run(GetInstalledPackages_UnSafe);
                 if (!task.Wait(TimeSpan.FromSeconds(PackageListingTaskTimeout)))
                 {
-                    if (!Settings.Get("DisableTimeoutOnPackageListingTasks"))
+                    if (!Settings.Get(Settings.K.DisableTimeoutOnPackageListingTasks))
                         throw new TimeoutException($"Task _getInstalledPackages for manager {Name} did not finish after " +
                                                    $"{PackageListingTaskTimeout} seconds, aborting.  You may disable " +
                                                    $"timeouts from UniGetUI Advanced Settings");
@@ -311,10 +365,9 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// Refreshes the Package Manager sources/indexes
         /// Each manager MUST implement this method.
         /// </summary>
-        public virtual async void RefreshPackageIndexes()
+        public virtual void RefreshPackageIndexes()
         {
             Logger.Debug($"Manager {Name} has not implemented RefreshPackageIndexes");
-            await Task.CompletedTask;
         }
 
         public virtual void AttemptFastRepair()

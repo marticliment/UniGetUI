@@ -1,7 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Text.Json.Serialization.Metadata;
 using UniGetUI.Core.Logging;
 
 namespace UniGetUI.Core.Data
@@ -10,8 +7,8 @@ namespace UniGetUI.Core.Data
     {
         private static int? __code_page;
         public static int CODE_PAGE { get => __code_page ??= GetCodePage(); }
-        public const string VersionName = "3.2.0"; // Do not modify this line, use file scripts/apply_versions.py
-        public const int BuildNumber = 90; // Do not modify this line, use file scripts/apply_versions.py
+        public const string VersionName = "3.2.1-beta5"; // Do not modify this line, use file scripts/apply_versions.py
+        public const int BuildNumber = 95; // Do not modify this line, use file scripts/apply_versions.py
 
         public const string UserAgentString = $"UniGetUI/{VersionName} (https://marticliment.com/unigetui/; contact@marticliment.com)";
 
@@ -393,5 +390,6 @@ namespace UniGetUI.Core.Data
             }
         }
 
+        public static readonly string PowerShell5 = Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe");
     }
 }

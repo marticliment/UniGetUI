@@ -50,8 +50,18 @@ namespace UniGetUI.Interface.Dialogs
             };
 
             await webView.EnsureCoreWebView2Async();
+            NavigateTo("", skipWait: true);
             Initialized = true;
-            webView.Source = lastUri ?? new Uri("https://marticliment.com/unigetui/help");
+        }
+
+        public void NavigateTo(string piece, bool skipWait = false)
+            => _ = _navigateTo(piece, skipWait);
+
+        private async Task _navigateTo(string piece, bool skipWait)
+        {
+            while (!Initialized && !skipWait) await Task.Delay(50);
+            ArgumentNullException.ThrowIfNull(webView);
+            webView.Source = new Uri("https://marticliment.com/unigetui/help/" + piece);
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)

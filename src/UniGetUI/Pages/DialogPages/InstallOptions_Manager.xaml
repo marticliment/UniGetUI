@@ -67,6 +67,7 @@
                 <CheckBox Name="InteractiveCheckBox" Click="InteractiveCheckBox_Click" />
                 <CheckBox Name="HashCheckBox" Click="HashCheckbox_Click" />
                 <CheckBox Name="PreReleaseCheckBox" Click="PreReleaseCheckBox_Click" />
+                <CheckBox Name="UninstallPreviousVerOnUpdate" Click="ClearPreviousOnUpdate_OnClick" />
 
             </controls:WrapPanel>
             <!--  ARCHITECTURE COMBOBOX  -->

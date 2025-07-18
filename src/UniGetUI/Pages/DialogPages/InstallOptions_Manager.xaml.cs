@@ -1,7 +1,3 @@
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using CommunityToolkit.WinUI.Controls;
-using Microsoft.Extensions.Options;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using UniGetUI.Core.Language;
@@ -30,6 +26,7 @@ public sealed partial class InstallOptions_Manager : UserControl
         AdminCheckBox.Content = CoreTools.Translate("Run as admin");
         InteractiveCheckBox.Content = CoreTools.Translate("Interactive installation");
         HashCheckBox.Content = CoreTools.Translate("Skip hash check");
+        UninstallPreviousVerOnUpdate.Content = CoreTools.Translate("Uninstall previous versions when updated");
         PreReleaseCheckBox.Content = CoreTools.Translate("Allow pre-release versions");
         ArchLabel.Text = CoreTools.Translate("Architecture to install:");
         ScopeLabel.Text = CoreTools.Translate("Installation scope:");
@@ -139,7 +136,7 @@ public sealed partial class InstallOptions_Manager : UserControl
             CustomInstallLocation.Text = CoreTools.Translate("Install location can't be changed for {0} packages", Manager.DisplayName);
         }
 
-        bool IsCLIEnabled = SecureSettings.Get(SecureSettings.ALLOW_CLI_ARGUMENTS);
+        bool IsCLIEnabled = SecureSettings.Get(SecureSettings.K.AllowCLIArguments);
         CustomParameters1.IsEnabled = IsCLIEnabled;
         CustomParameters2.IsEnabled = IsCLIEnabled;
         CustomParameters3.IsEnabled = IsCLIEnabled;
@@ -152,6 +149,9 @@ public sealed partial class InstallOptions_Manager : UserControl
         CustomParameters1.Text = string.Join(' ', options.CustomParameters_Install);
         CustomParameters2.Text = string.Join(' ', options.CustomParameters_Update);
         CustomParameters3.Text = string.Join(' ', options.CustomParameters_Uninstall);
+
+        UninstallPreviousVerOnUpdate.IsEnabled = Manager.Capabilities.CanUninstallPreviousVersionsAfterUpdate;
+        UninstallPreviousVerOnUpdate.IsChecked = options.UninstallPreviousVersionsOnUpdate;
 
         ResetButton.IsEnabled = true;
         ApplyButton.IsEnabled = true;
@@ -171,6 +171,7 @@ public sealed partial class InstallOptions_Manager : UserControl
         options.SkipHashCheck = HashCheckBox.IsChecked ?? false;
         options.InteractiveInstallation = InteractiveCheckBox.IsChecked ?? false;
         options.PreRelease = PreReleaseCheckBox.IsChecked ?? false;
+        options.UninstallPreviousVersionsOnUpdate = UninstallPreviousVerOnUpdate.IsChecked ?? false;
 
         // Administrator
         options.Architecture = "";
@@ -220,6 +221,7 @@ public sealed partial class InstallOptions_Manager : UserControl
         InteractiveCheckBox.IsEnabled = false;
         HashCheckBox.IsEnabled = false;
         ArchitectureCombo.IsEnabled = false;
+        UninstallPreviousVerOnUpdate.IsEnabled = false;
         ScopeCombo.IsEnabled = false;
         SelectDir.IsEnabled = false;
         ResetDir.IsEnabled = false;
@@ -297,5 +299,10 @@ public sealed partial class InstallOptions_Manager : UserControl
     private void GoToSecureSettings_Click(object sender, RoutedEventArgs e)
     {
         MainApp.Instance.MainWindow.NavigationPage.OpenSettingsPage(typeof(Administrator));
+    }
+
+    private void ClearPreviousOnUpdate_OnClick(object sender, RoutedEventArgs e)
+    {
+        ApplyButton.Style = (Style)Application.Current.Resources["AccentButtonStyle"];
     }
 }

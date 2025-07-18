@@ -11,11 +11,11 @@ namespace UniGetUI.Interface.Widgets
 {
     public sealed partial class TextboxCard : SettingsCard
     {
-        private readonly TextBox _textbox = new();
-        private readonly HyperlinkButton _helpbutton = new();
+        private readonly TextBox _textbox;
+        private readonly HyperlinkButton _helpbutton;
 
-        private string setting_name = "";
-        public string SettingName
+        private Settings.K setting_name = Settings.K.Unset;
+        public Settings.K SettingName
         {
             set {
                 setting_name = value;
@@ -74,12 +74,9 @@ namespace UniGetUI.Interface.Widgets
         {
             string SanitizedText = _textbox.Text;
 
-            if (setting_name.Contains("File"))
+            if (Settings.ResolveKey(setting_name).Contains("File"))
             {
-                foreach (char rem in "#%&{}\\/<>*?$!'\":;@`|~")
-                {
-                    SanitizedText = SanitizedText.Replace(rem.ToString(), "");
-                }
+                SanitizedText = CoreTools.MakeValidFileName(SanitizedText);
             }
 
             if (SanitizedText != "")

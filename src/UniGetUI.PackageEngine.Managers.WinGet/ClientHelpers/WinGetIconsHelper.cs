@@ -1,7 +1,5 @@
 using System.Globalization;
 using System.Net;
-using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.Management.Deployment;
 using Microsoft.Win32;

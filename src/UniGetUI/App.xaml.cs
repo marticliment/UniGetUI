@@ -65,27 +65,9 @@ namespace UniGetUI
             {
                 Instance = this;
                 Dispatcher = DispatcherQueue.GetForCurrentThread();
-
                 InitializeComponent();
-
-                string preferredTheme = Settings.GetValue("PreferredTheme");
-                if (preferredTheme == "dark")
-                {
-                    RequestedTheme = ApplicationTheme.Dark;
-                }
-                else if (preferredTheme == "light")
-                {
-                    RequestedTheme = ApplicationTheme.Light;
-                }
-                ThemeListener = new ThemeListener();
-
-                LoadGSudo();
-                RegisterErrorHandling();
-                SetUpWebViewUserDataFolder();
-                InitializeMainWindow();
-                RegisterNotificationService();
-
-                LoadComponentsAsync().ConfigureAwait(false);
+                ApplyThemeToApp();
+                _ = LoadComponentsAsync();
             }
             catch (Exception e)
             {
@@ -93,63 +75,147 @@ namespace UniGetUI
             }
         }
 
-        private static async void LoadGSudo()
+        /// <summary>
+        /// This method must be called during the constructor, because
+        /// setting RequestedTheme on runtime will crash the app
+        /// </summary>
+        private void ApplyThemeToApp()
         {
-#if DEBUG
-            Logger.Warn($"Using bundled GSudo at {CoreData.ElevatorPath} since UniGetUI Elevator is not available!");
-            CoreData.ElevatorPath = (await CoreTools.WhichAsync("gsudo.exe")).Item2;
-#else
-            if (SecureSettings.Get(SecureSettings.FORCE_USER_GSUDO))
+            string preferredTheme = Settings.GetValue(Settings.K.PreferredTheme);
+            if (preferredTheme == "dark")
             {
-                var res = await CoreTools.WhichAsync("gsudo.exe");
-                if (res.Item1)
-                {
-                    CoreData.ElevatorPath = res.Item2;
-                    Logger.Warn($"Using user GSudo (forced by user) at {CoreData.ElevatorPath}");
-                    return;
-                }
+                RequestedTheme = ApplicationTheme.Dark;
             }
+            else if (preferredTheme == "light")
+            {
+                RequestedTheme = ApplicationTheme.Light;
+            }
+            ThemeListener = new ThemeListener();
+        }
 
-            CoreData.ElevatorPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "UniGetUI Elevator.exe");
-            Logger.Debug($"Using built-in UniGetUI Elevator at {CoreData.ElevatorPath}");
+        private static async Task LoadGSudo()
+        {
+            try
+            {
+                if (Settings.Get(Settings.K.ProhibitElevation))
+                {
+                    Logger.Warn("UniGetUI Elevator has been disabled since elevation is prohibited!");
+                }
+
+                if (SecureSettings.Get(SecureSettings.K.ForceUserGSudo))
+                {
+                    var res = await CoreTools.WhichAsync("gsudo.exe");
+                    if (res.Item1)
+                    {
+                        CoreData.ElevatorPath = res.Item2;
+                        Logger.Warn($"Using user GSudo (forced by user) at {CoreData.ElevatorPath}");
+                        return;
+                    }
+                }
+
+#if DEBUG
+                Logger.Warn($"Using bundled GSudo at {CoreData.ElevatorPath} since UniGetUI Elevator is not available!");
+                CoreData.ElevatorPath = (await CoreTools.WhichAsync("gsudo.exe")).Item2;
+#else
+                CoreData.ElevatorPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities",
+                    "UniGetUI Elevator.exe");
+                Logger.Debug($"Using built-in UniGetUI Elevator at {CoreData.ElevatorPath}");
 #endif
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Elevator/GSudo failed to be loaded!");
+                Logger.Error(ex);
+            }
         }
 
         private void RegisterErrorHandling()
         {
-            UnhandledException += (_, e) =>
+            try
             {
-                string message = $"Unhandled Exception raised: {e.Message}";
-                string stackTrace = $"Stack Trace: \n{e.Exception.StackTrace}";
-                Logger.Error(" -");
-                Logger.Error(" -");
-                Logger.Error("  ⚠️⚠️⚠️ START OF UNHANDLED ERROR TRACE ⚠️⚠️⚠️");
-                Logger.Error(e.Message);
-                Logger.Error(e.Exception);
-                Logger.Error("  ⚠️⚠️⚠️  END OF UNHANDLED ERROR TRACE  ⚠️⚠️⚠️");
-                Logger.Error(" -");
-                Logger.Error(" -");
-                if (Environment.GetCommandLineArgs().Contains("--report-all-errors") || RaiseExceptionAsFatal || MainWindow is null)
+                UnhandledException += (_, e) =>
                 {
-                    CrashHandler.ReportFatalException(e.Exception);
-                }
-                else
+                    if (Debugger.IsAttached) Debugger.Break();
+                    string message = $"Unhandled Exception raised: {e.Message}";
+                    string stackTrace = $"Stack Trace: \n{e.Exception.StackTrace}";
+                    Logger.Error(" -");
+                    Logger.Error(" -");
+                    Logger.Error("  ⚠️⚠️⚠️ START OF UNHANDLED ERROR TRACE ⚠️⚠️⚠️");
+                    Logger.Error(message);
+                    Logger.Error(stackTrace);
+                    Logger.Error("  ⚠️⚠️⚠️  END OF UNHANDLED ERROR TRACE  ⚠️⚠️⚠️");
+                    Logger.Error(" -");
+                    Logger.Error(" -");
+                    if (Environment.GetCommandLineArgs().Contains("--report-all-errors") || RaiseExceptionAsFatal || MainWindow is null)
+                    {
+                        CrashHandler.ReportFatalException(e.Exception);
+                    }
+                    else
+                    {
+                        MainWindow.ErrorBanner.Title = CoreTools.Translate("Something went wrong");
+                        MainWindow.ErrorBanner.Message =
+                            CoreTools.Translate("An interal error occurred. Please view the log for further details.");
+                        MainWindow.ErrorBanner.IsOpen = true;
+                        Button button = new() { Content = CoreTools.Translate("WingetUI Log"), };
+                        button.Click += (sender, args) => MainWindow.NavigationPage.UniGetUILogs_Click(sender, args);
+                        MainWindow.ErrorBanner.ActionButton = button;
+                        e.Handled = true;
+                    }
+                };
+            }
+            catch (Exception ex)
+            {
+                if(Debugger.IsAttached) Debugger.Break();
+                Logger.Error(ex);
+            }
+
+            try
+            {
+                TaskScheduler.UnobservedTaskException += (sender, args) =>
                 {
-                    MainWindow.ErrorBanner.Title = CoreTools.Translate("Something went wrong");
-                    MainWindow.ErrorBanner.Message = CoreTools.Translate("An interal error occurred. Please view the log for further details.");
-                    MainWindow.ErrorBanner.IsOpen = true;
-                    Button button = new()
+                    Logger.Error($"An unhandled exception occurred in a Task (sender: {sender?.GetType().ToString() ?? "null"})");
+                    Exception? e = args.Exception.InnerException;
+                    Logger.Error(args.Exception);
+                    while (e is not null)
                     {
-                        Content = CoreTools.Translate("WingetUI Log"),
-                    };
-                    button.Click += (sender, args) =>
+                        Logger.Error("------------------------------");
+                        Logger.Error(e);
+                        e = e.InnerException;
+                    }
+
+                    if (Debugger.IsAttached) Debugger.Break();
+
+                    Dispatcher.TryEnqueue(() =>
                     {
-                        MainWindow.NavigationPage.UniGetUILogs_Click(sender, args);
-                    };
-                    MainWindow.ErrorBanner.ActionButton = button;
-                    e.Handled = true;
-                }
-            };
+                        if (MainWindow is null)
+                            return; // MainWindow could have not been loaded yet
+                        try
+                        {
+                            MainWindow.ErrorBanner.Title = CoreTools.Translate("Something went wrong");
+                            MainWindow.ErrorBanner.Message = CoreTools.Translate(
+                                    "An interal error occurred. Please view the log for further details.");
+                            MainWindow.ErrorBanner.IsOpen = true;
+                            Button button = new() { Content = CoreTools.Translate("WingetUI Log"), };
+                            if (MainWindow.NavigationPage is not null)
+                            {   // MainWindow.NavigationPage could have not been loaded yet
+                                button.Click += (s, a) => MainWindow.NavigationPage.UniGetUILogs_Click(s, a);
+                            }
+                            MainWindow.ErrorBanner.ActionButton = button;
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.Error(ex);
+                        }
+                    });
+
+                    args.SetObserved();
+                };
+            }
+            catch (Exception ex)
+            {
+                if (Debugger.IsAttached) Debugger.Break();
+                Logger.Error(ex);
+            }
         }
 
         private static void SetUpWebViewUserDataFolder()
@@ -222,21 +288,39 @@ namespace UniGetUI
         {
             try
             {
-                IconDatabase.InitializeInstance();
-                IconDatabase.Instance.LoadIconAndScreenshotsDatabase();
+                RegisterErrorHandling();
 
-                await InitializeBackgroundAPI();
+                // Create MainWindow
+                InitializeMainWindow();
+                await MainWindow.DoEntryTextAnimationAsync();
 
-                _ = MainWindow.DoEntryTextAnimationAsync();
+                IEnumerable<Task> iniTasks =
+                [
+                    Task.Run(SetUpWebViewUserDataFolder),
+                    Task.Run(async () =>
+                    {
+                        IconDatabase.InitializeInstance();
+                        await IconDatabase.Instance.LoadFromCacheAsync();
+                    }),
+                    Task.Run(RegisterNotificationService),
+                    Task.Run(LoadGSudo),
+                    Task.Run(InitializeBackgroundAPI),
+                    Task.Run(PEInterface.Initialize)
+                ];
 
-                // Load package managers
-                await Task.Run(PEInterface.Initialize);
-                TelemetryHandler.Initialize();
+                // Load essential components
+                await Task.WhenAll(iniTasks);
 
+                // Load non-essential components
+                _ = TelemetryHandler.InitializeAsync();
+                _ = IconDatabase.Instance.LoadIconAndScreenshotsDatabaseAsync();
+
+                // Load interface
                 Logger.Info("LoadComponentsAsync finished executing. All managers loaded. Proceeding to interface.");
                 MainWindow.SwitchToInterface();
                 RaiseExceptionAsFatal = false;
 
+                // Process any remaining command-line arguments
                 MainWindow.ProcessCommandLineParameters();
                 MainWindow.ParametersToProcess.ItemEnqueued += (_, _) =>
                 {
@@ -254,7 +338,7 @@ namespace UniGetUI
         private async Task InitializeBackgroundAPI()
         {
             // Bind the background api to the main interface
-            if (!Settings.Get("DisableApi"))
+            if (!Settings.Get(Settings.K.DisableApi))
             {
                 try
                 {
@@ -274,18 +358,18 @@ namespace UniGetUI
 
                     BackgroundApi.OnUpgradeAll += (_, _) => MainWindow.DispatcherQueue.TryEnqueue(() =>
                     {
-                        Operations.UpdateAll();
+                        _ = Operations.UpdateAll();
                     });
 
-                    BackgroundApi.OnUpgradeAllForManager += (_, managerName) =>
-                        MainWindow.DispatcherQueue.TryEnqueue(async () =>
+                    BackgroundApi.OnUpgradeAllForManager += (s, managerName) =>
+                        MainWindow.DispatcherQueue.TryEnqueue(() =>
                         {
-                            Operations.UpdateAllForManager(managerName);
+                            _ = Operations.UpdateAllForManager(managerName);
                         });
 
-                    BackgroundApi.OnUpgradePackage += (_, packageId) => MainWindow.DispatcherQueue.TryEnqueue(() =>
+                    BackgroundApi.OnUpgradePackage += (s, packageId) => MainWindow.DispatcherQueue.TryEnqueue(() =>
                     {
-                        Operations.UpdateForId(packageId);
+                        _ = Operations.UpdateForId(packageId);
                     });
 
                     await BackgroundApi.Start();
@@ -325,7 +409,7 @@ namespace UniGetUI
 
                     if (!isInstalled)
                     {
-                        if (Settings.GetDictionaryItem<string, string>("DependencyManagement", dependency.Name) == "skipped")
+                        if (Settings.GetDictionaryItem<string, string>(Settings.K.DependencyManagement, dependency.Name) == "skipped")
                         {
                             Logger.Error($"Dependency {dependency.Name} was not found, and the user set it to not be reminded of the missing dependency");
                         }
@@ -377,10 +461,13 @@ namespace UniGetUI
                 Logger.Warn("REDIRECTOR ACTIVATOR: args.Kind is not Launch but rather " + kind);
             }
 
-            MainWindow.DispatcherQueue.TryEnqueue(MainWindow.Activate);
+            if (kind is ExtendedActivationKind.Launch or ExtendedActivationKind.Protocol)
+            {
+                MainWindow.DispatcherQueue.TryEnqueue(MainWindow.Activate);
+            }
         }
 
-        public async void DisposeAndQuit(int outputCode = 0)
+        public void DisposeAndQuit(int outputCode = 0)
         {
             Logger.Warn("Quitting UniGetUI");
             DWMThreadHelper.ChangeState_DWM(false);
@@ -395,7 +482,7 @@ namespace UniGetUI
         public void KillAndRestart()
         {
             Process.Start(CoreData.UniGetUIExecutableFile);
-            MainApp.Instance.MainWindow?.Close();
+            Instance.MainWindow?.Close();
             Environment.Exit(0);
         }
     }

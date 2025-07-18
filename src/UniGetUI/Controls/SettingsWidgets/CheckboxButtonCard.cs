@@ -19,12 +19,12 @@ namespace UniGetUI.Interface.Widgets
         public ButtonBase Button;
         private bool IS_INVERTED;
 
-        private string setting_name = "";
-        public string SettingName
+        private Settings.K setting_name = Settings.K.Unset;
+        public Settings.K SettingName
         {
             set {
                 setting_name = value;
-                IS_INVERTED = value.StartsWith("Disable");
+                IS_INVERTED = Settings.ResolveKey(value).StartsWith("Disable");
                 _checkbox.IsOn = Settings.Get(setting_name) ^ IS_INVERTED ^ ForceInversion;
                 _textblock.Opacity = _checkbox.IsOn ? 1 : 0.7;
                 Button.IsEnabled = (_checkbox.IsOn) || _buttonAlwaysOn ;

@@ -3,7 +3,6 @@ using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
-using UniGetUI.Core.Tools;
 
 namespace UniGetUI
 {

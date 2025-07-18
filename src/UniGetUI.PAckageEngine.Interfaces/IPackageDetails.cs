@@ -59,9 +59,9 @@ namespace UniGetUI.PackageEngine.Interfaces
         public string? InstallerType { get; set; }
 
         /// <summary>
-        /// The size, in **MEGABYTES**, of the installer
+        /// The size, in **BYTES**, of the installer
         /// </summary>
-        public double InstallerSize { get; set; }
+        public long InstallerSize { get; set; }
 
         /// <summary>
         /// A URL pointing to the Manifest File of the package
@@ -94,5 +94,14 @@ namespace UniGetUI.PackageEngine.Interfaces
         /// </summary>
         /// <returns>An asynchronous task that can be awaited</returns>
         public Task Load();
+
+        public List<Dependency> Dependencies { get; }
+
+        public struct Dependency
+        {
+            public string Name;
+            public string Version;
+            public bool Mandatory;
+        }
     }
 }

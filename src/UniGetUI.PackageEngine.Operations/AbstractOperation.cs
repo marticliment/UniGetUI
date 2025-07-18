@@ -5,64 +5,9 @@ using UniGetUI.PackageEngine.Enums;
 
 namespace UniGetUI.PackageOperations;
 
-public abstract class AbstractOperation : IDisposable
+public abstract partial class AbstractOperation : IDisposable
 {
-    public static class RetryMode
-    {
-        public const string NoRetry = "";
-        public const string Retry = "Retry";
-        public const string Retry_AsAdmin = "RetryAsAdmin";
-        public const string Retry_Interactive = "RetryInteractive";
-        public const string Retry_SkipIntegrity = "RetryNoHashCheck";
-    }
-
-    public class OperationMetadata
-    {
-        /// <summary>
-        /// Installation of X
-        /// </summary>
-        public string Title = "";
-
-        /// <summary>
-        /// X is being installed/upated/removed
-        /// </summary>
-        public string Status = "";
-
-        /// <summary>
-        /// X was installed
-        /// </summary>
-        public string SuccessTitle = "";
-
-        /// <summary>
-        /// X has been installed successfully
-        /// </summary>
-        public string SuccessMessage = "";
-
-        /// <summary>
-        /// X could not be installed.
-        /// </summary>
-        public string FailureTitle = "";
-
-        /// <summary>
-        /// X Could not be installed
-        /// </summary>
-        public string FailureMessage = "";
-
-        /// <summary>
-        /// Starting operation X with options Y
-        /// </summary>
-        public string OperationInformation = "";
-
-        public readonly string Identifier;
-
-        public OperationMetadata()
-        {
-            Identifier  =  new Random().NextInt64(1000000, 9999999).ToString();
-        }
-    }
-
     public readonly OperationMetadata Metadata = new();
-    public static readonly List<AbstractOperation> OperationQueue = [];
 
     public event EventHandler<OperationStatus>? StatusChanged;
     public event EventHandler<EventArgs>? CancelRequested;
@@ -72,38 +17,12 @@ public abstract class AbstractOperation : IDisposable
     public event EventHandler<EventArgs>? Enqueued;
     public event EventHandler<EventArgs>? OperationSucceeded;
     public event EventHandler<EventArgs>? OperationFailed;
-
-    public static int MAX_OPERATIONS;
-
     public event EventHandler<BadgeCollection>? BadgesChanged;
 
-    public class BadgeCollection
-    {
-        public readonly bool AsAdministrator;
-        public readonly bool Interactive;
-        public readonly bool SkipHashCheck;
-        public readonly string? Scope;
-
-        public BadgeCollection(bool admin, bool interactive, bool skiphash, string? scope)
-        {
-            AsAdministrator = admin;
-            Interactive = interactive;
-            SkipHashCheck = skiphash;
-            Scope = scope;
-        }
-    }
-    public void ApplyCapabilities(bool admin, bool interactive, bool skiphash, string? scope)
-    {
-        BadgesChanged?.Invoke(this, new BadgeCollection(admin, interactive, skiphash, scope));
-    }
-
-    public enum LineType
-    {
-        VerboseDetails,
-        ProgressIndicator,
-        Information,
-        Error
-    }
+    public bool Started { get; private set; }
+    protected bool QUEUE_ENABLED;
+    protected bool FORCE_HOLD_QUEUE;
+    private bool IsInnerOperation;
 
     private readonly List<(string, LineType)> LogList = [];
     private OperationStatus _status = OperationStatus.InQueue;
@@ -113,25 +32,27 @@ public abstract class AbstractOperation : IDisposable
         set { _status = value; StatusChanged?.Invoke(this, value); }
     }
 
-    public bool Started { get; private set; }
-    protected bool QUEUE_ENABLED;
-    protected bool FORCE_HOLD_QUEUE;
+    public void ApplyCapabilities(bool admin, bool interactive, bool skiphash, string? scope)
+    {
+        BadgesChanged?.Invoke(this, new BadgeCollection(admin, interactive, skiphash, scope));
+    }
 
-    private readonly AbstractOperation? requirement;
+    private readonly IReadOnlyList<InnerOperation> PreOperations = [];
+    private readonly IReadOnlyList<InnerOperation> PostOperations = [];
 
-    public AbstractOperation(bool queue_enabled, AbstractOperation? req)
+    public AbstractOperation(
+        bool queue_enabled,
+        IReadOnlyList<InnerOperation>? preOps = null,
+        IReadOnlyList<InnerOperation>? postOps = null)
     {
         QUEUE_ENABLED = queue_enabled;
-        if (req is not null)
-        {
-            requirement = req;
-            QUEUE_ENABLED = false;
-        }
+        if (preOps is not null) PreOperations = preOps;
+        if (postOps is not null) PostOperations = postOps;
 
         Status = OperationStatus.InQueue;
         Line("Please wait...", LineType.ProgressIndicator);
 
-        if (int.TryParse(Settings.GetValue("ParallelOperationCount"), out int _maxPps))
+        if (int.TryParse(Settings.GetValue(Settings.K.ParallelOperationCount), out int _maxPps))
         {
             MAX_OPERATIONS = _maxPps;
             Logger.Debug($"Parallel operation limit set to {MAX_OPERATIONS}");
@@ -202,20 +123,9 @@ public abstract class AbstractOperation : IDisposable
 
             Enqueued?.Invoke(this, EventArgs.Empty);
 
-            if (requirement != null)
-            {   // OPERATION REQUIREMENT HANDLER
-                Logger.Info($"Operation {Metadata.Title} is waiting for requirement operation {requirement.Metadata.Title}");
-                Line(CoreTools.Translate("Waiting for {0} to complete...", requirement.Metadata.Title), LineType.ProgressIndicator);
-                {
-                    while (requirement.Status is OperationStatus.Running or OperationStatus.InQueue)
-                    {
-                        await Task.Delay(100);
-                        if (SKIP_QUEUE) break;
-                    }
-                }
-            }
-            else if (QUEUE_ENABLED)
-            {   // QUEUE HANDLER
+            if (QUEUE_ENABLED && !IsInnerOperation)
+            {
+                // QUEUE HANDLER
                 SKIP_QUEUE = false;
                 OperationQueue.Add(this);
                 int lastPos = -2;
@@ -238,61 +148,8 @@ public abstract class AbstractOperation : IDisposable
             }
             // END QUEUE HANDLER
 
-            // BEGIN ACTUAL OPERATION
-            OperationVeredict result;
-            Line(CoreTools.Translate("Starting operation..."), LineType.ProgressIndicator);
-            if (Status is OperationStatus.InQueue) Status = OperationStatus.Running;
-
-            do
-            {
-                OperationStarting?.Invoke(this, EventArgs.Empty);
-
-                try
-                {
-                    // Check if the operation was canceled
-                    if (Status is OperationStatus.Canceled)
-                    {
-                        result = OperationVeredict.Canceled;
-                        break;
-                    }
-
-                    if (requirement is not null)
-                    {
-                        if (requirement.Status is OperationStatus.Failed)
-                        {
-                            Line(CoreTools.Translate("{0} has failed, that was a requirement for {1} to be run", requirement.Metadata.Title, Metadata.Title), LineType.Error);
-                            result = OperationVeredict.Failure;
-                            break;
-                        }
-
-                        if (requirement.Status is OperationStatus.Canceled)
-                        {
-                            Line(CoreTools.Translate("The user has canceled {0}, that was a requirement for {1} to be run", requirement.Metadata.Title, Metadata.Title), LineType.Error);
-                            result = OperationVeredict.Canceled;
-                            break;
-                        }
-                    }
-
-                    Task<OperationVeredict> op = PerformOperation();
-                    while (Status != OperationStatus.Canceled && !op.IsCompleted) await Task.Delay(100);
-
-                    if (Status is OperationStatus.Canceled) result = OperationVeredict.Canceled;
-                    else result = op.GetAwaiter().GetResult();
-                }
-                catch (Exception e)
-                {
-                    result = OperationVeredict.Failure;
-                    Logger.Error(e);
-                    foreach (string l in e.ToString().Split("\n"))
-                    {
-                        Line(l, LineType.Error);
-                    }
-                }
-            } while (result == OperationVeredict.AutoRetry);
-
-
+            var result = await _runOperation();
             while (OperationQueue.Remove(this));
-            // END OPERATION
 
             if (result == OperationVeredict.Success)
             {
@@ -350,6 +207,91 @@ public abstract class AbstractOperation : IDisposable
             Line(Metadata.FailureMessage + " - " + CoreTools.Translate("Click here for more details"),
                 LineType.ProgressIndicator);
         }
+    }
+
+    private async Task<OperationVeredict> _runOperation()
+    {
+        OperationVeredict result;
+
+        // Process preoperations
+        int i = 0, count = PreOperations.Count;
+        if(count > 0) Line("", LineType.VerboseDetails);
+        foreach (var preReq in PreOperations)
+        {
+            i++;
+            Line(CoreTools.Translate($"Running PreOperation ({i}/{count})..."), LineType.Information);
+            preReq.Operation.LogLineAdded += (_, line) => Line(line.Item1, line.Item2);
+            await preReq.Operation.MainThread();
+            if (preReq.Operation.Status is not OperationStatus.Succeeded && preReq.MustSucceed)
+            {
+                Line(
+                    CoreTools.Translate($"PreOperation {i} out of {count} failed, and was tagged as necessary. Aborting..."),
+                    LineType.Error);
+                return OperationVeredict.Failure;
+            }
+            Line(CoreTools.Translate($"PreOperation {i} out of {count} finished with result {preReq.Operation.Status}"), LineType.Information);
+            Line("--------------------------------", LineType.Information);
+            Line("", LineType.VerboseDetails);
+        }
+
+        // BEGIN ACTUAL OPERATION
+        Line(CoreTools.Translate("Starting operation..."), LineType.Information);
+        if (Status is OperationStatus.InQueue) Status = OperationStatus.Running;
+
+        do
+        {
+            OperationStarting?.Invoke(this, EventArgs.Empty);
+
+            try
+            {
+                // Check if the operation was canceled
+                if (Status is OperationStatus.Canceled)
+                {
+                    result = OperationVeredict.Canceled;
+                    break;
+                }
+
+                Task<OperationVeredict> op = PerformOperation();
+                while (Status != OperationStatus.Canceled && !op.IsCompleted) await Task.Delay(100);
+
+                if (Status is OperationStatus.Canceled) result = OperationVeredict.Canceled;
+                else result = op.GetAwaiter().GetResult();
+            }
+            catch (Exception e)
+            {
+                result = OperationVeredict.Failure;
+                Logger.Error(e);
+                foreach (string l in e.ToString().Split("\n"))
+                {
+                    Line(l, LineType.Error);
+                }
+            }
+        } while (result is OperationVeredict.AutoRetry);
+
+        if (result is not OperationVeredict.Success)
+            return result;
+
+        // Process postoperations
+        i = 0; count = PostOperations.Count;
+        foreach (var postReq in PostOperations)
+        {
+            i++;
+            Line("--------------------------------", LineType.Information);
+            Line("", LineType.VerboseDetails);
+            Line(CoreTools.Translate($"Running PostOperation ({i}/{count})..."), LineType.Information);
+            postReq.Operation.LogLineAdded += (_, line) => Line(line.Item1, line.Item2);
+            await postReq.Operation.MainThread();
+            if (postReq.Operation.Status is not OperationStatus.Succeeded && postReq.MustSucceed)
+            {
+                Line(
+                    CoreTools.Translate($"PostOperation {i} out of {count} failed, and was tagged as necessary. Aborting..."),
+                    LineType.Error);
+                return OperationVeredict.Failure;
+            }
+            Line(CoreTools.Translate($"PostOperation {i} out of {count} finished with result {postReq.Operation.Status}"), LineType.Information);
+        }
+
+        return result;
     }
 
     private bool SKIP_QUEUE;

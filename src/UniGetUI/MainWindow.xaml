@@ -7,6 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:UniGetUI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:services="using:UniGetUI.Services"
     xmlns:widgets="using:UniGetUI.Interface.Widgets"
     xmlns:winex="using:WinUIEx"
     Title="UniGetUI"
@@ -32,18 +33,30 @@
             x:Name="TitleBar"
             Title="UniGetUI"
             Grid.Row="0"
-            Margin="0,4"
+            Margin="0,0,0,-4"
+            HorizontalContentAlignment="Center"
+            BackRequested="TitleBar_OnBackRequested"
+            IsBackButtonVisible="False"
             IsPaneToggleButtonVisible="True"
             PaneToggleRequested="TitleBar_PaneToggleRequested"
-            IsBackButtonVisible="False"
-            BackRequested="TitleBar_OnBackRequested"
+            SizeChanged="TitleBar_SizeChanged"
             Visibility="Collapsed">
             <winex:TitleBar.IconSource>
                 <ImageIconSource ImageSource="ms-appx:///Assets/Images/icon.png" />
             </winex:TitleBar.IconSource>
-            <!--winex:TitleBar.Content>
-                <UserControl Height="10" />
-            </winex:TitleBar.Content-->
+            <winex:TitleBar.Content>
+                <AutoSuggestBox
+                    x:Name="GlobalSearchBox"
+                    Width="400"
+                    Height="32"
+                    BorderBrush="{ThemeResource ButtonBorderBrush}"
+                    HorizontalAlignment="Stretch"
+                    x:FieldModifier="public"
+                    QueryIcon="Find" />
+            </winex:TitleBar.Content>
+            <winex:TitleBar.Footer>
+                <services:UserAvatar Margin="0,0,-44,0" />
+            </winex:TitleBar.Footer>
         </winex:TitleBar>
         <StackPanel
             Grid.Row="1"

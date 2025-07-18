@@ -42,7 +42,7 @@ internal sealed class CargoPkgDetailsHelper(Cargo manager) : BasePkgDetailsHelpe
 
         details.Author = versionData.published_by?.name;
         details.License = versionData.license;
-        details.InstallerUrl = new Uri(CratesIOClient.ApiUrl + versionData.dl_path);
+        details.InstallerUrl = new Uri((CratesIOClient.ApiUrl + versionData.dl_path).Replace("/api/v1/api/v1", "/api/v1"));
         details.InstallerSize = versionData.crate_size ?? 0;
         details.InstallerHash = versionData.checksum;
         details.Publisher = versionData.published_by?.name;

@@ -34,6 +34,7 @@ namespace UniGetUI.Interface.SoftwarePages
             DisableFilterOnQueryChange = false,
             MegaQueryBlockEnabled = false,
             ShowLastLoadTime = true,
+            DisableReload = false,
             PackagesAreCheckedByDefault = true,
             DisableSuggestedResultsRadio = true,
             PageName = "Updates",
@@ -71,7 +72,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 IconName = IconType.Options,
                 KeyboardAcceleratorTextOverride = "Alt+Enter"
             };
-            menuInstallSettings.Click += (_, _) => ShowInstallationOptionsForPackage(SelectedItem);
+            menuInstallSettings.Click += (_, _) => _ = ShowInstallationOptionsForPackage(SelectedItem);
 
             MenuOpenInstallLocation = new()
             {
@@ -301,7 +302,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             PackageDetails.Click += (_, _) => ShowDetailsForPackage(SelectedItem, TEL_InstallReferral.ALREADY_INSTALLED);
             HelpButton.Click += (_, _) => MainApp.Instance.MainWindow.NavigationPage.ShowHelp();
-            InstallationSettings.Click += (_, _) => ShowInstallationOptionsForPackage(SelectedItem);
+            InstallationSettings.Click += (_, _) => _ = ShowInstallationOptionsForPackage(SelectedItem);
             ManageIgnored.Click += async (_, _) => await DialogHelper.ManageIgnoredUpdates();
             IgnoreSelected.Click += async (_, _) =>
             {
@@ -317,7 +318,7 @@ namespace UniGetUI.Interface.SoftwarePages
             UpdateAsAdmin.Click += (_, _) => MainApp.Operations.Update(FilteredPackages.GetCheckedPackages(), elevated: true);
             UpdateSkipHash.Click += (_, _) => MainApp.Operations.Update(FilteredPackages.GetCheckedPackages(), no_integrity: true);
             UpdateInteractive.Click += (_, _) => MainApp.Operations.Update(FilteredPackages.GetCheckedPackages(), interactive: true);
-            SharePackage.Click += (_, _) => MainApp.Instance.MainWindow.SharePackage(SelectedItem);
+            SharePackage.Click += (_, _) => DialogHelper.SharePackage(SelectedItem);
         }
 
         protected override void WhenPackageCountUpdated()
@@ -339,18 +340,18 @@ namespace UniGetUI.Interface.SoftwarePages
                 if (upgradablePackages.Count == 0)
                     return;
 
-                bool EnableAutoUpdate = Settings.Get("AutomaticallyUpdatePackages");
+                bool EnableAutoUpdate = Settings.Get(Settings.K.AutomaticallyUpdatePackages);
 
                 if (EnableAutoUpdate)
                 {
                     var connectionCost = NetworkInformation.GetInternetConnectionProfile()?.GetConnectionCost().NetworkCostType;
-                    if (connectionCost is NetworkCostType.Fixed or NetworkCostType.Variable && Settings.Get("DisableAUPOnMeteredConnections"))
+                    if (connectionCost is NetworkCostType.Fixed or NetworkCostType.Variable && Settings.Get(Settings.K.DisableAUPOnMeteredConnections))
                     {
                         Logger.Warn("Updates will not be installed automatically because the current internet connection is metered.");
                         EnableAutoUpdate = false;
                     }
 
-                    if (PowerManager.EnergySaverStatus is EnergySaverStatus.On && Settings.Get("DisableAUPOnBatterySaver"))
+                    if (PowerManager.EnergySaverStatus is EnergySaverStatus.On && Settings.Get(Settings.K.DisableAUPOnBatterySaver))
                     {
                         Logger.Warn("Updates will not be installed automatically because battery saver is enabled.");
                         EnableAutoUpdate = false;
@@ -365,9 +366,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
 
                 if(EnableAutoUpdate)
-                {
-                    MainApp.Operations.UpdateAll();
-                }
+                    _ = MainApp.Operations.UpdateAll();
 
                 if (Settings.AreUpdatesNotificationsDisabled())
                     return;
@@ -419,7 +418,7 @@ namespace UniGetUI.Interface.SoftwarePages
                     string attribution = "";
                     foreach (IPackage package in upgradablePackages)
                     {
-                        if (!Settings.GetDictionaryItem<string, bool>("DisabledPackageManagerNotifications", package.Manager.Name))
+                        if (!Settings.GetDictionaryItem<string, bool>(Settings.K.DisabledPackageManagerNotifications, package.Manager.Name))
                             attribution += package.Name + ", ";
                     }
 
@@ -464,7 +463,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 bool SendNotification = false;
                 foreach (var Package in upgradablePackages)
                 {
-                    if (!Settings.GetDictionaryItem<string, bool>("DisabledPackageManagerNotifications", Package.Manager.Name))
+                    if (!Settings.GetDictionaryItem<string, bool>(Settings.K.DisabledPackageManagerNotifications, Package.Manager.Name))
                     {
                         SendNotification = true;
                         break;
@@ -494,11 +493,8 @@ namespace UniGetUI.Interface.SoftwarePages
         private void MenuAsAdmin_Invoked(object sender, RoutedEventArgs e)
             => _ = MainApp.Operations.Update(SelectedItem, elevated: true);
 
-        private async void MenuUpdateAfterUninstall_Invoked(object sender, RoutedEventArgs e)
-        {
-            var op = await MainApp.Operations.Uninstall(SelectedItem);
-            _ = MainApp.Operations.Install(SelectedItem, TEL_InstallReferral.ALREADY_INSTALLED, req: op);
-        }
+        private void MenuUpdateAfterUninstall_Invoked(object sender, RoutedEventArgs e)
+            => _ = MainApp.Operations.UninstallThenUpdate(SelectedItem);
 
         private void MenuUninstall_Invoked(object sender, RoutedEventArgs e)
             => _ = MainApp.Operations.Uninstall(SelectedItem);
@@ -538,7 +534,7 @@ namespace UniGetUI.Interface.SoftwarePages
         {
         }
 
-        public async void UpdateAllPackagesForManager(string manager)
+        public void UpdateAllPackagesForManager(string manager)
         {
         }
     }

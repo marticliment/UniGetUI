@@ -17,16 +17,16 @@ namespace UniGetUI.Interface.Widgets
         public TextBlock _textblock;
         public TextBlock _warningBlock;
         public ProgressRing _loading;
-        protected bool IS_INVERTED;
+        private bool IS_INVERTED;
 
-        protected string setting_name = "";
-        public virtual string SettingName
+        private SecureSettings.K setting_name = SecureSettings.K.Unset;
+        public SecureSettings.K SettingName
         {
             set
             {
                 _checkbox.IsEnabled = false;
                 setting_name = value;
-                IS_INVERTED = value.StartsWith("Disable");
+                IS_INVERTED = SecureSettings.ResolveKey(value).StartsWith("Disable");
                 _checkbox.IsOn = SecureSettings.Get(setting_name) ^ IS_INVERTED ^ ForceInversion;
                 _textblock.Opacity = _checkbox.IsOn ? 1 : 0.7;
                 _checkbox.IsEnabled = true;

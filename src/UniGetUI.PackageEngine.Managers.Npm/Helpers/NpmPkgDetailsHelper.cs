@@ -26,7 +26,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 p.StartInfo = new ProcessStartInfo
                 {
                     FileName = Manager.Status.ExecutablePath,
-                    Arguments = Manager.Properties.ExecutableCallArgs + " show " + details.Package.Id + " --json",
+                    Arguments = Manager.Status.ExecutableCallArgs + " show " + details.Package.Id + " --json",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
@@ -57,9 +57,50 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                     details.InstallerUrl = installerUrl;
 
                 if (int.TryParse(contents?["dist"]?["unpackedSize"]?.ToString() ?? "", NumberStyles.Any, CultureInfo.InvariantCulture, out int installerSize))
-                    details.InstallerSize = installerSize / 1048576d;
+                    details.InstallerSize = installerSize;
 
                 details.InstallerHash = contents?["dist"]?["integrity"]?.ToString();
+
+                details.Dependencies.Clear();
+                HashSet<string> addedDeps = new();
+                foreach (var rawDep in (contents?["dependencies"]?.AsObject() ?? []))
+                {
+                    if(addedDeps.Contains(rawDep.Key)) continue;
+                    addedDeps.Add(rawDep.Key);
+
+                    details.Dependencies.Add(new()
+                    {
+                        Name = rawDep.Key,
+                        Version = rawDep.Value?.GetValue<string>() ?? "",
+                        Mandatory = true,
+                    });
+                }
+
+                foreach (var rawDep in (contents?["devDependencies"]?.AsObject() ?? []))
+                {
+                    if(addedDeps.Contains(rawDep.Key)) continue;
+                    addedDeps.Add(rawDep.Key);
+
+                    details.Dependencies.Add(new()
+                    {
+                        Name = rawDep.Key,
+                        Version = rawDep.Value?.GetValue<string>() ?? "",
+                        Mandatory = false,
+                    });
+                }
+
+                foreach (var rawDep in (contents?["peerDependencies"]?.AsObject() ?? []))
+                {
+                    if(addedDeps.Contains(rawDep.Key)) continue;
+                    addedDeps.Add(rawDep.Key);
+
+                    details.Dependencies.Add(new()
+                    {
+                        Name = rawDep.Key,
+                        Version = rawDep.Value?.GetValue<string>() ?? "",
+                        Mandatory = false,
+                    });
+                }
 
                 logger.AddToStdErr(p.StandardError.ReadToEnd());
                 p.WaitForExit();
@@ -99,7 +140,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 {
                     FileName = Manager.Status.ExecutablePath,
                     Arguments =
-                        Manager.Properties.ExecutableCallArgs + " show " + package.Id + " versions --json",
+                        Manager.Status.ExecutableCallArgs + " show " + package.Id + " versions --json",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,

@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
@@ -31,6 +30,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                 SupportsCustomArchitectures = true,
                 SupportedCustomArchitectures = [Architecture.x86, Architecture.x64, Architecture.arm64, Architecture.arm32],
                 SupportsPreRelease = true,
+                CanListDependencies = true,
                 SupportsCustomLocations = true,
                 SupportsCustomPackageIcons = true,
                 SupportsCustomVersions = true,
@@ -48,7 +48,6 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                 InstallVerb = "install",
                 UninstallVerb = "uninstall",
                 UpdateVerb = "update",
-                ExecutableCallArgs = "tool",
                 DefaultSource = new ManagerSource(this, "nuget.org", new Uri("https://www.nuget.org/api/v2")),
                 KnownSources = [new ManagerSource(this, "nuget.org", new Uri("https://www.nuget.org/api/v2"))],
             };
@@ -67,7 +66,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                     StartInfo = new ProcessStartInfo
                     {
                         FileName = Status.ExecutablePath,
-                        Arguments = Properties.ExecutableCallArgs + " list" + (options.Scope == PackageScope.Global ? " --global" : ""),
+                        Arguments = Status.ExecutableCallArgs + " list" + (options.Scope == PackageScope.Global ? " --global" : ""),
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,
                         UseShellExecute = false,
@@ -126,13 +125,20 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
             return Packages;
         }
 
+        public override IReadOnlyList<string> FindCandidateExecutableFiles()
+        {
+            return CoreTools.WhichMultiple("dotnet.exe");
+        }
+
         protected override ManagerStatus LoadManager()
         {
-            ManagerStatus status = new();
-
-            var (found, path) = CoreTools.Which("dotnet.exe");
-            status.ExecutablePath = path;
-            status.Found = found;
+            var (found, path) = GetExecutableFile();
+            ManagerStatus status = new()
+            {
+                ExecutablePath = path,
+                Found = found,
+                ExecutableCallArgs = "tool "
+            };
 
             if (!status.Found)
             {
@@ -144,7 +150,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = status.ExecutablePath,
-                    Arguments = "tool -h",
+                    Arguments = status.ExecutableCallArgs + "-h",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,

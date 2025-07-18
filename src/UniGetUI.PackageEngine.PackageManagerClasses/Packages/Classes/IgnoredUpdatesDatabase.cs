@@ -70,7 +70,7 @@ public static class IgnoredUpdatesDatabase
 
     public static IReadOnlyDictionary<string, string> GetDatabase()
     {
-        return Settings.GetDictionary<string, string>("IgnoredPackageUpdates") ?? new Dictionary<string, string>();
+        return Settings.GetDictionary<string, string>(Settings.K.IgnoredPackageUpdates) ?? new Dictionary<string, string>();
     }
 
     public static string GetIgnoredIdForPackage(IPackage package)
@@ -85,7 +85,7 @@ public static class IgnoredUpdatesDatabase
     /// <param name="version">The version to ignore. Use wildcard (`*`) to ignore all versions</param>
     public static void Add(string ignoredId, string version = "*")
     {
-        Settings.SetDictionaryItem("IgnoredPackageUpdates", ignoredId, version);
+        Settings.SetDictionaryItem(Settings.K.IgnoredPackageUpdates, ignoredId, version);
     }
 
     /// <summary>
@@ -96,10 +96,10 @@ public static class IgnoredUpdatesDatabase
     public static bool Remove(string ignoredId)
     {
         // Remove the entry if present
-        if (Settings.DictionaryContainsKey<string, string>("IgnoredPackageUpdates", ignoredId))
+        if (Settings.DictionaryContainsKey<string, string>(Settings.K.IgnoredPackageUpdates, ignoredId))
         {
             // Remove the entry and propagate changes to disk
-            return Settings.RemoveDictionaryKey<string, string>("IgnoredPackageUpdates", ignoredId) != null;
+            return Settings.RemoveDictionaryKey<string, string>(Settings.K.IgnoredPackageUpdates, ignoredId) != null;
         }
 
         // Do nothing if the entry was not there
@@ -121,7 +121,7 @@ public static class IgnoredUpdatesDatabase
     /// <returns>True if the package is ignored, false otherwise</returns>
     public static bool HasUpdatesIgnored(string ignoredId, string version = "*")
     {
-        string? ignoredVersion = Settings.GetDictionaryItem<string, string>("IgnoredPackageUpdates", ignoredId);
+        string? ignoredVersion = Settings.GetDictionaryItem<string, string>(Settings.K.IgnoredPackageUpdates, ignoredId);
 
         if (ignoredVersion != null && ignoredVersion.StartsWith("<"))
         {
@@ -151,6 +151,6 @@ public static class IgnoredUpdatesDatabase
     /// If **no** versions are ignored, null will be returned.</returns>
     public static string? GetIgnoredVersion(string ignoredId)
     {
-        return Settings.GetDictionaryItem<string, string>("IgnoredPackageUpdates", ignoredId);
+        return Settings.GetDictionaryItem<string, string>(Settings.K.IgnoredPackageUpdates, ignoredId);
     }
 }

@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Text;
 using UniGetUI.Core.Logging;
+using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Enums;
 
@@ -11,7 +12,10 @@ public abstract class AbstractProcessOperation : AbstractOperation
     protected Process process { get; private set; }
     private bool ProcessKilled;
 
-    protected AbstractProcessOperation(bool queue_enabled, AbstractOperation? req) : base(queue_enabled, req)
+    protected AbstractProcessOperation(
+        bool queue_enabled,
+        IReadOnlyList<InnerOperation>? preOps = null,
+        IReadOnlyList<InnerOperation>? postOps = null) : base(queue_enabled, preOps, postOps)
     {
         process = new();
         CancelRequested += (_, _) =>
@@ -91,6 +95,11 @@ public abstract class AbstractProcessOperation : AbstractOperation
         }
 
         process.Start();
+        if (!Settings.Get(Settings.K.DisableNewProcessLineHandler))
+        {
+            await process.StandardInput.WriteLineAsync("\r\n\r\n\r\n\r\n");
+            process.StandardInput.Close();
+        }
         // process.BeginOutputReadLine();
         try { process.BeginErrorReadLine(); }
         catch (Exception ex) { Logger.Error(ex); }
@@ -98,6 +107,7 @@ public abstract class AbstractProcessOperation : AbstractOperation
         StringBuilder currentLine= new();
         char[] buffer = new char[1];
         string? lastStringBeforeLF = null;
+
         while ((await process.StandardOutput.ReadBlockAsync(buffer)) > 0)
         {
             char c = buffer[0];
@@ -107,10 +117,6 @@ public abstract class AbstractProcessOperation : AbstractOperation
                 {
                     if (lastStringBeforeLF is not null)
                     {
-                        if (lastStringBeforeLF.Contains("For the question below") || lastStringBeforeLF.Contains("Would remove:"))
-                        {
-                            await process.StandardInput.WriteLineAsync("");
-                        }
                         Line(lastStringBeforeLF, LineType.Information);
                         lastStringBeforeLF = null;
                     }
@@ -118,10 +124,6 @@ public abstract class AbstractProcessOperation : AbstractOperation
                 }
 
                 string line = currentLine.ToString();
-                if (line.Contains("For the question below") || line.Contains("Would remove:"))
-                {
-                    await process.StandardInput.WriteLineAsync("");
-                }
                 Line(line, LineType.Information);
                 currentLine.Clear();
             }

@@ -13,7 +13,7 @@ namespace UniGetUI.Interface.Pages.LogPage
         public override void LoadLog(bool isReload = false)
         {
             Paragraph paragraph = new();
-            foreach (string line in Settings.GetValue("OperationHistory").Split("\n"))
+            foreach (string line in Settings.GetValue(Settings.K.OperationHistory).Split("\n"))
             {
                 if (line.Replace("\r", "").Replace("\n", "").Trim() == "")
                 {

@@ -14,16 +14,15 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public InstallOptions installation_options;
 
         private readonly string _version;
+        private static readonly string _latestString = CoreTools.Translate("Latest");
 
         public override string VersionString
         {
             get
             {
-                if (installation_options is null)
-                    return _version;
                 if (installation_options.Version != "")
                     return installation_options.Version;
-                return CoreTools.Translate("Latest");
+                return _latestString;
             }
         }
 

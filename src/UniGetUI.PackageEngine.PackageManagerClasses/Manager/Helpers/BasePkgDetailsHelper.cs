@@ -60,6 +60,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders
         {
             try
             {
+                // Load native icon
                 if (Manager.Capabilities.SupportsCustomPackageIcons)
                 {
                     var nativeIcon = GetIcon_UnSafe(package);
@@ -69,11 +70,13 @@ namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders
                     }
                 }
 
-                string? iconUrl = IconDatabase.Instance.GetIconUrlForId(package.GetIconId());
-                if (iconUrl is not null)
-                {
-                    return new CacheableIcon(new Uri(iconUrl), package.VersionString);
-                }
+                // Try to get the icon especially for this package
+                string? iconUrl = IconDatabase.Instance.GetIconUrlForId(Manager.Name + "." + package.Id);
+                if (iconUrl is not null) return new CacheableIcon(new Uri(iconUrl));
+
+                // Try to get other corresponding icons for the package
+                iconUrl = IconDatabase.Instance.GetIconUrlForId(package.GetIconId());
+                if (iconUrl is not null) return new CacheableIcon(new Uri(iconUrl));
 
                 return null;
             } catch (Exception e)
@@ -90,6 +93,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders
             {
                 IReadOnlyList<Uri> URIs = [];
 
+                // Load native screenshots
                 if (Manager.Capabilities.SupportsCustomPackageScreenshots)
                 {
                     URIs = GetScreenshots_UnSafe(package);
@@ -99,6 +103,19 @@ namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders
                     Logger.Debug($"Manager {Manager.Name} does not support native screenshots");
                 }
 
+                // Try to get exact screenshots for this package
+                if (!URIs.Any())
+                {
+                    string[] UrlArray = IconDatabase.Instance.GetScreenshotsUrlForId(Manager.Name + "." + package.Id);
+                    List<Uri> UriList = [];
+                    foreach (string url in UrlArray)
+                    {
+                        if (url != "") UriList.Add(new Uri(url));
+                    }
+                    URIs = UriList;
+                }
+
+                // Try to get matching screenshots for this package
                 if (!URIs.Any())
                 {
                     string[] UrlArray = IconDatabase.Instance.GetScreenshotsUrlForId(package.GetIconId());

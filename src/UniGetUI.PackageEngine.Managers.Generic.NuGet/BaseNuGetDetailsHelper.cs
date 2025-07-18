@@ -49,7 +49,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 {
                     try
                     {
-                        details.InstallerSize = long.Parse(match.Groups[3].Value) / 1000000.0;
+                        details.InstallerSize = long.Parse(match.Groups[3].Value);
                         break;
                     }
                     catch (Exception ex)
@@ -106,6 +106,25 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                     details.License = match.Value.Replace("<d:LicenseNames>", "").Replace("</d:LicenseNames>", "");
                     break;
                 }
+
+                details.Dependencies.Clear();
+                foreach (Match match in Regex.Matches(PackageManifestContents,
+                             @"<d\:Dependencies>([^<]+)</d\:Dependencies>"))
+                {
+                    foreach (var dep in match.Groups[1].ToString().Split('|'))
+                    {
+                        if(string.IsNullOrEmpty(dep))
+                            continue;
+                        else if (dep.StartsWith("::"))
+                            details.Dependencies.Add(new() { Name = dep.TrimStart(':'), Version = "", Mandatory = true });
+                        else
+                            details.Dependencies.Add(new()
+                        {
+                            Name = dep.Split(':')[0], Version = dep.Split(':')[1].TrimEnd(':'), Mandatory = true
+                        });
+                    }
+                }
+
 
                 logger.Close(0);
                 return;

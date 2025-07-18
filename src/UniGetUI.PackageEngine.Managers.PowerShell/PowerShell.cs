@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
+using UniGetUI.Core.Data;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Manager;
@@ -24,6 +25,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 SupportsCustomVersions = true,
                 CanDownloadInstaller = true,
                 SupportsCustomScopes = true,
+                CanListDependencies = true,
                 SupportsCustomSources = true,
                 SupportsPreRelease = true,
                 SupportsCustomPackageIcons = true,
@@ -47,7 +49,6 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 InstallVerb = "Install-Module",
                 UninstallVerb = "Uninstall-Module",
                 UpdateVerb = "Update-Module",
-                ExecutableCallArgs = " -NoProfile -Command",
                 KnownSources = [new ManagerSource(this, "PSGallery", new Uri("https://www.powershellgallery.com/api/v2")),
                                 new ManagerSource(this, "PoshTestGallery", new Uri("https://www.poshtestgallery.com/api/v2"))],
                 DefaultSource = new ManagerSource(this, "PSGallery", new Uri("https://www.powershellgallery.com/api/v2")),
@@ -65,7 +66,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " Get-InstalledModule",
+                    Arguments = Status.ExecutableCallArgs + " Get-InstalledModule",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     RedirectStandardInput = true,
@@ -116,13 +117,22 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             return Packages;
         }
 
+        public override List<string> FindCandidateExecutableFiles()
+        {
+            var candidates = CoreTools.WhichMultiple("powershell.exe");
+            if(candidates.Count is 0) candidates.Add(CoreData.PowerShell5);
+            return candidates;
+        }
+
         protected override ManagerStatus LoadManager()
         {
+            var (found, path) = GetExecutableFile();
             ManagerStatus status = new()
             {
-                ExecutablePath = Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe")
+                ExecutablePath = path,
+                Found = found,
+                ExecutableCallArgs = " -NoProfile -Command",
             };
-            status.Found = File.Exists(status.ExecutablePath);
 
             if (!status.Found)
             {
@@ -134,7 +144,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " \"echo $PSVersionTable\"",
+                    Arguments = status.ExecutableCallArgs + " \"echo $PSVersionTable\"",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,

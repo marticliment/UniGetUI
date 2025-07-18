@@ -44,7 +44,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Manager.Status.ExecutablePath,
-                    Arguments = Manager.Properties.ExecutableCallArgs + " cat " + packageId,
+                    Arguments = Manager.Status.ExecutableCallArgs + " cat " + packageId,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
@@ -150,14 +150,69 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             }
 
             if (details.InstallerUrl is not null)
-                details.InstallerSize = CoreTools.GetFileSize(details.InstallerUrl);
+                details.InstallerSize = CoreTools.GetFileSizeAsLong(details.InstallerUrl);
 
             // Load release notes URL
             if (contents?["checkver"] is JsonObject checkver && Uri.TryCreate(checkver["url"]?.ToString(), UriKind.RelativeOrAbsolute,
                     out var releaseNotesUrl))
                 details.ReleaseNotesUrl = releaseNotesUrl;
 
+            details.Dependencies.Clear();
+            _getDepends(details, contents);
+            _getSuggests(details, contents);
+
             logger.Close(0);
+        }
+
+        private static void _getSuggests(IPackageDetails details, JsonObject? contents)
+        {
+            foreach (var rawDep in (contents?["suggest"]?.AsObject() ?? []))
+            {
+                List<string> innerDeps = [];
+
+                if(rawDep.Value is JsonValue value) innerDeps.Add(value.GetValue<string>());
+                else
+                {
+                    foreach (var iDep in rawDep.Value?.AsArray() ?? [])
+                    {
+                        string? val = iDep?.GetValue<string>();
+                        if(val is not null) innerDeps.Add(val);
+                    }
+                }
+
+                foreach(var val in innerDeps)
+                    details.Dependencies.Add(new()
+                    {
+                        Name = val,
+                        Version = "",
+                        Mandatory = false,
+                    });
+            }
+        }
+
+        private static void _getDepends(IPackageDetails details, JsonObject? contents)
+        {
+            var node = contents?["depends"];
+            List<string> innerDeps = [];
+
+
+            if(node is JsonValue value) innerDeps.Add(value.GetValue<string>());
+            else
+            {
+                foreach (var iDep in node?.AsArray() ?? [])
+                {
+                    string? val = iDep?.GetValue<string>();
+                    if(val is not null) innerDeps.Add(val);
+                }
+            }
+
+            foreach(var val in innerDeps)
+                details.Dependencies.Add(new()
+                {
+                    Name = val,
+                    Version = "",
+                    Mandatory = true,
+                });
         }
 
         protected override CacheableIcon? GetIcon_UnSafe(IPackage package)

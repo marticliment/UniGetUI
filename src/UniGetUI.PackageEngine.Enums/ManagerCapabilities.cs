@@ -1,5 +1,3 @@
-using System.Runtime.InteropServices;
-
 namespace UniGetUI.PackageEngine.ManagerClasses.Manager
 {
     public enum ProxySupport
@@ -26,6 +24,8 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         public bool CanRunInteractively = false;
         public bool CanRemoveDataOnUninstall = false;
         public bool CanDownloadInstaller = false;
+        public bool CanUninstallPreviousVersionsAfterUpdate = false;
+        public bool CanListDependencies = false;
         public bool SupportsCustomVersions = false;
         public bool SupportsCustomArchitectures = false;
         public string[] SupportedCustomArchitectures = [];

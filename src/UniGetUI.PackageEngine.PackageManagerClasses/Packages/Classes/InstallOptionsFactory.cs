@@ -126,10 +126,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 var filePath = Path.Join(CoreData.UniGetUIInstallationOptionsDirectory, key);
                 _optionsCache[key] = options.Copy();
 
-                string fileContents = JsonSerializer.Serialize(
-                    options,
-                    SerializationHelpers.DefaultOptions
-                );
+                string fileContents = options.AsJsonString();
                 File.WriteAllText(filePath, fileContents);
             }
             catch (Exception ex)
@@ -186,7 +183,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         private static InstallOptions EnsureSecureOptions(InstallOptions options)
         {
-            if (SecureSettings.Get(SecureSettings.ALLOW_CLI_ARGUMENTS))
+            if (SecureSettings.Get(SecureSettings.K.AllowCLIArguments))
             {
                 // If CLI arguments are allowed, sanitize them
                 for (int i = 0; i < options.CustomParameters_Install.Count; i++)
@@ -221,6 +218,23 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 options.CustomParameters_Install = [];
                 options.CustomParameters_Update = [];
                 options.CustomParameters_Uninstall = [];
+            }
+
+            if (!SecureSettings.Get(SecureSettings.K.AllowPrePostOpCommand))
+            {
+                if (options.PreInstallCommand.Any()) Logger.Warn($"Pre-install command {options.PreInstallCommand} will be discarded");
+                if (options.PostInstallCommand.Any()) Logger.Warn($"Post-install command {options.PostInstallCommand} will be discarded");
+                if (options.PreUpdateCommand.Any()) Logger.Warn($"Pre-update command {options.PreUpdateCommand} will be discarded");
+                if (options.PostUpdateCommand.Any()) Logger.Warn($"Post-update command {options.PostUpdateCommand} will be discarded");
+                if (options.PreUninstallCommand.Any()) Logger.Warn($"Pre-uninstall command {options.PreUninstallCommand} will be discarded");
+                if (options.PostUninstallCommand.Any()) Logger.Warn($"Post-uninstall command {options.PostUninstallCommand} will be discarded");
+
+                options.PreInstallCommand = "";
+                options.PostInstallCommand = "";
+                options.PreUpdateCommand = "";
+                options.PostUpdateCommand = "";
+                options.PreUninstallCommand = "";
+                options.PostUninstallCommand = "";
             }
 
             return options;

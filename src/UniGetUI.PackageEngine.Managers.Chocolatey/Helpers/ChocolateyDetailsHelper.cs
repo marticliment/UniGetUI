@@ -19,7 +19,7 @@ namespace UniGetUI.PackageEngine.Managers.Choco
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Manager.Status.ExecutablePath,
-                    Arguments = Manager.Properties.ExecutableCallArgs + $" search {package.Id} --exact --all-versions " + Chocolatey.GetProxyArgument(),
+                    Arguments = Manager.Status.ExecutableCallArgs + $" search {package.Id} --exact --all-versions " + Chocolatey.GetProxyArgument(),
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
@@ -56,7 +56,7 @@ namespace UniGetUI.PackageEngine.Managers.Choco
             if (File.Exists(portable_path))
                 return Path.GetDirectoryName(portable_path);
 
-            foreach (var base_path in new string[]
+            foreach (var base_path in new[]
                      {
                          Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
                          Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86),

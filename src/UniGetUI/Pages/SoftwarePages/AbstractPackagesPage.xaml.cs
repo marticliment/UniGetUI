@@ -1,7 +1,6 @@
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Runtime.Serialization;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -24,13 +23,14 @@ using Microsoft.UI;
 using Microsoft.UI.Xaml.Media;
 using Windows.UI;
 using Microsoft.UI.Xaml.Controls.Primitives;
+using UniGetUI.Pages.PageInterfaces;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace UniGetUI.Interface
 {
-    public abstract partial class AbstractPackagesPage : IKeyboardShortcutListener, IEnterLeaveListener
+    public abstract partial class AbstractPackagesPage : IKeyboardShortcutListener, IEnterLeaveListener, ISearchBoxPage
     {
 
         protected struct PackagesPageData
@@ -41,6 +41,7 @@ namespace UniGetUI.Interface
             public bool ShowLastLoadTime;
             public bool DisableSuggestedResultsRadio;
             public bool DisableFilterOnQueryChange;
+            public bool DisableReload;
 
             public OperationType PageRole;
             public AbstractPackageLoader Loader;
@@ -125,10 +126,13 @@ namespace UniGetUI.Interface
         protected readonly bool MEGA_QUERY_BOX_ENABLED;
         protected readonly bool SHOW_LAST_CHECKED_TIME;
         protected readonly bool DISABLE_FILTER_ON_QUERY_CHANGE;
+        protected readonly bool DISABLE_RELOAD;
         protected readonly string PAGE_NAME;
         public readonly bool RoleIsUpdateLike;
         protected DateTime LastPackageLoadTime { get; private set; }
         protected readonly OperationType PAGE_ROLE;
+
+        protected AutoSuggestBox QueryBlock { get => MainApp.Instance.MainWindow.GlobalSearchBox; }
 
         protected IPackage? SelectedItem
         {
@@ -187,6 +191,10 @@ namespace UniGetUI.Interface
                (SHOW_LAST_CHECKED_TIME ? " " + CoreTools.Translate("(Last checked: {0})", LastPackageLoadTime.ToString()) : "");
         }
         protected string FoundPackages_SubtitleText { get => NoMatches_SubtitleText; }
+        public string QueryBackup { get; set; }
+
+        private string _searchPlaceholder;
+        public string SearchBoxPlaceholder => _searchPlaceholder;
 
         private string TypeQuery = "";
         private int LastKeyDown;
@@ -200,6 +208,7 @@ namespace UniGetUI.Interface
             DISABLE_FILTER_ON_QUERY_CHANGE = data.DisableFilterOnQueryChange;
             MEGA_QUERY_BOX_ENABLED = data.MegaQueryBlockEnabled;
             SHOW_LAST_CHECKED_TIME = data.ShowLastLoadTime;
+            DISABLE_RELOAD = data.DisableReload;
 
             PAGE_ROLE = data.PageRole;
             RoleIsUpdateLike = PAGE_ROLE == OperationType.Update;
@@ -218,7 +227,7 @@ namespace UniGetUI.Interface
             InitializeComponent();
 
             // Selection of grid view mode
-            int viewMode = Settings.GetDictionaryItem<string, int>("PackageListViewMode", PAGE_NAME);
+            int viewMode = Settings.GetDictionaryItem<string, int>(Settings.K.PackageListViewMode, PAGE_NAME);
             if (viewMode < 0 || viewMode >= ViewModeSelector.Items.Count) viewMode = 0;
             ViewModeSelector.SelectedIndex = viewMode;
 
@@ -258,56 +267,14 @@ namespace UniGetUI.Interface
             LocalPackagesNode.IsExpanded = false;
 
             ReloadButton.Click += async (_, _) => await LoadPackages();
+            ReloadButton.Visibility = DISABLE_RELOAD ? Visibility.Collapsed : Visibility.Visible;
 
-            // Handle Find Button click on the Query Block
-            FindButton.Click += (_, _) =>
-            {
-                MegaQueryBlockGrid.Visibility = Visibility.Collapsed;
-                FilterPackages(true);
-            };
-
-            // Handle Enter pressed on the QueryBlock
-            QueryBlock.KeyUp += (_, e) =>
-            {
-                if (e.Key != VirtualKey.Enter)
-                {
-                    return;
-                }
-
-                MegaQueryBlockGrid.Visibility = Visibility.Collapsed;
-                if (!DISABLE_FILTER_ON_QUERY_CHANGE)
-                    FilterPackages(true);
-            };
-
-            // Handle showing the MegaQueryBlock
-            QueryBlock.TextChanged += (_, _) =>
-            {
-                if (InstantSearchCheckbox.IsChecked == true)
-                {
-                    if (!DISABLE_FILTER_ON_QUERY_CHANGE)
-                        FilterPackages(true);
-                }
-
-                if (MEGA_QUERY_BOX_ENABLED && QueryBlock.Text.Trim() == "")
-                {
-                    MegaQueryBlockGrid.Visibility = Visibility.Visible;
-                    Loader.StopLoading();
-                    BackgroundText.Visibility = Visibility.Collapsed;
-                    ClearSourcesList();
-                    WrappedPackages.Clear();
-                    FilterPackages(true);
-                    MegaQueryBlock.Focus(FocusState.Programmatic);
-                    MegaQueryBlock.Text = "";
-                }
-            };
 
             // Handle the Enter Pressed event on the MegaQueryBlock
             MegaQueryBlock.KeyUp += (_, e) =>
             {
                 if (e.Key != VirtualKey.Enter)
-                {
                     return;
-                }
 
                 MegaQueryBlockGrid.Visibility = Visibility.Collapsed;
                 QueryBlock.Text = MegaQueryBlock.Text.Trim();
@@ -365,9 +332,9 @@ namespace UniGetUI.Interface
                 BackgroundText.Visibility = Visibility.Collapsed;
             }
 
-            QueryBlock.PlaceholderText = CoreTools.Translate("Search for packages");
-            MegaQueryBlock.PlaceholderText = CoreTools.Translate("Search for packages");
-            InstantSearchCheckbox.IsChecked = !Settings.GetDictionaryItem<string, bool>("DisableInstantSearch", PAGE_NAME);
+            _searchPlaceholder = CoreTools.Translate("Search for packages");
+            MegaQueryBlock.PlaceholderText = _searchPlaceholder;
+            InstantSearchCheckbox.IsChecked = !Settings.GetDictionaryItem<string, bool>(Settings.K.DisableInstantSearch, PAGE_NAME);
 
             HeaderIcon.FontWeight = new Windows.UI.Text.FontWeight(700);
             NameHeader.Content = CoreTools.Translate("Package Name");
@@ -489,6 +456,7 @@ namespace UniGetUI.Interface
 
         public void ReloadTriggered()
         {
+            if (DISABLE_RELOAD) return;
             _ = LoadPackages(ReloadReason.Manual);
         }
 
@@ -569,7 +537,7 @@ namespace UniGetUI.Interface
         }
 
         private void InstantSearchValueChanged(object sender, RoutedEventArgs e)
-            => Settings.SetDictionaryItem("DisableInstantSearch", PAGE_NAME, !InstantSearchCheckbox.IsChecked);
+            => Settings.SetDictionaryItem(Settings.K.DisableInstantSearch, PAGE_NAME, !InstantSearchCheckbox.IsChecked);
 
         private void SourcesTreeView_SelectionChanged(TreeView sender, TreeViewSelectionChangedEventArgs args)
             => FilterPackages();
@@ -846,10 +814,10 @@ namespace UniGetUI.Interface
             }
             else
             {
-                ForceRedrawByScroll();
+                _ = ForceRedrawByScroll();
             }
 
-            if (!Settings.Get("DisableIconsOnPackageLists"))
+            if (!Settings.Get(Settings.K.DisableIconsOnPackageLists))
                 _ = LoadIconsForNewPackages();
         }
 
@@ -967,7 +935,7 @@ namespace UniGetUI.Interface
                 return;
             }
 
-            DialogHelper.ShowPackageDetails(package, PAGE_ROLE, referral);
+            _ = DialogHelper.ShowPackageDetails(package, PAGE_ROLE, referral);
         }
 
         protected void OpenPackageInstallLocation(IPackage? package)
@@ -988,10 +956,10 @@ namespace UniGetUI.Interface
             if (package is null)
                 return;
 
-            MainApp.Instance.MainWindow.SharePackage(package);
+            DialogHelper.SharePackage(package);
         }
 
-        protected async void ShowInstallationOptionsForPackage(IPackage? package)
+        protected async Task ShowInstallationOptionsForPackage(IPackage? package)
         {
             if (package is null)
                 return;
@@ -1021,11 +989,11 @@ namespace UniGetUI.Interface
             if ((int)e.NewSize.Width < 100)
             {
                 HideFilteringPane();
-                Settings.SetDictionaryItem("SidepanelWidths", PAGE_NAME, 250);
+                Settings.SetDictionaryItem(Settings.K.SidepanelWidths, PAGE_NAME, 250);
             }
             else
             {
-                Settings.SetDictionaryItem("SidepanelWidths", PAGE_NAME, (int)e.NewSize.Width);
+                Settings.SetDictionaryItem(Settings.K.SidepanelWidths, PAGE_NAME, (int)e.NewSize.Width);
             }
         }
 
@@ -1046,7 +1014,7 @@ namespace UniGetUI.Interface
             }
             else // if (PageRole == OperationType.Uninstall)
             {
-                MainApp.Operations.ConfirmAndUninstall(package);
+                _ = MainApp.Operations.ConfirmAndUninstall(package);
             }
         }
 
@@ -1099,7 +1067,7 @@ namespace UniGetUI.Interface
             }
         }
 
-        private async void ForceRedrawByScroll()
+        private async Task ForceRedrawByScroll()
         {
             if (CurrentPackageList is not null)
             {
@@ -1113,7 +1081,7 @@ namespace UniGetUI.Interface
         {
             if(FilteringPanel.DisplayMode is SplitViewDisplayMode.Inline)
             {
-                Settings.SetDictionaryItem("HideToggleFilters", PAGE_NAME, !ToggleFiltersButton.IsChecked ?? false);
+                Settings.SetDictionaryItem(Settings.K.HideToggleFilters, PAGE_NAME, !ToggleFiltersButton.IsChecked ?? false);
             }
 
             if (ToggleFiltersButton.IsChecked ?? false)
@@ -1139,11 +1107,11 @@ namespace UniGetUI.Interface
                 int finalWidth = 250;
                 try
                 {
-                    finalWidth = Settings.GetDictionaryItem<string, int>("SidepanelWidths", PAGE_NAME);
+                    finalWidth = Settings.GetDictionaryItem<string, int>(Settings.K.SidepanelWidths, PAGE_NAME);
                 }
                 catch
                 {
-                    Settings.SetDictionaryItem("SidepanelWidths", PAGE_NAME, 250);
+                    Settings.SetDictionaryItem(Settings.K.SidepanelWidths, PAGE_NAME, 250);
                 }
                 FilteringPanel.OpenPaneLength = finalWidth;
                 PackagesListGrid.Margin = new Thickness(12, 0, 0, 0);
@@ -1247,7 +1215,7 @@ namespace UniGetUI.Interface
             {
                 if (IS_ALT_PRESSED)
                 {
-                    ShowInstallationOptionsForPackage(package);
+                    _ = ShowInstallationOptionsForPackage(package);
                     e.Handled = true;
                 }
                 else if (IS_CONTROL_PRESSED)
@@ -1274,7 +1242,7 @@ namespace UniGetUI.Interface
             }
         }
 
-        private async void SetFilterMode_Overlay()
+        private void SetFilterMode_Overlay()
         {
             if (_filterPanelCurrentMode == SplitViewDisplayMode.Overlay)
                 return;
@@ -1285,7 +1253,7 @@ namespace UniGetUI.Interface
             FiltersResizer.Opacity = 0;
             ToggleFiltersButton.IsChecked = false;
 
-            await Task.Delay(200);
+            // await Task.Delay(200);
             FilteringPanel.Shadow = new ThemeShadow();
             SidePanel.BorderThickness = new Thickness(0, 1, 1, 1);
 
@@ -1313,7 +1281,7 @@ namespace UniGetUI.Interface
                 filters.Margin = new Thickness(0);
             }
 
-            if (!Settings.GetDictionaryItem<string, bool>("HideToggleFilters", PAGE_NAME))
+            if (!Settings.GetDictionaryItem<string, bool>(Settings.K.HideToggleFilters, PAGE_NAME))
             {
                 ShowFilteringPane();
             }
@@ -1346,7 +1314,7 @@ namespace UniGetUI.Interface
         }
         private void ViewModeSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Settings.SetDictionaryItem("PackageListViewMode", PAGE_NAME, ViewModeSelector.SelectedIndex);
+            Settings.SetDictionaryItem(Settings.K.PackageListViewMode, PAGE_NAME, ViewModeSelector.SelectedIndex);
         }
 
         FrameworkElement _lastContextMenuButtonTapped = null!;
@@ -1357,24 +1325,70 @@ namespace UniGetUI.Interface
         }
 
         private bool? _pageIsWide;
+        private bool? _titleHidden;
         private void ABSTRACT_PAGE_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if(ActualWidth < 700)
+            if (ActualWidth < 500)
+            {
+                if (_titleHidden != false)
+                {
+                    _titleHidden = false;
+                    MainSubtitle.Visibility = Visibility.Collapsed;
+                }
+            }
+            else
+            {
+                if (_titleHidden != true)
+                {
+                    _titleHidden = true;
+                    MainSubtitle.Visibility = Visibility.Visible;
+
+                }
+            }
+
+            if (ActualWidth < 700)
             {
                 if (_pageIsWide != false)
                 {
-                    SearchBoxPanel.Orientation = Orientation.Vertical;
                     _pageIsWide = false;
+                    MainTitle.FontSize = 20;
                 }
             }
             else
             {
                 if (_pageIsWide != true)
                 {
-                    SearchBoxPanel.Orientation = Orientation.Horizontal;
+                    MainTitle.FontSize = 30;
                     _pageIsWide = true;
                 }
             }
+        }
+
+        public void SearchBox_TextChanged(object? sender, AutoSuggestBoxTextChangedEventArgs args)
+        {
+            if (InstantSearchCheckbox.IsChecked is true && !DISABLE_FILTER_ON_QUERY_CHANGE)
+                FilterPackages(true);
+
+            if (MEGA_QUERY_BOX_ENABLED && QueryBlock.Text.Trim() == "")
+            {
+                MegaQueryBlockGrid.Visibility = Visibility.Visible;
+                Loader.StopLoading();
+                BackgroundText.Visibility = Visibility.Collapsed;
+                ClearSourcesList();
+                WrappedPackages.Clear();
+                FilterPackages(true);
+                MegaQueryBlock.Focus(FocusState.Programmatic);
+                MegaQueryBlock.Text = "";
+            }
+        }
+
+        public virtual void SearchBox_QuerySubmitted(object? sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+        {
+            // Handle Enter pressed or search button pressed
+            MegaQueryBlockGrid.Visibility = Visibility.Collapsed;
+            if (!DISABLE_FILTER_ON_QUERY_CHANGE)
+                FilterPackages(true);
+
         }
     }
 }

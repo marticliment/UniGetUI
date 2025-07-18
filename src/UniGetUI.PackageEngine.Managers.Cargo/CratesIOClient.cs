@@ -38,7 +38,7 @@ internal record CargoManifestVersion
 {
     public string[]? bin_names { get; init; }
     public required string checksum { get; init; }
-    public double? crate_size { get; init; }
+    public long? crate_size { get; init; }
     public string? created_at { get; init; }
     public required string dl_path { get; init; }
     public string? license { get; init; }

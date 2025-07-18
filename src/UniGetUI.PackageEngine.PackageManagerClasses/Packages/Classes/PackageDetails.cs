@@ -65,9 +65,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public string? InstallerType { get; set; }
 
         /// <summary>
-        /// The size, in **MEGABYTES**, of the installer
+        /// The size, in **BYTES**, of the installer
         /// </summary>
-        public double InstallerSize { get; set; }
+        public long InstallerSize { get; set; }
 
         /// <summary>
         /// A URL pointing to the Manifest File of the package
@@ -93,6 +93,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// A list of tags that (in theory) represent the package
         /// </summary>
         public string[] Tags { get; set; } = [];
+
+        public List<IPackageDetails.Dependency> Dependencies { get; set; } = [];
 
         public PackageDetails(IPackage package)
         {

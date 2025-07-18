@@ -1,6 +1,6 @@
 using System.Collections.ObjectModel;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Input;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine;
@@ -54,20 +54,21 @@ namespace UniGetUI.Interface
             }
         }
 
-        private async void IgnoredUpdatesList_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+        /*private async void IgnoredUpdatesList_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {
             if (IgnoredUpdatesList.SelectedItem is IgnoredPackageEntry package)
             {
                 await package.RemoveFromIgnoredUpdates();
             }
-        }
+        }*/
 
-        private void CloseButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             Close?.Invoke(this, EventArgs.Empty);
         }
 
-        private async void YesResetButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        private void YesResetButton_Click(object sender, RoutedEventArgs e) => _ = _yesResetButton_Click();
+        private async Task _yesResetButton_Click()
         {
             foreach (IgnoredPackageEntry package in ignoredPackages.ToArray())
             {
@@ -76,7 +77,7 @@ namespace UniGetUI.Interface
             ConfirmResetFlyout.Hide();
         }
 
-        private void NoResetButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        private void NoResetButton_Click(object sender, RoutedEventArgs e)
         {
             ConfirmResetFlyout.Hide();
         }
@@ -135,7 +136,7 @@ namespace UniGetUI.Interface
             if (PEInterface.UpgradablePackagesLoader.IgnoredPackages.TryRemove(Id, out IPackage? nativePackage)
                 && nativePackage.NewVersionString != nativePackage.VersionString)
             {
-                PEInterface.UpgradablePackagesLoader.AddForeign(nativePackage);
+                await PEInterface.UpgradablePackagesLoader.AddForeign(nativePackage);
             }
 
             foreach (IPackage package in PEInterface.InstalledPackagesLoader.Packages)

@@ -6,21 +6,12 @@ namespace UniGetUI.Core.SettingsEngine;
 
 public partial class Settings
 {
-    public static void ExportToJSON(string path)
+    public static void ExportToFile_JSON(string path)
     {
-        Dictionary<string, string> settings = [];
-        foreach (string entry in Directory.EnumerateFiles(CoreData.UniGetUIUserConfigurationDirectory))
-        {
-            if(new[] {"OperationHistory", "WinGetAlreadyUpgradedPackages.json", "TelemetryClientToken", "CurrentSessionToken"}.Contains(entry.Split("\\")[^1]))
-                continue;
-
-            settings.Add(Path.GetFileName(entry), File.ReadAllText(entry));
-        }
-
-        File.WriteAllText(path, JsonSerializer.Serialize(settings, SerializationOptions));
+        File.WriteAllText(path, ExportToString_JSON());
     }
 
-    public static void ImportFromJSON(string path)
+    public static void ImportFromFile_JSON(string path)
     {
         if (Path.GetDirectoryName(path) == CoreData.UniGetUIUserConfigurationDirectory)
         {
@@ -29,16 +20,34 @@ public partial class Settings
             File.Copy(path, newPath);
             path = newPath;
         }
+        ImportFromString_JSON(path);
+    }
 
+    public static string ExportToString_JSON()
+    {
+        Dictionary<string, string> settings = [];
+        foreach (string entry in Directory.EnumerateFiles(CoreData.UniGetUIUserConfigurationDirectory))
+        {
+            if (new[] { "OperationHistory", "WinGetAlreadyUpgradedPackages.json", "TelemetryClientToken", "CurrentSessionToken" }.Contains(Path.GetFileName(entry)))
+                continue;
+
+            settings.Add(Path.GetFileName(entry), File.ReadAllText(entry));
+        }
+        return JsonSerializer.Serialize(settings, SerializationOptions);
+    }
+
+    public static void ImportFromString_JSON(string jsonContent)
+    {
         ResetSettings();
-        Dictionary<string, string> settings = JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllText(path), SerializationOptions) ?? [];
+        Dictionary<string, string> settings = JsonSerializer.Deserialize<Dictionary<string, string>>(jsonContent, SerializationOptions) ?? [];
         foreach (KeyValuePair<string, string> entry in settings)
         {
-            if(new[] {"OperationHistory", "WinGetAlreadyUpgradedPackages.json", "TelemetryClientToken", "CurrentSessionToken"}.Contains(entry.Key))
+            if (new[] { "OperationHistory", "WinGetAlreadyUpgradedPackages.json", "TelemetryClientToken", "CurrentSessionToken" }.Contains(entry.Key))
                 continue;
 
             File.WriteAllText(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, entry.Key), entry.Value);
         }
+        Logger.Info("Settings successfully imported from string content.");
     }
 
     public static void ResetSettings()

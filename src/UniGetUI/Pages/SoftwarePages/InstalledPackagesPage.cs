@@ -12,6 +12,7 @@ using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Managers.WingetManager;
 using UniGetUI.Pages.DialogPages;
+using UniGetUI.Services;
 
 namespace UniGetUI.Interface.SoftwarePages
 {
@@ -38,6 +39,7 @@ namespace UniGetUI.Interface.SoftwarePages
             DisableFilterOnQueryChange = false,
             MegaQueryBlockEnabled = false,
             ShowLastLoadTime = false,
+            DisableReload = false,
             PackagesAreCheckedByDefault = false,
             DisableSuggestedResultsRadio = true,
             PageName = "Installed",
@@ -256,7 +258,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             ExportSelection.Click += ExportSelection_Click;
             HelpButton.Click += (_, _) => MainApp.Instance.MainWindow.NavigationPage.ShowHelp();
-            InstallationSettings.Click += (_, _) => ShowInstallationOptionsForPackage(SelectedItem);
+            InstallationSettings.Click += (_, _) => _ = ShowInstallationOptionsForPackage(SelectedItem);
             ManageIgnored.Click += async (_, _) => await DialogHelper.ManageIgnoredUpdates();
             IgnoreSelected.Click += async (_, _) =>
             {
@@ -270,10 +272,10 @@ namespace UniGetUI.Interface.SoftwarePages
                 }
             };
 
-            UninstallSelected.Click += (_, _) => MainApp.Operations.ConfirmAndUninstall(FilteredPackages.GetCheckedPackages());
-            UninstallAsAdmin.Click += (_, _) => MainApp.Operations.ConfirmAndUninstall(FilteredPackages.GetCheckedPackages(), elevated: true);
-            UninstallInteractive.Click += (_, _) => MainApp.Operations.ConfirmAndUninstall(FilteredPackages.GetCheckedPackages(), interactive: true);
-            SharePackage.Click += (_, _) => MainApp.Instance.MainWindow.SharePackage(SelectedItem);
+            UninstallSelected.Click += (_, _) => _ = MainApp.Operations.ConfirmAndUninstall(FilteredPackages.GetCheckedPackages());
+            UninstallAsAdmin.Click += (_, _) => _ = MainApp.Operations.ConfirmAndUninstall(FilteredPackages.GetCheckedPackages(), elevated: true);
+            UninstallInteractive.Click += (_, _) => _ = MainApp.Operations.ConfirmAndUninstall(FilteredPackages.GetCheckedPackages(), interactive: true);
+            SharePackage.Click += (_, _) => DialogHelper.SharePackage(SelectedItem);
         }
 
         protected override void WhenPackageCountUpdated()
@@ -285,13 +287,18 @@ namespace UniGetUI.Interface.SoftwarePages
         {
             if (!HasDoneBackup)
             {
-                if (Settings.Get("EnablePackageBackup"))
+                if (Settings.Get(Settings.K.EnablePackageBackup_LOCAL))
                 {
-                    _ = BackupPackages();
+                    _ = BackupPackages_LOCAL();
+                }
+
+                if (Settings.Get(Settings.K.EnablePackageBackup_CLOUD))
+                {
+                    _ = BackupPackages_CLOUD();
                 }
             }
 
-            if (WinGet.NO_PACKAGES_HAVE_BEEN_LOADED && !Settings.Get("DisableWinGetMalfunctionDetector"))
+            if (WinGet.NO_PACKAGES_HAVE_BEEN_LOADED && !Settings.Get(Settings.K.DisableWinGetMalfunctionDetector))
             {
                 var infoBar = MainApp.Instance.MainWindow.WinGetWarningBanner;
                 infoBar.IsOpen = true;
@@ -299,11 +306,14 @@ namespace UniGetUI.Interface.SoftwarePages
                 infoBar.Message = CoreTools.Translate("It looks like WinGet is not working properly. Do you want to attempt to repair WinGet?");
                 var button = new Button { Content = CoreTools.Translate("Repair WinGet") };
                 infoBar.ActionButton = button;
-                button.Click += (_, _) => DialogHelper.HandleBrokenWinGet();
+                button.Click += (_, _) => _ = DialogHelper.HandleBrokenWinGet();
             }
         }
 
-        protected override async void WhenShowingContextMenu(IPackage package)
+        protected override void WhenShowingContextMenu(IPackage package)
+            => _ = _whenShowingContextMenu(package);
+
+        private async Task _whenShowingContextMenu(IPackage package)
         {
             if (MenuAsAdmin is null
                 || MenuInteractive is null
@@ -352,30 +362,51 @@ namespace UniGetUI.Interface.SoftwarePages
             }
         }
 
-        private async void ExportSelection_Click(object sender, RoutedEventArgs e)
+        private void ExportSelection_Click(object sender, RoutedEventArgs e) => _ = _exportSelection_Click();
+        private async Task _exportSelection_Click()
         {
             MainApp.Instance.MainWindow.NavigationPage.NavigateTo(PageType.Bundles);
-            DialogHelper.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
+            int loadingId = DialogHelper.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
             await PEInterface.PackageBundlesLoader.AddPackagesAsync(FilteredPackages.GetCheckedPackages());
-            DialogHelper.HideLoadingDialog();
-
+            DialogHelper.HideLoadingDialog(loadingId);
         }
 
-        public static async Task BackupPackages()
+        public static Task<string> GenerateBackupContents()
         {
+            Logger.Debug("Starting package backup");
+            List<IPackage> packagesToExport = [];
+            foreach (IPackage package in PEInterface.InstalledPackagesLoader.Packages)
+            {
+                packagesToExport.Add(package);
+            }
 
+            return PackageBundlesPage.CreateBundle(packagesToExport.ToArray());
+        }
+
+        public static async Task BackupPackages_CLOUD()
+        {
             try
             {
-                Logger.Debug("Starting package backup");
-                List<IPackage> packagesToExport = [];
-                foreach (IPackage package in PEInterface.InstalledPackagesLoader.Packages)
-                {
-                    packagesToExport.Add(package);
-                }
+                await CoreTools.WaitForInternetConnection();
+                string backupContents = await GenerateBackupContents();
+                var authService = new GitHubAuthService();
+                var backupService = new GitHubBackupService(authService);
+                await backupService.UploadPackageBundle(backupContents);
+                Logger.ImportantInfo("Cloud backup succeeded");
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("An error occurred while performing a CLOUD backup");
+                Logger.Error(ex);
+            }
+        }
 
-                string BackupContents = await PackageBundlesPage.CreateBundle(packagesToExport.ToArray(), BundleFormatType.UBUNDLE);
-
-                string dirName = Settings.GetValue("ChangeBackupOutputDirectory");
+        public static async Task BackupPackages_LOCAL()
+        {
+            try
+            {
+                string backupContents = await GenerateBackupContents();
+                string dirName = Settings.GetValue(Settings.K.ChangeBackupOutputDirectory);
                 if (dirName == "")
                 {
                     dirName = CoreData.UniGetUI_DefaultBackupDirectory;
@@ -386,13 +417,13 @@ namespace UniGetUI.Interface.SoftwarePages
                     Directory.CreateDirectory(dirName);
                 }
 
-                string fileName = Settings.GetValue("ChangeBackupFileName");
+                string fileName = Settings.GetValue(Settings.K.ChangeBackupFileName);
                 if (fileName == "")
                 {
                     fileName = CoreTools.Translate("{pcName} installed packages", new Dictionary<string, object?> { { "pcName", Environment.MachineName } });
                 }
 
-                if (Settings.Get("EnableBackupTimestamping"))
+                if (Settings.Get(Settings.K.EnableBackupTimestamping))
                 {
                     fileName += " " + DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss");
                 }
@@ -400,39 +431,37 @@ namespace UniGetUI.Interface.SoftwarePages
                 fileName += ".ubundle";
 
                 string filePath = Path.Combine(dirName, fileName);
-                await File.WriteAllTextAsync(filePath, BackupContents);
+                await File.WriteAllTextAsync(filePath, backupContents);
                 HasDoneBackup = true;
                 Logger.ImportantInfo("Backup saved to " + filePath);
             }
             catch (Exception ex)
             {
-                Logger.Error("An error occurred while performing a backup");
+                Logger.Error("An error occurred while performing a LOCAL backup");
                 Logger.Error(ex);
             }
         }
 
         private void MenuUninstall_Invoked(object sender, RoutedEventArgs args)
-            => MainApp.Operations.ConfirmAndUninstall(SelectedItem);
+            => _ = MainApp.Operations.ConfirmAndUninstall(SelectedItem);
 
         private void MenuAsAdmin_Invoked(object sender, RoutedEventArgs args)
-            => MainApp.Operations.ConfirmAndUninstall(SelectedItem, elevated: true);
+            => _ = MainApp.Operations.ConfirmAndUninstall(SelectedItem, elevated: true);
 
         private void MenuInteractive_Invoked(object sender, RoutedEventArgs args)
-            => MainApp.Operations.ConfirmAndUninstall(SelectedItem, interactive: true);
+            => _ = MainApp.Operations.ConfirmAndUninstall(SelectedItem, interactive: true);
 
         private void MenuRemoveData_Invoked(object sender, RoutedEventArgs args)
-            => MainApp.Operations.ConfirmAndUninstall(SelectedItem, remove_data: true);
+            => _ = MainApp.Operations.ConfirmAndUninstall(SelectedItem, remove_data: true);
 
         private void MenuReinstall_Invoked(object sender, RoutedEventArgs args)
             => _ = MainApp.Operations.Install(SelectedItem, TEL_InstallReferral.ALREADY_INSTALLED);
 
-        private async void MenuUninstallThenReinstall_Invoked(object sender, RoutedEventArgs args)
-        {
-            var op = await MainApp.Operations.Uninstall(SelectedItem, ignoreParallel: true);
-            _ = MainApp.Operations.Install(SelectedItem, TEL_InstallReferral.ALREADY_INSTALLED, ignoreParallel: true, req: op);
-        }
+        private void MenuUninstallThenReinstall_Invoked(object sender, RoutedEventArgs args)
+            => _ = MainApp.Operations.UninstallThenReinstall(SelectedItem, TEL_InstallReferral.ALREADY_INSTALLED);
 
-        private async void MenuIgnorePackage_Invoked(object sender, RoutedEventArgs args)
+        private void MenuIgnorePackage_Invoked(object sender, RoutedEventArgs args) => _ = _menuIgnorePackage_Invoked();
+        private async Task _menuIgnorePackage_Invoked()
         {
             IPackage? package = SelectedItem;
             if (package is null) return;
@@ -453,7 +482,7 @@ namespace UniGetUI.Interface.SoftwarePages
             if (SelectedItem is null)
                 return;
 
-            MainApp.Instance.MainWindow.SharePackage(SelectedItem);
+            DialogHelper.SharePackage(SelectedItem);
         }
 
         private void MenuDetails_Invoked(object sender, RoutedEventArgs args)
@@ -463,7 +492,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private void MenuInstallSettings_Invoked(object sender, RoutedEventArgs e)
         {
-            ShowInstallationOptionsForPackage(SelectedItem);
+            _ = ShowInstallationOptionsForPackage(SelectedItem);
         }
     }
 }

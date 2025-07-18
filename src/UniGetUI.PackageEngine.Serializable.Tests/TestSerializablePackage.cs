@@ -73,7 +73,8 @@ public class TestSerializablePackage
                     "UNKNOWN_VAL3": 22,
                     "UNKNOWN_VAL4": "hehe",
                     "InstallationOptions" : {
-                        "SkipHashCheck": true
+                        "SkipHashCheck": true,
+                        "OverridesNextLevelOpts": false
                     }
                 }
                 """, "", "", "false", "Rodolfo Chikilicuatre", "lol", true, "")]
@@ -90,7 +91,7 @@ public class TestSerializablePackage
         Assert.Equal(manager, o2.ManagerName);
         Assert.Equal(source, o2.Source);
         Assert.Equal(version, o2.Version);
-        TestInstallOptions.AreEqual(new() { SkipHashCheck = skipHash }, o2.InstallationOptions);
+        TestInstallOptions.AssertAreEqual(new() { SkipHashCheck = skipHash }, o2.InstallationOptions);
         TestSerializableUpdatesOptions.AreEqual(new(){IgnoredVersion = ignoredVer}, o2.Updates);
     }
 
@@ -101,7 +102,7 @@ public class TestSerializablePackage
         Assert.Equal(o1.Source, o2.Source);
         Assert.Equal(o1.Version, o2.Version);
         Assert.Equal(o1.ManagerName, o2.ManagerName);
-        TestInstallOptions.AreEqual(o1.InstallationOptions, o2.InstallationOptions);
+        TestInstallOptions.AssertAreEqual(o1.InstallationOptions, o2.InstallationOptions);
         TestSerializableUpdatesOptions.AreEqual(o1.Updates, o2.Updates);
     }
 }

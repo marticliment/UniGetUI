@@ -90,13 +90,13 @@
 
             <widgets:ButtonCard
                 ButtonText="Import"
-                Click="ImportSettings"
+                Click="ImportSettings_Click"
                 CornerRadius="8,8,0,0"
                 Text="Import settings from a local file" />
             <widgets:ButtonCard
                 BorderThickness="1,0"
                 ButtonText="Export"
-                Click="ExportSettings"
+                Click="ExportSettings_Click"
                 CornerRadius="0"
                 Text="Export settings to a local file" />
             <widgets:ButtonCard

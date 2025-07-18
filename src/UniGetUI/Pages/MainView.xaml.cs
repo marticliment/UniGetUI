@@ -19,6 +19,7 @@ using UniGetUI.Pages.SettingsPages;
 using UniGetUI.Controls;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.PackageLoader;
+using UniGetUI.Pages.PageInterfaces;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -57,11 +58,13 @@ namespace UniGetUI.Interface
         private PageType CurrentPage_t = PageType.Null;
         private List<PageType> NavigationHistory = new();
 
+        AutoSuggestBox MainTextBlock;
         public event EventHandler<bool>? CanGoBackChanged;
 
-        public MainView()
+        public MainView(AutoSuggestBox mainTextBlock)
         {
             InitializeComponent();
+            MainTextBlock = mainTextBlock;
             OperationList.ItemContainerTransitions = null;
             OperationList.ItemsSource = MainApp.Operations._operationList;
             DiscoverPage = new DiscoverSoftwarePage();
@@ -143,21 +146,21 @@ namespace UniGetUI.Interface
 
             LoadDefaultPage();
 
-            if (CoreTools.IsAdministrator() && !Settings.Get("AlreadyWarnedAboutAdmin"))
+            if (CoreTools.IsAdministrator() && !Settings.Get(Settings.K.AlreadyWarnedAboutAdmin))
             {
-                Settings.Set("AlreadyWarnedAboutAdmin", true);
-                DialogHelper.WarnAboutAdminRights();
+                Settings.Set(Settings.K.AlreadyWarnedAboutAdmin, true);
+                _= DialogHelper.WarnAboutAdminRights();
             }
 
             UpdateOperationsLayout();
             MainApp.Operations._operationList.CollectionChanged += (_, _) => UpdateOperationsLayout();
 
-            if (!Settings.Get("ShownTelemetryBanner"))
+            if (!Settings.Get(Settings.K.ShownTelemetryBanner))
             {
                 DialogHelper.ShowTelemetryBanner();
             }
 
-            if (!Settings.Get("CollapseNavMenuOnWideScreen"))
+            if (!Settings.Get(Settings.K.CollapseNavMenuOnWideScreen))
             {
                 NavView.IsPaneOpen = true;
             }
@@ -165,7 +168,7 @@ namespace UniGetUI.Interface
 
         public void LoadDefaultPage()
         {
-            PageType type = Settings.GetValue("StartupPage") switch
+            PageType type = Settings.GetValue(Settings.K.StartupPage) switch
             {
                 "discover" => PageType.Discover,
                 "updates" => PageType.Updates,
@@ -257,7 +260,8 @@ namespace UniGetUI.Interface
             _lastNavItemSelectionWasAuto = false;
         }
 
-        private async void AboutNavButton_Click(object sender, RoutedEventArgs e)
+        private void AboutNavButton_Click(object sender, RoutedEventArgs e) => _ = _aboutNavButton_Click();
+        private async Task _aboutNavButton_Click()
         {
             SelectNavButtonForPage(PageType.Null);
             await DialogHelper.ShowAboutUniGetUI();
@@ -278,6 +282,13 @@ namespace UniGetUI.Interface
             CurrentPage_t = NewPage_t;
 
             (oldPage as IEnterLeaveListener)?.OnLeave();
+            if(oldPage is ISearchBoxPage oldSPage)
+            {
+                MainTextBlock.TextChanged -= oldSPage.SearchBox_TextChanged;
+                MainTextBlock.QuerySubmitted -= oldSPage.SearchBox_QuerySubmitted;
+                oldSPage.QueryBackup = MainTextBlock.Text;
+            }
+
             if (toHistory && OldPage_t is not PageType.Null)
             {
                 NavigationHistory.Add(OldPage_t);
@@ -287,6 +298,21 @@ namespace UniGetUI.Interface
             (NewPage as AbstractPackagesPage)?.FocusPackageList();
             (NewPage as AbstractPackagesPage)?.FilterPackages();
             (NewPage as IEnterLeaveListener)?.OnEnter();
+
+            if (NewPage is ISearchBoxPage newSPage)
+            {
+                MainTextBlock.TextChanged += newSPage.SearchBox_TextChanged;
+                MainTextBlock.QuerySubmitted += newSPage.SearchBox_QuerySubmitted;
+                MainTextBlock.Text = newSPage.QueryBackup;
+                MainTextBlock.PlaceholderText = newSPage.SearchBoxPlaceholder;
+                MainTextBlock.IsEnabled = true;
+            }
+            else
+            {
+                MainTextBlock.Text = "";
+                MainTextBlock.PlaceholderText = "";
+                MainTextBlock.IsEnabled = false;
+            }
         }
 
         public void NavigateBack()
@@ -306,7 +332,7 @@ namespace UniGetUI.Interface
         }
 
         private void ReleaseNotesMenu_Click(object sender, RoutedEventArgs e)
-            => DialogHelper.ShowReleaseNotes();
+            => _ = DialogHelper.ShowReleaseNotes();
 
         private void OperationHistoryMenu_Click(object sender, RoutedEventArgs e)
             => NavigateTo(PageType.OperationHistory);
@@ -336,8 +362,11 @@ namespace UniGetUI.Interface
         private void HelpMenu_Click(object sender, RoutedEventArgs e)
             => ShowHelp();
 
-        public void ShowHelp()
-            => NavigateTo(PageType.Help);
+        public void ShowHelp(string uriAttachment = "")
+        {
+            NavigateTo(PageType.Help);
+            HelpPage?.NavigateTo(uriAttachment);
+        }
 
         private void QuitUniGetUI_Click(object sender, RoutedEventArgs e)
             => MainApp.Instance.DisposeAndQuit();
@@ -386,7 +415,7 @@ namespace UniGetUI.Interface
             ResizingOPLayout = false;
         }
 
-        private async void OperationScrollView_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void OperationScrollView_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (ResizingOPLayout)
                 return;
@@ -394,7 +423,6 @@ namespace UniGetUI.Interface
             if (OpListChanges > 0)
             {
                 OpListChanges--;
-                return;
             }
         }
 
@@ -466,10 +494,26 @@ namespace UniGetUI.Interface
             MoreNavButtonMenu.ShowAt(sender as FrameworkElement);
         }
 
-        internal void LoadBundleFile(string param)
+        internal void LoadBundleFromFile(string param)
         {
             NavigateTo(PageType.Bundles);
             BundlesPage?.OpenFromFile(param);
+        }
+
+        internal void LoadBundleFromString(string payload, BundleFormatType format, string source, int loadingId)
+        {
+            NavigateTo(PageType.Bundles);
+            BundlesPage?.OpenFromString(payload, format, source, loadingId);
+        }
+
+        private void ClearAllFinished_OnClick(object sender, RoutedEventArgs e)
+        {
+            foreach (var widget in MainApp.Operations._operationList.ToArray())
+            {
+                var operation = widget.Operation;
+                if (operation.Status is OperationStatus.Succeeded or OperationStatus.Failed or OperationStatus.Canceled)
+                    widget.Close();
+            }
         }
     }
 }

@@ -1,11 +1,9 @@
 using System.Collections.ObjectModel;
-using System.Runtime.InteropServices;
 using System.Text.Json.Nodes;
 using UniGetUI.Core.Classes;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.Enums;
-using Architecture = UniGetUI.PackageEngine.Enums.Architecture;
 
 namespace UniGetUI.Core.Language
 {
@@ -132,7 +130,7 @@ namespace UniGetUI.Core.Language
                             Name: (url is not null ? "@" : "") + (translator["name"] ?? "").ToString(),
                             ProfilePicture: url is not null ? new Uri(url.ToString() + ".png") : null,
                             GitHubUrl: url,
-                            Language: !LangShown ? LanguageData.LanguageReference[langKey.Key] : ""
+                            Language: !LangShown ? LanguageReference[langKey.Key] : ""
                         );
                         LangShown = true;
                         result.Add(person);

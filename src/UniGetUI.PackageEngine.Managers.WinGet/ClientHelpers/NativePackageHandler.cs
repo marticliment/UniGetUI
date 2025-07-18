@@ -1,10 +1,8 @@
 using System.Collections.Concurrent;
-using System.Linq.Expressions;
 using Microsoft.Management.Deployment;
 using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
-using UniGetUI.PackageEngine.Serializable;
 using InstallOptions = UniGetUI.PackageEngine.Serializable.InstallOptions;
 
 namespace UniGetUI.PackageEngine.Managers.WingetManager;
