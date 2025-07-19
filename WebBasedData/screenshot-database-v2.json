@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11902,
-        "done": 5406,
-        "packages_with_icon": 5406,
-        "packages_with_screenshot": 815,
-        "total_screenshots": 2520
+        "total": 11905,
+        "done": 5418,
+        "packages_with_icon": 5418,
+        "packages_with_screenshot": 828,
+        "total_screenshots": 2553
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -27145,14 +27145,14 @@
             "images": []
         },
         "nanazip": {
-            "icon": "https://github.com/M2Team/NanaZip/blob/main/Assets/NanaZip.png?raw=true",
+            "icon": "https://i.postimg.cc/QCMrRPpR/nana.png",
             "images": [
                 "https://github.com/M2Team/NanaZip/blob/main/Documents/ContextMenu.png?raw=true",
                 "https://github.com/M2Team/NanaZip/blob/main/Documents/MainWindow.png?raw=true"
             ]
         },
         "nanazip-preview": {
-            "icon": "https://store-images.s-microsoft.com/image/apps.50792.14474509061719709.17da0911-dc1c-48b2-9bcb-e41dc2e0e38e.862b41b7-470d-46f3-801f-8b701239fbab",
+            "icon": "https://i.postimg.cc/m25bGbpV/nana-pre.png",
             "images": [
                 "https://github.com/M2Team/NanaZip/blob/main/Documents/ContextMenu.png?raw=true",
                 "https://github.com/M2Team/NanaZip/blob/main/Documents/MainWindow.png?raw=true"
@@ -48502,8 +48502,11 @@
             ]
         },
         "wiseadcleaner": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/qRvrKxcG/adclr.png",
+            "images": [
+                "https://i.postimg.cc/8cqgq82y/image.png",
+                "https://i.postimg.cc/HWKmJ5rQ/image.png"
+            ]
         },
         "wisecare365": {
             "icon": "https://i.postimg.cc/wjpdV2xp/wc.png",
@@ -48523,28 +48526,49 @@
             ]
         },
         "wisediskcleaner": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/hG7TBVQp/dskclr.png",
+            "images": [
+                "https://i.postimg.cc/d12C7vBC/image.png",
+                "https://i.postimg.cc/5yfCLG7R/image.png",
+                "https://i.postimg.cc/T1QW99BY/image.png",
+                "https://i.postimg.cc/2y3Cs7V5/image.png"
+            ]
         },
         "wiseduplicatefinder": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/pXZBGQKj/filedup.png",
+            "images": [
+                "https://i.postimg.cc/PJbMkYcB/image.png",
+                "https://i.postimg.cc/J4mq5YHm/image.png"
+            ]
         },
         "wisefolderhider": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/bvJRbXtF/wff.png",
+            "images": [
+                "https://i.postimg.cc/P5dyXvrH/image.png"
+            ]
         },
         "wisegamebooster": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/DfDPXYvx/gbuster.png",
+            "images": [
+                "https://i.postimg.cc/0yGYhkp4/image.png",
+                "https://i.postimg.cc/QMXQ32md/image.png",
+                "https://i.postimg.cc/hGp9P2Zb/image.png",
+                "https://i.postimg.cc/vBT515pR/image.png"
+            ]
         },
         "wisehotkey": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/pTsk4Wtv/hotkey.png",
+            "images": [
+                "https://i.postimg.cc/nhmRrfqK/image.png"
+            ]
         },
         "wisememoryoptimizer": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/jdSYD2jH/memo.png",
+            "images": [
+                "https://i.postimg.cc/dVZXCycy/image.png",
+                "https://i.postimg.cc/hvGZtJ0h/image.png",
+                "https://i.postimg.cc/JzywQFZt/image.png"
+            ]
         },
         "wisevideoconverter": {
             "icon": "https://i.postimg.cc/m2qKXwbD/wvc.png",
@@ -48569,6 +48593,15 @@
                 "https://i.postimg.cc/d08MTyc0/image.png"
             ]
         },
+        "wisex": {
+            "icon": "https://i.postimg.cc/50C3nZm9/wisex.png",
+            "images": [
+                "https://i.postimg.cc/DwnMmyPr/image.png",
+                "https://i.postimg.cc/ZRBfX9JS/image.png",
+                "https://i.postimg.cc/7YyBQYcF/image.png",
+                "https://i.postimg.cc/K8G0xpmQ/image.png"
+            ]
+        },
         "wisemo": {
             "icon": "https://community.chocolatey.org/content/packageimages/wisemo.3.51.png",
             "images": []
@@ -48584,12 +48617,19 @@
             "images": []
         },
         "wiseregistrycleaner": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/bN72RsBn/wisereg.png",
+            "images": [
+                "https://i.postimg.cc/Y2yFhXNb/image.png",
+                "https://i.postimg.cc/gJgZysCc/image.png",
+                "https://i.postimg.cc/pryns8vf/image.png",
+                "https://i.postimg.cc/J0gHvn79/image.png"
+            ]
         },
         "wisetoys": {
-            "icon": "",
-            "images": []
+            "icon": "https://www.wisecleaner.com/static/img/product/products_icon/wisetoys-100.png",
+            "images": [
+                "https://toys.wisecleaner.com/help/assets/wisetoys-main-search.png"
+            ]
         },
         "wit": {
             "icon": "https://community.chocolatey.org/content/packageimages/wit.3.04.8427.png",
@@ -48604,8 +48644,10 @@
             "images": []
         },
         "wixtoolset": {
-            "icon": "https://community.chocolatey.org/content/packageimages/wixtoolset.3.11.2.png",
-            "images": []
+            "icon": "https://i.postimg.cc/KcVKZ1FW/image.png",
+            "images": [
+                "https://raw.githubusercontent.com/wixtoolset/.github/master/profile/images/readme-header.png"
+            ]
         },
         "wizemo": {
             "icon": "",
@@ -50856,6 +50898,22 @@
                 "https://i.postimg.cc/RqrZcLPH/image.png",
                 "https://i.postimg.cc/13QpSG9X/image.png",
                 "https://i.postimg.cc/bvYkDqSj/image.png"
+            ]
+        },
+        "stratoshark": {
+            "icon": "https://i.postimg.cc/Hnmh5YC1/image.png",
+            "images": [
+                "https://i.postimg.cc/C1gNrcrj/image.png",
+                "https://i.postimg.cc/rwgMwHxp/image.png"
+            ]
+        },
+        "soluling": {
+            "icon": "https://i.postimg.cc/htKPrCwR/Soluling.png",
+            "images": [
+                "https://i.postimg.cc/Wp9njKGX/image.png",
+                "https://i.postimg.cc/B6TVMCkR/image.png",
+                "https://i.postimg.cc/ncC1LkTZ/image.png",
+                "https://i.postimg.cc/DyHP4XYG/image.png"
             ]
         }
     }
