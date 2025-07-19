@@ -1,4 +1,5 @@
 using Windows.Networking.Connectivity;
+using Windows.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -248,7 +249,8 @@ namespace UniGetUI.Interface.SoftwarePages
                         UninstallSelection
                     },
                     Placement = FlyoutPlacementMode.Bottom
-                }
+                },
+                FontWeight = new FontWeight(600),
             };
 
             AppBarButton InstallationSettings = new();
@@ -282,8 +284,8 @@ namespace UniGetUI.Interface.SoftwarePages
                 { UpdateSkipHash,       CoreTools.Translate("Skip integrity checks") },
                 { UpdateInteractive,    CoreTools.Translate("Interactive update") },
                 { DownloadInstallers,   CoreTools.Translate("Download selected installers") },
-                { InstallationSettings, CoreTools.Translate("Update options") },
                 { UninstallSelection,   CoreTools.Translate("Uninstall selected packages") },
+                { InstallationSettings, " " + CoreTools.Translate("Update options") },
                 { PackageDetails,       " " + CoreTools.Translate("Package details") },
                 { SharePackage,         " " + CoreTools.Translate("Share") },
                 { IgnoreSelected,       CoreTools.Translate("Ignore selected packages") },
@@ -330,7 +332,7 @@ namespace UniGetUI.Interface.SoftwarePages
             UpdateSkipHash.Click += (_, _) => MainApp.Operations.Update(FilteredPackages.GetCheckedPackages(), no_integrity: true);
             UpdateInteractive.Click += (_, _) => MainApp.Operations.Update(FilteredPackages.GetCheckedPackages(), interactive: true);
             DownloadInstallers.Click += (_, _) => _ = MainApp.Operations.Download(FilteredPackages.GetCheckedPackages(), TEL_InstallReferral.ALREADY_INSTALLED);
-            UninstallSelection.Click += (_, _) => _ = MainApp.Operations.Uninstall(FilteredPackages.GetCheckedPackages());
+            UninstallSelection.Click += (_, _) => _ = MainApp.Operations.ConfirmAndUninstall(FilteredPackages.GetCheckedPackages());
             SharePackage.Click += (_, _) => DialogHelper.SharePackage(SelectedItem);
         }
 

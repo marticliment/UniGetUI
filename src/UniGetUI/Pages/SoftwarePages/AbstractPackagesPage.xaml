@@ -617,8 +617,12 @@
                     Click="ToggleFiltersButton_Click"
                     CornerRadius="4">
                     <StackPanel Orientation="Horizontal" Spacing="8">
-                        <FontIcon FontSize="22" Glyph="&#xE71C;" />
-                        <widgets:TranslatedTextBlock Text="Filters" />
+                        <FontIcon FontSize="20" Glyph="&#xE71C;" />
+                        <widgets:TranslatedTextBlock
+                            Text="Filters"
+                            FontSize="12"
+                            VerticalAlignment="Center"
+                            FontWeight="SemiBold" />
                     </StackPanel>
                 </ToggleButton>
 

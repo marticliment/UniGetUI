@@ -1,3 +1,4 @@
+using Windows.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -195,10 +196,10 @@ namespace UniGetUI.Interface.SoftwarePages
                         UninstallInteractive,
                         new MenuFlyoutSeparator(),
                         DownloadInstallers,
-                        new MenuFlyoutSeparator(),
                     },
                     Placement = FlyoutPlacementMode.Bottom
-                }
+                },
+                FontWeight = new FontWeight(600),
             };
 
             AppBarButton InstallationSettings = new();
@@ -233,8 +234,8 @@ namespace UniGetUI.Interface.SoftwarePages
                 { UninstallSelected,    CoreTools.Translate("Uninstall selected packages") },
                 { UninstallAsAdmin,     CoreTools.Translate("Uninstall as administrator") },
                 { UninstallInteractive, CoreTools.Translate("Interactive uninstall") },
-                { DownloadInstallers,  CoreTools.Translate("Download selected installers") },
-                { InstallationSettings, CoreTools.Translate("Uninstall options") },
+                { DownloadInstallers,   CoreTools.Translate("Download selected installers") },
+                { InstallationSettings, " " + CoreTools.Translate("Uninstall options") },
                 { PackageDetails,       " " + CoreTools.Translate("Package details") },
                 { SharePackage,         " " + CoreTools.Translate("Share") },
                 { IgnoreSelected,       CoreTools.Translate("Ignore selected packages") },
@@ -245,10 +246,11 @@ namespace UniGetUI.Interface.SoftwarePages
 
             Dictionary<DependencyObject, IconType> Icons = new()
             {
+                { UninstallMenu,          IconType.Delete },
                 { UninstallSelected,      IconType.Delete },
                 { UninstallAsAdmin,       IconType.UAC },
                 { UninstallInteractive,   IconType.Interactive },
-                { DownloadInstallers,   IconType.Download },
+                { DownloadInstallers,     IconType.Download },
                 { InstallationSettings,   IconType.Options },
                 { PackageDetails,         IconType.Info_Round },
                 { SharePackage,           IconType.Share },

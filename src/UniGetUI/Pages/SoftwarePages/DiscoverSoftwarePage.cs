@@ -9,6 +9,7 @@ using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.PackageLoader;
 using Windows.System;
+using Windows.UI.Text;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using UniGetUI.Interface.Telemetry;
 using UniGetUI.Pages.DialogPages;
@@ -163,7 +164,8 @@ namespace UniGetUI.Interface.SoftwarePages
                         DownloadInstallers,
                     },
                     Placement = FlyoutPlacementMode.Bottom
-                }
+                },
+                FontWeight = new FontWeight(600),
             };
 
             AppBarButton InstallationSettings = new();

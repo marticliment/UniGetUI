@@ -174,7 +174,6 @@ namespace UniGetUI.Interface.SoftwarePages
             AppBarButton OpenBundle = new();
             AppBarButton NewBundle = new();
 
-            BetterMenuItem InstallAll = new();
             BetterMenuItem InstallSelected = new();
             BetterMenuItem InstallAsAdmin = new();
             BetterMenuItem InstallSkipHash = new();
@@ -183,12 +182,10 @@ namespace UniGetUI.Interface.SoftwarePages
 
             AppBarButton InstallMenu = new()
             {
-                FontWeight = new FontWeight(600),
                 Flyout = new BetterMenu()
                 {
                     Items =
                     {
-                        InstallAll,
                         InstallSelected,
                         new MenuFlyoutSeparator(),
                         InstallAsAdmin,
@@ -198,7 +195,8 @@ namespace UniGetUI.Interface.SoftwarePages
                         DownloadInstallers,
                     },
                     Placement = FlyoutPlacementMode.Bottom
-                }
+                },
+                FontWeight = new FontWeight(600),
             };
 
             AppBarButton RemoveSelected = new();
@@ -225,17 +223,16 @@ namespace UniGetUI.Interface.SoftwarePages
             Dictionary<DependencyObject, string> Labels = new()
             { // Entries with a trailing space are collapsed
               // Their texts will be used as the tooltip
-                { NewBundle,           CoreTools.Translate("New bundle") },
+                { NewBundle,           CoreTools.Translate("New") },
                 { InstallMenu,         CoreTools.Translate("Install selection") + "..." },
-                { InstallAll,          CoreTools.Translate("Install ALL packages") },
                 { InstallSelected,     CoreTools.Translate("Install selected packages") },
                 { InstallAsAdmin,      CoreTools.Translate("Install as administrator") },
                 { InstallInteractive,  CoreTools.Translate("Interactive installation") },
                 { InstallSkipHash,     CoreTools.Translate("Skip integrity checks") },
                 { DownloadInstallers,  CoreTools.Translate("Download selected installers") },
-                { OpenBundle,          CoreTools.Translate("Open existing bundle") },
+                { OpenBundle,          CoreTools.Translate("Open") },
                 { RemoveSelected,      CoreTools.Translate("Remove selection from bundle") },
-                { SaveBundle,          CoreTools.Translate("Save bundle as") },
+                { SaveBundle,          CoreTools.Translate("Save as") },
                 { AddPackagesToBundle, CoreTools.Translate("Add packages to bundle") },
                 { PackageDetails,      " " + CoreTools.Translate("Package details") },
                 { SharePackage,        " " + CoreTools.Translate("Share") },
@@ -244,21 +241,19 @@ namespace UniGetUI.Interface.SoftwarePages
 
             Dictionary<DependencyObject, IconType> Icons = new()
             {
-                { NewBundle,              IconType.AddTo },
-                { InstallMenu,            IconType.Download },
-                { InstallSelected,        IconType.Download },
-                { InstallAll,        IconType.Download },
-                { InstallAsAdmin,         IconType.UAC },
-                { InstallInteractive,     IconType.Interactive },
-                { InstallSkipHash,        IconType.Checksum },
-                { DownloadInstallers,     IconType.Download },
-                { OpenBundle,             IconType.OpenFolder },
-                { RemoveSelected,         IconType.Delete},
-                { SaveBundle,             IconType.SaveAs },
-                { AddPackagesToBundle,    IconType.AddTo },
-                { PackageDetails,         IconType.Info_Round },
-                { SharePackage,           IconType.Share },
-                { HelpButton,             IconType.Help }
+                { NewBundle,           IconType.AddTo },
+                { InstallMenu,         IconType.Download },
+                { InstallSelected,     IconType.Download },
+                { InstallAsAdmin,      IconType.UAC }, { InstallInteractive,  IconType.Interactive },
+                { InstallSkipHash,     IconType.Checksum },
+                { DownloadInstallers,  IconType.Download },
+                { OpenBundle,          IconType.OpenFolder },
+                { RemoveSelected,      IconType.Delete},
+                { SaveBundle,          IconType.SaveAs },
+                { AddPackagesToBundle, IconType.AddTo },
+                { PackageDetails,      IconType.Info_Round },
+                { SharePackage,        IconType.Share },
+                { HelpButton,          IconType.Help }
             };
 
             ApplyTextAndIconsToToolbar(Labels, Icons);
@@ -297,7 +292,6 @@ namespace UniGetUI.Interface.SoftwarePages
                     return FilteredPackages.GetCheckedPackages().Where(p => p.Tag is not PackageTag.AlreadyInstalled).ToList();
             }
 
-            InstallAll.Click += async (_, _) => await ImportAndInstallPackage(FilteredPackages.GetPackages());
             InstallSelected.Click += async (_, _) => await ImportAndInstallPackage(GetCheckedNonInstalledPackages());
             InstallSkipHash.Click += async (_, _) => await ImportAndInstallPackage(GetCheckedNonInstalledPackages(), skiphash: true);
             InstallInteractive.Click += async (_, _) => await ImportAndInstallPackage(GetCheckedNonInstalledPackages(), interactive: true);
