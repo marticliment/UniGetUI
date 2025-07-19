@@ -23,6 +23,7 @@ using Microsoft.UI;
 using Microsoft.UI.Xaml.Media;
 using Windows.UI;
 using Microsoft.UI.Xaml.Controls.Primitives;
+using UniGetUI.Interface.Enums;
 using UniGetUI.Pages.PageInterfaces;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -724,10 +725,61 @@ namespace UniGetUI.Interface
         }
 
         /// <summary>
+        /// Applies labels, tooltips and icons to all the menubar items
+        /// </summary>
+        /// <param name="Labels"></param>
+        /// <param name="Icons"></param>
+        /// <exception cref="InvalidCastException"></exception>
+        protected void ApplyTextAndIconsToToolbar(
+            IDictionary<DependencyObject, string> Labels,
+            IDictionary<DependencyObject, IconType> Icons)
+        {
+            foreach (DependencyObject item in Labels.Keys)
+            {
+                string text = Labels[item].Trim();
+                ToolTipService.SetToolTip(item, text);
+                if (item is AppBarButton toolButton)
+                {
+                    toolButton.IsCompact = Labels[toolButton][0] == ' ';
+                    if (toolButton.IsCompact)
+                    {
+                        toolButton.LabelPosition = CommandBarLabelPosition.Collapsed;
+                    }
+                    toolButton.Label = text;
+                }
+                else if (item is BetterMenuItem menuItem)
+                {
+                    menuItem.UntranslatedText = text;
+                }
+                else throw new InvalidCastException("item must be of type AppBarButton or MenuFlyoutButton");
+            }
+
+            foreach (DependencyObject item in Icons.Keys)
+            {
+                var icon = Icons[item];
+                if (item is AppBarButton barButton)
+                {
+                    barButton.Icon = new LocalIcon(icon);
+                }
+                else if (item is BetterMenuItem menuItem)
+                {
+                    menuItem.IconName = icon;
+                }
+                else throw new InvalidCastException("item must be of type AppBarButton or MenuFlyoutButton");
+            }
+        }
+
+
+
+
+
+
+
+
+        /// <summary>
         /// Will filter the packages with the query on QueryBlock.Text and put the
         /// resulting packages on the ItemsView
         /// </summary>
-
         public void FilterPackages(bool forceQueryUpdate = false)
         {
             var previousSelection = CurrentPackageList.SelectedItem as PackageWrapper;

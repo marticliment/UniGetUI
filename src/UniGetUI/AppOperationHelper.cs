@@ -133,6 +133,11 @@ public partial class MainApp
             }
         }
 
+        public static async Task Download(IEnumerable<IPackage> packages, TEL_InstallReferral referral)
+        {
+            throw new NotImplementedException();
+        }
+
         /*
          *
          *
