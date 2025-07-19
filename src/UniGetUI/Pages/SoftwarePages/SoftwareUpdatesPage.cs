@@ -278,7 +278,7 @@ namespace UniGetUI.Interface.SoftwarePages
             Dictionary<DependencyObject, string> Labels = new()
             { // Entries with a leading space are collapsed
               // Their texts will be used as the tooltip
-                { UpdateMenu,           CoreTools.Translate("Update selection") + "..." },
+                { UpdateMenu,           CoreTools.Translate("Update and more") + "..." },
                 { UpdateSelected,       CoreTools.Translate("Update selected packages") },
                 { UpdateAsAdmin,        CoreTools.Translate("Update as administrator") },
                 { UpdateSkipHash,       CoreTools.Translate("Skip integrity checks") },

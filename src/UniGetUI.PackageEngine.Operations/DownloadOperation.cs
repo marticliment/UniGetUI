@@ -61,9 +61,8 @@ public class DownloadOperation : AbstractOperation
 
             if (Directory.Exists(downloadLocation))
             {
-                string fileName = await _package.GetInstallerFileName();
-
-                if (fileName == "")
+                string? fileName = await _package.GetInstallerFileName();
+                if (fileName is null)
                 {
                     Line("An error occurred while retrieving file name, default will be used!", LineType.Error);
                     fileName = CoreTools.MakeValidFileName(_package.Name);

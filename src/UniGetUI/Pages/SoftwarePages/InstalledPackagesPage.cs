@@ -230,7 +230,7 @@ namespace UniGetUI.Interface.SoftwarePages
             Dictionary<DependencyObject, string> Labels = new()
             { // Entries with a trailing space are collapsed
               // Their texts will be used as the tooltip
-                { UninstallMenu,        CoreTools.Translate("Uninstall selection") + "..." },
+                { UninstallMenu,        CoreTools.Translate("Uninstall and more") + "..." },
                 { UninstallSelected,    CoreTools.Translate("Uninstall selected packages") },
                 { UninstallAsAdmin,     CoreTools.Translate("Uninstall as administrator") },
                 { UninstallInteractive, CoreTools.Translate("Interactive uninstall") },

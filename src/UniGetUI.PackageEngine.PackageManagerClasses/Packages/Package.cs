@@ -279,7 +279,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         public async Task<string?> GetInstallerFileName()
         {
-            if (Manager.Name.StartsWith("PowerShell"))
+            if (Manager.Name.StartsWith("PowerShell") || Manager.Name.StartsWith(".NET"))
             {
                 return CoreTools.MakeValidFileName($"{Id}.{VersionString}.nupkg");
             }

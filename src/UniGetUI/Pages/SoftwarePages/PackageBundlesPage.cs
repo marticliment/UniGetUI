@@ -224,7 +224,7 @@ namespace UniGetUI.Interface.SoftwarePages
             { // Entries with a trailing space are collapsed
               // Their texts will be used as the tooltip
                 { NewBundle,           CoreTools.Translate("New") },
-                { InstallMenu,         CoreTools.Translate("Install selection") + "..." },
+                { InstallMenu,         CoreTools.Translate("Install and more") + "..." },
                 { InstallSelected,     CoreTools.Translate("Install selected packages") },
                 { InstallAsAdmin,      CoreTools.Translate("Install as administrator") },
                 { InstallInteractive,  CoreTools.Translate("Interactive installation") },

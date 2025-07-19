@@ -147,7 +147,7 @@ namespace UniGetUI.PackageEngine.Interfaces
         /// Gets the installer file name for this package
         /// </summary>
         /// <returns></returns>
-        public Task<string> GetInstallerFileName();
+        public Task<string?> GetInstallerFileName();
 
         /// <summary>
         /// Checks whether a new update of this package is a minor update or not (0.0.x)

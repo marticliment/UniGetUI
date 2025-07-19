@@ -80,7 +80,7 @@ public partial class MainApp
                 WinRT.Interop.InitializeWithWindow.Initialize(savePicker, hWnd);
                 savePicker.SuggestedStartLocation = PickerLocationId.Downloads;
 
-                string name = await package.GetInstallerFileName();
+                string name = await package.GetInstallerFileName() ?? "";
                 string extension;
                 if (!name.Where(x => x == '.').Any())
                 {   // As a last resort, we need an extension for the file picker to work

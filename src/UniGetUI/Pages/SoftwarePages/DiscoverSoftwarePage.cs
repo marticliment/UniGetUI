@@ -191,7 +191,7 @@ namespace UniGetUI.Interface.SoftwarePages
             Dictionary<DependencyObject, string> Labels = new()
             {   // Entries with a trailing space are collapsed
                 // Their texts will be used as the tooltip
-                { InstallMenu,            CoreTools.Translate("Install selection") + "..." },
+                { InstallMenu,            CoreTools.Translate("Install and more") + "..." },
                 { InstallSelected,        CoreTools.Translate("Install selected packages") },
                 { InstallAsAdmin,         CoreTools.Translate("Install as administrator") },
                 { InstallSkipHash,        CoreTools.Translate("Skip integrity checks") },
