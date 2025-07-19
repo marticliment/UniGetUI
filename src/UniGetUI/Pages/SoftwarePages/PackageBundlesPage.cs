@@ -2,10 +2,12 @@ using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Xml.Serialization;
+using Windows.UI.Text;
 using ExternalLibraries.Pickers;
 using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Documents;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
@@ -171,10 +173,34 @@ namespace UniGetUI.Interface.SoftwarePages
         {
             AppBarButton OpenBundle = new();
             AppBarButton NewBundle = new();
-            AppBarButton InstallPackages = new();
-            AppBarButton InstallAsAdmin = new();
-            AppBarButton InstallInteractive = new();
-            AppBarButton InstallSkipHash = new();
+
+            BetterMenuItem InstallAll = new();
+            BetterMenuItem InstallSelected = new();
+            BetterMenuItem InstallAsAdmin = new();
+            BetterMenuItem InstallSkipHash = new();
+            BetterMenuItem InstallInteractive = new();
+            BetterMenuItem DownloadInstallers = new();
+
+            AppBarButton InstallMenu = new()
+            {
+                FontWeight = new FontWeight(600),
+                Flyout = new BetterMenu()
+                {
+                    Items =
+                    {
+                        InstallAll,
+                        InstallSelected,
+                        new MenuFlyoutSeparator(),
+                        InstallAsAdmin,
+                        InstallSkipHash,
+                        InstallInteractive,
+                        new MenuFlyoutSeparator(),
+                        DownloadInstallers,
+                    },
+                    Placement = FlyoutPlacementMode.Bottom
+                }
+            };
+
             AppBarButton RemoveSelected = new();
             AppBarButton SaveBundle = new();
             AppBarButton AddPackagesToBundle = new();
@@ -186,67 +212,56 @@ namespace UniGetUI.Interface.SoftwarePages
             ToolBar.PrimaryCommands.Add(OpenBundle);
             ToolBar.PrimaryCommands.Add(SaveBundle);
             ToolBar.PrimaryCommands.Add(new AppBarSeparator());
+            ToolBar.PrimaryCommands.Add(InstallMenu);
+            ToolBar.PrimaryCommands.Add(new AppBarSeparator());
             ToolBar.PrimaryCommands.Add(AddPackagesToBundle);
             ToolBar.PrimaryCommands.Add(RemoveSelected);
-            ToolBar.PrimaryCommands.Add(new AppBarSeparator());
-            ToolBar.PrimaryCommands.Add(InstallPackages);
-            ToolBar.PrimaryCommands.Add(InstallAsAdmin);
-            ToolBar.PrimaryCommands.Add(InstallInteractive);
-            ToolBar.PrimaryCommands.Add(InstallSkipHash);
             ToolBar.PrimaryCommands.Add(new AppBarSeparator());
             ToolBar.PrimaryCommands.Add(PackageDetails);
             ToolBar.PrimaryCommands.Add(SharePackage);
             ToolBar.PrimaryCommands.Add(new AppBarSeparator());
             ToolBar.PrimaryCommands.Add(HelpButton);
 
-            Dictionary<AppBarButton, string> Labels = new()
-                { // Entries with a trailing space are collapsed
-                  // Their texts will be used as the tooltip
-                    { NewBundle,                CoreTools.Translate("New bundle") },
-                    { InstallPackages,          CoreTools.Translate("Install selection") },
-                    { InstallAsAdmin,     " " + CoreTools.Translate("Install as administrator") },
-                    { InstallInteractive, " " + CoreTools.Translate("Interactive installation") },
-                    { InstallSkipHash,    " " + CoreTools.Translate("Skip integrity checks") },
-                    { OpenBundle,               CoreTools.Translate("Open existing bundle") },
-                    { RemoveSelected,           CoreTools.Translate("Remove selection from bundle") },
-                    { SaveBundle,               CoreTools.Translate("Save bundle as") },
-                    { AddPackagesToBundle,      CoreTools.Translate("Add packages to bundle") },
-                    { PackageDetails,     " " + CoreTools.Translate("Package details") },
-                    { SharePackage,       " " + CoreTools.Translate("Share") },
-                    { HelpButton,               CoreTools.Translate("Help") }
-                };
+            Dictionary<DependencyObject, string> Labels = new()
+            { // Entries with a trailing space are collapsed
+              // Their texts will be used as the tooltip
+                { NewBundle,           CoreTools.Translate("New bundle") },
+                { InstallMenu,         CoreTools.Translate("Install selection") + "..." },
+                { InstallAll,          CoreTools.Translate("Install ALL packages") },
+                { InstallSelected,     CoreTools.Translate("Install selected packages") },
+                { InstallAsAdmin,      CoreTools.Translate("Install as administrator") },
+                { InstallInteractive,  CoreTools.Translate("Interactive installation") },
+                { InstallSkipHash,     CoreTools.Translate("Skip integrity checks") },
+                { DownloadInstallers,  CoreTools.Translate("Download selected installers") },
+                { OpenBundle,          CoreTools.Translate("Open existing bundle") },
+                { RemoveSelected,      CoreTools.Translate("Remove selection from bundle") },
+                { SaveBundle,          CoreTools.Translate("Save bundle as") },
+                { AddPackagesToBundle, CoreTools.Translate("Add packages to bundle") },
+                { PackageDetails,      " " + CoreTools.Translate("Package details") },
+                { SharePackage,        " " + CoreTools.Translate("Share") },
+                { HelpButton,          CoreTools.Translate("Help") }
+            };
 
-            foreach (AppBarButton toolButton in Labels.Keys)
+            Dictionary<DependencyObject, IconType> Icons = new()
             {
-                toolButton.IsCompact = Labels[toolButton][0] == ' ';
-                if (toolButton.IsCompact)
-                    toolButton.LabelPosition = CommandBarLabelPosition.Collapsed;
+                { NewBundle,              IconType.AddTo },
+                { InstallMenu,            IconType.Download },
+                { InstallSelected,        IconType.Download },
+                { InstallAll,        IconType.Download },
+                { InstallAsAdmin,         IconType.UAC },
+                { InstallInteractive,     IconType.Interactive },
+                { InstallSkipHash,        IconType.Checksum },
+                { DownloadInstallers,     IconType.Download },
+                { OpenBundle,             IconType.OpenFolder },
+                { RemoveSelected,         IconType.Delete},
+                { SaveBundle,             IconType.SaveAs },
+                { AddPackagesToBundle,    IconType.AddTo },
+                { PackageDetails,         IconType.Info_Round },
+                { SharePackage,           IconType.Share },
+                { HelpButton,             IconType.Help }
+            };
 
-                string text = Labels[toolButton].Trim();
-                toolButton.Label = text;
-                ToolTipService.SetToolTip(toolButton, text);
-            }
-
-            Dictionary<AppBarButton, IconType> Icons = new()
-                {
-                    { NewBundle,              IconType.AddTo },
-                    { InstallPackages,        IconType.Download },
-                    { InstallAsAdmin,         IconType.UAC },
-                    { InstallInteractive,     IconType.Interactive },
-                    { InstallSkipHash,        IconType.Checksum },
-                    { OpenBundle,             IconType.OpenFolder },
-                    { RemoveSelected,         IconType.Delete},
-                    { SaveBundle,             IconType.SaveAs },
-                    { AddPackagesToBundle,    IconType.AddTo },
-                    { PackageDetails,         IconType.Info_Round },
-                    { SharePackage,           IconType.Share },
-                    { HelpButton,             IconType.Help }
-                };
-
-            foreach (AppBarButton toolButton in Icons.Keys)
-            {
-                toolButton.Icon = new LocalIcon(Icons[toolButton]);
-            }
+            ApplyTextAndIconsToToolbar(Labels, Icons);
 
             PackageDetails.Click += (_, _) =>
             {
@@ -282,10 +297,12 @@ namespace UniGetUI.Interface.SoftwarePages
                     return FilteredPackages.GetCheckedPackages().Where(p => p.Tag is not PackageTag.AlreadyInstalled).ToList();
             }
 
-            InstallPackages.Click += async (_, _) => await ImportAndInstallPackage(GetCheckedNonInstalledPackages());
+            InstallAll.Click += async (_, _) => await ImportAndInstallPackage(FilteredPackages.GetPackages());
+            InstallSelected.Click += async (_, _) => await ImportAndInstallPackage(GetCheckedNonInstalledPackages());
             InstallSkipHash.Click += async (_, _) => await ImportAndInstallPackage(GetCheckedNonInstalledPackages(), skiphash: true);
             InstallInteractive.Click += async (_, _) => await ImportAndInstallPackage(GetCheckedNonInstalledPackages(), interactive: true);
             InstallAsAdmin.Click += async (_, _) => await ImportAndInstallPackage(GetCheckedNonInstalledPackages(), elevated: true);
+            DownloadInstallers.Click += (_, _) => _ = MainApp.Operations.Download(FilteredPackages.GetCheckedPackages(), TEL_InstallReferral.FROM_BUNDLE);
             OpenBundle.Click += async (_, _) => await AskOpenFromFile();
             SaveBundle.Click += async (_, _) => await SaveFile();
 

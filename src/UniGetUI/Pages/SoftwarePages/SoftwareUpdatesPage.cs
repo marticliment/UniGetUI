@@ -276,13 +276,13 @@ namespace UniGetUI.Interface.SoftwarePages
             Dictionary<DependencyObject, string> Labels = new()
             { // Entries with a leading space are collapsed
               // Their texts will be used as the tooltip
-                { UpdateMenu,           CoreTools.Translate("Update") + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa..." },
+                { UpdateMenu,           CoreTools.Translate("Update selection") + "..." },
                 { UpdateSelected,       CoreTools.Translate("Update selected packages") },
                 { UpdateAsAdmin,        CoreTools.Translate("Update as administrator") },
                 { UpdateSkipHash,       CoreTools.Translate("Skip integrity checks") },
                 { UpdateInteractive,    CoreTools.Translate("Interactive update") },
                 { DownloadInstallers,   CoreTools.Translate("Download selected installers") },
-                { InstallationSettings, CoreTools.Translate("Installation options") },
+                { InstallationSettings, CoreTools.Translate("Update options") },
                 { UninstallSelection,   CoreTools.Translate("Uninstall selected packages") },
                 { PackageDetails,       " " + CoreTools.Translate("Package details") },
                 { SharePackage,         " " + CoreTools.Translate("Share") },
