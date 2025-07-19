@@ -1,5 +1,7 @@
+using Windows.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
@@ -177,9 +179,29 @@ namespace UniGetUI.Interface.SoftwarePages
 
         public override void GenerateToolBar()
         {
-            AppBarButton UninstallSelected = new();
-            AppBarButton UninstallAsAdmin = new();
-            AppBarButton UninstallInteractive = new();
+            BetterMenuItem UninstallSelected = new();
+            BetterMenuItem UninstallAsAdmin = new();
+            BetterMenuItem UninstallInteractive = new();
+            BetterMenuItem DownloadInstallers = new();
+
+            AppBarButton UninstallMenu = new()
+            {
+                Flyout = new BetterMenu()
+                {
+                    Items =
+                    {
+                        UninstallSelected,
+                        new MenuFlyoutSeparator(),
+                        UninstallAsAdmin,
+                        UninstallInteractive,
+                        new MenuFlyoutSeparator(),
+                        DownloadInstallers,
+                    },
+                    Placement = FlyoutPlacementMode.Bottom
+                },
+                FontWeight = new FontWeight(600),
+            };
+
             AppBarButton InstallationSettings = new();
 
             AppBarButton PackageDetails = new();
@@ -191,9 +213,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             AppBarButton HelpButton = new();
 
-            ToolBar.PrimaryCommands.Add(UninstallSelected);
-            ToolBar.PrimaryCommands.Add(UninstallAsAdmin);
-            ToolBar.PrimaryCommands.Add(UninstallInteractive);
+            ToolBar.PrimaryCommands.Add(UninstallMenu);
             ToolBar.PrimaryCommands.Add(new AppBarSeparator());
             ToolBar.PrimaryCommands.Add(InstallationSettings);
             ToolBar.PrimaryCommands.Add(new AppBarSeparator());
@@ -207,13 +227,15 @@ namespace UniGetUI.Interface.SoftwarePages
             ToolBar.PrimaryCommands.Add(new AppBarSeparator());
             ToolBar.PrimaryCommands.Add(HelpButton);
 
-            Dictionary<AppBarButton, string> Labels = new()
+            Dictionary<DependencyObject, string> Labels = new()
             { // Entries with a trailing space are collapsed
               // Their texts will be used as the tooltip
+                { UninstallMenu,        CoreTools.Translate("Uninstall and more") + "..." },
                 { UninstallSelected,    CoreTools.Translate("Uninstall selected packages") },
-                { UninstallAsAdmin,     " " + CoreTools.Translate("Uninstall as administrator") },
-                { UninstallInteractive, " " + CoreTools.Translate("Interactive uninstall") },
-                { InstallationSettings, " " + CoreTools.Translate("Installation options") },
+                { UninstallAsAdmin,     CoreTools.Translate("Uninstall as administrator") },
+                { UninstallInteractive, CoreTools.Translate("Interactive uninstall") },
+                { DownloadInstallers,   CoreTools.Translate("Download selected installers") },
+                { InstallationSettings, " " + CoreTools.Translate("Uninstall options") },
                 { PackageDetails,       " " + CoreTools.Translate("Package details") },
                 { SharePackage,         " " + CoreTools.Translate("Share") },
                 { IgnoreSelected,       CoreTools.Translate("Ignore selected packages") },
@@ -222,24 +244,13 @@ namespace UniGetUI.Interface.SoftwarePages
                 { HelpButton,           CoreTools.Translate("Help") }
             };
 
-            foreach (AppBarButton toolButton in Labels.Keys)
+            Dictionary<DependencyObject, IconType> Icons = new()
             {
-                toolButton.IsCompact = Labels[toolButton][0] == ' ';
-                if (toolButton.IsCompact)
-                {
-                    toolButton.LabelPosition = CommandBarLabelPosition.Collapsed;
-                }
-
-                string text = Labels[toolButton].Trim();
-                toolButton.Label = text;
-                ToolTipService.SetToolTip(toolButton, text);
-            }
-
-            Dictionary<AppBarButton, IconType> Icons = new()
-            {
+                { UninstallMenu,          IconType.Delete },
                 { UninstallSelected,      IconType.Delete },
                 { UninstallAsAdmin,       IconType.UAC },
                 { UninstallInteractive,   IconType.Interactive },
+                { DownloadInstallers,     IconType.Download },
                 { InstallationSettings,   IconType.Options },
                 { PackageDetails,         IconType.Info_Round },
                 { SharePackage,           IconType.Share },
@@ -249,10 +260,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 { HelpButton,             IconType.Help }
             };
 
-            foreach (AppBarButton toolButton in Icons.Keys)
-            {
-                toolButton.Icon = new LocalIcon(Icons[toolButton]);
-            }
+            ApplyTextAndIconsToToolbar(Labels, Icons);
 
             PackageDetails.Click += (_, _) => ShowDetailsForPackage(SelectedItem, TEL_InstallReferral.ALREADY_INSTALLED);
 
@@ -275,6 +283,7 @@ namespace UniGetUI.Interface.SoftwarePages
             UninstallSelected.Click += (_, _) => _ = MainApp.Operations.ConfirmAndUninstall(FilteredPackages.GetCheckedPackages());
             UninstallAsAdmin.Click += (_, _) => _ = MainApp.Operations.ConfirmAndUninstall(FilteredPackages.GetCheckedPackages(), elevated: true);
             UninstallInteractive.Click += (_, _) => _ = MainApp.Operations.ConfirmAndUninstall(FilteredPackages.GetCheckedPackages(), interactive: true);
+            DownloadInstallers.Click += (_, _) => _ = MainApp.Operations.Download(FilteredPackages.GetCheckedPackages(), TEL_InstallReferral.ALREADY_INSTALLED);
             SharePackage.Click += (_, _) => DialogHelper.SharePackage(SelectedItem);
         }
 

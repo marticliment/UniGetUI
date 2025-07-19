@@ -38,6 +38,7 @@
                 CornerRadius="0,0,8,8"
                 ForceInversion="True"
                 SettingName="MaintainSuccessfulInstalls"
+                WarningText="Download operations are not affected by this setting"
                 Text="Clear successful operations from the operation list after a 5 second delay" />
 
             <UserControl Height="16" />

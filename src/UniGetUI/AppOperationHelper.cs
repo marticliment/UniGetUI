@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using Windows.Storage;
 using Windows.Storage.Pickers;
@@ -79,7 +80,7 @@ public partial class MainApp
                 WinRT.Interop.InitializeWithWindow.Initialize(savePicker, hWnd);
                 savePicker.SuggestedStartLocation = PickerLocationId.Downloads;
 
-                string name = await CoreTools.GetFileNameAsync(details.InstallerUrl);
+                string name = await package.GetInstallerFileName() ?? "";
                 string extension;
                 if (!name.Where(x => x == '.').Any())
                 {   // As a last resort, we need an extension for the file picker to work
@@ -130,6 +131,37 @@ public partial class MainApp
                 Logger.Error(ex);
                 DialogHelper.HideLoadingDialog(loadingId);
                 return null;
+            }
+        }
+
+        public static async Task Download(IEnumerable<IPackage> packages, TEL_InstallReferral referral)
+        {
+            try
+            {
+                var hWnd = MainApp.Instance.MainWindow.GetWindowHandle();
+                var a = new ExternalLibraries.Pickers.FolderPicker(hWnd);
+                var outputPath = await Task.Run(a.Show);
+                if (outputPath == "")
+                    return;
+
+                foreach (var package in packages)
+                {
+                    if (package.Source.IsVirtualManager ||
+                        !package.Manager.Capabilities.CanDownloadInstaller)
+                    {
+                        Logger.Warn($"Package {package.Id} cannot have its installer downloaded.");
+                    }
+
+                    var op = new DownloadOperation(package, outputPath);
+                    op.OperationSucceeded += (_, _) => TelemetryHandler.DownloadPackage(package, TEL_OP_RESULT.SUCCESS, referral);
+                    op.OperationFailed += (_, _) => TelemetryHandler.DownloadPackage(package, TEL_OP_RESULT.FAILED, referral);
+                    Add(op);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("An error occurred while attempting to bulk-download packages:");
+                Logger.Error(ex);
             }
         }
 

@@ -175,70 +175,79 @@ namespace UniGetUI.Core.IconEngine
 
         private static string? SaveIconToCacheAndGetPath(CacheableIcon icon, string iconLocation)
         {
-            string iconVersionFile = Path.Join(iconLocation, $"icon.version");
-            string iconUriFile = Path.Join(iconLocation, $"icon.uri");
-
-            // If the cache is determined to NOT be valid, delete cache
-            DeteteCachedFiles(iconLocation);
-
-            // After discarding the cache, regenerate it
-            using HttpClient client = new(CoreTools.GenericHttpClientParameters);
-            client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
-            HttpResponseMessage response = client.GetAsync(icon.Url).GetAwaiter().GetResult();
-            if (!response.IsSuccessStatusCode)
+            try
             {
-                Logger.Warn($"Icon download attempt at {icon.Url} failed with code {response.StatusCode}");
-                return null;
-            }
+                string iconVersionFile = Path.Join(iconLocation, $"icon.version");
+                string iconUriFile = Path.Join(iconLocation, $"icon.uri");
 
-            string mimeType = response.Content.Headers.GetValues("Content-Type").First();
-            if (!MimeToExtension.TryGetValue(mimeType, out string? extension))
-            {
-                Logger.Warn($"Unknown mimetype {mimeType} for icon {icon.Url}, aborting download");
-                return null;
-            }
+                // If the cache is determined to NOT be valid, delete cache
+                DeteteCachedFiles(iconLocation);
 
-            string cachedIconFile = Path.Join(iconLocation, $"icon.{extension}");
-            string iconFileMime = Path.Join(iconLocation, $"icon.mime");
-            File.WriteAllText(iconFileMime, mimeType);
+                // After discarding the cache, regenerate it
+                using HttpClient client = new(CoreTools.GenericHttpClientParameters);
+                client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
 
-            using (Stream stream = response.Content.ReadAsStream())
-            using (FileStream fileStream = File.Create(cachedIconFile))
-            {
-                stream.CopyTo(fileStream);
-            }
-
-            if (icon.ValidationMethod is IconValidationMethod.PackageVersion)
-                File.WriteAllText(iconVersionFile, icon.Version);
-
-            if (icon.ValidationMethod is IconValidationMethod.UriSource)
-                File.WriteAllText(iconUriFile, icon.Url.ToString());
-
-            // Ensure the new icon has been properly downloaded
-            bool isNewCacheValid = icon.ValidationMethod switch
-            {
-                IconValidationMethod.FileSize => ValidateByImageSize(icon, cachedIconFile),
-                IconValidationMethod.SHA256 => ValidateBySHA256(icon, cachedIconFile),
-                IconValidationMethod.PackageVersion => true, // The validation result would be always true
-                IconValidationMethod.UriSource => true, // The validation result would be always true
-                _ => throw new InvalidDataException("Invalid icon validation method"),
-            };
-
-            if (isNewCacheValid)
-            {
-                if (icon.ValidationMethod is IconValidationMethod.PackageVersion or IconValidationMethod.UriSource
-                    && new[] { "png", "webp", "tif", "avif" }.Contains(extension))
+                HttpResponseMessage response = client.GetAsync(icon.Url).GetAwaiter().GetResult();
+                if (!response.IsSuccessStatusCode)
                 {
-                    DownsizeImage(cachedIconFile, extension);
+                    Logger.Warn($"Icon download attempt at {icon.Url} failed with code {response.StatusCode}");
+                    return null;
                 }
 
-                Logger.Debug($"Icon for Location={iconLocation} has been downloaded and verified properly (if applicable) ({icon.ValidationMethod})");
-                return cachedIconFile;
-            }
+                string mimeType = response.Content.Headers.GetValues("Content-Type").First();
+                if (!MimeToExtension.TryGetValue(mimeType, out string? extension))
+                {
+                    Logger.Warn($"Unknown mimetype {mimeType} for icon {icon.Url}, aborting download");
+                    return null;
+                }
 
-            Logger.Warn($"NEWLY DOWNLOADED Icon for Location={iconLocation} Uri={icon.Url} is NOT VALID and will be discarded (verification method is {icon.ValidationMethod})");
-            DeteteCachedFiles(iconLocation);
-            return null;
+                string cachedIconFile = Path.Join(iconLocation, $"icon.{extension}");
+                string iconFileMime = Path.Join(iconLocation, $"icon.mime");
+                File.WriteAllText(iconFileMime, mimeType);
+
+                using (Stream stream = response.Content.ReadAsStream())
+                using (FileStream fileStream = File.Create(cachedIconFile))
+                {
+                    stream.CopyTo(fileStream);
+                }
+
+                if (icon.ValidationMethod is IconValidationMethod.PackageVersion)
+                    File.WriteAllText(iconVersionFile, icon.Version);
+
+                if (icon.ValidationMethod is IconValidationMethod.UriSource)
+                    File.WriteAllText(iconUriFile, icon.Url.ToString());
+
+                // Ensure the new icon has been properly downloaded
+                bool isNewCacheValid = icon.ValidationMethod switch
+                {
+                    IconValidationMethod.FileSize => ValidateByImageSize(icon, cachedIconFile),
+                    IconValidationMethod.SHA256 => ValidateBySHA256(icon, cachedIconFile),
+                    IconValidationMethod.PackageVersion => true, // The validation result would be always true
+                    IconValidationMethod.UriSource => true, // The validation result would be always true
+                    _ => throw new InvalidDataException("Invalid icon validation method"),
+                };
+
+                if (isNewCacheValid)
+                {
+                    if (icon.ValidationMethod is IconValidationMethod.PackageVersion or IconValidationMethod.UriSource
+                        && new[] { "png", "webp", "tif", "avif" }.Contains(extension))
+                    {
+                        DownsizeImage(cachedIconFile, extension);
+                    }
+
+                    Logger.Debug($"Icon for Location={iconLocation} has been downloaded and verified properly (if applicable) ({icon.ValidationMethod})");
+                    return cachedIconFile;
+                }
+
+                Logger.Warn($"NEWLY DOWNLOADED Icon for Location={iconLocation} Uri={icon.Url} is NOT VALID and will be discarded (verification method is {icon.ValidationMethod})");
+                DeteteCachedFiles(iconLocation);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+                return null;
+            }
         }
 
         /// <summary>

@@ -277,6 +277,20 @@ namespace UniGetUI.PackageEngine.PackageClasses
             return PackageCacher.NewerVersionIsInstalled(this);
         }
 
+        public async Task<string?> GetInstallerFileName()
+        {
+            if (Manager.Name.StartsWith("PowerShell") || Manager.Name.StartsWith(".NET"))
+            {
+                return CoreTools.MakeValidFileName($"{Id}.nupkg");
+            }
+            else
+            {
+                if (!Details.IsPopulated) await Details.Load();
+                if (Details.InstallerUrl is null) return null;
+                return await CoreTools.GetFileNameAsync(Details.InstallerUrl);
+            }
+        }
+
         public virtual bool IsUpdateMinor()
         {
             if (!IsUpgradable) return false;

@@ -166,6 +166,11 @@ namespace UniGetUI.PackageEngine.PackageClasses
             return false;
         }
 
+        public Task<string> GetInstallerFileName()
+        {
+            return Task.FromResult("");
+        }
+
         public bool IsUpdateMinor()
         {
             return false;

@@ -28,10 +28,8 @@ namespace UniGetUI.Interface.Widgets
             }
         }
 
-        public new string Text
-        {
-            set => base.Text = CoreTools.Translate(value);
-        }
+        public string UntranslatedText { set => base.Text = value; }
+        public new string Text { set => base.Text = CoreTools.Translate(value); }
 
         public BetterMenuItem()
         {
