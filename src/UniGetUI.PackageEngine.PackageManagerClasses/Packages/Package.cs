@@ -281,7 +281,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         {
             if (Manager.Name.StartsWith("PowerShell") || Manager.Name.StartsWith(".NET"))
             {
-                return CoreTools.MakeValidFileName($"{Id}.{VersionString}.nupkg");
+                return CoreTools.MakeValidFileName($"{Id}.nupkg");
             }
             else
             {
