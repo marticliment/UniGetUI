@@ -7,7 +7,7 @@ namespace UniGetUI.PackageEngine.Operations;
 public class DownloadOperation : AbstractOperation
 {
     private readonly IPackage _package;
-    private readonly string downloadLocation;
+    private string downloadLocation;
     public string DownloadLocation
     {
         get => downloadLocation;
@@ -57,6 +57,18 @@ public class DownloadOperation : AbstractOperation
                 Line($"UniGetUI was not able to find any installer for this package. " +
                      $"Please check that this package has an applicable installer and try again later", LineType.Error);
                 return OperationVeredict.Failure;
+            }
+
+            if (Directory.Exists(downloadLocation))
+            {
+                string fileName = await _package.GetInstallerFileName();
+
+                if (fileName == "")
+                {
+                    Line("An error occurred while retrieving file name, default will be used!", LineType.Error);
+                    fileName = CoreTools.MakeValidFileName(_package.Name);
+                }
+                downloadLocation = Path.Join(downloadLocation, fileName);
             }
 
             Line($"Download URL found at {downloadUrl} ", LineType.Information);

@@ -144,6 +144,12 @@ namespace UniGetUI.PackageEngine.Interfaces
         public bool NewerVersionIsInstalled();
 
         /// <summary>
+        /// Gets the installer file name for this package
+        /// </summary>
+        /// <returns></returns>
+        public Task<string> GetInstallerFileName();
+
+        /// <summary>
         /// Checks whether a new update of this package is a minor update or not (0.0.x)
         /// </summary>
         /// <returns>False if the update is a major update or the update doesn't exist, true if it's a minor update</returns>
