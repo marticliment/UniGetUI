@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Package
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  IgnorableNamespaces="uap rescap">
+
+  <Identity
+    Name="marticliment.UniGetUI"
+    Publisher="CN=&quot;Open Source Developer, Martí Climent López&quot;, O=Open Source Developer, L=Barcelona, S=Barcelona, C=ES"
+    Version="3.3.0.0"
+    ProcessorArchitecture="x64" />
+
+  <Properties>
+    <DisplayName>UniGetUI (MSIX)</DisplayName>
+    <PublisherDisplayName>Martí Climent</PublisherDisplayName>
+    <Logo>Assets\Images\icon.png</Logo>
+    <Description>Universal package manager UI for Windows</Description>
+  </Properties>
+
+  <Resources>
+    <Resource Language="en-us"/>
+    <Resource Language="es-es"/>
+    <Resource Language="fr-fr"/>
+    <!-- Add other supported languages here -->
+  </Resources>
+
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.0.0" MaxVersionTested="10.0.19041.0"/>
+  </Dependencies>
+
+  <Applications>
+    <Application Id="UniGetUI"
+      Executable="UniGetUI.exe"
+      EntryPoint="Windows.FullTrustApplication">
+      <uap:VisualElements
+        DisplayName="UniGetUI (MSIX)"
+        Description="Universal package manager UI for Windows"
+        BackgroundColor="transparent"
+        Square150x150Logo="Assets\Images\icon.png"
+        Square44x44Logo="Assets\Images\icon.png">
+        <uap:DefaultTile Wide310x150Logo="Assets\Images\icon.png"/>
+      </uap:VisualElements>
+      <Extensions>
+        <!-- Protocol handler -->
+        <uap:Extension Category="windows.protocol">
+          <uap:Protocol Name="unigetui">
+            <uap:DisplayName>UniGetUI (MSIX) Protocol</uap:DisplayName>
+          </uap:Protocol>
+        </uap:Extension>
+        <!-- File type handler -->
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="unigetui.package-bundle">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.ubundle</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>UniGetUI (MSIX) Package Bundle</uap:DisplayName>
+            <uap:Logo>Assets\Images\icon.png</uap:Logo>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+      </Extensions>
+    </Application>
+  </Applications>
+
+  <Capabilities>
+    <Capability Name="internetClient" />
+    <rescap:Capability Name="runFullTrust" />
+    <rescap:Capability Name="allowElevation" />
+    <rescap:Capability Name="packageManagement" />
+    <!-- Add other capabilities as needed -->
+  </Capabilities>
+</Package>
