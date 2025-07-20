@@ -1,10 +1,10 @@
 {
     "package_count": {
         "total": 11905,
-        "done": 5418,
-        "packages_with_icon": 5418,
-        "packages_with_screenshot": 828,
-        "total_screenshots": 2553
+        "done": 5421,
+        "packages_with_icon": 5421,
+        "packages_with_screenshot": 830,
+        "total_screenshots": 2565
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -9698,8 +9698,14 @@
             "images": []
         },
         "datarecovery": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/TY0YBDxK/drw.png",
+            "images": [
+                "https://i.postimg.cc/SxQjKGdL/image.png",
+                "https://i.postimg.cc/7ZBhJTtF/image.png",
+                "https://i.postimg.cc/JhGnN49G/image.png",
+                "https://i.postimg.cc/4yTxRvn9/image.png",
+                "https://i.postimg.cc/G3kpJfSJ/image.png"
+            ]
         },
         "datarescue": {
             "icon": "",
@@ -30501,11 +30507,11 @@
             "images": []
         },
         "partitionmaster": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/prZRNggw/pm.png",
             "images": []
         },
         "partitionmasterfree": {
-            "icon": "https://community.chocolatey.org/content/packageimages/PartitionMasterFree.17.8.png",
+            "icon": "https://i.postimg.cc/prZRNggw/pm.png",
             "images": []
         },
         "partitionwizard": {
@@ -42411,8 +42417,16 @@
             "images": []
         },
         "todopctrans": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/R0G2gsRp/pct.png",
+            "images": [
+                "https://i.postimg.cc/JzSsGxJg/image.png",
+                "https://i.postimg.cc/9QwM59SB/image.png",
+                "https://i.postimg.cc/R0Qv4LTw/image.png",
+                "https://i.postimg.cc/Kv6bTHqn/image.png",
+                "https://i.postimg.cc/Gpr17s1t/image.png",
+                "https://i.postimg.cc/6Q0xD590/image.png",
+                "https://i.postimg.cc/XJY63Sq0/image.png"
+            ]
         },
         "todotxt-net": {
             "icon": "",
