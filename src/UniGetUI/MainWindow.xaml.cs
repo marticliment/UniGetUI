@@ -289,9 +289,10 @@ namespace UniGetUI.Interface
         private void HandleDeepLink(string link)
         {
             string baseUrl = Uri.UnescapeDataString(link[11..]);
+            string loweredUrl = baseUrl.ToLower();
             Logger.ImportantInfo("Begin handle of deep link with body " + baseUrl);
 
-            if (baseUrl.StartsWith("showPackage"))
+            if (loweredUrl.StartsWith("showpackage"))
             {
                 string Id = Regex.Match(baseUrl, "id=([^&]+)").Value.Split("=")[^1];
                 string CombinedManagerName = Regex.Match(baseUrl, "combinedManagerName=([^&]+)").Value.Split("=")[^1];
@@ -312,19 +313,19 @@ namespace UniGetUI.Interface
                     Logger.Error(new UriFormatException($"Malformed URL {link}"));
                 }
             }
-            else if (baseUrl.StartsWith("showUniGetUI"))
+            else if (loweredUrl.StartsWith("showunigetui"))
             {
                 /* Skip */
             }
-            else if (baseUrl.StartsWith("showDiscoverPage"))
+            else if (loweredUrl.StartsWith("showdiscoverpage"))
             {
                 NavigationPage.NavigateTo(PageType.Discover);
             }
-            else if (baseUrl.StartsWith("showUpdatesPage"))
+            else if (loweredUrl.StartsWith("showupdatespage"))
             {
                 NavigationPage.NavigateTo(PageType.Updates);
             }
-            else if (baseUrl.StartsWith("showInstalledPage"))
+            else if (loweredUrl.StartsWith("showinstalledpage"))
             {
                 NavigationPage.NavigateTo(PageType.Installed);
             }

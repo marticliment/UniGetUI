@@ -435,35 +435,59 @@ namespace UniGetUI
 
         public async Task ShowMainWindowFromRedirectAsync(AppActivationArguments rawArgs)
         {
-            while (MainWindow is null)
-                await Task.Delay(100);
-
-            ExtendedActivationKind kind = rawArgs.Kind;
-            if (kind is ExtendedActivationKind.Launch)
+            async Task WaitForWindowAsync() { while (MainWindow is null) await Task.Delay(100); }
+            try
             {
-                if (rawArgs.Data is ILaunchActivatedEventArgs launchArguments)
+                switch (rawArgs.Kind)
                 {
-                    // If the app redirection event comes from a launch, extract
-                    // the CLI arguments and redirect them to the ParameterProcessor
-                    foreach (Match argument in Regex.Matches(launchArguments.Arguments,
-                                 "([^ \"']+|\"[^\"]+\"|'[^']+')"))
+                    case ExtendedActivationKind.Launch or ExtendedActivationKind.RestrictedLaunch or ExtendedActivationKind.CommandLineLaunch:
                     {
-                        MainWindow.ParametersToProcess.Enqueue(argument.Value);
+                        await WaitForWindowAsync();
+                        MainWindow.DispatcherQueue.TryEnqueue(MainWindow.Activate);
+                        var lArgs = rawArgs.Data as ILaunchActivatedEventArgs
+                            ?? throw new InvalidDataException("rawArgs.Data as ILaunchActivatedEventArgs was null!");
+                        foreach (Match argument in Regex.Matches(lArgs.Arguments, "([^ \"']+|\"[^\"]+\"|'[^']+')"))
+                            MainWindow.ParametersToProcess.Enqueue(argument.Value);
+
+                        break;
+                    }
+                    case ExtendedActivationKind.Protocol:
+                    {
+                        await WaitForWindowAsync();
+                        MainWindow.DispatcherQueue.TryEnqueue(MainWindow.Activate);
+                        var pArgs = rawArgs.Data as IProtocolActivatedEventArgs
+                            ?? throw new InvalidDataException("rawArgs.Data as IProtocolActivatedEventArgs was null!");
+                        MainWindow.ParametersToProcess.Enqueue(pArgs.Uri.ToString());
+                        break;
+                    }
+                    case ExtendedActivationKind.File:
+                    {
+                        await WaitForWindowAsync();
+                        MainWindow.DispatcherQueue.TryEnqueue(MainWindow.Activate);
+                        var pArgs = rawArgs.Data as IFileActivatedEventArgs
+                            ?? throw new InvalidDataException("rawArgs.Data as IFileActivatedEventArgs was null!");
+                        foreach (var file in pArgs.Files)
+                            MainWindow.ParametersToProcess.Enqueue(file.Path);
+
+                        break;
+                    }
+                    case ExtendedActivationKind.StartupTask:
+                    {
+                        CoreData.IsDaemon = true;
+                        break;
+                    }
+                    default:
+                    {
+                        // AppSdk is not supposed to use more kinds than the ones handled
+                        Logger.Error($"Unknown activation reason: {rawArgs.Kind}");
+                        break;
                     }
                 }
-                else
-                {
-                    Logger.Error("REDIRECTOR ACTIVATOR: args.Data was null when casted to ILaunchActivatedEventArgs");
-                }
             }
-            else
+            catch (Exception ex)
             {
-                Logger.Warn("REDIRECTOR ACTIVATOR: args.Kind is not Launch but rather " + kind);
-            }
-
-            if (kind is ExtendedActivationKind.Launch or ExtendedActivationKind.Protocol)
-            {
-                MainWindow.DispatcherQueue.TryEnqueue(MainWindow.Activate);
+                Logger.Error("An error occurred while handling activation arguments:");
+                Logger.Error(ex);
             }
         }
 
