@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
+using Octokit;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.Pages.DialogPages;
@@ -166,15 +167,25 @@ namespace UniGetUI.Services
 
         private async Task<PointButton> GenerateLogoutControl()
         {
-            var authClient = new GitHubAuthService();
-            var GHClient = authClient.CreateGitHubClient();
-            if(GHClient is null)
+            User user;
+            try
             {
-                Logger.Error("Client did not report valid authentication");
+                var authClient = new GitHubAuthService();
+                var GHClient = authClient.CreateGitHubClient();
+                if (GHClient is null)
+                {
+                    Logger.Error("Client did not report valid authentication");
+                    return GenerateLoginControl();
+                }
+
+                user = await GHClient.User.Current();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("An error occurred while retrieving user's logged in data.");
+                Logger.Error(ex);
                 return GenerateLoginControl();
             }
-
-            var user = await GHClient.User.Current();
 
             var personPicture = new PersonPicture
             {

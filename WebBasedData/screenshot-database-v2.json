@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11905,
-        "done": 5421,
-        "packages_with_icon": 5421,
-        "packages_with_screenshot": 830,
-        "total_screenshots": 2565
+        "total": 11911,
+        "done": 5428,
+        "packages_with_icon": 5428,
+        "packages_with_screenshot": 837,
+        "total_screenshots": 2597
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -48108,9 +48108,59 @@
             "icon": "https://raw.githubusercontent.com/winfsp/winfsp/master/art/winfsp-glow.png",
             "images": []
         },
+        "wingide": {
+            "icon": "https://i.postimg.cc/1X55zmcm/wing.png",
+            "images": [
+                "https://i.postimg.cc/Kjzx29x4/image.png",
+                "https://i.postimg.cc/0NRkwddH/image.png",
+                "https://i.postimg.cc/436Jb7W4/image.png",
+                "https://i.postimg.cc/sX33njLY/image.png"
+            ]
+        },
+        "wingidepersonal": {
+            "icon": "https://i.postimg.cc/1X55zmcm/wing.png",
+            "images": [
+                "https://i.postimg.cc/Kjzx29x4/image.png",
+                "https://i.postimg.cc/0NRkwddH/image.png",
+                "https://i.postimg.cc/436Jb7W4/image.png",
+                "https://i.postimg.cc/sX33njLY/image.png"
+            ]
+        },
+        "wingide101": {
+            "icon": "https://i.postimg.cc/1X55zmcm/wing.png",
+            "images": [
+                "https://i.postimg.cc/Kjzx29x4/image.png",
+                "https://i.postimg.cc/0NRkwddH/image.png",
+                "https://i.postimg.cc/436Jb7W4/image.png",
+                "https://i.postimg.cc/sX33njLY/image.png"
+            ]
+        },
         "wing-101": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/1X55zmcm/wing.png",
+            "images": [
+                "https://i.postimg.cc/Kjzx29x4/image.png",
+                "https://i.postimg.cc/0NRkwddH/image.png",
+                "https://i.postimg.cc/436Jb7W4/image.png",
+                "https://i.postimg.cc/sX33njLY/image.png"
+            ]
+        },
+        "wing-pro": {
+            "icon": "https://i.postimg.cc/1X55zmcm/wing.png",
+            "images": [
+                "https://i.postimg.cc/Kjzx29x4/image.png",
+                "https://i.postimg.cc/0NRkwddH/image.png",
+                "https://i.postimg.cc/436Jb7W4/image.png",
+                "https://i.postimg.cc/sX33njLY/image.png"
+            ]
+        },
+        "wing-personal": {
+            "icon": "https://i.postimg.cc/1X55zmcm/wing.png",
+            "images": [
+                "https://i.postimg.cc/Kjzx29x4/image.png",
+                "https://i.postimg.cc/0NRkwddH/image.png",
+                "https://i.postimg.cc/436Jb7W4/image.png",
+                "https://i.postimg.cc/sX33njLY/image.png"
+            ]
         },
         "winget": {
             "icon": "https://i.postimg.cc/bJfdcw0g/winget-cli.png",
@@ -48155,18 +48205,6 @@
                 "https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/UniGetUI_9.png",
                 "https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/UniGetUI_10.png"
             ]
-        },
-        "wingide": {
-            "icon": "https://community.chocolatey.org/content/packageimages/wingide.9.0.2.1.png",
-            "images": []
-        },
-        "wingide101": {
-            "icon": "https://community.chocolatey.org/content/packageimages/wingide101.9.0.2.1.png",
-            "images": []
-        },
-        "wingidepersonal": {
-            "icon": "https://community.chocolatey.org/content/packageimages/wingidepersonal.9.0.2.1.png",
-            "images": []
         },
         "winginx": {
             "icon": "https://community.chocolatey.org/content/packageimages/winginx.0.6.2.png",
@@ -50928,6 +50966,19 @@
                 "https://i.postimg.cc/B6TVMCkR/image.png",
                 "https://i.postimg.cc/ncC1LkTZ/image.png",
                 "https://i.postimg.cc/DyHP4XYG/image.png"
+            ]
+        },
+        "msiwrapper": {
+            "icon": "https://i.postimg.cc/BQBSzFCk/wrap.png",
+            "images": [
+                "https://i.postimg.cc/8zd1q6Bx/image.png",
+                "https://i.postimg.cc/T2WhthFv/image.png",
+                "https://i.postimg.cc/5NdyTbWY/image.png",
+                "https://i.postimg.cc/rwqmyjmq/image.png",
+                "https://i.postimg.cc/8C5zMCM3/image.png",
+                "https://i.postimg.cc/43SN5T13/image.png",
+                "https://i.postimg.cc/MTfZ3rsm/image.png",
+                "https://i.postimg.cc/6qdWt4x7/image.png"
             ]
         }
     }
