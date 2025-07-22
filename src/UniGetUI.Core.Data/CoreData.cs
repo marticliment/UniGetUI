@@ -196,6 +196,8 @@ namespace UniGetUI.Core.Data
             }
         }
 
+        public static bool IsUnpackaged = true;
+
         public static bool IsDaemon;
         public static bool WasDaemon;
 

@@ -110,6 +110,9 @@ namespace UniGetUI
 
                 // WinRT single-instance fancy stuff
                 WinRT.ComWrappersSupport.InitializeComWrappers();
+
+                CoreData.IsUnpackaged = Windows.ApplicationModel.Package.Current is null;
+
                 bool isRedirect = await DecideRedirection();
 
                 // If this is the main instance, start the app

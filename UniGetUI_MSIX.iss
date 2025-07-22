@@ -210,4 +210,4 @@ Name: "{autodesktop}\{#MyAppName}"; Filename: "unigetui://"; Tasks: regularinsta
 [Run]
 Filename: "powershell.exe"; Parameters: "-Command ""Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* | Where-Object {{$_.DisplayName -like ''*UniGetUI*''}} | ForEach-Object {{Start-Process $_.UninstallString -ArgumentList ''/SILENT'' -Wait}}"""; Flags: runhidden waituntilterminated; StatusMsg: "Removing old versions..."
 Filename: "powershell.exe"; Parameters: "-Command ""Add-AppxPackage -Path '{tmp}\UniGetUI.x64.Appx' -ForceUpdateFromAnyVersion"""; Flags: runhidden waituntilterminated; StatusMsg: "Deploying base package..."
-Filename: "unigetui://"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: runasoriginaluser nowait postinstall; Check: not CmdLineParamExists('/NoAutoStart');
+Filename: "cmd.exe"; Parameters: "/c start unigetui.exe"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: runasoriginaluser nowait postinstall; Check: not CmdLineParamExists('/NoAutoStart');

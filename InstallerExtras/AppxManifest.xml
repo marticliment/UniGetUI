@@ -2,6 +2,7 @@
 <Package
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10"
   xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
   xmlns:uap10="http://schemas.microsoft.com/appx/manifest/uap/windows10/10"
   xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5"
@@ -11,7 +12,7 @@
   <Identity
     Name="marticliment.UniGetUI"
     Publisher="CN=&quot;Open Source Developer, Martí Climent López&quot;, O=Open Source Developer, L=Barcelona, S=Barcelona, C=ES"
-    Version="3.3.0.0"
+    Version="3.3.0.4"
     ProcessorArchitecture="x64" />
 
   <Properties>
@@ -61,6 +62,7 @@
             <uap:Logo>Assets\Images\icon.png</uap:Logo>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <!-- AutoStart -->
         <desktop:Extension 
           Category="windows.startupTask"
           Executable="UniGetUI.exe"
@@ -70,6 +72,33 @@
               Enabled="true"
               DisplayName="UniGetUI (MSIX)" />
         </desktop:Extension>
+        <!-- App execution alias -->
+        <uap5:Extension Category="windows.appExecutionAlias">
+          <uap5:AppExecutionAlias>
+            <uap5:ExecutionAlias Alias="unigetui.exe" />
+          </uap5:AppExecutionAlias>
+        </uap5:Extension>
+
+        <!-- Notification handling -->
+        <desktop:Extension 
+          Category="windows.toastNotificationActivation">
+          <desktop:ToastNotificationActivation 
+            ToastActivatorCLSID="dd21d7f2-431f-40f0-b930-754031375a5a" />
+        </desktop:Extension>
+
+        <!--Register COM CLSID-->    
+        <com:Extension Category="windows.comServer">
+          <com:ComServer>
+            <com:ExeServer 
+                Executable="UniGetUI.exe" 
+                DisplayName="UniGetUI" 
+                Arguments="----AppNotificationActivated:">
+              <com:Class Id="dd21d7f2-431f-40f0-b930-754031375a5a" />
+            </com:ExeServer>
+          </com:ComServer>
+        </com:Extension>
+
+
       </Extensions>
     </Application>
   </Applications>
