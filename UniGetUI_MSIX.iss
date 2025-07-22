@@ -26,7 +26,7 @@ AppUpdatesURL={#MyAppURL}
 VersionInfoVersion=3.3.0.0
 DefaultDirName="{autopf64}\UniGetUI"
 DisableProgramGroupPage=yes
-DisableDirPage=no
+DisableDirPage=yes
 DirExistsWarning=no
 CloseApplications=no
 ; Remove the following line to run in administrative install mode (install for all users.)
@@ -42,7 +42,7 @@ SignTool=azsign
 MinVersion=10.0
 SetupIconFile=src\UniGetUI\Assets\Images\icon.ico
 UninstallDisplayIcon={app}\UniGetUI.exe
-Compression=lzma
+Compression=lzma2
 SolidCompression=yes
 WizardStyle=classic
 WizardImageFile=InstallerExtras\INSTALLER.BMP
@@ -164,16 +164,18 @@ begin
 end;
 
 function NextButtonClick(CurPageID: Integer): Boolean;
+var  
+  ResultCode: Integer;
 begin
   Result := True;
 
-  if (CurPageID = wpSelectDir) and 
-    not IsDirNameValid(WizardForm.DirEdit.Text) then
+  if (CurPageID = wpSelectTasks) and IsTaskSelected('portableinstall') then
   begin
     Result := False;
-    MsgBox('There is an invalid character in the selected install location. ' +
-      'Install location cannot contain special characters. ' +
-      'Please input a valid path to continue, such as '+ExpandConstant('{commonpf64}')+'\UniGetUI', mbError, MB_OK);
+    if MsgBox('Portable installs cannot be created from the installer anymore. Would you like to open a step-by-step guide on how to set up UniGetUI portable?', mbConfirmation, MB_YESNO) = IDYES then
+    begin
+      ShellExec('open', 'https://www.marticliment.com/unigetui/help/unigetui-portable', '', '', SW_SHOWNORMAL, ewNoWait, ResultCode);
+    end;
   end;
 end;
 
@@ -198,11 +200,14 @@ end;
 
 
 [Tasks]
-Name: "regularinstall"; Description: "{cm:RegInst}"; GroupDescription: "{cm:InstallType}"; Flags: exclusive   
+Name: "portableinstall"; Description: "{cm:PortInst}"; GroupDescription: "{cm:InstallType}"; Flags: unchecked exclusive
+Name: "regularinstall"; Description: "{cm:RegInst}"; GroupDescription: "{cm:InstallType}"; Flags: exclusive
 Name: "regularinstall\desktopicon"; Description: "{cm:RegDesktopIcon}"; GroupDescription: "{cm:ShCuts}";
+Name: "regularinstall\chocoinstall"; Description: "{cm:ChocoInstall}"; GroupDescription: "{cm:ShCuts}";
 
 [Files]
 Source: "UniGetUI.x64.Appx"; DestDir: "{tmp}"; Flags: deleteafterinstall; BeforeInstall: TripleKill('WingetUI.exe', 'UniGetUI.exe', 'choco.exe');
+Source: "src\UniGetUI.PackageEngine.Managers.Chocolatey\choco-cli\*"; DestDir: "{userpf}\..\UniGetUI\Chocolatey"; Flags: createallsubdirs ignoreversion recursesubdirs uninsneveruninstall; Tasks: regularinstall\chocoinstall; Check: not CmdLineParamExists('/NoChocolatey');
 
 [Icons]
 Name: "{autodesktop}\{#MyAppName}"; Filename: "unigetui://"; Tasks: regularinstall\desktopicon
@@ -210,4 +215,4 @@ Name: "{autodesktop}\{#MyAppName}"; Filename: "unigetui://"; Tasks: regularinsta
 [Run]
 Filename: "powershell.exe"; Parameters: "-Command ""Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* | Where-Object {{$_.DisplayName -like ''*UniGetUI*''}} | ForEach-Object {{Start-Process $_.UninstallString -ArgumentList ''/SILENT'' -Wait}}"""; Flags: runhidden waituntilterminated; StatusMsg: "Removing old versions..."
 Filename: "powershell.exe"; Parameters: "-Command ""Add-AppxPackage -Path '{tmp}\UniGetUI.x64.Appx' -ForceUpdateFromAnyVersion"""; Flags: runhidden waituntilterminated; StatusMsg: "Deploying base package..."
-Filename: "cmd.exe"; Parameters: "/c start unigetui.exe"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: runasoriginaluser nowait postinstall; Check: not CmdLineParamExists('/NoAutoStart');
+Filename: "unigetui.exe"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: runasoriginaluser nowait postinstall; Check: not CmdLineParamExists('/NoAutoStart');
