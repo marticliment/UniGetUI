@@ -12,7 +12,7 @@
   <Identity
     Name="marticliment.UniGetUI"
     Publisher="CN=&quot;Open Source Developer, Martí Climent López&quot;, O=Open Source Developer, L=Barcelona, S=Barcelona, C=ES"
-    Version="3.3.0.6"
+    Version="3.3.0.7"
     ProcessorArchitecture="x64" />
 
   <Properties>
@@ -41,9 +41,15 @@
         DisplayName="UniGetUI (MSIX)"
         Description="Universal package manager UI for Windows"
         BackgroundColor="transparent"
-        Square150x150Logo="Assets\Images\icon.png"
-        Square44x44Logo="Assets\Images\icon.png">
-        <uap:DefaultTile Wide310x150Logo="Assets\Images\icon.png"/>
+        Square150x150Logo="Assets\MsixImages\Square150x150Logo.png"
+        Square44x44Logo="Assets\MsixImages\Square44x44Logo.png">
+        <uap:DefaultTile 
+          Wide310x150Logo="Assets\MsixImages\Wide310x150Logo.png"  
+          Square71x71Logo="Assets\MsixImages\SmallTile.png" 
+          Square310x310Logo="Assets\MsixImages\LargeTile.png"/>
+        <uap:SplashScreen 
+          Image="Assets\MsixImages\SplashScreen.png"  
+          BackgroundColor="transparent"/>
       </uap:VisualElements>
       <Extensions>
         <!-- Protocol handler -->

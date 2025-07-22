@@ -92,3 +92,4 @@ UniGetUI.x64.Appx
 UniGetUI.MSIX.exe
 
 unigetui_debug
+/InstallerExtras/.vs
