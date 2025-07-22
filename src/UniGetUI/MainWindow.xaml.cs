@@ -292,6 +292,7 @@ namespace UniGetUI.Interface
             string loweredUrl = baseUrl.ToLower();
             Logger.ImportantInfo("Begin handle of deep link with body " + baseUrl);
 
+
             if (loweredUrl.StartsWith("showpackage"))
             {
                 string Id = Regex.Match(baseUrl, "id=([^&]+)").Value.Split("=")[^1];
@@ -313,7 +314,8 @@ namespace UniGetUI.Interface
                     Logger.Error(new UriFormatException($"Malformed URL {link}"));
                 }
             }
-            else if (loweredUrl.StartsWith("showunigetui"))
+            //      In some cases, calling unigetui:// will actually call unigetui:///
+            else if (loweredUrl.StartsWith("showunigetui") || loweredUrl == "/")
             {
                 /* Skip */
             }

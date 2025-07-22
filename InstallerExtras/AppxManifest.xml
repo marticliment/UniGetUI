@@ -12,7 +12,7 @@
   <Identity
     Name="marticliment.UniGetUI"
     Publisher="CN=&quot;Open Source Developer, Martí Climent López&quot;, O=Open Source Developer, L=Barcelona, S=Barcelona, C=ES"
-    Version="3.3.0.7"
+    Version="3.3.0.9"
     ProcessorArchitecture="x64" />
 
   <Properties>

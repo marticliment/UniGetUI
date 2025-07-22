@@ -473,12 +473,14 @@ namespace UniGetUI
                     }
                     case ExtendedActivationKind.StartupTask:
                     {
+                        // Theoretically we'd never reach this, but just in case.
                         CoreData.IsDaemon = true;
                         break;
                     }
                     default:
                     {
-                        // AppSdk is not supposed to use more kinds than the ones handled
+                        // AppSdk is not supposed to use more kinds than the ones handled.
+                        // see https://learn.microsoft.com/en-us/windows/windows-app-sdk/api/winrt/microsoft.windows.applifecycle.appactivationarguments.data
                         Logger.Error($"Unknown activation reason: {rawArgs.Kind}");
                         break;
                     }
