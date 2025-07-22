@@ -1,6 +1,7 @@
 using System.Data;
 using System.Diagnostics;
 using System.Security.Authentication;
+using System.Security.Cryptography;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
@@ -132,28 +133,47 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             GitHubAuthService authService = new();
             if (authService.IsAuthenticated())
             {
-                var client = authService.CreateGitHubClient();
-                if (client is null) throw new AuthenticationException("How can it be authenticated and fail to create a client?");
-                var user = await client.User.Current();
-
-                _isLoggedIn = true;
-                LogInButton.Visibility = Visibility.Collapsed;
-                LogOutButton.Visibility = Visibility.Visible;
-                GitHubUserTitle.Text = CoreTools.Translate("You are logged in as {0} (@{1})", user.Name, user.Login);
-                GitHubUserSubtitle.Text = CoreTools.Translate("Nice! Backups will be uploaded to a private gist on your account");
-                GitHubImage.Initials = "";
-                GitHubImage.ProfilePicture = new BitmapImage(new Uri(user.AvatarUrl));
+                try
+                {
+                    await GenerateLogoutUI(authService);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error("An error occurred while attempting to generate settings login UI: ");
+                    Logger.Error(ex);
+                    GenerateLoginUI();
+                }
             }
             else
             {
-                _isLoggedIn = false;
-                LogInButton.Visibility = Visibility.Visible;
-                LogOutButton.Visibility = Visibility.Collapsed;
-                GitHubUserTitle.Text = CoreTools.Translate("Current status: Not logged in");
-                GitHubUserSubtitle.Text = CoreTools.Translate("Log in to enable cloud backup");
-                GitHubImage.ProfilePicture = null;
+                GenerateLoginUI();
             }
             UpdateCloudControlsEnabled();
+        }
+
+        private void GenerateLoginUI()
+        {
+            _isLoggedIn = false;
+            LogInButton.Visibility = Visibility.Visible;
+            LogOutButton.Visibility = Visibility.Collapsed;
+            GitHubUserTitle.Text = CoreTools.Translate("Current status: Not logged in");
+            GitHubUserSubtitle.Text = CoreTools.Translate("Log in to enable cloud backup");
+            GitHubImage.ProfilePicture = null;
+        }
+
+        private async Task GenerateLogoutUI(GitHubAuthService authService)
+        {
+            var client = authService.CreateGitHubClient();
+            if (client is null) throw new AuthenticationException("How can it be authenticated and fail to create a client?");
+            var user = await client.User.Current();
+
+            _isLoggedIn = true;
+            LogInButton.Visibility = Visibility.Collapsed;
+            LogOutButton.Visibility = Visibility.Visible;
+            GitHubUserTitle.Text = CoreTools.Translate("You are logged in as {0} (@{1})", user.Name, user.Login);
+            GitHubUserSubtitle.Text = CoreTools.Translate("Nice! Backups will be uploaded to a private gist on your account");
+            GitHubImage.Initials = "";
+            GitHubImage.ProfilePicture = new BitmapImage(new Uri(user.AvatarUrl));
         }
 
         private void UpdateCloudControlsEnabled()
