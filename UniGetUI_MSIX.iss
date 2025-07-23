@@ -86,13 +86,6 @@ Name: "Ukrainian"; MessagesFile: "compiler:Languages\Ukrainian.isl"
 ; Include installer's messages
 #include "InstallerExtras\CustomMessages.iss"
 
-[InstallDelete]
-Type: filesandordirs; Name: "{app}\*.dll";
-Type: filesandordirs; Name: "{app}\*.exe";
-Type: filesandordirs; Name: "{app}\*.winmd";
-Type: filesandordirs; Name: "{app}\Assets\*";
-
-
 [Code]
 procedure InitializeWizard;
 begin
@@ -175,18 +168,25 @@ var
 begin
   if CurStep = ssInstall then
   begin
+    WizardForm.StatusLabel.Caption := 'Closing UniGetUI...';
+    WizardForm.ProgressGauge.Style := npbstMarquee;
+    
+    TaskKill('WingetUI.exe');
+    TaskKill('UniGetUI.exe');
+    TaskKill('choco.exe');
+  
     Log('Begin MSIX deployment...');
     WizardForm.StatusLabel.Caption := 'Extracting MSIX package...';
     WizardForm.ProgressGauge.Style := npbstMarquee;
     
     ExtractTemporaryFile('UniGetUI.x64.appx');
-    InstallerFile := ExpandConstant('{tmp}\UniGetUI.x64r.Appx');
+    InstallerFile := ExpandConstant('{tmp}\UniGetUI.x64.Appx');
     OutFile := ExpandConstant('{tmp}\deploy_output.txt');
 
     WizardForm.StatusLabel.Caption := 'Deploying MSIX package...';
     WizardForm.ProgressGauge.Style := npbstMarquee;
     
-    Command := '-NoProfile -NonInteractive -Command "Add-AppxPackage -Path ''' + InstallerFile + '''"';
+    Command := '-NoProfile -NonInteractive -ExecutionPolicy Bypass -Command "Add-AppxPackage -Path ''' + InstallerFile + '''"';
     Exec('powershell.exe', Command,'', SW_HIDE, ewWaitUntilTerminated, ResultCode);    
 
     if ResultCode = 0 then
@@ -197,7 +197,7 @@ begin
     
     WizardForm.StatusLabel.Caption := 'Previous deployment failed with code ' + IntToStr(ResultCode) + ', forcing deployment...';
 
-    Command := '-NoProfile -NonInteractive -Command "Add-AppxPackage -Path ''' + InstallerFile + ''' -ForceUpdateFromAnyVersion"';
+    Command := '-NoProfile -NonInteractive -ExecutionPolicy Bypass -Command "Add-AppxPackage -Path ''' + InstallerFile + ''' -ForceUpdateFromAnyVersion"';
     Exec('powershell.exe', Command,'', SW_HIDE, ewWaitUntilTerminated, ResultCode); 
     
     if ResultCode = 0 then
@@ -210,7 +210,7 @@ begin
     // So, it seems like it is not possible to both redirect output to file as ansi AND get return code.
     // Here, we are re-running the command to get the error output.
     WizardForm.StatusLabel.Caption := 'Loading error result...';
-    Command := '-NoProfile -NonInteractive -Command "& { Add-AppxPackage -Path ''' + InstallerFile + ''' -ForceUpdateFromAnyVersion } *>&1 | Out-File -FilePath ''' + OutFile + ''' -Encoding ascii;"';
+    Command := '-NoProfile -NonInteractive -ExecutionPolicy Bypass -Command "& { Add-AppxPackage -Path ''' + InstallerFile + ''' -ForceUpdateFromAnyVersion } *>&1 | Out-File -FilePath ''' + OutFile + ''' -Encoding ascii;"';
     Exec('powershell.exe', Command,'', SW_HIDE, ewWaitUntilTerminated, ResultCode2); 
 
     if LoadStringFromFile(OutFile, OutFileContents) then
@@ -232,13 +232,16 @@ Name: "regularinstall\desktopicon"; Description: "{cm:RegDesktopIcon}"; GroupDes
 Name: "regularinstall\chocoinstall"; Description: "{cm:ChocoInstall}"; GroupDescription: "{cm:ShCuts}";
 
 [Files]
-Source: "UniGetUI.x64.Appx"; DestDir: "{tmp}"; Flags: dontcopy; BeforeInstall: TripleKill('WingetUI.exe', 'UniGetUI.exe', 'choco.exe');
+Source: "UniGetUI.x64.Appx"; DestDir: "{tmp}"; Flags: dontcopy;
 Source: "src\UniGetUI.PackageEngine.Managers.Chocolatey\choco-cli\*"; DestDir: "{userpf}\..\UniGetUI\Chocolatey"; Flags: createallsubdirs ignoreversion recursesubdirs uninsneveruninstall; Tasks: regularinstall\chocoinstall; Check: not CmdLineParamExists('/NoChocolatey');
 
 [Icons]
 Name: "{autodesktop}\{#MyAppName}"; Filename: "unigetui://"; Tasks: regularinstall\desktopicon; Check: not CmdLineParamExists('/NoShortcut')
 
 [Run]
-Filename: "powershell.exe"; Parameters: "-Command ""Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* | Where-Object {{$_.DisplayName -like ''*UniGetUI*''}} | ForEach-Object {{Start-Process $_.UninstallString -ArgumentList ''/SILENT'' -Wait}}"""; Flags: runhidden waituntilterminated; StatusMsg: "Removing old versions..."
-; Filename: "powershell.exe"; Parameters: ""; Flags: runhidden waituntilterminated; StatusMsg: "Deploying base package..."
+; Uninstall previons UniGetUI
+Filename: "powershell.exe"; Parameters: "-NoProfile -NonInteractive -ExecutionPolicy Bypass -Command ""Get-ItemProperty 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*' | Where-Object {{ $_.DisplayName -like 'UniGetUI' } | ForEach-Object {{ Start-Process $_.UninstallString -ArgumentList '/SILENT' -Wait }"""; Flags: runhidden waituntilterminated; StatusMsg: "Deleting old UniGetUI versions... (1/3)"
+Filename: "powershell.exe"; Parameters: "-NoProfile -NonInteractive -ExecutionPolicy Bypass -Command ""Get-ItemProperty 'HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*' | Where-Object {{ $_.DisplayName -like 'UniGetUI' } | ForEach-Object {{ Start-Process $_.UninstallString -ArgumentList '/SILENT' -Wait }"""; Flags: runhidden waituntilterminated; StatusMsg: "Deleting old UniGetUI versions... (2/3)"
+Filename: "powershell.exe"; Parameters: "-NoProfile -NonInteractive -ExecutionPolicy Bypass -Command ""Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*' | Where-Object {{ $_.DisplayName -like 'UniGetUI' } | ForEach-Object {{ Start-Process $_.UninstallString -ArgumentList '/SILENT' -Wait }"""; Flags: runhidden waituntilterminated; StatusMsg: "Deleting old UniGetUI versions... (3/3)"
+
 Filename: "unigetui.exe"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: runasoriginaluser nowait postinstall; Check: not CmdLineParamExists('/NoAutoStart');
