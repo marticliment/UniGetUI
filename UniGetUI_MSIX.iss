@@ -104,20 +104,16 @@ procedure TaskKill(FileName: String);
 var
   ResultCode: Integer;
 begin
-    Exec('taskkill.exe', '/f /im ' + '"' + FileName + '"', '', SW_HIDE,
-     ewWaitUntilTerminated, ResultCode);
+    Exec('taskkill.exe', '/f /im "' + FileName + '"', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
 end;
 
 procedure TripleKill(FileName1: String; FileName2: String; FileName3: String);
 var
   ResultCode: Integer;
 begin
-    Exec('taskkill.exe', '/f /im ' + '"' + FileName1 + '"', '', SW_HIDE,
-     ewWaitUntilTerminated, ResultCode);
-    Exec('taskkill.exe', '/f /im ' + '"' + FileName2 + '"', '', SW_HIDE,
-     ewWaitUntilTerminated, ResultCode);     
-    Exec('taskkill.exe', '/f /im ' + '"' + FileName3 + '"', '', SW_HIDE,
-     ewWaitUntilTerminated, ResultCode);
+  TaskKill(FileName1);
+  TaskKill(FileName2);
+  TaskKill(FileName3);
 end;
 
 function CmdLineParamExists(const Value: string): Boolean;
@@ -133,42 +129,12 @@ begin
     end;
 end;
 
-var CustomExitCode: integer;
-
-procedure ExitProcess(exitCode:integer);
-    external 'ExitProcess@kernel32.dll stdcall';
-
-procedure DeinitializeSetup();
-begin
-    if (CustomExitCode <> 0) then
-    begin
-        DelTree(ExpandConstant('{tmp}'), True, True, True);
-        ExitProcess(0);
-    end;
-end;
-
-function IsCharValid(Value: Char): Boolean;
-begin
-  Result := Ord(Value) <= $007F;
-end;
-
-function IsDirNameValid(const Value: string): Boolean;
-var
-  I: Integer;
-begin
-  Result := False;
-  for I := 1 to Length(Value) do
-    if not IsCharValid(Value[I]) then
-      Exit;
-  Result := True;
-end;
 
 function NextButtonClick(CurPageID: Integer): Boolean;
 var  
   ResultCode: Integer;
 begin
   Result := True;
-
   if (CurPageID = wpSelectTasks) and IsTaskSelected('portableinstall') then
   begin
     Result := False;
@@ -198,6 +164,66 @@ begin
   end;
 end;
 
+procedure CurStepChanged(CurStep: TSetupStep);
+var 
+  ResultCode: Integer;
+  ResultCode2: Integer;
+  InstallerFile: String;
+  Command: String;
+  OutFile: String;
+  OutFileContents: AnsiString;
+begin
+  if CurStep = ssInstall then
+  begin
+    Log('Begin MSIX deployment...');
+    WizardForm.StatusLabel.Caption := 'Extracting MSIX package...';
+    WizardForm.ProgressGauge.Style := npbstMarquee;
+    
+    ExtractTemporaryFile('UniGetUI.x64.appx');
+    InstallerFile := ExpandConstant('{tmp}\UniGetUI.x64r.Appx');
+    OutFile := ExpandConstant('{tmp}\deploy_output.txt');
+
+    WizardForm.StatusLabel.Caption := 'Deploying MSIX package...';
+    WizardForm.ProgressGauge.Style := npbstMarquee;
+    
+    Command := '-NoProfile -NonInteractive -Command "Add-AppxPackage -Path ''' + InstallerFile + '''"';
+    Exec('powershell.exe', Command,'', SW_HIDE, ewWaitUntilTerminated, ResultCode);    
+
+    if ResultCode = 0 then
+    begin
+      Log('Regular deployment succeeded!');
+      Exit;
+    end;
+    
+    WizardForm.StatusLabel.Caption := 'Previous deployment failed with code ' + IntToStr(ResultCode) + ', forcing deployment...';
+
+    Command := '-NoProfile -NonInteractive -Command "Add-AppxPackage -Path ''' + InstallerFile + ''' -ForceUpdateFromAnyVersion"';
+    Exec('powershell.exe', Command,'', SW_HIDE, ewWaitUntilTerminated, ResultCode); 
+    
+    if ResultCode = 0 then
+    begin
+      Log('Forced deployment succeeded!');
+      Exit;
+    end;
+
+    Log('Forced deployment failed with code ' + IntToStr(ResultCode));
+    // So, it seems like it is not possible to both redirect output to file as ansi AND get return code.
+    // Here, we are re-running the command to get the error output.
+    WizardForm.StatusLabel.Caption := 'Loading error result...';
+    Command := '-NoProfile -NonInteractive -Command "& { Add-AppxPackage -Path ''' + InstallerFile + ''' -ForceUpdateFromAnyVersion } *>&1 | Out-File -FilePath ''' + OutFile + ''' -Encoding ascii;"';
+    Exec('powershell.exe', Command,'', SW_HIDE, ewWaitUntilTerminated, ResultCode2); 
+
+    if LoadStringFromFile(OutFile, OutFileContents) then
+    begin
+        MsgBox('MSIX package deployment failed (code ' + IntToStr(ResultCode) + ').' + #13#10#13#10 +  'Deployment output:' + #13#10 + OutFileContents, mbError, MB_OK);
+    end
+    else
+    begin
+        MsgBox('MSIX package deployment failed (code ' + IntToStr(ResultCode) + ').' + #13#10#13#10 + 'Deployment output could not be read.', mbError, MB_OK);
+    end;
+    RaiseException('The installation was aborted because the MSIX package failed to be deployed');
+  end;
+end;
 
 [Tasks]
 Name: "portableinstall"; Description: "{cm:PortInst}"; GroupDescription: "{cm:InstallType}"; Flags: unchecked exclusive
@@ -206,7 +232,7 @@ Name: "regularinstall\desktopicon"; Description: "{cm:RegDesktopIcon}"; GroupDes
 Name: "regularinstall\chocoinstall"; Description: "{cm:ChocoInstall}"; GroupDescription: "{cm:ShCuts}";
 
 [Files]
-Source: "UniGetUI.x64.Appx"; DestDir: "{tmp}"; Flags: deleteafterinstall; BeforeInstall: TripleKill('WingetUI.exe', 'UniGetUI.exe', 'choco.exe');
+Source: "UniGetUI.x64.Appx"; DestDir: "{tmp}"; Flags: dontcopy; BeforeInstall: TripleKill('WingetUI.exe', 'UniGetUI.exe', 'choco.exe');
 Source: "src\UniGetUI.PackageEngine.Managers.Chocolatey\choco-cli\*"; DestDir: "{userpf}\..\UniGetUI\Chocolatey"; Flags: createallsubdirs ignoreversion recursesubdirs uninsneveruninstall; Tasks: regularinstall\chocoinstall; Check: not CmdLineParamExists('/NoChocolatey');
 
 [Icons]
@@ -214,5 +240,5 @@ Name: "{autodesktop}\{#MyAppName}"; Filename: "unigetui://"; Tasks: regularinsta
 
 [Run]
 Filename: "powershell.exe"; Parameters: "-Command ""Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* | Where-Object {{$_.DisplayName -like ''*UniGetUI*''}} | ForEach-Object {{Start-Process $_.UninstallString -ArgumentList ''/SILENT'' -Wait}}"""; Flags: runhidden waituntilterminated; StatusMsg: "Removing old versions..."
-Filename: "powershell.exe"; Parameters: "-Command ""Add-AppxPackage -Path '{tmp}\UniGetUI.x64.Appx' -ForceUpdateFromAnyVersion"""; Flags: runhidden waituntilterminated; StatusMsg: "Deploying base package..."
+; Filename: "powershell.exe"; Parameters: ""; Flags: runhidden waituntilterminated; StatusMsg: "Deploying base package..."
 Filename: "unigetui.exe"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: runasoriginaluser nowait postinstall; Check: not CmdLineParamExists('/NoAutoStart');
