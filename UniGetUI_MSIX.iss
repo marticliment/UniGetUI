@@ -37,7 +37,7 @@ OutputDir=.
 ; Comment line below to disable digital signature of installer
 SignTool=azsign
 
-; SignedUninstaller=yes
+SignedUninstaller=no
 ; SignedUninstallerDir=InstallerExtras\
 MinVersion=10.0
 SetupIconFile=src\UniGetUI\Assets\Images\icon.ico
@@ -210,7 +210,7 @@ Source: "UniGetUI.x64.Appx"; DestDir: "{tmp}"; Flags: deleteafterinstall; Before
 Source: "src\UniGetUI.PackageEngine.Managers.Chocolatey\choco-cli\*"; DestDir: "{userpf}\..\UniGetUI\Chocolatey"; Flags: createallsubdirs ignoreversion recursesubdirs uninsneveruninstall; Tasks: regularinstall\chocoinstall; Check: not CmdLineParamExists('/NoChocolatey');
 
 [Icons]
-Name: "{autodesktop}\{#MyAppName}"; Filename: "unigetui://"; Tasks: regularinstall\desktopicon
+Name: "{autodesktop}\{#MyAppName}"; Filename: "unigetui://"; Tasks: regularinstall\desktopicon; Check: not CmdLineParamExists('/NoShortcut')
 
 [Run]
 Filename: "powershell.exe"; Parameters: "-Command ""Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* | Where-Object {{$_.DisplayName -like ''*UniGetUI*''}} | ForEach-Object {{Start-Process $_.UninstallString -ArgumentList ''/SILENT'' -Wait}}"""; Flags: runhidden waituntilterminated; StatusMsg: "Removing old versions..."
