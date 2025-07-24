@@ -14,14 +14,14 @@ def main():
         major, minor, build, rev = match.groups()
         
         with open(Path(__file__).parent / "PatchNumber", 'r') as f:
-            new_rev = int(f.read()) + 1
+            new_rev = int(f.read()) + (0 if '--no-increment' in sys.argv else 1)
         
         with open(Path(__file__).parent / "PatchNumber", 'w') as f:
             f.write(str(new_rev))
             
         old_version = f"{major}.{minor}.{build}.{rev}"
         new_version = f"{major}.{minor}.{build}.{new_rev}"
-        print(f"Updated patch version: {old_version} → {new_version}")
+        print(f"Updated patch version: {old_version} → {new_version}" + (" (increment was disabled via cli)" if '--no-increment' in sys.argv else ""))
         return f'Version="{new_version}"'
 
     new_content, count = re.subn(
