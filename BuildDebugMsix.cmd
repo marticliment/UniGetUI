@@ -21,7 +21,6 @@ rem Move binaries to unigetui_debug
 rmdir /q /s unigetui_debug
 mkdir unigetui_debug
 robocopy src\UniGetUI\bin\x64\Debug\net8.0-windows10.0.26100.0\win-x64 unigetui_debug *.* /MOVE /E
-if %ERRORLEVEL% NEQ 0 ( pause )
 
 rem checkpoint
 :CONTINUE

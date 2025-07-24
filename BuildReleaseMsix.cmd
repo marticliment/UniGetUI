@@ -16,7 +16,6 @@ rem Move binaries to unigetui_release
 rmdir /Q /S unigetui_release
 mkdir unigetui_release
 robocopy src\UniGetUI\bin\x64\Release\net8.0-windows10.0.26100.0\win-x64\publish unigetui_release *.* /MOVE /E
-if %ERRORLEVEL% NEQ 0 ( pause )
 
 rem Sign all exe and dll
 set /p signfiles="Do you want to sign the files? [Y/n]: "
