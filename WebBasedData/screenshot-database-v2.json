@@ -1,10 +1,10 @@
 {
     "package_count": {
         "total": 11911,
-        "done": 5428,
-        "packages_with_icon": 5428,
-        "packages_with_screenshot": 838,
-        "total_screenshots": 2601
+        "done": 5429,
+        "packages_with_icon": 5429,
+        "packages_with_screenshot": 840,
+        "total_screenshots": 2609
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -57,8 +57,13 @@
             ]
         },
         "0install": {
-            "icon": "https://i.postimg.cc/W1ygf5s9/zeroinstall-icon.png",
-            "images": []
+            "icon": "https://i.postimg.cc/TPqFDC19/zero.png",
+            "images": [
+                "https://i.postimg.cc/3N7wZLFx/image.png",
+                "https://i.postimg.cc/CLxhLnvX/image.png",
+                "https://i.postimg.cc/HLXHPwxc/image.png",
+                "https://i.postimg.cc/y6vK5YVP/image.png"
+            ]
         },
         "0patch": {
             "icon": "https://imgur.com/YHwGP6l.png",
@@ -50244,8 +50249,13 @@
             "images": []
         },
         "zeroinstall": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/TPqFDC19/zero.png",
+            "images": [
+                "https://i.postimg.cc/3N7wZLFx/image.png",
+                "https://i.postimg.cc/CLxhLnvX/image.png",
+                "https://i.postimg.cc/HLXHPwxc/image.png",
+                "https://i.postimg.cc/y6vK5YVP/image.png"
+            ]
         },
         "zeronet": {
             "icon": "https://community.chocolatey.org/content/packageimages/zeronet.0.7.1.png",
