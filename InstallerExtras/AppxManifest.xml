@@ -12,14 +12,17 @@
   <Identity
     Name="marticliment.UniGetUI"
     Publisher="CN=&quot;Open Source Developer, Martí Climent López&quot;, O=Open Source Developer, L=Barcelona, S=Barcelona, C=ES"
-    Version="3.3.0.9"
+    Version="3.3.0.11"
     ProcessorArchitecture="x64" />
 
   <Properties>
-    <DisplayName>UniGetUI (MSIX)</DisplayName>
+    <DisplayName>UniGetUI (MSIX Beta)</DisplayName>
     <PublisherDisplayName>Martí Climent</PublisherDisplayName>
     <Logo>Assets\Images\icon.png</Logo>
     <Description>Universal package manager UI for Windows</Description>
+    <uap10:PackageIntegrity>
+      <uap10:Content Enforcement="on" />
+    </uap10:PackageIntegrity>
   </Properties>
 
   <Resources>
@@ -38,7 +41,7 @@
       Executable="UniGetUI.exe"
       EntryPoint="Windows.FullTrustApplication">
       <uap:VisualElements
-        DisplayName="UniGetUI (MSIX)"
+        DisplayName="UniGetUI (MSIX Beta)"
         Description="Universal package manager UI for Windows"
         BackgroundColor="transparent"
         Square150x150Logo="Assets\MsixImages\Square150x150Logo.png"
@@ -55,7 +58,7 @@
         <!-- Protocol handler -->
         <uap:Extension Category="windows.protocol">
           <uap:Protocol Name="unigetui">
-            <uap:DisplayName>UniGetUI (MSIX) Protocol</uap:DisplayName>
+            <uap:DisplayName>UniGetUI (MSIX Beta) Protocol</uap:DisplayName>
           </uap:Protocol>
         </uap:Extension>
         <!-- File type handler -->
@@ -64,7 +67,7 @@
             <uap:SupportedFileTypes>
               <uap:FileType>.ubundle</uap:FileType>
             </uap:SupportedFileTypes>
-            <uap:DisplayName>UniGetUI (MSIX) Package Bundle</uap:DisplayName>
+            <uap:DisplayName>UniGetUI (MSIX Beta) Package Bundle</uap:DisplayName>
             <uap:Logo>Assets\Images\icon.png</uap:Logo>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -76,7 +79,7 @@
           <desktop:StartupTask
               TaskId="UniGetUIDaemon"
               Enabled="true"
-              DisplayName="UniGetUI (MSIX)" />
+              DisplayName="UniGetUI (MSIX Beta)" />
         </desktop:Extension>
         <!-- App execution alias -->
         <uap5:Extension Category="windows.appExecutionAlias">
