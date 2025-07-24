@@ -6,24 +6,47 @@ if /I NOT "%userChoice%"=="Y" (
     goto :CONTINUE
 )
 
+rem Clear old builds
 rmdir /q /s src\UniGetUI\bin\x64\Debug\net8.0-windows10.0.26100.0\win-x64\
+
+rem Build UniGetUI
 dotnet build src/UniGetUI/UniGetUI.csproj /noLogo /property:Configuration=Debug /property:Platform=x64 -v m 
+if %ERRORLEVEL% NEQ 0 ( pause )
+
+rem Sign main executable
 %signcommand% "src\UniGetUI\bin\x64\Debug\net8.0-windows10.0.26100.0\win-x64\UniGetUI.exe"
+if %ERRORLEVEL% NEQ 0 ( pause )
+
+rem Move binaries to unigetui_debug
 rmdir /q /s unigetui_debug
 mkdir unigetui_debug
 robocopy src\UniGetUI\bin\x64\Debug\net8.0-windows10.0.26100.0\win-x64 unigetui_debug *.* /MOVE /E
+if %ERRORLEVEL% NEQ 0 ( pause )
 
+rem checkpoint
 :CONTINUE
 
-python InstallerExtras\IncreaseMsixPatchNum.py
+rem Create output/ folder
+rmdir /q /s output
+mkdir output
+
+rem Create MSIX Package
+python scripts\IncreaseMsixPatchNum.py
 copy InstallerExtras\AppxManifest.xml unigetui_debug\AppxManifest.xml
-makeappx pack /d unigetui_debug /p UniGetUI.x64.Appx
+makeappx pack /d unigetui_debug /p output\UniGetUI.x64.Msix
+if %ERRORLEVEL% NEQ 0 ( pause )
 
-if %ERRORLEVEL% NEQ 0 (
-    pause
-)
+rem Sign MSIX package
+%signcommand% output\UniGetUI.x64.Msix
 
-%signcommand% UniGetUI.x64.Appx
+rem Create INNO Installer
 set INSTALLATOR="%SYSTEMDRIVE%\Program Files (x86)\Inno Setup 6\ISCC.exe"
 %INSTALLATOR% "UniGetUI_MSIX.iss"
-UniGetUI.MSIX.exe
+move "UniGetUI.Installer.exe" output\
+if %ERRORLEVEL% NEQ 0 ( pause )
+
+rem Clear and run installer
+rem rmdir /q /s unigetui_debug
+"output\UniGetUI.Installer.exe"
+
+pause

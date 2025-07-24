@@ -3,7 +3,7 @@ from pathlib import Path
 import sys
 
 def main():
-    manifest_path = Path(__file__).parent / 'AppxManifest.xml'
+    manifest_path = Path(__file__).parent.parent / 'InstallerExtras/AppxManifest.xml'
     if not manifest_path.exists():
         print(f"Cannot find {manifest_path}")
         sys.exit(1)
@@ -12,7 +12,13 @@ def main():
 
     def bump_version(match):
         major, minor, build, rev = match.groups()
-        new_rev = int(rev) + 1
+        
+        with open(Path(__file__).parent / "PatchNumber", 'r') as f:
+            new_rev = int(f.read()) + 1
+        
+        with open(Path(__file__).parent / "PatchNumber", 'w') as f:
+            f.write(str(new_rev))
+            
         old_version = f"{major}.{minor}.{build}.{rev}"
         new_version = f"{major}.{minor}.{build}.{new_rev}"
         print(f"Updated patch version: {old_version} → {new_version}")

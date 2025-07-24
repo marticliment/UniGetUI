@@ -93,3 +93,4 @@ UniGetUI.MSIX.exe
 
 unigetui_debug
 /InstallerExtras/.vs
+scripts/PatchNumber

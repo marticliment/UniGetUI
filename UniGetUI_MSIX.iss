@@ -32,7 +32,7 @@ CloseApplications=no
 ; Remove the following line to run in administrative install mode (install for all users.)
 ;PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
-OutputBaseFilename=UniGetUI.MSIX
+OutputBaseFilename=UniGetUI.Installer
 OutputDir=.     
 ; Comment line below to disable digital signature of installer
 SignTool=azsign
@@ -179,8 +179,8 @@ begin
     WizardForm.StatusLabel.Caption := 'Extracting MSIX package...';
     WizardForm.ProgressGauge.Style := npbstMarquee;
     
-    ExtractTemporaryFile('UniGetUI.x64.appx');
-    InstallerFile := ExpandConstant('{tmp}\UniGetUI.x64.Appx');
+    ExtractTemporaryFile('UniGetUI.x64.Msix');
+    InstallerFile := ExpandConstant('{tmp}\UniGetUI.x64.Msix');
     OutFile := ExpandConstant('{tmp}\deploy_output.txt');
 
     WizardForm.StatusLabel.Caption := 'Deploying MSIX package...';
@@ -232,7 +232,7 @@ Name: "regularinstall\desktopicon"; Description: "{cm:RegDesktopIcon}"; GroupDes
 Name: "regularinstall\chocoinstall"; Description: "{cm:ChocoInstall}"; GroupDescription: "{cm:ShCuts}";
 
 [Files]
-Source: "UniGetUI.x64.Appx"; DestDir: "{tmp}"; Flags: dontcopy;
+Source: "output\UniGetUI.x64.Msix"; DestDir: "{tmp}"; Flags: dontcopy;
 Source: "src\UniGetUI.PackageEngine.Managers.Chocolatey\choco-cli\*"; DestDir: "{userpf}\..\UniGetUI\Chocolatey"; Flags: createallsubdirs ignoreversion recursesubdirs uninsneveruninstall; Tasks: regularinstall\chocoinstall; Check: not CmdLineParamExists('/NoChocolatey');
 
 [Icons]
