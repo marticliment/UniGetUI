@@ -12,7 +12,7 @@
   <Identity
     Name="marticliment.UniGetUI"
     Publisher="CN=&quot;Open Source Developer, Martí Climent López&quot;, O=Open Source Developer, L=Barcelona, S=Barcelona, C=ES"
-    Version="3.3.0.11"
+    Version="3.3.0.14"
     ProcessorArchitecture="x64" />
 
   <Properties>
@@ -26,9 +26,57 @@
   </Properties>
 
   <Resources>
-    <Resource Language="en-us"/>
-    <Resource Language="es-es"/>
-    <Resource Language="fr-fr"/>
+    <Resource Language="af"/>
+    <Resource Language="ar"/>
+    <Resource Language="bg"/>
+    <Resource Language="bn"/>
+    <Resource Language="ca"/>
+    <Resource Language="cs"/>
+    <Resource Language="da"/>
+    <Resource Language="de"/>
+    <Resource Language="el"/>
+    <Resource Language="et"/>
+    <Resource Language="en"/>
+    <Resource Language="es"/>
+    <Resource Language="fa"/>
+    <Resource Language="fi"/>
+    <Resource Language="fil"/>
+    <Resource Language="fr"/>
+    <Resource Language="gl"/>
+    <Resource Language="gu"/>
+    <Resource Language="hi"/>
+    <Resource Language="hr"/>
+    <Resource Language="he"/>
+    <Resource Language="hu"/>
+    <Resource Language="it"/>
+    <Resource Language="id"/>
+    <Resource Language="ja"/>
+    <Resource Language="ka"/>
+    <Resource Language="kn"/>
+    <Resource Language="ko"/>
+    <Resource Language="lt"/>
+    <Resource Language="mk"/>
+    <Resource Language="mr"/>
+    <Resource Language="nb"/>
+    <Resource Language="nn"/>
+    <Resource Language="nl"/>
+    <Resource Language="pl"/>
+    <Resource Language="pt-br"/>
+    <Resource Language="pt-pt"/>
+    <Resource Language="ro"/>
+    <Resource Language="ru"/>
+    <Resource Language="sk"/>
+    <Resource Language="sq"/>
+    <Resource Language="si"/>
+    <Resource Language="sl"/>
+    <Resource Language="sv"/>
+    <Resource Language="th"/>
+    <Resource Language="tr"/>
+    <Resource Language="uk"/>
+    <Resource Language="ur"/>
+    <Resource Language="vi"/>
+    <Resource Language="zh-Hans-cn"/>
+    <Resource Language="zh-Hant-tw"/>
     <!-- Add other supported languages here -->
   </Resources>
 
