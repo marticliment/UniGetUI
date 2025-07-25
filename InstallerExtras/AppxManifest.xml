@@ -1,177 +1,222 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package
-  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
-  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
-  xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10"
-  xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
-  xmlns:uap10="http://schemas.microsoft.com/appx/manifest/uap/windows10/10"
-  xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5"
-  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
-  IgnorableNamespaces="uap uap10 rescap">
+    xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+    xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+    xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10"
+    xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
+    xmlns:uap10="http://schemas.microsoft.com/appx/manifest/uap/windows10/10"
+    xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5"
+    xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+    IgnorableNamespaces="uap uap10 rescap">
 
-  <Identity
-    Name="marticliment.UniGetUI"
-    Publisher="CN=&quot;Open Source Developer, Martí Climent López&quot;, O=Open Source Developer, L=Barcelona, S=Barcelona, C=ES"
-    Version="3.3.1.20"
-    ProcessorArchitecture="x64" />
+    <Identity
+        Name="marticliment.UniGetUI"
+        Publisher="CN=&quot;Open Source Developer, Martí Climent López&quot;, O=Open Source Developer, L=Barcelona, S=Barcelona, C=ES"
+        Version="3.3.1.81"
+        ProcessorArchitecture="x64" />
 
-  <Properties>
-    <DisplayName>UniGetUI (MSIX Beta)</DisplayName>
-    <PublisherDisplayName>Martí Climent</PublisherDisplayName>
-    <Logo>Assets\Images\icon.png</Logo>
-    <Description>Universal package manager UI for Windows</Description>
-    <uap10:PackageIntegrity>
-      <uap10:Content Enforcement="on" />
-    </uap10:PackageIntegrity>
-  </Properties>
+    <Properties>
+        <DisplayName>UniGetUI (MSIX Beta)</DisplayName>
+        <PublisherDisplayName>Martí Climent</PublisherDisplayName>
+        <Logo>Assets\Images\icon.png</Logo>
+        <Description>Universal package manager UI for Windows</Description>
+        <uap10:PackageIntegrity>
+            <uap10:Content Enforcement="on" />
+        </uap10:PackageIntegrity>
+    </Properties>
 
-  <Resources>
-    <Resource Language="af"/>
-    <Resource Language="ar"/>
-    <Resource Language="bg"/>
-    <Resource Language="bn"/>
-    <Resource Language="ca"/>
-    <Resource Language="cs"/>
-    <Resource Language="da"/>
-    <Resource Language="de"/>
-    <Resource Language="el"/>
-    <Resource Language="et"/>
-    <Resource Language="en"/>
-    <Resource Language="es"/>
-    <Resource Language="fa"/>
-    <Resource Language="fi"/>
-    <Resource Language="fil"/>
-    <Resource Language="fr"/>
-    <Resource Language="gl"/>
-    <Resource Language="gu"/>
-    <Resource Language="hi"/>
-    <Resource Language="hr"/>
-    <Resource Language="he"/>
-    <Resource Language="hu"/>
-    <Resource Language="it"/>
-    <Resource Language="id"/>
-    <Resource Language="ja"/>
-    <Resource Language="ka"/>
-    <Resource Language="kn"/>
-    <Resource Language="ko"/>
-    <Resource Language="lt"/>
-    <Resource Language="mk"/>
-    <Resource Language="mr"/>
-    <Resource Language="nb"/>
-    <Resource Language="nn"/>
-    <Resource Language="nl"/>
-    <Resource Language="pl"/>
-    <Resource Language="pt-br"/>
-    <Resource Language="pt-pt"/>
-    <Resource Language="ro"/>
-    <Resource Language="ru"/>
-    <Resource Language="sk"/>
-    <Resource Language="sq"/>
-    <Resource Language="si"/>
-    <Resource Language="sl"/>
-    <Resource Language="sv"/>
-    <Resource Language="th"/>
-    <Resource Language="tr"/>
-    <Resource Language="uk"/>
-    <Resource Language="ur"/>
-    <Resource Language="vi"/>
-    <Resource Language="zh-Hans-cn"/>
-    <Resource Language="zh-Hant-tw"/>
-    <!-- Add other supported languages here -->
-  </Resources>
+    <Resources>
+        <Resource Language="af" />
+        <Resource Language="ar" />
+        <Resource Language="bg" />
+        <Resource Language="bn" />
+        <Resource Language="ca" />
+        <Resource Language="cs" />
+        <Resource Language="da" />
+        <Resource Language="de" />
+        <Resource Language="el" />
+        <Resource Language="et" />
+        <Resource Language="en" />
+        <Resource Language="es" />
+        <Resource Language="fa" />
+        <Resource Language="fi" />
+        <Resource Language="fil" />
+        <Resource Language="fr" />
+        <Resource Language="gl" />
+        <Resource Language="gu" />
+        <Resource Language="hi" />
+        <Resource Language="hr" />
+        <Resource Language="he" />
+        <Resource Language="hu" />
+        <Resource Language="it" />
+        <Resource Language="id" />
+        <Resource Language="ja" />
+        <Resource Language="ka" />
+        <Resource Language="kn" />
+        <Resource Language="ko" />
+        <Resource Language="lt" />
+        <Resource Language="mk" />
+        <Resource Language="mr" />
+        <Resource Language="nb" />
+        <Resource Language="nn" />
+        <Resource Language="nl" />
+        <Resource Language="pl" />
+        <Resource Language="pt-br" />
+        <Resource Language="pt-pt" />
+        <Resource Language="ro" />
+        <Resource Language="ru" />
+        <Resource Language="sk" />
+        <Resource Language="sq" />
+        <Resource Language="si" />
+        <Resource Language="sl" />
+        <Resource Language="sv" />
+        <Resource Language="th" />
+        <Resource Language="tr" />
+        <Resource Language="uk" />
+        <Resource Language="ur" />
+        <Resource Language="vi" />
+        <Resource Language="zh-Hans-cn" />
+        <Resource Language="zh-Hant-tw" />
+        <!-- Add other supported languages here -->
+    </Resources>
 
-  <Dependencies>
-    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.19041.0" MaxVersionTested="10.0.26100.0"/>
-  </Dependencies>
+    <Dependencies>
+        <TargetDeviceFamily
+            Name="Windows.Desktop"
+            MinVersion="10.0.19041.0"
+            MaxVersionTested="10.0.26100.0" />
+    </Dependencies>
 
-  <Applications>
-    <Application Id="UniGetUI"
-      Executable="UniGetUI.exe"
-      EntryPoint="Windows.FullTrustApplication">
-      <uap:VisualElements
-        DisplayName="UniGetUI (MSIX Beta)"
-        Description="Universal package manager UI for Windows"
-        BackgroundColor="transparent"
-        Square150x150Logo="Assets\MsixImages\Square150x150Logo.png"
-        Square44x44Logo="Assets\MsixImages\Square44x44Logo.png">
-        <uap:DefaultTile 
-          Wide310x150Logo="Assets\MsixImages\Wide310x150Logo.png"  
-          Square71x71Logo="Assets\MsixImages\SmallTile.png" 
-          Square310x310Logo="Assets\MsixImages\LargeTile.png"/>
-        <uap:SplashScreen 
-          Image="Assets\MsixImages\SplashScreen.png"  
-          BackgroundColor="transparent"/>
-      </uap:VisualElements>
-      <Extensions>
-        <!-- Protocol handler -->
-        <uap:Extension Category="windows.protocol">
-          <uap:Protocol Name="unigetui">
-            <uap:DisplayName>UniGetUI (MSIX Beta) Protocol</uap:DisplayName>
-          </uap:Protocol>
-        </uap:Extension>
-        <!-- File type handler -->
-        <uap:Extension Category="windows.fileTypeAssociation">
-          <uap:FileTypeAssociation Name="unigetui.package-bundle">
-            <uap:SupportedFileTypes>
-              <uap:FileType>.ubundle</uap:FileType>
-            </uap:SupportedFileTypes>
-            <uap:DisplayName>UniGetUI (MSIX Beta) Package Bundle</uap:DisplayName>
-            <uap:Logo>Assets\Images\icon.png</uap:Logo>
-          </uap:FileTypeAssociation>
-        </uap:Extension>
-        <!-- AutoStart -->
-        <desktop:Extension 
-          Category="windows.startupTask"
-          Executable="UniGetUI.exe"
-          EntryPoint="Windows.FullTrustApplication">
-          <desktop:StartupTask
-              TaskId="UniGetUIDaemon"
-              Enabled="true"
-              DisplayName="UniGetUI (MSIX Beta)" />
-        </desktop:Extension>
-        <!-- App execution alias -->
-        <uap5:Extension Category="windows.appExecutionAlias">
-          <uap5:AppExecutionAlias>
-            <uap5:ExecutionAlias Alias="unigetui.exe" />
-          </uap5:AppExecutionAlias>
-        </uap5:Extension>
+    <Applications>
+        <Application
+            Id="UniGetUI"
+            Executable="UniGetUI.exe"
+            uap10:RuntimeBehavior="win32App"
+            uap10:TrustLevel="mediumIL">
 
-        <!-- Notification handling -->
-        <desktop:Extension 
-          Category="windows.toastNotificationActivation">
-          <desktop:ToastNotificationActivation 
-            ToastActivatorCLSID="dd21d7f2-431f-40f0-b930-754031375a5a" />
-        </desktop:Extension>
+            <uap:VisualElements
+                DisplayName="UniGetUI (MSIX Beta)"
+                Description="Universal package manager UI for Windows"
+                BackgroundColor="transparent"
+                Square150x150Logo="Assets\MsixImages\Square150x150Logo.png"
+                Square44x44Logo="Assets\MsixImages\Square44x44Logo.png">
 
-        <!--Register COM CLSID-->    
-        <com:Extension Category="windows.comServer">
-          <com:ComServer>
-            <com:ExeServer 
-                Executable="UniGetUI.exe" 
-                DisplayName="UniGetUI" 
-                Arguments="----AppNotificationActivated:">
-              <com:Class Id="dd21d7f2-431f-40f0-b930-754031375a5a" />
-            </com:ExeServer>
-          </com:ComServer>
-        </com:Extension>
+                <uap:DefaultTile
+                    Wide310x150Logo="Assets\MsixImages\Wide310x150Logo.png"
+                    Square71x71Logo="Assets\MsixImages\SmallTile.png"
+                    Square310x310Logo="Assets\MsixImages\LargeTile.png" />
+
+                <uap:SplashScreen
+                    Image="Assets\MsixImages\SplashScreen.png"
+                    BackgroundColor="transparent" />
+            </uap:VisualElements>
+            <Extensions>
+                <!-- Protocol handler -->
+                <uap:Extension Category="windows.protocol">
+                    <uap:Protocol Name="unigetui">
+                        <uap:DisplayName>UniGetUI (MSIX Beta) Protocol</uap:DisplayName>
+                    </uap:Protocol>
+                </uap:Extension>
+
+                <!-- File type handler -->
+                <uap:Extension Category="windows.fileTypeAssociation">
+                    <uap:FileTypeAssociation Name="unigetui.package-bundle">
+                        <uap:SupportedFileTypes>
+                            <uap:FileType>.ubundle</uap:FileType>
+                        </uap:SupportedFileTypes>
+                        <uap:DisplayName>UniGetUI (MSIX Beta) Package Bundle</uap:DisplayName>
+                        <uap:Logo>Assets\Images\icon.png</uap:Logo>
+                    </uap:FileTypeAssociation>
+                </uap:Extension>
+
+                <!-- AutoStart -->
+                <desktop:Extension Category="windows.startupTask">
+                    <desktop:StartupTask
+                        TaskId="UniGetUIDaemon"
+                        Enabled="true"
+                        DisplayName="UniGetUI (MSIX Beta)" />
+                </desktop:Extension>
+
+                <!-- App execution alias -->
+                <uap5:Extension Category="windows.appExecutionAlias">
+                    <uap5:AppExecutionAlias>
+                        <uap5:ExecutionAlias Alias="unigetui.exe" />
+                    </uap5:AppExecutionAlias>
+                </uap5:Extension>
+
+                <!-- Notification handling -->
+                <desktop:Extension Category="windows.toastNotificationActivation">
+                    <desktop:ToastNotificationActivation ToastActivatorCLSID="dd21d7f2-431f-40f0-b930-754031375a5a" />
+                </desktop:Extension>
+
+                <!-- Register Notification COM CLASS ID -->
+                <com:Extension Category="windows.comServer">
+                    <com:ComServer>
+                        <com:ExeServer
+                            Executable="UniGetUI.exe"
+                            DisplayName="UniGetUI"
+                            Arguments="----AppNotificationActivated:">
+                            <com:Class Id="dd21d7f2-431f-40f0-b930-754031375a5a" />
+                        </com:ExeServer>
+                    </com:ComServer>
+                </com:Extension>
+
+                <!-- Helper executable -->
+                <desktop:Extension
+                    Category="windows.fullTrustProcess"
+                    Executable="Assets\Utilities\UniGetUI Elevator.exe"
+                    uap10:RuntimeBehavior="win32App"
+                    uap10:TrustLevel="mediumIL" />
+            </Extensions>
+        </Application>
+
+        <Application
+            Id="UniGetUIElevator"
+            Executable="Assets\Utilities\UniGetUI Elevator.exe"
+            uap10:RuntimeBehavior="win32App"
+            uap10:TrustLevel="mediumIL">
+
+            <uap:VisualElements
+                DisplayName="UniGetUI Elevator (MSIX Beta)"
+                Description="Universal package manager UI for Windows"
+                BackgroundColor="transparent"
+                AppListEntry="none"
+                Square150x150Logo="Assets\MsixImages\Square150x150Logo.png"
+                Square44x44Logo="Assets\MsixImages\Square44x44Logo.png" />
+
+            <Extensions>
+                <!-- App execution alias -->
+                <uap5:Extension Category="windows.appExecutionAlias">
+                    <uap5:AppExecutionAlias>
+                        <uap5:ExecutionAlias Alias="UniGetUI Elevator.exe" />
+                    </uap5:AppExecutionAlias>
+                </uap5:Extension>
+
+                <!-- Helper executable -->
+                <desktop:Extension
+                    Category="windows.fullTrustProcess"
+                    Executable="Assets\Utilities\UniGetUI Elevator.exe"
+                    uap10:RuntimeBehavior="win32App"
+                    uap10:TrustLevel="mediumIL" />
+            </Extensions>
+
+        </Application>
+
+    </Applications>
 
 
-      </Extensions>
-    </Application>
-  </Applications>
-
-  <Capabilities>
-    <Capability Name="internetClient" />
-    <Capability Name="internetClientServer" />
-    <Capability Name="privateNetworkClientServer" />
-    <rescap:Capability Name="runFullTrust" />
-    <rescap:Capability Name="allowElevation" />
-    <rescap:Capability Name="packageManagement" />
-    <rescap:Capability Name="broadFileSystemAccess" />
-    <rescap:Capability Name="confirmAppClose" />
-    <rescap:Capability Name="registryRead" />
-    <rescap:Capability Name="registryWrite" />
-    <rescap:Capability Name="unvirtualizedResources" />
-    <rescap:Capability Name="startupTask" />
-  </Capabilities>
+    <Capabilities>
+        <Capability Name="internetClient" />
+        <Capability Name="internetClientServer" />
+        <Capability Name="privateNetworkClientServer" />
+        <rescap:Capability Name="allowElevation" />
+        <rescap:Capability Name="packageManagement" />
+        <rescap:Capability Name="broadFileSystemAccess" />
+        <rescap:Capability Name="confirmAppClose" />
+        <rescap:Capability Name="registryRead" />
+        <rescap:Capability Name="registryWrite" />
+        <rescap:Capability Name="runFullTrust" />
+        <rescap:Capability Name="unvirtualizedResources" />
+        <rescap:Capability Name="startupTask" />
+    </Capabilities>
 </Package>
