@@ -1,3 +1,4 @@
+using ABI.Windows.UI.Text.Core;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
@@ -76,7 +77,7 @@ namespace UniGetUI
                 }
                 else
                 {
-                    CoreData.WasDaemon = CoreData.IsDaemon = args.Contains(CLIHandler.DAEMON);
+                    CheckIfIsDaemon(args);
                     _ = AsyncMain();
                 }
             }
@@ -84,6 +85,26 @@ namespace UniGetUI
             {
                 CrashHandler.ReportFatalException(e);
             }
+        }
+
+        private static void CheckIfIsDaemon(string[] args)
+        {
+            CoreData.IsDaemon = args.Contains(CLIHandler.DAEMON);
+            if (!CoreData.IsDaemon)
+            {
+                try
+                {
+                    var actArgs = AppInstance.GetCurrent().GetActivatedEventArgs();
+                    CoreData.IsDaemon = actArgs.Kind is ExtendedActivationKind.StartupTask;
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error("An error occurred while attempting to detect the activation event args:");
+                    Logger.Error(ex);
+                }
+            }
+
+            CoreData.WasDaemon = CoreData.IsDaemon;
         }
 
         /// <summary>

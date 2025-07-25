@@ -7,8 +7,8 @@ namespace UniGetUI.Core.Data
     {
         private static int? __code_page;
         public static int CODE_PAGE { get => __code_page ??= GetCodePage(); }
-        public const string VersionName = "3.3.0"; // Do not modify this line, use file scripts/apply_versions.py
-        public const int BuildNumber = 96; // Do not modify this line, use file scripts/apply_versions.py
+        public const string VersionName = "3.3.1-beta1-msix"; // Do not modify this line, use file scripts/apply_versions.py
+        public const int BuildNumber = 97; // Do not modify this line, use file scripts/apply_versions.py
 
         public const string UserAgentString = $"UniGetUI/{VersionName} (https://marticliment.com/unigetui/; contact@marticliment.com)";
 

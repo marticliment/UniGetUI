@@ -63,6 +63,11 @@ try:
         "#define MyAppVersion": f" \"{versionName}\"\n",
         "VersionInfoVersion=": f"{versionISS}\n",
     }, encoding="utf-8-sig")
+    
+    fileReplaceLinesWith("UniGetUI_MSIX.iss", {
+        "#define MyAppVersion": f" \"{versionName}\"\n",
+        "VersionInfoVersion=": f"{versionISS}\n",
+    }, encoding="utf-8-sig")
 
     IS_BETA = (input("Is this a beta release? [y/N]: ").lower().strip() == "y")
 
@@ -72,12 +77,22 @@ try:
     fileReplaceLinesWith("UniGetUI.iss", {
         "UninstallDisplayName=\"": f"{BETA_APP_NAME if IS_BETA else STABLE_APP_NAME}\"\n",
     }, encoding="utf-8-sig")
+    
+    fileReplaceLinesWith("UniGetUI_MSIX.iss", {
+        "UninstallDisplayName=\"": f"{BETA_APP_NAME if IS_BETA else STABLE_APP_NAME}\"\n",
+    }, encoding="utf-8-sig")
 
     fileReplaceLinesWith("src/UniGetUI/app.manifest", {
         "	  version=": f" \"{versionISS}\"\n",
     }, encoding="utf-8-sig")
+    
+    fileReplaceLinesWith("InstallerExtras/AppxManifest.xml", {
+        "    Version=": f"\"{versionISS}\"\n",
+    }, encoding="utf-8-sig")
 
     print("done!")
+    
+    os.system("python scripts\\IncreaseMsixPatchNum.py --no-increment")
 
 except FileNotFoundError as e:
     print(f"Error: {e.strerror}: {e.filename}")
