@@ -174,30 +174,25 @@ namespace UniGetUI.Interface.SoftwarePages
             AppBarButton OpenBundle = new();
             AppBarButton NewBundle = new();
 
-            BetterMenuItem InstallSelected = new();
             BetterMenuItem InstallAsAdmin = new();
             BetterMenuItem InstallSkipHash = new();
             BetterMenuItem InstallInteractive = new();
             BetterMenuItem DownloadInstallers = new();
 
-            AppBarButton InstallMenu = new()
+            MainToolbarButtonDropdown.Flyout = new BetterMenu()
             {
-                Flyout = new BetterMenu()
+                Items =
                 {
-                    Items =
-                    {
-                        InstallSelected,
-                        new MenuFlyoutSeparator(),
-                        InstallAsAdmin,
-                        InstallSkipHash,
-                        InstallInteractive,
-                        new MenuFlyoutSeparator(),
-                        DownloadInstallers,
-                    },
-                    Placement = FlyoutPlacementMode.Bottom
+                    InstallAsAdmin,
+                    InstallSkipHash,
+                    InstallInteractive,
+                    new MenuFlyoutSeparator(),
+                    DownloadInstallers,
                 },
-                FontWeight = new FontWeight(600),
+                Placement = FlyoutPlacementMode.Bottom
             };
+            MainToolbarButtonIcon.Icon = IconType.Download;
+            MainToolbarButtonText.Text = CoreTools.Translate("Install selected packages");
 
             AppBarButton RemoveSelected = new();
             AppBarButton SaveBundle = new();
@@ -206,11 +201,10 @@ namespace UniGetUI.Interface.SoftwarePages
             AppBarButton SharePackage = new();
             AppBarButton HelpButton = new();
 
+            ToolBar.PrimaryCommands.Add(new AppBarSeparator());
             ToolBar.PrimaryCommands.Add(NewBundle);
             ToolBar.PrimaryCommands.Add(OpenBundle);
             ToolBar.PrimaryCommands.Add(SaveBundle);
-            ToolBar.PrimaryCommands.Add(new AppBarSeparator());
-            ToolBar.PrimaryCommands.Add(InstallMenu);
             ToolBar.PrimaryCommands.Add(new AppBarSeparator());
             ToolBar.PrimaryCommands.Add(AddPackagesToBundle);
             ToolBar.PrimaryCommands.Add(RemoveSelected);
@@ -224,8 +218,6 @@ namespace UniGetUI.Interface.SoftwarePages
             { // Entries with a trailing space are collapsed
               // Their texts will be used as the tooltip
                 { NewBundle,           CoreTools.Translate("New") },
-                { InstallMenu,         CoreTools.Translate("Install and more") + "..." },
-                { InstallSelected,     CoreTools.Translate("Install selected packages") },
                 { InstallAsAdmin,      CoreTools.Translate("Install as administrator") },
                 { InstallInteractive,  CoreTools.Translate("Interactive installation") },
                 { InstallSkipHash,     CoreTools.Translate("Skip integrity checks") },
@@ -242,9 +234,8 @@ namespace UniGetUI.Interface.SoftwarePages
             Dictionary<DependencyObject, IconType> Icons = new()
             {
                 { NewBundle,           IconType.AddTo },
-                { InstallMenu,         IconType.Download },
-                { InstallSelected,     IconType.Download },
-                { InstallAsAdmin,      IconType.UAC }, { InstallInteractive,  IconType.Interactive },
+                { InstallAsAdmin,      IconType.UAC },
+                { InstallInteractive,  IconType.Interactive },
                 { InstallSkipHash,     IconType.Checksum },
                 { DownloadInstallers,  IconType.Download },
                 { OpenBundle,          IconType.OpenFolder },
@@ -292,7 +283,7 @@ namespace UniGetUI.Interface.SoftwarePages
                     return FilteredPackages.GetCheckedPackages().Where(p => p.Tag is not PackageTag.AlreadyInstalled).ToList();
             }
 
-            InstallSelected.Click += async (_, _) => await ImportAndInstallPackage(GetCheckedNonInstalledPackages());
+            MainToolbarButton.Click += async (_, _) => await ImportAndInstallPackage(GetCheckedNonInstalledPackages());
             InstallSkipHash.Click += async (_, _) => await ImportAndInstallPackage(GetCheckedNonInstalledPackages(), skiphash: true);
             InstallInteractive.Click += async (_, _) => await ImportAndInstallPackage(GetCheckedNonInstalledPackages(), interactive: true);
             InstallAsAdmin.Click += async (_, _) => await ImportAndInstallPackage(GetCheckedNonInstalledPackages(), elevated: true);

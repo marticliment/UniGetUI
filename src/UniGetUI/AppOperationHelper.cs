@@ -138,6 +138,8 @@ public partial class MainApp
         {
             try
             {
+                if (!packages.Any()) return;
+
                 var hWnd = MainApp.Instance.MainWindow.GetWindowHandle();
                 var a = new ExternalLibraries.Pickers.FolderPicker(hWnd);
                 var outputPath = await Task.Run(a.Show);

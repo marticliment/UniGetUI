@@ -143,30 +143,24 @@ namespace UniGetUI.Interface.SoftwarePages
 
         public override void GenerateToolBar()
         {
-            BetterMenuItem InstallSelected = new();
             BetterMenuItem InstallAsAdmin = new();
             BetterMenuItem InstallSkipHash = new();
             BetterMenuItem InstallInteractive = new();
             BetterMenuItem DownloadInstallers = new();
 
-            AppBarButton InstallMenu = new()
+            MainToolbarButtonDropdown.Flyout = new BetterMenu()
             {
-                Flyout = new BetterMenu()
-                {
-                    Items =
-                    {
-                        InstallSelected,
-                        new MenuFlyoutSeparator(),
-                        InstallAsAdmin,
-                        InstallSkipHash,
-                        InstallInteractive,
-                        new MenuFlyoutSeparator(),
-                        DownloadInstallers,
+                Items = {
+                    InstallAsAdmin,
+                    InstallSkipHash,
+                    InstallInteractive,
+                    new MenuFlyoutSeparator(),
+                    DownloadInstallers,
                     },
-                    Placement = FlyoutPlacementMode.Bottom
-                },
-                FontWeight = new FontWeight(600),
+                Placement = FlyoutPlacementMode.Bottom
             };
+            MainToolbarButtonIcon.Icon = IconType.Download;
+            MainToolbarButtonText.Text = CoreTools.Translate("Install selection");
 
             AppBarButton InstallationSettings = new();
 
@@ -177,7 +171,6 @@ namespace UniGetUI.Interface.SoftwarePages
 
             AppBarButton HelpButton = new();
 
-            ToolBar.PrimaryCommands.Add(InstallMenu);
             ToolBar.PrimaryCommands.Add(new AppBarSeparator());
             ToolBar.PrimaryCommands.Add(InstallationSettings);
             ToolBar.PrimaryCommands.Add(new AppBarSeparator());
@@ -191,8 +184,6 @@ namespace UniGetUI.Interface.SoftwarePages
             Dictionary<DependencyObject, string> Labels = new()
             {   // Entries with a trailing space are collapsed
                 // Their texts will be used as the tooltip
-                { InstallMenu,            CoreTools.Translate("Install and more") + "..." },
-                { InstallSelected,        CoreTools.Translate("Install selected packages") },
                 { InstallAsAdmin,         CoreTools.Translate("Install as administrator") },
                 { InstallSkipHash,        CoreTools.Translate("Skip integrity checks") },
                 { InstallInteractive,     CoreTools.Translate("Interactive installation") },
@@ -206,8 +197,6 @@ namespace UniGetUI.Interface.SoftwarePages
 
             Dictionary<DependencyObject, IconType> Icons = new()
             {
-                { InstallMenu,          IconType.Download },
-                { InstallSelected,      IconType.Download },
                 { InstallAsAdmin,       IconType.UAC },
                 { InstallSkipHash,      IconType.Checksum },
                 { InstallationSettings, IconType.Options },
@@ -226,7 +215,7 @@ namespace UniGetUI.Interface.SoftwarePages
             HelpButton.Click += (_, _) => MainApp.Instance.MainWindow.NavigationPage.ShowHelp();
             InstallationSettings.Click += (_, _) => _ = ShowInstallationOptionsForPackage(SelectedItem);
 
-            InstallSelected.Click += (_, _) => MainApp.Operations.Install(FilteredPackages.GetCheckedPackages(), TEL_InstallReferral.DIRECT_SEARCH);
+            MainToolbarButton.Click += (_, _) => MainApp.Operations.Install(FilteredPackages.GetCheckedPackages(), TEL_InstallReferral.DIRECT_SEARCH);
             InstallAsAdmin.Click += (_, _) => MainApp.Operations.Install(FilteredPackages.GetCheckedPackages(), TEL_InstallReferral.DIRECT_SEARCH, elevated: true);
             InstallSkipHash.Click += (_, _) => MainApp.Operations.Install(FilteredPackages.GetCheckedPackages(), TEL_InstallReferral.DIRECT_SEARCH, no_integrity: true);
             InstallInteractive.Click += (_, _) => MainApp.Operations.Install(FilteredPackages.GetCheckedPackages(), TEL_InstallReferral.DIRECT_SEARCH, interactive: true);

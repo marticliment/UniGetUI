@@ -13,7 +13,6 @@
     xmlns:operations="using:UniGetUI.PackageOperations"
     xmlns:pages="using:UniGetUI.Interface"
     xmlns:widgets="using:UniGetUI.Interface.Widgets"
-    xmlns:winex="using:WinUIEx"
     MinWidth="200"
     MinHeight="200"
     mc:Ignorable="d">
@@ -71,7 +70,7 @@
                     Click="RetryFailedOps_Click"
                     IconName="Reload"
                     Text="Retry failed operations" />
-                <MenuFlyoutSeparator/>
+                <MenuFlyoutSeparator />
                 <widgets:BetterMenuItem
                     Name="ClearSuccessful"
                     Click="ClearSuccessfulOps_Click"
@@ -82,7 +81,7 @@
                     Click="ClearAllFinished_OnClick"
                     IconName="ClipboardList"
                     Text="Clear finished operations" />
-                <MenuFlyoutSeparator/>
+                <MenuFlyoutSeparator />
                 <widgets:BetterMenuItem
                     Name="CancellAllOps"
                     Click="CancellAllOps_Click"
@@ -258,6 +257,8 @@
         <NavigationView.Resources>
             <SolidColorBrush x:Key="NavigationViewContentBackground" Color="Transparent" />
             <Thickness x:Key="NavigationViewContentGridBorderThickness">0,0,0,0</Thickness>
+            <Thickness x:Key="NavigationViewMinimalContentGridBorderThickness">0,0,0,0</Thickness>
+            <Thickness x:Key="TopNavigationViewContentGridBorderThickness">0,0,0,0</Thickness>
         </NavigationView.Resources>
 
         <NavigationView.MenuItems>
@@ -412,7 +413,10 @@
                 SizeChanged="OperationScrollView_SizeChanged">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <StackPanel Orientation="Vertical" Spacing="8" Margin="-16,0,-12,0" />
+                        <StackPanel
+                            Margin="-16,0,-12,0"
+                            Orientation="Vertical"
+                            Spacing="8" />
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ListView.Resources>
