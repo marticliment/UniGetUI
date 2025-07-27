@@ -159,6 +159,7 @@ namespace UniGetUI
                         Button button = new() { Content = CoreTools.Translate("WingetUI Log"), };
                         button.Click += (sender, args) => MainWindow.NavigationPage.UniGetUILogs_Click(sender, args);
                         MainWindow.ErrorBanner.ActionButton = button;
+                        DialogHelper.HideAllLoadingDialogs();
                         e.Handled = true;
                     }
                 };
@@ -201,6 +202,7 @@ namespace UniGetUI
                                 button.Click += (s, a) => MainWindow.NavigationPage.UniGetUILogs_Click(s, a);
                             }
                             MainWindow.ErrorBanner.ActionButton = button;
+                            DialogHelper.HideAllLoadingDialogs();
                         }
                         catch (Exception ex)
                         {
