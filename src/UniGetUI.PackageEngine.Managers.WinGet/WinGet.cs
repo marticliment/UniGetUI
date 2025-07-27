@@ -110,7 +110,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         protected override IReadOnlyList<Package> GetAvailableUpdates_UnSafe()
         {
-            return WinGetHelper.Instance.GetAvailableUpdates_UnSafe();
+            return WinGetHelper.Instance.GetAvailableUpdates_UnSafe().Where(p => p.Id != "Chocolatey.Chocolatey").ToArray();
         }
 
         protected override IReadOnlyList<Package> GetInstalledPackages_UnSafe()
