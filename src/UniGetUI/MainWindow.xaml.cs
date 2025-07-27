@@ -23,8 +23,7 @@ using UniGetUI.Core.Classes;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.Pages.DialogPages;
-using WinUIEx;
-using TitleBar = WinUIEx.TitleBar;
+// using TitleBar = WinUIEx.TitleBar;
 using WindowExtensions = H.NotifyIcon.WindowExtensions;
 using System.Diagnostics;
 using Windows.UI.Text.Core;
@@ -57,7 +56,8 @@ namespace UniGetUI.Interface
             InitializeComponent();
 
             DismissableNotification.CloseButtonContent = CoreTools.Translate("Close");
-            WindowManager.Get(this).IsMinimizable = false;
+
+            SetMinimizable(false);
             ExtendsContentIntoTitleBar = true;
             AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
             SetTitleBar(MainContentGrid);
@@ -114,6 +114,14 @@ namespace UniGetUI.Interface
             else
             {
                 Activate();
+            }
+        }
+
+        private void SetMinimizable(bool enabled)
+        {
+            if (AppWindow.Presenter is OverlappedPresenter presenter)
+            {
+                presenter.IsMinimizable = enabled;
             }
         }
 
@@ -644,8 +652,7 @@ namespace UniGetUI.Interface
                     MainContentFrame.Content = NavigationPage;
             };
 
-            WindowManager.Get(this).IsMinimizable = true;
-            WindowManager.Get(this).IsMaximizable = true;
+            SetMinimizable(true);
         }
 
         public void ApplyTheme()
@@ -884,7 +891,7 @@ namespace UniGetUI.Interface
 
         private bool? subtitleCollapsed;
         private bool? titleCollapsed;
-        private const int DYNAMIC_SEARCHBOX_LIMIT = 750;
+        private const int DYNAMIC_SEARCHBOX_LIMIT = 800;
         private const int HIDE_TITLE_LIMIT = 870;
         private const int MIN_SEARCHBOX_W = 50;
         private const int MAX_SEARCHBOX_W = 400;
