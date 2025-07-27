@@ -100,7 +100,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 Logger.Warn("Proxy is enabled, but WinGet does not support proxy authentication, so the proxy setting will be ignored");
                 return "";
             }
-            return $"--proxy {proxyUri.ToString()[..^1]}";
+            return $"--proxy {proxyUri.ToString().TrimEnd('/')}";
         }
 
         protected override IReadOnlyList<Package> FindPackages_UnSafe(string query)
