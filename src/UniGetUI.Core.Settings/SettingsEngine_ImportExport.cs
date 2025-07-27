@@ -20,7 +20,7 @@ public partial class Settings
             File.Copy(path, newPath);
             path = newPath;
         }
-        ImportFromString_JSON(path);
+        ImportFromString_JSON(File.ReadAllText(path));
     }
 
     public static string ExportToString_JSON()
