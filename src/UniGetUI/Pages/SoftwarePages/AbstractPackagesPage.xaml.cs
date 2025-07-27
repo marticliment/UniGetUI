@@ -1160,6 +1160,7 @@ namespace UniGetUI.Interface
                 try
                 {
                     finalWidth = Settings.GetDictionaryItem<string, int>(Settings.K.SidepanelWidths, PAGE_NAME);
+                    if (finalWidth == 0) finalWidth = 250;
                 }
                 catch
                 {
