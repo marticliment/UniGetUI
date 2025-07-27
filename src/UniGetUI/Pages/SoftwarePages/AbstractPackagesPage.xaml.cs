@@ -1033,19 +1033,21 @@ namespace UniGetUI.Interface
 
         private void SidepanelWidth_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if ((int)e.NewSize.Width == (int)(e.NewSize.Width / 10) || (int)e.NewSize.Width == 25)
+            int newWidth = (int)e.NewSize.Width;
+            if (newWidth == (int)(e.NewSize.Width / 10) || newWidth == 25)
             {
                 return;
             }
 
-            if ((int)e.NewSize.Width < 100)
+            if (newWidth < 100)
             {
                 HideFilteringPane();
                 Settings.SetDictionaryItem(Settings.K.SidepanelWidths, PAGE_NAME, 250);
             }
             else
             {
-                Settings.SetDictionaryItem(Settings.K.SidepanelWidths, PAGE_NAME, (int)e.NewSize.Width);
+                ToggleFiltersButtonWidth.MinWidth = newWidth;
+                Settings.SetDictionaryItem(Settings.K.SidepanelWidths, PAGE_NAME, newWidth);
             }
         }
 
@@ -1150,6 +1152,7 @@ namespace UniGetUI.Interface
         {
             FilteringPanel.IsPaneOpen = false;
             PackagesListGrid.Margin = new Thickness(0, 0, 0, 0);
+            ToggleFiltersButtonWidth.MinWidth = 4;
         }
 
         private void ShowFilteringPane()
@@ -1167,11 +1170,13 @@ namespace UniGetUI.Interface
                     Settings.SetDictionaryItem(Settings.K.SidepanelWidths, PAGE_NAME, 250);
                 }
                 FilteringPanel.OpenPaneLength = finalWidth;
+                ToggleFiltersButtonWidth.MinWidth = finalWidth;
                 PackagesListGrid.Margin = new Thickness(12, 0, 0, 0);
             }
             else
             {
                 FilteringPanel.OpenPaneLength = 250;
+                ToggleFiltersButtonWidth.MinWidth = 4;
 
                 if (this.ActualTheme is ElementTheme.Dark)
                 {
@@ -1364,6 +1369,7 @@ namespace UniGetUI.Interface
         private void FilteringPanel_PaneClosing(SplitView sender, SplitViewPaneClosingEventArgs args)
         {
             ToggleFiltersButton.IsChecked = false;
+            HideFilteringPane();
         }
         private void ViewModeSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

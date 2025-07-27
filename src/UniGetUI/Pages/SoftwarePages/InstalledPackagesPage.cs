@@ -77,7 +77,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             MenuInstallationOptions = new()
             {
-                Text = CoreTools.AutoTranslated("Installation options"),
+                Text = CoreTools.AutoTranslated("Uninstall options"),
                 IconName = IconType.Options,
                 KeyboardAcceleratorTextOverride = "Alt+Enter"
             };

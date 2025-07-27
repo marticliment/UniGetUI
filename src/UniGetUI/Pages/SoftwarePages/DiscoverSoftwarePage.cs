@@ -78,7 +78,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             BetterMenuItem menuInstallSettings = new()
             {
-                Text = CoreTools.AutoTranslated("Installation options"),
+                Text = CoreTools.AutoTranslated("Install options"),
                 IconName = IconType.Options,
                 KeyboardAcceleratorTextOverride = "Alt+Enter"
             };
