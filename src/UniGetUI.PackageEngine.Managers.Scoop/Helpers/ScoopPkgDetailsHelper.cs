@@ -34,7 +34,8 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             }
 
             string packageId;
-            if (details.Package.Source.Name.Contains("..."))
+            // If source is ellpised or source is a local path, omit source argument
+            if (details.Package.Source.Name.Contains("...") || details.Package.Source.Name.Contains(":\\"))
                 packageId = $"{details.Package.Id}";
             else
                 packageId = $"{details.Package.Source.Name}/{details.Package.Id}";
