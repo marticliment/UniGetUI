@@ -7,10 +7,8 @@
     xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
     xmlns:animations="using:CommunityToolkit.WinUI.Animations"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="using:UniGetUI.Interface"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:pkgClasses="using:UniGetUI.PackageEngine.PackageClasses"
-    xmlns:ui="using:CommunityToolkit.WinUI"
     xmlns:widgets="using:UniGetUI.Interface.Widgets"
     Name="ABSTRACT_PAGE"
     NavigationCacheMode="Required"
@@ -576,9 +574,15 @@
                         x:Name="ViewModeSelector"
                         SelectionChanged="ViewModeSelector_SelectionChanged"
                         SelectionMode="Single">
-                        <Toolkit:SegmentedItem x:Name="Selector_List" Icon="{ui:FontIcon Glyph=&#xE8FD;}" />
-                        <Toolkit:SegmentedItem x:Name="Selector_Grid" Icon="{ui:FontIcon Glyph=&#xF168;}" />
-                        <Toolkit:SegmentedItem x:Name="Selector_Icons" Icon="{ui:FontIcon Glyph=&#xF0E2;}" />
+                        <Toolkit:SegmentedItem x:Name="Selector_List">
+                            <Toolkit:SegmentedItem.Icon><FontIcon Glyph="&#xE8FD;"/></Toolkit:SegmentedItem.Icon>
+                        </Toolkit:SegmentedItem>
+                        <Toolkit:SegmentedItem x:Name="Selector_Grid">
+                            <Toolkit:SegmentedItem.Icon><FontIcon Glyph="&#xF168;"/></Toolkit:SegmentedItem.Icon>
+                        </Toolkit:SegmentedItem>
+                        <Toolkit:SegmentedItem x:Name="Selector_Icons">
+                            <Toolkit:SegmentedItem.Icon><FontIcon Glyph="&#xF0E2;"/></Toolkit:SegmentedItem.Icon>
+                        </Toolkit:SegmentedItem>
                     </Toolkit:Segmented>
                 </StackPanel>
                 <Button
