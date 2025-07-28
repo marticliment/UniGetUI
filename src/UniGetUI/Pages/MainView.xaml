@@ -99,7 +99,7 @@
                     ToolTipService.ToolTip="{x:Bind Tooltip}">
                     <widgets:LocalIcon Icon="{x:Bind Icon}" />
                     <Button.Flyout>
-                        <Flyout>
+                        <widgets:BetterFlyout>
                             <StackPanel Orientation="Horizontal" Spacing="12">
                                 <widgets:LocalIcon Icon="{x:Bind Icon}" />
                                 <StackPanel Orientation="Vertical" Spacing="6">
@@ -115,7 +115,7 @@
                                         Visibility="{x:Bind SecondaryBannerVisible}" />
                                 </StackPanel>
                             </StackPanel>
-                        </Flyout>
+                        </widgets:BetterFlyout>
                     </Button.Flyout>
                 </Button>
             </DataTemplate>

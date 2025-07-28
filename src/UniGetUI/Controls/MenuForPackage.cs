@@ -1,6 +1,7 @@
 
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 
@@ -87,4 +88,15 @@ namespace UniGetUI.Interface.Widgets
             Header = text;
         }
     }
+
+    public partial class BetterFlyout: Flyout
+    {
+        public BetterFlyout() : base()
+        {
+            ShouldConstrainToRootBounds = false;
+            SystemBackdrop = new DesktopAcrylicBackdrop();
+            FlyoutPresenterStyle = (Style)Application.Current.Resources["BetterFlyoutPresenterStyle"];
+        }
+    }
+
 }

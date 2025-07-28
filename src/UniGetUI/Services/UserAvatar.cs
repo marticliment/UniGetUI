@@ -1,3 +1,4 @@
+using Windows.UI;
 using Microsoft.UI;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
@@ -8,6 +9,7 @@ using Microsoft.UI.Xaml.Media.Imaging;
 using Octokit;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
+using UniGetUI.Interface.Widgets;
 using UniGetUI.Pages.DialogPages;
 using UniGetUI.Pages.SettingsPages.GeneralPages;
 
@@ -146,7 +148,7 @@ namespace UniGetUI.Services
             stackPanel.Children.Add(hyperlinkButton);
             stackPanel.Children.Add(loginButton);
 
-            var flyout = new Flyout
+            var flyout = new BetterFlyout()
             {
                 LightDismissOverlayMode = LightDismissOverlayMode.Off,
                 Placement = FlyoutPlacementMode.Bottom,
@@ -258,7 +260,7 @@ namespace UniGetUI.Services
             stackPanel.Children.Add(hyperlinkButton2);
             stackPanel.Children.Add(loginButton);
 
-            var flyout = new Flyout
+            var flyout = new BetterFlyout()
             {
                 LightDismissOverlayMode = LightDismissOverlayMode.Off,
                 Placement = FlyoutPlacementMode.Bottom,
