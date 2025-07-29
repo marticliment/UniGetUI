@@ -327,7 +327,7 @@ namespace UniGetUI
                 // Load interface
                 Logger.Info("LoadComponentsAsync finished executing. All managers loaded. Proceeding to interface.");
                 MainWindow.SwitchToInterface();
-                
+
                 RaiseExceptionAsFatal = false;
 
                 // Process any remaining command-line arguments

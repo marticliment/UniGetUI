@@ -55,6 +55,7 @@ UsePreviousAppDir=yes
 ChangesEnvironment=yes
 RestartIfNeededByRun=no
 Uninstallable=WizardIsTaskSelected('regularinstall')
+AppModifyPath="{app}\UniGetUI.Installer.exe" /silent /NoDeployInstaller
 
 
 [Languages]
@@ -85,18 +86,6 @@ Name: "Ukrainian"; MessagesFile: "compiler:Languages\Ukrainian.isl"
 
 ; Include installer's messages
 #include "InstallerExtras\CustomMessages.iss"
-
-[InstallDelete]
-Type: filesandordirs; Name: "{app}\*.dll";
-Type: filesandordirs; Name: "{app}\*.exe";
-Type: filesandordirs; Name: "{app}\*.winmd";
-Type: filesandordirs; Name: "{app}\Assets\*";
-
-[UninstallDelete]
-Type: filesandordirs; Name: "{app}\*.dll";
-Type: filesandordirs; Name: "{app}\*.exe";
-Type: filesandordirs; Name: "{app}\*.winmd";
-Type: filesandordirs; Name: "{app}\Assets\*";
 
 [Code]
 procedure InitializeWizard;
@@ -228,8 +217,8 @@ Root: HKA; Subkey: "Software\Classes\UniGetUI.PackageBundle\shell\open\command";
 Source: "unigetui_bin\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion; BeforeInstall: TripleKill('WingetUI.exe', 'UniGetUI.exe', 'choco.exe');
 Source: "unigetui_bin\*"; DestDir: "{app}"; Flags: createallsubdirs ignoreversion recursesubdirs;
 Source: "src\UniGetUI.PackageEngine.Managers.Chocolatey\choco-cli\*"; DestDir: "{userpf}\..\UniGetUI\Chocolatey"; Flags: createallsubdirs ignoreversion recursesubdirs uninsneveruninstall; Tasks: regularinstall\chocoinstall; Check: not CmdLineParamExists('/NoChocolatey');
-; Source: "InstallerExtras\EnsureWinGet.ps1"; DestDir: "{tmp}"; Flags: deleteafterinstall
 Source: "InstallerExtras\ForceUniGetUIPortable"; DestDir: "{app}"; Tasks: portableinstall
+Source: "{srcexe}"; DestDir: "{app}"; DestName: "UniGetUI.Installer.exe"; Flags: external ignoreversion; Tasks: regularinstall; Check: not CmdLineParamExists('/NoDeployInstaller');
 
 
 [Icons]
