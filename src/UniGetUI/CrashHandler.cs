@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Runtime.InteropServices.JavaScript;
 using System.Text;
 using Microsoft.UI.Xaml.Markup;
 using UniGetUI.Core.Data;
@@ -131,6 +132,36 @@ public static class CrashHandler
         } catch
         {
             // ignore
+        }
+
+        Error_String += "\n\n -------------------------------------- \n\n";
+
+        try
+        {
+            var integrityReport = IntegrityTester.CheckIntegrityAsync().GetAwaiter().GetResult();
+            if (integrityReport.Passed)
+            {
+                Error_String += "No corrupted files were found";
+            }
+            else
+            {
+                if (integrityReport.MissingFiles.Any())
+                {
+                    Error_String += "Missing files: \n - " + string.Join("\n - ", integrityReport.MissingFiles) + "\n\n";
+                }
+                if (integrityReport.CorruptedFiles.Any())
+                {
+                    var list = integrityReport.CorruptedFiles.Select((k) =>
+                        $" - {k.Key}: (found {k.Value.Got} instead of {k.Value.Expected})");
+
+                    Error_String += "Corrupted files: \n - " + list + "\n\n";
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Error_String += "Failed to compute integrity report: ";
+            Error_String +=  ex.GetType() + ": " + ex.Message;
         }
 
         Console.WriteLine(Error_String);

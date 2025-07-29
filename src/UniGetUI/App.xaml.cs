@@ -314,7 +314,7 @@ namespace UniGetUI
                     Task.Run(RegisterNotificationService),
                     Task.Run(LoadGSudo),
                     Task.Run(InitializeBackgroundAPI),
-                    Task.Run(PEInterface.Initialize)
+                    Task.Run(PEInterface.Initialize),
                 ];
 
                 // Load essential components
@@ -336,7 +336,10 @@ namespace UniGetUI
                     MainWindow.DispatcherQueue.TryEnqueue(MainWindow.ProcessCommandLineParameters);
                 };
 
-                await CheckForMissingDependencies();
+                _ = CheckForMissingDependencies();
+
+                var i = await IntegrityTester.CheckIntegrityAsync();
+                if (!i.Passed) _ = DialogHelper.ShowIntegrityResult(i);
             }
             catch (Exception e)
             {

@@ -199,4 +199,35 @@ public static partial class DialogHelper
             return ContentDialogResult.None;
         }
     }
+
+    public static async Task ShowIntegrityResult(IntegrityTester.IntegrityResult integrityResult)
+    {
+        var dialog = DialogFactory.Create();
+
+        var Error_String = "";
+        if (integrityResult.MissingFiles.Any())
+        {
+            Error_String += "Missing files: \n - " + string.Join("\n - ", integrityResult.MissingFiles) + "\n\n";
+        }
+        if (integrityResult.CorruptedFiles.Any())
+        {
+            var list = integrityResult.CorruptedFiles.Select((k) =>
+                $" - {k.Key}: (found {k.Value.Got} instead of {k.Value.Expected})");
+
+            Error_String += "Corrupted files: \n - " + string.Join("\n", list) + "\n\n";
+        }
+
+        dialog.Title = "Integrity Check Result";
+        dialog.Content = new ScrollViewer()
+        {
+            Content = new TextBlock
+            {
+                Text = $"UniGetUI may be corrupted: \n\n{Error_String}",
+                TextWrapping = TextWrapping.Wrap,
+                FontFamily = new FontFamily("Consolas"),
+            }
+        };
+        dialog.PrimaryButtonText = "OK";
+        await ShowDialogAsync(dialog);
+    }
 }

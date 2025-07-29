@@ -18,12 +18,10 @@
     <PublishTrimmed>true</PublishTrimmed>
     <TrimMode>partial</TrimMode>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
-</PropertyGroup>    
+</PropertyGroup>
     
-    
-    
-    <PropertyGroup>
-      <GeneratedBuildInfoFile>$(IntermediateOutputPath)\Generated Files\Secrets.Generated.cs</GeneratedBuildInfoFile>
+  <PropertyGroup>
+    <GeneratedBuildInfoFile>$(IntermediateOutputPath)\Generated Files\Secrets.Generated.cs</GeneratedBuildInfoFile>
   </PropertyGroup>
     
     <Target Name="GenerateBuildInfo" BeforeTargets="BeforeBuild">
@@ -33,9 +31,6 @@
                      Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder);$(BaseIntermediateOutputPath)**;$(BaseOutputPath)**;@(Compile)" />
         </ItemGroup>
     </Target>
-
-
-
 
     <ItemGroup>
       <Content Include="icon.ico" />
