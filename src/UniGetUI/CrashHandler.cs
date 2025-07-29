@@ -84,6 +84,19 @@ public static class CrashHandler
             }
         }
 
+        string iReport;
+        try
+        {
+            var integrityReport = IntegrityTester.CheckIntegrity(false);
+            iReport = IntegrityTester.GetReadableReport(integrityReport);
+        }
+        catch (Exception ex)
+        {
+            iReport = "Failed to compute integrity report: ";
+            iReport +=  ex.GetType() + ": " + ex.Message;
+        }
+
+
         string Error_String = $$"""
             Environment details:
                     Windows version: {{Environment.OSVersion.VersionString}}
@@ -93,7 +106,10 @@ public static class CrashHandler
                     Executable: {{Environment.ProcessPath}}
                     Command-line arguments: {{Environment.CommandLine}}
 
-            Exception details:
+            Integrity report:
+                {{iReport.Replace("\n", "\n    ")}}
+            
+            Exception type: {{e.GetType()?.Name}} ({{e.GetType()}})
                 Crash HResult: 0x{{(uint)e.HResult:X}} ({{(uint)e.HResult}}, {{e.HResult}})
                 Crash Message: {{e.Message}}
 
@@ -134,37 +150,7 @@ public static class CrashHandler
             // ignore
         }
 
-        Error_String += "\n\n -------------------------------------- \n\n";
-
-        try
-        {
-            var integrityReport = IntegrityTester.CheckIntegrityAsync().GetAwaiter().GetResult();
-            if (integrityReport.Passed)
-            {
-                Error_String += "No corrupted files were found";
-            }
-            else
-            {
-                if (integrityReport.MissingFiles.Any())
-                {
-                    Error_String += "Missing files: \n - " + string.Join("\n - ", integrityReport.MissingFiles) + "\n\n";
-                }
-                if (integrityReport.CorruptedFiles.Any())
-                {
-                    var list = integrityReport.CorruptedFiles.Select((k) =>
-                        $" - {k.Key}: (found {k.Value.Got} instead of {k.Value.Expected})");
-
-                    Error_String += "Corrupted files: \n - " + string.Join("\n", list) + "\n\n";
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            Error_String += "Failed to compute integrity report: ";
-            Error_String +=  ex.GetType() + ": " + ex.Message;
-        }
-
-        Console.WriteLine(Error_String);
+       Console.WriteLine(Error_String);
 
         string ErrorUrl = $"https://www.marticliment.com/error-report/" +
               $"?appName=UniGetUI" +

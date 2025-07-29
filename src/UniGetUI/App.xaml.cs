@@ -327,6 +327,9 @@ namespace UniGetUI
                 // Load interface
                 Logger.Info("LoadComponentsAsync finished executing. All managers loaded. Proceeding to interface.");
                 MainWindow.SwitchToInterface();
+
+                throw new FileNotFoundException();
+
                 RaiseExceptionAsFatal = false;
 
                 // Process any remaining command-line arguments
@@ -338,8 +341,11 @@ namespace UniGetUI
 
                 _ = CheckForMissingDependencies();
 
-                var i = await IntegrityTester.CheckIntegrityAsync();
-                if (!i.Passed) _ = DialogHelper.ShowIntegrityResult(i);
+                var i = await Task.Run(() => IntegrityTester.CheckIntegrity(allowRetry: true));
+                if (!i.Passed && !Settings.Get(Settings.K.DisableIntegrityChecks))
+                {
+                    _ = DialogHelper.ShowIntegrityResult();
+                }
             }
             catch (Exception e)
             {

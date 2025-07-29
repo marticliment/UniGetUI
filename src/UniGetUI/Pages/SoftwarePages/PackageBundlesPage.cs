@@ -192,7 +192,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 Placement = FlyoutPlacementMode.Bottom
             };
             MainToolbarButtonIcon.Icon = IconType.Download;
-            MainToolbarButtonText.Text = CoreTools.Translate("Install selected packages");
+            MainToolbarButtonText.Text = CoreTools.Translate("Install selection");
 
             AppBarButton RemoveSelected = new();
             AppBarButton SaveBundle = new();

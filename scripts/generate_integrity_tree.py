@@ -6,7 +6,7 @@ try:
     if len(sys.argv) < 2:
         raise ValueError("A directory path must be provided as an argument.")
 
-    root_dir = sys.argv[1]
+    root_dir: str = sys.argv[1]
     if not os.path.isdir(root_dir):
         raise FileNotFoundError(f"The directory '{root_dir}' does not exist.")
 
@@ -21,7 +21,7 @@ try:
 
             file_path = os.path.join(subdir, filename)
             relative_path = os.path.relpath(file_path, root_dir).replace('\\', '/')
-            print(f" - Computing MD5SUM of {relative_path}...")
+            if("--min-output" not in sys.argv): print(f" - Computing MD5SUM of {relative_path}...")
 
             with open(file_path, 'rb') as f:
                 md5_hash = hashlib.md5(f.read())
@@ -32,8 +32,7 @@ try:
     with open(output_file_path, 'w') as f:
         json.dump(integrity_data, f, indent=4, sort_keys=True)
 
-    print(f"Integrity tree was generated and saved to {root_dir}/{output_filename}")
-    
+    print(f"Integrity tree was generated and saved to {root_dir.strip('\\').strip('/')}/{output_filename}") 
     
     
     

@@ -19,9 +19,9 @@
     <TrimMode>partial</TrimMode>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
 </PropertyGroup>
-    
-  <PropertyGroup>
-    <GeneratedBuildInfoFile>$(IntermediateOutputPath)\Generated Files\Secrets.Generated.cs</GeneratedBuildInfoFile>
+
+    <PropertyGroup>
+      <GeneratedBuildInfoFile>$(IntermediateOutputPath)\Generated Files\Secrets.Generated.cs</GeneratedBuildInfoFile>
   </PropertyGroup>
     
     <Target Name="GenerateBuildInfo" BeforeTargets="BeforeBuild">
@@ -31,6 +31,10 @@
                      Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder);$(BaseIntermediateOutputPath)**;$(BaseOutputPath)**;@(Compile)" />
         </ItemGroup>
     </Target>
+
+  <Target Name="PostBuildGenerateIntegrityTree" AfterTargets="PostBuildEvent">
+    <Exec Command="python ../../scripts/generate_integrity_tree.py $(OutputPath) --min-output" />
+  </Target>
 
     <ItemGroup>
       <Content Include="icon.ico" />

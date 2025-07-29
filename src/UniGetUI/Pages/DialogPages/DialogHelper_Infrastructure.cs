@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Windows.UI;
+using Windows.UI.Text;
 using Microsoft.UI;
 using Microsoft.UI.Text;
 using Microsoft.UI.Windowing;
@@ -200,34 +201,43 @@ public static partial class DialogHelper
         }
     }
 
-    public static async Task ShowIntegrityResult(IntegrityTester.IntegrityResult integrityResult)
+    public static async Task ShowIntegrityResult()
     {
         var dialog = DialogFactory.Create();
 
-        var Error_String = "";
-        if (integrityResult.MissingFiles.Any())
+        dialog.Title = "Integrity violation";
+        dialog.Content = new ScrollView()
         {
-            Error_String += "Missing files: \n - " + string.Join("\n - ", integrityResult.MissingFiles) + "\n\n";
-        }
-        if (integrityResult.CorruptedFiles.Any())
-        {
-            var list = integrityResult.CorruptedFiles.Select((k) =>
-                $" - {k.Key}: (found {k.Value.Got} instead of {k.Value.Expected})");
-
-            Error_String += "Corrupted files: \n - " + string.Join("\n", list) + "\n\n";
-        }
-
-        dialog.Title = "Integrity Check Result";
-        dialog.Content = new ScrollViewer()
-        {
-            Content = new TextBlock
+            Content = new StackPanel()
             {
-                Text = $"UniGetUI may be corrupted: \n\n{Error_String}",
-                TextWrapping = TextWrapping.Wrap,
-                FontFamily = new FontFamily("Consolas"),
-            }
+                Orientation = Orientation.Vertical,
+                Spacing = 8,
+                Children =
+                {
+                    new TextBlock()
+                    {
+                        Text = CoreTools.Translate("UniGetUI or some of its components are missing or corrupt.")
+                + " " + CoreTools.Translate("It is strongly recommended to reinstall UniGetUI to adress the situation."),
+                        FontWeight = new FontWeight(600),
+                        TextWrapping = TextWrapping.Wrap,
+                        Foreground = Application.Current.Resources["SystemControlErrorTextForegroundBrush"] as Brush,
+                    },
+                    new TextBlock()
+                    {
+                        Text = " ● " + CoreTools.Translate("Refer to the UniGetUI Logs to get more details regarding the affected file(s)"),
+                        TextWrapping = TextWrapping.Wrap,
+                    },
+                    new TextBlock()
+                    {
+                        Text = " ● " + CoreTools.Translate("Integrity checks can be disabled from the Experimental Settings"),
+                        TextWrapping = TextWrapping.Wrap,
+                    }
+                }
+            },
+            HorizontalAlignment = HorizontalAlignment.Stretch,
+            VerticalAlignment = VerticalAlignment.Stretch
         };
-        dialog.PrimaryButtonText = "OK";
+        dialog.PrimaryButtonText = CoreTools.Translate("Close");
         await ShowDialogAsync(dialog);
     }
 }

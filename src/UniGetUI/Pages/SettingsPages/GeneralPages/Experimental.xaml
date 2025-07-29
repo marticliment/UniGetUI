@@ -95,6 +95,14 @@
             <UserControl Height="16" />
 
             <widgets:CheckboxCard
+                Name="DisableIntegrityChecks"
+                CornerRadius="8"
+                SettingName="DisableIntegrityChecks"
+                Text="Perform integrity checks at startup" />
+
+            <UserControl Height="16" />
+
+            <widgets:CheckboxCard
                 Name="InstallInstalledPackagesBundlesPage"
                 CornerRadius="8"
                 SettingName="InstallInstalledPackagesBundlesPage"

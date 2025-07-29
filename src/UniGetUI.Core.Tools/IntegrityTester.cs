@@ -1,4 +1,5 @@
 using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
@@ -13,14 +14,14 @@ public static class IntegrityTester
         public string Expected;
     }
 
-    public struct IntegrityResult
+    public struct Result
     {
         public bool Passed;
         public IReadOnlyList<string> MissingFiles;
         public Dictionary<string, MismatchedHash> CorruptedFiles;
     }
 
-    private static async Task<string> GetMD5Async(string fullPath, bool canRetry = true)
+    private static string GetMD5(string fullPath, bool canRetry)
     {
         try
         {
@@ -28,7 +29,7 @@ public static class IntegrityTester
             {
                 using (var stream = File.OpenRead(fullPath))
                 {
-                    var hashBytes = await md5.ComputeHashAsync(stream);
+                    var hashBytes = md5.ComputeHash(stream);
                     return BitConverter.ToString(hashBytes).Replace("-", "");
                 }
             }
@@ -37,15 +38,15 @@ public static class IntegrityTester
         {
             if (canRetry)
             {
-                await Task.Delay(1000);
-                return await GetMD5Async(fullPath, false);
+                Task.Delay(1000).GetAwaiter().GetResult();
+                return GetMD5(fullPath, false);
             }
 
             return $"{ex.GetType()}: {ex.Message}";
         }
     }
 
-    public static async Task<IntegrityResult> CheckIntegrityAsync()
+    public static Result CheckIntegrity(bool allowRetry = true)
     {
         string integrityTreePath = Path.Join(CoreData.UniGetUIExecutableDirectory, "IntegrityTree.json");
         if (!File.Exists(integrityTreePath))
@@ -59,7 +60,7 @@ public static class IntegrityTester
             };
         }
 
-        string rawData = await File.ReadAllTextAsync(integrityTreePath);
+        string rawData = File.ReadAllText(integrityTreePath);
         Dictionary<string, string>? data = null;
 
         try
@@ -96,7 +97,7 @@ public static class IntegrityTester
                 continue;
             }
 
-            var currentMd5 = (await GetMD5Async(fullPath)).ToLower();
+            var currentMd5 = GetMD5(fullPath, allowRetry).ToLower();
             if (currentMd5 != expectedHash.ToLower())
             {
                 mismatches.Add($"/{file}", new() { Expected = expectedHash, Got = currentMd5 });
@@ -104,7 +105,7 @@ public static class IntegrityTester
             }
         }
 
-        IntegrityResult result = new()
+        Result result = new()
         {
             Passed = !misses.Any() && !mismatches.Any(),
             MissingFiles = misses,
@@ -117,5 +118,30 @@ public static class IntegrityTester
         }
 
         return result;
+    }
+
+    public static string GetReadableReport(Result result)
+    {
+        var Builder = new StringBuilder();
+        if (result.Passed)
+        {
+            Builder.Append("No integrity violations were found.\n");
+        }
+        if (result.MissingFiles.Any())
+        {
+            Builder.Append("Missing files: ");
+            foreach (var file in result.MissingFiles)
+                Builder.Append($"\n - {file}");
+            Builder.Append('\n');
+        }
+        if (result.CorruptedFiles.Any())
+        {
+            Builder.Append("Corrupted files: ");
+            foreach (var (file, hashes) in result.CorruptedFiles)
+                Builder.Append($"\n - {file} (md5 mismatch, got {hashes.Got} but expected {hashes.Expected} ");
+            Builder.Append('\n');
+        }
+
+        return Builder.ToString();
     }
 }
