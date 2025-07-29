@@ -154,7 +154,7 @@ public static class CrashHandler
                     var list = integrityReport.CorruptedFiles.Select((k) =>
                         $" - {k.Key}: (found {k.Value.Got} instead of {k.Value.Expected})");
 
-                    Error_String += "Corrupted files: \n - " + list + "\n\n";
+                    Error_String += "Corrupted files: \n - " + string.Join("\n", list) + "\n\n";
                 }
             }
         }
