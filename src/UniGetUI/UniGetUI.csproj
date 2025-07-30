@@ -33,7 +33,7 @@
     </Target>
 
   <Target Name="PostBuildGenerateIntegrityTree" AfterTargets="PostBuildEvent">
-    <Exec Command="python ../../scripts/generate_integrity_tree.py $(OutputPath) --min-output" />
+    <Exec Command="python3 ../../scripts/generate_integrity_tree.py $(OutputPath) --min-output" />
   </Target>
 
     <ItemGroup>
