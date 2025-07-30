@@ -32,7 +32,7 @@ try:
     with open(output_file_path, 'w') as f:
         json.dump(integrity_data, f, indent=4, sort_keys=True)
 
-    print(f"Integrity tree was generated and saved to {root_dir.strip('\\').strip('/')}/{output_filename}") 
+    print(f"Integrity tree was generated and saved to {root_dir.strip('/')}/{output_filename}") 
     
     
     
