@@ -11,26 +11,55 @@ public static class CrashHandler
 {
     private const uint MB_ICONSTOP = 0x00000010;
     private const uint MB_OKCANCEL = 0x00000001;
-    private const int IDCANCEL = 2;
+    private const uint MB_YESNOCANCEL = 0x00000003;
+    private const int IDOK = 1;
+    private const int IDYES = 6;
+    private const int IDNO = 7;
 
     [System.Runtime.InteropServices.DllImport("user32.dll", CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
     private static extern int MessageBox(IntPtr hWnd, string lpText, string lpCaption, uint uType);
 
-    private static bool _reportMissingFiles()
+    private static void _reportMissingFiles(out bool showDetailedReport)
     {
         try
         {
-            var errorMessage = "UniGetUI has detected that some required files are missing."
-                             + "\n\nThis might be caused by an incomplete installation or corrupted files. Please reinstall UniGetUI."
-                             + "\n\nPress CANCEL to get more details about the crash.";
+            string installerPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "UniGetUI.Installer.exe");
+            bool canAutoRepair = File.Exists(installerPath);
 
             var title = "UniGetUI - Missing Files";
 
-            return MessageBox(IntPtr.Zero,  errorMessage, title, MB_ICONSTOP | MB_OKCANCEL) is not IDCANCEL;
+            if (canAutoRepair)
+            {
+                var errorMessage = "UniGetUI has detected that some required files are missing."
+                                   + "\n\nThis might be caused by an incomplete installation or corrupted files. Please reinstall UniGetUI."
+                                   + "\n\nPress YES to reinstall UniGetUI right now."
+                                   + "\nPress NO to close this prompt."
+                                   + "\nPress CANCEL to get more details about the crash.";
+
+                var msgboxResult = MessageBox(IntPtr.Zero,  errorMessage, title, MB_ICONSTOP | MB_YESNOCANCEL);
+                if (msgboxResult is IDYES)
+                {
+                    Process.Start(installerPath, "/silent /NoDeployInstaller");
+                }
+
+                if (msgboxResult is IDYES or IDNO) showDetailedReport = false;
+                else showDetailedReport = true; // msgboxResult is IDCANCEL
+            }
+            else
+            {
+                var errorMessage = "UniGetUI has detected that some required files are missing."
+                                   + "\n\nThis might be caused by an incomplete installation or corrupted files. Please reinstall UniGetUI."
+                                   + "\n\nPress OK to close this prompt."
+                                   + "\nPress CANCEL to get more details about the crash.";
+
+                var msgboxResult = MessageBox(IntPtr.Zero,  errorMessage, title, MB_ICONSTOP | MB_OKCANCEL);
+                if (msgboxResult is IDOK) showDetailedReport = false;
+                else showDetailedReport = true; // msgboxResult is IDCANCEL
+            }
         }
         catch
         {
-            return false;
+            showDetailedReport = false;
         }
     }
 
@@ -46,7 +75,8 @@ public static class CrashHandler
             {
                 if ((uint)fileEx.HResult is 0x80070002 or 0x8007007E)
                 {
-                    if (_reportMissingFiles())
+                    _reportMissingFiles(out bool showDetailedReport);
+                    if (!showDetailedReport)
                     {
                         Environment.Exit(1);
                     }

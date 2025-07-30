@@ -237,6 +237,18 @@ public static partial class DialogHelper
             HorizontalAlignment = HorizontalAlignment.Stretch,
             VerticalAlignment = VerticalAlignment.Stretch
         };
+
+        string installerPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "UniGetUI.Installer.exe");
+        if (File.Exists(installerPath))
+        {
+            dialog.SecondaryButtonText = CoreTools.Translate("Repair UniGetUI");
+            dialog.DefaultButton = ContentDialogButton.Secondary;
+            dialog.SecondaryButtonClick += (_, _) =>
+            {
+                Process.Start(installerPath, "/silent /NoDeployInstaller");
+            };
+        }
+
         dialog.PrimaryButtonText = CoreTools.Translate("Close");
         await ShowDialogAsync(dialog);
     }
