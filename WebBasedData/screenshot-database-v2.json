@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11911,
-        "done": 5429,
-        "packages_with_icon": 5429,
-        "packages_with_screenshot": 841,
-        "total_screenshots": 2611
+        "total": 11916,
+        "done": 5426,
+        "packages_with_icon": 5426,
+        "packages_with_screenshot": 855,
+        "total_screenshots": 2684
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -5014,8 +5014,13 @@
             "images": []
         },
         "beyondcompare": {
-            "icon": "https://community.chocolatey.org/content/packageimages/beyondcompare.4.4.5.27371.png",
-            "images": []
+            "icon": "https://i.postimg.cc/HLscGbLj/Beyond-Compare5.png",
+            "images": [
+                "https://www.scootersoftware.com/shot_FolderCompare_Dark.png",
+                "https://www.scootersoftware.com/shot_TextCompare_Dark.png",
+                "https://www.scootersoftware.com/shot_FolderMerge_Dark.png",
+                "https://www.scootersoftware.com/shot_TextMerge_Dark.png"
+            ]
         },
         "beyondcompare-integration": {
             "icon": "https://community.chocolatey.org/content/packageimages/beyondcompare-integration.2.0.0.png",
@@ -7755,8 +7760,15 @@
             "images": []
         },
         "clipboardfusion": {
-            "icon": "https://community.chocolatey.org/content/packageimages/clipboardfusion.5.9.1.png",
-            "images": []
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/Jnyh9s0B/image.png",
+                "https://i.postimg.cc/Vvnkk2jf/image.png",
+                "https://i.postimg.cc/fW9LCS1G/image.png",
+                "https://i.postimg.cc/m2Wr52st/image.png",
+                "https://i.postimg.cc/kXN533Jw/image.png",
+                "https://i.postimg.cc/vZQZGqDy/image.png"
+            ]
         },
         "clipboardic": {
             "icon": "https://community.chocolatey.org/content/packageimages/clipboardic.1.15.png",
@@ -10888,7 +10900,16 @@
         "displayfusion": {
             "icon": "https://tweakers.net/ext/i/2004839352.png",
             "images": [
-                "https://tweakers.net/ext/i/1403165975.jpeg"
+                "https://i.postimg.cc/bwNp7ZFN/image.png",
+                "https://i.postimg.cc/Bvjsvd0r/image.png",
+                "https://i.postimg.cc/s2bzGwfv/image.png",
+                "https://i.postimg.cc/PxZjWYNK/image.png",
+                "https://i.postimg.cc/HngCBnym/image.png",
+                "https://i.postimg.cc/2y7NJYQZ/image.png",
+                "https://i.postimg.cc/2jQY3QsS/image.png",
+                "https://i.postimg.cc/T34MBCDC/image.png",
+                "https://i.postimg.cc/QMKGD1gs/image.png",
+                "https://i.postimg.cc/QtLLdCS7/image.png"
             ]
         },
         "displaylink": {
@@ -14517,7 +14538,13 @@
         },
         "fileseek": {
             "icon": "https://community.chocolatey.org/content/packageimages/fileseek.6.7.0.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/Ls17wRR8/image.png",
+                "https://i.postimg.cc/SsVGttXK/image.png",
+                "https://i.postimg.cc/1tWpKnTn/image.png",
+                "https://i.postimg.cc/SKg200GH/image.png",
+                "https://i.postimg.cc/2jbTCYKQ/image.png"
+            ]
         },
         "fileshredder": {
             "icon": "https://community.chocolatey.org/content/packageimages/fileshredder.2.5.1.png",
@@ -18260,7 +18287,9 @@
         },
         "hashtools": {
             "icon": "https://community.chocolatey.org/content/packageimages/hashtools.4.6.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/sxdWVkMm/image.png"
+            ]
         },
         "haskell": {
             "icon": "",
@@ -18925,7 +18954,10 @@
         },
         "hover": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/MTT2n9rQ/image.png",
+                "https://i.postimg.cc/Dz7KTvr5/image.png"
+            ]
         },
         "howard": {
             "icon": "",
@@ -23916,8 +23948,15 @@
             "images": []
         },
         "logfusion": {
-            "icon": "https://community.chocolatey.org/content/packageimages/logfusion.6.6.png",
-            "images": []
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/ZnxWJCtY/image.png",
+                "https://i.postimg.cc/9XdRdNR3/image.png",
+                "https://i.postimg.cc/CLJRtBsm/image.png",
+                "https://i.postimg.cc/g2TnzC5h/image.png",
+                "https://i.postimg.cc/3w0WdL5c/image.png",
+                "https://i.postimg.cc/y6yxggts/image.png"
+            ]
         },
         "logibolt": {
             "icon": "",
@@ -42861,7 +42900,13 @@
         },
         "traystatus": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/gjgGMRbh/image.png",
+                "https://i.postimg.cc/L6s9Jyj3/image.png",
+                "https://i.postimg.cc/MpMzDvPc/image.png",
+                "https://i.postimg.cc/T3zfHfFt/image.png",
+                "https://i.postimg.cc/XJ334xVF/image.png"
+            ]
         },
         "trayweather": {
             "icon": "",
@@ -45943,7 +45988,17 @@
         },
         "voicebot": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/FR9t2RZV/image.png",
+                "https://i.postimg.cc/HxBGHgvD/image.png",
+                "https://i.postimg.cc/SRsBxvHX/image.png",
+                "https://i.postimg.cc/ryZ6Pqt5/image.png",
+                "https://i.postimg.cc/BQ8WWRxk/image.png",
+                "https://i.postimg.cc/HsFqT3zx/image.png",
+                "https://i.postimg.cc/RZfjhfpT/image.png",
+                "https://i.postimg.cc/hGBNdjHR/image.png",
+                "https://i.postimg.cc/6QfgLKX2/image.png"
+            ]
         },
         "voicecommands": {
             "icon": "",
@@ -47742,8 +47797,11 @@
             "images": []
         },
         "windowinspector": {
-            "icon": "https://community.chocolatey.org/content/packageimages/windowinspector.3.1.png",
-            "images": []
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/6qyPXGGn/image.png",
+                "https://i.postimg.cc/PfRcMKB4/image.png"
+            ]
         },
         "windows-11-installation-assistant": {
             "icon": "https://community.chocolatey.org/content/packageimages/windows-11-installation-assistant.1.4.19041.1285.png",
@@ -50997,6 +51055,55 @@
                 "https://i.postimg.cc/43SN5T13/image.png",
                 "https://i.postimg.cc/MTfZ3rsm/image.png",
                 "https://i.postimg.cc/6qdWt4x7/image.png"
+            ]
+        },
+        "recexperts": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/K8mf2MTV/image.png",
+                "https://i.postimg.cc/j5nQXQVW/image.png",
+                "https://i.postimg.cc/W3dSycZ1/image.png",
+                "https://i.postimg.cc/sfkywVW1/image.png",
+                "https://i.postimg.cc/T2mB2nyY/image.png",
+                "https://i.postimg.cc/hPNJ8WD0/image.png",
+                "https://i.postimg.cc/fkQVNmgr/image.png"
+            ]
+        },
+        "filelocator": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/7YfLsxm2/image.png",
+                "https://i.postimg.cc/Pqkr51hW/image.png",
+                "https://i.postimg.cc/KzGGnF14/image.png",
+                "https://i.postimg.cc/3N635vnD/image.png",
+                "https://i.postimg.cc/mZ6LFvB2/image.png",
+                "https://i.postimg.cc/Qx2jfcF2/image.png"
+            ]
+        },
+        "fileviewerplus": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/GtGMtYrD/image.png",
+                "https://i.postimg.cc/hvBLCYWJ/image.png",
+                "https://i.postimg.cc/7hwz1T00/image.png",
+                "https://i.postimg.cc/dVLy9FkH/image.png"
+            ]
+        },
+        "k8studio": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/5NG0bCyg/image.png",
+                "https://i.postimg.cc/J00rWrWS/image.png",
+                "https://i.postimg.cc/J0F1rfr0/image.png",
+                "https://i.postimg.cc/QxB84dmT/image.png"
+            ]
+        },
+        "puresync-personal": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/tJ6XgrYz/image.png",
+                "https://i.postimg.cc/hGGcm4Xv/image.png",
+                "https://i.postimg.cc/tgmyN065/image.png"
             ]
         }
     }
