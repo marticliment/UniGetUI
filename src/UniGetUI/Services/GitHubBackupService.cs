@@ -38,7 +38,7 @@ namespace UniGetUI.Services
             User user = await GHClient.User.Current();
 
             var candidates = await GHClient.Gist.GetAllForUser(user.Login);
-            Gist? existingBackup = candidates?.FirstOrDefault(g => g.Description.EndsWith(GistDescription_EndingKey));
+            Gist? existingBackup = candidates?.FirstOrDefault(g => g?.Description?.EndsWith(GistDescription_EndingKey) ?? false);
 
             if (existingBackup is null)
             {
@@ -96,7 +96,7 @@ namespace UniGetUI.Services
             User user = await GHClient.User.Current();
 
             var candidates = await GHClient.Gist.GetAllForUser(user.Login);
-            Gist? existingBackup = candidates?.FirstOrDefault(g => g.Description.EndsWith(GistDescription_EndingKey));
+            Gist? existingBackup = candidates?.FirstOrDefault(g => g?.Description?.EndsWith(GistDescription_EndingKey) ?? false);
 
             return existingBackup?.Files
                 .Where(f => f.Key.StartsWith(PackageBackup_StartingKey))
@@ -115,7 +115,7 @@ namespace UniGetUI.Services
             User user = await GHClient.User.Current();
 
             var candidates = await GHClient.Gist.GetAllForUser(user.Login);
-            Gist? existingBackup = candidates?.FirstOrDefault(g => g.Description.EndsWith(GistDescription_EndingKey));
+            Gist? existingBackup = candidates?.FirstOrDefault(g => g?.Description?.EndsWith(GistDescription_EndingKey) ?? false);
             if (existingBackup is null)
                 throw new Exception($"The backup {backupName} was not found, yet this name was passed by argument");
 

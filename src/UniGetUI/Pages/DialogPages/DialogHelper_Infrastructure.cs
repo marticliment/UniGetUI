@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Windows.UI;
+using Windows.UI.Text;
 using Microsoft.UI;
 using Microsoft.UI.Text;
 using Microsoft.UI.Windowing;
@@ -198,5 +199,57 @@ public static partial class DialogHelper
             _dialogQueue.Remove(dialog);
             return ContentDialogResult.None;
         }
+    }
+
+    public static async Task ShowIntegrityResult()
+    {
+        var dialog = DialogFactory.Create();
+
+        dialog.Title = "Integrity violation";
+        dialog.Content = new ScrollView()
+        {
+            Content = new StackPanel()
+            {
+                Orientation = Orientation.Vertical,
+                Spacing = 8,
+                Children =
+                {
+                    new TextBlock()
+                    {
+                        Text = CoreTools.Translate("UniGetUI or some of its components are missing or corrupt.")
+                + " " + CoreTools.Translate("It is strongly recommended to reinstall UniGetUI to adress the situation."),
+                        FontWeight = new FontWeight(600),
+                        TextWrapping = TextWrapping.Wrap,
+                        Foreground = Application.Current.Resources["SystemControlErrorTextForegroundBrush"] as Brush,
+                    },
+                    new TextBlock()
+                    {
+                        Text = " ● " + CoreTools.Translate("Refer to the UniGetUI Logs to get more details regarding the affected file(s)"),
+                        TextWrapping = TextWrapping.Wrap,
+                    },
+                    new TextBlock()
+                    {
+                        Text = " ● " + CoreTools.Translate("Integrity checks can be disabled from the Experimental Settings"),
+                        TextWrapping = TextWrapping.Wrap,
+                    }
+                }
+            },
+            HorizontalAlignment = HorizontalAlignment.Stretch,
+            VerticalAlignment = VerticalAlignment.Stretch
+        };
+
+        string installerPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "UniGetUI.Installer.exe");
+        if (File.Exists(installerPath))
+        {
+            dialog.SecondaryButtonText = CoreTools.Translate("Repair UniGetUI");
+            dialog.DefaultButton = ContentDialogButton.Secondary;
+            dialog.SecondaryButtonClick += (_, _) =>
+            {
+                Process.Start(installerPath, "/silent /NoDeployInstaller");
+            };
+        }
+
+        dialog.PrimaryButtonText = CoreTools.Translate("Close");
+        await ShowDialogAsync(dialog);
     }
 }

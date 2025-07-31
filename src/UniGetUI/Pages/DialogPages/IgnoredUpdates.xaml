@@ -30,7 +30,7 @@
             HorizontalAlignment="Right">
             <widgets:TranslatedTextBlock Text="Reset list" />
             <Button.Flyout>
-                <Flyout
+                <widgets:BetterFlyout
                     x:Name="ConfirmResetFlyout"
                     LightDismissOverlayMode="Off"
                     Placement="Bottom">
@@ -69,7 +69,7 @@
                             <widgets:TranslatedTextBlock Text="Yes" />
                         </Button>
                     </Grid>
-                </Flyout>
+                </widgets:BetterFlyout>
             </Button.Flyout>
         </Button>
         <ItemsView

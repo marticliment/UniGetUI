@@ -41,29 +41,37 @@ namespace UniGetUI.PackageEngine
 
         public static void Initialize()
         {
-            List<Task> initializeTasks = [];
-
-            foreach (IPackageManager manager in Managers)
-            {
-                initializeTasks.Add(Task.Run(manager.Initialize));
-            }
-
-            Task ManagersMetaTask = Task.WhenAll(initializeTasks);
             try
             {
-                ManagersMetaTask.Wait(TimeSpan.FromSeconds(ManagerLoadTimeout));
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-            }
-            if (ManagersMetaTask.IsCompletedSuccessfully == false)
-            {
-                Logger.Warn("Timeout: Not all package managers have finished initializing.");
-            }
+                List<Task> initializeTasks = [];
 
-            _ = InstalledPackagesLoader.ReloadPackages();
-            _ = UpgradablePackagesLoader.ReloadPackages();
+                foreach (IPackageManager manager in Managers)
+                {
+                    initializeTasks.Add(Task.Run(manager.Initialize));
+                }
+
+                Task ManagersMetaTask = Task.WhenAll(initializeTasks);
+                try
+                {
+                    ManagersMetaTask.Wait(TimeSpan.FromSeconds(ManagerLoadTimeout));
+                }
+                catch (Exception e)
+                {
+                    Logger.Error(e);
+                }
+
+                if (ManagersMetaTask.IsCompletedSuccessfully == false)
+                {
+                    Logger.Warn("Timeout: Not all package managers have finished initializing.");
+                }
+
+                _ = InstalledPackagesLoader.ReloadPackages();
+                _ = UpgradablePackagesLoader.ReloadPackages();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
         }
     }
 }

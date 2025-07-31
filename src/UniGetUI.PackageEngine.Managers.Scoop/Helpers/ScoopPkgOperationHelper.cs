@@ -19,7 +19,8 @@ internal sealed class ScoopPkgOperationHelper : BasePkgOperationHelper
             _ => throw new InvalidDataException("Invalid package operation")
         }];
 
-        if (package.Source.Name.Contains("..."))
+        // If source is ellpised or source is a local path, omit source argument
+        if (package.Source.Name.Contains("...") || package.Source.Name.Contains(":\\"))
             parameters.Add($"{package.Id}");
         else
             parameters.Add($"{package.Source.Name}/{package.Id}");

@@ -159,6 +159,7 @@ namespace UniGetUI
                         Button button = new() { Content = CoreTools.Translate("WingetUI Log"), };
                         button.Click += (sender, args) => MainWindow.NavigationPage.UniGetUILogs_Click(sender, args);
                         MainWindow.ErrorBanner.ActionButton = button;
+                        DialogHelper.HideAllLoadingDialogs();
                         e.Handled = true;
                     }
                 };
@@ -201,6 +202,7 @@ namespace UniGetUI
                                 button.Click += (s, a) => MainWindow.NavigationPage.UniGetUILogs_Click(s, a);
                             }
                             MainWindow.ErrorBanner.ActionButton = button;
+                            DialogHelper.HideAllLoadingDialogs();
                         }
                         catch (Exception ex)
                         {
@@ -299,13 +301,20 @@ namespace UniGetUI
                     Task.Run(SetUpWebViewUserDataFolder),
                     Task.Run(async () =>
                     {
-                        IconDatabase.InitializeInstance();
-                        await IconDatabase.Instance.LoadFromCacheAsync();
+                        try
+                        {
+                            IconDatabase.InitializeInstance();
+                            await IconDatabase.Instance.LoadFromCacheAsync();
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.Error(ex);
+                        }
                     }),
                     Task.Run(RegisterNotificationService),
                     Task.Run(LoadGSudo),
                     Task.Run(InitializeBackgroundAPI),
-                    Task.Run(PEInterface.Initialize)
+                    Task.Run(PEInterface.Initialize),
                 ];
 
                 // Load essential components
@@ -318,6 +327,7 @@ namespace UniGetUI
                 // Load interface
                 Logger.Info("LoadComponentsAsync finished executing. All managers loaded. Proceeding to interface.");
                 MainWindow.SwitchToInterface();
+
                 RaiseExceptionAsFatal = false;
 
                 // Process any remaining command-line arguments
@@ -327,7 +337,13 @@ namespace UniGetUI
                     MainWindow.DispatcherQueue.TryEnqueue(MainWindow.ProcessCommandLineParameters);
                 };
 
-                await CheckForMissingDependencies();
+                _ = CheckForMissingDependencies();
+
+                var i = await Task.Run(() => IntegrityTester.CheckIntegrity(allowRetry: true));
+                if (!i.Passed && !Settings.Get(Settings.K.DisableIntegrityChecks))
+                {
+                    _ = DialogHelper.ShowIntegrityResult();
+                }
             }
             catch (Exception e)
             {
@@ -338,48 +354,49 @@ namespace UniGetUI
         private async Task InitializeBackgroundAPI()
         {
             // Bind the background api to the main interface
-            if (!Settings.Get(Settings.K.DisableApi))
+            try
             {
-                try
+                if (Settings.Get(Settings.K.DisableApi))
+                    return;
+
+                BackgroundApi.OnOpenWindow += (_, _) =>
+                    MainWindow.DispatcherQueue.TryEnqueue(() => MainWindow.Activate());
+
+                BackgroundApi.OnOpenUpdatesPage += (_, _) => MainWindow.DispatcherQueue.TryEnqueue(() =>
                 {
-                    BackgroundApi.OnOpenWindow += (_, _) =>
-                        MainWindow.DispatcherQueue.TryEnqueue(() => MainWindow.Activate());
+                    MainWindow?.NavigationPage?.NavigateTo(PageType.Updates);
+                    MainWindow?.Activate();
+                });
 
-                    BackgroundApi.OnOpenUpdatesPage += (_, _) => MainWindow.DispatcherQueue.TryEnqueue(() =>
-                    {
-                        MainWindow?.NavigationPage?.NavigateTo(PageType.Updates);
-                        MainWindow?.Activate();
-                    });
-
-                    BackgroundApi.OnShowSharedPackage += (_, package) => MainWindow.DispatcherQueue.TryEnqueue(() =>
-                    {
-                        DialogHelper.ShowSharedPackage_ThreadSafe(package.Key, package.Value);
-                    });
-
-                    BackgroundApi.OnUpgradeAll += (_, _) => MainWindow.DispatcherQueue.TryEnqueue(() =>
-                    {
-                        _ = Operations.UpdateAll();
-                    });
-
-                    BackgroundApi.OnUpgradeAllForManager += (s, managerName) =>
-                        MainWindow.DispatcherQueue.TryEnqueue(() =>
-                        {
-                            _ = Operations.UpdateAllForManager(managerName);
-                        });
-
-                    BackgroundApi.OnUpgradePackage += (s, packageId) => MainWindow.DispatcherQueue.TryEnqueue(() =>
-                    {
-                        _ = Operations.UpdateForId(packageId);
-                    });
-
-                    await BackgroundApi.Start();
-                }
-                catch (Exception ex)
+                BackgroundApi.OnShowSharedPackage += (_, package) => MainWindow.DispatcherQueue.TryEnqueue(() =>
                 {
-                    Logger.Error("Could not initialize Background API:");
-                    Logger.Error(ex);
-                }
+                    DialogHelper.ShowSharedPackage_ThreadSafe(package.Key, package.Value);
+                });
+
+                BackgroundApi.OnUpgradeAll += (_, _) => MainWindow.DispatcherQueue.TryEnqueue(() =>
+                {
+                    _ = Operations.UpdateAll();
+                });
+
+                BackgroundApi.OnUpgradeAllForManager += (s, managerName) =>
+                    MainWindow.DispatcherQueue.TryEnqueue(() =>
+                    {
+                        _ = Operations.UpdateAllForManager(managerName);
+                    });
+
+                BackgroundApi.OnUpgradePackage += (s, packageId) => MainWindow.DispatcherQueue.TryEnqueue(() =>
+                {
+                    _ = Operations.UpdateForId(packageId);
+                });
+
+                await BackgroundApi.Start();
             }
+            catch (Exception ex)
+            {
+                Logger.Error("Could not initialize Background API:");
+                Logger.Error(ex);
+            }
+
         }
 
         private async Task CheckForMissingDependencies()

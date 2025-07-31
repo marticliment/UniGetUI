@@ -42,7 +42,7 @@ def get_all_strings():
                     translation_strings.append(match.encode('raw_unicode_escape').decode('unicode_escape'))
 
     # Find XAML translation strings
-    MAIN_WILDCARD = r'(?:x:|"&#x[a-zA-Z0-9]{4};"|[ a-zA-Z0-9=\"\'\r\n\t_\.\,\:\;\{\}])'
+    MAIN_WILDCARD = r'(?:x:|"&#x[a-zA-Z0-9]{4};"|[ a-zA-Z0-9=\-\"\'\r\n\t_\.\,\:\;\{\}])'
 
     regex_data = {
         r'(?<=Translate\(["\']).+?(?=["\']\))': lambda match: match.encode('raw_unicode_escape').decode('unicode_escape'),

@@ -70,7 +70,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             BetterMenuItem menuInstallSettings = new()
             {
-                Text = CoreTools.AutoTranslated("Installation options"),
+                Text = CoreTools.AutoTranslated("Update options"),
                 IconName = IconType.Options,
                 KeyboardAcceleratorTextOverride = "Alt+Enter"
             };
@@ -225,33 +225,27 @@ namespace UniGetUI.Interface.SoftwarePages
 
         public override void GenerateToolBar()
         {
-            BetterMenuItem UpdateSelected = new();
             BetterMenuItem UpdateAsAdmin = new();
             BetterMenuItem UpdateSkipHash = new();
             BetterMenuItem UpdateInteractive = new();
             BetterMenuItem DownloadInstallers = new();
             BetterMenuItem UninstallSelection = new();
 
-            AppBarButton UpdateMenu = new()
+            MainToolbarButtonDropdown.Flyout = new BetterMenu()
             {
-                Flyout = new BetterMenu()
-                {
-                    Items =
-                    {
-                        UpdateSelected,
-                        new MenuFlyoutSeparator(),
-                        UpdateAsAdmin,
-                        UpdateSkipHash,
-                        UpdateInteractive,
-                        new MenuFlyoutSeparator(),
-                        DownloadInstallers,
-                        new MenuFlyoutSeparator(),
-                        UninstallSelection
-                    },
-                    Placement = FlyoutPlacementMode.Bottom
+                Items = {
+                    UpdateAsAdmin,
+                    UpdateSkipHash,
+                    UpdateInteractive,
+                    new MenuFlyoutSeparator(),
+                    DownloadInstallers,
+                    new MenuFlyoutSeparator(),
+                    UninstallSelection
                 },
-                FontWeight = new FontWeight(600),
+                Placement = FlyoutPlacementMode.Bottom
             };
+            MainToolbarButtonIcon.Icon = IconType.Update;
+            MainToolbarButtonText.Text = CoreTools.Translate("Update selection");
 
             AppBarButton InstallationSettings = new();
 
@@ -263,7 +257,6 @@ namespace UniGetUI.Interface.SoftwarePages
 
             AppBarButton HelpButton = new();
 
-            ToolBar.PrimaryCommands.Add(UpdateMenu);
             ToolBar.PrimaryCommands.Add(new AppBarSeparator());
             ToolBar.PrimaryCommands.Add(InstallationSettings);
             ToolBar.PrimaryCommands.Add(new AppBarSeparator());
@@ -278,8 +271,6 @@ namespace UniGetUI.Interface.SoftwarePages
             Dictionary<DependencyObject, string> Labels = new()
             { // Entries with a leading space are collapsed
               // Their texts will be used as the tooltip
-                { UpdateMenu,           CoreTools.Translate("Update and more") + "..." },
-                { UpdateSelected,       CoreTools.Translate("Update selected packages") },
                 { UpdateAsAdmin,        CoreTools.Translate("Update as administrator") },
                 { UpdateSkipHash,       CoreTools.Translate("Skip integrity checks") },
                 { UpdateInteractive,    CoreTools.Translate("Interactive update") },
@@ -296,8 +287,6 @@ namespace UniGetUI.Interface.SoftwarePages
 
             Dictionary<DependencyObject, IconType> Icons = new()
             {
-                { UpdateMenu,           IconType.Update },
-                { UpdateSelected,       IconType.Update },
                 { UpdateAsAdmin,        IconType.UAC },
                 { UpdateSkipHash,       IconType.Checksum },
                 { UpdateInteractive,    IconType.Interactive },
@@ -327,7 +316,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 }
             };
 
-            UpdateSelected.Click += (_, _) => MainApp.Operations.Update(FilteredPackages.GetCheckedPackages());
+            MainToolbarButton.Click += (_, _) => MainApp.Operations.Update(FilteredPackages.GetCheckedPackages());
             UpdateAsAdmin.Click += (_, _) => MainApp.Operations.Update(FilteredPackages.GetCheckedPackages(), elevated: true);
             UpdateSkipHash.Click += (_, _) => MainApp.Operations.Update(FilteredPackages.GetCheckedPackages(), no_integrity: true);
             UpdateInteractive.Click += (_, _) => MainApp.Operations.Update(FilteredPackages.GetCheckedPackages(), interactive: true);

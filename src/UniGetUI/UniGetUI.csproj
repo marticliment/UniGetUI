@@ -18,10 +18,8 @@
     <PublishTrimmed>true</PublishTrimmed>
     <TrimMode>partial</TrimMode>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
-</PropertyGroup>    
-    
-    
-    
+</PropertyGroup>
+
     <PropertyGroup>
       <GeneratedBuildInfoFile>$(IntermediateOutputPath)\Generated Files\Secrets.Generated.cs</GeneratedBuildInfoFile>
   </PropertyGroup>
@@ -34,8 +32,9 @@
         </ItemGroup>
     </Target>
 
-
-
+  <Target Name="PostBuildGenerateIntegrityTree" AfterTargets="PostBuildEvent">
+    <Exec Command="python3 ../../scripts/generate_integrity_tree.py $(OutputPath) --min-output" />
+  </Target>
 
     <ItemGroup>
       <Content Include="icon.ico" />
@@ -96,16 +95,15 @@
     <PackageReference Include="H.NotifyIcon.WinUI" Version="2.3.0" />
     <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.2.0" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.250606001" />
-    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.4188" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.4654" />
     <PackageReference Include="PhotoSauce.MagicScaler" Version="0.15.0" />
-      <PackageReference Include="System.Drawing.Common" Version="9.0.6" Aliases="DrawingCommon" />
+      <PackageReference Include="System.Drawing.Common" Version="9.0.7" Aliases="DrawingCommon" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
     <PackageReference Include="System.Private.Uri" Version="4.3.2" />
     <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
-    <PackageReference Include="WinUIEx" Version="2.6.0" />
     <PackageReference Include="YamlDotNet" Version="16.3.0" />
     <PackageReference Include="IdentityModel.OidcClient" Version="6.0.0" />
-    <PackageReference Include="Octokit" Version="13.0.1" />
+    <PackageReference Include="Octokit" Version="14.0.0" />
 
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>

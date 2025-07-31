@@ -81,6 +81,7 @@ public static partial class Settings
         DisableNewProcessLineHandler,
         InstallInstalledPackagesBundlesPage,
         ProhibitElevation,
+        DisableIntegrityChecks,
 
         Test1,
         Test2,
@@ -173,6 +174,7 @@ public static partial class Settings
             K.DisableNewProcessLineHandler => "DisableNewProcessLineHandler",
             K.InstallInstalledPackagesBundlesPage => "InstallInstalledPackagesBundlesPage",
             K.ProhibitElevation => "ProhibitElevation",
+            K.DisableIntegrityChecks => "DisableIntegrityChecks",
 
             K.Test1 => "TestSetting1",
             K.Test2 => "TestSetting2",

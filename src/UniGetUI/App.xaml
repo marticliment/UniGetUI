@@ -43,6 +43,57 @@
                 <Setter Property="BorderBrush" Value="{ThemeResource DividerStrokeColorDefaultBrush}" />
             </Style>
 
+            <Style x:Key="BetterFlyoutPresenterStyle" TargetType="FlyoutPresenter">
+                <Setter Property="Background" Value="{ThemeResource MenuFlyoutPresenterBackground}" />
+                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                <Setter Property="VerticalContentAlignment" Value="Stretch" />
+                <Setter Property="IsTabStop" Value="False" />
+                <Setter Property="BorderBrush" Value="{ThemeResource FlyoutBorderThemeBrush}" />
+                <Setter Property="BorderThickness" Value="{ThemeResource FlyoutBorderThemeThickness}" />
+                <Setter Property="Padding" Value="{StaticResource FlyoutContentPadding}" />
+                <Setter Property="MinWidth" Value="{ThemeResource FlyoutThemeMinWidth}" />
+                <Setter Property="MaxWidth" Value="{ThemeResource FlyoutThemeMaxWidth}" />
+                <Setter Property="MinHeight" Value="{ThemeResource FlyoutThemeMinHeight}" />
+                <Setter Property="MaxHeight" Value="{ThemeResource FlyoutThemeMaxHeight}" />
+                <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Auto" />
+                <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+                <Setter Property="ScrollViewer.VerticalScrollMode" Value="Auto" />
+                <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+                <Setter Property="ScrollViewer.ZoomMode" Value="Disabled" />
+                <Setter Property="CornerRadius" Value="{ThemeResource OverlayCornerRadius}" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="FlyoutPresenter">
+                            <Border
+                                Background="{TemplateBinding Background}"
+                                BackgroundSizing="InnerBorderEdge"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="{TemplateBinding CornerRadius}">
+                                <ScrollViewer
+                                    x:Name="ScrollViewer"
+                                    AutomationProperties.AccessibilityView="Raw"
+                                    HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                                    HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}"
+                                    VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
+                                    VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}"
+                                    ZoomMode="{TemplateBinding ScrollViewer.ZoomMode}">
+                                    <ContentPresenter
+                                        Margin="{TemplateBinding Padding}"
+                                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                        Content="{TemplateBinding Content}"
+                                        ContentTemplate="{TemplateBinding ContentTemplate}"
+                                        ContentTransitions="{TemplateBinding ContentTransitions}" />
+                                </ScrollViewer>
+                            </Border>
+
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+
 
             <Style BasedOn="{StaticResource DefaultListViewItemStyle}" TargetType="TreeViewItem">
                 <Setter Property="Padding" Value="0" />
