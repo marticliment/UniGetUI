@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11927,
-        "done": 5439,
-        "packages_with_icon": 5439,
-        "packages_with_screenshot": 872,
-        "total_screenshots": 2731
+        "total": 11931,
+        "done": 5443,
+        "packages_with_icon": 5443,
+        "packages_with_screenshot": 878,
+        "total_screenshots": 2755
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -14516,8 +14516,12 @@
             "images": []
         },
         "filelist": {
-            "icon": "https://community.chocolatey.org/content/packageimages/filelist.4.3.1.png",
-            "images": []
+            "icon": "https://i.postimg.cc/vDwTRXkX/filelist.png",
+            "images": [
+                "https://i.postimg.cc/gJrn3x3y/image.png",
+                "https://i.postimg.cc/MT4X5zYC/image.png",
+                "https://i.postimg.cc/kGbGhL1B/image.png"
+            ]
         },
         "filemenutools": {
             "icon": "",
@@ -17339,7 +17343,9 @@
         },
         "google-quickshare": {
             "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Quickshare.svg/1200px-Quickshare.svg.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/KYG1sNtZ/zen-ra5ql49-DU7.png"
+            ]
         },
         "google-translate-chrome": {
             "icon": "https://community.chocolatey.org/content/packageimages/google-translate-chrome.2.0.7.png",
@@ -18485,7 +18491,7 @@
             ]
         },
         "heavyload": {
-            "icon": "https://community.chocolatey.org/content/packageimages/heavyload.3.8.png",
+            "icon": "https://i.postimg.cc/BvmgB7wr/Heavy-Load.png",
             "images": []
         },
         "hec-ds\u2026": {
@@ -32992,7 +32998,11 @@
         },
         "protonmail-bridge": {
             "icon": "https://github.com/ProtonMail/proton-bridge/blob/master/dist/raw/win%2Blin_icon_256x256.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/QC1c11Fx/image.png",
+                "https://i.postimg.cc/fTQcZ2P3/image.png",
+                "https://i.postimg.cc/XvP5PQFY/image.png"
+            ]
         },
         "protonmailbridge": {
             "icon": "https://github.com/ProtonMail/proton-bridge/blob/master/dist/raw/win%2Blin_icon_256x256.png",
@@ -33019,6 +33029,14 @@
                 "https://i.postimg.cc/GphzR864/image.png",
                 "https://i.postimg.cc/x8Sz0Bq6/image.png",
                 "https://i.postimg.cc/2yQBsfSF/windows-ovpn-9-1024x616.png"
+            ]
+        },
+        "protonauthenticator": {
+            "icon": "https://i.postimg.cc/BnByYH70/proton-auth.png",
+            "images": [
+                "https://i.postimg.cc/8zZJmnGg/image.png",
+                "https://i.postimg.cc/26Z1mkZC/image.png",
+                "https://i.postimg.cc/L88h5B1C/image.png"
             ]
         },
         "protopie": {
@@ -51213,6 +51231,34 @@
                 "https://i.postimg.cc/8CcxfZ3J/image.png",
                 "https://i.postimg.cc/50FGn6ff/image.png"
             ]
+        },
+        "desktopbrowser": {
+            "icon": "https://i.postimg.cc/sf9t34WF/icons8-duckduckgo-480.png",
+            "images": [
+                "https://i.postimg.cc/WzbSNgRj/1.png",
+                "https://i.postimg.cc/mZ88dXMr/2.png",
+                "https://i.postimg.cc/65bbQj5P/3.jpg",
+                "https://i.postimg.cc/yxQjkxBR/4.jpg",
+                "https://i.postimg.cc/2SBGSCtq/5.png",
+                "https://i.postimg.cc/NfFbZ67k/6.png",
+                "https://i.postimg.cc/xCPtVg4t/7.jpg",
+                "https://i.postimg.cc/QM1f0jkL/8.jpg",
+                "https://i.postimg.cc/52ZPBXzq/9.jpg",
+                "https://i.postimg.cc/wjtfRX1j/10.jpg"
+            ]
+        },
+        "primoramdisk": {
+            "icon": "https://i.postimg.cc/MK9V2cy1/ramd.png",
+            "images": [
+                "https://i.postimg.cc/QdkLd3dg/image.png",
+                "https://i.postimg.cc/wMCK7xN2/image.png",
+                "https://i.postimg.cc/hGtSFj1Q/image.png",
+                "https://i.postimg.cc/3RP7DZ52/image.png"
+            ]
+        },
+        "primocache": {
+            "icon": "https://i.postimg.cc/XJqr4x4W/ramdsk.png",
+            "images": []
         }
     }
 }
