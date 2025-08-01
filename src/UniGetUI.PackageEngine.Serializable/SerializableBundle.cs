@@ -8,7 +8,7 @@ namespace UniGetUI.PackageEngine.Classes.Serializable
     {
         public const double ExpectedVersion = 3;
         public const string IncompatMessage = "Incompatible packages cannot be installed from UniGetUI, " +
-                                              "either because they came from a local source (for example Local PC)" +
+                                              "either because they came from a local source (for example Local PC) " +
                                               "or because the package manager was unavailable. " +
                                               "Nevertheless, they have been listed here for logging purposes.";
 
