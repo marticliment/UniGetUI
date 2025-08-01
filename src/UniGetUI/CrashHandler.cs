@@ -73,7 +73,7 @@ public static class CrashHandler
             Exception? fileEx = e;
             while (fileEx is not null)
             {
-                if ((uint)fileEx.HResult is 0x80070002 or 0x8007007E)
+                if ((uint)fileEx.HResult is 0x80070002 or 0x8007007E or 0x802B000A)
                 {
                     _reportMissingFiles(out bool showDetailedReport);
                     if (!showDetailedReport)
