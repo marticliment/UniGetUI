@@ -853,7 +853,7 @@
   "Update packages automatically": "Aktualizuj pakiety automatycznie",
   "Update selected packages": "Zaktualizuj wybrane pakiety",
   "Update selected packages with administrator privileges": "Zaktualizuj wybrane pakiety z uprawnieniami administratora",
-  "Update selection": null,
+  "Update selection": "Zaktualizuj wybrane",
   "Update succeeded": "Aktualizacja się powiodła",
   "Update to version {0}": "Zaktualizuj do wersji {0}",
   "Update to {0} available": "jest dostępna aktualizacja do {0}",
