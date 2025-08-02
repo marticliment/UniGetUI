@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11931,
-        "done": 5443,
-        "packages_with_icon": 5443,
-        "packages_with_screenshot": 878,
-        "total_screenshots": 2755
+        "total": 11936,
+        "done": 5448,
+        "packages_with_icon": 5448,
+        "packages_with_screenshot": 882,
+        "total_screenshots": 2773
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -18492,7 +18492,12 @@
         },
         "heavyload": {
             "icon": "https://i.postimg.cc/BvmgB7wr/Heavy-Load.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/7h2nDHY4/image.png",
+                "https://i.postimg.cc/7PFN92mZ/image.png",
+                "https://i.postimg.cc/9FyYnQnt/image.png",
+                "https://i.postimg.cc/RZ9L5zrr/image.png"
+            ]
         },
         "hec-ds\u2026": {
             "icon": "",
@@ -38409,8 +38414,13 @@
             "images": []
         },
         "smartftp": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/pr4jMkZ6/smartftp.png",
+            "images": [
+                "https://i.postimg.cc/Gt5Fhbcz/image.png",
+                "https://i.postimg.cc/BZYcCBxD/image.png",
+                "https://i.postimg.cc/8PxR2kXz/image.png",
+                "https://i.postimg.cc/Z5384kXF/image.png"
+            ]
         },
         "smartgamebooster": {
             "icon": "",
@@ -38916,8 +38926,14 @@
             "images": []
         },
         "soundcheck": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/3NFW2Vtp/sndchk.png",
+            "images": [
+                "https://i.postimg.cc/bNqZqYvR/image.png",
+                "https://i.postimg.cc/rwmzthx0/image.png",
+                "https://i.postimg.cc/x148GK3s/image.png",
+                "https://i.postimg.cc/Xq4YNxnv/image.png",
+                "https://i.postimg.cc/j2cdDNj4/image.png"
+            ]
         },
         "soundly": {
             "icon": "",
@@ -51259,6 +51275,32 @@
         "primocache": {
             "icon": "https://i.postimg.cc/XJqr4x4W/ramdsk.png",
             "images": []
+        },
+        "acdseephotostudio-ultimate": {
+            "icon": "https://i.postimg.cc/LXLxnYq5/acdsee-u.png",
+            "images": []
+        },
+        "acdseephotostudio-professional": {
+            "icon": "",
+            "images": []
+        },
+        "acdseephotostudio-home": {
+            "icon": "",
+            "images": []
+        },
+        "acdsee-free": {
+            "icon": "https://i.postimg.cc/4NSpR4dS/acdsee-f.png",
+            "images": []
+        },
+        "simplestickynotes": {
+            "icon": "https://i.postimg.cc/QxjSZFnb/ssn.png",
+            "images": [
+                "https://i.postimg.cc/65HVsYZW/image.png",
+                "https://i.postimg.cc/kgzxGGwL/image.png",
+                "https://i.postimg.cc/gk0RK8Tf/image.png",
+                "https://i.postimg.cc/BnrKsyn0/image.png",
+                "https://i.postimg.cc/Y93G6Cfr/image.png"
+            ]
         }
     }
 }
