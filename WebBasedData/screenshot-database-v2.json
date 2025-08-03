@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11936,
-        "done": 5448,
-        "packages_with_icon": 5448,
-        "packages_with_screenshot": 882,
-        "total_screenshots": 2773
+        "total": 11938,
+        "done": 5452,
+        "packages_with_icon": 5452,
+        "packages_with_screenshot": 886,
+        "total_screenshots": 2783
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -34275,12 +34275,34 @@
             "images": []
         },
         "queueexplorer-professional": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/BQd3nbmP/qe.png",
+            "images": [
+                "https://i.postimg.cc/xdQSL7D0/image.png",
+                "https://i.postimg.cc/sxWrYRXg/image.png"
+            ]
         },
         "queueexplorer": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/BQd3nbmP/qe.png",
+            "images": [
+                "https://i.postimg.cc/xdQSL7D0/image.png",
+                "https://i.postimg.cc/sxWrYRXg/image.png"
+            ]
+        },
+        "queuemonitor-pro": {
+            "icon": "https://i.postimg.cc/XqSh0Bjn/qm.png",
+            "images": [
+                "https://i.postimg.cc/sXqtT0QH/image.png",
+                "https://i.postimg.cc/fW04VZpG/image.png",
+                "https://i.postimg.cc/fTx6vCw5/image.png"
+            ]
+        },
+        "queuemonitor-std": {
+            "icon": "https://i.postimg.cc/XqSh0Bjn/qm.png",
+            "images": [
+                "https://i.postimg.cc/sXqtT0QH/image.png",
+                "https://i.postimg.cc/fW04VZpG/image.png",
+                "https://i.postimg.cc/fTx6vCw5/image.png"
+            ]
         },
         "quick-javascript-switcher-chrome": {
             "icon": "",
