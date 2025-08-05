@@ -522,7 +522,7 @@
   "Perform a backup now": "Jetzt eine Sicherung durchführen",
   "Perform a cloud backup now": "Jetzt eine Cloud-Sicherung durchführen",
   "Perform a local backup now": "Jetzt eine lokale Sicherung durchführen",
-  "Perform integrity checks at startup": "Führen Sie beim Start Integritätsprüfungen durch.",
+  "Perform integrity checks at startup": "Beim Start Integritätsprüfungen durchführen",
   "Performing backup, please wait...": "Sicherung wird erstellt, bitte warten...",
   "Periodically perform a backup of the installed packages": "Regelmäßig eine Sicherung der installierten Pakete durchführen",
   "Periodically perform a cloud backup of the installed packages": "Regelmäßig eine Cloud-Sicherung der installierten Pakete durchführen",
