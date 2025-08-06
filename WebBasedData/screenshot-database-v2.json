@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11938,
-        "done": 5452,
-        "packages_with_icon": 5452,
-        "packages_with_screenshot": 886,
-        "total_screenshots": 2783
+        "total": 11944,
+        "done": 5451,
+        "packages_with_icon": 5451,
+        "packages_with_screenshot": 893,
+        "total_screenshots": 2813
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -10851,9 +10851,10 @@
         "diskdefrag": {
             "icon": "https://www.auslogics.com/includes/software/disk-defrag/i/logo.png",
             "images": [
-                "https://i0.wp.com/filecr.com/wp-content/uploads/2021/06/Auslogics-Disk-Defrag-professional-Free-Download.jpg",
-                "https://sc.filehippo.net/images/t_app-cover-m,f_auto/p/df5582de-96d1-11e6-b25d-00163ec9f5fa/1089620818/auslogics-disk-defrag-1089620818.png",
-                "https://windows-cdn.softpedia.com/screenshots/Portable-Auslogics-Disk-Defrag_12.png"
+                "https://i.postimg.cc/0y2TJ5bp/image.png",
+                "https://i.postimg.cc/Bn6znhVp/image.png",
+                "https://i.postimg.cc/SKYtWnqz/image.png",
+                "https://i.postimg.cc/Pxm3R0CX/image.png"
             ]
         },
         "diskdefragtouch": {
@@ -12439,8 +12440,13 @@
             "images": []
         },
         "duplicatefilefinder": {
-            "icon": "https://community.chocolatey.org/content/packageimages/duplicatefilefinder.10.0.0.2.png",
-            "images": []
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/s2K14gcs/image.png",
+                "https://i.postimg.cc/B66bYfYD/image.png",
+                "https://i.postimg.cc/Tw4wBNFs/image.png",
+                "https://i.postimg.cc/D04ZhdKw/image.png"
+            ]
         },
         "duplicatefilesfix\u2026": {
             "icon": "",
@@ -51322,6 +51328,61 @@
                 "https://i.postimg.cc/gk0RK8Tf/image.png",
                 "https://i.postimg.cc/BnrKsyn0/image.png",
                 "https://i.postimg.cc/Y93G6Cfr/image.png"
+            ]
+        },
+        "bitreplica": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/SQf17F0V/image.png",
+                "https://i.postimg.cc/t4Yrjssm/image.png",
+                "https://i.postimg.cc/HxC3X3Bf/image.png",
+                "https://i.postimg.cc/wvc2VJr3/image.png",
+                "https://i.postimg.cc/zvxjmN8r/image.png",
+                "https://i.postimg.cc/Y2R8L6gs/image.png",
+                "https://i.postimg.cc/CLK7GRsL/image.png"
+            ]
+        },
+        "boostspeed": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/rw09H7HB/image.png",
+                "https://i.postimg.cc/NfL8yWQK/image.png",
+                "https://i.postimg.cc/vZVWhfgM/image.png",
+                "https://i.postimg.cc/xdVL48Mm/image.png"
+            ]
+        },
+        "driverupdater": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/t4WxWbw4/image.png",
+                "https://i.postimg.cc/XvWygh6c/image.png",
+                "https://i.postimg.cc/s2JGHcVF/image.png",
+                "https://i.postimg.cc/85PJ2657/image.png",
+                "https://i.postimg.cc/SRHnY1G9/image.png"
+            ]
+        },
+        "registrycleaner": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/0Qbm6SqL/image.png",
+                "https://i.postimg.cc/KzwTtYG4/image.png",
+                "https://i.postimg.cc/wMNm2dM2/image.png"
+            ]
+        },
+        "registrydefrag": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/PJ1CZzVF/image.png",
+                "https://i.postimg.cc/1RFnLsRc/image.png",
+                "https://i.postimg.cc/X70GWmpM/image.png"
+            ]
+        },
+        "ssdoptimizer": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/8PBFz467/image.png",
+                "https://i.postimg.cc/K8G1kTPJ/image.png",
+                "https://i.postimg.cc/9fzz1jN9/image.png"
             ]
         }
     }
