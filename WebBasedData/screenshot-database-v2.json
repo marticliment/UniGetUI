@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11944,
-        "done": 5451,
-        "packages_with_icon": 5451,
-        "packages_with_screenshot": 893,
-        "total_screenshots": 2813
+        "total": 11948,
+        "done": 5453,
+        "packages_with_icon": 5453,
+        "packages_with_screenshot": 897,
+        "total_screenshots": 2829
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -51383,6 +51383,42 @@
                 "https://i.postimg.cc/8PBFz467/image.png",
                 "https://i.postimg.cc/K8G1kTPJ/image.png",
                 "https://i.postimg.cc/9fzz1jN9/image.png"
+            ]
+        },
+        "videograbber": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/RFHh5LmV/image.png",
+                "https://i.postimg.cc/RhxFMJC1/image.png",
+                "https://i.postimg.cc/6qVQT6Tk/image.png"
+            ]
+        },
+        "windowsslimmer": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/15Pt2Fjs/image.png",
+                "https://i.postimg.cc/28w6D5sv/image.png",
+                "https://i.postimg.cc/Njj0fctn/image.png"
+            ]
+        },
+        "sqliteexpertpers": {
+            "icon": "https://i.postimg.cc/KzGKLMhZ/SQLite-Exp.png",
+            "images": [
+                "https://i.postimg.cc/02BpscR7/image.png",
+                "https://i.postimg.cc/rp6xdspm/image.png",
+                "https://i.postimg.cc/KzxTNWBh/image.png",
+                "https://i.postimg.cc/rp6xdspm/image.png",
+                "https://i.postimg.cc/65yvYn2q/image.png"
+            ]
+        },
+        "sqliteexpertpro": {
+            "icon": "https://i.postimg.cc/KzGKLMhZ/SQLite-Exp.png",
+            "images": [
+                "https://i.postimg.cc/02BpscR7/image.png",
+                "https://i.postimg.cc/rp6xdspm/image.png",
+                "https://i.postimg.cc/KzxTNWBh/image.png",
+                "https://i.postimg.cc/rp6xdspm/image.png",
+                "https://i.postimg.cc/65yvYn2q/image.png"
             ]
         }
     }
