@@ -79,24 +79,35 @@ properties:
     id: Rustlang.Rustup
     source: winget
 
-  - resource: Microsoft.WinGet.DSC/WinGetPackage
+- resource: Microsoft.WinGet.DSC/WinGetPackage
+    id: installGit
     directives:
-    description: Install VCPkg
-    allowPrerelease: true
+      description: Install Git for vcpkg
+      allowPrerelease: true
     settings:
-    id: Microsoft.VCPkg
-    source: winget
+      id: Git.Git
+      source: winget
 
-  - resource: Microsoft.WinGet.DSC/WinGetPackage
+  - resource: Microsoft.Windows.Developer/GitClone
+    id: cloneVcpkg
     directives:
-    description: Install .NET Framework 4.8.1 Developer Pack
-    allowPrerelease: true
+      description: Clone vcpkg repository
+      dependsOn:
+        - installGit
     settings:
-    id: Microsoft.Net.Framework.DeveloperPack.4.8.1
-    source: winget
+      repositoryUrl: https://github.com/microsoft/vcpkg.git
+      directory: '%SystemDrive%\vcpkg'
+
+  - resource: Microsoft.Windows.Developer/PowerShell
+    directives:
+      description: Bootstrap vcpkg
+      dependsOn:
+        - cloneVcpkg
+    settings:
+      script: |
+        & '%SystemDrive%\vcpkg\bootstrap-vcpkg.bat' -disableMetrics
 
   # Build and deployment tools
-
   - resource: Microsoft.WinGet.DSC/WinGetPackage
     directives:
       description: Install Git for version control

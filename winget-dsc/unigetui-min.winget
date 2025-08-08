@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=https://aka.ms/configuration-dsc-schema/0.2
+# WinGet Configuration File for UniGetUI Development Environment
+# This file defines the desired state configuration for setting up a development environment for UniGetUI
+
+properties:
+  configurationVersion: 0.2.0
+  assertions:
+  - resource: Microsoft.Windows.Developer/OsVersion
+    directives:
+      description: Verify minimum OS version
+      allowPrerelease: true
+    settings:
+      MinVersion: "10.0.19041"
+  resources:
+
+  # Basic dependencies 
+  - resource: Microsoft.WinGet.DSC/WinGetPackage
+    directives:
+      description: Install Microsoft Edge WebView2
+      allowPrerelease: true
+    settings:
+      id: Microsoft.EdgeWebView2Runtime
+      source: winget
+
+  - resource: Microsoft.WinGet.DSC/WinGetPackage
+    directives:
+      description: Install Microsoft Visual C++ 2015-2022 Redistributable
+      allowPrerelease: true
+    settings:
+      id: Microsoft.VCRedist.2015-2022.x64
+      source: winget
