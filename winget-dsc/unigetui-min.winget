@@ -3,25 +3,24 @@ $schema: https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/2024/04/c
 metadata:
   name: UniGetUI Minimal Runtime Dependencies
   description: Installs the minimal runtime dependencies required for UniGetUI
-  author: UniGetUI Team
-
-parameters:
+  author: Martí Climent
 
 resources:
-- name: Verify minimum OS version
-  type: Microsoft.Windows.Developer/OsVersion
-  properties:
-    MinVersion: "10.0.19041"
-
 # Basic dependencies 
 - name: Install Microsoft Edge WebView2
-  type: Microsoft.WinGet.DSC/WinGetPackage
+  type: Microsoft.WinGet/Package
   properties:
     id: Microsoft.EdgeWebView2Runtime
     source: winget
 
 - name: Install Microsoft Visual C++ 2015-2022 Redistributable
-  type: Microsoft.WinGet.DSC/WinGetPackage
+  type: Microsoft.WinGet/Package
   properties:
     id: Microsoft.VCRedist.2015-2022.x64
+    source: winget
+
+- name: Install UniGetUI
+  type: Microsoft.WinGet/Package
+  properties:
+    id: MartiCliment.UniGetUI
     source: winget
