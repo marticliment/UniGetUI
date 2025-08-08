@@ -1,0 +1,12 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+  "schedule": [
+    "* 0-3 * * 1"
+  ],
+  "nuget": {
+    "enabled": true
+  }
+}
