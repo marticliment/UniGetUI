@@ -1,0 +1,146 @@
+# yaml-language-server: $schema=https://aka.ms/configuration-dsc-schema/0.2
+# WinGet Configuration File for UniGetUI Development Environment
+# This file defines the desired state configuration for setting up a development environment for UniGetUI
+
+properties:
+  configurationVersion: 0.2.0
+  assertions:
+    - resource: Microsoft.Windows.Developer/OsVersion
+      directives:
+        description: Verify minimum OS version
+        allowPrerelease: true
+      settings:
+        MinVersion: "10.0.19041"
+  resources:
+    # Development Tools
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install Git for version control
+        allowPrerelease: true
+      settings:
+        id: Git.Git
+        source: winget
+    
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install Visual Studio 2022 Community
+        allowPrerelease: true
+      settings:
+        id: Microsoft.VisualStudio.2022.Community
+        source: winget
+    
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install .NET 8 SDK
+        allowPrerelease: true
+      settings:
+        id: Microsoft.DotNet.SDK.8
+        source: winget
+        
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install Windows App SDK
+        allowPrerelease: true
+      settings:
+        id: Microsoft.WindowsAppRuntime.1.7
+        source: winget
+    
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install PowerShell 7
+        allowPrerelease: true
+      settings:
+        id: Microsoft.PowerShell
+        source: winget
+    
+    # Package Managers (for testing UniGetUI functionality)
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install Chocolatey
+        allowPrerelease: true
+      settings:
+        id: Chocolatey.Chocolatey
+        source: winget
+    
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install Scoop
+        allowPrerelease: true
+      settings:
+        id: Scoop.Scoop
+        source: winget
+    
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install Python (for scripts and tools)
+        allowPrerelease: true
+      settings:
+        id: Python.Python.3.12
+        source: winget
+    
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install Node.js (for web components)
+        allowPrerelease: true
+      settings:
+        id: OpenJS.NodeJS
+        source: winget
+    
+    # Development and Testing Tools
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install Windows Terminal
+        allowPrerelease: true
+      settings:
+        id: Microsoft.WindowsTerminal
+        source: winget
+    
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install Windows Subsystem for Linux
+        allowPrerelease: true
+      settings:
+        id: Microsoft.WSL
+        source: winget
+    
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install Microsoft Edge WebView2
+        allowPrerelease: true
+      settings:
+        id: Microsoft.EdgeWebView2Runtime
+        source: winget
+    
+    # Optional development tools
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install Visual Studio Code (optional)
+        allowPrerelease: true
+      settings:
+        id: Microsoft.VisualStudioCode
+        source: winget
+    
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install Windows SDK
+        allowPrerelease: true
+      settings:
+        id: Microsoft.WindowsSDK.10
+        source: winget
+    
+    # Build and deployment tools
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install Inno Setup (for installer creation)
+        allowPrerelease: true
+      settings:
+        id: JRSoftware.InnoSetup
+        source: winget
+    
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install 7-Zip (for archive handling)
+        allowPrerelease: true
+      settings:
+        id: 7zip.7zip
+        source: winget
