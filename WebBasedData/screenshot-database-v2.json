@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11948,
-        "done": 5453,
-        "packages_with_icon": 5453,
-        "packages_with_screenshot": 897,
-        "total_screenshots": 2829
+        "total": 11951,
+        "done": 5458,
+        "packages_with_icon": 5458,
+        "packages_with_screenshot": 900,
+        "total_screenshots": 2837
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -15504,7 +15504,9 @@
         },
         "freedownloadmanager": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://www.freedownloadmanager.org/public/img/v2/scr_win.png"
+            ]
         },
         "freeencoderpack": {
             "icon": "",
@@ -51265,7 +51267,7 @@
             ]
         },
         "merge": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/qqqw0MLL/amerge.png",
             "images": [
                 "https://i.postimg.cc/43FkWDtQ/image.png",
                 "https://i.postimg.cc/d1bMYG57/image.png",
@@ -51309,11 +51311,11 @@
             "images": []
         },
         "acdseephotostudio-professional": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/QNT6zdfq/acdpro.png",
             "images": []
         },
         "acdseephotostudio-home": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/50MJFRyc/acdhome.png",
             "images": []
         },
         "acdsee-free": {
@@ -51420,6 +51422,27 @@
                 "https://i.postimg.cc/rp6xdspm/image.png",
                 "https://i.postimg.cc/65yvYn2q/image.png"
             ]
+        },
+        "usbtrace": {
+            "icon": "https://i.postimg.cc/W3Px2rF7/usbt.png",
+            "images": [
+                "https://i.postimg.cc/4dq77fGw/image.png",
+                "https://i.postimg.cc/nV9Q8DKW/image.png",
+                "https://i.postimg.cc/pXDhrM6Y/image.png",
+                "https://i.postimg.cc/W18dm6jd/image.png",
+                "https://i.postimg.cc/bvvsmDN3/image.png",
+                "https://i.postimg.cc/XJGX0R55/image.png"
+            ]
+        },
+        "videopad": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/vBs938kB/image.png"
+            ]
+        },
+        "acdseegemstone": {
+            "icon": "https://i.postimg.cc/13tCz35b/gemstone.png",
+            "images": []
         }
     }
 }
