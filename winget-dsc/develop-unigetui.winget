@@ -71,22 +71,22 @@ properties:
       id: OpenJS.NodeJS
       source: winget
 
-  - resource: Microsoft.WinGet.DSC/WinGetPackage
-    directives:
+- resource: Microsoft.WinGet.DSC/WinGetPackage
+  directives:
     description: Install Rust (Cargo)
     allowPrerelease: true
-    settings:
+  settings:
     id: Rustlang.Rustup
     source: winget
 
 - resource: Microsoft.WinGet.DSC/WinGetPackage
-    id: installGit
-    directives:
-      description: Install Git for vcpkg
-      allowPrerelease: true
-    settings:
-      id: Git.Git
-      source: winget
+  id: installGit
+  directives:
+    description: Install Git for vcpkg
+    allowPrerelease: true
+  settings:
+    id: Git.Git
+    source: winget
 
   - resource: Microsoft.Windows.Developer/GitClone
     id: cloneVcpkg
@@ -96,7 +96,7 @@ properties:
         - installGit
     settings:
       repositoryUrl: https://github.com/microsoft/vcpkg.git
-      directory: '%SystemDrive%\vcpkg'
+      directory: '%userprofile%\vcpkg'
 
   - resource: Microsoft.Windows.Developer/PowerShell
     directives:
@@ -105,7 +105,7 @@ properties:
         - cloneVcpkg
     settings:
       script: |
-        & '%SystemDrive%\vcpkg\bootstrap-vcpkg.bat' -disableMetrics
+        & '%userprofile%\vcpkg\bootstrap-vcpkg.bat' -disableMetrics
 
   # Build and deployment tools
   - resource: Microsoft.WinGet.DSC/WinGetPackage
@@ -143,12 +143,12 @@ properties:
 
   - resource: Microsoft.WinGet.DSC/WinGetPackage
     directives:
-    description: Install Windows SDK
-    allowPrerelease: true
+      description: Install Windows SDK
+      allowPrerelease: true
     settings:
-    id: Microsoft.WindowsSDK.10
-    version: 10.0.19041.0
-    source: winget
+      id: Microsoft.WindowsSDK.10
+      version: 10.0.19041.0
+      source: winget
 
   - resource: Microsoft.WinGet.DSC/WinGetPackage
     directives:
@@ -168,8 +168,18 @@ properties:
 
   - resource: Microsoft.WinGet.DSC/WinGetPackage
     directives:
-    description: Install gsudo (sudo for Windows)
-    allowPrerelease: true
+      description: Install gsudo (sudo for Windows)
+      allowPrerelease: true
     settings:
-    id: gerardog.gsudo
-    source: winget
+      id: gerardog.gsudo
+      source: winget
+
+  # Clone the UniGetUI repository
+  - resource: Microsoft.Windows.Developer/GitClone
+    directives:
+      description: Clone UniGetUI repository
+      dependsOn:
+        - installGit
+    settings:
+      repositoryUrl: https://github.com/marticliment/UniGetUI.git
+      directory: '%userprofile%\UniGetUI'

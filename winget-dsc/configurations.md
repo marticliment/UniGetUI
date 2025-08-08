@@ -7,3 +7,4 @@ All in `unigetui-min.winget`, but will also install all required package manager
 
 
 ### `unigetui-min.winget`
+All in `unigetui-full.winget`, but will also install required development tools and clone the repository to your user folder

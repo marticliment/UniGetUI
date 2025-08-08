@@ -87,7 +87,6 @@ properties:
       id: Microsoft.DotNet.SDK.8
       source: winget
 
-
   - resource: Microsoft.WinGet.DSC/WinGetPackage
     id: installGit
     directives:
@@ -102,16 +101,16 @@ properties:
     directives:
       description: Clone vcpkg repository
       dependsOn:
-        - installGit
+      - installGit
     settings:
       repositoryUrl: https://github.com/microsoft/vcpkg.git
-      directory: '%SystemDrive%\vcpkg'
+      directory: '%userprofile%\vcpkg'
 
   - resource: Microsoft.Windows.Developer/PowerShell
     directives:
       description: Bootstrap vcpkg
       dependsOn:
-        - cloneVcpkg
+      - cloneVcpkg
     settings:
       script: |
-        & '%SystemDrive%\vcpkg\bootstrap-vcpkg.bat' -disableMetrics
+        & '%userprofile%\vcpkg\bootstrap-vcpkg.bat' -disableMetrics
