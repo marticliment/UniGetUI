@@ -1,0 +1,65 @@
+$schema: https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/2024/04/config/document.json
+
+metadata:
+  name: UniGetUI Complete Environment
+  description: Installs all dependencies and tools for UniGetUI development and runtime
+  author: Martí Climent
+
+resources:
+# Basic dependencies 
+- name: Install Microsoft Edge WebView2
+  type: Microsoft.WinGet/Package
+  properties:
+    id: Microsoft.EdgeWebView2Runtime
+    source: winget
+
+- name: Install Microsoft Visual C++ 2015-2022 Redistributable
+  type: Microsoft.WinGet/Package
+  properties:
+    id: Microsoft.VCRedist.2015+.x64
+    source: winget
+
+- name: Install UniGetUI
+  type: Microsoft.WinGet/Package
+  properties:
+    id: MartiCliment.UniGetUI
+    source: winget
+
+# Package Managers (for testing UniGetUI functionality)
+- name: Install Chocolatey
+  type: Microsoft.WinGet/Package
+  properties:
+    id: Chocolatey.Chocolatey
+    source: winget
+
+- name: Install Python
+  type: Microsoft.WinGet/Package
+  properties:
+    id: Python.Python.3.13
+    source: winget
+
+- name: Install PowerShell 7
+  type: Microsoft.WinGet/Package
+  properties:
+    id: Microsoft.PowerShell
+    source: winget
+
+- name: Install NodeJS
+  type: Microsoft.WinGet/Package
+  properties:
+    id: OpenJS.NodeJS
+    source: winget
+
+- name: Install Rust (Cargo)
+  type: Microsoft.WinGet/Package
+  properties:
+    id: Rustlang.Rustup
+    source: winget
+
+- name: Install .NET 8 SDK
+  type: Microsoft.WinGet/Package
+  properties:
+    id: Microsoft.DotNet.SDK.8
+    source: winget
+
+# vcpkg bootstrap is optional; run scripts\dev-setup-optional.ps1 if needed.

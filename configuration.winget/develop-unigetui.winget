@@ -1,0 +1,100 @@
+$schema: https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/2024/04/config/document.json
+
+metadata:
+  name: UniGetUI Development Environment
+  description: Sets up the development environment for UniGetUI
+  author: Martí Climent
+
+resources:
+# Basic dependencies 
+- name: Install Microsoft Edge WebView2
+  type: Microsoft.WinGet/Package
+  properties:
+    id: Microsoft.EdgeWebView2Runtime
+    source: winget
+
+- name: Install Microsoft Visual C++ 2015-2022 Redistributable
+  type: Microsoft.WinGet/Package
+  properties:
+    id: Microsoft.VCRedist.2015+.x64
+    source: winget
+
+# Package Managers (for testing UniGetUI functionality)
+- name: Install Chocolatey
+  type: Microsoft.WinGet/Package
+  properties:
+    id: Chocolatey.Chocolatey
+    source: winget
+
+- name: Install Python
+  type: Microsoft.WinGet/Package
+  properties:
+    id: Python.Python.3.13
+    source: winget
+
+- name: Install PowerShell 7
+  type: Microsoft.WinGet/Package
+  properties:
+    id: Microsoft.PowerShell
+    source: winget
+
+- name: Install NodeJS
+  type: Microsoft.WinGet/Package
+  properties:
+    id: OpenJS.NodeJS
+    source: winget
+
+- name: Install Rust (Cargo)
+  type: Microsoft.WinGet/Package
+  properties:
+    id: Rustlang.Rustup
+    source: winget
+
+# Build and deployment tools
+- name: Install Git for version control
+  type: Microsoft.WinGet/Package
+  properties:
+    id: Git.Git
+    source: winget
+
+- name: Install Visual Studio 2022 Community
+  type: Microsoft.WinGet/Package
+  properties:
+    id: Microsoft.VisualStudio.2022.Community
+    source: winget
+
+- name: Install .NET 8 SDK
+  type: Microsoft.WinGet/Package
+  properties:
+    id: Microsoft.DotNet.SDK.8
+    source: winget
+
+- name: Install Windows App SDK
+  type: Microsoft.WinGet/Package
+  properties:
+    id: Microsoft.WindowsAppRuntime.1.7
+    source: winget
+
+- name: Install Windows SDK
+  type: Microsoft.WinGet/Package
+  properties:
+    id: Microsoft.WindowsSDK.10.0.19041
+    source: winget
+
+- name: Install Inno Setup (for installer creation)
+  type: Microsoft.WinGet/Package
+  properties:
+    id: JRSoftware.InnoSetup
+    source: winget
+
+- name: Install 7-Zip (for archive handling)
+  type: Microsoft.WinGet/Package
+  properties:
+    id: 7zip.7zip
+    source: winget
+
+- name: Install gsudo (sudo for Windows)
+  type: Microsoft.WinGet/Package
+  properties:
+    id: gerardog.gsudo
+    source: winget
