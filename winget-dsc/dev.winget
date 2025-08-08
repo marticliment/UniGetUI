@@ -5,137 +5,160 @@
 properties:
   configurationVersion: 0.2.0
   assertions:
-    - resource: Microsoft.Windows.Developer/OsVersion
-      directives:
-        description: Verify minimum OS version
-        allowPrerelease: true
-      settings:
-        MinVersion: "10.0.19041"
+  - resource: Microsoft.Windows.Developer/OsVersion
+    directives:
+      description: Verify minimum OS version
+      allowPrerelease: true
+    settings:
+      MinVersion: "10.0.19041"
   resources:
-    # Basic dependencies 
-    - resource: Microsoft.WinGet.DSC/WinGetPackage
-      directives:
-        description: Install Microsoft Edge WebView2
-        allowPrerelease: true
-      settings:
-        id: Microsoft.EdgeWebView2Runtime
-        source: winget
 
-    - resource: Microsoft.WinGet.DSC/WinGetPackage
-      directives:
-        description: Install Microsoft Visual C++ 2015-2022 Redistributable
-        allowPrerelease: true
-      settings:
-        id: Microsoft.VCRedist.2015-2022.x64
-        source: winget
-
-    
-    # Package Managers (for testing UniGetUI functionality)
-
-    - resource: Microsoft.WinGet.DSC/WinGetPackage
-      directives:
-        description: Install Chocolatey
-        allowPrerelease: true
-      settings:
-        id: Chocolatey.Chocolatey
-        source: winget
-    
-    - resource: Microsoft.WinGet.DSC/WinGetPackage
-      directives:
-        description: Install Scoop
-        allowPrerelease: true
-      settings:
-        id: Scoop.Scoop
-        source: winget
-    
-    - resource: Microsoft.WinGet.DSC/WinGetPackage
-      directives:
-        description: Install Python (for scripts and tools)
-        allowPrerelease: true
-      settings:
-        id: Python.Python.3.12
-        source: winget
-
-    - resource: Microsoft.WinGet.DSC/WinGetPackage
-      directives:
-        description: Install PowerShell 7
-        allowPrerelease: true
-      settings:
-        id: Microsoft.PowerShell
-        source: winget
-    
-    - resource: Microsoft.WinGet.DSC/WinGetPackage
-      directives:
-        description: Install Node.js (for web components)
-        allowPrerelease: true
-      settings:
-        id: OpenJS.NodeJS
-        source: winget
-    
-        
-    # Build and deployment tools
-
-    - resource: Microsoft.WinGet.DSC/WinGetPackage
-      directives:
-        description: Install Git for version control
-        allowPrerelease: true
-      settings:
-        id: Git.Git
-        source: winget
-    
-    - resource: Microsoft.WinGet.DSC/WinGetPackage
-      directives:
-        description: Install Visual Studio 2022 Community
-        allowPrerelease: true
-      settings:
-        id: Microsoft.VisualStudio.2022.Community
-        source: winget
-    
-    - resource: Microsoft.WinGet.DSC/WinGetPackage
-      directives:
-        description: Install .NET 8 SDK
-        allowPrerelease: true
-      settings:
-        id: Microsoft.DotNet.SDK.8
-        source: winget
-        
-    - resource: Microsoft.WinGet.DSC/WinGetPackage
-      directives:
-        description: Install Windows App SDK
-        allowPrerelease: true
-      settings:
-        id: Microsoft.WindowsAppRuntime.1.7
-        source: winget
-
-    - resource: Microsoft.WinGet.DSC/WinGetPackage
-      directives:
-      description: Install Windows SDK
+  # Basic dependencies 
+  - resource: Microsoft.WinGet.DSC/WinGetPackage
+    directives:
+      description: Install Microsoft Edge WebView2
       allowPrerelease: true
-      settings:
-      id: Microsoft.WindowsSDK.10
-      version: 10.0.19041.0
+    settings:
+      id: Microsoft.EdgeWebView2Runtime
       source: winget
 
-    - resource: Microsoft.WinGet.DSC/WinGetPackage
-      directives:
-        description: Install Inno Setup (for installer creation)
-        allowPrerelease: true
-      settings:
-        id: JRSoftware.InnoSetup
-        source: winget
-    
-    - resource: Microsoft.WinGet.DSC/WinGetPackage
-      directives:
-        description: Install 7-Zip (for archive handling)
-        allowPrerelease: true
-      settings:
-        id: 7zip.7zip
-        source: winget
-
-    - resource: Microsoft.WinGet.DSC/WinGetPackage
-      directives:
-      description: Install gsudo (sudo for Windows)
+  - resource: Microsoft.WinGet.DSC/WinGetPackage
+    directives:
+      description: Install Microsoft Visual C++ 2015-2022 Redistributable
       allowPrerelease: true
-      settings:
-      id: gerardog.gsudo
+    settings:
+      id: Microsoft.VCRedist.2015-2022.x64
       source: winget
+
+  # Package Managers (for testing UniGetUI functionality)
+  - resource: Microsoft.WinGet.DSC/WinGetPackage
+    directives:
+      description: Install Chocolatey
+      allowPrerelease: true
+    settings:
+      id: Chocolatey.Chocolatey
+      source: winget
+
+  - resource: Microsoft.WinGet.DSC/WinGetPackage
+    directives:
+      description: Install Scoop
+      allowPrerelease: true
+    settings:
+      id: Scoop.Scoop
+      source: winget
+
+  - resource: Microsoft.WinGet.DSC/WinGetPackage
+    directives:
+      description: Install Python
+      allowPrerelease: true
+    settings:
+      id: Python.Python.3.13
+      source: winget
+
+  - resource: Microsoft.WinGet.DSC/WinGetPackage
+    directives:
+      description: Install PowerShell 7
+      allowPrerelease: true
+    settings:
+      id: Microsoft.PowerShell
+      source: winget
+
+  - resource: Microsoft.WinGet.DSC/WinGetPackage
+    directives:
+      description: Install Node.js (for web components)
+      allowPrerelease: true
+    settings:
+      id: OpenJS.NodeJS
+      source: winget
+
+  - resource: Microsoft.WinGet.DSC/WinGetPackage
+    directives:
+    description: Install Rust (Cargo)
+    allowPrerelease: true
+    settings:
+    id: Rustlang.Rustup
+    source: winget
+
+  - resource: Microsoft.WinGet.DSC/WinGetPackage
+    directives:
+    description: Install VCPkg
+    allowPrerelease: true
+    settings:
+    id: Microsoft.VCPkg
+    source: winget
+
+  - resource: Microsoft.WinGet.DSC/WinGetPackage
+    directives:
+    description: Install .NET Framework 4.8.1 Developer Pack
+    allowPrerelease: true
+    settings:
+    id: Microsoft.Net.Framework.DeveloperPack.4.8.1
+    source: winget
+
+  # Build and deployment tools
+
+  - resource: Microsoft.WinGet.DSC/WinGetPackage
+    directives:
+      description: Install Git for version control
+      allowPrerelease: true
+    settings:
+      id: Git.Git
+      source: winget
+
+  - resource: Microsoft.WinGet.DSC/WinGetPackage
+    directives:
+      description: Install Visual Studio 2022 Community
+      allowPrerelease: true
+    settings:
+      id: Microsoft.VisualStudio.2022.Community
+      source: winget
+
+  - resource: Microsoft.WinGet.DSC/WinGetPackage
+    directives:
+      # This one also serves for dotnet tool
+      description: Install .NET 8 SDK
+      allowPrerelease: true
+    settings:
+      id: Microsoft.DotNet.SDK.8
+      source: winget
+
+  - resource: Microsoft.WinGet.DSC/WinGetPackage
+    directives:
+      description: Install Windows App SDK
+      allowPrerelease: true
+    settings:
+      id: Microsoft.WindowsAppRuntime.1.7
+      source: winget
+
+  - resource: Microsoft.WinGet.DSC/WinGetPackage
+    directives:
+    description: Install Windows SDK
+    allowPrerelease: true
+    settings:
+    id: Microsoft.WindowsSDK.10
+    version: 10.0.19041.0
+    source: winget
+
+  - resource: Microsoft.WinGet.DSC/WinGetPackage
+    directives:
+      description: Install Inno Setup (for installer creation)
+      allowPrerelease: true
+    settings:
+      id: JRSoftware.InnoSetup
+      source: winget
+
+  - resource: Microsoft.WinGet.DSC/WinGetPackage
+    directives:
+      description: Install 7-Zip (for archive handling)
+      allowPrerelease: true
+    settings:
+      id: 7zip.7zip
+      source: winget
+
+  - resource: Microsoft.WinGet.DSC/WinGetPackage
+    directives:
+    description: Install gsudo (sudo for Windows)
+    allowPrerelease: true
+    settings:
+    id: gerardog.gsudo
+    source: winget
