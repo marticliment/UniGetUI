@@ -16,7 +16,7 @@ resources:
 - name: Install Microsoft Visual C++ 2015-2022 Redistributable
   type: Microsoft.WinGet/Package
   properties:
-    id: Microsoft.VCRedist.2015-2022.x64
+    id: Microsoft.VCRedist.2015+.x64
     source: winget
 
 - name: Install UniGetUI
@@ -30,12 +30,6 @@ resources:
   type: Microsoft.WinGet/Package
   properties:
     id: Chocolatey.Chocolatey
-    source: winget
-
-- name: Install Scoop
-  type: Microsoft.WinGet/Package
-  properties:
-    id: Scoop.Scoop
     source: winget
 
 - name: Install Python
@@ -66,12 +60,6 @@ resources:
   type: Microsoft.WinGet/Package
   properties:
     id: Microsoft.DotNet.SDK.8
-    source: winget
-
-- name: Install Git for vcpkg
-  type: Microsoft.WinGet/Package
-  properties:
-    id: Git.Git
     source: winget
 
 # vcpkg bootstrap is optional; run scripts\dev-setup-optional.ps1 if needed.

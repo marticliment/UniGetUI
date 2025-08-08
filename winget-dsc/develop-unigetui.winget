@@ -16,7 +16,7 @@ resources:
 - name: Install Microsoft Visual C++ 2015-2022 Redistributable
   type: Microsoft.WinGet/Package
   properties:
-    id: Microsoft.VCRedist.2015-2022.x64
+    id: Microsoft.VCRedist.2015+.x64
     source: winget
 
 # Package Managers (for testing UniGetUI functionality)
@@ -24,12 +24,6 @@ resources:
   type: Microsoft.WinGet/Package
   properties:
     id: Chocolatey.Chocolatey
-    source: winget
-
-- name: Install Scoop
-  type: Microsoft.WinGet/Package
-  properties:
-    id: Scoop.Scoop
     source: winget
 
 - name: Install Python
@@ -44,7 +38,7 @@ resources:
     id: Microsoft.PowerShell
     source: winget
 
-- name: Install Node.js (for web components)
+- name: Install NodeJS
   type: Microsoft.WinGet/Package
   properties:
     id: OpenJS.NodeJS
@@ -54,12 +48,6 @@ resources:
   type: Microsoft.WinGet/Package
   properties:
     id: Rustlang.Rustup
-    source: winget
-
-- name: Install Git for vcpkg
-  type: Microsoft.WinGet/Package
-  properties:
-    id: Git.Git
     source: winget
 
 # Build and deployment tools
@@ -90,8 +78,7 @@ resources:
 - name: Install Windows SDK
   type: Microsoft.WinGet/Package
   properties:
-    id: Microsoft.WindowsSDK.10
-    version: 10.0.19041.0
+    id: Microsoft.WindowsSDK.10.0.19041
     source: winget
 
 - name: Install Inno Setup (for installer creation)

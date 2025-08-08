@@ -16,7 +16,7 @@ resources:
 - name: Install Microsoft Visual C++ 2015-2022 Redistributable
   type: Microsoft.WinGet/Package
   properties:
-    id: Microsoft.VCRedist.2015-2022.x64
+    id: Microsoft.VCRedist.2015+.x64
     source: winget
 
 - name: Install UniGetUI
