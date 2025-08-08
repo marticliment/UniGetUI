@@ -110,7 +110,6 @@ properties:
     directives:
       description: Bootstrap vcpkg
       dependsOn:
-      - cloneVcpkg
+        - cloneVcpkg
     settings:
-      script: |
-        & '%userprofile%\vcpkg\bootstrap-vcpkg.bat' -disableMetrics
+      script: "& '%userprofile%\vcpkg\bootstrap-vcpkg.bat' -disableMetrics"

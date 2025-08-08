@@ -71,22 +71,22 @@ properties:
       id: OpenJS.NodeJS
       source: winget
 
-- resource: Microsoft.WinGet.DSC/WinGetPackage
-  directives:
-    description: Install Rust (Cargo)
-    allowPrerelease: true
-  settings:
-    id: Rustlang.Rustup
-    source: winget
+  - resource: Microsoft.WinGet.DSC/WinGetPackage
+    directives:
+      description: Install Rust (Cargo)
+      allowPrerelease: true
+    settings:
+      id: Rustlang.Rustup
+      source: winget
 
-- resource: Microsoft.WinGet.DSC/WinGetPackage
-  id: installGit
-  directives:
-    description: Install Git for vcpkg
-    allowPrerelease: true
-  settings:
-    id: Git.Git
-    source: winget
+  - resource: Microsoft.WinGet.DSC/WinGetPackage
+    id: installGit
+    directives:
+      description: Install Git for vcpkg
+      allowPrerelease: true
+    settings:
+      id: Git.Git
+      source: winget
 
   - resource: Microsoft.Windows.Developer/GitClone
     id: cloneVcpkg
@@ -104,8 +104,7 @@ properties:
       dependsOn:
         - cloneVcpkg
     settings:
-      script: |
-        & '%userprofile%\vcpkg\bootstrap-vcpkg.bat' -disableMetrics
+      script: "& '%userprofile%\vcpkg\bootstrap-vcpkg.bat' -disableMetrics"
 
   # Build and deployment tools
   - resource: Microsoft.WinGet.DSC/WinGetPackage
