@@ -3,89 +3,75 @@ $schema: https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/2024/04/c
 metadata:
   name: UniGetUI Complete Environment
   description: Installs all dependencies and tools for UniGetUI development and runtime
-  author: UniGetUI Team
-
-parameters:
+  author: Martí Climent
 
 resources:
-- name: Verify minimum OS version
-  type: Microsoft.Windows.Developer/OsVersion
-  properties:
-    MinVersion: "10.0.19041"
-
 # Basic dependencies 
 - name: Install Microsoft Edge WebView2
-  type: Microsoft.WinGet.DSC/WinGetPackage
+  type: Microsoft.WinGet/Package
   properties:
     id: Microsoft.EdgeWebView2Runtime
     source: winget
 
 - name: Install Microsoft Visual C++ 2015-2022 Redistributable
-  type: Microsoft.WinGet.DSC/WinGetPackage
+  type: Microsoft.WinGet/Package
   properties:
     id: Microsoft.VCRedist.2015-2022.x64
     source: winget
 
+- name: Install UniGetUI
+  type: Microsoft.WinGet/Package
+  properties:
+    id: MartiCliment.UniGetUI
+    source: winget
+
 # Package Managers (for testing UniGetUI functionality)
 - name: Install Chocolatey
-  type: Microsoft.WinGet.DSC/WinGetPackage
+  type: Microsoft.WinGet/Package
   properties:
     id: Chocolatey.Chocolatey
     source: winget
 
 - name: Install Scoop
-  type: Microsoft.WinGet.DSC/WinGetPackage
+  type: Microsoft.WinGet/Package
   properties:
     id: Scoop.Scoop
     source: winget
 
 - name: Install Python
-  type: Microsoft.WinGet.DSC/WinGetPackage
+  type: Microsoft.WinGet/Package
   properties:
     id: Python.Python.3.13
     source: winget
 
 - name: Install PowerShell 7
-  type: Microsoft.WinGet.DSC/WinGetPackage
+  type: Microsoft.WinGet/Package
   properties:
     id: Microsoft.PowerShell
     source: winget
 
-- name: Install Node.js (for web components)
-  type: Microsoft.WinGet.DSC/WinGetPackage
+- name: Install NodeJS
+  type: Microsoft.WinGet/Package
   properties:
     id: OpenJS.NodeJS
     source: winget
 
 - name: Install Rust (Cargo)
-  type: Microsoft.WinGet.DSC/WinGetPackage
+  type: Microsoft.WinGet/Package
   properties:
     id: Rustlang.Rustup
     source: winget
 
 - name: Install .NET 8 SDK
-  type: Microsoft.WinGet.DSC/WinGetPackage
+  type: Microsoft.WinGet/Package
   properties:
     id: Microsoft.DotNet.SDK.8
     source: winget
 
 - name: Install Git for vcpkg
-  type: Microsoft.WinGet.DSC/WinGetPackage
+  type: Microsoft.WinGet/Package
   properties:
     id: Git.Git
     source: winget
 
-- name: Clone vcpkg repository
-  type: Microsoft.Windows.Developer/GitClone
-  dependsOn:
-  - Install Git for vcpkg
-  properties:
-    repositoryUrl: https://github.com/microsoft/vcpkg.git
-    directory: '%userprofile%\vcpkg'
-
-- name: Bootstrap vcpkg
-  type: Microsoft.Windows.Developer/PowerShell
-  dependsOn:
-  - Clone vcpkg repository
-  properties:
-    script: "& '%userprofile%\vcpkg\bootstrap-vcpkg.bat' -disableMetrics"
+# vcpkg bootstrap is optional; run scripts\dev-setup-optional.ps1 if needed.
