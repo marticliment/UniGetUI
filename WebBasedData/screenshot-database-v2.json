@@ -1,10 +1,10 @@
 {
     "package_count": {
         "total": 11951,
-        "done": 5458,
-        "packages_with_icon": 5458,
-        "packages_with_screenshot": 900,
-        "total_screenshots": 2837
+        "done": 5460,
+        "packages_with_icon": 5460,
+        "packages_with_screenshot": 902,
+        "total_screenshots": 2842
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -15503,9 +15503,10 @@
             "images": []
         },
         "freedownloadmanager": {
-            "icon": "",
+            "icon": "https://raw.githubusercontent.com/wanwanvxt/chocolatey-packages/main/icons/FreeDownloadManager.png",
             "images": [
-                "https://www.freedownloadmanager.org/public/img/v2/scr_win.png"
+                "https://www.freedownloadmanager.org/public/img/v2/scr_win.png",
+                "https://files2.freedownloadmanager.org/5/FDM_5.1.3_w920.png"
             ]
         },
         "freeencoderpack": {
@@ -17257,7 +17258,11 @@
         },
         "goodsync": {
             "icon": "https://community.chocolatey.org/content/packageimages/GoodSync.12.1.7.png",
-            "images": []
+            "images": [
+                "https://www.goodsync.com/images/logos/GoodSync-sync-progress.png",
+                "https://www.goodsync.com/images/logos/GoodSync-sync-completed.png",
+                "https://www.goodsync.com/images/logos/GoodSync-sync-analysis.png"
+            ]
         },
         "google-api-core": {
             "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1200px-Google_%22G%22_logo.svg.png",
@@ -42556,8 +42561,10 @@
             "images": []
         },
         "todesk": {
-            "icon": "",
-            "images": []
+            "icon": "https://todeskcdnspeed.todesk.com/20250513164524635007419258d4.png",
+            "images": [
+                "https://todeskcdnspeed.todesk.com/202302231103335f555421c56974.png"
+            ]
         },
         "todo": {
             "icon": "",
