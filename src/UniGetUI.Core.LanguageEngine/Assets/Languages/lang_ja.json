@@ -964,7 +964,7 @@
   "You may restart your computer later if you wish": "あとでコンピューターを再起動することもできます。",
   "You will be prompted only once, and administrator rights will be granted to packages that request them.": "一度だけUACプロンプトが表示され、管理者権限が要求されたパッケージに付与されます。",
   "You will be prompted only once, and every future installation will be elevated automatically.": "UACプロンプトが表示されるのは一度だけで、以後のインストールはすべて自動的に昇格します。",
-  "You will likely need to interact with the installer.": null,
+  "You will likely need to interact with the installer.": "インストーラーと対話する必要がある可能性があります。 ",
   "[RAN AS ADMINISTRATOR]": "管理者として実行",
   "buy me a coffee": "コーヒー代を投げ銭",
   "extracted": null,
