@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11951,
-        "done": 5460,
-        "packages_with_icon": 5460,
-        "packages_with_screenshot": 902,
-        "total_screenshots": 2842
+        "total": 11955,
+        "done": 5464,
+        "packages_with_icon": 5464,
+        "packages_with_screenshot": 908,
+        "total_screenshots": 2864
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -3463,6 +3463,7 @@
         "audacity": {
             "icon": "https://forum.audacityteam.org/uploads/default/original/1X/81a69b20bcd548215067cfaceccc8a10bfa2d176.png",
             "images": [
+                "https://i.postimg.cc/h4rWHTWb/image.png",
                 "https://i.postimg.cc/zf3bxXFw/audacity-1.png",
                 "https://i.postimg.cc/63v7NjSy/audacity-2.png",
                 "https://i.postimg.cc/28w1mBHF/audacity-3.png"
@@ -19805,7 +19806,13 @@
         },
         "imagine": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/MpQLn0hB/image.png",
+                "https://i.postimg.cc/s2P0cjfD/image.png",
+                "https://i.postimg.cc/DzcBGx5S/image.png",
+                "https://i.postimg.cc/3w3Z3g7Y/image.png",
+                "https://i.postimg.cc/SxfvLQxQ/image.png"
+            ]
         },
         "imazing": {
             "icon": "",
@@ -31189,7 +31196,13 @@
         },
         "peazip": {
             "icon": "https://www.iconarchive.com/download/i106134/papirus-team/papirus-apps/peazip.512.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/Qxybz51V/image.png",
+                "https://i.postimg.cc/DyXJ2bRS/image.png",
+                "https://i.postimg.cc/qvHtgvdj/image.png",
+                "https://i.postimg.cc/VND5790V/image.png",
+                "https://i.postimg.cc/SsY2J2j1/image.png"
+            ]
         },
         "pebear": {
             "icon": "https://community.chocolatey.org/content/packageimages/pebear.0.6.5.png",
@@ -51450,6 +51463,37 @@
         "acdseegemstone": {
             "icon": "https://i.postimg.cc/13tCz35b/gemstone.png",
             "images": []
+        },
+        "darkthumbs": {
+            "icon": "https://i.postimg.cc/9Mmw1yHg/Dark-Thumbs-Icon.png",
+            "images": [
+                "https://i.postimg.cc/m2tM03z0/image.png",
+                "https://i.postimg.cc/1526PgD4/image.png"
+            ]
+        },
+        "vectorstyler": {
+            "icon": "https://i.postimg.cc/4yLJZhMd/vector.png",
+            "images": [
+                "https://i.postimg.cc/vBvYqKt5/image.png",
+                "https://i.postimg.cc/pX407LTJ/image.png",
+                "https://i.postimg.cc/mkhwXvWn/image.png",
+                "https://i.postimg.cc/tJfzLBX4/image.png",
+                "https://i.postimg.cc/Jz8TmdNs/image.png",
+                "https://i.postimg.cc/2Sx05FG2/image.png",
+                "https://i.postimg.cc/FHhxwkvc/image.png"
+            ]
+        },
+        "sysinternals-suite": {
+            "icon": "https://i.postimg.cc/FFWmY3WF/image.png",
+            "images": [
+                "https://i.postimg.cc/NFMcNjMw/image.png"
+            ]
+        },
+        "diffractor": {
+            "icon": "https://i.postimg.cc/0yFXFdkQ/diffractor.png",
+            "images": [
+                "https://i.postimg.cc/sgXbtg5n/image.png"
+            ]
         }
     }
 }
