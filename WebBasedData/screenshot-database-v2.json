@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11955,
-        "done": 5464,
-        "packages_with_icon": 5464,
-        "packages_with_screenshot": 908,
-        "total_screenshots": 2864
+        "total": 11956,
+        "done": 5466,
+        "packages_with_icon": 5466,
+        "packages_with_screenshot": 910,
+        "total_screenshots": 2871
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -13876,8 +13876,21 @@
             "images": []
         },
         "examdiff": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/dVJr6css/examdif.png",
+            "images": [
+                "https://i.postimg.cc/T1hnrVfr/image.png"
+            ]
+        },
+        "examdiff-pro": {
+            "icon": "https://i.postimg.cc/dVJr6css/examdif.png",
+            "images": [
+                "https://i.postimg.cc/pV1fP6Jk/image.png",
+                "https://i.postimg.cc/X7Gwqk2W/image.png",
+                "https://i.postimg.cc/G2f4nZny/image.png",
+                "https://i.postimg.cc/W42FGG7h/image.png",
+                "https://i.postimg.cc/252q21HT/image.png",
+                "https://i.postimg.cc/9Q2tkqpj/image.png"
+            ]
         },
         "excel-parser-processor": {
             "icon": "",
