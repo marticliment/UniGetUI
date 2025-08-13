@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11960,
-        "done": 5485,
-        "packages_with_icon": 5485,
-        "packages_with_screenshot": 925,
-        "total_screenshots": 2908
+        "total": 11962,
+        "done": 5484,
+        "packages_with_icon": 5484,
+        "packages_with_screenshot": 927,
+        "total_screenshots": 2924
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -14067,7 +14067,7 @@
             "icon": "",
             "images": []
         },
-        "EyesGuard\n": {
+        "eyesguard": {
             "icon": "https://raw.githubusercontent.com/avestura/EyesGuard/master/UWPAssets/310x310.png",
             "images": [
                 "https://raw.githubusercontent.com/avestura/EyesGuard/master/Screenshots/Store/Settings.PNG",
@@ -15266,7 +15266,17 @@
         },
         "fontcreator": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/zBB8V333/image.png",
+                "https://i.postimg.cc/V5y8GRgb/image.png",
+                "https://i.postimg.cc/2yLY7JQD/image.png",
+                "https://i.postimg.cc/66F4xx1C/image.png",
+                "https://i.postimg.cc/vH9gQ2pk/image.png",
+                "https://i.postimg.cc/9Qh4zt2M/image.png",
+                "https://i.postimg.cc/XYkr5GNg/image.png",
+                "https://i.postimg.cc/8Ckjmpjg/image.png",
+                "https://i.postimg.cc/k5jDj0b6/image.png"
+            ]
         },
         "fontforge": {
             "icon": "https://i.postimg.cc/kXyktPsr/fontforge.png",
@@ -17281,7 +17291,7 @@
             "images": []
         },
         "goodsync": {
-            "icon": "https://i.postimg.cc/sgPsM2DZ/Good-Sync-256-256.png",
+            "icon": "https://i.postimg.cc/mDJwHMts/Good-Sync-256-256.png",
             "images": [
                 "https://www.goodsync.com/images/logos/GoodSync-sync-progress.png",
                 "https://www.goodsync.com/images/logos/GoodSync-sync-completed.png",
@@ -27807,10 +27817,8 @@
             "images": []
         },
         "netextender": {
-            "icon": "https://postimg.cc/qtZcPS5b",
-            "images": [
-                "https://postimg.cc/8sJsMDBD"
-            ]
+            "icon": "",
+            "images": []
         },
         "netfoxdetective": {
             "icon": "",
@@ -51574,6 +51582,24 @@
             "images": [
                 "https://i.postimg.cc/0N0QG2MY/image.png",
                 "https://i.postimg.cc/FRPHqWx1/image.png"
+            ]
+        },
+        "invisibleman-invisiblemanxray": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/QMjxjYH3/image.png",
+                "https://i.postimg.cc/Dz5f0QXb/image.png"
+            ]
+        },
+        "icofx": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/B6drntMK/image.png",
+                "https://i.postimg.cc/66Zs1LpL/image.png",
+                "https://i.postimg.cc/hPGLtMQV/image.png",
+                "https://i.postimg.cc/G2qB0wQV/image.png",
+                "https://i.postimg.cc/Cxkzhf7j/image.png",
+                "https://i.postimg.cc/Z585tzYH/image.png"
             ]
         }
     }
