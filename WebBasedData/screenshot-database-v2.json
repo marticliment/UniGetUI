@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11962,
-        "done": 5484,
-        "packages_with_icon": 5484,
-        "packages_with_screenshot": 927,
-        "total_screenshots": 2924
+        "total": 11965,
+        "done": 5489,
+        "packages_with_icon": 5489,
+        "packages_with_screenshot": 935,
+        "total_screenshots": 2952
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -14068,7 +14068,7 @@
             "images": []
         },
         "eyesguard": {
-            "icon": "https://raw.githubusercontent.com/avestura/EyesGuard/master/UWPAssets/310x310.png",
+            "icon": "https://raw.githubusercontent.com/avestura/EyesGuard/master/UWPAssets/150x150.png",
             "images": [
                 "https://raw.githubusercontent.com/avestura/EyesGuard/master/Screenshots/Store/Settings.PNG",
                 "https://raw.githubusercontent.com/avestura/EyesGuard/master/Screenshots/Store/ContextMenu.png"
@@ -25802,7 +25802,7 @@
             "images": []
         },
         "miniforge3": {
-            "icon": "https://raw.githubusercontent.com/geicht/chocolatey-packages/52c59b68595a4dfafa336c4245f300fd1aa82776/miniforge3/img/miniforge.png",
+            "icon": "https://i.postimg.cc/pLM4CMmw/Miniforge3-256-256.png",
             "images": []
         },
         "minify": {
@@ -34042,8 +34042,11 @@
             "images": []
         },
         "qq": {
-            "icon": "https://qzonestyle.gtimg.cn/qzone/qzact/act/external/tiqq/logo.png",
-            "images": []
+            "icon": "https://sqimg.qq.com/qq_product_operations/im/mac/5.0/images/share-img.png",
+            "images": [
+                "https://im.qq.com/pcqq/images/new/big-chat-desk.png",
+                "https://im.qq.com/pcqq/images/new/login.png"
+            ]
         },
         "qq-devtool": {
             "icon": "",
@@ -38001,8 +38004,12 @@
             "images": []
         },
         "sigil": {
-            "icon": "",
-            "images": []
+            "icon": "https://sigil-ebook.com/assets/images/sigil-512.png",
+            "images": [
+                "https://raw.githubusercontent.com/Sigil-Ebook/Sigil/master/docs/screencaps/sigil.png",
+                "https://raw.githubusercontent.com/Sigil-Ebook/Sigil/master/docs/screencaps/sigil_dark.png",
+                "https://raw.githubusercontent.com/Sigil-Ebook/Sigil/master/docs/screencaps/pageedit.png"
+            ]
         },
         "sigma-file-manager": {
             "icon": "https://i.imgur.com/YA5meL1.png",
@@ -47513,19 +47520,32 @@
             "images": []
         },
         "wechat": {
-            "icon": "https://raw.githubusercontent.com/facorread/wechat-chocolatey/master/wechat.png",
-            "images": []
+            "icon": "https://pp.myapp.com/ma_icon/0/icon_10910_1753099072/256.png",
+            "images": [
+                "https://res.wx.qq.com/t/wx_fed/base/weixin_portal/res/static/img/3iay9ly.png",
+                "https://res.wx.qq.com/t/wx_fed/base/weixin_portal/res/static/img/v6Q8nnL.png"
+            ]
+        },
+        "wechat-universal": {
+            "icon": "https://pp.myapp.com/ma_icon/0/icon_10910_1753099072/256.png",
+            "images": [
+                "https://res.wx.qq.com/t/fed_upload/7d5aac613b423c3b246a5a2827b8ab1b/1.png",
+                "https://res.wx.qq.com/t/fed_upload/56a84421870dd0a5700bf2585e403e5d/darkmode.png"
+            ]
         },
         "wechat-work": {
-            "icon": "",
+            "icon": "http://dldir1.qq.com/foxmail/icon/work_logo.png",
             "images": []
         },
         "wechatdevtools": {
-            "icon": "https://raw.githubusercontent.com/glucn/chocolatey-packages/main/icons/weixin-devtools.png",
-            "images": []
+            "icon": "https://raw.githubusercontent.com/msojocs/wechat-web-devtools-linux/master/res/icons/512x512.png",
+            "images": [
+                "https://res.wx.qq.com/wxdoc/dist/assets/img/main.9b443fbd.png",
+                "https://res.wx.qq.com/wxdoc/dist/assets/img/projectlist.41fad5cf.png"
+            ]
         },
         "wecom": {
-            "icon": "https://raw.githubusercontent.com/glucn/chocolatey-packages/main/icons/wecom.png",
+            "icon": "http://dldir1.qq.com/foxmail/icon/work_logo.png",
             "images": []
         },
         "weebp": {
@@ -47534,7 +47554,10 @@
         },
         "weixin-dev-tools": {
             "icon": "https://file.service.qq.com/user-files/uploads/201612/0ce9ee10d3099f9989a81308811be588.png",
-            "images": []
+            "images": [
+                "https://res.wx.qq.com/wxdoc/dist/assets/img/main.9b443fbd.png",
+                "https://res.wx.qq.com/wxdoc/dist/assets/img/projectlist.41fad5cf.png"
+            ]
         },
         "weixindevtools": {
             "icon": "",
@@ -51600,6 +51623,31 @@
                 "https://i.postimg.cc/G2qB0wQV/image.png",
                 "https://i.postimg.cc/Cxkzhf7j/image.png",
                 "https://i.postimg.cc/Z585tzYH/image.png"
+            ]
+        },
+        "rapidraw": {
+            "icon": "https://i.postimg.cc/B6sDqSHn/rapidraw.png",
+            "images": [
+                "https://i.postimg.cc/mgRm5s6B/image.png",
+                "https://i.postimg.cc/vTrWr1y9/image.png",
+                "https://i.postimg.cc/LXffSqn7/image.png",
+                "https://i.postimg.cc/j2tWrMVw/image.png",
+                "https://i.postimg.cc/NfLs23xG/image.png",
+                "https://i.postimg.cc/brnj3hV1/image.png"
+            ]
+        },
+        "malcatlite": {
+            "icon": "https://i.postimg.cc/prh9r2bn/malcat-1.png",
+            "images": [
+                "https://i.postimg.cc/9QtDr8S1/image.png",
+                "https://i.postimg.cc/3RWNfKwb/image.png",
+                "https://i.postimg.cc/Y0W9kbY6/image.png",
+                "https://i.postimg.cc/T2pt8SNz/image.png",
+                "https://i.postimg.cc/kMzf7ckB/image.png",
+                "https://i.postimg.cc/XY0LCvNW/image.png",
+                "https://i.postimg.cc/pdWBs1n1/image.png",
+                "https://i.postimg.cc/1zvr2cGR/image.png",
+                "https://i.postimg.cc/TwSqYdNZ/image.png"
             ]
         }
     }
