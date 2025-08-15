@@ -1,10 +1,10 @@
 {
     "package_count": {
         "total": 11965,
-        "done": 5489,
-        "packages_with_icon": 5489,
-        "packages_with_screenshot": 935,
-        "total_screenshots": 2952
+        "done": 5491,
+        "packages_with_icon": 5491,
+        "packages_with_screenshot": 937,
+        "total_screenshots": 2962
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -34809,12 +34809,24 @@
             "images": []
         },
         "rawtherapee": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/P5L5D1yp/image.png",
+            "images": [
+                "https://i.postimg.cc/sggCGWPF/image.png",
+                "https://i.postimg.cc/Y0j37XNq/image.png",
+                "https://i.postimg.cc/tRPd3Vrc/image.png",
+                "https://i.postimg.cc/BnZxf7qW/image.png",
+                "https://i.postimg.cc/JhGZGyDP/image.png"
+            ]
         },
         "rawtherapee-dev": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/P5L5D1yp/image.png",
+            "images": [
+                "https://i.postimg.cc/5tDYjbCz/image.png",
+                "https://i.postimg.cc/Y0j37XNq/image.png",
+                "https://i.postimg.cc/tRPd3Vrc/image.png",
+                "https://i.postimg.cc/BnZxf7qW/image.png",
+                "https://i.postimg.cc/JhGZGyDP/image.png"
+            ]
         },
         "rawwrite": {
             "icon": "",
