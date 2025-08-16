@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11965,
-        "done": 5491,
-        "packages_with_icon": 5491,
-        "packages_with_screenshot": 937,
-        "total_screenshots": 2962
+        "total": 11966,
+        "done": 5493,
+        "packages_with_icon": 5493,
+        "packages_with_screenshot": 939,
+        "total_screenshots": 2972
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -13357,8 +13357,16 @@
             "images": []
         },
         "emeditor": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/5055hhLW/image.png",
+            "images": [
+                "https://i.postimg.cc/zfs0ZwQK/image.png",
+                "https://i.postimg.cc/26nTzbpJ/image.png",
+                "https://i.postimg.cc/NF44H3jk/image.png",
+                "https://i.postimg.cc/h4bM6d1Q/image.png",
+                "https://i.postimg.cc/tCqDj4BS/image.png",
+                "https://i.postimg.cc/YqdRqBVp/image.png",
+                "https://i.postimg.cc/fRFvmjDp/image.png"
+            ]
         },
         "emet": {
             "icon": "https://community.chocolatey.org/content/packageimages/emet.5.52.png",
@@ -15537,10 +15545,10 @@
             "images": []
         },
         "freedownloadmanager": {
-            "icon": "https://raw.githubusercontent.com/wanwanvxt/chocolatey-packages/main/icons/FreeDownloadManager.png",
+            "icon": "https://www.freedownloadmanager.org/public/img/v2/FDM6_logo.png",
             "images": [
-                "https://www.freedownloadmanager.org/public/img/v2/scr_win.png",
-                "https://files2.freedownloadmanager.org/5/FDM_5.1.3_w920.png"
+                "https://www.freedownloadmanager.org/public/img/v2/FDM6_windows_screenshot.png",
+                "https://www.freedownloadmanager.org/public/img/v2/FDM6_mac_screenshot.png"
             ]
         },
         "freeencoderpack": {
@@ -51660,6 +51668,14 @@
                 "https://i.postimg.cc/pdWBs1n1/image.png",
                 "https://i.postimg.cc/1zvr2cGR/image.png",
                 "https://i.postimg.cc/TwSqYdNZ/image.png"
+            ]
+        },
+        "futuremarksystemInfo": {
+            "icon": "https://i.postimg.cc/q7FSWxjc/System-Info.png",
+            "images": [
+                "https://i.postimg.cc/Y0HnwngF/image.png",
+                "https://i.postimg.cc/tJNrR3tM/image.png",
+                "https://i.postimg.cc/76V7fmd0/image.png"
             ]
         }
     }
