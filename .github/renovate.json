@@ -3,7 +3,7 @@
   "extends": [
     "config:recommended"
   ],
-  "nuget": {
-    "enabled": true
-  }
+  "enabledManagers": [
+    "nuget"
+  ]
 }
