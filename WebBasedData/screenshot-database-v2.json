@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11966,
-        "done": 5493,
-        "packages_with_icon": 5493,
-        "packages_with_screenshot": 939,
-        "total_screenshots": 2972
+        "total": 11968,
+        "done": 5496,
+        "packages_with_icon": 5496,
+        "packages_with_screenshot": 943,
+        "total_screenshots": 3001
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -8775,7 +8775,17 @@
         },
         "corsixth": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/fTF6Vt4w/image.png",
+                "https://i.postimg.cc/C526ntQv/image.png",
+                "https://i.postimg.cc/9FVBJcGG/image.png",
+                "https://i.postimg.cc/HxXQ9NnZ/image.png",
+                "https://i.postimg.cc/tJbFSzVX/image.png",
+                "https://i.postimg.cc/d1w0gNnS/image.png",
+                "https://i.postimg.cc/yx5s6LXK/image.png",
+                "https://i.postimg.cc/XNDVgvMP/image.png",
+                "https://i.postimg.cc/Y2VHWyYK/image.png"
+            ]
         },
         "corvusskk": {
             "icon": "",
@@ -10696,7 +10706,16 @@
         },
         "directoryopus": {
             "icon": "https://s3-ap-southeast-2.amazonaws.com/images.imagescience.com.au/_201904_imager-transforms/s3images/Knowledge-Base/Miscellaneous/Directory-Opus/310128/Opus-Logo_8a39ff8a6b9c4355b296f93fc26068cc.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/15VYgs8r/image.png",
+                "https://i.postimg.cc/DZzx7TVs/image.png",
+                "https://i.postimg.cc/vTJh7x4L/image.png",
+                "https://i.postimg.cc/pV3Mc08k/image.png",
+                "https://i.postimg.cc/4NtkDzQG/image.png",
+                "https://i.postimg.cc/g2WFmngZ/image.png",
+                "https://i.postimg.cc/Gmx02dfS/image.png",
+                "https://i.postimg.cc/q7JP6WVB/image.png"
+            ]
         },
         "directorystudio": {
             "icon": "https://i.imgur.com/KeJwBYO.png",
@@ -28209,6 +28228,15 @@
             "icon": "",
             "images": []
         },
+        "winget-nilesoft-shell": {
+            "icon": "https://nilesoft.org/images/favicon.png",
+            "images": [
+                "https://nilesoft.org/images/screenshots/light/ss2.png",
+                "https://nilesoft.org/images/screenshots/light/goto.png",
+                "https://nilesoft.org/images/screenshots/light/ss1.png",
+                "https://nilesoft.org/images/screenshots/light/file-manage.png"
+            ]
+        },
         "nilesoft-shell": {
             "icon": "https://nilesoft.org/images/favicon.png",
             "images": [
@@ -40072,16 +40100,16 @@
             "images": []
         },
         "start11": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/prC8r9DL/Start-All-Back.png",
             "images": []
         },
         "startallback": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/prC8r9DL/Start-All-Back.png",
             "images": [
-                "https://www.startallback.com/img/screen1thm.png",
-                "https://www.startallback.com/img/screen2thm.png",
-                "https://www.startallback.com/img/screen3thm.png",
-                "https://www.startallback.com/img/screen4thm.png"
+                "https://i.postimg.cc/Vv8BdQpD/image.png",
+                "https://i.postimg.cc/MHm0B38x/image.png",
+                "https://i.postimg.cc/J7N5S0Hg/image.png",
+                "https://i.postimg.cc/0290vvpN/image.png"
             ]
         },
         "startbluescreen": {
@@ -51676,6 +51704,19 @@
                 "https://i.postimg.cc/Y0HnwngF/image.png",
                 "https://i.postimg.cc/tJNrR3tM/image.png",
                 "https://i.postimg.cc/76V7fmd0/image.png"
+            ]
+        },
+        "smartsdr": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/NFCrXdnF/image.png",
+                "https://i.postimg.cc/7PtCmQBY/image.png",
+                "https://i.postimg.cc/jSPLqqRL/image.png",
+                "https://i.postimg.cc/Gpz39HVh/image.png",
+                "https://i.postimg.cc/nr9ndTzC/image.png",
+                "https://i.postimg.cc/J7sJVLHB/image.png",
+                "https://i.postimg.cc/NGZXQzRC/image.png",
+                "https://i.postimg.cc/zXWgvFjz/image.png"
             ]
         }
     }
