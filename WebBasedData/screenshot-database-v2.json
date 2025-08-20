@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11968,
-        "done": 5497,
-        "packages_with_icon": 5497,
-        "packages_with_screenshot": 946,
-        "total_screenshots": 3021
+        "total": 11969,
+        "done": 5498,
+        "packages_with_icon": 5498,
+        "packages_with_screenshot": 947,
+        "total_screenshots": 3036
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -37832,7 +37832,17 @@
         "sharex": {
             "icon": "https://community.chocolatey.org/content/packageimages/sharex.16.1.0.png",
             "images": [
-                "https://getsharex.com/img/ShareX_Screenshot.png"
+                "https://getsharex.com/img/ShareX_Screenshot.png",
+                "https://getsharex.com/img/screenshots/MainWindowListView.png",
+                "https://getsharex.com/img/screenshots/MainWindowCaptureMenu.png",
+                "https://getsharex.com/img/screenshots/MainWindowUploadMenu.png",
+                "https://getsharex.com/img/screenshots/ClipboardUpload.png",
+                "https://getsharex.com/img/screenshots/MainWindowToolsMenu.png",
+                "https://getsharex.com/img/screenshots/ColorPicker.png",
+                "https://getsharex.com/img/screenshots/ScreenColorPicker.png",
+                "https://getsharex.com/img/screenshots/VideoConverter.png",
+                "https://getsharex.com/img/screenshots/ImageEditor.png",
+                "https://getsharex.com/img/screenshots/ImageEffects.png"
             ]
         },
         "sharik": {
@@ -51740,6 +51750,16 @@
                 "https://i.postimg.cc/J7sJVLHB/image.png",
                 "https://i.postimg.cc/NGZXQzRC/image.png",
                 "https://i.postimg.cc/zXWgvFjz/image.png"
+            ]
+        },
+        "undertalemodtool": {
+            "icon": "https://i.postimg.cc/5txxVVtW/umt.png",
+            "images": [
+                "https://i.postimg.cc/44zsmyhR/image.png",
+                "https://i.postimg.cc/nhLJR1Sn/image.png",
+                "https://i.postimg.cc/0Q7RMXj0/image.png",
+                "https://i.postimg.cc/TYdM196n/image.png",
+                "https://i.postimg.cc/PxW9rLV6/image.png"
             ]
         }
     }
