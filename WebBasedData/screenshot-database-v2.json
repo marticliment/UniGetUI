@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11969,
-        "done": 5498,
-        "packages_with_icon": 5498,
-        "packages_with_screenshot": 947,
-        "total_screenshots": 3036
+        "total": 11975,
+        "done": 5499,
+        "packages_with_icon": 5499,
+        "packages_with_screenshot": 950,
+        "total_screenshots": 3051
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -35661,6 +35661,11 @@
         "resourcehacker": {
             "icon": "https://community.chocolatey.org/content/packageimages/resourcehacker.portable.5.1.8.png",
             "images": [
+                "https://i.postimg.cc/2y55NVxC/image.png",
+                "https://i.postimg.cc/mDrqq449/image.png",
+                "https://i.postimg.cc/23pTGRTn/image.png",
+                "https://i.postimg.cc/T2QyNXcR/image.png",
+                "https://i.postimg.cc/xCnCgsJJ/image.png",
                 "https://i.postimg.cc/FsdvcXYd/image.png"
             ]
         },
@@ -40104,7 +40109,7 @@
             "images": []
         },
         "starship": {
-            "icon": "https://community.chocolatey.org/content/packageimages/starship.portable.1.13.1.png",
+            "icon": "https://raw.githubusercontent.com/starship/starship/master/media/icon.png",
             "images": []
         },
         "start": {
@@ -47757,15 +47762,15 @@
             "images": []
         },
         "whatsapp": {
-            "icon": "https://zv915ylvcs.ufs.sh/f/fYIgEizARqiSOW3E8jXwucg28hCEesJXjktpBP0U35QGyzm6",
+            "icon": "https://i.postimg.cc/jjzdZ4GZ/WhatsApp.png",
             "images": []
         },
         "whatsapp-beta": {
-            "icon": "https://zv915ylvcs.ufs.sh/f/fYIgEizARqiSOW3E8jXwucg28hCEesJXjktpBP0U35QGyzm6",
+            "icon": "https://i.postimg.cc/jjzdZ4GZ/WhatsApp.png",
             "images": []
         },
         "whatsappdesktop": {
-            "icon": "https://zv915ylvcs.ufs.sh/f/fYIgEizARqiSOW3E8jXwucg28hCEesJXjktpBP0U35QGyzm6",
+            "icon": "https://i.postimg.cc/jjzdZ4GZ/WhatsApp.png",
             "images": []
         },
         "whatsapptray": {
@@ -51761,6 +51766,43 @@
                 "https://i.postimg.cc/TYdM196n/image.png",
                 "https://i.postimg.cc/PxW9rLV6/image.png"
             ]
+        },
+        "gimp-3": {
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/The_GIMP_icon_-_gnome.svg/316px-The_GIMP_icon_-_gnome.svg.png",
+            "images": [
+                "https://docs.gimp.org/2.10/en/images/using/multi-window.png",
+                "https://i.sooftcdn.com/screen/en/windows/gimp-1.png",
+                "https://www.ionos.it/digitalguide/fileadmin/DigitalGuide/Screenshots_2021/screenshot-funktion-von-gimp.png"
+            ]
+        },
+        "santedicomeditor": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/1zKsSp7F/image.png",
+                "https://i.postimg.cc/mgYG3Ysn/image.png",
+                "https://i.postimg.cc/4y7DYtPB/image.png",
+                "https://i.postimg.cc/7P5h3WQQ/image.png",
+                "https://i.postimg.cc/k5h9Dn9M/image.png",
+                "https://i.postimg.cc/Dwx3Y2SQ/image.png"
+            ]
+        },
+        "santedicomviewerlite": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/J001PGqk/image.png"
+            ]
+        },
+        "santedicomviewerpro": {
+            "icon": "",
+            "images": []
+        },
+        "santepacsserver": {
+            "icon": "",
+            "images": []
+        },
+        "santepacsserverpg": {
+            "icon": "",
+            "images": []
         }
     }
 }
