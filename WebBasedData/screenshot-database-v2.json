@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11975,
+        "total": 11976,
         "done": 5499,
         "packages_with_icon": 5499,
-        "packages_with_screenshot": 950,
-        "total_screenshots": 3051
+        "packages_with_screenshot": 951,
+        "total_screenshots": 3054
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -10269,7 +10269,11 @@
         },
         "dependencies": {
             "icon": "https://community.chocolatey.org/content/packageimages/dependencies.1.11.1.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/BZc8QVt8/image.png",
+                "https://i.postimg.cc/QdRNqQHG/image.png",
+                "https://i.postimg.cc/L5C2gfrW/image.png"
+            ]
         },
         "dependency-check": {
             "icon": "",
@@ -51801,6 +51805,10 @@
             "images": []
         },
         "santepacsserverpg": {
+            "icon": "",
+            "images": []
+        },
+        "smartalbums": {
             "icon": "",
             "images": []
         }
