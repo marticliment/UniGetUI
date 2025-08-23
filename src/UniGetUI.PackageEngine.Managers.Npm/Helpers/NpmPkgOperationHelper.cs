@@ -17,7 +17,6 @@ internal sealed class NpmPkgOperationHelper : BasePkgOperationHelper
             OperationType.Uninstall => [Manager.Properties.UninstallVerb, package.Id],
             _ => throw new InvalidDataException("Invalid package operation")
         };
-        parameters.Add($"'{package.Id}'");
 
         if (package.OverridenOptions.Scope == PackageScope.Global ||
             (package.OverridenOptions.Scope is null && options.InstallationScope == PackageScope.Global))
