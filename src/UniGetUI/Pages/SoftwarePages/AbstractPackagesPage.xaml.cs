@@ -179,19 +179,12 @@ namespace UniGetUI.Interface
         protected readonly string NoPackages_SubtitleText_Base;
         protected readonly string NoMatches_BackgroundText;
 
-        protected Func<int, int, string> FoundPackages_SubtitleText_Base = (a, b) => CoreTools.Translate("{0} packages were found, {1} of which match the specified filters.", a, b);
-
         protected string NoPackages_SubtitleText
         {
             get => NoPackages_SubtitleText_Base +
                 (SHOW_LAST_CHECKED_TIME ? " " + CoreTools.Translate("(Last checked: {0})", LastPackageLoadTime.ToString()) : "");
         }
-        protected string NoMatches_SubtitleText
-        {
-            get => FoundPackages_SubtitleText_Base(Loader.Count(), FilteredPackages.Count) +
-               (SHOW_LAST_CHECKED_TIME ? " " + CoreTools.Translate("(Last checked: {0})", LastPackageLoadTime.ToString()) : "");
-        }
-        protected string FoundPackages_SubtitleText { get => NoMatches_SubtitleText; }
+
         public string QueryBackup { get; set; }
 
         private string _searchPlaceholder;
@@ -770,12 +763,6 @@ namespace UniGetUI.Interface
         }
 
 
-
-
-
-
-
-
         /// <summary>
         /// Will filter the packages with the query on QueryBlock.Text and put the
         /// resulting packages on the ItemsView
@@ -878,23 +865,48 @@ namespace UniGetUI.Interface
         /// </summary>
         public void UpdatePackageCount()
         {
-            if (!FilteredPackages.Any())
+            var selected = FilteredPackages.Where(p => p.IsChecked).Count();
+            var unSelected = FilteredPackages.Where(p => !p.IsChecked).Count();
+            if (selected is 0 && unSelected is not 0) SelectAllCheckBox.IsChecked = false;
+            else if (selected is not 0 && unSelected is 0) SelectAllCheckBox.IsChecked = true;
+            else if (selected is not 0 && unSelected is not 0) SelectAllCheckBox.IsChecked = null;
+
+
+            string GetSubtitleText()
             {
-                if (LoadingProgressBar.Visibility == Visibility.Collapsed)
+                string r = CoreTools.Translate(
+                    "{0} packages were found, {1} of which match the specified filters.", FilteredPackages.Count, Loader.Count())
+                           + " (" + CoreTools.Translate("{0} selected", selected) + ")";
+
+                if (SHOW_LAST_CHECKED_TIME) r += " " + CoreTools.Translate("(Last checked: {0})", LastPackageLoadTime);
+                return r;
+            }
+
+
+            if (FilteredPackages.Any())
+            {
+                BackgroundText.Text = NoPackages_BackgroundText;
+                BackgroundText.Visibility = Loader.Any() ? Visibility.Collapsed : Visibility.Visible;
+                MainSubtitle.Text = GetSubtitleText();
+            }
+            else
+            {
+                if (LoadingProgressBar.Visibility is Visibility.Collapsed)
                 {
-                    if (!Loader.Any())
+                    if (Loader.Any())
+                    {
+                        BackgroundText.Text = NoMatches_BackgroundText;
+                        SourcesPlaceholderText.Visibility = Visibility.Collapsed;
+                        MainSubtitle.Text = GetSubtitleText();
+                    }
+                    else
                     {
                         BackgroundText.Text = NoPackages_BackgroundText;
                         SourcesPlaceholderText.Text = NoPackages_SourcesText;
                         SourcesPlaceholderText.Visibility = Visibility.Visible;
                         MainSubtitle.Text = NoPackages_SubtitleText;
                     }
-                    else
-                    {
-                        BackgroundText.Text = NoMatches_BackgroundText;
-                        SourcesPlaceholderText.Visibility = Visibility.Collapsed;
-                        MainSubtitle.Text = NoMatches_SubtitleText;
-                    }
+
                     BackgroundText.Visibility = Visibility.Visible;
                 }
                 else
@@ -906,18 +918,11 @@ namespace UniGetUI.Interface
                     MainSubtitle.Text = MainSubtitle_StillLoading;
                 }
             }
-            else
-            {
-                BackgroundText.Text = NoPackages_BackgroundText;
-                BackgroundText.Visibility = Loader.Any() ? Visibility.Collapsed : Visibility.Visible;
-                MainSubtitle.Text = FoundPackages_SubtitleText;
-            }
 
             if (MegaQueryBlockGrid.Visibility == Visibility.Visible)
             {
                 BackgroundText.Visibility = Visibility.Collapsed;
             }
-
             WhenPackageCountUpdated();
         }
 

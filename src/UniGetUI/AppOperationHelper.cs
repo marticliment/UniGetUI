@@ -148,10 +148,10 @@ public partial class MainApp
 
                 foreach (var package in packages)
                 {
-                    if (package.Source.IsVirtualManager ||
-                        !package.Manager.Capabilities.CanDownloadInstaller)
+                    if (package.Source.IsVirtualManager || !package.Manager.Capabilities.CanDownloadInstaller)
                     {
                         Logger.Warn($"Package {package.Id} cannot have its installer downloaded.");
+                        continue;
                     }
 
                     var op = new DownloadOperation(package, outputPath);
