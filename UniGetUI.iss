@@ -214,10 +214,16 @@ Root: HKA; Subkey: "Software\Classes\UniGetUI.PackageBundle\shell\open\command";
 
 
 [Files]
+; Deploy installer for autorepair jobs (unless disabled)
 Source: "{srcexe}"; DestDir: "{app}"; DestName: "UniGetUI.Installer.exe"; Flags: external ignoreversion; Tasks: regularinstall; Check: not CmdLineParamExists('/NoDeployInstaller');
+; Deploy integrity tree
+Source: "unigetui_bin\IntegrityTree.json"; DestDir: "{app}"; Flags: createallsubdirs ignoreversion recursesubdirs;
+; Deploy executable files
 Source: "unigetui_bin\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion; BeforeInstall: TripleKill('WingetUI.exe', 'UniGetUI.exe', 'choco.exe');
 Source: "unigetui_bin\*"; DestDir: "{app}"; Flags: createallsubdirs ignoreversion recursesubdirs;
+; Deploy chocolatey (unless disabled)
 Source: "src\UniGetUI.PackageEngine.Managers.Chocolatey\choco-cli\*"; DestDir: "{userpf}\..\UniGetUI\Chocolatey"; Flags: createallsubdirs ignoreversion recursesubdirs uninsneveruninstall; Tasks: regularinstall\chocoinstall; Check: not CmdLineParamExists('/NoChocolatey');
+; Make installation portable (id required)
 Source: "InstallerExtras\ForceUniGetUIPortable"; DestDir: "{app}"; Tasks: portableinstall
 
 
