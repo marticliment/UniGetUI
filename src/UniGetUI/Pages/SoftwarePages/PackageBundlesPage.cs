@@ -196,6 +196,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             AppBarButton RemoveSelected = new();
             AppBarButton SaveBundle = new();
+            AppBarButton ToBatchScript = new();
             AppBarButton AddPackagesToBundle = new();
             AppBarButton PackageDetails = new();
             AppBarButton SharePackage = new();
@@ -205,6 +206,8 @@ namespace UniGetUI.Interface.SoftwarePages
             ToolBar.PrimaryCommands.Add(NewBundle);
             ToolBar.PrimaryCommands.Add(OpenBundle);
             ToolBar.PrimaryCommands.Add(SaveBundle);
+            ToolBar.PrimaryCommands.Add(new AppBarSeparator());
+            ToolBar.PrimaryCommands.Add(ToBatchScript);
             ToolBar.PrimaryCommands.Add(new AppBarSeparator());
             ToolBar.PrimaryCommands.Add(AddPackagesToBundle);
             ToolBar.PrimaryCommands.Add(RemoveSelected);
@@ -223,6 +226,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 { InstallSkipHash,     CoreTools.Translate("Skip integrity checks") },
                 { DownloadInstallers,  CoreTools.Translate("Download selected installers") },
                 { OpenBundle,          CoreTools.Translate("Open") },
+                { ToBatchScript,       CoreTools.Translate("Create batch script")},
                 { RemoveSelected,      CoreTools.Translate("Remove selection from bundle") },
                 { SaveBundle,          CoreTools.Translate("Save as") },
                 { AddPackagesToBundle, CoreTools.Translate("Add packages to bundle") },
@@ -239,6 +243,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 { InstallSkipHash,     IconType.Checksum },
                 { DownloadInstallers,  IconType.Download },
                 { OpenBundle,          IconType.OpenFolder },
+                { ToBatchScript,       IconType.Console},
                 { RemoveSelected,      IconType.Delete},
                 { SaveBundle,          IconType.SaveAs },
                 { AddPackagesToBundle, IconType.AddTo },
@@ -290,6 +295,7 @@ namespace UniGetUI.Interface.SoftwarePages
             DownloadInstallers.Click += (_, _) => _ = MainApp.Operations.Download(FilteredPackages.GetCheckedPackages(), TEL_InstallReferral.FROM_BUNDLE);
             OpenBundle.Click += async (_, _) => await AskOpenFromFile();
             SaveBundle.Click += async (_, _) => await SaveFile();
+            ToBatchScript.Click += (_, _) => _ = CreateBatchScript();
 
             SharePackage.Click += (_, _) =>
             {
@@ -740,6 +746,141 @@ namespace UniGetUI.Interface.SoftwarePages
         public static IPackage DeserializeIncompatiblePackage(SerializableIncompatiblePackage raw_package, IManagerSource source)
         {
             return new InvalidImportedPackage(raw_package, source);
+        }
+
+
+        public async Task CreateBatchScript()
+        {
+            try
+            {
+                string defaultName = CoreTools.Translate("Install batch script") + ".cmd";
+                string file = await Task.Run(() => (new FileSavePicker(MainApp.Instance.MainWindow.GetWindowHandle())).Show(["*.cmd", "*.bat"], defaultName));
+                if (file != String.Empty)
+                {
+                    // Loading dialog
+                    int loadingId = DialogHelper.ShowLoadingDialog(CoreTools.Translate("Saving packages, please wait..."));
+
+                    var packages = new List<string>();
+                    var commands = new List<string>();
+
+                    foreach (var _p in Loader.Packages)
+                    {
+                        if (_p is ImportedPackage package)
+                        {
+                            packages.Add(package.Name + " from " + package.Manager.DisplayName);
+                            commands.Add(
+                                package.Manager.Properties.ExecutableFriendlyName + " " + string.Join(' ',
+                                    package.Manager.OperationHelper.GetParameters(package, package.installation_options, OperationType.Install)));
+                        }
+                    }
+
+                    await File.WriteAllTextAsync(file, GenerateCommandString(packages, commands));
+
+                    DialogHelper.HideLoadingDialog(loadingId);
+                    DialogHelper.ShowDismissableBalloon(
+                        CoreTools.Translate("Success!"),
+                        CoreTools.Translate("The batch file was created successfully on {0}", file));
+
+                    await CoreTools.ShowFileOnExplorer(file);
+                }
+            }
+            catch (Exception ex)
+            {
+                DialogHelper.HideAllLoadingDialogs();
+                Logger.Error("An error occurred while attempting to export a batch file");
+                Logger.Error(ex);
+                DialogHelper.ShowDismissableBalloon(
+                    CoreTools.Translate("An error occurred"),
+                    CoreTools.Translate("An error occurred while attempting to create a installable batch file:") + " " + ex.Message);
+            }
+        }
+
+
+        private string GenerateCommandString(IReadOnlyList<string> names, IReadOnlyList<string> commands)
+        {
+            return $$"""
+            @echo off
+            setlocal enabledelayedexpansion
+
+            echo.
+            echo ========================================================
+            echo.
+            echo         __  __      _ ______     __  __  ______
+            echo        / / / /___  (_) ____/__  / /_/ / / /  _/
+            echo       / / / / __ \/ / / __/ _ \/ __/ / / // /
+            echo      / /_/ / / / / / /_/ /  __/ /_/ /_/ // /
+            echo      \____/_/ /_/_/\____/\___/\__/\____/___/
+            echo        UniGetUI Package Installer Batch Script 
+            echo         Created with UniGetUI Version {{CoreData.VersionName}}
+            echo.
+            echo          https://www.marticliment.com/unigetui
+            echo        https://github.com/marticliment/UniGetUI
+            echo.
+            echo ========================================================
+            echo.
+            echo NOTES:
+            echo ^ ^ - Packages will be installed with the install options specified at the time of creation of this batch file.
+            echo ^ ^ - The install process will not be as reliable as importing a package collection into UniGetUI.
+            echo ^ ^ - Error detection will be done through exit-code, so it may not be 100% accurate.
+            echo ^ ^ - Some of the packages may require elevation. Some of them may ask for permission, but others may fail. Consider running this script elevated.
+            echo ^ ^ - You can skip confirmation prompts by running this batch file with the parameter `/DisablePausePrompts` 
+            echo.
+            echo.
+            IF NOT "%1"=="/DisablePausePrompts" (pause)
+            echo.
+            echo This script will install the following programs:
+            {{string.Join('\n', names.Select(x => $"echo ^ ^ - {x}"))}}
+            echo.
+            IF NOT "%1"=="/DisablePausePrompts" (pause)
+            cls
+
+            set "success_count=0"
+            set "failure_count=0"
+            set "commands_run=0"
+            set "results="
+
+            set commands=^{{string.Join(",", commands.Select(x => $"\"cmd.exe /C {x}\""))}}
+
+            :: ========================================================
+            :: RUN COMMANDS AND TRACK RESULTS
+            :: ========================================================
+            for %%C in (%commands%) do (
+                echo Running: %%~C
+                call %%~C
+                if !errorlevel! EQU 0 (
+                    echo [SUCCESS] %%~C
+                    set /a success_count+=1
+                    set "results=!results!✓ %%~C\r\n"
+                ) else (
+                    echo [FAILURE] %%~C
+                    set /a failure_count+=1
+                    set "results=!results!✗ %%~C\r\n"
+                )
+                set /a commands_run+=1
+                echo.
+            )
+
+            echo ========================================================
+            echo                   OPERATION SUMMARY
+            echo ========================================================
+            echo Total commands run: %commands_run%
+            echo Successful: %success_count%
+            echo Failed: %failure_count%
+            echo.
+            echo Details:
+            echo !results!
+            echo ========================================================
+
+            if %failure_count% GTR 0 (
+                echo Some commands failed. Please check the log above.
+            ) else (
+                echo All commands executed successfully!
+            )
+            echo.
+            IF NOT "%1"=="/DisablePausePrompts" (pause)
+            if %failure_count% GTR 0 (set errorlevel=1) else (set errorlevel=0)
+            endlocal
+            """;
         }
     }
 }
