@@ -31,7 +31,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             {
                 Package.IsChecked = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsChecked)));
-                _page.UpdateCheckBoxStates();
+                _page.UpdatePackageCount();
             }
         }
 
