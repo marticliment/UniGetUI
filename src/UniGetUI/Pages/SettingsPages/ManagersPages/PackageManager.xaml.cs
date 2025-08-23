@@ -172,7 +172,8 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 {
                     Text = CoreTools.Translate("Enable an [experimental] improved WinGet troubleshooter"),
                     SettingName = Settings.K.DisableNewWinGetTroubleshooter,
-                    CornerRadius = new CornerRadius(0),
+                    // CornerRadius = new CornerRadius(0),
+                    CornerRadius = new CornerRadius(0, 0, 8, 8),
                     BorderThickness = new Thickness(1, 0, 1, 0),
                 };
                 WinGet_EnableTroubleshooter_v2.StateChanged += (_, _) =>
@@ -182,13 +183,13 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 };
                 ExtraControls.Children.Add(WinGet_EnableTroubleshooter_v2);
 
-                CheckboxCard WinGet_HideNonApplicableUpdates = new()
+                /*CheckboxCard WinGet_HideNonApplicableUpdates = new()
                 {
                     Text = CoreTools.Translate("Add updates that fail with a 'no applicable update found' to the ignored updates list"),
                     SettingName = Settings.K.IgnoreUpdatesNotApplicable,
                     CornerRadius = new CornerRadius(0, 0, 8, 8)
                 };
-                ExtraControls.Children.Add(WinGet_HideNonApplicableUpdates);
+                ExtraControls.Children.Add(WinGet_HideNonApplicableUpdates);*/
             }
 
             // ---------------------------- SCOOP EXTRA SETTINGS -------------------------

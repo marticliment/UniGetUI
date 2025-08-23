@@ -169,13 +169,13 @@ internal sealed class WinGetPkgOperationHelper : BasePkgOperationHelper
 
         if (uintCode is 0x8A15002B)
         {
-            if (Settings.Get(Settings.K.IgnoreUpdatesNotApplicable))
-            {
-                Logger.Warn($"Ignoring update {package.Id} as the update is not applicable to the platform, and the user has enabled IgnoreUpdatesNotApplicable");
-                IgnoredUpdatesDatabase.Add(IgnoredUpdatesDatabase.GetIgnoredIdForPackage(package), package.VersionString);
-                return OperationVeredict.Success;
-            }
-            return OperationVeredict.Failure;
+            //if (Settings.Get(Settings.K.IgnoreUpdatesNotApplicable))
+            //{
+            Logger.Warn($"Ignoring update {package.Id} as the update is not applicable to the platform, and the user has enabled IgnoreUpdatesNotApplicable");
+            IgnoredUpdatesDatabase.Add(IgnoredUpdatesDatabase.GetIgnoredIdForPackage(package), package.VersionString);
+            return OperationVeredict.Success;
+            //}
+            //return OperationVeredict.Failure;
         }
 
         if (uintCode is 0x8A15010D or 0x8A15004F or 0x8A15010E)
