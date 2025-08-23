@@ -12,12 +12,11 @@ internal sealed class NpmPkgOperationHelper : BasePkgOperationHelper
         InstallOptions options, OperationType operation)
     {
         List<string> parameters = operation switch {
-            OperationType.Install => [Manager.Properties.InstallVerb, $"{package.Id}@{(options.Version == string.Empty? package.VersionString: options.Version)}"],
-            OperationType.Update => [Manager.Properties.UpdateVerb, $"{package.Id}@{package.NewVersionString}"],
+            OperationType.Install => [Manager.Properties.InstallVerb, $"'{package.Id}@{(options.Version == string.Empty? package.VersionString: options.Version)}'"],
+            OperationType.Update => [Manager.Properties.UpdateVerb, $"'{package.Id}@{package.NewVersionString}'"],
             OperationType.Uninstall => [Manager.Properties.UninstallVerb, package.Id],
             _ => throw new InvalidDataException("Invalid package operation")
         };
-        parameters.Add(package.Id);
 
         if (package.OverridenOptions.Scope == PackageScope.Global ||
             (package.OverridenOptions.Scope is null && options.InstallationScope == PackageScope.Global))
