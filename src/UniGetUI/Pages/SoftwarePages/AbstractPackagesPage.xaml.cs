@@ -770,12 +770,6 @@ namespace UniGetUI.Interface
         }
 
 
-
-
-
-
-
-
         /// <summary>
         /// Will filter the packages with the query on QueryBlock.Text and put the
         /// resulting packages on the ItemsView
@@ -918,7 +912,17 @@ namespace UniGetUI.Interface
                 BackgroundText.Visibility = Visibility.Collapsed;
             }
 
+            UpdateCheckBoxStates();
             WhenPackageCountUpdated();
+        }
+
+        public void UpdateCheckBoxStates()
+        {
+            var selected = FilteredPackages.Where(p => p.IsChecked).Count();
+            var unSelected = FilteredPackages.Where(p => !p.IsChecked).Count();
+            if (selected is 0 && unSelected is not 0) SelectAllCheckBox.IsChecked = false;
+            else if (selected is not 0 && unSelected is 0) SelectAllCheckBox.IsChecked = true;
+            else if (selected is not 0 && unSelected is not 0) SelectAllCheckBox.IsChecked = null;
         }
 
         /// <summary>

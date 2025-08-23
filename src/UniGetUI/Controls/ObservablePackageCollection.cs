@@ -40,7 +40,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
             Sort();
         }
 
-
         /// <summary>
         /// Sets the property with which to filter the package and sorts the collection
         /// </summary>
