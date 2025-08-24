@@ -196,6 +196,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             AppBarButton RemoveSelected = new();
             AppBarButton SaveBundle = new();
+            AppBarButton ToBatchScript = new();
             AppBarButton AddPackagesToBundle = new();
             AppBarButton PackageDetails = new();
             AppBarButton SharePackage = new();
@@ -205,6 +206,8 @@ namespace UniGetUI.Interface.SoftwarePages
             ToolBar.PrimaryCommands.Add(NewBundle);
             ToolBar.PrimaryCommands.Add(OpenBundle);
             ToolBar.PrimaryCommands.Add(SaveBundle);
+            ToolBar.PrimaryCommands.Add(new AppBarSeparator());
+            ToolBar.PrimaryCommands.Add(ToBatchScript);
             ToolBar.PrimaryCommands.Add(new AppBarSeparator());
             ToolBar.PrimaryCommands.Add(AddPackagesToBundle);
             ToolBar.PrimaryCommands.Add(RemoveSelected);
@@ -223,6 +226,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 { InstallSkipHash,     CoreTools.Translate("Skip integrity checks") },
                 { DownloadInstallers,  CoreTools.Translate("Download selected installers") },
                 { OpenBundle,          CoreTools.Translate("Open") },
+                { ToBatchScript,       CoreTools.Translate("Create .ps1 script")},
                 { RemoveSelected,      CoreTools.Translate("Remove selection from bundle") },
                 { SaveBundle,          CoreTools.Translate("Save as") },
                 { AddPackagesToBundle, CoreTools.Translate("Add packages to bundle") },
@@ -239,6 +243,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 { InstallSkipHash,     IconType.Checksum },
                 { DownloadInstallers,  IconType.Download },
                 { OpenBundle,          IconType.OpenFolder },
+                { ToBatchScript,       IconType.Console},
                 { RemoveSelected,      IconType.Delete},
                 { SaveBundle,          IconType.SaveAs },
                 { AddPackagesToBundle, IconType.AddTo },
@@ -290,6 +295,7 @@ namespace UniGetUI.Interface.SoftwarePages
             DownloadInstallers.Click += (_, _) => _ = MainApp.Operations.Download(FilteredPackages.GetCheckedPackages(), TEL_InstallReferral.FROM_BUNDLE);
             OpenBundle.Click += async (_, _) => await AskOpenFromFile();
             SaveBundle.Click += async (_, _) => await SaveFile();
+            ToBatchScript.Click += (_, _) => _ = CreateBatchScript();
 
             SharePackage.Click += (_, _) =>
             {
@@ -527,13 +533,11 @@ namespace UniGetUI.Interface.SoftwarePages
 
                     DialogHelper.HideLoadingDialog(loadingId);
 
-                    // Launch file
-                    Process.Start(new ProcessStartInfo
-                    {
-                        FileName = "explorer.exe",
-                        Arguments = @$"/select, ""{file}"""
-                    });
+                       DialogHelper.ShowDismissableBalloon(
+                        CoreTools.Translate("Success!"),
+                        CoreTools.Translate("The bundle was created successfully on {0}", file));
 
+                    await CoreTools.ShowFileOnExplorer(file);
                     HasUnsavedChanges = false;
 
                 }
@@ -740,6 +744,156 @@ namespace UniGetUI.Interface.SoftwarePages
         public static IPackage DeserializeIncompatiblePackage(SerializableIncompatiblePackage raw_package, IManagerSource source)
         {
             return new InvalidImportedPackage(raw_package, source);
+        }
+
+
+        public async Task CreateBatchScript()
+        {
+            try
+            {
+                string defaultName = CoreTools.Translate("Install script") + ".ps1";
+                string file = await Task.Run(() => (new FileSavePicker(MainApp.Instance.MainWindow.GetWindowHandle())).Show(["*.ps1"], defaultName));
+                if (file != String.Empty)
+                {
+                    int loadingId = DialogHelper.ShowLoadingDialog(CoreTools.Translate("Saving packages, please wait..."));
+
+                    var packages = new List<string>();
+                    var commands = new List<string>();
+
+                    var forceKill = Settings.Get(Settings.K.KillProcessesThatRefuseToDie);
+                    foreach (var _p in Loader.Packages)
+                    {
+                        if (_p is ImportedPackage package)
+                        {
+                            packages.Add(package.Name + " from " + package.Manager.DisplayName);
+
+                            foreach (var process in package.installation_options.KillBeforeOperation)
+                            {   // Kill required processes, if any. Forcekill if the user has enable said option
+                                commands.Add($"taskkill /im \"{process}\"" + (forceKill ? " /f" : ""));
+                            }
+
+                            if (package.installation_options.PreInstallCommand != "")
+                            {   // Add pre-operation
+                                commands.Add(package.installation_options.PreInstallCommand);
+                            }
+
+                            // Add install command
+                            var exeName = package.Manager.Properties.ExecutableFriendlyName;
+                            var param = package.Manager.OperationHelper.GetParameters(package,
+                                package.installation_options, OperationType.Install);
+                            commands.Add($"{exeName} {string.Join(' ',param)}");
+
+                            if (package.installation_options.PostInstallCommand != "")
+                            {   // Add post-operation
+                                commands.Add(package.installation_options.PostInstallCommand);
+                            }
+                        }
+                    }
+
+                    await File.WriteAllTextAsync(file, GenerateCommandString(packages, commands));
+
+                    DialogHelper.HideLoadingDialog(loadingId);
+                    DialogHelper.ShowDismissableBalloon(
+                        CoreTools.Translate("Success!"),
+                        CoreTools.Translate("The installation script saved to {0}", file));
+
+                    TelemetryHandler.ExportBatch();
+
+                    await CoreTools.ShowFileOnExplorer(file);
+                }
+            }
+            catch (Exception ex)
+            {
+                DialogHelper.HideAllLoadingDialogs();
+                Logger.Error("An error occurred while attempting to export an installation script");
+                Logger.Error(ex);
+                DialogHelper.ShowDismissableBalloon(
+                    CoreTools.Translate("An error occurred"),
+                    CoreTools.Translate("An error occurred while attempting to create an installation script:") + " " + ex.Message);
+            }
+        }
+
+
+        private string GenerateCommandString(IReadOnlyList<string> names, IReadOnlyList<string> commands)
+        {
+            return $$"""
+            Clear-Host
+            Write-Host ""
+            Write-Host "========================================================"
+            Write-Host ""
+            Write-Host "        __  __      _ ______     __  __  ______" -ForegroundColor Cyan
+            Write-Host "       / / / /___  (_) ____/__  / /_/ / / /  _/" -ForegroundColor Cyan
+            Write-Host "      / / / / __ \/ / / __/ _ \/ __/ / / // /" -ForegroundColor Cyan
+            Write-Host "     / /_/ / / / / / /_/ /  __/ /_/ /_/ // /" -ForegroundColor Cyan
+            Write-Host "     \____/_/ /_/_/\____/\___/\__/\____/___/" -ForegroundColor Cyan
+            Write-Host "          UniGetUI Package Installer Script" 
+            Write-Host "        Created with UniGetUI Version {{CoreData.VersionName}}"
+            Write-Host ""
+            Write-Host "========================================================"
+            Write-Host ""
+            Write-Host "NOTES:" -ForegroundColor Yellow
+            Write-Host "  - The install process will not be as reliable as importing a bundle with UniGetUI. Expect issues and errors." -ForegroundColor Yellow
+            Write-Host "  - Packages will be installed with the install options specified at the time of creation of this script." -ForegroundColor Yellow
+            Write-Host "  - Error/Sucess detection may not be 100% accurate." -ForegroundColor Yellow
+            Write-Host "  - Some of the packages may require elevation. Some of them may ask for permission, but others may fail. Consider running this script elevated." -ForegroundColor Yellow
+            Write-Host "  - You can skip confirmation prompts by running this script with the parameter `/DisablePausePrompts` " -ForegroundColor Yellow
+            Write-Host ""
+            Write-Host ""
+            if ($args[0] -ne "/DisablePausePrompts") { pause }
+            Write-Host ""
+            Write-Host "This script will attempt to install the following packages:"
+            {{string.Join('\n', names.Select(x => $"Write-Host \"  - {x}\""))}}
+            Write-Host ""
+            if ($args[0] -ne "/DisablePausePrompts") { pause }
+            Clear-Host
+
+            $success_count=0
+            $failure_count=0
+            $commands_run=0
+            $results=""
+
+            $commands= @(
+                {{string.Join(",\n    ", commands.Select(x => $"'cmd.exe /C {x.Replace("'", "''")}'"))}}
+            )
+
+            foreach ($command in $commands) {
+                Write-Host "Running: $command" -ForegroundColor Yellow
+                cmd.exe /C $command
+                if ($LASTEXITCODE -eq 0) {
+                    Write-Host "[  OK  ] $command" -ForegroundColor Green
+                    $success_count++
+                    $results += "$([char]0x1b)[32m[  OK  ] $command`n"
+                }
+                else {
+                    Write-Host "[ FAIL ] $command" -ForegroundColor Red
+                    $failure_count++
+                    $results += "$([char]0x1b)[31m[ FAIL ] $command`n"
+                }
+                $commands_run++
+                Write-Host ""
+            }
+
+            Write-Host "========================================================"
+            Write-Host "                  OPERATION SUMMARY"
+            Write-Host "========================================================"
+            Write-Host "Total commands run: $commands_run"
+            Write-Host "Successful: $success_count"
+            Write-Host "Failed: $failure_count"
+            Write-Host ""
+            Write-Host "Details:"
+            Write-Host "$results$([char]0x1b)[37m"
+            Write-Host "========================================================"
+            
+            if ($failure_count -gt 0) {
+                Write-Host "Some commands failed. Please check the log above." -ForegroundColor Yellow
+            }
+            else {
+                Write-Host "All commands executed successfully!" -ForegroundColor Green
+            }
+            Write-Host ""
+            if ($args[0] -ne "/DisablePausePrompts") { pause }
+            exit $failure_count
+            """;
         }
     }
 }

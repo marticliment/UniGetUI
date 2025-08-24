@@ -188,12 +188,15 @@ public static class TelemetryHandler
     // -------------------------------------------------------------------------
 
     public static void ImportBundle(BundleFormatType type)
-        => BundlesEndpoint("import", type);
+        => BundlesEndpoint("import", type.ToString());
 
     public static void ExportBundle(BundleFormatType type)
-        => BundlesEndpoint("export", type);
+        => BundlesEndpoint("export", type.ToString());
 
-    private static async void BundlesEndpoint(string endpoint, BundleFormatType type)
+    public static void ExportBatch()
+        => BundlesEndpoint("export", "PS1_SCRIPT");
+
+    private static async void BundlesEndpoint(string endpoint, string type)
     {
         try
         {
@@ -204,7 +207,7 @@ public static class TelemetryHandler
             var request = new HttpRequestMessage(HttpMethod.Post, $"{HOST}/bundles/{endpoint}");
 
             request.Headers.Add("clientId", ID);
-            request.Headers.Add("bundleType", type.ToString());
+            request.Headers.Add("bundleType", type);
 
             HttpClient _httpClient = new(CoreTools.GenericHttpClientParameters);
             HttpResponseMessage response = await _httpClient.SendAsync(request);

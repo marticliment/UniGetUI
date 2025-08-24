@@ -669,18 +669,7 @@ public partial class OperationControl: INotifyPropertyChanged
                 Text = CoreTools.Translate("Show in explorer"),
                 IconName = IconType.OpenFolder,
             };
-            showFileInExplorer.Click += (_, _) =>
-            {
-                try
-                {
-                    Process.Start("explorer.exe", "/select," + $"\"{downloadOp.DownloadLocation}\"");
-                }
-                catch (Exception ex)
-                {
-                    Logger.Error($"An error occurred while attempting to show the file {downloadOp.DownloadLocation} on explorer.");
-                    Logger.Error(ex);
-                }
-            };
+            showFileInExplorer.Click += (_, _) => _ = CoreTools.ShowFileOnExplorer(downloadOp.DownloadLocation);
             showFileInExplorer.IsEnabled = downloadOp.Status is OperationStatus.Succeeded;
             optionsMenu.Add(showFileInExplorer);
         }
