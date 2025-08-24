@@ -122,14 +122,14 @@ Hebrew.ChocoInstall=להתקין את Chocolatey (for the current user only)
 Hebrew.PackageBundleName=אוסף חבילות UniGetUI
 
 ; Icelandic
-Icelandic.InstallType=Uppsetningargerð
-Icelandic.ShCuts=Flýtivísar
-Icelandic.PortInst=Framkvæma færanlega uppsetningu
-Icelandic.RegInst=Framkvæma reglulega uppsetningu
-Icelandic.RegStartMmenuIcon=Búa til flýtileið á Start valmyndinni
-Icelandic.RegDesktopIcon=Búa til flýtileið á skjáborðinu
-Icelandic.ChocoInstall=Setja upp Chocolatey (for the current user only)
-Icelandic.PackageBundleName=Safn af UniGetUI pakka
+;Icelandic.InstallType=Uppsetningargerð
+;Icelandic.ShCuts=Flýtivísar
+;Icelandic.PortInst=Framkvæma færanlega uppsetningu
+;Icelandic.RegInst=Framkvæma reglulega uppsetningu
+;Icelandic.RegStartMmenuIcon=Búa til flýtileið á Start valmyndinni
+;Icelandic.RegDesktopIcon=Búa til flýtileið á skjáborðinu
+;Icelandic.ChocoInstall=Setja upp Chocolatey (for the current user only)
+;Icelandic.PackageBundleName=Safn af UniGetUI pakka
 
 ; Italian
 Italian.InstallType=Tipo di installazione
