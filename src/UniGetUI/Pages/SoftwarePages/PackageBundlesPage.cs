@@ -226,7 +226,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 { InstallSkipHash,     CoreTools.Translate("Skip integrity checks") },
                 { DownloadInstallers,  CoreTools.Translate("Download selected installers") },
                 { OpenBundle,          CoreTools.Translate("Open") },
-                { ToBatchScript,       CoreTools.Translate("Create batch script")},
+                { ToBatchScript,       CoreTools.Translate("Create .ps1 script")},
                 { RemoveSelected,      CoreTools.Translate("Remove selection from bundle") },
                 { SaveBundle,          CoreTools.Translate("Save as") },
                 { AddPackagesToBundle, CoreTools.Translate("Add packages to bundle") },
@@ -795,7 +795,7 @@ namespace UniGetUI.Interface.SoftwarePages
                     DialogHelper.HideLoadingDialog(loadingId);
                     DialogHelper.ShowDismissableBalloon(
                         CoreTools.Translate("Success!"),
-                        CoreTools.Translate("The batch file was created successfully on {0}", file));
+                        CoreTools.Translate("The installation script saved to {0}", file));
 
                     await CoreTools.ShowFileOnExplorer(file);
                 }
@@ -803,11 +803,11 @@ namespace UniGetUI.Interface.SoftwarePages
             catch (Exception ex)
             {
                 DialogHelper.HideAllLoadingDialogs();
-                Logger.Error("An error occurred while attempting to export a batch file");
+                Logger.Error("An error occurred while attempting to export an installation script");
                 Logger.Error(ex);
                 DialogHelper.ShowDismissableBalloon(
                     CoreTools.Translate("An error occurred"),
-                    CoreTools.Translate("An error occurred while attempting to create a installable batch file:") + " " + ex.Message);
+                    CoreTools.Translate("An error occurred while attempting to create an installation script:") + " " + ex.Message);
             }
         }
 
