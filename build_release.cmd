@@ -37,7 +37,7 @@ robocopy src\UniGetUI\bin\x64\Release\net8.0-windows10.0.26100.0\win-x64\publish
 
 set /p signfiles="Do you want to sign the files? [Y/n]: "
 if /i "%signfiles%" neq "n" (
-    %signcommand% "unigetui_bin/UniGetUI.exe" "unigetui_bin/UniGetUI.dll" "unigetui_bin/UniGetUI.*.dll" "unigetui_bin/ExternalLibraries.*.dll"
+    %signcommand% "unigetui_bin/UniGetUI.exe" "unigetui_bin/*.dll"
 
     if %errorlevel% neq 0 (
         echo "Signing has failed!"
@@ -63,7 +63,7 @@ if %errorlevel% neq 0 (
     pause
 )
 
-set INSTALLATOR="%SYSTEMDRIVE%\Program Files (x86)\Inno Setup 6\ISCC.exe"
+set INSTALLATOR="%localappdata%\Programs\Inno Setup 6\ISCC.exe"
 if exist %INSTALLATOR% (
     %INSTALLATOR% "UniGetUI.iss"
     move "UniGetUI Installer.exe" "UniGetUI.Installer.exe"
