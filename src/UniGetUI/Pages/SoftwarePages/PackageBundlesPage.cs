@@ -751,8 +751,8 @@ namespace UniGetUI.Interface.SoftwarePages
         {
             try
             {
-                string defaultName = CoreTools.Translate("Install batch script") + ".cmd";
-                string file = await Task.Run(() => (new FileSavePicker(MainApp.Instance.MainWindow.GetWindowHandle())).Show(["*.cmd", "*.bat"], defaultName));
+                string defaultName = CoreTools.Translate("Install script") + ".ps1";
+                string file = await Task.Run(() => (new FileSavePicker(MainApp.Instance.MainWindow.GetWindowHandle())).Show(["*.ps1"], defaultName));
                 if (file != String.Empty)
                 {
                     int loadingId = DialogHelper.ShowLoadingDialog(CoreTools.Translate("Saving packages, please wait..."));
@@ -815,87 +815,82 @@ namespace UniGetUI.Interface.SoftwarePages
         private string GenerateCommandString(IReadOnlyList<string> names, IReadOnlyList<string> commands)
         {
             return $$"""
-            @echo off
-            setlocal enabledelayedexpansion
-            (set LF=^
-            %=DO NOT REMOVE THIS=%
+            Clear-Host
+            Write-Host ""
+            Write-Host "========================================================"
+            Write-Host ""
+            Write-Host "        __  __      _ ______     __  __  ______" -ForegroundColor Cyan
+            Write-Host "       / / / /___  (_) ____/__  / /_/ / / /  _/" -ForegroundColor Cyan
+            Write-Host "      / / / / __ \/ / / __/ _ \/ __/ / / // /" -ForegroundColor Cyan
+            Write-Host "     / /_/ / / / / / /_/ /  __/ /_/ /_/ // /" -ForegroundColor Cyan
+            Write-Host "     \____/_/ /_/_/\____/\___/\__/\____/___/" -ForegroundColor Cyan
+            Write-Host "       UniGetUI Package Installer Batch Script" 
+            Write-Host "        Created with UniGetUI Version {{CoreData.VersionName}}"
+            Write-Host ""
+            Write-Host "========================================================"
+            Write-Host ""
+            Write-Host "NOTES:" -ForegroundColor Yellow
+            Write-Host "  - The install process will not be as reliable as importing a bundle with UniGetUI. Expect issues and errors." -ForegroundColor Yellow
+            Write-Host "  - Packages will be installed with the install options specified at the time of creation of this batch file." -ForegroundColor Yellow
+            Write-Host "  - Error/Sucess detection may not be 100% accurate." -ForegroundColor Yellow
+            Write-Host "  - Some of the packages may require elevation. Some of them may ask for permission, but others may fail. Consider running this script elevated." -ForegroundColor Yellow
+            Write-Host "  - You can skip confirmation prompts by running this batch file with the parameter `/DisablePausePrompts` " -ForegroundColor Yellow
+            Write-Host ""
+            Write-Host ""
+            if ($args[0] -ne "/DisablePausePrompts") { pause }
+            Write-Host ""
+            Write-Host "This script will attempt to install the following packages:"
+            {{string.Join('\n', names.Select(x => $"Write-Host \"  - {x}\""))}}
+            Write-Host ""
+            if ($args[0] -ne "/DisablePausePrompts") { pause }
+            Clear-Host
+
+            $success_count=0
+            $failure_count=0
+            $commands_run=0
+            $results=""
+
+            $commands= @(
+                {{string.Join(",\n    ", commands.Select(x => $"'cmd.exe /C {x.Replace("'", "''")}'"))}}
             )
+
+            foreach ($command in $commands) {
+                Write-Host "Running: $command" -ForegroundColor Yellow
+                cmd.exe /C $command
+                if ($LASTEXITCODE -eq 0) {
+                    Write-Host "[  OK  ] $command" -ForegroundColor Green
+                    $success_count++
+                    $results += "$([char]0x1b)[32m[  OK  ] $command`n"
+                }
+                else {
+                    Write-Host "[ FAIL ] $command" -ForegroundColor Red
+                    $failure_count++
+                    $results += "$([char]0x1b)[31m[ FAIL ] $command`n"
+                }
+                $commands_run++
+                Write-Host ""
+            }
+
+            Write-Host "========================================================"
+            Write-Host "                  OPERATION SUMMARY"
+            Write-Host "========================================================"
+            Write-Host "Total commands run: $commands_run"
+            Write-Host "Successful: $success_count"
+            Write-Host "Failed: $failure_count"
+            Write-Host ""
+            Write-Host "Details:"
+            Write-Host "$results$([char]0x1b)[37m"
+            Write-Host "========================================================"
             
-            echo.
-            echo ========================================================
-            echo.
-            echo         __  __      _ ______     __  __  ______
-            echo        / / / /___  (_) ____/__  / /_/ / / /  _/
-            echo       / / / / __ \/ / / __/ _ \/ __/ / / // /
-            echo      / /_/ / / / / / /_/ /  __/ /_/ /_/ // /
-            echo      \____/_/ /_/_/\____/\___/\__/\____/___/
-            echo        UniGetUI Package Installer Batch Script 
-            echo         Created with UniGetUI Version {{CoreData.VersionName}}
-            echo.
-            echo ========================================================
-            echo.
-            echo NOTES:
-            echo ^ ^ - The install process will not be as reliable as importing a bundle with UniGetUI. Expect issues and errors.
-            echo ^ ^ - Packages will be installed with the install options specified at the time of creation of this batch file.
-            echo ^ ^ - Error/Sucess detection may not be 100% accurate.
-            echo ^ ^ - Some of the packages may require elevation. Some of them may ask for permission, but others may fail. Consider running this script elevated.
-            echo ^ ^ - You can skip confirmation prompts by running this batch file with the parameter `/DisablePausePrompts` 
-            echo.
-            echo.
-            IF NOT "%1"=="/DisablePausePrompts" (pause)
-            echo.
-            echo This script will attempt to install the following packages:
-            {{string.Join('\n', names.Select(x => $"echo ^ ^ - {x}"))}}
-            echo.
-            IF NOT "%1"=="/DisablePausePrompts" (pause)
-            cls
-
-            set "success_count=0"
-            set "failure_count=0"
-            set "commands_run=0"
-            set "results="
-
-            set commands=^{{string.Join(",", commands.Select(x => $"\"cmd.exe /C {x}\""))}}
-
-            :: ========================================================
-            :: RUN COMMANDS AND TRACK RESULTS
-            :: ========================================================
-            for %%C in (%commands%) do (
-                echo Running: %%~C
-                call %%~C
-                if !errorlevel! EQU 0 (
-                    echo [SUCCESS] %%~C
-                    set /a success_count+=1
-                    set "results=!results![  OK  ] %%~C!LF!"
-                ) else (
-                    echo [FAILURE] %%~C
-                    set /a failure_count+=1
-                    set "results=!results![FAILED] %%~C!LF!"
-                )
-                set /a commands_run+=1
-                echo.
-            )
-
-            echo ========================================================
-            echo                   OPERATION SUMMARY
-            echo ========================================================
-            echo Total commands run: %commands_run%
-            echo Successful: %success_count%
-            echo Failed: %failure_count%
-            echo.
-            echo Details:
-            echo !results!
-            echo ========================================================
-
-            if %failure_count% GTR 0 (
-                echo Some commands failed. Please check the log above.
-            ) else (
-                echo All commands executed successfully!
-            )
-            echo.
-            IF NOT "%1"=="/DisablePausePrompts" (pause)
-            if %failure_count% GTR 0 (powershell.exe -Command "exit 1") else (powershell.exe -Command "exit 0")
-            endlocal
+            if ($failure_count -gt 0) {
+                Write-Host "Some commands failed. Please check the log above." -ForegroundColor Yellow
+            }
+            else {
+                Write-Host "All commands executed successfully!" -ForegroundColor Green
+            }
+            Write-Host ""
+            if ($args[0] -ne "/DisablePausePrompts") { pause }
+            exit $failure_count
             """;
         }
     }
