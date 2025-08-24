@@ -797,6 +797,8 @@ namespace UniGetUI.Interface.SoftwarePages
                         CoreTools.Translate("Success!"),
                         CoreTools.Translate("The installation script saved to {0}", file));
 
+                    TelemetryHandler.ExportBatch();
+
                     await CoreTools.ShowFileOnExplorer(file);
                 }
             }
@@ -824,17 +826,17 @@ namespace UniGetUI.Interface.SoftwarePages
             Write-Host "      / / / / __ \/ / / __/ _ \/ __/ / / // /" -ForegroundColor Cyan
             Write-Host "     / /_/ / / / / / /_/ /  __/ /_/ /_/ // /" -ForegroundColor Cyan
             Write-Host "     \____/_/ /_/_/\____/\___/\__/\____/___/" -ForegroundColor Cyan
-            Write-Host "       UniGetUI Package Installer Batch Script" 
+            Write-Host "          UniGetUI Package Installer Script" 
             Write-Host "        Created with UniGetUI Version {{CoreData.VersionName}}"
             Write-Host ""
             Write-Host "========================================================"
             Write-Host ""
             Write-Host "NOTES:" -ForegroundColor Yellow
             Write-Host "  - The install process will not be as reliable as importing a bundle with UniGetUI. Expect issues and errors." -ForegroundColor Yellow
-            Write-Host "  - Packages will be installed with the install options specified at the time of creation of this batch file." -ForegroundColor Yellow
+            Write-Host "  - Packages will be installed with the install options specified at the time of creation of this script." -ForegroundColor Yellow
             Write-Host "  - Error/Sucess detection may not be 100% accurate." -ForegroundColor Yellow
             Write-Host "  - Some of the packages may require elevation. Some of them may ask for permission, but others may fail. Consider running this script elevated." -ForegroundColor Yellow
-            Write-Host "  - You can skip confirmation prompts by running this batch file with the parameter `/DisablePausePrompts` " -ForegroundColor Yellow
+            Write-Host "  - You can skip confirmation prompts by running this script with the parameter `/DisablePausePrompts` " -ForegroundColor Yellow
             Write-Host ""
             Write-Host ""
             if ($args[0] -ne "/DisablePausePrompts") { pause }
