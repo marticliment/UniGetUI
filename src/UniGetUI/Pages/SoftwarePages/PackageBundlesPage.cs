@@ -779,7 +779,8 @@ namespace UniGetUI.Interface.SoftwarePages
 
                             // Add install command
                             var exeName = package.Manager.Properties.ExecutableFriendlyName;
-                            var param = package.Manager.OperationHelper.GetParameters(package, package.installation_options, OperationType.Install)
+                            var param = package.Manager.OperationHelper.GetParameters(package,
+                                package.installation_options, OperationType.Install);
                             commands.Add($"{exeName} {string.Join(' ',param)}");
 
                             if (package.installation_options.PostInstallCommand != "")
