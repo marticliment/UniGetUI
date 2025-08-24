@@ -533,13 +533,11 @@ namespace UniGetUI.Interface.SoftwarePages
 
                     DialogHelper.HideLoadingDialog(loadingId);
 
-                    // Launch file
-                    Process.Start(new ProcessStartInfo
-                    {
-                        FileName = "explorer.exe",
-                        Arguments = @$"/select, ""{file}"""
-                    });
+                       DialogHelper.ShowDismissableBalloon(
+                        CoreTools.Translate("Success!"),
+                        CoreTools.Translate("The bundle was created successfully on {0}", file));
 
+                    await CoreTools.ShowFileOnExplorer(file);
                     HasUnsavedChanges = false;
 
                 }

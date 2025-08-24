@@ -87,11 +87,7 @@ namespace UniGetUI.Interface.Pages
                 LogTextBox.SelectAll();
                 await File.WriteAllTextAsync(file.Path, LogTextBox.SelectedText);
                 LogTextBox.Select(LogTextBox.SelectionStart, LogTextBox.SelectionStart);
-                Process.Start(new ProcessStartInfo
-                {
-                    FileName = "explorer.exe",
-                    Arguments = @$"/select, ""{file.Path}"""
-                });
+                await CoreTools.ShowFileOnExplorer(file.Path);
             }
         }
 

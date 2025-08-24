@@ -7,6 +7,7 @@ using Microsoft.UI.Xaml.Controls;
 using UniGetUI.PackageEngine.Classes.Packages.Classes;
 using UniGetUI.Pages.DialogPages;
 using UniGetUI.Core.SettingsEngine;
+using UniGetUI.Core.Tools;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -158,10 +159,7 @@ namespace UniGetUI.Interface
             IsDeletable = isDeletable;
         }
 
-        public void OpenShortcutPath()
-        {
-            Process.Start("explorer.exe", "/select," + $"\"{Path}\"");
-        }
+        public void OpenShortcutPath() => _ = CoreTools.ShowFileOnExplorer(Path);
 
         public void ResetShortcut()
         {
