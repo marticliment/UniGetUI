@@ -757,20 +757,37 @@ namespace UniGetUI.Interface.SoftwarePages
                 string file = await Task.Run(() => (new FileSavePicker(MainApp.Instance.MainWindow.GetWindowHandle())).Show(["*.cmd", "*.bat"], defaultName));
                 if (file != String.Empty)
                 {
-                    // Loading dialog
                     int loadingId = DialogHelper.ShowLoadingDialog(CoreTools.Translate("Saving packages, please wait..."));
 
                     var packages = new List<string>();
                     var commands = new List<string>();
 
+                    var forceKill = Settings.Get(Settings.K.KillProcessesThatRefuseToDie);
                     foreach (var _p in Loader.Packages)
                     {
                         if (_p is ImportedPackage package)
                         {
                             packages.Add(package.Name + " from " + package.Manager.DisplayName);
-                            commands.Add(
-                                package.Manager.Properties.ExecutableFriendlyName + " " + string.Join(' ',
-                                    package.Manager.OperationHelper.GetParameters(package, package.installation_options, OperationType.Install)));
+
+                            foreach (var process in package.installation_options.KillBeforeOperation)
+                            {   // Kill required processes, if any. Forcekill if the user has enable said option
+                                commands.Add($"taskkill /im \"{process}\"" + (forceKill ? " /f" : ""));
+                            }
+
+                            if (package.installation_options.PreInstallCommand != "")
+                            {   // Add pre-operation
+                                commands.Add(package.installation_options.PreInstallCommand);
+                            }
+
+                            // Add install command
+                            var exeName = package.Manager.Properties.ExecutableFriendlyName;
+                            var param = package.Manager.OperationHelper.GetParameters(package, package.installation_options, OperationType.Install)
+                            commands.Add($"{exeName} {string.Join(' ',param)}");
+
+                            if (package.installation_options.PostInstallCommand != "")
+                            {   // Add post-operation
+                                commands.Add(package.installation_options.PostInstallCommand);
+                            }
                         }
                     }
 
@@ -801,7 +818,10 @@ namespace UniGetUI.Interface.SoftwarePages
             return $$"""
             @echo off
             setlocal enabledelayedexpansion
-
+            (set LF=^
+            %=DO NOT REMOVE THIS=%
+            )
+            
             echo.
             echo ========================================================
             echo.
@@ -813,22 +833,19 @@ namespace UniGetUI.Interface.SoftwarePages
             echo        UniGetUI Package Installer Batch Script 
             echo         Created with UniGetUI Version {{CoreData.VersionName}}
             echo.
-            echo          https://www.marticliment.com/unigetui
-            echo        https://github.com/marticliment/UniGetUI
-            echo.
             echo ========================================================
             echo.
             echo NOTES:
+            echo ^ ^ - The install process will not be as reliable as importing a bundle with UniGetUI. Expect issues and errors.
             echo ^ ^ - Packages will be installed with the install options specified at the time of creation of this batch file.
-            echo ^ ^ - The install process will not be as reliable as importing a package collection into UniGetUI.
-            echo ^ ^ - Error detection will be done through exit-code, so it may not be 100% accurate.
+            echo ^ ^ - Error/Sucess detection may not be 100% accurate.
             echo ^ ^ - Some of the packages may require elevation. Some of them may ask for permission, but others may fail. Consider running this script elevated.
             echo ^ ^ - You can skip confirmation prompts by running this batch file with the parameter `/DisablePausePrompts` 
             echo.
             echo.
             IF NOT "%1"=="/DisablePausePrompts" (pause)
             echo.
-            echo This script will install the following programs:
+            echo This script will attempt to install the following packages:
             {{string.Join('\n', names.Select(x => $"echo ^ ^ - {x}"))}}
             echo.
             IF NOT "%1"=="/DisablePausePrompts" (pause)
@@ -850,11 +867,11 @@ namespace UniGetUI.Interface.SoftwarePages
                 if !errorlevel! EQU 0 (
                     echo [SUCCESS] %%~C
                     set /a success_count+=1
-                    set "results=!results!✓ %%~C\r\n"
+                    set "results=!results![  OK  ] %%~C!LF!"
                 ) else (
                     echo [FAILURE] %%~C
                     set /a failure_count+=1
-                    set "results=!results!✗ %%~C\r\n"
+                    set "results=!results![FAILED] %%~C!LF!"
                 )
                 set /a commands_run+=1
                 echo.
@@ -878,7 +895,7 @@ namespace UniGetUI.Interface.SoftwarePages
             )
             echo.
             IF NOT "%1"=="/DisablePausePrompts" (pause)
-            if %failure_count% GTR 0 (set errorlevel=1) else (set errorlevel=0)
+            if %failure_count% GTR 0 (powershell.exe -Command "exit 1") else (powershell.exe -Command "exit 0")
             endlocal
             """;
         }
