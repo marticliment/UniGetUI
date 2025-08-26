@@ -109,6 +109,7 @@ public static class TelemetryHandler
             request.Headers.Add("language", LanguageEngine.SelectedLocale);
 
             HttpClient _httpClient = new(CoreTools.GenericHttpClientParameters);
+            _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
             HttpResponseMessage response = await _httpClient.SendAsync(request);
 
             if (response.IsSuccessStatusCode)
@@ -159,6 +160,7 @@ public static class TelemetryHandler
             var request = new HttpRequestMessage(HttpMethod.Post, $"{HOST}/package/{endpoint}");
 
             request.Headers.Add("clientId", ID);
+            request.Headers.Add("clientVersion", CoreData.VersionName);
             request.Headers.Add("packageId", package.Id);
             request.Headers.Add("managerName", package.Manager.Name);
             request.Headers.Add("sourceName", package.Source.Name);
@@ -166,6 +168,7 @@ public static class TelemetryHandler
             if(eventSource is not null) request.Headers.Add("eventSource", eventSource);
 
             HttpClient _httpClient = new(CoreTools.GenericHttpClientParameters);
+            _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
             HttpResponseMessage response = await _httpClient.SendAsync(request);
 
             if (response.IsSuccessStatusCode)
@@ -207,9 +210,11 @@ public static class TelemetryHandler
             var request = new HttpRequestMessage(HttpMethod.Post, $"{HOST}/bundles/{endpoint}");
 
             request.Headers.Add("clientId", ID);
+            request.Headers.Add("clientVersion", CoreData.VersionName);
             request.Headers.Add("bundleType", type);
 
             HttpClient _httpClient = new(CoreTools.GenericHttpClientParameters);
+            _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
             HttpResponseMessage response = await _httpClient.SendAsync(request);
 
             if (response.IsSuccessStatusCode)
