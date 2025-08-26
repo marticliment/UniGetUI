@@ -50,7 +50,7 @@
       <WindowsAppSdkUndockedRegFreeWinRTInitialize>false</WindowsAppSdkUndockedRegFreeWinRTInitialize>
     </PackageReference>
 
-    <PackageReference Include="Microsoft.WindowsPackageManager.InProcCom" Version="1.11.430">
+    <PackageReference Include="Microsoft.WindowsPackageManager.InProcCom" Version="1.11.460">
       <NoWarn>NU1701</NoWarn>
       <GeneratePathProperty>true</GeneratePathProperty>
       <IncludeAssets>none</IncludeAssets>
