@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11982,
-        "done": 5504,
-        "packages_with_icon": 5504,
-        "packages_with_screenshot": 959,
-        "total_screenshots": 3082
+        "total": 11988,
+        "done": 5509,
+        "packages_with_icon": 5509,
+        "packages_with_screenshot": 963,
+        "total_screenshots": 3096
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -51871,6 +51871,48 @@
         "networkscanner": {
             "icon": "",
             "images": []
+        },
+        "innoextractor": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/k5YWCpws/image.png",
+                "https://i.postimg.cc/gcZ394hy/image.png",
+                "https://i.postimg.cc/kMKRYGrf/image.png",
+                "https://i.postimg.cc/7ZWLZr85/image.png"
+            ]
+        },
+        "dwgseecad": {
+            "icon": "https://i.postimg.cc/VNNmMGw3/dwgseecad.png",
+            "images": []
+        },
+        "dwgseepro": {
+            "icon": "https://i.postimg.cc/MH2CsdkZ/dwgseepro.png",
+            "images": []
+        },
+        "smbiosexplorer ": {
+            "icon": "https://i.postimg.cc/SRRMv7c5/smbe.png",
+            "images": [
+                "https://i.postimg.cc/tCRS9LzQ/image.png",
+                "https://i.postimg.cc/GpvJFQjx/image.png",
+                "https://i.postimg.cc/qR0cj3bV/image.png"
+            ]
+        },
+        "netoptimizer": {
+            "icon": "https://i.postimg.cc/MKvWvrWN/Net-Optimizer.png",
+            "images": [
+                "https://i.postimg.cc/sfPWTx7s/image.png",
+                "https://i.postimg.cc/bNztWP9b/image.png",
+                "https://i.postimg.cc/FsDLQ6T6/image.png",
+                "https://i.postimg.cc/dVfZhyPm/image.png",
+                "https://i.postimg.cc/nzbskfLX/image.png",
+                "https://i.postimg.cc/1Xyfk0wP/image.png"
+            ]
+        },
+        "wiseforcedeleter": {
+            "icon": "https://i.postimg.cc/T2rt6RM3/image.png",
+            "images": [
+                "https://i.postimg.cc/15sJRLsc/image.png"
+            ]
         }
     }
 }
