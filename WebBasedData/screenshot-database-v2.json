@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11988,
-        "done": 5509,
-        "packages_with_icon": 5509,
-        "packages_with_screenshot": 963,
-        "total_screenshots": 3096
+        "total": 11991,
+        "done": 5510,
+        "packages_with_icon": 5510,
+        "packages_with_screenshot": 974,
+        "total_screenshots": 3134
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -14086,7 +14086,9 @@
         },
         "externalraidmanager": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/DyHyRCmr/image.png"
+            ]
         },
         "extractnow": {
             "icon": "",
@@ -27807,7 +27809,12 @@
         },
         "netbakreplicator": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/B66rS0VX/image.png",
+                "https://i.postimg.cc/ZRM10MGj/image.png",
+                "https://i.postimg.cc/zGq5s98R/image.png",
+                "https://i.postimg.cc/W1YK5K3V/image.png"
+            ]
         },
         "netbalancer": {
             "icon": "https://community.chocolatey.org/content/packageimages/netbalancer.9.5.2.png",
@@ -33115,7 +33122,7 @@
             ]
         },
         "protonmail-bridge": {
-            "icon": "https://github.com/ProtonMail/proton-bridge/blob/master/dist/raw/win%2Blin_icon_256x256.png",
+            "icon": "https://raw.githubusercontent.com/ProtonMail/proton-bridge/refs/heads/master/dist/raw/win%2Blin_icon_256x256.png",
             "images": [
                 "https://i.postimg.cc/QC1c11Fx/image.png",
                 "https://i.postimg.cc/fTQcZ2P3/image.png",
@@ -33123,7 +33130,7 @@
             ]
         },
         "protonmailbridge": {
-            "icon": "https://github.com/ProtonMail/proton-bridge/blob/master/dist/raw/win%2Blin_icon_256x256.png",
+            "icon": "https://raw.githubusercontent.com/ProtonMail/proton-bridge/refs/heads/master/dist/raw/win%2Blin_icon_256x256.png",
             "images": [
                 "https://i.postimg.cc/QC1c11Fx/image.png",
                 "https://i.postimg.cc/fTQcZ2P3/image.png",
@@ -33142,7 +33149,7 @@
             ]
         },
         "protonvpn": {
-            "icon": "https://community.chocolatey.org/content/packageimages/protonvpn.2.3.2.png",
+            "icon": "https://raw.githubusercontent.com/ProtonVPN/proton-vpn-browser-extension/refs/heads/main/source/img/icon-256.png",
             "images": [
                 "https://i.postimg.cc/GphzR864/image.png",
                 "https://i.postimg.cc/x8Sz0Bq6/image.png",
@@ -34003,7 +34010,10 @@
         },
         "qencdecrypter": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/5tM926Bj/image.png",
+                "https://i.postimg.cc/rszMPWkZ/image.png"
+            ]
         },
         "qet": {
             "icon": "https://community.chocolatey.org/content/packageimages/qet.0.90.7758.png",
@@ -34011,7 +34021,11 @@
         },
         "qfinderpro": {
             "icon": "https://community.chocolatey.org/content/packageimages/qfinderpro.7.8.3.1309.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/SRGCDBmf/image.png",
+                "https://i.postimg.cc/tRd3qxFn/image.png",
+                "https://i.postimg.cc/KvJtLhqZ/image.png"
+            ]
         },
         "qflipper": {
             "icon": "https://community.chocolatey.org/content/packageimages/qflipper.1.1.2.png",
@@ -34164,11 +34178,18 @@
         },
         "qsirch": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/C1kQLx4M/image.png"
+            ]
         },
         "qsync": {
             "icon": "https://community.chocolatey.org/content/packageimages/qsync.5.0.7.1122.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/Y9HvZdnn/image.png",
+                "https://i.postimg.cc/HnWVsVCb/image.png",
+                "https://i.postimg.cc/gkJnCXsW/image.png",
+                "https://i.postimg.cc/Gh5HdLgs/image.png"
+            ]
         },
         "qt-creator": {
             "icon": "",
@@ -34376,7 +34397,11 @@
         },
         "qudedupextracttool": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/HsBPLKbM/image.png",
+                "https://i.postimg.cc/J46P8XWc/image.png",
+                "https://i.postimg.cc/rpWJ5YRQ/image.png"
+            ]
         },
         "queryexplus": {
             "icon": "",
@@ -34572,7 +34597,13 @@
         },
         "qvrproclient": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/C5MsThPQ/image.png",
+                "https://i.postimg.cc/X7mdxkbh/image.png",
+                "https://i.postimg.cc/fRdXPSWb/image.png",
+                "https://i.postimg.cc/bvjbfYd9/image.png",
+                "https://i.postimg.cc/5yjQS6kb/image.png"
+            ]
         },
         "qws": {
             "icon": "",
@@ -51911,7 +51942,37 @@
         "wiseforcedeleter": {
             "icon": "https://i.postimg.cc/T2rt6RM3/image.png",
             "images": [
-                "https://i.postimg.cc/15sJRLsc/image.png"
+                "https://i.postimg.cc/15sJRLsc/image.png",
+                "https://i.postimg.cc/FHBXdwb8/image.png"
+            ]
+        },
+        "wisejetsearch\n": {
+            "icon": "https://i.postimg.cc/VN2wT2dn/image.png",
+            "images": [
+                "https://i.postimg.cc/jqHTggKn/image.png",
+                "https://i.postimg.cc/8PTSqRPK/image.png",
+                "https://i.postimg.cc/Yq8Hkvvp/image.png"
+            ]
+        },
+        "netbakpcagent": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/25mmfgYZ/image.png",
+                "https://i.postimg.cc/Qtd3F5HN/image.png",
+                "https://i.postimg.cc/HxvCXxyw/image.png",
+                "https://i.postimg.cc/qqtHLTs9/image.png",
+                "https://i.postimg.cc/PJBsVRKN/image.png",
+                "https://i.postimg.cc/tRfjgsyy/image.png"
+            ]
+        },
+        "qvpnclient": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/1td3PMJ1/image.png",
+                "https://i.postimg.cc/4dYhzY0Z/image.png",
+                "https://i.postimg.cc/cHPtTsq3/image.png",
+                "https://i.postimg.cc/C5DBQWYQ/image.png",
+                "https://i.postimg.cc/vHF6VHtF/image.png"
             ]
         }
     }
