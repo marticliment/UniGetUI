@@ -120,7 +120,7 @@ To translate UniGetUI to other languages or to update an old translation, please
 | :-- | :-- | --- |
 | <img src='https://flagcdn.com/af.svg' width=20> &nbsp; Afrikaans - Afrikaans | 87% | Hendrik Bezuidenhout |
 | <img src='https://flagcdn.com/sa.svg' width=20> &nbsp; Arabic - عربي‎ | 87% | [Abdu11ahAS](https://github.com/Abdu11ahAS), [Abdullah-Dev115](https://github.com/Abdullah-Dev115), [AbdullahAlousi](https://github.com/AbdullahAlousi), [bassuny3003](https://github.com/bassuny3003), [DaRandomCube](https://github.com/DaRandomCube), [FancyCookin](https://github.com/FancyCookin), [IFrxo](https://github.com/IFrxo), [mo9a7i](https://github.com/mo9a7i) |
-| <img src='https://flagcdn.com/be.svg' width=20> &nbsp; Belarusian - беларуская | 5% | [bthos](https://github.com/bthos) |
+| <img src='https://flagcdn.com/by.svg' width=20> &nbsp; Belarusian - беларуская | 5% | [bthos](https://github.com/bthos) |
 | <img src='https://flagcdn.com/bg.svg' width=20> &nbsp; Bulgarian - български | 38% | Vasil Kolev |
 | <img src='https://flagcdn.com/bd.svg' width=20> &nbsp; Bangla - বাংলা | 58% | [fluentmoheshwar](https://github.com/fluentmoheshwar), [itz-rj-here](https://github.com/itz-rj-here), Mushfiq Iqbal Rayon, Nilavra Bhattacharya, [samiulislamsharan](https://github.com/samiulislamsharan) |
 | <img src='https://flagcdn.com/ad.svg' width=20> &nbsp; Catalan - Català | 100% | [marticliment](https://github.com/marticliment) |
