@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11991,
-        "done": 5510,
-        "packages_with_icon": 5510,
-        "packages_with_screenshot": 974,
-        "total_screenshots": 3134
+        "total": 11992,
+        "done": 5511,
+        "packages_with_icon": 5511,
+        "packages_with_screenshot": 975,
+        "total_screenshots": 3138
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -3559,8 +3559,13 @@
             ]
         },
         "authenticator": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/DyndH0xK/image.png",
+            "images": [
+                "https://i.postimg.cc/mZQymCNw/image.png",
+                "https://i.postimg.cc/X7LcbWPB/image.png",
+                "https://i.postimg.cc/fRb7WF42/image.png",
+                "https://i.postimg.cc/L80tJT2H/image.png"
+            ]
         },
         "authenticator-beta": {
             "icon": "",
@@ -51974,6 +51979,10 @@
                 "https://i.postimg.cc/C5DBQWYQ/image.png",
                 "https://i.postimg.cc/vHF6VHtF/image.png"
             ]
+        },
+        "winsecretplus": {
+            "icon": "",
+            "images": []
         }
     }
 }
