@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11991,
-        "done": 5510,
-        "packages_with_icon": 5510,
-        "packages_with_screenshot": 974,
-        "total_screenshots": 3134
+        "total": 12000,
+        "done": 5516,
+        "packages_with_icon": 5516,
+        "packages_with_screenshot": 984,
+        "total_screenshots": 3178
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -3559,8 +3559,13 @@
             ]
         },
         "authenticator": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/DyndH0xK/image.png",
+            "images": [
+                "https://i.postimg.cc/mZQymCNw/image.png",
+                "https://i.postimg.cc/X7LcbWPB/image.png",
+                "https://i.postimg.cc/fRb7WF42/image.png",
+                "https://i.postimg.cc/L80tJT2H/image.png"
+            ]
         },
         "authenticator-beta": {
             "icon": "",
@@ -44504,7 +44509,14 @@
         },
         "usbsafelyremove": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/d3X6TQB5/image.png",
+                "https://i.postimg.cc/yNBPRbmC/image.png",
+                "https://i.postimg.cc/Px5Q3vV6/image.png",
+                "https://i.postimg.cc/gkZqTW4P/image.png",
+                "https://i.postimg.cc/1300yrLC/image.png",
+                "https://i.postimg.cc/9Q1pGBJ4/image.png"
+            ]
         },
         "usbserver": {
             "icon": "",
@@ -51900,8 +51912,13 @@
             "images": []
         },
         "networkscanner": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/WbZTHyRJ/netscan.png",
+            "images": [
+                "https://i.postimg.cc/QNKgSVZm/image.png",
+                "https://i.postimg.cc/50SZHp97/image.png",
+                "https://i.postimg.cc/NMWSzMGX/image.png",
+                "https://i.postimg.cc/DyysWcPS/image.png"
+            ]
         },
         "innoextractor": {
             "icon": "",
@@ -51973,6 +51990,79 @@
                 "https://i.postimg.cc/cHPtTsq3/image.png",
                 "https://i.postimg.cc/C5DBQWYQ/image.png",
                 "https://i.postimg.cc/vHF6VHtF/image.png"
+            ]
+        },
+        "winsecretplus": {
+            "icon": "",
+            "images": []
+        },
+        "exeexplorer": {
+            "icon": "https://i.postimg.cc/rmwhGyzS/exe.png",
+            "images": [
+                "https://i.postimg.cc/d3Mys4ML/image.png",
+                "https://i.postimg.cc/GpH8vZd4/image.png",
+                "https://i.postimg.cc/pVD9QQbJ/image.png",
+                "https://i.postimg.cc/g0CJ8jg7/image.png",
+                "https://i.postimg.cc/fT8R5BHm/image.png",
+                "https://i.postimg.cc/QtgX7b9B/image.png",
+                "https://i.postimg.cc/3Jf32WRZ/image.png",
+                "https://i.postimg.cc/x8TSzSV7/image.png"
+            ]
+        },
+        "hexedit": {
+            "icon": "https://i.postimg.cc/85fZXKB5/hexedit.png",
+            "images": [
+                "https://i.postimg.cc/VNdg5GhR/image.png",
+                "https://i.postimg.cc/nLgkmKbt/image.png",
+                "https://i.postimg.cc/G2DjxBdT/image.png",
+                "https://i.postimg.cc/2j4wqB0P/image.png"
+            ]
+        },
+        "iconexplorer": {
+            "icon": "https://i.postimg.cc/jSkQV6jJ/Icon-Explorer.png",
+            "images": [
+                "https://i.postimg.cc/yxPcLc5x/image.png"
+            ]
+        },
+        "infobar": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/V69CNXzg/image.png",
+                "https://i.postimg.cc/C5Ffnd1g/image.png",
+                "https://i.postimg.cc/tJ2n3yZV/image.png",
+                "https://i.postimg.cc/2jwWRdc8/image.png",
+                "https://i.postimg.cc/Pr5wtL9b/image.png",
+                "https://i.postimg.cc/qMDCgJHP/image.png"
+            ]
+        },
+        "jsonviewer": {
+            "icon": "",
+            "images": []
+        },
+        "networkmeter": {
+            "icon": "https://i.postimg.cc/1tYZwjR3/netmeter.png",
+            "images": [
+                "https://i.postimg.cc/pdCvXdg8/image.png"
+            ]
+        },
+        "harddisksentinel-professional": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/76Zj3634/image.png",
+                "https://i.postimg.cc/zv9MYF9D/image.png",
+                "https://i.postimg.cc/Dy3kD2Fr/image.png",
+                "https://i.postimg.cc/7640dGsv/image.png",
+                "https://i.postimg.cc/k5m2grxK/image.png"
+            ]
+        },
+        "harddisksentinel-standard": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/76Zj3634/image.png",
+                "https://i.postimg.cc/zv9MYF9D/image.png",
+                "https://i.postimg.cc/Dy3kD2Fr/image.png",
+                "https://i.postimg.cc/7640dGsv/image.png",
+                "https://i.postimg.cc/k5m2grxK/image.png"
             ]
         }
     }
