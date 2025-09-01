@@ -46,7 +46,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
 
         protected abstract void _loadManagerExecutableFile(out bool found, out string path, out string callArguments);
         protected abstract void _loadManagerVersion(out string version);
-        protected abstract void _performExtraLoadingSteps();
+        protected virtual void _performExtraLoadingSteps() { }
 
         public void Initialize()
         {

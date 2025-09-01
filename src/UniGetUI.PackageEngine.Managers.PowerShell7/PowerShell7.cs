@@ -118,31 +118,23 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
         }
 
         public override IReadOnlyList<string> FindCandidateExecutableFiles()
+            => CoreTools.WhichMultiple("pwsh.exe");
+
+        protected override void _loadManagerExecutableFile(out bool found, out string path, out string callArguments)
         {
-            return CoreTools.WhichMultiple("pwsh.exe");
+            var (_found, _path) = GetExecutableFile();
+            found = _found;
+            path = _path;
+            callArguments = " -NoProfile -Command";
         }
 
-        protected override ManagerStatus LoadManager()
+        protected override void _loadManagerVersion(out string version)
         {
-            var (found, path) = GetExecutableFile();
-
-            ManagerStatus status = new()
-            {
-                ExecutablePath = path,
-                Found = found,
-                ExecutableCallArgs = " -NoProfile -Command",
-            };
-
-            if (!status.Found)
-            {
-                return status;
-            }
-
             Process process = new()
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = status.ExecutablePath,
+                    FileName = Status.ExecutablePath,
                     Arguments = "-NoProfile -Version",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
@@ -152,11 +144,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
                 }
             };
             process.Start();
-            status.Version = process.StandardOutput.ReadToEnd().Trim();
-
-            return status;
+            version = process.StandardOutput.ReadToEnd().Trim();
         }
-
     }
-
 }

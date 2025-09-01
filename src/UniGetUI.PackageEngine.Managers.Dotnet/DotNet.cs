@@ -174,7 +174,5 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
             process.Start();
             version = process.StandardOutput.ReadToEnd().Trim();
         }
-
-        protected override void _performExtraLoadingSteps() { }
     }
 }

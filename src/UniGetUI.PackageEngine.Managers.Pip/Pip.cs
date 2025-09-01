@@ -58,7 +58,9 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             Properties = new ManagerProperties
             {
                 Name = "Pip",
-                Description = CoreTools.Translate("Python's library manager. Full of python libraries and other python-related utilities<br>Contains: <b>Python libraries and related utilities</b>"),
+                Description =
+                    CoreTools.Translate(
+                        "Python's library manager. Full of python libraries and other python-related utilities<br>Contains: <b>Python libraries and related utilities</b>"),
                 IconId = IconType.Python,
                 ColorIconId = "pip_color",
                 ExecutableFriendlyName = "pip",
@@ -84,11 +86,12 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 return $"--proxy {proxyUri.ToString()}";
 
             var creds = Settings.GetProxyCredentials();
-            if(creds is null)
+            if (creds is null)
                 return $"--proxy {proxyUri.ToString()}";
 
-            return $"--proxy {proxyUri.Scheme}://{Uri.EscapeDataString(creds.UserName)}:{Uri.EscapeDataString(creds.Password)}" +
-                   $"@{proxyUri.AbsoluteUri.Replace($"{proxyUri.Scheme}://", "")}";
+            return
+                $"--proxy {proxyUri.Scheme}://{Uri.EscapeDataString(creds.UserName)}:{Uri.EscapeDataString(creds.Password)}" +
+                $"@{proxyUri.AbsoluteUri.Replace($"{proxyUri.Scheme}://", "")}";
         }
 
         protected override IReadOnlyList<Package> FindPackages_UnSafe(string query)
@@ -169,9 +172,11 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                         continue;
                     }
 
-                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], DefaultSource, this, new(PackageScope.Global)));
+                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1],
+                        DefaultSource, this, new(PackageScope.Global)));
                 }
             }
+
             logger.AddToStdErr(p.StandardError.ReadToEnd());
             p.WaitForExit();
             logger.Close(p.ExitCode);
@@ -230,9 +235,11 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                         continue;
                     }
 
-                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], DefaultSource, this, new(PackageScope.Global)));
+                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2],
+                        DefaultSource, this, new(PackageScope.Global)));
                 }
             }
+
             logger.AddToStdErr(p.StandardError.ReadToEnd());
             p.WaitForExit();
             logger.Close(p.ExitCode);
@@ -292,9 +299,11 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                         continue;
                     }
 
-                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], DefaultSource, this, new(PackageScope.Global)));
+                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1],
+                        DefaultSource, this, new(PackageScope.Global)));
                 }
             }
+
             logger.AddToStdErr(p.StandardError.ReadToEnd());
             p.WaitForExit();
             logger.Close(p.ExitCode);
@@ -307,7 +316,9 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             var FoundPaths = CoreTools.WhichMultiple("python");
             List<string> Paths = [];
 
-            if (FoundPaths.Any()) foreach (var Path in FoundPaths) Paths.Add(Path);
+            if (FoundPaths.Any())
+                foreach (var Path in FoundPaths)
+                    Paths.Add(Path);
 
             try
             {
@@ -330,28 +341,29 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                         Paths.Add(PythonPath);
                 }
             }
-            catch (Exception) { }
+            catch (Exception)
+            {
+            }
 
             return Paths;
         }
 
-        protected override ManagerStatus LoadManager()
+        protected override void _loadManagerExecutableFile(out bool found, out string path, out string callArguments)
         {
-            var (found, path) = GetExecutableFile();
+            var (_found, _path) = GetExecutableFile();
+            found = _found;
+            path = _path;
+            callArguments = "-m pip ";
+        }
 
-            ManagerStatus status = new() { ExecutablePath = path, Found = found, ExecutableCallArgs = "-m pip " };
-
-            if (!status.Found)
-            {
-                return status;
-            }
-
+        protected override void _loadManagerVersion(out string version)
+        {
             Process process = new()
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = status.ExecutablePath,
-                    Arguments = status.ExecutableCallArgs + "--version " + GetProxyArgument(),
+                    FileName = Status.ExecutablePath,
+                    Arguments = Status.ExecutableCallArgs + "--version " + GetProxyArgument(),
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
@@ -360,17 +372,17 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 }
             };
             process.Start();
-            status.Version = process.StandardOutput.ReadToEnd().Trim();
+            version = process.StandardOutput.ReadToEnd().Trim();
 
-            if (process.ExitCode == 9009)
+            if (process.ExitCode is 9009)
             {
-                status.Found = false;
-                return status;
+                throw new Exception("Microsoft Store python alias is not a valid python install");
             }
+        }
 
-
+        protected override void _performExtraLoadingSteps()
+        {
             Environment.SetEnvironmentVariable("PIP_REQUIRE_VIRTUALENV", "false", EnvironmentVariableTarget.Process);
-            return status;
         }
     }
 }

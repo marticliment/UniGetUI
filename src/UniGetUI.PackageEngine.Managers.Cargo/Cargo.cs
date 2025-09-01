@@ -157,8 +157,6 @@ public partial class Cargo : PackageManager
         if (!string.IsNullOrEmpty(error)) Logger.Error("cargo version error: " + error);
     }
 
-    protected override void _performExtraLoadingSteps() { }
-
     private IReadOnlyList<Package> GetPackages(LoggableTaskType taskType)
     {
         List<Package> Packages = [];
