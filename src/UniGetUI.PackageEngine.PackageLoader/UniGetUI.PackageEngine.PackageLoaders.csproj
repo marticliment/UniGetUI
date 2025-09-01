@@ -8,7 +8,8 @@
     <ProjectReference Include="..\UniGetUI.Core.Settings\UniGetUI.Core.Settings.csproj" />
     <ProjectReference Include="..\UniGetUI.Core.Tools\UniGetUI.Core.Tools.csproj" />
     <ProjectReference Include="..\UniGetUI.PackageEngine.Enums\UniGetUI.PackageEngine.Structs.csproj" />
-    <ProjectReference Include="..\UniGetUI.PackageEngine.Managers.Cargo\UniGetUI.PackageEngine.Managers.Cargo.csproj" />
+    <ProjectReference Include="..\UniGetUI.PAckageEngine.Interfaces\UniGetUI.PackageEngine.Interfaces.csproj" />
+    <!--ProjectReference Include="..\UniGetUI.PackageEngine.Managers.Cargo\UniGetUI.PackageEngine.Managers.Cargo.csproj" />
     <ProjectReference Include="..\UniGetUI.PackageEngine.Managers.Chocolatey\UniGetUI.PackageEngine.Managers.Chocolatey.csproj" />
     <ProjectReference Include="..\UniGetUI.PackageEngine.Managers.Dotnet\UniGetUI.PackageEngine.Managers.Dotnet.csproj" />
     <ProjectReference Include="..\UniGetUI.PackageEngine.Managers.Generic.NuGet\UniGetUI.PackageEngine.Managers.Generic.NuGet.csproj" />
@@ -16,7 +17,7 @@
     <ProjectReference Include="..\UniGetUI.PackageEngine.Managers.Pip\UniGetUI.PackageEngine.Managers.Pip.csproj" />
     <ProjectReference Include="..\UniGetUI.PackageEngine.Managers.PowerShell\UniGetUI.PackageEngine.Managers.PowerShell.csproj" />
     <ProjectReference Include="..\UniGetUI.PackageEngine.Managers.Scoop\UniGetUI.PackageEngine.Managers.Scoop.csproj" />
-    <ProjectReference Include="..\UniGetUI.PackageEngine.Managers.WinGet\UniGetUI.PackageEngine.Managers.WinGet.csproj" />
+    <ProjectReference Include="..\UniGetUI.PackageEngine.Managers.WinGet\UniGetUI.PackageEngine.Managers.WinGet.csproj" /-->
   </ItemGroup>
 
   <ItemGroup>

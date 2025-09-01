@@ -6,6 +6,7 @@ using UniGetUI.PackageEngine.Classes.Manager;
 using UniGetUI.PackageEngine.Classes.Serializable;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.Serializable;
 using UniGetUI.PackageEngine.Structs;
 
 namespace UniGetUI.PackageEngine.PackageClasses
@@ -74,6 +75,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
         {
             return Task.CompletedTask;
         }
+
+        public Task<InstallOptions> GetInstallOptions()
+            => Task.FromResult(new InstallOptions());
 
         public Task<SerializablePackage> AsSerializableAsync()
         {

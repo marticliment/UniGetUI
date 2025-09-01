@@ -45,6 +45,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
             return package;
         }
 
+        public override Task<InstallOptions> GetInstallOptions()
+            => Task.FromResult(installation_options.Copy());
+
         public override Task<SerializablePackage> AsSerializableAsync()
         {
             return Task.FromResult(new SerializablePackage

@@ -10,6 +10,7 @@ using UniGetUI.PackageEngine.Classes.Packages;
 using UniGetUI.PackageEngine.Classes.Packages.Classes;
 using UniGetUI.PackageEngine.Classes.Serializable;
 using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.Serializable;
 using UniGetUI.PackageEngine.Structs;
 
 namespace UniGetUI.PackageEngine.PackageClasses
@@ -298,6 +299,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
             return NormalizedVersion.Major == NormalizedNewVersion.Major && NormalizedVersion.Minor == NormalizedNewVersion.Minor &&
                    (NormalizedVersion.Patch != NormalizedNewVersion.Patch || NormalizedVersion.Remainder != NormalizedNewVersion.Remainder);
         }
+
+        public virtual Task<InstallOptions> GetInstallOptions()
+            => InstallOptionsFactory.LoadApplicableAsync(this);
 
         public virtual async Task<SerializablePackage> AsSerializableAsync()
         {
