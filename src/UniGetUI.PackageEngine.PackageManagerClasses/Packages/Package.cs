@@ -279,7 +279,15 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         public virtual bool NewerVersionIsInstalled()
         {
-            return PackageCacher.NewerVersionIsInstalled(this);
+            foreach (var p in GetInstalledPackages())
+            {
+                if (p.NormalizedVersion >= this.NormalizedNewVersion)
+                {
+                    return true;
+                }
+            }
+            
+            return false;
         }
 
         public async Task<string?> GetInstallerFileName()
