@@ -213,13 +213,8 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                     task.Wait();
                 }
 
-                Package[] packages = task.GetAwaiter().GetResult().ToArray();
-
-                for (int i = 0; i < packages.Length; i++)
-                {
-                    packages[i] = PackageCacher.GetAvailablePackage(packages[i]);
-                }
-                Logger.Info($"Found {packages.Length} available packages from {Name} with the query {query}");
+                var packages = task.GetAwaiter().GetResult();
+                Logger.Info($"Found {packages.Count} available packages from {Name} with the query {query}");
                 return packages;
             }
             catch (Exception e)
@@ -263,14 +258,8 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                     task.Wait();
                 }
 
-                Package[] packages = task.GetAwaiter().GetResult().ToArray();
-
-                for (int i = 0; i < packages.Length; i++)
-                {
-                    packages[i] = PackageCacher.GetUpgradablePackage(packages[i]);
-                }
-
-                Logger.Info($"Found {packages.Length} available updates from {Name}");
+                var packages = task.GetAwaiter().GetResult();
+                Logger.Info($"Found {packages.Count} available updates from {Name}");
                 return packages;
             }
             catch (Exception e)
@@ -312,14 +301,8 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                     task.Wait();
                 }
 
-                Package[] packages = task.GetAwaiter().GetResult().ToArray();
-
-                for (int i = 0; i < packages.Length; i++)
-                {
-                    packages[i] = PackageCacher.GetInstalledPackage(packages[i]);
-                }
-
-                Logger.Info($"Found {packages.Length} installed packages from {Name}");
+                var packages = task.GetAwaiter().GetResult();
+                Logger.Info($"Found {packages.Count} installed packages from {Name}");
                 return packages;
             }
             catch (Exception e)
@@ -370,9 +353,12 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             Logger.Debug($"Manager {Name} has not implemented RefreshPackageIndexes");
         }
 
+        /// <summary>
+        /// Attempt a live, fast, repair method when an exception occurs (for example, reconnect to COM Server)
+        /// </summary>
         public virtual void AttemptFastRepair()
         {
-            // Implementing this method is optional
+            Logger.Debug($"Manager {Name} has not implemented AttemptFastRepair");
         }
     }
 }

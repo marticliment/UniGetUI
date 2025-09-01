@@ -60,7 +60,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
             {
                 package.SetTag(PackageTag.IsUpgradable);
             }
-            else if (package.GetInstalledPackage() is not null)
+            else if (package.GetInstalledPackages().Any())
             {
                 package.SetTag(PackageTag.AlreadyInstalled);
             }

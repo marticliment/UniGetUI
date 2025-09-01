@@ -3,7 +3,6 @@ using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Interfaces;
-using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.PackageLoader
 {
@@ -31,18 +30,24 @@ namespace UniGetUI.PackageEngine.PackageLoader
 
         protected override async Task<bool> IsPackageValid(IPackage package)
         {
-            if (package.VersionString == package.NewVersionString) return false;
+            if (package.VersionString == package.NewVersionString)
+                return false;
+
+            if (package.NewerVersionIsInstalled())
+                return false;
+
+            if (package.IsUpdateMinor() && (await package.GetInstallOptions()).SkipMinorUpdates)
+            {
+                Logger.Info($"Ignoring package {package.Id} because it is a minor update ({package.VersionString} -> {package.NewVersionString}) and SkipMinorUpdates is set to true.");
+                return false;
+            }
+
             if (await package.HasUpdatesIgnoredAsync(package.NewVersionString))
             {
                 IgnoredPackages[package.Id] = package;
                 return false;
             }
-            if ((await InstallOptionsFactory.LoadApplicableAsync(package)).SkipMinorUpdates && package.IsUpdateMinor())
-            {
-                Logger.Info($"Ignoring package {package.Id} because it is a minor update ({package.VersionString} -> {package.NewVersionString}) and SkipMinorUpdates is set to true.");
-                return false;
-            }
-            if (package.NewerVersionIsInstalled()) return false;
+
             return true;
         }
 
@@ -53,7 +58,9 @@ namespace UniGetUI.PackageEngine.PackageLoader
         protected override Task WhenAddingPackage(IPackage package)
         {
             package.GetAvailablePackage()?.SetTag(PackageTag.IsUpgradable);
-            package.GetInstalledPackage()?.SetTag(PackageTag.IsUpgradable);
+
+            foreach(var p in package.GetInstalledPackages())
+                p.SetTag(PackageTag.IsUpgradable);
 
             return Task.CompletedTask;
         }

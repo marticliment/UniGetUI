@@ -105,7 +105,7 @@ namespace UniGetUI.Interface.Dialogs
 
             AvailablePackage = Package.GetAvailablePackage();
             UpgradablePackage = Package.GetUpgradablePackage();
-            InstalledPackage = UpgradablePackage?.GetInstalledPackage() ?? Package.GetInstalledPackage();
+            InstalledPackage = UpgradablePackage?.GetInstalledPackages().FirstOrDefault();
 
             var options = InstallOptionsFactory.LoadForPackage(package);
             InstallOptionsPage = new InstallOptionsPage(package, OperationRole, options);

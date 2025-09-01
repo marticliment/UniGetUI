@@ -2,6 +2,7 @@ using System.ComponentModel;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Serializable;
+using UniGetUI.PackageEngine.Serializable;
 using UniGetUI.PackageEngine.Structs;
 
 namespace UniGetUI.PackageEngine.Interfaces
@@ -118,7 +119,7 @@ namespace UniGetUI.PackageEngine.Interfaces
         /// Returns the corresponding installed Package object. Will return null if not applicable
         /// </summary>
         /// <returns>a Package object if found, null if not</returns>
-        public IPackage? GetInstalledPackage();
+        public IReadOnlyList<IPackage> GetInstalledPackages();
 
         /// <summary>
         /// Returns the corresponding available Package object. Will return null if not applicable
@@ -154,6 +155,12 @@ namespace UniGetUI.PackageEngine.Interfaces
         /// </summary>
         /// <returns>False if the update is a major update or the update doesn't exist, true if it's a minor update</returns>
         public bool IsUpdateMinor();
+
+        /// <summary>
+        /// Gets the applicable install options for this package
+        /// </summary>
+        /// <returns>The package install options, or, if not overriden, the manager install options</returns>
+        public Task<InstallOptions> GetInstallOptions();
 
         public Task<SerializablePackage> AsSerializableAsync();
 
