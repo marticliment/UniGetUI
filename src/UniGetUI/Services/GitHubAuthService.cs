@@ -6,6 +6,7 @@ using UniGetUI.Core.Logging;
 using UniGetUI.Core.SecureSettings;
 using UniGetUI.Core.SettingsEngine;
 using Windows.System;
+using UniGetUI.Interface;
 
 namespace UniGetUI.Services
 {
@@ -13,33 +14,7 @@ namespace UniGetUI.Services
     {
         private readonly string GitHubClientId = Secrets.GetGitHubClientId();
         private readonly string GitHubClientSecret = Secrets.GetGitHubClientSecret();
-
-        private const string DataReceivedWebsite = """
-           <html>
-               <style>
-                   div {
-                       display: flex;
-                       flex-direction: column;
-                       align-items: center;
-                       justify-content: center;
-                       height: 100vh;
-                       font-family: sans-serif;
-                       text-align: center;
-                   }
-               </style>
-               <script>
-                   window.close();
-               </script>
-               <div>
-                   <title>UniGetUI authentication</title>
-                   <h1>Authentication successful</h1>
-                   <p>You can now close this window and return to UniGetUI</p>
-               </div>
-           </html>
-           """;
-
         private const string RedirectUri = "http://127.0.0.1:58642/";
-
         private readonly GitHubClient _client;
 
         public static event EventHandler<EventArgs>? AuthStatusChanged;
@@ -63,24 +38,12 @@ namespace UniGetUI.Services
             };
         }
 
-        private static HttpListener? httpListener;
+        private GHAuthApiRunner? loginBackend;
         public async Task<bool> SignInAsync()
         {
             try
             {
                 Logger.Info("Initiating GitHub sign-in process using loopback redirect...");
-
-                if (httpListener is null)
-                {
-                    httpListener = new HttpListener();
-                    httpListener.Prefixes.Add(RedirectUri);
-                    httpListener.Start();
-                    Logger.Info($"Listening for GitHub callback on {RedirectUri}");
-                }
-                else
-                {
-                    Logger.Warn("Http listener already existed");
-                }
 
                 var request = new OauthLoginRequest(GitHubClientId)
                 {
@@ -90,41 +53,33 @@ namespace UniGetUI.Services
 
                 var oauthLoginUrl = _client.Oauth.GetGitHubLoginUrl(request);
 
+                codeFromAPI = null;
+                if (loginBackend is not null)
+                {
+                    try
+                    {
+                        await loginBackend.Stop();
+                        loginBackend.Dispose();
+                        loginBackend = null;
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Warn(ex);
+                    }
+                }
+                loginBackend = new GHAuthApiRunner();
+                loginBackend.OnLogin += BackgroundApiOnOnLogin;
+                await loginBackend.Start();
                 await Launcher.LaunchUriAsync(oauthLoginUrl);
 
-                var context = await httpListener.GetContextAsync();
+                while (codeFromAPI is null) await Task.Delay(100);
 
-                var response = context.Response;
-                var buffer = Encoding.UTF8.GetBytes(DataReceivedWebsite);
-                response.ContentLength64 = buffer.Length;
-                var output = response.OutputStream;
-                await output.WriteAsync(buffer, 0, buffer.Length);
-                output.Close();
+                loginBackend.OnLogin -= BackgroundApiOnOnLogin;
+                await loginBackend.Stop();
+                loginBackend.Dispose();
+                loginBackend = null;
 
-                httpListener.Stop();
-                httpListener = null;
-                Logger.Info("GitHub callback received and processed.");
-
-                var code = context.Request.QueryString["code"];
-                if (string.IsNullOrEmpty(code))
-                {
-                    var error = context.Request.QueryString["error"];
-                    var errorDescription = context.Request.QueryString["error_description"];
-                    Logger.Error($"GitHub OAuth callback returned an error: {error} - {errorDescription}");
-                    AuthStatusChanged?.Invoke(this, EventArgs.Empty);
-                    return false;
-                }
-
-                return await _completeSignInAsync(code);
-            }
-            catch (HttpListenerException ex) when (ex.ErrorCode == 5) // Access Denied
-            {
-                Logger.Error("Access denied to the http listener. Please run the following command in an administrator terminal:");
-                Logger.Error($"netsh http add urlacl url={RedirectUri} user=Everyone");
-                // Optionally, you could try to run this command for the user.
-                // For now, just logging the instruction.
-                AuthStatusChanged?.Invoke(this, EventArgs.Empty);
-                return false;
+                return await _completeSignInAsync(codeFromAPI);
             }
             catch (Exception ex)
             {
@@ -134,13 +89,12 @@ namespace UniGetUI.Services
                 AuthStatusChanged?.Invoke(this, EventArgs.Empty);
                 return false;
             }
-            finally
-            {
-                try {
-                    httpListener?.Stop();
-                } catch { /* ignore */ }
-                httpListener = null;
-            }
+        }
+
+        private string? codeFromAPI;
+        private void BackgroundApiOnOnLogin(object? sender, string c)
+        {
+            codeFromAPI = c;
         }
 
         private async Task<bool> _completeSignInAsync(string code)
