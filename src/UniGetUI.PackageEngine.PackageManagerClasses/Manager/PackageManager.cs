@@ -55,11 +55,10 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                 _ready = false;
                 _ensurePropertlyConstructed();
 
-                if (IsEnabled())
-                {
-                    // Do NOT initialise disabled package managers
+                if (!IsEnabled())
+                {   // Do NOT initialise disabled package managers
                     Status = new() { Version = CoreTools.Translate("{0} is disabled", DisplayName) };
-                    Logger.Info($"{Name} is not enabled");
+                    Logger.ImportantInfo($"{Name} is not enabled");
                     return;
                 }
 
@@ -71,14 +70,13 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                 Status.ExecutableCallArgs = callArguments;
 
                 if (!Status.Found)
-                {
-                    // Do not load version of managers that were not found
+                {   // Do not load version of managers that were not found
                     Status.Version = CoreTools.Translate("{pm} was not found!").Replace("{pm}", DisplayName).Trim('!');
-                    Logger.Warn($"{Name} was not found on the system!");
+                    Logger.Error($"{Name} is enabled but was not found on the system!");
                     return;
                 }
 
-                Logger.Info($"{Name} is enabled and was found on {path}");
+                Logger.ImportantInfo($"{Name} is enabled and was found on {path}");
 
                 // Load manager version
                 _loadManagerVersion(out string version);

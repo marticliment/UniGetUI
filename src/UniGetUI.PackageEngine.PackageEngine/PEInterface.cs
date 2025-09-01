@@ -51,17 +51,9 @@ namespace UniGetUI.PackageEngine
                     initializeTasks.Add(Task.Run(manager.Initialize));
                 }
 
-                Task ManagersMetaTask = Task.WhenAll(initializeTasks);
-                try
-                {
-                    ManagersMetaTask.Wait(TimeSpan.FromSeconds(ManagerLoadTimeout));
-                }
-                catch (Exception e)
-                {
-                    Logger.Error(e);
-                }
+                Task ManagersMegaTask = Task.WhenAll(initializeTasks);
 
-                if (ManagersMetaTask.IsCompletedSuccessfully == false)
+                if (!ManagersMegaTask.Wait(TimeSpan.FromSeconds(ManagerLoadTimeout)))
                 {
                     Logger.Warn("Timeout: Not all package managers have finished initializing.");
                 }
