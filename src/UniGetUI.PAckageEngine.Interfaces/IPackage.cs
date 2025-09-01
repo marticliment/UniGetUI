@@ -119,7 +119,7 @@ namespace UniGetUI.PackageEngine.Interfaces
         /// Returns the corresponding installed Package object. Will return null if not applicable
         /// </summary>
         /// <returns>a Package object if found, null if not</returns>
-        public IPackage? GetInstalledPackage();
+        public IReadOnlyList<IPackage> GetInstalledPackages();
 
         /// <summary>
         /// Returns the corresponding available Package object. Will return null if not applicable

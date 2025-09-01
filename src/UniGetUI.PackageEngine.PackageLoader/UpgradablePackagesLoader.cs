@@ -58,7 +58,9 @@ namespace UniGetUI.PackageEngine.PackageLoader
         protected override Task WhenAddingPackage(IPackage package)
         {
             package.GetAvailablePackage()?.SetTag(PackageTag.IsUpgradable);
-            package.GetInstalledPackage()?.SetTag(PackageTag.IsUpgradable);
+
+            foreach(var p in package.GetInstalledPackages())
+                p.SetTag(PackageTag.IsUpgradable);
 
             return Task.CompletedTask;
         }

@@ -10,6 +10,7 @@ using UniGetUI.PackageEngine.Classes.Packages;
 using UniGetUI.PackageEngine.Classes.Packages.Classes;
 using UniGetUI.PackageEngine.Classes.Serializable;
 using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.PackageLoader;
 using UniGetUI.PackageEngine.Serializable;
 using UniGetUI.PackageEngine.Structs;
 
@@ -191,7 +192,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
             try
             {
                 await Task.Run(() => IgnoredUpdatesDatabase.Add(_ignoredId, version));
-                GetInstalledPackage()?.SetTag(PackageTag.Pinned);
+                foreach(var p in GetInstalledPackages())
+                    p.SetTag(PackageTag.Pinned);
             }
             catch (Exception ex)
             {
@@ -205,7 +207,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
             try
             {
                 await Task.Run(() => IgnoredUpdatesDatabase.Remove(_ignoredId));
-                GetInstalledPackage()?.SetTag(PackageTag.Default);
+                foreach(var p in GetInstalledPackages())
+                    p.SetTag(PackageTag.Default);
             }
             catch (Exception ex)
             {
@@ -259,14 +262,15 @@ namespace UniGetUI.PackageEngine.PackageClasses
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
-        public IPackage? GetInstalledPackage()
-            => PackageCacher.GetInstalledPackageOrNull(this);
 
         public IPackage? GetAvailablePackage()
-            => PackageCacher.GetAvailablePackageOrNull(this);
+            => DiscoverablePackagesLoader.Instance.GetEquivalentPackage(this);
 
         public IPackage? GetUpgradablePackage()
-            => PackageCacher.GetUpgradablePackageOrNull(this);
+            => UpgradablePackagesLoader.Instance.GetEquivalentPackage(this);
+
+        public IReadOnlyList<IPackage> GetInstalledPackages()
+            => InstalledPackagesLoader.Instance.GetEquivalentPackages(this);
 
         public virtual void SetTag(PackageTag tag)
         {

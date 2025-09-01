@@ -1,6 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-
+  
   <ItemGroup>
     <ProjectReference Include="..\UniGetUI.Core.Classes\UniGetUI.Core.Classes.csproj" />
     <ProjectReference Include="..\UniGetUI.Core.Data\UniGetUI.Core.Data.csproj" />

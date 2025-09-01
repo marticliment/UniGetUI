@@ -130,7 +130,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             return Task.FromResult(String.Empty);
         }
 
-        public IPackage? GetInstalledPackage()
+        public IReadOnlyList<IPackage> GetInstalledPackages()
         {
             return null;
         }

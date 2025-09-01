@@ -263,8 +263,10 @@ namespace UniGetUI.PackageEngine.Operations
         protected override async Task HandleSuccess()
         {
             Package.SetTag(PackageTag.Default);
-            Package.GetInstalledPackage()?.SetTag(PackageTag.Default);
             Package.GetAvailablePackage()?.SetTag(PackageTag.AlreadyInstalled);
+
+            foreach (var p in Package.GetInstalledPackages())
+                p.SetTag(PackageTag.Default);
 
             UpgradablePackagesLoader.Instance.Remove(Package);
 
