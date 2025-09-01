@@ -302,45 +302,30 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             return candidates;
         }
 
-        protected override ManagerStatus LoadManager()
+        protected override void _loadManagerExecutableFile(out bool found, out string path, out string callArguments)
         {
             var (exeFound, exePath) = GetExecutableFile();
-            var (rootFound, rootPath) = GetVcpkgRoot();
+            var (rootFound, _) = GetVcpkgRoot();
 
-            if (!exeFound)
-            {
-                return new()
-                {
-                    Found = false,
-                    ExecutablePath = exePath,
-                    Version = CoreTools.Translate(
-                        "Vcpkg was not found on your system."),
-                };
-            }
+            Logger.Error("Vcpkg root was not found. Please define the %VCPKG_ROOT% environment variable or define it from UniGetUI Settings");
 
-            if (!rootFound)
-            {
-                return new()
-                {
-                    Found = false,
-                    ExecutablePath = CoreTools.Translate(
-                        "Vcpkg root was not found. Please define the %VCPKG_ROOT% environment variable or define it from UniGetUI Settings"),
-                };
-            }
+            found = exeFound && rootFound;
+            path = exePath;
 
-            ManagerStatus status = new ManagerStatus { Found = exeFound, ExecutablePath = exePath, };
+            string vcpkgRoot = Settings.GetValue(Settings.K.CustomVcpkgRoot);
+            callArguments = vcpkgRoot == "" ? "" : $" --vcpkg-root=\"{vcpkgRoot}\"";
+        }
 
-            if (!status.Found)
-            {
-                return status;
-            }
+        protected override void _loadManagerVersion(out string version)
+        {
+            var (_, rootPath) = GetVcpkgRoot();
 
             Process process = new()
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = status.ExecutablePath,
-                    Arguments = status.ExecutableCallArgs + " version",
+                    FileName = Status.ExecutablePath,
+                    Arguments = Status.ExecutableCallArgs + " version",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
@@ -350,13 +335,8 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 }
             };
             process.Start();
-            status.Version = process.StandardOutput.ReadLine()?.Trim() ?? "";
-            status.Version += $"\n%VCPKG_ROOT% = {rootPath}";
-
-            string vcpkgRoot = Settings.GetValue(Settings.K.CustomVcpkgRoot);
-            status.ExecutableCallArgs = vcpkgRoot == "" ? "" : $" --vcpkg-root=\"{vcpkgRoot}\"";
-
-            return status;
+            version = process.StandardOutput.ReadLine()?.Trim() ?? "";
+            version += $"\n%VCPKG_ROOT% = {rootPath}";
         }
 
         public override void RefreshPackageIndexes()
