@@ -80,7 +80,8 @@ languageFlagsRemap = {
     "kn": "in",
     "sa": "in",
     "gu": "in",
-    "ur": "pk"
+    "ur": "pk",
+    "be": "by"
 }
 
 

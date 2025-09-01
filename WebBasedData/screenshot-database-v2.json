@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11977,
-        "done": 5500,
-        "packages_with_icon": 5500,
-        "packages_with_screenshot": 955,
-        "total_screenshots": 3069
+        "total": 12000,
+        "done": 5516,
+        "packages_with_icon": 5516,
+        "packages_with_screenshot": 984,
+        "total_screenshots": 3178
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -3559,8 +3559,13 @@
             ]
         },
         "authenticator": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/DyndH0xK/image.png",
+            "images": [
+                "https://i.postimg.cc/mZQymCNw/image.png",
+                "https://i.postimg.cc/X7LcbWPB/image.png",
+                "https://i.postimg.cc/fRb7WF42/image.png",
+                "https://i.postimg.cc/L80tJT2H/image.png"
+            ]
         },
         "authenticator-beta": {
             "icon": "",
@@ -14086,7 +14091,9 @@
         },
         "externalraidmanager": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/DyHyRCmr/image.png"
+            ]
         },
         "extractnow": {
             "icon": "",
@@ -19162,8 +19169,14 @@
             "images": []
         },
         "httpdownloader": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/d3CWK7DB/httpd.png",
+            "images": [
+                "https://i.postimg.cc/G22Jb4gD/image.png",
+                "https://i.postimg.cc/Prkyw5Pg/image.png",
+                "https://i.postimg.cc/Ls7B6Hc0/image.png",
+                "https://i.postimg.cc/j576DpKq/image.png",
+                "https://i.postimg.cc/Y0B6Ydq6/image.png"
+            ]
         },
         "httpie": {
             "icon": "https://community.chocolatey.org/content/packageimages/httpie.3.2.1.png",
@@ -27801,7 +27814,12 @@
         },
         "netbakreplicator": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/B66rS0VX/image.png",
+                "https://i.postimg.cc/ZRM10MGj/image.png",
+                "https://i.postimg.cc/zGq5s98R/image.png",
+                "https://i.postimg.cc/W1YK5K3V/image.png"
+            ]
         },
         "netbalancer": {
             "icon": "https://community.chocolatey.org/content/packageimages/netbalancer.9.5.2.png",
@@ -33109,7 +33127,7 @@
             ]
         },
         "protonmail-bridge": {
-            "icon": "https://github.com/ProtonMail/proton-bridge/blob/master/dist/raw/win%2Blin_icon_256x256.png",
+            "icon": "https://raw.githubusercontent.com/ProtonMail/proton-bridge/refs/heads/master/dist/raw/win%2Blin_icon_256x256.png",
             "images": [
                 "https://i.postimg.cc/QC1c11Fx/image.png",
                 "https://i.postimg.cc/fTQcZ2P3/image.png",
@@ -33117,7 +33135,7 @@
             ]
         },
         "protonmailbridge": {
-            "icon": "https://github.com/ProtonMail/proton-bridge/blob/master/dist/raw/win%2Blin_icon_256x256.png",
+            "icon": "https://raw.githubusercontent.com/ProtonMail/proton-bridge/refs/heads/master/dist/raw/win%2Blin_icon_256x256.png",
             "images": [
                 "https://i.postimg.cc/QC1c11Fx/image.png",
                 "https://i.postimg.cc/fTQcZ2P3/image.png",
@@ -33136,7 +33154,7 @@
             ]
         },
         "protonvpn": {
-            "icon": "https://community.chocolatey.org/content/packageimages/protonvpn.2.3.2.png",
+            "icon": "https://raw.githubusercontent.com/ProtonVPN/proton-vpn-browser-extension/refs/heads/main/source/img/icon-256.png",
             "images": [
                 "https://i.postimg.cc/GphzR864/image.png",
                 "https://i.postimg.cc/x8Sz0Bq6/image.png",
@@ -33997,7 +34015,10 @@
         },
         "qencdecrypter": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/5tM926Bj/image.png",
+                "https://i.postimg.cc/rszMPWkZ/image.png"
+            ]
         },
         "qet": {
             "icon": "https://community.chocolatey.org/content/packageimages/qet.0.90.7758.png",
@@ -34005,7 +34026,11 @@
         },
         "qfinderpro": {
             "icon": "https://community.chocolatey.org/content/packageimages/qfinderpro.7.8.3.1309.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/SRGCDBmf/image.png",
+                "https://i.postimg.cc/tRd3qxFn/image.png",
+                "https://i.postimg.cc/KvJtLhqZ/image.png"
+            ]
         },
         "qflipper": {
             "icon": "https://community.chocolatey.org/content/packageimages/qflipper.1.1.2.png",
@@ -34158,11 +34183,18 @@
         },
         "qsirch": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/C1kQLx4M/image.png"
+            ]
         },
         "qsync": {
             "icon": "https://community.chocolatey.org/content/packageimages/qsync.5.0.7.1122.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/Y9HvZdnn/image.png",
+                "https://i.postimg.cc/HnWVsVCb/image.png",
+                "https://i.postimg.cc/gkJnCXsW/image.png",
+                "https://i.postimg.cc/Gh5HdLgs/image.png"
+            ]
         },
         "qt-creator": {
             "icon": "",
@@ -34370,7 +34402,11 @@
         },
         "qudedupextracttool": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/HsBPLKbM/image.png",
+                "https://i.postimg.cc/J46P8XWc/image.png",
+                "https://i.postimg.cc/rpWJ5YRQ/image.png"
+            ]
         },
         "queryexplus": {
             "icon": "",
@@ -34566,7 +34602,13 @@
         },
         "qvrproclient": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/C5MsThPQ/image.png",
+                "https://i.postimg.cc/X7mdxkbh/image.png",
+                "https://i.postimg.cc/fRdXPSWb/image.png",
+                "https://i.postimg.cc/bvjbfYd9/image.png",
+                "https://i.postimg.cc/5yjQS6kb/image.png"
+            ]
         },
         "qws": {
             "icon": "",
@@ -44467,7 +44509,14 @@
         },
         "usbsafelyremove": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/d3X6TQB5/image.png",
+                "https://i.postimg.cc/yNBPRbmC/image.png",
+                "https://i.postimg.cc/Px5Q3vV6/image.png",
+                "https://i.postimg.cc/gkZqTW4P/image.png",
+                "https://i.postimg.cc/1300yrLC/image.png",
+                "https://i.postimg.cc/9Q1pGBJ4/image.png"
+            ]
         },
         "usbserver": {
             "icon": "",
@@ -51833,6 +51882,187 @@
                 "https://i.postimg.cc/mgrZ2wxz/xreveal-mydrives.png",
                 "https://i.postimg.cc/0jxPgGdN/xreveal-rip2iso.png",
                 "https://i.postimg.cc/WznjsDXw/xreveal-ripping.png"
+            ]
+        },
+        "ciemiddleware": {
+            "icon": "https://i.postimg.cc/52GCc4FP/cieid.png",
+            "images": [
+                "https://i.postimg.cc/7YH70QkN/image.png"
+            ]
+        },
+        "innounpacker": {
+            "icon": "https://i.postimg.cc/wMZfsXRL/innoun.png",
+            "images": [
+                "https://i.postimg.cc/503WvRfv/image.png",
+                "https://i.postimg.cc/xT7DKHVs/image.png",
+                "https://i.postimg.cc/7L8FRk60/image.png",
+                "https://i.postimg.cc/4ydqc4Lk/image.png"
+            ]
+        },
+        "xmlviewer ": {
+            "icon": "https://i.postimg.cc/PxBVCbwZ/xmlv.png",
+            "images": [
+                "https://i.postimg.cc/1RGr0Zxb/image.png",
+                "https://i.postimg.cc/kgpQMJ8R/image.png",
+                "https://i.postimg.cc/XJM9FssV/image.png"
+            ]
+        },
+        "windowsfileanalyzer": {
+            "icon": "",
+            "images": []
+        },
+        "networkscanner": {
+            "icon": "https://i.postimg.cc/WbZTHyRJ/netscan.png",
+            "images": [
+                "https://i.postimg.cc/QNKgSVZm/image.png",
+                "https://i.postimg.cc/50SZHp97/image.png",
+                "https://i.postimg.cc/NMWSzMGX/image.png",
+                "https://i.postimg.cc/DyysWcPS/image.png"
+            ]
+        },
+        "innoextractor": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/k5YWCpws/image.png",
+                "https://i.postimg.cc/gcZ394hy/image.png",
+                "https://i.postimg.cc/kMKRYGrf/image.png",
+                "https://i.postimg.cc/7ZWLZr85/image.png"
+            ]
+        },
+        "dwgseecad": {
+            "icon": "https://i.postimg.cc/VNNmMGw3/dwgseecad.png",
+            "images": []
+        },
+        "dwgseepro": {
+            "icon": "https://i.postimg.cc/MH2CsdkZ/dwgseepro.png",
+            "images": []
+        },
+        "smbiosexplorer ": {
+            "icon": "https://i.postimg.cc/SRRMv7c5/smbe.png",
+            "images": [
+                "https://i.postimg.cc/tCRS9LzQ/image.png",
+                "https://i.postimg.cc/GpvJFQjx/image.png",
+                "https://i.postimg.cc/qR0cj3bV/image.png"
+            ]
+        },
+        "netoptimizer": {
+            "icon": "https://i.postimg.cc/MKvWvrWN/Net-Optimizer.png",
+            "images": [
+                "https://i.postimg.cc/sfPWTx7s/image.png",
+                "https://i.postimg.cc/bNztWP9b/image.png",
+                "https://i.postimg.cc/FsDLQ6T6/image.png",
+                "https://i.postimg.cc/dVfZhyPm/image.png",
+                "https://i.postimg.cc/nzbskfLX/image.png",
+                "https://i.postimg.cc/1Xyfk0wP/image.png"
+            ]
+        },
+        "wiseforcedeleter": {
+            "icon": "https://i.postimg.cc/T2rt6RM3/image.png",
+            "images": [
+                "https://i.postimg.cc/15sJRLsc/image.png",
+                "https://i.postimg.cc/FHBXdwb8/image.png"
+            ]
+        },
+        "wisejetsearch\n": {
+            "icon": "https://i.postimg.cc/VN2wT2dn/image.png",
+            "images": [
+                "https://i.postimg.cc/jqHTggKn/image.png",
+                "https://i.postimg.cc/8PTSqRPK/image.png",
+                "https://i.postimg.cc/Yq8Hkvvp/image.png"
+            ]
+        },
+        "netbakpcagent": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/25mmfgYZ/image.png",
+                "https://i.postimg.cc/Qtd3F5HN/image.png",
+                "https://i.postimg.cc/HxvCXxyw/image.png",
+                "https://i.postimg.cc/qqtHLTs9/image.png",
+                "https://i.postimg.cc/PJBsVRKN/image.png",
+                "https://i.postimg.cc/tRfjgsyy/image.png"
+            ]
+        },
+        "qvpnclient": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/1td3PMJ1/image.png",
+                "https://i.postimg.cc/4dYhzY0Z/image.png",
+                "https://i.postimg.cc/cHPtTsq3/image.png",
+                "https://i.postimg.cc/C5DBQWYQ/image.png",
+                "https://i.postimg.cc/vHF6VHtF/image.png"
+            ]
+        },
+        "winsecretplus": {
+            "icon": "",
+            "images": []
+        },
+        "exeexplorer": {
+            "icon": "https://i.postimg.cc/rmwhGyzS/exe.png",
+            "images": [
+                "https://i.postimg.cc/d3Mys4ML/image.png",
+                "https://i.postimg.cc/GpH8vZd4/image.png",
+                "https://i.postimg.cc/pVD9QQbJ/image.png",
+                "https://i.postimg.cc/g0CJ8jg7/image.png",
+                "https://i.postimg.cc/fT8R5BHm/image.png",
+                "https://i.postimg.cc/QtgX7b9B/image.png",
+                "https://i.postimg.cc/3Jf32WRZ/image.png",
+                "https://i.postimg.cc/x8TSzSV7/image.png"
+            ]
+        },
+        "hexedit": {
+            "icon": "https://i.postimg.cc/85fZXKB5/hexedit.png",
+            "images": [
+                "https://i.postimg.cc/VNdg5GhR/image.png",
+                "https://i.postimg.cc/nLgkmKbt/image.png",
+                "https://i.postimg.cc/G2DjxBdT/image.png",
+                "https://i.postimg.cc/2j4wqB0P/image.png"
+            ]
+        },
+        "iconexplorer": {
+            "icon": "https://i.postimg.cc/jSkQV6jJ/Icon-Explorer.png",
+            "images": [
+                "https://i.postimg.cc/yxPcLc5x/image.png"
+            ]
+        },
+        "infobar": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/V69CNXzg/image.png",
+                "https://i.postimg.cc/C5Ffnd1g/image.png",
+                "https://i.postimg.cc/tJ2n3yZV/image.png",
+                "https://i.postimg.cc/2jwWRdc8/image.png",
+                "https://i.postimg.cc/Pr5wtL9b/image.png",
+                "https://i.postimg.cc/qMDCgJHP/image.png"
+            ]
+        },
+        "jsonviewer": {
+            "icon": "",
+            "images": []
+        },
+        "networkmeter": {
+            "icon": "https://i.postimg.cc/1tYZwjR3/netmeter.png",
+            "images": [
+                "https://i.postimg.cc/pdCvXdg8/image.png"
+            ]
+        },
+        "harddisksentinel-professional": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/76Zj3634/image.png",
+                "https://i.postimg.cc/zv9MYF9D/image.png",
+                "https://i.postimg.cc/Dy3kD2Fr/image.png",
+                "https://i.postimg.cc/7640dGsv/image.png",
+                "https://i.postimg.cc/k5m2grxK/image.png"
+            ]
+        },
+        "harddisksentinel-standard": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/76Zj3634/image.png",
+                "https://i.postimg.cc/zv9MYF9D/image.png",
+                "https://i.postimg.cc/Dy3kD2Fr/image.png",
+                "https://i.postimg.cc/7640dGsv/image.png",
+                "https://i.postimg.cc/k5m2grxK/image.png"
             ]
         }
     }
