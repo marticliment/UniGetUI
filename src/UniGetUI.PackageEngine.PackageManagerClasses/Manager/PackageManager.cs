@@ -1,6 +1,8 @@
+using ABI.Windows.UI.Text.Core;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.SettingsEngine.SecureSettings;
+using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager;
 using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
@@ -22,7 +24,6 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         public string Name { get => Properties.Name; }
         public string DisplayName { get => Properties.DisplayName ?? Name; }
         public IManagerSource DefaultSource { get => Properties.DefaultSource; }
-        public bool ManagerReady { get; set; }
         public IManagerLogger TaskLogger { get; }
         public IReadOnlyList<ManagerDependency> Dependencies { get; protected set; } = [];
         public IMultiSourceHelper SourcesHelper { get; protected set; } = new NullSourceHelper();
@@ -30,6 +31,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         public IPackageOperationHelper OperationHelper { get; protected set; } = null!;
 
         private readonly bool _baseConstructorCalled;
+        private bool _ready;
 
         public PackageManager()
         {
@@ -42,12 +44,65 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             throw new InvalidDataException(message);
         }
 
-        /// <summary>
-        /// Initializes the Package Manager (asynchronously). Must be run before using any other method of the manager.
-        /// </summary>
-        public virtual void Initialize()
+        protected abstract void _loadManagerExecutableFile(out bool found, out string path, out string callArguments);
+        protected abstract void _loadManagerVersion(out string version);
+        protected abstract void _performExtraLoadingSteps();
+
+        public void Initialize()
         {
-            // BEGIN integrity check
+            try
+            {
+                _ready = false;
+                _ensurePropertlyConstructed();
+
+                if (IsEnabled())
+                {
+                    // Do NOT initialise disabled package managers
+                    Status = new() { Version = CoreTools.Translate("{0} is disabled", DisplayName) };
+                    Logger.Info($"{Name} is not enabled");
+                    return;
+                }
+
+                // Find package manager executable
+                _loadManagerExecutableFile(out bool found, out string path, out string callArguments);
+                Status = new ManagerStatus();
+                Status.Found = found;
+                Status.ExecutablePath = path;
+                Status.ExecutableCallArgs = callArguments;
+
+                if (!Status.Found)
+                {
+                    // Do not load version of managers that were not found
+                    Status.Version = CoreTools.Translate("{pm} was not found!").Replace("{pm}", DisplayName).Trim('!');
+                    Logger.Warn($"{Name} was not found on the system!");
+                    return;
+                }
+
+                Logger.Info($"{Name} is enabled and was found on {path}");
+
+                // Load manager version
+                _loadManagerVersion(out string version);
+                Status.Version = version;
+                _logManagerInfo();
+
+                // Finish initialization
+                _initializeSources();
+                _performExtraLoadingSteps();
+                _ready = true;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"An error occurred while initialising package manager {Name}");
+                Logger.Error(ex);
+            }
+        }
+
+        /// <summary>
+        /// This serves to ensure that the implemented hasn't messed up any crucial
+        /// details on the implementation
+        /// </summary>
+        private void _ensurePropertlyConstructed()
+        {
             if (!_baseConstructorCalled) Throw($"The Manager {Properties.Name} has not called the base constructor.");
             if (Capabilities.IsDummy) Throw($"The current instance of PackageManager with name ${Properties.Name} does not have a valid Capabilities object");
             if (Properties.IsDummy) Throw($"The current instance of PackageManager with name ${Properties.Name} does not have a valid Properties object");
@@ -57,64 +112,43 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
 
             if (Capabilities.SupportsCustomSources && SourcesHelper is NullSourceHelper)
                 Throw($"Manager {Name} has been declared as SupportsCustomSources but has no helper associated with it");
-            // END integrity check
+        }
 
+        /// <summary>
+        /// Load and prepare manager sources sources
+        /// </summary>
+        private void _initializeSources()
+        {
+            // Sources that are instantiated before Manager's DisplayName property will have invalid DisplayName
+            // To prevent loading it on runtime, the string is cached internally and will only be reloaded when needed to
             Properties.DefaultSource.RefreshSourceNames();
             foreach (var source in Properties.KnownSources)
             {
                 source.RefreshSourceNames();
             }
 
-            try
+            if (Capabilities.SupportsCustomSources)
             {
-                Status = LoadManager();
-
-                if (IsReady() && Capabilities.SupportsCustomSources)
-                {
-                    Task<IReadOnlyList<IManagerSource>> sourcesTask = Task.Run(SourcesHelper.GetSources);
-
-                    if (sourcesTask.Wait(TimeSpan.FromSeconds(15)))
-                    {
-                        foreach (var source in sourcesTask.Result)
-                        {
-                            SourcesHelper?.Factory.AddSource(source);
-                        }
-                    }
-                    else
-                    {
-                        Logger.Warn(Name + " sources took too long to load, using known sources as default");
-                    }
-                }
-                ManagerReady = true;
-
-                string LogData = "▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄" +
-                               "\n█▀▀▀▀▀▀▀▀▀▀▀▀▀ MANAGER LOADED ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀" +
-                               "\n█ Name: " + Name +
-                               "\n█ Enabled: " + IsEnabled().ToString() +
-                               (IsEnabled() ?
-                               "\n█ Found: " + Status.Found.ToString() +
-                               (Status.Found ?
-                               "\n█ Fancy exe name: " + Properties.ExecutableFriendlyName +
-                               "\n█ Executable path: " + Status.ExecutablePath +
-                               "\n█ Call arguments: " + Status.ExecutableCallArgs +
-                               "\n█ Version: \n" + "█   " + Status.Version.Replace("\n", "\n█   ")
-                               :
-                               "\n█ THE MANAGER WAS NOT FOUND. PERHAPS IT IS NOT " +
-                               "\n█ INSTALLED OR IT HAS BEEN MISCONFIGURED "
-                               )
-                               :
-                               "\n█ THE MANAGER IS DISABLED"
-                               ) +
-                               "\n▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀";
-
-                Logger.Info(LogData);
+                // SourcesHelper.GetSources() will handle saving the found sources to the internal registry
+                SourcesHelper.GetSources();
             }
-            catch (Exception e)
-            {
-                ManagerReady = true; // We need this to unblock the main thread
-                Logger.Error("Could not initialize Package Manager " + Name);
-                Logger.Error(e);
-            }
+        }
+
+        private void _logManagerInfo()
+        {
+            string LogData = $"""
+                ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+                █▀▀▀▀▀▀▀▀▀▀▀▀▀ MANAGER LOADED ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+                █ Name: {DisplayName} (aka {Name})
+                █ Executable name: "{Properties.ExecutableFriendlyName}"
+                █ Executable path: "{Status.ExecutablePath}"
+                █ Call arguments: "{Status.ExecutableCallArgs}"
+                █ Version: {Status.Version.Trim().Replace("\n", "\n█          ")}
+                █          
+                █ {DisplayName} is enabled and ready to go.
+                ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+                """;
+            Logger.Info(LogData);
         }
 
         /// <summary>
@@ -171,11 +205,6 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         }
 
         /// <summary>
-        /// Returns a ManagerStatus object representing the current status of the package manager. This method runs asynchronously.
-        /// </summary>
-        protected abstract ManagerStatus LoadManager();
-
-        /// <summary>
         /// Returns true if the manager is enabled, false otherwise
         /// </summary>
         public bool IsEnabled()
@@ -188,7 +217,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// </summary>
         public bool IsReady()
         {
-            return IsEnabled() && Status.Found;
+            return _ready && IsEnabled() && Status.Found;
         }
 
         /// <summary>

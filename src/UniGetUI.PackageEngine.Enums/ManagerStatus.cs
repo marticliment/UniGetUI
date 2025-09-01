@@ -1,12 +1,10 @@
 namespace UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers
 {
-    public struct ManagerStatus
+    public class ManagerStatus
     {
         public string Version = "";
-        public bool Found = false;
+        public bool Found;
         public string ExecutablePath = "";
-        public string ExecutableCallArgs { get; set; } = "Unset";
-        public ManagerStatus()
-        { }
+        public string ExecutableCallArgs = "Unset";
     }
 }

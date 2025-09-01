@@ -14,7 +14,6 @@ namespace UniGetUI.PackageEngine.Interfaces
         public string Name { get; }
         public string DisplayName { get; }
         public IManagerSource DefaultSource { get; }
-        public bool ManagerReady { get; }
         public IManagerLogger TaskLogger { get; }
         public IMultiSourceHelper SourcesHelper { get; }
         public IPackageDetailsHelper DetailsHelper { get; }
