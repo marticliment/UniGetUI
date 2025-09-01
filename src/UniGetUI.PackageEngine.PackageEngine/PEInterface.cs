@@ -10,6 +10,7 @@ using UniGetUI.PackageEngine.Managers.PowerShellManager;
 using UniGetUI.PackageEngine.Managers.ScoopManager;
 using UniGetUI.PackageEngine.Managers.WingetManager;
 using UniGetUI.PackageEngine.Managers.VcpkgManager;
+using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.PackageLoader;
 
 namespace UniGetUI.PackageEngine
@@ -72,6 +73,60 @@ namespace UniGetUI.PackageEngine
             {
                 Logger.Error(ex);
             }
+        }
+    }
+
+
+
+
+    public class PackageBundlesLoader : PackageBundlesLoader_A
+    {
+        public PackageBundlesLoader(IReadOnlyList<IPackageManager> managers): base(managers)
+        {
+        }
+
+        public override async Task AddPackagesAsync(IReadOnlyList<IPackage> foreign_packages)
+        {
+            List<IPackage> added = new();
+            foreach (IPackage foreign in foreign_packages)
+            {
+                IPackage? package = null;
+
+                if (foreign is not ImportedPackage && foreign is Package native)
+                {
+                    if (native.Source.IsVirtualManager)
+                    {
+                        Logger.Debug($"Adding native package with id={native.Id} to bundle as an INVALID package...");
+                        package = new InvalidImportedPackage(native.AsSerializable_Incompatible(), NullSource.Instance);
+                    }
+                    else
+                    {
+                        Logger.Debug($"Adding native package with id={native.Id} to bundle as a VALID package...");
+                        package = new ImportedPackage(await native.AsSerializableAsync(), native.Manager, native.Source);
+                    }
+                }
+                else if (foreign is ImportedPackage imported)
+                {
+                    Logger.Debug($"Adding loaded imported package with id={imported.Id} to bundle...");
+                    package = imported;
+                }
+                else if (foreign is InvalidImportedPackage invalid)
+                {
+                    Logger.Debug($"Adding loaded incompatible package with id={invalid.Id} to bundle...");
+                    package = invalid;
+                }
+                else
+                {
+                    Logger.Error($"An IPackage instance id={foreign.Id} did not match the types Package, ImportedPackage or InvalidImportedPackage. This should never be the case");
+                }
+
+                if (package is not null)
+                {   // Here, AddForeign is not used so a single PackagesChangedEvent can be invoked.
+                    await AddPackage(package);
+                    added.Add(package);
+                }
+            }
+            InvokePackagesChangedEvent(true, added, []);
         }
     }
 }

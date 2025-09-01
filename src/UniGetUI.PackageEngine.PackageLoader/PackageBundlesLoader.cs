@@ -1,15 +1,13 @@
-using UniGetUI.Core.Logging;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Interfaces;
-using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.PackageLoader
 {
-    public class PackageBundlesLoader : AbstractPackageLoader
+    public abstract class PackageBundlesLoader_A : AbstractPackageLoader
     {
-        public static PackageBundlesLoader Instance = null!;
+        public static PackageBundlesLoader_A Instance = null!;
 
-        public PackageBundlesLoader(IReadOnlyList<IPackageManager> managers)
+        public PackageBundlesLoader_A(IReadOnlyList<IPackageManager> managers)
         : base(managers,
             identifier: "PACKAGE_BUNDLES",
             AllowMultiplePackageVersions: true,
@@ -44,49 +42,11 @@ namespace UniGetUI.PackageEngine.PackageLoader
             return Task.CompletedTask;
         }
 
-        public async Task AddPackagesAsync(IReadOnlyList<IPackage> foreign_packages)
-        {
-            List<IPackage> added = new();
-            foreach (IPackage foreign in foreign_packages)
-            {
-                IPackage? package = null;
-
-                if (foreign is not ImportedPackage && foreign is Package native)
-                {
-                    if (native.Source.IsVirtualManager)
-                    {
-                        Logger.Debug($"Adding native package with id={native.Id} to bundle as an INVALID package...");
-                        package = new InvalidImportedPackage(native.AsSerializable_Incompatible(), NullSource.Instance);
-                    }
-                    else
-                    {
-                        Logger.Debug($"Adding native package with id={native.Id} to bundle as a VALID package...");
-                        package = new ImportedPackage(await native.AsSerializableAsync(), native.Manager, native.Source);
-                    }
-                }
-                else if (foreign is ImportedPackage imported)
-                {
-                    Logger.Debug($"Adding loaded imported package with id={imported.Id} to bundle...");
-                    package = imported;
-                }
-                else if (foreign is InvalidImportedPackage invalid)
-                {
-                    Logger.Debug($"Adding loaded incompatible package with id={invalid.Id} to bundle...");
-                    package = invalid;
-                }
-                else
-                {
-                    Logger.Error($"An IPackage instance id={foreign.Id} did not match the types Package, ImportedPackage or InvalidImportedPackage. This should never be the case");
-                }
-
-                if (package is not null)
-                {   // Here, AddForeign is not used so a single PackagesChangedEvent can be invoked.
-                    await AddPackage(package);
-                    added.Add(package);
-                }
-            }
-            InvokePackagesChangedEvent(true, added, []);
-        }
+        /*
+         * This method required access to the Package, ImportedPackage and InvalidPackage classes,
+         * but they are not defined here yet. This class will be inherited on PEInterface, with the missing member
+         */
+        public abstract Task AddPackagesAsync(IReadOnlyList<IPackage> foreign_packages);
 
         public void RemoveRange(IReadOnlyList<IPackage> packages)
         {
