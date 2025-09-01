@@ -126,31 +126,23 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
         }
 
         public override IReadOnlyList<string> FindCandidateExecutableFiles()
+            => CoreTools.WhichMultiple("dotnet.exe");
+
+        protected override void _loadManagerExecutableFile(out bool found, out string path, out string callArguments)
         {
-            return CoreTools.WhichMultiple("dotnet.exe");
-        }
+            var (_found, _path) = GetExecutableFile();
+            found = _found;
+            path = _path;
+            callArguments = "tool ";
 
-        protected override ManagerStatus LoadManager()
-        {
-            var (found, path) = GetExecutableFile();
-            ManagerStatus status = new()
-            {
-                ExecutablePath = path,
-                Found = found,
-                ExecutableCallArgs = "tool "
-            };
-
-            if (!status.Found)
-            {
-                return status;
-            }
-
-            Process process = new()
+            // Ensure .NET SDK is installed
+            if (!found) return;
+            var process = new Process()
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = status.ExecutablePath,
-                    Arguments = status.ExecutableCallArgs + "-h",
+                    FileName = path,
+                    Arguments = callArguments + "-h",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
@@ -160,17 +152,16 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
             };
             process.Start();
             process.WaitForExit();
-            if (process.ExitCode != 0)
-            {
-                status.Found = false;
-                return status;
-            }
+            found = process.ExitCode is 0;
+        }
 
-            process = new()
+        protected override void _loadManagerVersion(out string version)
+        {
+            var process = new Process()
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = status.ExecutablePath,
+                    FileName = Status.ExecutablePath,
                     Arguments = "--version",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
@@ -181,9 +172,9 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
             };
 
             process.Start();
-            status.Version = process.StandardOutput.ReadToEnd().Trim();
-
-            return status;
+            version = process.StandardOutput.ReadToEnd().Trim();
         }
+
+        protected override void _performExtraLoadingSteps() { }
     }
 }

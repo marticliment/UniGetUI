@@ -138,31 +138,26 @@ public partial class Cargo : PackageManager
     }
 
     public override IReadOnlyList<string> FindCandidateExecutableFiles()
+        => CoreTools.WhichMultiple("cargo.exe");
+
+    protected override void _loadManagerExecutableFile(out bool found, out string path, out string callArguments)
     {
-        return CoreTools.WhichMultiple("cargo.exe");
+        var (_found, _executablePath) = GetExecutableFile();
+        found = _found;
+        path = _executablePath;
+        callArguments = "";
     }
 
-    protected override ManagerStatus LoadManager()
+    protected override void _loadManagerVersion(out string version)
     {
-        var (found, executablePath) = GetExecutableFile();
-        if (!found)
-        {
-            return new(){ ExecutablePath = executablePath, Found = false, Version = ""};
-        }
-
-        Status = new() { ExecutablePath = executablePath, Found = found, Version = "", ExecutableCallArgs = ""};
-
-        using Process p = GetProcess(executablePath, "--version");
+        using Process p = GetProcess(Status.ExecutablePath, "--version");
         p.Start();
-        string version = p.StandardOutput.ReadToEnd().Trim();
+        version = p.StandardOutput.ReadToEnd().Trim();
         string error = p.StandardError.ReadToEnd();
-        if (!string.IsNullOrEmpty(error))
-        {
-            Logger.Error("cargo version error: " + error);
-        }
-
-        return new() { ExecutablePath = executablePath, Found = found, Version = version, ExecutableCallArgs = ""};
+        if (!string.IsNullOrEmpty(error)) Logger.Error("cargo version error: " + error);
     }
+
+    protected override void _performExtraLoadingSteps() { }
 
     private IReadOnlyList<Package> GetPackages(LoggableTaskType taskType)
     {
