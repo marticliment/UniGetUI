@@ -48,7 +48,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         protected abstract void _loadManagerVersion(out string version);
         protected virtual void _performExtraLoadingSteps() { }
 
-        public void Initialize()
+        public virtual void Initialize()
         {
             try
             {

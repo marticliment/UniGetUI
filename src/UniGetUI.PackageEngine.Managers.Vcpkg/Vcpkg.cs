@@ -351,7 +351,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                     CreateNoWindow = true
                 }
             };
-            IProcessTaskLogger processLogger2 = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes, p);
+            IProcessTaskLogger processLogger2 = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes, p2);
             p2.Start();
             p2.WaitForExit();
             processLogger2.Close(p2.ExitCode);
