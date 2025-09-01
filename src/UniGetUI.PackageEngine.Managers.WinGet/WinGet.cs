@@ -185,38 +185,46 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             return candidates;
         }
 
-        protected override ManagerStatus LoadManager()
+        protected override void _loadManagerExecutableFile(out bool found, out string path, out string callArguments)
         {
-
             bool FORCE_BUNDLED = Settings.Get(Settings.K.ForceLegacyBundledWinGet);
-            var (found, path) = GetExecutableFile();
+            var (_found, _path) = GetExecutableFile();
 
-            ManagerStatus status = new()
-            {
-                ExecutablePath = path,
-                ExecutableCallArgs = "",
-                Found = found,
-            };
-
-            if (found && status.ExecutablePath == BundledWinGetPath && !FORCE_BUNDLED)
+            if (_found && _path == BundledWinGetPath && !FORCE_BUNDLED)
             {
                 Logger.Error("User does not have WinGet installed, forcing bundled WinGet...");
                 FORCE_BUNDLED = true;
             }
 
-            if (!status.Found)
-            {
-                return status;
-            }
+            found = _found;
+            path = _path;
+            callArguments = "";
 
-            TryRepairTempFolderPermissions();
+            try
+            {
+                if (FORCE_BUNDLED) WinGetHelper.Instance = new BundledWinGetHelper(this);
+                else WinGetHelper.Instance = new NativeWinGetHelper(this);
+            }
+            catch (Exception ex)
+            {
+                Logger.Warn($"Cannot instantiate {(FORCE_BUNDLED ? "Bundled" : "Native")} WinGet Helper due to error: {ex.Message}");
+                Logger.Warn(ex);
+                Logger.Warn("WinGet will resort to using BundledWinGetHelper()");
+                WinGetHelper.Instance = new BundledWinGetHelper(this);
+
+            }
+        }
+
+        protected override void _loadManagerVersion(out string version)
+        {
+            bool IS_BUNDLED = WinGetHelper.Instance is BundledWinGetHelper;
 
             Process process = new()
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = status.ExecutablePath,
-                    Arguments = status.ExecutableCallArgs + " --version",
+                    FileName = Status.ExecutablePath,
+                    Arguments = Status.ExecutableCallArgs + " --version",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
@@ -232,41 +240,22 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 process.StartInfo.Environment["TEMP"] = WinGetTemp;
                 process.StartInfo.Environment["TMP"] = WinGetTemp;
             }
-
             process.Start();
-            status.Version = $"{(FORCE_BUNDLED ? "Bundled" : "System")} WinGet CLI Version: {process.StandardOutput.ReadToEnd().Trim()}";
+
+            version = $"{(IS_BUNDLED ? "Bundled" : "System")} WinGet (CLI) Version: {process.StandardOutput.ReadToEnd().Trim()}";
+
+            if(IS_BUNDLED) version += "\nUsing bundled WinGet helper (CLI parsing)";
+            else version += "\nUsing Native WinGet helper (COM Api)";
+
             string error = process.StandardError.ReadToEnd();
-            if (error != "")
-            {
-                Logger.Error("WinGet STDERR not empty: " + error);
-            }
-
-            try
-            {
-                if (FORCE_BUNDLED)
-                {
-                    WinGetHelper.Instance = new BundledWinGetHelper(this);
-                    status.Version += "\nUsing bundled WinGet helper (CLI parsing)";
-                }
-                else
-                {
-                    WinGetHelper.Instance = new NativeWinGetHelper(this);
-                    status.Version += "\nUsing Native WinGet helper (COM Api)";
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.Warn($"Cannot instantiate {(FORCE_BUNDLED? "Bundled" : "Native")} WinGet Helper due to error: {ex.Message}");
-                Logger.Warn(ex);
-                Logger.Warn("WinGet will resort to using BundledWinGetHelper()");
-                WinGetHelper.Instance = new BundledWinGetHelper(this);
-                status.Version += "\nUsing bundled WinGet helper (CLI parsing, caused by exception)";
-            }
-
-            return status;
+            if (error != "") Logger.Error("WinGet STDERR not empty: " + error);
         }
 
-        // For future usage
+        protected override void _performExtraLoadingSteps()
+        {
+            TryRepairTempFolderPermissions();
+        }
+
         private void ReRegisterCOMServer()
         {
             WinGetHelper.Instance = new NativeWinGetHelper(this);
@@ -277,13 +266,12 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         {
             try
             {
+                TryRepairTempFolderPermissions();
                 if (WinGetHelper.Instance is NativeWinGetHelper)
                 {
                     Logger.ImportantInfo("Attempting to reconnect to WinGet COM Server...");
                     ReRegisterCOMServer();
-                    TryRepairTempFolderPermissions();
                     NO_PACKAGES_HAVE_BEEN_LOADED = false;
-
                 }
                 else
                 {

@@ -86,9 +86,9 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                 _logManagerInfo();
 
                 // Finish initialization
-                _initializeSources();
                 _performExtraLoadingSteps();
                 _ready = true;
+                _initializeSources();
             }
             catch (Exception ex)
             {
