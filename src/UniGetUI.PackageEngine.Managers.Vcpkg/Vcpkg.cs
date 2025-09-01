@@ -23,8 +23,6 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
         public Dictionary<string, ManagerSource> TripletSourceMap;
         public static Uri URI_VCPKG_IO = new Uri("https://vcpkg.io/");
 
-        private bool hasBeenBootstrapped;
-
         public Vcpkg()
         {
             Dependencies = [
@@ -339,6 +337,26 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             version += $"\n%VCPKG_ROOT% = {rootPath}";
         }
 
+        protected override void _performExtraLoadingSteps()
+        {
+            var (_, rootPath) = GetVcpkgRoot();
+            using Process p2 = new()
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = "cmd.exe",
+                    WorkingDirectory = rootPath,
+                    Arguments = "/C .\\bootstrap-vcpkg.bat",
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                }
+            };
+            IProcessTaskLogger processLogger2 = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes, p);
+            p2.Start();
+            p2.WaitForExit();
+            processLogger2.Close(p2.ExitCode);
+        }
+
         public override void RefreshPackageIndexes()
         {
             var (vcpkgRootFound, vcpkgRoot) = GetVcpkgRoot();
@@ -374,30 +392,6 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             processLogger.AddToStdOut(p.StandardOutput.ReadToEnd());
             processLogger.AddToStdErr(p.StandardError.ReadToEnd());
             processLogger.Close(p.ExitCode);
-
-            if (!hasBeenBootstrapped)
-            {
-                using Process p2 = new()
-                {
-                    StartInfo = new ProcessStartInfo
-                    {
-                        FileName = "cmd.exe",
-                        WorkingDirectory = vcpkgRoot,
-                        Arguments = "/C .\\bootstrap-vcpkg.bat",
-                        UseShellExecute = false,
-                        // RedirectStandardOutput = true,
-                        // RedirectStandardError = true,
-                        CreateNoWindow = true
-                    }
-                };
-                IProcessTaskLogger processLogger2 = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes, p);
-                p2.Start();
-                p2.WaitForExit();
-                // processLogger2.AddToStdOut(p2.StandardOutput.ReadToEnd());
-                // processLogger2.AddToStdErr(p2.StandardError.ReadToEnd());
-                processLogger2.Close(p2.ExitCode);
-                hasBeenBootstrapped = true;
-            }
         }
 
         public static Tuple<bool, string> GetVcpkgRoot()
