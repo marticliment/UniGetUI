@@ -35,10 +35,12 @@ namespace UniGetUI.PackageEngine
 
         public static readonly IPackageManager[] Managers = [WinGet, Scoop, Chocolatey, Npm, Pip, Cargo, Vcpkg, DotNet, PowerShell, PowerShell7];
 
-        public static readonly DiscoverablePackagesLoader DiscoveredPackagesLoader = new(Managers);
-        public static readonly UpgradablePackagesLoader UpgradablePackagesLoader = new(Managers);
-        public static readonly InstalledPackagesLoader InstalledPackagesLoader = new(Managers);
-        public static readonly PackageBundlesLoader PackageBundlesLoader = new(Managers);
+#pragma warning disable CA1823
+        private static readonly DiscoverablePackagesLoader DiscoveredPackagesLoader = new(Managers);
+        private static readonly UpgradablePackagesLoader UpgradablePackagesLoader = new(Managers);
+        private static readonly InstalledPackagesLoader InstalledPackagesLoader = new(Managers);
+        private static readonly PackageBundlesLoader PackageBundlesLoader = new(Managers);
+#pragma warning restore CA1823
 
         public static void Initialize()
         {

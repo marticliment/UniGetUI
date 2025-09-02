@@ -35,7 +35,7 @@ namespace UniGetUI.Interface.SoftwarePages
             DisableSuggestedResultsRadio = false,
             PageName = "Discover",
 
-            Loader = PEInterface.DiscoveredPackagesLoader,
+            Loader = DiscoverablePackagesLoader.Instance,
             PageRole = OperationType.Install,
 
             NoPackages_BackgroundText = CoreTools.Translate("No results were found matching the input criteria"),
@@ -269,7 +269,7 @@ namespace UniGetUI.Interface.SoftwarePages
         {
             MainApp.Instance.MainWindow.NavigationPage.NavigateTo(PageType.Bundles);
             int loadingId = DialogHelper.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
-            await PEInterface.PackageBundlesLoader.AddPackagesAsync(FilteredPackages.GetCheckedPackages());
+            await PackageBundlesLoader.Instance.AddPackagesAsync(FilteredPackages.GetCheckedPackages());
             DialogHelper.HideLoadingDialog(loadingId);
         }
 

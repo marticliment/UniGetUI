@@ -116,9 +116,9 @@ namespace UniGetUI.Interface
              */
             foreach(var pair in new Dictionary<CustomNavViewItem, AbstractPackageLoader>
             {
-                {  DiscoverNavBtn,  PEInterface.DiscoveredPackagesLoader },
-                {  UpdatesNavBtn,  PEInterface.UpgradablePackagesLoader },
-                {  InstalledNavBtn,  PEInterface.InstalledPackagesLoader },
+                {  DiscoverNavBtn,  DiscoverablePackagesLoader.Instance },
+                {  UpdatesNavBtn,  UpgradablePackagesLoader.Instance },
+                {  InstalledNavBtn,  InstalledPackagesLoader.Instance },
             })
             {
                 pair.Value.FinishedLoading += (_, _) => MainApp.Dispatcher.TryEnqueue(() => pair.Key.IsLoading = false);
@@ -126,12 +126,12 @@ namespace UniGetUI.Interface
                 pair.Key.IsLoading = pair.Value.IsLoading;
             }
 
-            PEInterface.UpgradablePackagesLoader.PackagesChanged += (_, _) => MainApp.Dispatcher.TryEnqueue(() =>
+            UpgradablePackagesLoader.Instance.PackagesChanged += (_, _) => MainApp.Dispatcher.TryEnqueue(() =>
             {
-                UpdatesBadge.Value = PEInterface.UpgradablePackagesLoader.Count();
+                UpdatesBadge.Value = UpgradablePackagesLoader.Instance.Count();
                 UpdatesBadge.Visibility = UpdatesBadge.Value > 0 ? Visibility.Visible : Visibility.Collapsed;
             });
-            UpdatesBadge.Value = PEInterface.UpgradablePackagesLoader.Count();
+            UpdatesBadge.Value = UpgradablePackagesLoader.Instance.Count();
             UpdatesBadge.Visibility = UpdatesBadge.Value > 0 ? Visibility.Visible : Visibility.Collapsed;
 
             BundlesPage.UnsavedChangesStateChanged += (_, _) => MainApp.Dispatcher.TryEnqueue(() =>

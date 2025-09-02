@@ -16,6 +16,7 @@ using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.PackageEngine.PackageLoader;
 using UniGetUI.PackageEngine.Serializable;
 using UniGetUI.Pages.SettingsPages.GeneralPages;
 
@@ -177,7 +178,7 @@ public static partial class DialogHelper
         {
             Window.Activate();
 
-            var findResult = await Task.Run(() => PEInterface.DiscoveredPackagesLoader.GetPackageFromIdAndManager(id, managerName, sourceName));
+            var findResult = await Task.Run(() => DiscoverablePackagesLoader.Instance.GetPackageFromIdAndManager(id, managerName, sourceName));
 
             HideLoadingDialog(loadingId);
 

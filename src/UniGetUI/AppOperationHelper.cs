@@ -17,6 +17,7 @@ using UniGetUI.PackageOperations;
 using UniGetUI.Pages.DialogPages;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine;
+using UniGetUI.PackageEngine.PackageLoader;
 
 namespace UniGetUI;
 
@@ -229,8 +230,8 @@ public partial class MainApp
             if (package.NewerVersionIsInstalled())
             {
                 Logger.Warn($"A newer version of {package.Id} has been detected, the update will not be performed!");
-                PEInterface.UpgradablePackagesLoader.Remove(package);
-                foreach (var eq in PEInterface.InstalledPackagesLoader.GetEquivalentPackages(package))
+                UpgradablePackagesLoader.Instance.Remove(package);
+                foreach (var eq in InstalledPackagesLoader.Instance.GetEquivalentPackages(package))
                 {   // Remove upgradable tag from all installed packages
                     eq.Tag = PackageTag.Default;
                 }
@@ -257,14 +258,14 @@ public partial class MainApp
 
         public static async Task UpdateAll()
         {
-            foreach (IPackage package in PEInterface.UpgradablePackagesLoader.Packages)
+            foreach (IPackage package in UpgradablePackagesLoader.Instance.Packages)
                 if (package.Tag is not PackageTag.BeingProcessed and not PackageTag.OnQueue)
                     await Update(package);
         }
 
         public static async Task UpdateAllForManager(string managerName)
         {
-            foreach (IPackage package in PEInterface.UpgradablePackagesLoader.Packages)
+            foreach (IPackage package in UpgradablePackagesLoader.Instance.Packages)
             {
                 if (package.Tag is not PackageTag.OnQueue and not PackageTag.BeingProcessed
                     && package.Manager.Name == managerName || package.Manager.DisplayName == managerName)
@@ -274,7 +275,7 @@ public partial class MainApp
 
         public static async Task UpdateForId(string packageId)
         {
-            foreach (IPackage package in PEInterface.UpgradablePackagesLoader.Packages)
+            foreach (IPackage package in UpgradablePackagesLoader.Instance.Packages)
             {
                 if (package.Id == packageId)
                 {

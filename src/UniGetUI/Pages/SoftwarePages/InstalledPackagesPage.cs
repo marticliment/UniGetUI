@@ -13,6 +13,7 @@ using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Managers.WingetManager;
+using UniGetUI.PackageEngine.PackageLoader;
 using UniGetUI.Pages.DialogPages;
 using UniGetUI.Services;
 
@@ -46,7 +47,7 @@ namespace UniGetUI.Interface.SoftwarePages
             DisableSuggestedResultsRadio = true,
             PageName = "Installed",
 
-            Loader = PEInterface.InstalledPackagesLoader,
+            Loader = InstalledPackagesLoader.Instance,
             PageRole = OperationType.Uninstall,
 
             NoPackages_BackgroundText = CoreTools.Translate("No results were found matching the input criteria"),
@@ -264,7 +265,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 {
                     if (!package.Source.IsVirtualManager)
                     {
-                        PEInterface.UpgradablePackagesLoader.Remove(package);
+                        UpgradablePackagesLoader.Instance.Remove(package);
                         await package.AddToIgnoredUpdatesAsync();
                     }
                 }
@@ -366,7 +367,7 @@ namespace UniGetUI.Interface.SoftwarePages
         {
             MainApp.Instance.MainWindow.NavigationPage.NavigateTo(PageType.Bundles);
             int loadingId = DialogHelper.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
-            await PEInterface.PackageBundlesLoader.AddPackagesAsync(FilteredPackages.GetCheckedPackages());
+            await PackageBundlesLoader.Instance.AddPackagesAsync(FilteredPackages.GetCheckedPackages());
             DialogHelper.HideLoadingDialog(loadingId);
         }
 
@@ -374,7 +375,7 @@ namespace UniGetUI.Interface.SoftwarePages
         {
             Logger.Debug("Starting package backup");
             List<IPackage> packagesToExport = [];
-            foreach (IPackage package in PEInterface.InstalledPackagesLoader.Packages)
+            foreach (IPackage package in InstalledPackagesLoader.Instance.Packages)
             {
                 packagesToExport.Add(package);
             }
@@ -472,7 +473,7 @@ namespace UniGetUI.Interface.SoftwarePages
             else
             {
                 await package.AddToIgnoredUpdatesAsync();
-                PEInterface.UpgradablePackagesLoader.Remove(package);
+                UpgradablePackagesLoader.Instance.Remove(package);
             }
         }
 

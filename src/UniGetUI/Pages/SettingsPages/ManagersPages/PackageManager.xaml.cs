@@ -22,6 +22,7 @@ using UniGetUI.Core.Data;
 using UniGetUI.Pages.DialogPages;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.SettingsEngine.SecureSettings;
+using UniGetUI.PackageEngine.PackageLoader;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -164,7 +165,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 WinGet_EnableTroubleshooter.StateChanged += (_, _) =>
                 {
                     MainApp.Instance.MainWindow.WinGetWarningBanner.IsOpen = false;
-                    _ = PEInterface.InstalledPackagesLoader.ReloadPackages();
+                    _ = InstalledPackagesLoader.Instance.ReloadPackages();
                 };
                 ExtraControls.Children.Add(WinGet_EnableTroubleshooter);
 
@@ -179,7 +180,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 WinGet_EnableTroubleshooter_v2.StateChanged += (_, _) =>
                 {
                     MainApp.Instance.MainWindow.WinGetWarningBanner.IsOpen = false;
-                    _ = PEInterface.InstalledPackagesLoader.ReloadPackages();
+                    _ = InstalledPackagesLoader.Instance.ReloadPackages();
                 };
                 ExtraControls.Children.Add(WinGet_EnableTroubleshooter_v2);
 
