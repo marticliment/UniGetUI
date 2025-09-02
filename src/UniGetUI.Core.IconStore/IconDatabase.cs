@@ -19,25 +19,11 @@ namespace UniGetUI.Core.IconEngine
             public IconCount() { }
         }
 
-        private static IconDatabase? __instance;
 
+        private static IconDatabase? __instance;
         public static IconDatabase Instance
         {
-            get
-            {
-                if (__instance is null)
-                {
-                    Logger.Error("IconStore.Instance was not initialized, creating an empty instance.");
-                    InitializeInstance();
-                    return Instance;
-                }
-                return __instance;
-            }
-        }
-
-        public static void InitializeInstance()
-        {
-            __instance = new();
+            get => __instance ??= new();
         }
 
         /// <summary>
@@ -51,10 +37,12 @@ namespace UniGetUI.Core.IconEngine
         /// </summary>
         public async Task LoadIconAndScreenshotsDatabaseAsync()
         {
-            string IconsAndScreenshotsFile = Path.Join(CoreData.UniGetUICacheDirectory_Data, "Icon Database.json");
             try
             {
-                Uri DownloadUrl = new("https://github.com/marticliment/UniGetUI/raw/refs/heads/main/WebBasedData/screenshot-database-v2.json");
+                string IconsAndScreenshotsFile = Path.Join(CoreData.UniGetUICacheDirectory_Data, "Icon Database.json");
+                Uri DownloadUrl =
+                    new(
+                        "https://github.com/marticliment/UniGetUI/raw/refs/heads/main/WebBasedData/screenshot-database-v2.json");
                 if (Settings.Get(Settings.K.IconDataBaseURL))
                 {
                     DownloadUrl = new Uri(Settings.GetValue(Settings.K.IconDataBaseURL));
@@ -69,17 +57,17 @@ namespace UniGetUI.Core.IconEngine
 
                 Logger.ImportantInfo("Downloaded new icons and screenshots successfully!");
 
+
+                if (!File.Exists(IconsAndScreenshotsFile))
+                {
+                    Logger.Error("Icon Database file not found");
+                    return;
+                }
             }
             catch (Exception e)
             {
                 Logger.Warn("Failed to download icons and screenshots");
                 Logger.Warn(e);
-            }
-
-            if (!File.Exists(IconsAndScreenshotsFile))
-            {
-                Logger.Error("Icon Database file not found");
-                return;
             }
 
             // Update data with new cached file
@@ -89,9 +77,9 @@ namespace UniGetUI.Core.IconEngine
 
         public async Task LoadFromCacheAsync()
         {
-            string IconsAndScreenshotsFile = Path.Join(CoreData.UniGetUICacheDirectory_Data, "Icon Database.json");
             try
             {
+                string IconsAndScreenshotsFile = Path.Join(CoreData.UniGetUICacheDirectory_Data, "Icon Database.json");
                 IconScreenshotDatabase_v2 JsonData = JsonSerializer.Deserialize<IconScreenshotDatabase_v2>(
                     await File.ReadAllTextAsync(IconsAndScreenshotsFile),
                     SerializationHelpers.DefaultOptions
