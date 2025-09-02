@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Managers.CargoManager;
@@ -35,14 +36,15 @@ namespace UniGetUI.PackageEngine
 
         public static readonly IPackageManager[] Managers = [WinGet, Scoop, Chocolatey, Npm, Pip, Cargo, Vcpkg, DotNet, PowerShell, PowerShell7];
 
-#pragma warning disable CA1823
-        private static readonly DiscoverablePackagesLoader DiscoveredPackagesLoader = new(Managers);
-        private static readonly UpgradablePackagesLoader UpgradablePackagesLoader = new(Managers);
-        private static readonly InstalledPackagesLoader InstalledPackagesLoader = new(Managers);
-        private static readonly PackageBundlesLoader PackageBundlesLoader = new(Managers);
-#pragma warning restore CA1823
+        public static void LoadLoaders()
+        {
+            DiscoverablePackagesLoader.Instance = new DiscoverablePackagesLoader(Managers);
+            InstalledPackagesLoader.Instance = new InstalledPackagesLoader(Managers);
+            UpgradablePackagesLoader.Instance = new UpgradablePackagesLoader(Managers);
+            PackageBundlesLoader.Instance = new PackageBundlesLoader_I(Managers);
+        }
 
-        public static void Initialize()
+        public static void LoadManagers()
         {
             try
             {
@@ -60,8 +62,8 @@ namespace UniGetUI.PackageEngine
                     Logger.Warn("Timeout: Not all package managers have finished initializing.");
                 }
 
-                _ = InstalledPackagesLoader.ReloadPackages();
-                _ = UpgradablePackagesLoader.ReloadPackages();
+                _ = InstalledPackagesLoader.Instance.ReloadPackages();
+                _ = UpgradablePackagesLoader.Instance.ReloadPackages();
             }
             catch (Exception ex)
             {
@@ -71,11 +73,9 @@ namespace UniGetUI.PackageEngine
     }
 
 
-
-
-    public class PackageBundlesLoader : PackageBundlesLoader_A
+    public class PackageBundlesLoader_I : PackageBundlesLoader
     {
-        public PackageBundlesLoader(IReadOnlyList<IPackageManager> managers): base(managers)
+        public PackageBundlesLoader_I(IReadOnlyList<IPackageManager> managers): base(managers)
         {
         }
 

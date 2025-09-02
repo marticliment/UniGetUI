@@ -22,6 +22,7 @@ using UniGetUI.PackageEngine.Classes.Serializable;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.PackageEngine.PackageLoader;
 using UniGetUI.Pages.DialogPages;
 
 namespace UniGetUI.Interface.SoftwarePages

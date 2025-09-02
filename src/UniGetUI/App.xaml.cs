@@ -292,6 +292,9 @@ namespace UniGetUI
             {
                 RegisterErrorHandling();
 
+                // MainWindow depends on this
+                await Task.Run(PEInterface.LoadLoaders);
+
                 // Create MainWindow
                 InitializeMainWindow();
                 await MainWindow.DoEntryTextAnimationAsync();
@@ -314,7 +317,7 @@ namespace UniGetUI
                     Task.Run(RegisterNotificationService),
                     Task.Run(LoadGSudo),
                     Task.Run(InitializeBackgroundAPI),
-                    Task.Run(PEInterface.Initialize),
+                    Task.Run(PEInterface.LoadManagers),
                 ];
 
                 // Load essential components
