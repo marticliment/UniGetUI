@@ -6,6 +6,7 @@ using UniGetUI.Interface.Widgets;
 using UniGetUI.Pages.SettingsPages.GeneralPages;
 using UniGetUI.PackageEngine;
 using UniGetUI.Core.SettingsEngine;
+using UniGetUI.Pages.DialogPages;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -26,6 +27,7 @@ namespace UniGetUI.Pages.SettingsPages
 
         private List<SettingsPageButton> managerControls = new();
 
+        private bool _isLoadingToggles = false;
         public ManagersHomepage()
         {
             this.InitializeComponent();
@@ -44,7 +46,16 @@ namespace UniGetUI.Pages.SettingsPages
                 button.Click += (_, _) => NavigationRequested?.Invoke(this, manager.GetType());
 
                 var toggle = new ToggleSwitch();
-                toggle.Toggled += (_, _) => Settings.SetDictionaryItem(Settings.K.DisabledManagers, manager.Name, !toggle.IsOn);
+                toggle.Toggled += async (_, _) =>
+                {
+                    if (_isLoadingToggles) return;
+
+                    bool disabled = !toggle.IsOn;
+                    int loadingId = DialogHelper.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
+                    Settings.SetDictionaryItem(Settings.K.DisabledManagers, manager.Name, disabled);
+                    await Task.Run(manager.Initialize);
+                    DialogHelper.HideLoadingDialog(loadingId);
+                };
                 button.Content = toggle;
 
                 first = false;
@@ -57,12 +68,13 @@ namespace UniGetUI.Pages.SettingsPages
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
+            _isLoadingToggles = true;
             for(int i = 0; i < managerControls.Count; i++)
             {
                 var toggle = (ToggleSwitch)managerControls[i].Content;
                 toggle.IsOn = !Settings.GetDictionaryItem<string, bool>(Settings.K.DisabledManagers, PEInterface.Managers[i].Name);
             }
-
+            _isLoadingToggles = false;
             base.OnNavigatedTo(e);
         }
 
