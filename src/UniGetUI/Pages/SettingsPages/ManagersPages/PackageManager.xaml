@@ -25,6 +25,7 @@
                 x:Name="EnableManager"
                 CornerRadius="8"
                 DictionaryName="DisabledManagers"
+                StateChanged="EnableManager_OnStateChanged"
                 FontSize="18"
                 FontWeight="SemiBold" />
 

@@ -107,6 +107,7 @@ namespace UniGetUI.Interface.Widgets
         public override event EventHandler<EventArgs>? StateChanged;
 
         private Settings.K _dictName = Settings.K.Unset;
+        private bool _disableStateChangedEvent = false;
 
         private string _keyName = "";
         public string KeyName { set
@@ -114,8 +115,10 @@ namespace UniGetUI.Interface.Widgets
             _keyName = value;
             if (_dictName != Settings.K.Unset && _keyName.Any())
             {
+                _disableStateChangedEvent = true;
                 _checkbox.IsOn = Settings.GetDictionaryItem<string, bool>(_dictName, _keyName) ^ IS_INVERTED ^ ForceInversion;
                 _textblock.Opacity = _checkbox.IsOn ? 1 : 0.7;
+                _disableStateChangedEvent = false;
             }
         } }
 
@@ -139,6 +142,7 @@ namespace UniGetUI.Interface.Widgets
 
         protected override void _checkbox_Toggled(object sender, RoutedEventArgs e)
         {
+            if (_disableStateChangedEvent) return;
             Settings.SetDictionaryItem(_dictName, _keyName, _checkbox.IsOn ^ IS_INVERTED ^ ForceInversion);
             StateChanged?.Invoke(this, EventArgs.Empty);
             _textblock.Opacity = _checkbox.IsOn ? 1 : 0.7;
