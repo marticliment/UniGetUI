@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 12002,
-        "done": 5516,
-        "packages_with_icon": 5516,
-        "packages_with_screenshot": 986,
-        "total_screenshots": 3189
+        "total": 12004,
+        "done": 5518,
+        "packages_with_icon": 5518,
+        "packages_with_screenshot": 990,
+        "total_screenshots": 3200
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -6504,7 +6504,15 @@
         },
         "camunda-modeler": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/sDv8b82G/image.png"
+            ]
+        },
+        "modeler": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/sDv8b82G/image.png"
+            ]
         },
         "camunda-operate": {
             "icon": "",
@@ -26130,10 +26138,6 @@
             "icon": "https://community.chocolatey.org/content/packageimages/moddb.extension.0.1.3.png",
             "images": []
         },
-        "modeler": {
-            "icon": "",
-            "images": []
-        },
         "modelio": {
             "icon": "https://community.chocolatey.org/content/packageimages/modelio.4.1.0.png",
             "images": []
@@ -32314,9 +32318,9 @@
             "images": []
         },
         "portmaster": {
-            "icon": "https://avatars.githubusercontent.com/u/20678162?s=200&v=4",
+            "icon": "https://i.postimg.cc/bwPx1D4Y/image.png",
             "images": [
-                "https://camo.githubusercontent.com/2b2fb81ed43805526b69458094bfb2f2500023999dd6e06916e54299fe24f8c7/68747470733a2f2f736166696e672e696f2f6173736574732f696d672f706167652d73706563696669632f6c616e64696e672f706f72746d61737465722d7468756d626e61696c2e706e673f",
+                "https://i.postimg.cc/02Ym55jT/image.png",
                 "https://raw.githubusercontent.com/kamack38/chocopkgs/94fb372e1be6e893d51714e565ea9413cd97e6bc/assets/portmaster.png",
                 "https://safing.io/assets/img/page-specific/portmaster/block-trackers-system-wide.png",
                 "https://safing.io/assets/img/page-specific/portmaster/set-global-and-per-app-configuration.png",
@@ -41331,8 +41335,12 @@
             "images": []
         },
         "tableplus": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/sDw9zDvT/image.png",
+            "images": [
+                "https://i.postimg.cc/HxRRB9C7/image.png",
+                "https://i.postimg.cc/BvwVnBbw/image.png",
+                "https://i.postimg.cc/GpNXC3gW/image.png"
+            ]
         },
         "tabspace": {
             "icon": "",
@@ -52084,6 +52092,17 @@
                 "https://i.postimg.cc/yY4cRd7k/image.png",
                 "https://i.postimg.cc/XvJCWBkD/image.png",
                 "https://i.postimg.cc/fbr0RWHW/image.png"
+            ]
+        },
+        "dnakitstudio": {
+            "icon": "https://i.postimg.cc/137CWYMW/dna.png",
+            "images": [
+                "https://i.postimg.cc/76jrpZVW/image.png",
+                "https://i.postimg.cc/RCnBwwC5/image.png",
+                "https://i.postimg.cc/FHhXtqyN/image.png",
+                "https://i.postimg.cc/vBJC0S8R/image.png",
+                "https://i.postimg.cc/RVzjf8bK/image.png",
+                "https://i.postimg.cc/Prz0M4Bc/image.png"
             ]
         }
     }
