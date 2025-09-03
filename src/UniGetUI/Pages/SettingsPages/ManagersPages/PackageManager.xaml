@@ -61,7 +61,7 @@
                 ContentAlignment="Vertical"
                 CornerRadius="0,0,0,0">
                 <controls:SettingsCard.Header>
-                    <TextBlock Text="Select the executable to be used. The following list shows the executables found by UniGetUI" />
+                    <widgets:TranslatedTextBlock Text="Select the executable to be used. The following list shows the executables found by UniGetUI" />
                 </controls:SettingsCard.Header>
                 <controls:SettingsCard.Content>
                     <Grid HorizontalAlignment="Left" RowSpacing="4" ColumnSpacing="4">
@@ -128,7 +128,7 @@
                         Symbol="Copy" />
                 </controls:SettingsCard.Content>
                 <controls:SettingsCard.Header>
-                    <TextBlock
+                    <widgets:TranslatedTextBlock
                         Grid.ColumnSpan="2"
                         FontSize="12"
                         FontWeight="SemiBold"

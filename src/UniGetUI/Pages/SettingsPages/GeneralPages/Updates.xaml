@@ -20,7 +20,7 @@
         HorizontalContentAlignment="Center"
         VerticalContentAlignment="Center">
         <StackPanel Orientation="Vertical" Spacing="0">
-            <TextBlock
+            <widgets:TranslatedTextBlock
                 Padding="4,32,4,8"
                 Style="{ThemeResource NavigationViewItemHeaderTextStyle}"
                 Text="Update checking" />
@@ -40,7 +40,7 @@
                 Text="Check for updates every:"
                 ValueChanged="ShowRestartBanner" />
 
-            <TextBlock
+            <widgets:TranslatedTextBlock
                 Padding="4,32,4,8"
                 Style="{ThemeResource NavigationViewItemHeaderTextStyle}"
                 Text="Automatic updates" />

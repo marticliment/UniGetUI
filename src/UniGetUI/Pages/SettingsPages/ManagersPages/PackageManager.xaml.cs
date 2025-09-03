@@ -131,13 +131,13 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                     Text =
                         $"{CoreTools.Translate("Use bundled WinGet instead of system WinGet")} ({CoreTools.Translate("This may help if WinGet packages are not shown")})",
                     SettingName = Settings.K.ForceLegacyBundledWinGet,
-                    CornerRadius = new CornerRadius(0),
-                    BorderThickness = new Thickness(1, 0, 1, 0),
+                    CornerRadius = new CornerRadius(0, 0, 8, 8),
+                    BorderThickness = new Thickness(1, 0, 1, 1),
                 };
                 WinGet_UseBundled.StateChanged += (_, _) => _ = ReloadPackageManager();
                 ExtraControls.Children.Add(WinGet_UseBundled);
 
-                CheckboxCard WinGet_EnableTroubleshooter = new()
+                /*CheckboxCard WinGet_EnableTroubleshooter = new()
                 {
                     Text = CoreTools.Translate("Enable the automatic WinGet troubleshooter"),
                     SettingName = Settings.K.DisableWinGetMalfunctionDetector,
@@ -163,7 +163,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                     MainApp.Instance.MainWindow.WinGetWarningBanner.IsOpen = false;
                     _ = InstalledPackagesLoader.Instance.ReloadPackages();
                 };
-                ExtraControls.Children.Add(WinGet_EnableTroubleshooter_v2);
+                ExtraControls.Children.Add(WinGet_EnableTroubleshooter_v2);*/
 
                 /*CheckboxCard WinGet_HideNonApplicableUpdates = new()
                 {

@@ -287,7 +287,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         private static void TryRepairTempFolderPermissions()
         {
-            if (Settings.Get(Settings.K.DisableNewWinGetTroubleshooter)) return;
+            // if (Settings.Get(Settings.K.DisableNewWinGetTroubleshooter)) return;
 
             try
             {
