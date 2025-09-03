@@ -21,8 +21,8 @@
         VerticalContentAlignment="Center">
         <StackPanel Orientation="Vertical" Spacing="0">
             <widgets:TranslatedTextBlock
-                Padding="4,32,4,8"
-                Style="{ThemeResource NavigationViewItemHeaderTextStyle}"
+                Margin="4,32,4,8"
+                FontWeight="SemiBold"
                 Text="Update checking" />
 
             <widgets:CheckboxCard
@@ -41,8 +41,8 @@
                 ValueChanged="ShowRestartBanner" />
 
             <widgets:TranslatedTextBlock
-                Padding="4,32,4,8"
-                Style="{ThemeResource NavigationViewItemHeaderTextStyle}"
+                Margin="4,32,4,8"
+                FontWeight="SemiBold"
                 Text="Automatic updates" />
 
             <widgets:CheckboxCard
