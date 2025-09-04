@@ -90,6 +90,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             ExecutableComboBox.IsEnabled = SecureSettings.Get(SecureSettings.K.AllowCustomManagerPaths);
 
             InstallOptionsPanel.Description = new InstallOptions_Manager(Manager);
+            InstallOptionsPanel.Padding = new(18, 24, 18, 24);
 
             // ----------------------- SOURCES CONTROL -------------------
 
@@ -99,13 +100,20 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             {
                 SettingsCard SourceManagerCard = new()
                 {
-                    Resources = { ["SettingsCardLeftIndention"] = 10 },
                     CornerRadius = new CornerRadius(8),
-                    Margin = new Thickness(0, 0, 0, 16)
+                    Margin = new Thickness(0, 0, 0, 16),
+                    Padding = new(24, 24, 0, 24),
                 };
                 var man = new SourceManager(Manager);
                 SourceManagerCard.Description = man;
                 ExtraControls.Children.Add(SourceManagerCard);
+
+                ExtraControls.Children.Add(new TextBlock()
+                {
+                    Margin = new(4, 24, 4, 8),
+                    FontWeight = new Windows.UI.Text.FontWeight(600),
+                    Text=CoreTools.Translate("Advanced options")
+                });
             }
 
             // ------------------------- WINGET EXTRA SETTINGS -----------------------

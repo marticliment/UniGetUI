@@ -25,9 +25,9 @@
                 x:Name="EnableManager"
                 CornerRadius="8"
                 DictionaryName="DisabledManagers"
-                StateChanged="EnableManager_OnStateChanged"
                 FontSize="18"
-                FontWeight="SemiBold" />
+                FontWeight="SemiBold"
+                StateChanged="EnableManager_OnStateChanged" />
 
             <widgets:TranslatedTextBlock
                 x:Name="StatusTitle"
@@ -64,7 +64,10 @@
                     <widgets:TranslatedTextBlock Text="Select the executable to be used. The following list shows the executables found by UniGetUI" />
                 </controls:SettingsCard.Header>
                 <controls:SettingsCard.Content>
-                    <Grid HorizontalAlignment="Left" RowSpacing="4" ColumnSpacing="4">
+                    <Grid
+                        HorizontalAlignment="Left"
+                        ColumnSpacing="4"
+                        RowSpacing="4">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
