@@ -134,7 +134,7 @@ To translate UniGetUI to other languages or to update an old translation, please
 | <img src='https://flagcdn.com/ir.svg' width=20> &nbsp; Persian - فارسی‎ | 99% | [MobinMardi](https://github.com/MobinMardi) |
 | <img src='https://flagcdn.com/fi.svg' width=20> &nbsp; Finnish - Suomi | 93% | [simakuutio](https://github.com/simakuutio) |
 | <img src='https://flagcdn.com/fil.svg' width=20> &nbsp; Filipino - Filipino | 96% | [infyProductions](https://github.com/infyProductions) |
-| <img src='https://flagcdn.com/fr.svg' width=20> &nbsp; French - Français | 99% | BreatFR, [Entropiness](https://github.com/Entropiness), Evans Costa, [PikPakPik](https://github.com/PikPakPik), Rémi Guerrero, [W1L7dev](https://github.com/W1L7dev) |
+| <img src='https://flagcdn.com/fr.svg' width=20> &nbsp; French - Français | 100% | BreatFR, [Entropiness](https://github.com/Entropiness), Evans Costa, [PikPakPik](https://github.com/PikPakPik), Rémi Guerrero, [W1L7dev](https://github.com/W1L7dev) |
 | <img src='https://flagcdn.com/in.svg' width=20> &nbsp; Gujarati - ગુજરાતી | 7% |  |
 | <img src='https://flagcdn.com/in.svg' width=20> &nbsp; Hindi - हिंदी | 35% | [Ashu-r](https://github.com/Ashu-r), [atharva_xoxo](https://github.com/atharva_xoxo), [satanarious](https://github.com/satanarious) |
 | <img src='https://flagcdn.com/hr.svg' width=20> &nbsp; Croatian - Hrvatski | 44% | [AndrejFeher](https://github.com/AndrejFeher), Stjepan Treger |
@@ -158,22 +158,22 @@ To translate UniGetUI to other languages or to update an old translation, please
 | <img src='https://flagcdn.com/ru.svg' width=20> &nbsp; Russian - Русский | 99% | Alexander, [bropines](https://github.com/bropines), [Denisskas](https://github.com/Denisskas), [DvladikD](https://github.com/DvladikD), [flatron4eg](https://github.com/flatron4eg), Gleb Saygin, [katrovsky](https://github.com/katrovsky), Sergey, sklart, [solarscream](https://github.com/solarscream), [tapnisu](https://github.com/tapnisu) |
 | <img src='https://flagcdn.com/in.svg' width=20> &nbsp; Sanskrit - संस्कृत भाषा | 8% | [skanda890](https://github.com/skanda890) |
 | <img src='https://flagcdn.com/sk.svg' width=20> &nbsp; Slovak - Slovenčina | 8% | [Luk164](https://github.com/Luk164) |
-| <img src='https://flagcdn.com/rs.svg' width=20> &nbsp; Serbian - Srpski | 66% | [daVinci13](https://github.com/daVinci13), [momcilovicluka](https://github.com/momcilovicluka) |
+| <img src='https://flagcdn.com/rs.svg' width=20> &nbsp; Serbian - Srpski | 73% | [daVinci13](https://github.com/daVinci13), [momcilovicluka](https://github.com/momcilovicluka) |
 | <img src='https://flagcdn.com/al.svg' width=20> &nbsp; Albanian - Shqip | 99% | [RDN000](https://github.com/RDN000) |
 | <img src='https://flagcdn.com/lk.svg' width=20> &nbsp; Sinhala - සිංහල | 10% | [SashikaSandeepa](https://github.com/SashikaSandeepa), [Savithu-s3](https://github.com/Savithu-s3), [ttheek](https://github.com/ttheek) |
 | <img src='https://flagcdn.com/si.svg' width=20> &nbsp; Slovene - Slovenščina | 87% | [rumplin](https://github.com/rumplin) |
-| <img src='https://flagcdn.com/se.svg' width=20> &nbsp; Swedish - Svenska | 99% | [curudel](https://github.com/curudel), [Hi-there-how-are-u](https://github.com/Hi-there-how-are-u), [kakmonster](https://github.com/kakmonster), [umeaboy](https://github.com/umeaboy) |
+| <img src='https://flagcdn.com/se.svg' width=20> &nbsp; Swedish - Svenska | 100% | [curudel](https://github.com/curudel), [Hi-there-how-are-u](https://github.com/Hi-there-how-are-u), [kakmonster](https://github.com/kakmonster), [umeaboy](https://github.com/umeaboy) |
 | <img src='https://flagcdn.com/ta.svg' width=20> &nbsp; Tamil - தமிழ் | 4% | [nochilli](https://github.com/nochilli) |
 | <img src='https://flagcdn.com/ph.svg' width=20> &nbsp; Tagalog - Tagalog | 12% | lasersPew, [znarfm](https://github.com/znarfm) |
 | <img src='https://flagcdn.com/th.svg' width=20> &nbsp; Thai - ภาษาไทย | 79% | [apaeisara](https://github.com/apaeisara), [dulapahv](https://github.com/dulapahv), [hanchain](https://github.com/hanchain), [rikoprushka](https://github.com/rikoprushka), [vestearth](https://github.com/vestearth) |
 | <img src='https://flagcdn.com/tr.svg' width=20> &nbsp; Turkish - Türkçe | 90% | [ahmetozmtn](https://github.com/ahmetozmtn), [dogancanyr @anzeralp](https://github.com/dogancanyr @anzeralp), [gokberkgs](https://github.com/gokberkgs) |
 | <img src='https://flagcdn.com/ua.svg' width=20> &nbsp; Ukrainian - Українська | 100% | Alex Logvin, Artem Moldovanenko, Operator404, [Taron-art](https://github.com/Taron-art) |
 | <img src='https://flagcdn.com/pk.svg' width=20> &nbsp; Urdu - اردو | 81% | [digitio](https://github.com/digitio), [digitpk](https://github.com/digitpk), [hamzaharoon1314](https://github.com/hamzaharoon1314) |
-| <img src='https://flagcdn.com/vn.svg' width=20> &nbsp; Vietnamese - Tiếng Việt | 99% | [aethervn2309](https://github.com/aethervn2309), [legendsjoon](https://github.com/legendsjoon), [txavlog](https://github.com/txavlog), [vanlongluuly](https://github.com/vanlongluuly) |
+| <img src='https://flagcdn.com/vn.svg' width=20> &nbsp; Vietnamese - Tiếng Việt | 100% | [aethervn2309](https://github.com/aethervn2309), [legendsjoon](https://github.com/legendsjoon), [txavlog](https://github.com/txavlog), [vanlongluuly](https://github.com/vanlongluuly) |
 | <img src='https://flagcdn.com/cn.svg' width=20> &nbsp; Simplified Chinese (China) | 100% | Aaron Liu, adfnekc, [Ardenet](https://github.com/Ardenet), [arthurfsy2](https://github.com/arthurfsy2), [bai0012](https://github.com/bai0012), BUGP Association, ciaran, CnYeSheng, Cololi, [dongfengweixiao](https://github.com/dongfengweixiao), [enKl03B](https://github.com/enKl03B), [seanyu0](https://github.com/seanyu0), [Sigechaishijie](https://github.com/Sigechaishijie), [SpaceTimee](https://github.com/SpaceTimee), [xiaopangju](https://github.com/xiaopangju), Yisme |
 | <img src='https://flagcdn.com/tw.svg' width=20> &nbsp; Traditional Chinese (Taiwan) | 99% | Aaron Liu, CnYeSheng, Cololi, [enKl03B](https://github.com/enKl03B), [Henryliu880922](https://github.com/Henryliu880922), [StarsShine11904](https://github.com/StarsShine11904), [yrctw](https://github.com/yrctw) |
 
-Last updated: Tue Sep  2 00:14:48 2025
+Last updated: Thu Sep  4 00:13:45 2025
 <!-- END Autogenerated translations -->
 
 
