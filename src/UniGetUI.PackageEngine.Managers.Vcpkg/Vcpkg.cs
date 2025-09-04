@@ -23,8 +23,6 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
         public Dictionary<string, ManagerSource> TripletSourceMap;
         public static Uri URI_VCPKG_IO = new Uri("https://vcpkg.io/");
 
-        private bool hasBeenBootstrapped;
-
         public Vcpkg()
         {
             Dependencies = [
@@ -302,45 +300,30 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             return candidates;
         }
 
-        protected override ManagerStatus LoadManager()
+        protected override void _loadManagerExecutableFile(out bool found, out string path, out string callArguments)
         {
             var (exeFound, exePath) = GetExecutableFile();
-            var (rootFound, rootPath) = GetVcpkgRoot();
+            var (rootFound, _) = GetVcpkgRoot();
 
-            if (!exeFound)
-            {
-                return new()
-                {
-                    Found = false,
-                    ExecutablePath = exePath,
-                    Version = CoreTools.Translate(
-                        "Vcpkg was not found on your system."),
-                };
-            }
 
-            if (!rootFound)
-            {
-                return new()
-                {
-                    Found = false,
-                    ExecutablePath = CoreTools.Translate(
-                        "Vcpkg root was not found. Please define the %VCPKG_ROOT% environment variable or define it from UniGetUI Settings"),
-                };
-            }
+            if(!rootFound) Logger.Error("Vcpkg root was not found. Please define the %VCPKG_ROOT% environment variable or define it from UniGetUI Settings");
+            found = exeFound && rootFound;
+            path = exePath;
 
-            ManagerStatus status = new ManagerStatus { Found = exeFound, ExecutablePath = exePath, };
+            string vcpkgRoot = Settings.GetValue(Settings.K.CustomVcpkgRoot);
+            callArguments = vcpkgRoot == "" ? "" : $" --vcpkg-root=\"{vcpkgRoot}\"";
+        }
 
-            if (!status.Found)
-            {
-                return status;
-            }
+        protected override void _loadManagerVersion(out string version)
+        {
+            var (_, rootPath) = GetVcpkgRoot();
 
             Process process = new()
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = status.ExecutablePath,
-                    Arguments = status.ExecutableCallArgs + " version",
+                    FileName = Status.ExecutablePath,
+                    Arguments = Status.ExecutableCallArgs + " version",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
@@ -350,13 +333,28 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 }
             };
             process.Start();
-            status.Version = process.StandardOutput.ReadLine()?.Trim() ?? "";
-            status.Version += $"\n%VCPKG_ROOT% = {rootPath}";
+            version = process.StandardOutput.ReadLine()?.Trim() ?? "";
+            version += $"\n%VCPKG_ROOT% = {rootPath}";
+        }
 
-            string vcpkgRoot = Settings.GetValue(Settings.K.CustomVcpkgRoot);
-            status.ExecutableCallArgs = vcpkgRoot == "" ? "" : $" --vcpkg-root=\"{vcpkgRoot}\"";
-
-            return status;
+        protected override void _performExtraLoadingSteps()
+        {
+            var (_, rootPath) = GetVcpkgRoot();
+            using Process p2 = new()
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = "cmd.exe",
+                    WorkingDirectory = rootPath,
+                    Arguments = "/C .\\bootstrap-vcpkg.bat",
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                }
+            };
+            IProcessTaskLogger processLogger2 = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes, p2);
+            p2.Start();
+            p2.WaitForExit();
+            processLogger2.Close(p2.ExitCode);
         }
 
         public override void RefreshPackageIndexes()
@@ -394,30 +392,6 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             processLogger.AddToStdOut(p.StandardOutput.ReadToEnd());
             processLogger.AddToStdErr(p.StandardError.ReadToEnd());
             processLogger.Close(p.ExitCode);
-
-            if (!hasBeenBootstrapped)
-            {
-                using Process p2 = new()
-                {
-                    StartInfo = new ProcessStartInfo
-                    {
-                        FileName = "cmd.exe",
-                        WorkingDirectory = vcpkgRoot,
-                        Arguments = "/C .\\bootstrap-vcpkg.bat",
-                        UseShellExecute = false,
-                        // RedirectStandardOutput = true,
-                        // RedirectStandardError = true,
-                        CreateNoWindow = true
-                    }
-                };
-                IProcessTaskLogger processLogger2 = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes, p);
-                p2.Start();
-                p2.WaitForExit();
-                // processLogger2.AddToStdOut(p2.StandardOutput.ReadToEnd());
-                // processLogger2.AddToStdErr(p2.StandardError.ReadToEnd());
-                processLogger2.Close(p2.ExitCode);
-                hasBeenBootstrapped = true;
-            }
         }
 
         public static Tuple<bool, string> GetVcpkgRoot()

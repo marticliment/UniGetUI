@@ -21,6 +21,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using UniGetUI.Interface.Telemetry;
 using UniGetUI.PackageEngine;
+using UniGetUI.PackageEngine.PackageLoader;
 
 namespace UniGetUI.Controls.OperationWidgets;
 
@@ -573,7 +574,7 @@ public partial class OperationControl: INotifyPropertyChanged
                 {
                     callback();
                     await packageOp.Package.AddToIgnoredUpdatesAsync(packageOp.Package.VersionString);
-                    PEInterface.UpgradablePackagesLoader.Remove(packageOp.Package);
+                    UpgradablePackagesLoader.Instance.Remove(packageOp.Package);
                     Close();
                 };
                 retryOptionsMenu.Add(skipThisVersion);
@@ -584,7 +585,7 @@ public partial class OperationControl: INotifyPropertyChanged
                 {
                     callback();
                     await packageOp.Package.AddToIgnoredUpdatesAsync();
-                    PEInterface.UpgradablePackagesLoader.Remove(packageOp.Package);
+                    UpgradablePackagesLoader.Instance.Remove(packageOp.Package);
                     Close();
                 };
                 retryOptionsMenu.Add(ignoreUpdates);

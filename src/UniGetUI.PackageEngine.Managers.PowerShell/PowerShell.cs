@@ -124,27 +124,22 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             return candidates;
         }
 
-        protected override ManagerStatus LoadManager()
+        protected override void _loadManagerExecutableFile(out bool found, out string path, out string callArguments)
         {
-            var (found, path) = GetExecutableFile();
-            ManagerStatus status = new()
-            {
-                ExecutablePath = path,
-                Found = found,
-                ExecutableCallArgs = " -NoProfile -Command",
-            };
+            var (_found, _path) = GetExecutableFile();
+            found = _found;
+            path = _path;
+            callArguments = " -NoProfile -Command";
+        }
 
-            if (!status.Found)
-            {
-                return status;
-            }
-
+        protected override void _loadManagerVersion(out string version)
+        {
             Process process = new()
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = status.ExecutablePath,
-                    Arguments = status.ExecutableCallArgs + " \"echo $PSVersionTable\"",
+                    FileName = Status.ExecutablePath,
+                    Arguments = Status.ExecutableCallArgs + " \"echo $PSVersionTable\"",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
@@ -153,11 +148,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 }
             };
             process.Start();
-            status.Version = process.StandardOutput.ReadToEnd().Trim();
-
-            return status;
+            version = process.StandardOutput.ReadToEnd().Trim();
         }
-
     }
-
 }

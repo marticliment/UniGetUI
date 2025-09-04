@@ -26,7 +26,8 @@
                 CornerRadius="8"
                 DictionaryName="DisabledManagers"
                 FontSize="18"
-                FontWeight="SemiBold" />
+                FontWeight="SemiBold"
+                StateChanged="EnableManager_OnStateChanged" />
 
             <widgets:TranslatedTextBlock
                 x:Name="StatusTitle"
@@ -60,10 +61,13 @@
                 ContentAlignment="Vertical"
                 CornerRadius="0,0,0,0">
                 <controls:SettingsCard.Header>
-                    <TextBlock Text="Select the executable to be used. The following list shows the executables found by UniGetUI" />
+                    <widgets:TranslatedTextBlock Text="Select the executable to be used. The following list shows the executables found by UniGetUI" />
                 </controls:SettingsCard.Header>
                 <controls:SettingsCard.Content>
-                    <Grid HorizontalAlignment="Left" RowSpacing="4" ColumnSpacing="4">
+                    <Grid
+                        HorizontalAlignment="Left"
+                        ColumnSpacing="4"
+                        RowSpacing="4">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
@@ -127,7 +131,7 @@
                         Symbol="Copy" />
                 </controls:SettingsCard.Content>
                 <controls:SettingsCard.Header>
-                    <TextBlock
+                    <widgets:TranslatedTextBlock
                         Grid.ColumnSpan="2"
                         FontSize="12"
                         FontWeight="SemiBold"

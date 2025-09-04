@@ -189,32 +189,25 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
         }
 
         public override IReadOnlyList<string> FindCandidateExecutableFiles()
+            => CoreTools.WhichMultiple("npm.ps1");
+
+        protected override void _loadManagerExecutableFile(out bool found, out string path, out string callArguments)
         {
-            return CoreTools.WhichMultiple("npm.ps1");
+            var (_found, _executable) = GetExecutableFile();
+
+            found = _found;
+            path = CoreData.PowerShell5;
+            callArguments = $"-NoProfile -ExecutionPolicy Bypass -Command \"{_executable.Replace(" ", "` ")}\" ";
         }
 
-        protected override ManagerStatus LoadManager()
+        protected override void _loadManagerVersion(out string version)
         {
-            var (found, executable) = GetExecutableFile();
-
-            ManagerStatus status = new()
-            {
-                ExecutablePath = CoreData.PowerShell5,
-                ExecutableCallArgs = $"-NoProfile -ExecutionPolicy Bypass -Command \"{executable.Replace(" ", "` ")}\" ",
-                Found = found
-            };
-
-            if (!status.Found)
-            {
-                return status;
-            }
-
             Process process = new()
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = status.ExecutablePath,
-                    Arguments = status.ExecutableCallArgs + "--version",
+                    FileName = Status.ExecutablePath,
+                    Arguments = Status.ExecutableCallArgs + "--version",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
@@ -225,10 +218,8 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 }
             };
             process.Start();
-            status.Version = process.StandardOutput.ReadToEnd().Trim();
+            version = process.StandardOutput.ReadToEnd().Trim();
             process.WaitForExit();
-
-            return status;
         }
     }
 }

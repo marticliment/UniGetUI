@@ -1,5 +1,6 @@
 using UniGetUI.Core.Classes;
 using UniGetUI.Core.Logging;
+using UniGetUI.Core.SettingsEngine;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Interfaces.ManagerProviders;
@@ -8,6 +9,9 @@ namespace UniGetUI.PackageEngine.Classes.Manager.Providers
 {
     public abstract class BaseSourceHelper : IMultiSourceHelper
     {
+        private const int PackageListingTaskTimeout = 60;
+
+
         public ISourceFactory Factory { get; }
         protected IPackageManager Manager;
 
@@ -54,11 +58,19 @@ namespace UniGetUI.PackageEngine.Classes.Manager.Providers
 
         public virtual IReadOnlyList<IManagerSource> _getSources()
         {
-            if (!Manager.IsReady()) { Logger.Warn($"Manager {Manager.Name} is disabled but yet GetSources was called"); return []; }
-
             try
             {
-                IReadOnlyList<IManagerSource> sources = GetSources_UnSafe().ToArray();
+                var task = Task.Run(GetSources_UnSafe);
+                if (!task.Wait(TimeSpan.FromSeconds(PackageListingTaskTimeout)))
+                {
+                    if (!Settings.Get(Settings.K.DisableTimeoutOnPackageListingTasks))
+                        throw new TimeoutException($"Task _getInstalledPackages for manager {Manager.Name} did not finish after " +
+                                                   $"{PackageListingTaskTimeout} seconds, aborting.  You may disable " +
+                                                   $"timeouts from UniGetUI Advanced Settings");
+                    task.Wait();
+                }
+
+                var sources = task.Result;
                 Factory.Reset();
 
                 foreach (IManagerSource source in sources)

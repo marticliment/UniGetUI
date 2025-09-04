@@ -12,6 +12,7 @@ using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.PackageLoader;
 
 namespace UniGetUI.Interface
 {
@@ -128,18 +129,18 @@ namespace UniGetUI.Interface
                 return;
             }
 
-            if (!PEInterface.UpgradablePackagesLoader.IsLoaded && !PEInterface.UpgradablePackagesLoader.IsLoading)
+            if (!UpgradablePackagesLoader.Instance.IsLoaded && !UpgradablePackagesLoader.Instance.IsLoading)
             {
-                _ = PEInterface.UpgradablePackagesLoader.ReloadPackages();
+                _ = UpgradablePackagesLoader.Instance.ReloadPackages();
             }
 
-            while (PEInterface.UpgradablePackagesLoader.IsLoading)
+            while (UpgradablePackagesLoader.Instance.IsLoading)
             {
                 await Task.Delay(100);
             }
 
             StringBuilder packages = new();
-            foreach (IPackage package in PEInterface.UpgradablePackagesLoader.Packages)
+            foreach (IPackage package in UpgradablePackagesLoader.Instance.Packages)
             {
                 if (package.Tag is PackageTag.OnQueue or PackageTag.BeingProcessed) continue;
 
@@ -247,7 +248,7 @@ namespace UniGetUI.Interface
 
             string iconPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Images", "package_color.png");
 
-            IPackage? package = PEInterface.UpgradablePackagesLoader.GetPackageForId(packageId, packageSource);
+            IPackage? package = UpgradablePackagesLoader.Instance.GetPackageForId(packageId, packageSource);
             if (package != null)
             {
                 var iconUrl = await Task.Run(package.GetIconUrl);

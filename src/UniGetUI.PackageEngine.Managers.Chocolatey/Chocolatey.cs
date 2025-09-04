@@ -204,7 +204,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             return candidates;
         }
 
-        protected override ManagerStatus LoadManager()
+        protected override void _loadManagerExecutableFile(out bool found, out string path, out string callArguments)
         {
             if (!Directory.Exists(OldChocoPath))
             {
@@ -293,19 +293,19 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 }
             }
 
-            var (found, executable) = GetExecutableFile();
-            ManagerStatus status = new() { Found = found, ExecutablePath = executable, ExecutableCallArgs = "", };
+            var (_found, _path) = GetExecutableFile();
+            found = _found;
+            path = _path;
+            callArguments = "";
+        }
 
-            if (!status.Found)
-            {
-                return status;
-            }
-
+        protected override void _loadManagerVersion(out string version)
+        {
             Process process = new()
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = status.ExecutablePath,
+                    FileName = Status.ExecutablePath,
                     Arguments = "--version " + GetProxyArgument(),
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
@@ -315,19 +315,21 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 }
             };
             process.Start();
-            status.Version = process.StandardOutput.ReadToEnd().Trim();
+            version = process.StandardOutput.ReadToEnd().Trim();
+        }
 
+        protected override void _performExtraLoadingSteps()
+        {
             // If the user is running bundled chocolatey and chocolatey is not in path, add chocolatey to path
-            if (!Settings.Get(Settings.K.UseSystemChocolatey)
-                && !File.Exists("C:\\ProgramData\\Chocolatey\\bin\\choco.exe"))
-            /* && Settings.Get(Settings.K.ShownWelcomeWizard)) */
+            if (!Settings.Get(Settings.K.UseSystemChocolatey) && !File.Exists("C:\\ProgramData\\Chocolatey\\bin\\choco.exe"))
+                /* && Settings.Get(Settings.K.ShownWelcomeWizard)) */
             {
                 string? path = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.User);
-                if (!path?.Contains(status.ExecutablePath.Replace("\\choco.exe", "\\bin")) ?? false)
+                if (!path?.Contains(Status.ExecutablePath.Replace("\\choco.exe", "\\bin")) ?? false)
                 {
                     Logger.ImportantInfo("Adding chocolatey to path since it was not on path.");
-                    Environment.SetEnvironmentVariable("PATH", $"{status.ExecutablePath.Replace("\\choco.exe", "\\bin")};{path}", EnvironmentVariableTarget.User);
-                    Environment.SetEnvironmentVariable("chocolateyinstall", Path.GetDirectoryName(status.ExecutablePath), EnvironmentVariableTarget.User);
+                    Environment.SetEnvironmentVariable("PATH", $"{Status.ExecutablePath.Replace("\\choco.exe", "\\bin")};{path}", EnvironmentVariableTarget.User);
+                    Environment.SetEnvironmentVariable("chocolateyinstall", Path.GetDirectoryName(Status.ExecutablePath), EnvironmentVariableTarget.User);
                 }
                 else
                 {
@@ -336,14 +338,12 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             }
 
             // Trick chocolatey into using the wanted installation
-            var choco_dir = Path.GetDirectoryName(status.ExecutablePath)?.Replace('/', '\\').Trim('\\') ?? "";
+            var choco_dir = Path.GetDirectoryName(Status.ExecutablePath)?.Replace('/', '\\').Trim('\\') ?? "";
             if (choco_dir.EndsWith("bin"))
             {
                 choco_dir = choco_dir[..^3].Trim('\\');
             }
             Environment.SetEnvironmentVariable("chocolateyinstall", choco_dir, EnvironmentVariableTarget.Process);
-
-            return status;
         }
     }
 }

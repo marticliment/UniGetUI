@@ -3,11 +3,11 @@ using UniGetUI.PackageEngine.Interfaces;
 
 namespace UniGetUI.PackageEngine.PackageLoader
 {
-    public abstract class PackageBundlesLoader_A : AbstractPackageLoader
+    public abstract class PackageBundlesLoader : AbstractPackageLoader
     {
-        public static PackageBundlesLoader_A Instance = null!;
+        public static PackageBundlesLoader Instance = null!;
 
-        public PackageBundlesLoader_A(IReadOnlyList<IPackageManager> managers)
+        public PackageBundlesLoader(IReadOnlyList<IPackageManager> managers)
         : base(managers,
             identifier: "PACKAGE_BUNDLES",
             AllowMultiplePackageVersions: true,

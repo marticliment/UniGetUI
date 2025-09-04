@@ -27,6 +27,7 @@ using UniGetUI.Pages.DialogPages;
 using WindowExtensions = H.NotifyIcon.WindowExtensions;
 using System.Diagnostics;
 using Windows.UI.Text.Core;
+using UniGetUI.PackageEngine.PackageLoader;
 
 namespace UniGetUI.Interface
 {
@@ -430,9 +431,9 @@ namespace UniGetUI.Interface
             }
 
             NativeHelpers.SetForegroundWindow(GetWindowHandle());
-            if (!PEInterface.InstalledPackagesLoader.IsLoading)
+            if (!InstalledPackagesLoader.Instance.IsLoading)
             {
-                _ = PEInterface.InstalledPackagesLoader.ReloadPackagesSilently();
+                _ = InstalledPackagesLoader.Instance.ReloadPackagesSilently();
             }
 
             (this as Window).Activate();

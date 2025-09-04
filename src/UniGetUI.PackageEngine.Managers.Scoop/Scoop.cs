@@ -374,41 +374,27 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
         }
 
         public override IReadOnlyList<string> FindCandidateExecutableFiles()
+            => CoreTools.WhichMultiple("scoop.ps1");
+
+        protected override void _loadManagerExecutableFile(out bool found, out string path, out string callArguments)
         {
-            return CoreTools.WhichMultiple("scoop.ps1");
+            path = CoreData.PowerShell5;
+            var (pwshFound, pwshPath) = CoreTools.Which("pwsh.exe");
+            if (pwshFound) path = pwshPath;
+
+            var (_found, executable) = GetExecutableFile();
+            found = _found;
+            callArguments = $"-NoProfile -ExecutionPolicy Bypass -Command \"{executable.Replace(" ", "` ")}\" ";
         }
 
-
-        protected override ManagerStatus LoadManager()
+        protected override void _loadManagerVersion(out string version)
         {
-            string path = CoreData.PowerShell5;
-            var pwsh7 = CoreTools.Which("pwsh.exe");
-
-            if (pwsh7.Item1)
-            {
-                Logger.Info("Scoop found PowerShell7, PowerShell7 will be used...");
-                path = pwsh7.Item2;
-            }
-
-            var (found, executable) = GetExecutableFile();
-            ManagerStatus status = new()
-            {
-                ExecutablePath = path,
-                ExecutableCallArgs = $"-NoProfile -ExecutionPolicy Bypass -Command \"{executable.Replace(" ", "` ")}\" ",
-                Found = found,
-            };
-
-            if (!status.Found)
-            {
-                return status;
-            }
-
             Process process = new()
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = status.ExecutablePath,
-                    Arguments = status.ExecutableCallArgs + "--version",
+                    FileName = Status.ExecutablePath,
+                    Arguments = Status.ExecutableCallArgs + "--version",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
@@ -417,15 +403,15 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 }
             };
             process.Start();
-            status.Version = process.StandardOutput.ReadToEnd().Trim();
+            version = process.StandardOutput.ReadToEnd().Trim();
+        }
 
-            Status = status; // Wee need this for the RunCleanup method to get the executable path
-            if (status.Found && IsEnabled() && Settings.Get(Settings.K.EnableScoopCleanup))
+        protected override void _performExtraLoadingSteps()
+        {
+            if(Settings.Get(Settings.K.EnableScoopCleanup))
             {
                 RunCleanup();
             }
-
-            return status;
         }
 
         private void RunCleanup() => _ = _runCleanup();

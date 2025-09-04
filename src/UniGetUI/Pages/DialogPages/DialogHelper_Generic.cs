@@ -17,6 +17,7 @@ using UniGetUI.Interface.Dialogs;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Classes.Packages.Classes;
+using UniGetUI.PackageEngine.PackageLoader;
 
 namespace UniGetUI.Pages.DialogPages;
 
@@ -366,8 +367,8 @@ public static partial class DialogHelper
             }
             else
             {
-                _ = PEInterface.UpgradablePackagesLoader.ReloadPackages();
-                _ = PEInterface.InstalledPackagesLoader.ReloadPackages();
+                _ = UpgradablePackagesLoader.Instance.ReloadPackages();
+                _ = InstalledPackagesLoader.Instance.ReloadPackages();
             }
         }
         catch (Exception ex)

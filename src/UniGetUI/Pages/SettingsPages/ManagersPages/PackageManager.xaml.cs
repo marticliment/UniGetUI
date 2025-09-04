@@ -22,6 +22,7 @@ using UniGetUI.Core.Data;
 using UniGetUI.Pages.DialogPages;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.SettingsEngine.SecureSettings;
+using UniGetUI.PackageEngine.PackageLoader;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -39,11 +40,11 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         public event EventHandler? ReapplyProperties;
         public bool CanGoBack => true;
         public string ShortTitle => Manager is null ? "" : CoreTools.Translate("{0} settings", Manager.DisplayName);
+        private bool _isLoading = false;
 
         public PackageManagerPage()
         {
             this.InitializeComponent();
-            EnableManager.StateChanged += (_, _) => SetManagerStatus();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -65,11 +66,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
 
             ReapplyProperties?.Invoke(this, new());
 
-            LongVersionTextBlock.Text = Manager.Status.Version + "\n";
-            SetManagerStatus(false);
-
-            LocationLabel.Text = Manager.Status.ExecutablePath + " " + Manager.Status.ExecutableCallArgs.Trim();
-            if (LocationLabel.Text == "") LocationLabel.Text = CoreTools.Translate("The executable file for {0} was not found", Manager.DisplayName);
+            ApplyManagerState();
             EnableManager.KeyName = Manager.Name;
             EnableManager.Text = CoreTools.Translate("Enable {pm}").Replace("{pm}", Manager.DisplayName);
             InstallOptionsTitle.Text = CoreTools.Translate("Default installation options for {0} packages", Manager.DisplayName);
@@ -91,23 +88,9 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             ExeFileWarningText.Visibility = SecureSettings.Get(SecureSettings.K.AllowCustomManagerPaths) ? Visibility.Collapsed : Visibility.Visible;
             GoToSecureSettingsBtn.Visibility = SecureSettings.Get(SecureSettings.K.AllowCustomManagerPaths) ? Visibility.Collapsed : Visibility.Visible;
             ExecutableComboBox.IsEnabled = SecureSettings.Get(SecureSettings.K.AllowCustomManagerPaths);
-            ExecutableComboBox.Items.Clear();
-            foreach(var path in Manager.FindCandidateExecutableFiles())
-            {
-                ExecutableComboBox.Items.Add(path);
-            }
-
-            string selectedValue = Settings.GetDictionaryItem<string, string>(Settings.K.ManagerPaths, Manager.Name) ?? "";
-            if (string.IsNullOrEmpty(selectedValue))
-            {
-                var exe = Manager.GetExecutableFile();
-                selectedValue = exe.Item1? exe.Item2: "";
-            }
-
-            ExecutableComboBox.SelectedValue = selectedValue;
-            ExecutableComboBox.SelectionChanged += ExecutableComboBox_SelectionChanged;
 
             InstallOptionsPanel.Description = new InstallOptions_Manager(Manager);
+            InstallOptionsPanel.Padding = new(18, 24, 18, 24);
 
             // ----------------------- SOURCES CONTROL -------------------
 
@@ -117,13 +100,20 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             {
                 SettingsCard SourceManagerCard = new()
                 {
-                    Resources = { ["SettingsCardLeftIndention"] = 10 },
                     CornerRadius = new CornerRadius(8),
-                    Margin = new Thickness(0, 0, 0, 16)
+                    Margin = new Thickness(0, 0, 0, 16),
+                    Padding = new(24, 24, 0, 24),
                 };
                 var man = new SourceManager(Manager);
                 SourceManagerCard.Description = man;
                 ExtraControls.Children.Add(SourceManagerCard);
+
+                ExtraControls.Children.Add(new TextBlock()
+                {
+                    Margin = new(4, 24, 4, 8),
+                    FontWeight = new Windows.UI.Text.FontWeight(600),
+                    Text=CoreTools.Translate("Advanced options")
+                });
             }
 
             // ------------------------- WINGET EXTRA SETTINGS -----------------------
@@ -149,13 +139,13 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                     Text =
                         $"{CoreTools.Translate("Use bundled WinGet instead of system WinGet")} ({CoreTools.Translate("This may help if WinGet packages are not shown")})",
                     SettingName = Settings.K.ForceLegacyBundledWinGet,
-                    CornerRadius = new CornerRadius(0),
-                    BorderThickness = new Thickness(1, 0, 1, 0),
+                    CornerRadius = new CornerRadius(0, 0, 8, 8),
+                    BorderThickness = new Thickness(1, 0, 1, 1),
                 };
-                WinGet_UseBundled.StateChanged += (_, _) => RestartRequired?.Invoke(this, new());
+                WinGet_UseBundled.StateChanged += (_, _) => _ = ReloadPackageManager();
                 ExtraControls.Children.Add(WinGet_UseBundled);
 
-                CheckboxCard WinGet_EnableTroubleshooter = new()
+                /*CheckboxCard WinGet_EnableTroubleshooter = new()
                 {
                     Text = CoreTools.Translate("Enable the automatic WinGet troubleshooter"),
                     SettingName = Settings.K.DisableWinGetMalfunctionDetector,
@@ -164,7 +154,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 WinGet_EnableTroubleshooter.StateChanged += (_, _) =>
                 {
                     MainApp.Instance.MainWindow.WinGetWarningBanner.IsOpen = false;
-                    _ = PEInterface.InstalledPackagesLoader.ReloadPackages();
+                    _ = InstalledPackagesLoader.Instance.ReloadPackages();
                 };
                 ExtraControls.Children.Add(WinGet_EnableTroubleshooter);
 
@@ -179,9 +169,9 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 WinGet_EnableTroubleshooter_v2.StateChanged += (_, _) =>
                 {
                     MainApp.Instance.MainWindow.WinGetWarningBanner.IsOpen = false;
-                    _ = PEInterface.InstalledPackagesLoader.ReloadPackages();
+                    _ = InstalledPackagesLoader.Instance.ReloadPackages();
                 };
-                ExtraControls.Children.Add(WinGet_EnableTroubleshooter_v2);
+                ExtraControls.Children.Add(WinGet_EnableTroubleshooter_v2);*/
 
                 /*CheckboxCard WinGet_HideNonApplicableUpdates = new()
                 {
@@ -268,7 +258,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                     SettingName = Settings.K.UseSystemChocolatey,
                     CornerRadius = new CornerRadius(0, 0, 8, 8)
                 };
-                Chocolatey_SystemChoco.StateChanged += (_, _) => RestartRequired?.Invoke(this, new());
+                Chocolatey_SystemChoco.StateChanged += (_, _) => _ = ReloadPackageManager();
                 ExtraControls.Children.Add(Chocolatey_SystemChoco);
             }
 
@@ -345,7 +335,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 p.Children.Add(ResetVcPkgRootLabel);
                 p.Children.Add(OpenVcPkgRootLabel);
                 Vcpkg_CustomVcpkgRoot.Description = p;
-                Vcpkg_CustomVcpkgRoot.Click += (_, _) => RestartRequired?.Invoke(this, new());
+                Vcpkg_CustomVcpkgRoot.Click += (_, _) => _ = ReloadPackageManager();
                 ExtraControls.Children.Add(Vcpkg_CustomVcpkgRoot);
             }
 
@@ -371,28 +361,62 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             base.OnNavigatedTo(e);
         }
 
-        private void ShowVersionHyperlink_Click(object sender, RoutedEventArgs e)
-            => SetManagerStatus(true);
+        private void ShowVersionHyperlink_Click(object sender, RoutedEventArgs e) => ApplyManagerState(true);
 
-        void SetManagerStatus(bool ShowVersion = false)
+        void ApplyManagerState(bool ShowVersion = false)
         {
             if (Manager is null) throw new InvalidDataException();
 
+            // Load version and manager path
             ShowVersionHyperlink.Visibility = Visibility.Collapsed;
             LongVersionTextBlock.Visibility = Visibility.Collapsed;
-            if (Manager.IsEnabled() && Manager.Status.Found)
+            LongVersionTextBlock.Text = Manager.Status.Version + "\n";
+            LocationLabel.Text = Manager.Status.ExecutablePath + " " + Manager.Status.ExecutableCallArgs.Trim();
+            if (Manager.Status.ExecutablePath == "") LocationLabel.Text = CoreTools.Translate("The executable file for {0} was not found", Manager.DisplayName);
+
+            // Load executable selection
+            ExecutableComboBox.SelectionChanged -= ExecutableComboBox_SelectionChanged;
+            ExecutableComboBox.Items.Clear();
+            foreach(var path in Manager.FindCandidateExecutableFiles())
+            {
+                ExecutableComboBox.Items.Add(path);
+            }
+            string selectedValue = Settings.GetDictionaryItem<string, string>(Settings.K.ManagerPaths, Manager.Name) ?? "";
+            if (string.IsNullOrEmpty(selectedValue))
+            {
+                var exe = Manager.GetExecutableFile();
+                selectedValue = exe.Item1? exe.Item2: "";
+            }
+
+            ExecutableComboBox.SelectedValue = selectedValue;
+            ExecutableComboBox.SelectionChanged += ExecutableComboBox_SelectionChanged;
+
+
+            // Load version block text and style
+            if (_isLoading)
+            {
+                ManagerStatusBar.Severity = InfoBarSeverity.Informational;
+                ManagerStatusBar.Title = CoreTools.Translate("Please wait...");
+                ManagerStatusBar.Message = "";
+            }
+            else if (!Manager.IsEnabled())
+            {
+                ManagerStatusBar.Severity = InfoBarSeverity.Warning;
+                ManagerStatusBar.Title = CoreTools.Translate("{pm} is disabled").Replace("{pm}", Manager.DisplayName);
+                ManagerStatusBar.Message = CoreTools.Translate("Enable it to install packages from {pm}.").Replace("{pm}", Manager.DisplayName);
+            }
+            else if (Manager.Status.Found)
             {
                 ManagerStatusBar.Severity = InfoBarSeverity.Success;
-                ManagerStatusBar.Title = CoreTools.Translate("{pm} is enabled and ready to go", new Dictionary<string, object?> { { "pm", Manager.DisplayName } });
+                ManagerStatusBar.Title = CoreTools.Translate("{pm} is enabled and ready to go").Replace("{pm}", Manager.DisplayName);
                 if (!Manager.Status.Version.Contains('\n'))
                 {
-                    ManagerStatusBar.Message =
-                        CoreTools.Translate("{pm} version:", new Dictionary<string, object?> { { "pm", Manager.DisplayName } }) + $" {Manager.Status.Version}";
+                    ManagerStatusBar.Message = CoreTools.Translate(
+                            "{pm} version:").Replace("{pm}", Manager.DisplayName) + $" {Manager.Status.Version}";
                 }
                 else if (ShowVersion)
                 {
-                    ManagerStatusBar.Message = CoreTools.Translate("{pm} version:",
-                        new Dictionary<string, object?> { { "pm", Manager.DisplayName } });
+                    ManagerStatusBar.Message = CoreTools.Translate("{pm} version:").Replace("{pm}", Manager.DisplayName);
                     LongVersionTextBlock.Visibility = Visibility.Visible;
                 }
                 else
@@ -401,22 +425,12 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                     ShowVersionHyperlink.Visibility = Visibility.Visible;
                 }
             }
-            else if (Manager.IsEnabled() && !Manager.Status.Found)
+            else // manager was not found
             {
                 ManagerStatusBar.Severity = InfoBarSeverity.Error;
-                ManagerStatusBar.Title = CoreTools.Translate("{pm} was not found!",
-                    new Dictionary<string, object?> { { "pm", Manager.DisplayName } });
-                ManagerStatusBar.Message = CoreTools.Translate(
-                    "You may need to install {pm} in order to use it with WingetUI.",
-                    new Dictionary<string, object?> { { "pm", Manager.DisplayName } });
-            }
-            else if (!Manager.IsEnabled())
-            {
-                ManagerStatusBar.Severity = InfoBarSeverity.Informational;
-                ManagerStatusBar.Title = CoreTools.Translate("{pm} is disabled",
-                    new Dictionary<string, object?> { { "pm", Manager.DisplayName } });
-                ManagerStatusBar.Message = CoreTools.Translate("Enable it to install packages from {pm}.",
-                    new Dictionary<string, object?> { { "pm", Manager.DisplayName } });
+                ManagerStatusBar.Title = CoreTools.Translate("{pm} was not found!").Replace("{pm}", Manager.DisplayName);
+                ManagerStatusBar.Message = CoreTools.Translate("You may need to install {pm} in order to use it with WingetUI.")
+                    .Replace("{pm}", Manager.DisplayName);
             }
         }
 
@@ -431,7 +445,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
 
         private void ManagerLogs_Click(object sender, RoutedEventArgs e)
         {
-            MainApp.Instance.MainWindow.NavigationPage.OpenManagerLogs(Manager as IPackageManager);
+            MainApp.Instance.MainWindow.NavigationPage.OpenManagerLogs(Manager);
         }
 
         private void ExecutableComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -440,12 +454,27 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 return;
 
             Settings.SetDictionaryItem(Settings.K.ManagerPaths, Manager!.Name, ExecutableComboBox.SelectedValue.ToString());
-            RestartRequired?.Invoke(this, EventArgs.Empty);
+            _ = ReloadPackageManager();
         }
 
         private void GoToSecureSettingsBtn_Click(object sender, RoutedEventArgs e)
         {
             MainApp.Instance.MainWindow.NavigationPage.OpenSettingsPage(typeof(Administrator));
+        }
+
+        private void EnableManager_OnStateChanged(object? sender, EventArgs e)
+            => _ = ReloadPackageManager();
+
+        private async Task ReloadPackageManager()
+        {
+            if (Manager is null) return;
+            int loadingId = DialogHelper.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
+            _isLoading = true;
+            ApplyManagerState();
+            await Task.Run(Manager.Initialize);
+            _isLoading = false;
+            ApplyManagerState();
+            DialogHelper.HideLoadingDialog(loadingId);
         }
     }
 }

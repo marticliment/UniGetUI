@@ -22,6 +22,7 @@ using UniGetUI.PackageEngine.Classes.Serializable;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.PackageEngine.PackageLoader;
 using UniGetUI.Pages.DialogPages;
 
 namespace UniGetUI.Interface.SoftwarePages
@@ -62,7 +63,7 @@ namespace UniGetUI.Interface.SoftwarePages
             DisableSuggestedResultsRadio = true,
             PageName = "Bundles",
 
-            Loader = PEInterface.PackageBundlesLoader,
+            Loader = PackageBundlesLoader.Instance,
             PageRole = OperationType.Install,
 
             NoPackages_BackgroundText = CoreTools.Translate("Add packages or open an existing package bundle"),
@@ -277,7 +278,7 @@ namespace UniGetUI.Interface.SoftwarePages
             RemoveSelected.Click += (_, _) =>
             {
                 HasUnsavedChanges = true;
-                PEInterface.PackageBundlesLoader.RemoveRange(FilteredPackages.GetCheckedPackages());
+                PackageBundlesLoader.Instance.RemoveRange(FilteredPackages.GetCheckedPackages());
             };
 
             IReadOnlyList<IPackage> GetCheckedNonInstalledPackages()
@@ -703,7 +704,7 @@ namespace UniGetUI.Interface.SoftwarePages
             foreach (var pkg in DeserializedData.incompatible_packages)
                 packages.Add(DeserializeIncompatiblePackage(pkg, NullSource.Instance));
 
-            await PEInterface.PackageBundlesLoader.AddPackagesAsync(packages);
+            await PackageBundlesLoader.Instance.AddPackagesAsync(packages);
 
             return (DeserializedData.export_version, report);
         }

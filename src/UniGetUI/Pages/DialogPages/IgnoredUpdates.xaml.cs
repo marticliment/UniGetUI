@@ -7,6 +7,7 @@ using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Classes.Packages.Classes;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Managers.WingetManager;
+using UniGetUI.PackageEngine.PackageLoader;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -107,9 +108,9 @@ namespace UniGetUI.Interface
                 Version = version;
             }
 
-            string CurrentVersion = PEInterface.InstalledPackagesLoader.GetPackageForId(id)?.VersionString ?? "Unknown";
+            string CurrentVersion = InstalledPackagesLoader.Instance.GetPackageForId(id)?.VersionString ?? "Unknown";
 
-            if (PEInterface.UpgradablePackagesLoader.IgnoredPackages.TryGetValue(Id, out IPackage? package)
+            if (UpgradablePackagesLoader.Instance.IgnoredPackages.TryGetValue(Id, out IPackage? package)
                 && package.NewVersionString != package.VersionString)
             {
                 NewVersion = CurrentVersion + " \u27a4 " + package.NewVersionString;
@@ -133,13 +134,13 @@ namespace UniGetUI.Interface
             await Task.Run(() => IgnoredUpdatesDatabase.Remove(ignoredId));
 
             // If possible, add the package to the software updates tab again
-            if (PEInterface.UpgradablePackagesLoader.IgnoredPackages.TryRemove(Id, out IPackage? nativePackage)
+            if (UpgradablePackagesLoader.Instance.IgnoredPackages.TryRemove(Id, out IPackage? nativePackage)
                 && nativePackage.NewVersionString != nativePackage.VersionString)
             {
-                await PEInterface.UpgradablePackagesLoader.AddForeign(nativePackage);
+                await UpgradablePackagesLoader.Instance.AddForeign(nativePackage);
             }
 
-            foreach (IPackage package in PEInterface.InstalledPackagesLoader.Packages)
+            foreach (IPackage package in InstalledPackagesLoader.Instance.Packages)
             {
                 if (Manager == package.Manager && package.Id == Id)
                 {

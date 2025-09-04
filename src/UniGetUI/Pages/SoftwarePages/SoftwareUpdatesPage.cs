@@ -17,6 +17,7 @@ using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Classes.Packages.Classes;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.PackageLoader;
 using UniGetUI.Pages.DialogPages;
 
 namespace UniGetUI.Interface.SoftwarePages
@@ -41,7 +42,7 @@ namespace UniGetUI.Interface.SoftwarePages
             DisableSuggestedResultsRadio = true,
             PageName = "Updates",
 
-            Loader = PEInterface.UpgradablePackagesLoader,
+            Loader = UpgradablePackagesLoader.Instance,
             PageRole = OperationType.Update,
 
             NoPackages_BackgroundText = CoreTools.Translate("Hooray! No updates were found."),
@@ -173,7 +174,7 @@ namespace UniGetUI.Interface.SoftwarePages
                     if (SelectedItem != null)
                     {
                         SelectedItem.AddToIgnoredUpdatesAsync("<" + menuTime.GetDateFromNow());
-                        PEInterface.UpgradablePackagesLoader.IgnoredPackages[SelectedItem.Id] = SelectedItem;
+                        UpgradablePackagesLoader.Instance.IgnoredPackages[SelectedItem.Id] = SelectedItem;
                         Loader.Remove(SelectedItem);
                     }
                 };
@@ -311,8 +312,8 @@ namespace UniGetUI.Interface.SoftwarePages
                 foreach (IPackage package in FilteredPackages.GetCheckedPackages())
                 {
                     await package.AddToIgnoredUpdatesAsync();
-                    PEInterface.UpgradablePackagesLoader.Remove(package);
-                    PEInterface.UpgradablePackagesLoader.IgnoredPackages[package.Id] = package;
+                    UpgradablePackagesLoader.Instance.Remove(package);
+                    UpgradablePackagesLoader.Instance.IgnoredPackages[package.Id] = package;
                 }
             };
 
@@ -512,8 +513,8 @@ namespace UniGetUI.Interface.SoftwarePages
             }
 
             _ = package.AddToIgnoredUpdatesAsync();
-            PEInterface.UpgradablePackagesLoader.Remove(package);
-            PEInterface.UpgradablePackagesLoader.IgnoredPackages[package.Id] = package;
+            UpgradablePackagesLoader.Instance.Remove(package);
+            UpgradablePackagesLoader.Instance.IgnoredPackages[package.Id] = package;
         }
 
         private void MenuSkipVersion_Invoked(object sender, RoutedEventArgs e)
@@ -525,8 +526,8 @@ namespace UniGetUI.Interface.SoftwarePages
             }
 
             _ = package.AddToIgnoredUpdatesAsync(package.NewVersionString);
-            PEInterface.UpgradablePackagesLoader.Remove(package);
-            PEInterface.UpgradablePackagesLoader.IgnoredPackages[package.Id] = package;
+            UpgradablePackagesLoader.Instance.Remove(package);
+            UpgradablePackagesLoader.Instance.IgnoredPackages[package.Id] = package;
         }
 
 
