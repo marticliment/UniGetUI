@@ -224,6 +224,7 @@ namespace UniGetUI.Interface
             int viewMode = Settings.GetDictionaryItem<string, int>(Settings.K.PackageListViewMode, PAGE_NAME);
             if (viewMode < 0 || viewMode >= ViewModeSelector.Items.Count) viewMode = 0;
             ViewModeSelector.SelectedIndex = viewMode;
+            GenerateHeaderBarTitles();
 
             ToolTipService.SetToolTip(Selector_List, CoreTools.Translate("List"));
             ToolTipService.SetToolTip(Selector_Grid, CoreTools.Translate("Grid"));
@@ -331,11 +332,6 @@ namespace UniGetUI.Interface
             InstantSearchCheckbox.IsChecked = !Settings.GetDictionaryItem<string, bool>(Settings.K.DisableInstantSearch, PAGE_NAME);
 
             HeaderIcon.FontWeight = new Windows.UI.Text.FontWeight(700);
-            NameHeader.Content = CoreTools.Translate("Package Name");
-            IdHeader.Content = CoreTools.Translate("Package ID");
-            VersionHeader.Content = CoreTools.Translate("Version");
-            NewVersionHeader.Content = CoreTools.Translate("New version");
-            SourceHeader.Content = CoreTools.Translate("Source");
 
             NameHeader.Click += (_, _) => SortPackagesBy(ObservablePackageCollection.Sorter.Name);
             IdHeader.Click += (_, _) => SortPackagesBy(ObservablePackageCollection.Sorter.Id);
@@ -361,6 +357,26 @@ namespace UniGetUI.Interface
 
             Loaded += (_, _) => ChangeFilteringPaneLayout();
             UpdateSortingMenu();
+        }
+
+        private void GenerateHeaderBarTitles()
+        {
+            if (ViewModeSelector.SelectedIndex == 0)
+            {
+                NameHeader.Content = CoreTools.Translate("Package Name");
+                IdHeader.Content = CoreTools.Translate("Package ID");
+                VersionHeader.Content = CoreTools.Translate("Version");
+                NewVersionHeader.Content = CoreTools.Translate("New version");
+                SourceHeader.Content = CoreTools.Translate("Source");
+            }
+            else
+            {
+                NameHeader.Content = "";
+                IdHeader.Content = "";
+                VersionHeader.Content = "";
+                NewVersionHeader.Content = "";
+                SourceHeader.Content = "";
+            }
         }
 
         private void Loader_PackagesChanged(object? sender, PackagesChangedEvent packagesChangedEvent)
@@ -1376,9 +1392,11 @@ namespace UniGetUI.Interface
             ToggleFiltersButton.IsChecked = false;
             HideFilteringPane();
         }
+
         private void ViewModeSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Settings.SetDictionaryItem(Settings.K.PackageListViewMode, PAGE_NAME, ViewModeSelector.SelectedIndex);
+            GenerateHeaderBarTitles();
         }
 
         FrameworkElement _lastContextMenuButtonTapped = null!;
