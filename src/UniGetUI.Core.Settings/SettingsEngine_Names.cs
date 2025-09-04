@@ -82,6 +82,7 @@ public static partial class Settings
         InstallInstalledPackagesBundlesPage,
         ProhibitElevation,
         DisableIntegrityChecks,
+        UseLegacyElevator,
 
         Test1,
         Test2,
@@ -90,7 +91,7 @@ public static partial class Settings
         Test5,
         Test6,
         Test7_Legacy,
-        Unset
+        Unset,
     };
 
     public static string ResolveKey(K key)
@@ -175,6 +176,7 @@ public static partial class Settings
             K.InstallInstalledPackagesBundlesPage => "InstallInstalledPackagesBundlesPage",
             K.ProhibitElevation => "ProhibitElevation",
             K.DisableIntegrityChecks => "DisableIntegrityChecks",
+            K.UseLegacyElevator => "UseLegacyElevator",
 
             K.Test1 => "TestSetting1",
             K.Test2 => "TestSetting2",
