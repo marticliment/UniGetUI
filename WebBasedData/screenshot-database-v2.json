@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 12004,
-        "done": 5518,
-        "packages_with_icon": 5518,
-        "packages_with_screenshot": 990,
-        "total_screenshots": 3200
+        "total": 12007,
+        "done": 5519,
+        "packages_with_icon": 5519,
+        "packages_with_screenshot": 993,
+        "total_screenshots": 3206
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -52103,6 +52103,27 @@
                 "https://i.postimg.cc/vBJC0S8R/image.png",
                 "https://i.postimg.cc/RVzjf8bK/image.png",
                 "https://i.postimg.cc/Prz0M4Bc/image.png"
+            ]
+        },
+        "pinga": {
+            "icon": "https://i.postimg.cc/52T9Cz66/pinga.png",
+            "images": [
+                "https://i.postimg.cc/qRnNRLwJ/image.png",
+                "https://i.postimg.cc/76MqdQX2/image.png",
+                "https://i.postimg.cc/Y0dMqG52/image.png"
+            ]
+        },
+        "pingo": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/yNDgqBSS/image.png"
+            ]
+        },
+        "cterm": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/vZJgdk7q/image.png",
+                "https://i.postimg.cc/FFTYK7gJ/image.png"
             ]
         }
     }
