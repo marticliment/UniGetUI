@@ -82,7 +82,6 @@ namespace UniGetUI.Pages.SettingsPages
                     }
                 }
 
-                loadStatusBadge();
                 var toggle = new ToggleSwitch()
                 {
                     Height = 22,
@@ -91,6 +90,7 @@ namespace UniGetUI.Pages.SettingsPages
                     OffContent = "",
                     Margin = new Thickness(-10, 0, 0, 0),
                 };
+                toggle.Loaded += (_, _) => loadStatusBadge();
                 toggle.Toggled += async (_, _) =>
                 {
                     if (_isLoadingToggles) return;
