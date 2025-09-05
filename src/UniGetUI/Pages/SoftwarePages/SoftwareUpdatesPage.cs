@@ -356,6 +356,12 @@ namespace UniGetUI.Interface.SoftwarePages
                         EnableAutoUpdate = false;
                     }
 
+                    if (PowerManager.PowerSupplyStatus is PowerSupplyStatus.NotPresent && Settings.Get(Settings.K.DisableAUPOnBattery))
+                    {
+                        Logger.Warn("Updates will not be installed automatically because the device is on battery.");
+                        EnableAutoUpdate = false;
+                    }
+
                     if (PowerManager.EnergySaverStatus is EnergySaverStatus.On && Settings.Get(Settings.K.DisableAUPOnBatterySaver))
                     {
                         Logger.Warn("Updates will not be installed automatically because battery saver is enabled.");

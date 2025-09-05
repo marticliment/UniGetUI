@@ -61,6 +61,14 @@
                 Text="Do not automatically install updates when the network connection is metered" />
 
             <widgets:CheckboxCard
+                BorderThickness="1,1,1,0"
+                CornerRadius="0"
+                ForceInversion="True"
+                IsEnabled="{x:Bind AutomaticallyUpdatePackages._checkbox.IsOn, Mode=OneWay}"
+                SettingName="DisableAUPOnBattery"
+                Text="Do not automatically install updates when the device runs on battery" />
+
+            <widgets:CheckboxCard
                 CornerRadius="0,0,8,8"
                 ForceInversion="True"
                 IsEnabled="{x:Bind AutomaticallyUpdatePackages._checkbox.IsOn, Mode=OneWay}"
