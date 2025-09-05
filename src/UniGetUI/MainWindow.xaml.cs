@@ -884,11 +884,8 @@ namespace UniGetUI.Interface
             NavigationPage.NavView.IsPaneOpen = !NavigationPage.NavView.IsPaneOpen;
         }
 
-        private void TitleBar_OnBackRequested(TitleBar sender, object args)
-        {
-            NavigationPage?.NavigateBack();
-        }
-
+        private void TitleBar_OnBackRequested(TitleBar sender, object args) => GoBack();
+        public void GoBack() => NavigationPage?.NavigateBack();
 
         private bool? subtitleCollapsed;
         private bool? titleCollapsed;

@@ -25,7 +25,8 @@ namespace UniGetUI.Pages.SettingsPages
             this.InitializeComponent();
             BackButton.Click += (_, _) =>
             {
-                if (MainNavigationFrame.CanGoBack) MainNavigationFrame.GoBack();
+                if (MainNavigationFrame.Content is ManagersHomepage or SettingsHomepage) MainApp.Instance.MainWindow.GoBack();
+                else if (MainNavigationFrame.CanGoBack) MainNavigationFrame.GoBack();
                 else MainNavigationFrame.Navigate(isManagers? typeof(ManagersHomepage): typeof(SettingsHomepage), null, new DrillInNavigationTransitionInfo());
             };
             MainNavigationFrame.Navigated += MainNavigationFrame_Navigated;
@@ -59,20 +60,16 @@ namespace UniGetUI.Pages.SettingsPages
             var page = e.Content as ISettingsPage;
             if (page is null) throw new InvalidCastException("Settings page does not inherit from ISettingsPage");
 
-            BackButton.Visibility = page.CanGoBack ? Visibility.Visible : Visibility.Collapsed;
-            // AnnouncerBorder.Visibility = BackButton.Visibility is Visibility.Collapsed? Visibility.Visible : Visibility.Collapsed;
+            BackButton.Visibility = Visibility.Visible;
             SettingsTitle.Text = page.ShortTitle;
             page.NavigationRequested += Page_NavigationRequested;
             page.RestartRequired += Page_RestartRequired;
             if (page is PackageManagerPage pmpage) pmpage.ReapplyProperties += SettingsBasePage_ReapplyProperties;
-
-            // Scroller.ChangeView(0, 0, 1, true);
         }
 
         private void SettingsBasePage_ReapplyProperties(object? sender, EventArgs e)
         {
             BackButton.Visibility = ((MainNavigationFrame.Content as ISettingsPage)?.CanGoBack ?? true) ? Visibility.Visible : Visibility.Collapsed;
-            // AnnouncerBorder.Visibility = BackButton.Visibility is Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
             SettingsTitle.Text = (MainNavigationFrame.Content as ISettingsPage)?.ShortTitle ?? "INVALID CONTENT PAGE!";
         }
 
@@ -116,6 +113,9 @@ namespace UniGetUI.Pages.SettingsPages
             => MainNavigationFrame.CanGoBack && MainNavigationFrame.Content is not SettingsHomepage && MainNavigationFrame.Content is not ManagersHomepage;
 
         public void GoBack()
-            => MainNavigationFrame.GoBack();
+        {
+            if (CanGoBack()) MainNavigationFrame.GoBack();
+            else MainApp.Instance.MainWindow.GoBack();
+        }
     }
 }
