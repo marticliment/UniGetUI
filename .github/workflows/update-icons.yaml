@@ -2,7 +2,7 @@ name: Retrieve latest icons from excel file
 
 on:
   schedule:
-    - cron: 0 0 * * *
+    - cron: 0 0 */4 * *
   workflow_dispatch:
 
 jobs:
@@ -43,3 +43,4 @@ jobs:
           commit-message: "Update icons and screenshots from the excel file"
           branch: pull-request/update-icons-and-screenshots
           body-path: pr_body.md
+
