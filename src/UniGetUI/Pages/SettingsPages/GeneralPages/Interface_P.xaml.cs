@@ -91,17 +91,6 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             => MainApp.Instance.MainWindow.ApplyTheme();
 
         private void EditAutostartSettings_Click(object sender, EventArgs e)
-        {
-            using Process p = new()
-            {
-                StartInfo = new ProcessStartInfo
-                {
-                    FileName = "ms-settings:startupapps",
-                    UseShellExecute = true,
-                    CreateNoWindow = true
-                }
-            };
-            p.Start();
-        }
+            => CoreTools.Launch("ms-settings:startupapps");
     }
 }

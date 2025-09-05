@@ -100,19 +100,12 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         private void OpenBackupPath_Click(object sender, RoutedEventArgs e)
         {
             string directory = Settings.GetValue(Settings.K.ChangeBackupOutputDirectory);
-            if (directory == "")
-            {
-                directory = CoreData.UniGetUI_DefaultBackupDirectory;
-            }
+            if (directory == "") directory = CoreData.UniGetUI_DefaultBackupDirectory;
 
             directory = directory.Replace("/", "\\");
+            if (!Directory.Exists(directory)) Directory.CreateDirectory(directory);
 
-            if (!Directory.Exists(directory))
-            {
-                Directory.CreateDirectory(directory);
-            }
-
-            Process.Start("explorer.exe", directory);
+            CoreTools.Launch(directory);
         }
 
         private void DoBackup_LOCAL_Click(object sender, EventArgs e) => _ = _doBackup_LOCAL_Click();

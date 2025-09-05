@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Pages;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -83,27 +84,27 @@ namespace UniGetUI.Interface.Dialogs
 
         private void HomeButton_Click(object sender, RoutedEventArgs e)
         {
+            if (!Initialized || webView is null)
+                return;
 
-            if (Initialized && webView is not null)
-            {
-                webView.Source = new Uri("https://marticliment.com/unigetui/help");
-            }
+            webView.Source = new Uri("https://marticliment.com/unigetui/help");
         }
 
         private void ReloadButton_Click(object sender, RoutedEventArgs e)
         {
-            if (Initialized && webView is not null)
-            {
-                webView.Reload();
-            }
+            if (!Initialized || webView is null)
+                return;
+
+            webView.Reload();
         }
 
         private void BrowserButton_Click(object sender, RoutedEventArgs e)
         {
-            if (Initialized && webView is not null)
-            {
-                Process.Start(new ProcessStartInfo { FileName = webView.Source.ToString().Replace("?isWingetUIIframe", "").Replace("&isWingetUIIframe", ""), UseShellExecute = true });
-            }
+            if (!Initialized || webView is null)
+                return;
+
+            string uri = webView.Source.ToString().Replace("?isWingetUIIframe", "").Replace("&isWingetUIIframe", "");
+            CoreTools.Launch(uri);
         }
 
         public void Dispose()

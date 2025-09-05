@@ -629,14 +629,7 @@ public partial class OperationControl: INotifyPropertyChanged
                 Text = CoreTools.Translate("Open install location"),
                 IconName = IconType.OpenFolder,
             };
-            openLocation.Click += (_, _) =>
-            {
-                Process.Start(new ProcessStartInfo {
-                    FileName = location ?? "",
-                    UseShellExecute = true,
-                    Verb = "open"
-                });
-            };
+            openLocation.Click += (_, _) => CoreTools.Launch(location);
             openLocation.IsEnabled = location is not null && Directory.Exists(location);
             optionsMenu.Add(openLocation);
         }
@@ -647,22 +640,7 @@ public partial class OperationControl: INotifyPropertyChanged
                 Text = CoreTools.Translate("Open"),
                 IconName = IconType.Launch,
             };
-            launchInstaller.Click += (_, _) =>
-            {
-                try
-                {
-                    Process.Start(new ProcessStartInfo
-                    {
-                        FileName = downloadOp.DownloadLocation,
-                        UseShellExecute = true
-                    });
-                }
-                catch (Exception ex)
-                {
-                    Logger.Error($"An error occurred while attempting to launch the file {downloadOp.DownloadLocation}.");
-                    Logger.Error(ex);
-                }
-            };
+            launchInstaller.Click += (_, _) => CoreTools.Launch(downloadOp.DownloadLocation);
             launchInstaller.IsEnabled = downloadOp.Status is OperationStatus.Succeeded;
             optionsMenu.Add(launchInstaller);
 

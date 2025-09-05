@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Security.Principal;
 using System.Text;
 using Windows.Networking.Connectivity;
+using ABI.Windows.ApplicationModel.UserDataTasks;
 using UniGetUI.Core.Classes;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Language;
@@ -720,13 +721,36 @@ namespace UniGetUI.Core.Tools
             }
         }
 
+        public static void Launch(string? path)
+        {
+            try
+            {
+                if (path is null) return;
+
+                var p = new Process()
+                {
+                    StartInfo = new()
+                    {
+                        FileName = path,
+                        UseShellExecute = true,
+                        CreateNoWindow = true,
+                    }
+                };
+                p.Start();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
+        }
+
         public static string GetCurrentLocale()
         {
             return LanguageEngine?.Locale ?? "Unset/Unknown";
         }
 
-        private static readonly HashSet<char> illegalPathChars = Path.GetInvalidFileNameChars().ToHashSet();
+        private static readonly HashSet<char> _illegalPathChars = Path.GetInvalidFileNameChars().ToHashSet();
         public static string MakeValidFileName(string name)
-            => string.Concat(name.Where(x => !illegalPathChars.Contains(x)));
+            => string.Concat(name.Where(x => !_illegalPathChars.Contains(x)));
     }
 }

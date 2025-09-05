@@ -1,6 +1,7 @@
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.SettingsEngine.SecureSettings;
+using UniGetUI.Core.Tools;
 
 namespace UniGetUI;
 
@@ -37,11 +38,8 @@ public static class CLIHandler
 
     public static int Help()
     {
-        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
-        {
-            FileName = "https://github.com/marticliment/UniGetUI/blob/main/cli-arguments.md#unigetui-command-line-parameters",
-            UseShellExecute = true
-        });
+        var url = "https://github.com/marticliment/UniGetUI/blob/main/cli-arguments.md#unigetui-command-line-parameters";
+        CoreTools.Launch(url);
         return 0;
     }
 

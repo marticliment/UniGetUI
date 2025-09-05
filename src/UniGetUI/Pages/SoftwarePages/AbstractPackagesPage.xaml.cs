@@ -1014,14 +1014,7 @@ namespace UniGetUI.Interface
         protected void OpenPackageInstallLocation(IPackage? package)
         {
             string? path = package?.Manager.DetailsHelper.GetInstallLocation(package);
-
-            if (path is not null)
-                Process.Start(new ProcessStartInfo
-                {
-                    FileName = path,
-                    UseShellExecute = true,
-                    Verb = "open"
-                });
+            CoreTools.Launch(path);
         }
 
         protected void SharePackage(IPackage? package)

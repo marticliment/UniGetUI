@@ -314,7 +314,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 OpenVcPkgRootLabel.Click += (_, _) =>
                 {
                     string directory = Settings.GetValue(Settings.K.CustomVcpkgRoot).Replace("/", "\\");
-                    if (directory.Any()) Process.Start("explorer.exe", directory);
+                    if (directory.Any()) CoreTools.Launch(directory);
                 };
 
                 Vcpkg_CustomVcpkgRoot.Click += (_, _) =>
