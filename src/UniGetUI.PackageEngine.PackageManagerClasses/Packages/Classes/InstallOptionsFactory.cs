@@ -138,6 +138,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         private static InstallOptions _loadFromDisk(string key)
         {
+            var filePath = Path.Join(CoreData.UniGetUIInstallationOptionsDirectory, key);
             try
             {
                 InstallOptions serializedOptions;
@@ -148,7 +149,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 }
                 else
                 {
-                    var filePath = Path.Join(CoreData.UniGetUIInstallationOptionsDirectory, key);
                     if (!File.Exists(filePath))
                     {
                         // If the file where it should be stored does not exist
@@ -170,7 +170,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             catch (JsonException)
             {
                 Logger.Warn("An error occurred while parsing package " + key + ". The file will be overwritten");
-                File.WriteAllText(key, "{}");
+                try { File.WriteAllText(filePath, "{}"); } catch (Exception ex) { Logger.Warn(ex); }
                 return new();
             }
             catch (Exception e)
