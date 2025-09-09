@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 12007,
-        "done": 5519,
-        "packages_with_icon": 5519,
-        "packages_with_screenshot": 993,
-        "total_screenshots": 3206
+        "total": 12008,
+        "done": 5527,
+        "packages_with_icon": 5527,
+        "packages_with_screenshot": 997,
+        "total_screenshots": 3210
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -10405,8 +10405,10 @@
             "images": []
         },
         "desktopok": {
-            "icon": "https://community.chocolatey.org/content/packageimages/desktopok.10.66.png",
-            "images": []
+            "icon": "https://i.postimg.cc/DyPVnPcT/Desktop-OK.png",
+            "images": [
+                "https://i.postimg.cc/rpz7GX2V/Desktop-OK-1.png"
+            ]
         },
         "desktops": {
             "icon": "",
@@ -10762,6 +10764,12 @@
         "dirhash": {
             "icon": "",
             "images": []
+        },
+        "dirprintok": {
+            "icon": "https://i.postimg.cc/pLWwT50n/Dir-Print-OK.png",
+            "images": [
+                "https://i.postimg.cc/hGw6pyK9/Dir-Print-OK-1.png"
+            ]
         },
         "dirsyncpro": {
             "icon": "https://community.chocolatey.org/content/packageimages/dirsyncpro.1.53.png",
@@ -13858,7 +13866,7 @@
             "images": []
         },
         "everythingtoolbar": {
-            "icon": "",
+            "icon": "https://lecrabeinfo.net/app/uploads/2024/02/everything-toolbar-65ccd9736a92e.png",
             "images": [
                 "https://i.postimg.cc/P5hMrSG5/IfpkHAX.png"
             ]
@@ -32198,7 +32206,7 @@
             "images": []
         },
         "pokemonshowdown": {
-            "icon": "",
+            "icon": "https://play.pokemonshowdown.com/favicon-256.png",
             "images": []
         },
         "pokemontcgonline": {
@@ -33944,8 +33952,10 @@
             "images": []
         },
         "q-dir": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/QdfRWNPY/Q-Dir.png",
+            "images": [
+                "https://i.postimg.cc/tJdcR9W5/Q-Dir-1.png"
+            ]
         },
         "q-dns": {
             "icon": "",
@@ -39404,7 +39414,7 @@
             "images": []
         },
         "spicetify": {
-            "icon": "",
+            "icon": "https://spicetify.app/images/spicetify.png",
             "images": []
         },
         "spicetify-cli": {
@@ -44913,6 +44923,14 @@
             "icon": "https://community.chocolatey.org/content/packageimages/vcredist-all.1.0.1.png",
             "images": []
         },
+        "vcredist-2015-x64": {
+            "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
+            "images": []
+        },
+        "vcredist-2015-x86": {
+            "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
+            "images": []
+        },
         "vcredist140": {
             "icon": "https://community.chocolatey.org/content/packageimages/vcredist140.14.34.31938.png",
             "images": []
@@ -47100,13 +47118,13 @@
             "images": []
         },
         "vscodium": {
-            "icon": "https://community.chocolatey.org/content/packageimages/vscodium.install.1.75.1.23040.png",
+            "icon": "https://dl.flathub.org/media/com/vscodium/codium/6efa4be7fea2ee9f93db27a85f515cc3/icons/128x128/com.vscodium.codium.png",
             "images": [
                 "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/VS_Code_%28Insiders%29.png/800px-VS_Code_%28Insiders%29.png?20210728074118"
             ]
         },
         "vscodium-insiders": {
-            "icon": "",
+            "icon": "https://dl.flathub.org/media/com/vscodium/codium-insiders/8b559d12716a7f31e2aafc6193c1edb8/icons/128x128/com.vscodium.codium-insiders.png",
             "images": []
         },
         "vspatialremotedesktop": {
@@ -48457,7 +48475,7 @@
             ]
         },
         "windowsterminal-preview": {
-            "icon": "",
+            "icon": "https://store-images.s-microsoft.com/image/apps.38612.14050269303149694.7e11f917-1bec-40ee-862c-2c5c3983ffb4.c7fa762a-1448-4ba9-93fb-3b4af6a64c4f",
             "images": []
         },
         "windowsupdate-disableautorestart": {
@@ -48847,8 +48865,10 @@
             "images": []
         },
         "winscan2pdf": {
-            "icon": "https://community.chocolatey.org/content/packageimages/winscan2pdf.8.41.png",
-            "images": []
+            "icon": "https://i.postimg.cc/B6KyyTvR/Win-Scan2-PDF.png",
+            "images": [
+                "https://i.postimg.cc/PJnckCpJ/Win-Scan2-PDF-1.png"
+            ]
         },
         "winscp": {
             "icon": "https://i.postimg.cc/3xtGsCtK/icon.png",
@@ -48970,7 +48990,7 @@
         "wireguard": {
             "icon": "https://community.chocolatey.org/content/packageimages/wireguard.0.5.3.png",
             "images": [
-                "https://i.postimg.cc/s2j7cRzY/image.png"
+                "https://i.postimg.cc/wvRXQFBR/wire1.png"
             ]
         },
         "wirelessconnectioninfo": {
@@ -51451,7 +51471,7 @@
             ]
         },
         "filelocator": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/MHkfsnx8/fileloc.png",
             "images": [
                 "https://i.postimg.cc/7YfLsxm2/image.png",
                 "https://i.postimg.cc/Pqkr51hW/image.png",
