@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Formats.Asn1;
 using System.Text;
 using System.Text.RegularExpressions;
 using UniGetUI.Core.Tools;
@@ -61,58 +62,63 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
 
         protected override IReadOnlyList<Package> _getInstalledPackages_UnSafe()
         {
-            using Process p = new()
-            {
-                StartInfo = new ProcessStartInfo
-                {
-                    FileName = Status.ExecutablePath,
-                    Arguments = Status.ExecutableCallArgs + " \"Get-InstalledPSResource | Format-Table -Property Name,Version,Repository\"",
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    RedirectStandardInput = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                    StandardOutputEncoding = Encoding.UTF8
-                }
-            };
-
-            IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
-
-            p.Start();
-            string? line;
             List<Package> Packages = [];
-            bool DashesPassed = false;
-            while ((line = p.StandardOutput.ReadLine()) is not null)
+            foreach (var env in new[] { "AllUsers", "CurrentUser" })
             {
-                logger.AddToStdOut(line);
-                if (!DashesPassed)
+                using Process p = new()
                 {
-                    if (line.Contains("-----"))
+                    StartInfo = new ProcessStartInfo
                     {
-                        DashesPassed = true;
+                        FileName = Status.ExecutablePath,
+                        Arguments = Status.ExecutableCallArgs +
+                                    $" \"Get-InstalledPSResource -Scope {env} | Format-Table -Property Name,Version,Repository\"",
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true,
+                        RedirectStandardInput = true,
+                        UseShellExecute = false,
+                        CreateNoWindow = true,
+                        StandardOutputEncoding = Encoding.UTF8
+                    }
+                };
+
+                IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
+
+                p.Start();
+                string? line;
+                bool DashesPassed = false;
+                while ((line = p.StandardOutput.ReadLine()) is not null)
+                {
+                    logger.AddToStdOut(line);
+                    if (!DashesPassed)
+                    {
+                        if (line.Contains("-----"))
+                        {
+                            DashesPassed = true;
+                        }
+                    }
+                    else
+                    {
+                        string[] elements = Regex.Replace(line, " {2,}", " ").Split(' ');
+                        if (elements.Length < 3)
+                        {
+                            continue;
+                        }
+
+                        for (int i = 0; i < elements.Length; i++)
+                        {
+                            elements[i] = elements[i].Trim();
+                        }
+
+                        Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1],
+                            SourcesHelper.Factory.GetSourceOrDefault(elements[2]), this,
+                            new(env == "CurrentUser"? PackageScope.User : PackageScope.Machine)));
                     }
                 }
-                else
-                {
-                    string[] elements = Regex.Replace(line, " {2,}", " ").Split(' ');
-                    if (elements.Length < 3)
-                    {
-                        continue;
-                    }
 
-                    for (int i = 0; i < elements.Length; i++)
-                    {
-                        elements[i] = elements[i].Trim();
-                    }
-
-                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1],
-                        SourcesHelper.Factory.GetSourceOrDefault(elements[2]), this));
-                }
+                logger.AddToStdErr(p.StandardError.ReadToEnd());
+                p.WaitForExit();
+                logger.Close(p.ExitCode);
             }
-
-            logger.AddToStdErr(p.StandardError.ReadToEnd());
-            p.WaitForExit();
-            logger.Close(p.ExitCode);
 
             return Packages;
         }
