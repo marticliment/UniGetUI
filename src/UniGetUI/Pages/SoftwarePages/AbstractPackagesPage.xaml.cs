@@ -1067,7 +1067,7 @@ namespace UniGetUI.Interface
 
             int newWidth = Math.Clamp(rawWidth, 0, (int)this.ActualWidth - 250);
 
-            if (newWidth < 204)
+            if (newWidth < 100)
             {
                 HideFilteringPane();
                 Settings.SetDictionaryItem(Settings.K.SidepanelWidths, PAGE_NAME, 250);
