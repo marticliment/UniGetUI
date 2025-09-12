@@ -1065,7 +1065,7 @@ namespace UniGetUI.Interface
                 return;
             }
 
-            int newWidth = Math.Clamp(rawWidth, 0, (int)this.ActualWidth - 250);
+            int newWidth = Math.Clamp(rawWidth, 0, 600);
 
             if (newWidth < 100)
             {

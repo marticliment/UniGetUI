@@ -266,7 +266,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                         }
                     }
 
-                    foreach (string old_subdir in Directory.GetDirectories(OldChocoPath, "*", SearchOption.AllDirectories).Reverse())
+                    foreach (string old_subdir in Directory.GetDirectories(OldChocoPath, "*", SearchOption.AllDirectories))
                     {
                         if (!Directory.EnumerateFiles(old_subdir).Any() && !Directory.EnumerateDirectories(old_subdir).Any())
                         {
