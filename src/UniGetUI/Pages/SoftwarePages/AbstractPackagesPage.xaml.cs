@@ -137,7 +137,20 @@ namespace UniGetUI.Interface
 
         protected IPackage? SelectedItem
         {
-            get => (CurrentPackageList.SelectedItem as PackageWrapper)?.Package;
+            get
+            {
+                if(CurrentPackageList.SelectedItem is PackageWrapper w)
+                    return w.Package;
+
+                var fp = FilteredPackages.GetCheckedPackages();
+                if (fp.Count == 1) return fp.First();
+                DialogHelper.ShowDismissableBalloon(
+                    CoreTools.Translate("Invalid selection"),
+                    fp.Count == 0
+                        ? CoreTools.Translate("No package was selected")
+                        : CoreTools.Translate("More than 1 package was selected"));
+                return null;
+            }
         }
 
         protected ItemsView CurrentPackageList
