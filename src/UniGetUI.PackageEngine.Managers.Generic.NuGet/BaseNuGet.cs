@@ -204,8 +204,18 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 }
             }
 
+            var maxVersions = new Dictionary<string, CoreTools.Version?>();
+            foreach (var pkg in installedPackages)
+            {
+                maxVersions.TryGetValue(pkg.Id, out var ver);
+                if (ver is null || ver < pkg.NormalizedVersion)
+                {
+                    maxVersions[pkg.Id] = pkg.NormalizedVersion;
+                }
+            }
+
             logger.Close(errors);
-            return Packages;
+            return Packages.Where(p => maxVersions[p.Id] < p.NormalizedNewVersion).ToArray();
         }
 
         protected sealed override IReadOnlyList<Package> GetInstalledPackages_UnSafe()
