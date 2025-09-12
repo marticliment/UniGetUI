@@ -1060,19 +1060,21 @@ namespace UniGetUI.Interface
 
         private void SidepanelWidth_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            int newWidth = (int)e.NewSize.Width;
-            if (newWidth == (int)(e.NewSize.Width / 10) || newWidth == 25)
-            {
+            int rawWidth = (int)e.NewSize.Width;
+            if (rawWidth == (int)(e.NewSize.Width / 10) || rawWidth == 25) {
                 return;
             }
 
-            if (newWidth < 100)
+            int newWidth = Math.Clamp(rawWidth, 0, 600);
+
+            if (newWidth < 204)
             {
                 HideFilteringPane();
                 Settings.SetDictionaryItem(Settings.K.SidepanelWidths, PAGE_NAME, 250);
             }
             else
             {
+                FilteringPanel.OpenPaneLength = newWidth;
                 ToggleFiltersButtonWidth.MinWidth = newWidth;
                 Settings.SetDictionaryItem(Settings.K.SidepanelWidths, PAGE_NAME, newWidth);
             }
