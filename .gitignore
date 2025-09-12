@@ -88,3 +88,5 @@ src/global.json
 UniGetUI.Installer.ms-store-test.exe
 UniGetUI Installer_winget-fix-test.exe
 InstallerExtras/uninst-*.e32
+src/.idea/.idea.UniGetUI/.idea/copilot.data.migration.edit.xml
+src/.idea/.idea.UniGetUI/.idea/copilot.data.migration.agent.xml

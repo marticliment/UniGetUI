@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Interfaces;
 
@@ -119,71 +120,89 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// </summary>
         public virtual async Task ReloadPackages()
         {
-            if (DISABLE_RELOAD)
+            try
             {
-                InvokePackagesChangedEvent(false, [], []);
-                return;
-            }
-
-            ClearPackages(emitFinishSignal: false);
-            LoadOperationIdentifier = new Random().Next();
-            int current_identifier = LoadOperationIdentifier;
-            IsLoading = true;
-            StartedLoading?.Invoke(this, EventArgs.Empty);
-
-            if (REQUIRES_INTERNET)
-            {
-                await CoreTools.WaitForInternetConnection();
-            }
-
-            List<Task<IReadOnlyList<IPackage>>> tasks = [];
-
-            foreach (IPackageManager manager in Managers)
-            {
-                if (manager.IsReady())
+                if (DISABLE_RELOAD)
                 {
-                    Task<IReadOnlyList<IPackage>> task = Task.Run(() => LoadPackagesFromManager(manager));
-                    tasks.Add(task);
+                    InvokePackagesChangedEvent(false, [], []);
+                    return;
                 }
-            }
 
-            while (tasks.Count > 0)
-            {
-                foreach (Task<IReadOnlyList<IPackage>> task in tasks.ToArray())
+                if (IsLoading)
                 {
-                    if (!task.IsCompleted)
-                    {
-                        await Task.Delay(100).ConfigureAwait(false);
-                    }
+                    Logger.Debug($"[{this.GetType()}] Packages are already being loaded!!!");
+                    return;
+                }
 
-                    if (task.IsCompleted)
+                ClearPackages(emitFinishSignal: false);
+                LoadOperationIdentifier = new Random().Next();
+                int current_identifier = LoadOperationIdentifier;
+                IsLoading = true;
+                StartedLoading?.Invoke(this, EventArgs.Empty);
+
+                if (REQUIRES_INTERNET)
+                {
+                    await CoreTools.WaitForInternetConnection();
+                }
+
+                List<Task<IReadOnlyList<IPackage>>> tasks = [];
+
+                foreach (IPackageManager manager in Managers)
+                {
+                    if (manager.IsReady())
                     {
-                        if (LoadOperationIdentifier == current_identifier && task.IsCompletedSuccessfully)
+                        Task<IReadOnlyList<IPackage>> task = Task.Run(() => LoadPackagesFromManager(manager));
+                        tasks.Add(task);
+                    }
+                }
+
+                while (tasks.Count > 0)
+                {
+                    foreach (Task<IReadOnlyList<IPackage>> task in tasks.ToArray())
+                    {
+                        if (!task.IsCompleted)
                         {
-                            var toAdd = new List<IPackage>();
-                            foreach (IPackage package in task.Result)
+                            await Task.Delay(100).ConfigureAwait(false);
+                        }
+
+                        if (task.IsCompleted)
+                        {
+                            if (LoadOperationIdentifier == current_identifier && task.IsCompletedSuccessfully)
                             {
-                                if (Contains(package) || !await IsPackageValid(package))
+                                var toAdd = new List<IPackage>();
+                                foreach (IPackage package in task.Result)
                                 {
-                                    continue;
+                                    if (Contains(package) || !await IsPackageValid(package))
+                                    {
+                                        continue;
+                                    }
+
+                                    toAdd.Add(package);
+                                    await AddPackage(package);
                                 }
 
-                                toAdd.Add(package);
-                                await AddPackage(package);
+                                InvokePackagesChangedEvent(true, toAdd, []);
                             }
-                            InvokePackagesChangedEvent(true, toAdd, []);
+
+                            tasks.Remove(task);
                         }
-                        tasks.Remove(task);
                     }
                 }
-            }
 
-            if (LoadOperationIdentifier == current_identifier)
-            {
-                InvokeFinishedLoadingEvent();
-                IsLoaded = true;
+                if (LoadOperationIdentifier == current_identifier)
+                {
+                    InvokeFinishedLoadingEvent();
+                    IsLoaded = true;
+                }
+
+                IsLoading = false;
             }
-            IsLoading = false;
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+                IsLoading = false;
+                throw;
+            }
         }
 
         /// <summary>
@@ -310,16 +329,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
                 return [];
             }
 
-            List<IPackage> result = [];
-            long hash_to_match = package.GetHash();
-            foreach (IPackage local_package in Packages)
-            {
-                if (local_package.GetHash() == hash_to_match)
-                {
-                    result.Add(local_package);
-                }
-            }
-            return result;
+            return Packages.Where(p => p.IsEquivalentTo(package)).ToArray();
         }
 
         public IPackage? GetPackageForId(string id, string? sourceName = null)

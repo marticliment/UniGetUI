@@ -46,51 +46,71 @@ namespace UniGetUI.PackageEngine.PackageLoader
 
         public async Task ReloadPackagesSilently()
         {
-            IsLoading = true;
-            InvokeStartedLoadingEvent();
-
-            List<Task<IReadOnlyList<IPackage>>> tasks = [];
-
-            foreach (IPackageManager manager in Managers)
+            if (IsLoading)
             {
-                if (manager.IsEnabled() && manager.Status.Found)
-                {
-                    Task<IReadOnlyList<IPackage>> task = Task.Run(() => LoadPackagesFromManager(manager));
-                    tasks.Add(task);
-                }
+                Logger.Debug($"[{this.GetType()}] Packages are already being loaded!!!");
+                return;
             }
 
-            while (tasks.Count > 0)
+            try
             {
-                foreach (Task<IReadOnlyList<IPackage>> task in tasks.ToArray())
-                {
-                    if (!task.IsCompleted)
-                    {
-                        await Task.Delay(100);
-                    }
+                IsLoading = true;
+                InvokeStartedLoadingEvent();
 
-                    if (task.IsCompleted)
+                List<Task<IReadOnlyList<IPackage>>> tasks = [];
+
+                foreach (IPackageManager manager in Managers)
+                {
+                    if (manager.IsEnabled() && manager.Status.Found)
                     {
-                        if (task.IsCompletedSuccessfully)
+                        Task<IReadOnlyList<IPackage>> task = Task.Run(() => LoadPackagesFromManager(manager));
+                        tasks.Add(task);
+                    }
+                }
+
+                while (tasks.Count > 0)
+                {
+                    foreach (Task<IReadOnlyList<IPackage>> task in tasks.ToArray())
+                    {
+                        if (!task.IsCompleted)
                         {
-                            foreach (IPackage package in task.Result)
+                            await Task.Delay(100);
+                        }
+
+                        if (task.IsCompleted)
+                        {
+                            if (task.IsCompletedSuccessfully)
                             {
-                                if (!Contains(package))
+                                var toAdd = new List<IPackage>();
+                                foreach (IPackage package in task.Result)
                                 {
+                                    if (Contains(package) || !await IsPackageValid(package))
+                                    {
+                                        continue;
+                                    }
+
                                     Logger.ImportantInfo($"Adding missing package {package.Id} to installed packages list");
+                                    toAdd.Add(package);
                                     await AddPackage(package);
                                 }
+
+                                InvokePackagesChangedEvent(true, toAdd, []);
                             }
-                            InvokePackagesChangedEvent(true, task.Result.ToArray(), []);
+
+                            tasks.Remove(task);
                         }
-                        tasks.Remove(task);
                     }
                 }
+
+                InvokeFinishedLoadingEvent();
+                IsLoading = false;
             }
-
-            InvokeFinishedLoadingEvent();
-            IsLoading = false;
-
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+                IsLoading = false;
+                throw;
+            }
         }
     }
 }
