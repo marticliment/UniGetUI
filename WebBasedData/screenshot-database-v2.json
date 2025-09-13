@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 12008,
-        "done": 5527,
-        "packages_with_icon": 5527,
-        "packages_with_screenshot": 997,
-        "total_screenshots": 3210
+        "total": 12014,
+        "done": 5535,
+        "packages_with_icon": 5535,
+        "packages_with_screenshot": 1007,
+        "total_screenshots": 3246
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -11156,7 +11156,12 @@
         },
         "dnsjumper": {
             "icon": "https://community.chocolatey.org/content/packageimages/dnsjumper.2.2.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/N0WkXr0Z/image.png",
+                "https://i.postimg.cc/XJdck7Gq/image.png",
+                "https://i.postimg.cc/8kdmFcgn/image.png",
+                "https://i.postimg.cc/xT0yLQ0j/image.png"
+            ]
         },
         "dnslookup": {
             "icon": "",
@@ -17715,8 +17720,10 @@
             "images": []
         },
         "gpxsee": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/FKsmkfLh/image.png",
+            "images": [
+                "https://i.postimg.cc/brbjfkK9/image.png"
+            ]
         },
         "graalvm": {
             "icon": "",
@@ -27058,7 +27065,13 @@
         },
         "multimc": {
             "icon": "https://community.chocolatey.org/content/packageimages/multimc.0.6.16.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/65rZjmpj/image.png",
+                "https://i.postimg.cc/Hk3yH85b/image.png",
+                "https://i.postimg.cc/rpmtpyC3/image.png",
+                "https://i.postimg.cc/25KLLp06/image.png",
+                "https://i.postimg.cc/0jmVH0zY/image.png"
+            ]
         },
         "multimon": {
             "icon": "",
@@ -42368,9 +42381,11 @@
             "icon": "https://community.chocolatey.org/content/packageimages/thinupdate.2.06.22.png",
             "images": []
         },
-        "thisiswin11": {
-            "icon": "",
-            "images": []
+        "thisismyfile": {
+            "icon": "https://i.postimg.cc/g2mDwxmL/This-Is-My-File.png",
+            "images": [
+                "https://i.postimg.cc/fTLd1YzK/This-Is-My-File-1.png"
+            ]
         },
         "thonny": {
             "icon": "https://upload.wikimedia.org/wikipedia/commons/e/e2/Thonny_logo.png",
@@ -52144,6 +52159,61 @@
             "images": [
                 "https://i.postimg.cc/vZJgdk7q/image.png",
                 "https://i.postimg.cc/FFTYK7gJ/image.png"
+            ]
+        },
+        "hoppscotch": {
+            "icon": "https://raw.githubusercontent.com/hoppscotch/hoppscotch/refs/heads/main/packages/hoppscotch-common/public/icons/pwa-192x192.png",
+            "images": [
+                "https://raw.githubusercontent.com/hoppscotch/hoppscotch/refs/heads/main/packages/hoppscotch-common/public/images/banner-dark.png"
+            ]
+        },
+        "cryptostuff": {
+            "icon": "https://i.postimg.cc/xjwGFCh0/Crypto-Stuff.png",
+            "images": [
+                "https://i.postimg.cc/W1jGTysC/image.png",
+                "https://i.postimg.cc/JhzjBBDQ/image.png",
+                "https://i.postimg.cc/76TGg1xS/image.png",
+                "https://i.postimg.cc/hvLXYSQj/image.png",
+                "https://i.postimg.cc/BQ3LK1R1/image.png",
+                "https://i.postimg.cc/Kv5Kr8yp/image.png"
+            ]
+        },
+        "servy": {
+            "icon": "https://i.postimg.cc/25PF22gT/image.png",
+            "images": [
+                "https://i.postimg.cc/d3FRKDsy/image.png"
+            ]
+        },
+        "gesturesign": {
+            "icon": "https://i.postimg.cc/tCbHVPYs/image.png",
+            "images": [
+                "https://i.postimg.cc/Jhx81h1s/image.png",
+                "https://i.postimg.cc/h45SzhVx/image.png",
+                "https://i.postimg.cc/dVvtvp8S/image.png",
+                "https://i.postimg.cc/gj8mbHrW/image.png",
+                "https://i.postimg.cc/L8HRGfpc/image.png"
+            ]
+        },
+        "websitewatcher": {
+            "icon": "https://i.postimg.cc/rsRYp50F/wsw.png",
+            "images": [
+                "https://i.postimg.cc/15cbVc7f/image.png",
+                "https://i.postimg.cc/gJgPhy2V/image.png",
+                "https://i.postimg.cc/ZYDSKLgZ/image.png",
+                "https://i.postimg.cc/BQLG8K9F/image.png",
+                "https://i.postimg.cc/0y7Rn1N2/image.png",
+                "https://i.postimg.cc/J0sSB9g8/image.png"
+            ]
+        },
+        "websitewatcherfree": {
+            "icon": "https://i.postimg.cc/rsRYp50F/wsw.png",
+            "images": [
+                "https://i.postimg.cc/MTCgVs8j/image.png",
+                "https://i.postimg.cc/gJgPhy2V/image.png",
+                "https://i.postimg.cc/ZYDSKLgZ/image.png",
+                "https://i.postimg.cc/BQLG8K9F/image.png",
+                "https://i.postimg.cc/0y7Rn1N2/image.png",
+                "https://i.postimg.cc/J0sSB9g8/image.png"
             ]
         }
     }
