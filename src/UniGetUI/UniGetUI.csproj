@@ -27,7 +27,8 @@
     <Target Name="GenerateBuildInfo" BeforeTargets="BeforeBuild">
         <Exec Command="pwsh -File Services/generate-secrets.ps1 $(IntermediateOutputPath)" />
         <ItemGroup>
-            <Compile Include="**/*$(DefaultLanguageSourceExtension)" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder);$(BaseIntermediateOutputPath)**;$(BaseOutputPath)**;@(Compile)" />
+            <Compile Include="**/*$(DefaultLanguageSourceExtension)"
+                     Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder);$(BaseIntermediateOutputPath)**;$(BaseOutputPath)**;@(Compile)" />
         </ItemGroup>
     </Target>
 
@@ -93,10 +94,10 @@
     <PackageReference Include="CommunityToolkit.WinUI.Media" Version="8.2.250402" />
     <PackageReference Include="H.NotifyIcon.WinUI" Version="2.3.0" />
     <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.2.0" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.250907003" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.250606001" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.4948" />
     <PackageReference Include="PhotoSauce.MagicScaler" Version="0.15.0" />
-    <PackageReference Include="System.Drawing.Common" Version="9.0.9" Aliases="DrawingCommon" />
+      <PackageReference Include="System.Drawing.Common" Version="9.0.9" Aliases="DrawingCommon" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
     <PackageReference Include="System.Private.Uri" Version="4.3.2" />
     <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
