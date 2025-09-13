@@ -109,7 +109,6 @@ namespace UniGetUI.PackageEngine.PackageLoader
             {
                 Logger.Error(ex);
                 IsLoading = false;
-                throw;
             }
         }
     }

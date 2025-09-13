@@ -23,7 +23,6 @@ using UniGetUI.Core.Classes;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.Pages.DialogPages;
-// using TitleBar = WinUIEx.TitleBar;
 using WindowExtensions = H.NotifyIcon.WindowExtensions;
 using System.Diagnostics;
 using Windows.UI.Text.Core;
