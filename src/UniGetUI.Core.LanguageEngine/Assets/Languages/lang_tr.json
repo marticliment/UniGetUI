@@ -1058,7 +1058,7 @@
   "{package} was updated successfully": "{package} başarıyla güncellendi",
   "{pcName} installed packages": "{pcName} yüklü paketler",
   "{pm} could not be found": "{pm} bulunamadı",
-  "{pm} found: {state}": "{pm} şurada bulundu: {state}",
+  "{pm} found: {state}": "{pm} bulundu: {state}",
   "{pm} is disabled": "{pm} devre dışı",
   "{pm} is enabled and ready to go": "{pm} etkinleştirildi ve kullanıma hazır",
   "{pm} package manager specific preferences": "{pm} paket yöneticisine özel tercihler",
