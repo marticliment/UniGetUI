@@ -664,7 +664,7 @@
   "Select only <b>if you know what you are doing</b>.": "Вибирайте, тільки <b>якщо ви знаєте, що робите</b>.",
   "Select package file": "Вибрати файл пакета",
   "Select the backup you want to open. Later, you will be able to review which packages you want to install.": "Виберіть резервну копію для відкриття. Пізніше ви зможете переглянути, які пакети/програми ви хочете відновити.",
-  "Select the executable to be used. The following list shows the executables found by UniGetUI": "Виберіть виконавчій файл, який буде використовуватися. Наступний список показує список файлів, знайдених UniGetUI",
+  "Select the executable to be used. The following list shows the executables found by UniGetUI": "Виберіть виконавчій файл, який буде використовуватися. Наступний список містить файли, знайдені UniGetUI",
   "Select the processes that should be closed before this package is installed, updated or uninstalled.": "Виберіть процеси, які мають бути закрити до того як цей пакет буде встановлено, оновлено чи видалено.",
   "Select the source you want to add:": "Виберіть джерело для додавання:",
   "Select upgradable packages by default": "Вибирати пакети, що можна оновити, за замовчуванням",
