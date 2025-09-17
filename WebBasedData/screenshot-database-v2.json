@@ -1,10 +1,10 @@
 {
     "package_count": {
         "total": 12014,
-        "done": 5535,
-        "packages_with_icon": 5535,
-        "packages_with_screenshot": 1007,
-        "total_screenshots": 3246
+        "done": 5537,
+        "packages_with_icon": 5537,
+        "packages_with_screenshot": 1008,
+        "total_screenshots": 3253
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -3314,8 +3314,8 @@
             "icon": "https://community.chocolatey.org/content/packageimages/assistant-computer-control.1.4.4.png",
             "images": []
         },
-        "assume-role": {
-            "icon": "",
+        "Winget.ares-emulator.ares": {
+            "icon": "https://raw.githubusercontent.com/ares-emulator/ares/refs/heads/master/desktop-ui/resource/ares.png",
             "images": []
         },
         "astah": {
@@ -6655,8 +6655,16 @@
             "images": []
         },
         "cascadeur": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/Bb23WKb5/cascadeur.png",
+            "images": [
+                "https://i.postimg.cc/7ZXbfp9v/cascadeur-ss0.png",
+                "https://i.postimg.cc/k54G8fY2/cascadeur-ss1.png",
+                "https://i.postimg.cc/pT5dcyHx/cascadeur-ss2.png",
+                "https://i.postimg.cc/tJ04Kyq6/cascadeur-ss3.png",
+                "https://i.postimg.cc/zvnG5Mvc/cascadeur-ss4.png",
+                "https://i.postimg.cc/15QzM9Yh/cascadeur-ss5.png",
+                "https://i.postimg.cc/vmNBvfC3/cascadeur-ss6.png"
+            ]
         },
         "cascadiacodeitalic": {
             "icon": "",
