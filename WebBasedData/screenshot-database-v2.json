@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 12017,
-        "done": 5545,
-        "packages_with_icon": 5545,
-        "packages_with_screenshot": 1013,
-        "total_screenshots": 3278
+        "total": 12059,
+        "done": 5585,
+        "packages_with_icon": 5585,
+        "packages_with_screenshot": 1019,
+        "total_screenshots": 3304
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -31803,9 +31803,14 @@
         "picpick": {
             "icon": "",
             "images": [
-                "https://picpick.app/static/screenshot_6-5e1b3ae39deaa0e864db567987191881.png",
-                "https://picpick.app/static/screenshot_5-ce960495e0e30e97d983172f9e9b0e7a.png",
-                "https://picpick.app/static/screenshot_2-fa50c1e8d5b5bdcafdd5e647d467cfac.png"
+                "https://i.postimg.cc/ZYHQDcfg/image.png",
+                "https://i.postimg.cc/Qts6f9ch/image.png",
+                "https://i.postimg.cc/yxpv6Lt8/image.png",
+                "https://i.postimg.cc/CxqmYHNw/image.png",
+                "https://i.postimg.cc/j5Zhv8s4/image.png",
+                "https://i.postimg.cc/D0NP384W/image.png",
+                "https://i.postimg.cc/nVSkDwSH/image.png",
+                "https://i.postimg.cc/rFvNhRL3/image.png"
             ]
         },
         "pictoselector": {
@@ -32229,7 +32234,7 @@
         "poedit": {
             "icon": "https://poedit.net/images/icons/poedit/icon_128x128@2x.png",
             "images": [
-                "https://poedit.net/screenshots/mainwin_mac.png"
+                "https://i.postimg.cc/NGJJKCNf/image.png"
             ]
         },
         "poetry": {
@@ -38786,6 +38791,10 @@
         },
         "snagit-2023": {
             "icon": "https://blogs.swarthmore.edu/its/wp-content/uploads/2020/05/Snagit-1024x768.jpg",
+            "images": []
+        },
+        "snagit-2024": {
+            "icon": "https://assets.techsmith.com/Images/content/snagit_icon.svg",
             "images": []
         },
         "snailfm": {
@@ -50948,6 +50957,14 @@
             "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
             "images": []
         },
+        "zulu-10-jdk": {
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
+        },
+        "zulu-10-jre": {
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
+        },
         "zulu-11-jdk": {
             "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
             "images": []
@@ -50956,11 +50973,27 @@
             "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
             "images": []
         },
+        "zulu-12-jdk": {
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
+        },
+        "zulu-12-jre": {
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
+        },
         "zulu-13-jdk": {
             "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
             "images": []
         },
         "zulu-13-jre": {
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
+        },
+        "zulu-14-jdk": {
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
+        },
+        "zulu-14-jre": {
             "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
             "images": []
         },
@@ -50997,6 +51030,62 @@
             "images": []
         },
         "zulu-19-jdk": {
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
+        },
+        "zulu-19-jre": {
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
+        },
+        "zulu-20-jdk": {
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
+        },
+        "zulu-20-jre": {
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
+        },
+        "zulu-21-jdk": {
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
+        },
+        "zulu-21-jre": {
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
+        },
+        "zulu-22-jdk": {
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
+        },
+        "zulu-22-jre": {
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
+        },
+        "zulu-23-jdk": {
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
+        },
+        "zulu-23-jre": {
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
+        },
+        "zulu-24-jdk": {
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
+        },
+        "zulu-24-jre": {
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
+        },
+        "zulu-25-jdk": {
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
+        },
+        "zulu-25-jre": {
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
+        },
+        "zulu-6-jre": {
             "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
             "images": []
         },
@@ -51060,11 +51149,71 @@
             "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
             "images": []
         },
+        "zulufx-17-jre": {
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
+        },
         "zulufx-18-jdk": {
             "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
             "images": []
         },
+        "zulufx-18-jre": {
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
+        },
         "zulufx-19-jdk": {
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
+        },
+        "zulufx-19-jre": {
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
+        },
+        "zulufx-20-jdk": {
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
+        },
+        "zulufx-20-jre": {
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
+        },
+        "zulufx-21-jdk": {
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
+        },
+        "zulufx-21-jre": {
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
+        },
+        "zulufx-22-jdk": {
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
+        },
+        "zulufx-22-jre": {
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
+        },
+        "zulufx-23-jdk": {
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
+        },
+        "zulufx-23-jre": {
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
+        },
+        "zulufx-24-jdk": {
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
+        },
+        "zulufx-24-jre": {
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
+        },
+        "zulufx-25-jdk": {
+            "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
+        },
+        "zulufx-25-jre": {
             "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
             "images": []
         },
@@ -52264,6 +52413,57 @@
                 "https://i.postimg.cc/1RdxDKqz/image.png",
                 "https://i.postimg.cc/V6HhBY5h/image.png",
                 "https://i.postimg.cc/1569tdjS/image.png"
+            ]
+        },
+        "atlantiswordprocessorlite": {
+            "icon": "https://i.postimg.cc/zXV2wVqK/awp.png",
+            "images": [
+                "https://i.postimg.cc/85fsBRXx/image.png"
+            ]
+        },
+        "atlantiswordprocessor": {
+            "icon": "https://i.postimg.cc/zXV2wVqK/awp.png",
+            "images": [
+                "https://i.postimg.cc/15rXH5MR/image.png",
+                "https://i.postimg.cc/Gm32SwSF/image.png",
+                "https://i.postimg.cc/52DhQ8vX/image.png"
+            ]
+        },
+        "elcomsoftupdater": {
+            "icon": "https://i.postimg.cc/d0pGYtbP/UPD.png",
+            "images": [
+                "https://i.postimg.cc/pTmkfSHx/image.png"
+            ]
+        },
+        "jetscreenshot": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/FKLKd3Pz/image.png",
+                "https://i.postimg.cc/zBYGnvMj/image.png",
+                "https://i.postimg.cc/15XsVDXS/image.png",
+                "https://i.postimg.cc/Kv1h8Fpv/image.png",
+                "https://i.postimg.cc/15bhgTb0/image.png"
+            ]
+        },
+        "rcloneui": {
+            "icon": "https://i.postimg.cc/pXHmqzQj/image.png",
+            "images": [
+                "https://i.postimg.cc/dtPypzFL/image.png",
+                "https://i.postimg.cc/xTvz2tjg/image.png",
+                "https://i.postimg.cc/XYny7dpW/image.png"
+            ]
+        },
+        "alterphoto": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/BZcSZyD8/image.png",
+                "https://i.postimg.cc/7YHx5VMK/image.png",
+                "https://i.postimg.cc/X7sndCs4/image.png",
+                "https://i.postimg.cc/YCjM3CPg/image.png",
+                "https://i.postimg.cc/cHGW0MLM/image.png",
+                "https://i.postimg.cc/J01WBrJs/image.png",
+                "https://i.postimg.cc/GtqnFWJq/image.png",
+                "https://i.postimg.cc/Qt86QH4Z/image.png"
             ]
         }
     }
