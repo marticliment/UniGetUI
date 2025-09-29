@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 12059,
-        "done": 5585,
-        "packages_with_icon": 5585,
-        "packages_with_screenshot": 1019,
-        "total_screenshots": 3304
+        "total": 12065,
+        "done": 5591,
+        "packages_with_icon": 5591,
+        "packages_with_screenshot": 1025,
+        "total_screenshots": 3314
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -32724,7 +32724,7 @@
             "icon": "",
             "images": []
         },
-        "powertoys": {
+        "https://i.postimg.cc/KjdjH0cp/pt1.png": {
             "icon": "https://i.postimg.cc/Rq5CRqGj/pticon.png",
             "images": [
                 "https://i.postimg.cc/KjdjH0cp/pt1.png",
@@ -50703,7 +50703,7 @@
             "images": []
         },
         "zen-browser": {
-            "icon": "https://github.com/zen-browser/.github/raw/main/profile/logo-black.png",
+            "icon": "blob:https://github.com/301e6324-a7fd-4bf8-b4b0-5a3f98940488",
             "images": [
                 "https://i.postimg.cc/MTFqp5N4/browsers-i-Ox7z-S8-P-Z2u-WYk9.png",
                 "https://i.postimg.cc/9XDqtnmD/browser-workspaces-Cb-JPkzf-E-Ha2-Q.png",
@@ -52464,6 +52464,46 @@
                 "https://i.postimg.cc/J01WBrJs/image.png",
                 "https://i.postimg.cc/GtqnFWJq/image.png",
                 "https://i.postimg.cc/Qt86QH4Z/image.png"
+            ]
+        },
+        "wondershare-filmora": {
+            "icon": "https://i.postimg.cc/dt1TdfW7/wondershare-1746013641.png",
+            "images": [
+                "https://i.postimg.cc/xd49wsvM/step2-pic.png"
+            ]
+        },
+        "xp89dcgq3k6vld": {
+            "icon": "https://i.postimg.cc/yYZ3vRzc/image.png",
+            "images": [
+                "https://i.postimg.cc/KjdjH0cp/pt1.png",
+                "https://i.postimg.cc/KYZzwkFb/pt2.png",
+                "https://i.postimg.cc/x1VqGp4c/pt3.png",
+                "https://i.postimg.cc/XYKqsKRx/pt4.png"
+            ]
+        },
+        "guru3d-afterburner": {
+            "icon": "https://i.postimg.cc/nzfnVXWr/images.jpg",
+            "images": [
+                "https://i.postimg.cc/43bStnd5/msi-afterburner.png"
+            ]
+        },
+        "guru3d-rtss": {
+            "icon": "https://i.postimg.cc/mD9NM5V0/rivatuner-thumb-megaupp.png",
+            "images": [
+                "https://i.postimg.cc/2jFnDvtB/2021-02-18-ts3-thumbs-831.png"
+            ]
+        },
+        "wargaming-gamecenter": {
+            "icon": "https://i.postimg.cc/tgkHbBFv/Wargaming-Game-Cente2.png",
+            "images": [
+                "https://i.postimg.cc/nhVykvyB/809-07.png",
+                "https://i.postimg.cc/X7Lhprrr/808-2.png"
+            ]
+        },
+        "sandisk-dashboard": {
+            "icon": "https://i.postimg.cc/MG5XLbHW/sandisk-dashboard-icon.png",
+            "images": [
+                "https://i.postimg.cc/J062YgV0/78-BA0-CB7-1-B00-4-F4-B-91-D3-36392-FC6572-B.png"
             ]
         }
     }
