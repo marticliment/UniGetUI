@@ -1,10 +1,10 @@
 {
     "package_count": {
         "total": 12086,
-        "done": 5601,
-        "packages_with_icon": 5601,
-        "packages_with_screenshot": 1036,
-        "total_screenshots": 3353
+        "done": 5602,
+        "packages_with_icon": 5602,
+        "packages_with_screenshot": 1037,
+        "total_screenshots": 3359
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -22500,8 +22500,15 @@
             "images": []
         },
         "klavaro": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/2yp3v5nk/image.png",
+            "images": [
+                "https://i.postimg.cc/NFyL2Hyc/image.png",
+                "https://i.postimg.cc/15qf9DhB/image.png",
+                "https://i.postimg.cc/xCZ1Q16N/image.png",
+                "https://i.postimg.cc/h4J9dzRv/image.png",
+                "https://i.postimg.cc/fbTdTkfp/image.png",
+                "https://i.postimg.cc/W3xqn8cv/image.png"
+            ]
         },
         "klayout": {
             "icon": "https://community.chocolatey.org/content/packageimages/klayout.0.28.5.png",
@@ -51957,7 +51964,7 @@
                 "https://i.postimg.cc/Njj0fctn/image.png"
             ]
         },
-        "sqliteexpertpers": {
+        "sqliteexpert-personal": {
             "icon": "https://i.postimg.cc/KzGKLMhZ/SQLite-Exp.png",
             "images": [
                 "https://i.postimg.cc/02BpscR7/image.png",
@@ -51967,7 +51974,7 @@
                 "https://i.postimg.cc/65yvYn2q/image.png"
             ]
         },
-        "sqliteexpertpro": {
+        "sqliteexpert-professional": {
             "icon": "https://i.postimg.cc/KzGKLMhZ/SQLite-Exp.png",
             "images": [
                 "https://i.postimg.cc/02BpscR7/image.png",
