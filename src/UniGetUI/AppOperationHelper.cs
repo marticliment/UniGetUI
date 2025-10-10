@@ -239,6 +239,20 @@ public partial class MainApp
                 return null;
             }
 
+            // Check for duplicate operations already in the queue
+            var existingOperation = _operationList
+                .Where(x => x.Operation is UpdatePackageOperation updateOp
+                    && updateOp.Package.GetHash() == package.GetHash()
+                    && (x.Operation.Status is OperationStatus.InQueue or OperationStatus.Running))
+                .Select(x => x.Operation)
+                .FirstOrDefault();
+
+            if (existingOperation is not null)
+            {
+                Logger.Info($"Update operation for package {package.Id} is already queued or running. Skipping duplicate.");
+                return existingOperation;
+            }
+
             var options = await InstallOptionsFactory.LoadApplicableAsync(package, elevated, interactive, no_integrity);
             var operation = new UpdatePackageOperation(package, options, ignoreParallel, req);
             operation.OperationSucceeded += (_, _) => TelemetryHandler.UpdatePackage(package, TEL_OP_RESULT.SUCCESS);
