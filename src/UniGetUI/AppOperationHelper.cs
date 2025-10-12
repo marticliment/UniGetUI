@@ -239,20 +239,6 @@ public partial class MainApp
                 return null;
             }
 
-            // Check for duplicate operations already in the queue
-            var existingOperation = _operationList
-                .Where(x => x.Operation is UpdatePackageOperation updateOp
-                    && updateOp.Package.GetHash() == package.GetHash()
-                    && (x.Operation.Status is OperationStatus.InQueue or OperationStatus.Running))
-                .Select(x => x.Operation)
-                .FirstOrDefault();
-
-            if (existingOperation is not null)
-            {
-                Logger.Info($"Update operation for package {package.Id} is already queued or running. Skipping duplicate.");
-                return existingOperation;
-            }
-
             var options = await InstallOptionsFactory.LoadApplicableAsync(package, elevated, interactive, no_integrity);
             var operation = new UpdatePackageOperation(package, options, ignoreParallel, req);
             operation.OperationSucceeded += (_, _) => TelemetryHandler.UpdatePackage(package, TEL_OP_RESULT.SUCCESS);
@@ -273,8 +259,20 @@ public partial class MainApp
         public static async Task UpdateAll()
         {
             foreach (IPackage package in UpgradablePackagesLoader.Instance.Packages)
+            {
                 if (package.Tag is not PackageTag.BeingProcessed and not PackageTag.OnQueue)
-                    await Update(package);
+                {
+                    // Check for duplicate operations already in the queue (prevents duplicates during unattended updates)
+                    var isDuplicate = _operationList.Any(x => x.Operation is UpdatePackageOperation updateOp
+                        && updateOp.Package.GetHash() == package.GetHash()
+                        && (x.Operation.Status is OperationStatus.InQueue or OperationStatus.Running));
+
+                    if (!isDuplicate)
+                        await Update(package);
+                    else
+                        Logger.Info($"Update operation for package {package.Id} is already queued or running. Skipping duplicate in UpdateAll.");
+                }
+            }
         }
 
         public static async Task UpdateAllForManager(string managerName)
@@ -282,8 +280,18 @@ public partial class MainApp
             foreach (IPackage package in UpgradablePackagesLoader.Instance.Packages)
             {
                 if (package.Tag is not PackageTag.OnQueue and not PackageTag.BeingProcessed
-                    && package.Manager.Name == managerName || package.Manager.DisplayName == managerName)
-                    await Update(package);
+                    && (package.Manager.Name == managerName || package.Manager.DisplayName == managerName))
+                {
+                    // Check for duplicate operations already in the queue (prevents duplicates during unattended updates)
+                    var isDuplicate = _operationList.Any(x => x.Operation is UpdatePackageOperation updateOp
+                        && updateOp.Package.GetHash() == package.GetHash()
+                        && (x.Operation.Status is OperationStatus.InQueue or OperationStatus.Running));
+
+                    if (!isDuplicate)
+                        await Update(package);
+                    else
+                        Logger.Info($"Update operation for package {package.Id} is already queued or running. Skipping duplicate in UpdateAllForManager.");
+                }
             }
         }
 
