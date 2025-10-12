@@ -188,7 +188,7 @@
                     VerticalAlignment="Bottom"
                     Foreground="#08a9c3"
                     IsIndeterminate="True"
-                    Visibility="Visible" />
+                    Visibility="Collapsed" />
             </Grid>
         </Frame>
 
