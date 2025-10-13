@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 12086,
-        "done": 5602,
-        "packages_with_icon": 5602,
-        "packages_with_screenshot": 1037,
-        "total_screenshots": 3359
+        "total": 12112,
+        "done": 5632,
+        "packages_with_icon": 5632,
+        "packages_with_screenshot": 1075,
+        "total_screenshots": 3517
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -1419,7 +1419,6 @@
             "images": [
                 "https://startupstash.com/wp-content/uploads/2022/07/adventure-game-studio.jpg",
                 "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/AGS_SCI_template_Room_1.png/1200px-AGS_SCI_template_Room_1.png",
-                "https://www.adventuregamestudio.co.uk/images/editorscreen1large.png",
                 "https://www.adventuregamestudio.co.uk/images/editorscreen2large.png",
                 "https://www.adventuregamestudio.co.uk/images/editorscreen3large.png",
                 "https://www.adventuregamestudio.co.uk/images/editorscreen4large.png"
@@ -14275,8 +14274,10 @@
             ]
         },
         "fastcopy": {
-            "icon": "https://community.chocolatey.org/content/packageimages/fastcopy.install.4.2.1.png",
-            "images": []
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/59HZpDLn/image.png"
+            ]
         },
         "fastest-mouse-clicker": {
             "icon": "https://community.chocolatey.org/content/packageimages/fastest-mouse-clicker.2.6.1.0.png",
@@ -16098,7 +16099,6 @@
             "images": [
                 "https://m.media-amazon.com/images/G/01/sm/shared/166979982420469/social_image._CB409110150_.jpg",
                 "https://theculturednerd.org/wp-content/uploads/2020/10/Crucible-Featured.png",
-                "https://www.allcitycanvas.com/wp-content/uploads/2021/07/new-world-amazon-games-h-1280x720.jpg",
                 "https://www.howtogeek.com/wp-content/uploads/2020/06/0-amazon-games-header.jpg",
                 "https://www.androidheadlines.com/wp-content/uploads/2021/01/Prime-Gaming-Amazon-Games-Launcher.jpg"
             ]
@@ -18505,7 +18505,7 @@
             "images": []
         },
         "hdcleaner": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/T2FY9Szj/HDCleaner.png",
             "images": []
         },
         "hddexpert": {
@@ -27556,44 +27556,146 @@
             ]
         },
         "navicatpremiumlite": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/1RprsTC3/navicatlite.png",
+            "images": [
+                "https://i.postimg.cc/25snfFnf/image.png",
+                "https://i.postimg.cc/Hn2M5qRr/image.png",
+                "https://i.postimg.cc/JztXDdqw/image.png",
+                "https://i.postimg.cc/Ls1ZvYw7/image.png"
+            ]
         },
         "navicatmysql": {
             "icon": "https://i.postimg.cc/7Y26p28r/navsql.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/Nj7008hK/image.png",
+                "https://i.postimg.cc/76bPXp5g/image.png",
+                "https://i.postimg.cc/nVjBhW3J/image.png",
+                "https://i.postimg.cc/J7fJDQF6/image.png",
+                "https://i.postimg.cc/DwFX5wnn/image.png",
+                "https://i.postimg.cc/kgctHPgy/image.png"
+            ]
         },
         "navicatmongodb": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/KYJ2gJvs/navicatmongo.png",
+            "images": [
+                "https://i.postimg.cc/JnyDtycf/image.png",
+                "https://i.postimg.cc/tJWstLcs/image.png",
+                "https://i.postimg.cc/wT5ttYL6/image.png",
+                "https://i.postimg.cc/DwB8gQx9/image.png",
+                "https://i.postimg.cc/zBRv8sqY/image.png",
+                "https://i.postimg.cc/tCbJGvf3/image.png"
+            ]
         },
         "navicatpostgresql": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/QtmwztWv/navicatpost.png",
+            "images": [
+                "https://i.postimg.cc/x1m72gzN/image.png",
+                "https://i.postimg.cc/mDmpw50p/image.png",
+                "https://i.postimg.cc/vTjqR680/image.png",
+                "https://i.postimg.cc/xTJpvggp/image.png",
+                "https://i.postimg.cc/k5cTJHX4/image.png"
+            ]
+        },
+        "navicatoracle": {
+            "icon": "https://i.postimg.cc/PqPCJpdy/navicatora.png",
+            "images": [
+                "https://i.postimg.cc/gcq2Yq35/image.png",
+                "https://i.postimg.cc/MpX6bCN4/image.png",
+                "https://i.postimg.cc/Ssbm4Jsw/image.png",
+                "https://i.postimg.cc/Y23tc2wX/image.png",
+                "https://i.postimg.cc/QxdhjL8W/image.png",
+                "https://i.postimg.cc/SxX4zWzy/image.png",
+                "https://i.postimg.cc/3RhQ6VfG/image.png"
+            ]
         },
         "navicatredis": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/W4X7LJXT/navicatredis.png",
+            "images": [
+                "https://i.postimg.cc/15w2xJ6N/image.png",
+                "https://i.postimg.cc/PqrRwH7d/image.png",
+                "https://i.postimg.cc/7LsQ1c8w/image.png",
+                "https://i.postimg.cc/Y9TnZWCF/image.png",
+                "https://i.postimg.cc/2jBXv20t/image.png",
+                "https://i.postimg.cc/vHrq2DFQ/image.png"
+            ]
         },
         "navicatmariadb": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/sgXV3kJc/image.png",
+                "https://i.postimg.cc/8CfN6L94/image.png",
+                "https://i.postimg.cc/DwFX5wnn/image.png",
+                "https://i.postimg.cc/T2JGgd7B/image.png",
+                "https://i.postimg.cc/2yzs2WcB/image.png"
+            ]
         },
         "navicatsnowflake": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/ZnKQrSnF/image.png",
+                "https://i.postimg.cc/BZMkJX7r/image.png",
+                "https://i.postimg.cc/13Nj0MRP/image.png",
+                "https://i.postimg.cc/qqRmNxZq/image.png",
+                "fv"
+            ]
         },
         "navicatsqlite": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/C1456jNJ/navicatsqlite.png",
+            "images": [
+                "https://i.postimg.cc/Y982xt2q/image.png",
+                "https://i.postimg.cc/rFDyS6vf/image.png",
+                "https://i.postimg.cc/DzT2kS80/image.png",
+                "https://i.postimg.cc/0Q5PjhGs/image.png",
+                "https://i.postimg.cc/0Q5PjhGs/image.png"
+            ]
         },
         "navicatmonitor": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/NGPRxcPP/navicatmon.png",
+            "images": [
+                "https://i.postimg.cc/tgPBKg8q/image.png",
+                "https://i.postimg.cc/c4HXshVs/image.png",
+                "https://i.postimg.cc/DzVgPTmn/image.png",
+                "https://i.postimg.cc/bJp949x8/image.png",
+                "https://i.postimg.cc/KjYr8csh/image.png",
+                "https://i.postimg.cc/Yqhzc9WW/image.png"
+            ]
         },
         "navicatdatamodeler": {
             "icon": "https://i.postimg.cc/vHhVPnWM/navdatamod.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/FsjwLDTC/image.png",
+                "https://i.postimg.cc/C1BQLNZj/image.png",
+                "https://i.postimg.cc/wTdGgD98/image.png",
+                "https://i.postimg.cc/RZSpn932/image.png"
+            ]
+        },
+        "navicatdatamodelerlite": {
+            "icon": "https://i.postimg.cc/qMx4TJHd/modelerlite.png",
+            "images": [
+                "https://i.postimg.cc/FsjwLDTC/image.png",
+                "https://i.postimg.cc/C1BQLNZj/image.png",
+                "https://i.postimg.cc/wTdGgD98/image.png",
+                "https://i.postimg.cc/RZSpn932/image.png"
+            ]
+        },
+        "navicatonpremserver": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/d3nrMMq0/image.png",
+                "https://i.postimg.cc/Y02LzX17/image.png",
+                "https://i.postimg.cc/9MCDcxg4/image.png",
+                "https://i.postimg.cc/mkh2rKYy/image.png"
+            ]
+        },
+        "navicatsqlserver": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/d3b8J2bx/image.png",
+                "https://i.postimg.cc/PrDW27D0/image.png",
+                "https://i.postimg.cc/HLYbWshB/image.png",
+                "https://i.postimg.cc/G29YYgrN/image.png",
+                "https://i.postimg.cc/2jVgGnxK/image.png"
+            ]
         },
         "nbfc": {
             "icon": "",
@@ -28167,7 +28269,12 @@
         },
         "networx": {
             "icon": "https://community.chocolatey.org/content/packageimages/networx.6.2.5.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/sxWybn53/image.png",
+                "https://i.postimg.cc/X7Mn9b0F/image.png",
+                "https://i.postimg.cc/MGGwzZ1P/image.png",
+                "https://i.postimg.cc/j5pY6zmP/image.png"
+            ]
         },
         "newfield": {
             "icon": "https://community.chocolatey.org/content/packageimages/newfield.install.1.03.png",
@@ -32775,7 +32882,7 @@
             "images": []
         },
         "powertoys": {
-            "icon": "https://i.postimg.cc/Rq5CRqGj/pticon.png",
+            "icon": "https://i.postimg.cc/DfmW7XGy/pticon.png",
             "images": [
                 "https://i.postimg.cc/KjdjH0cp/pt1.png",
                 "https://i.postimg.cc/KYZzwkFb/pt2.png",
@@ -33697,7 +33804,12 @@
         },
         "pvs-studio": {
             "icon": "https://community.chocolatey.org/content/packageimages/pvs-studio.7.23.68542.86.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/rwz0mx25/image.png",
+                "https://i.postimg.cc/bwGr8P1v/image.png",
+                "https://i.postimg.cc/3RZJ9xHk/image.png",
+                "https://i.postimg.cc/9XJQ70pz/image.png"
+            ]
         },
         "pwgen": {
             "icon": "https://community.chocolatey.org/content/packageimages/pwgen.install.3.4.5.png",
@@ -48229,8 +48341,15 @@
             "images": []
         },
         "winbox": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/8CKZvh7N/winbox.png",
+            "images": [
+                "https://i.postimg.cc/DZPRRWZs/image.png",
+                "https://i.postimg.cc/gjc1pYLp/image.png",
+                "https://i.postimg.cc/D0CHyt1B/image.png",
+                "https://i.postimg.cc/YqsTcBpb/image.png",
+                "https://i.postimg.cc/nLtRZH6F/image.png",
+                "https://i.postimg.cc/dtk4ykYm/image.png"
+            ]
         },
         "winbtrfs": {
             "icon": "",
@@ -52634,13 +52753,186 @@
             ]
         },
         "kyno": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/FR3Z7svR/kyno.png",
             "images": []
         },
         "dnslookupview": {
             "icon": "",
             "images": [
                 "https://i.postimg.cc/T3j7Mm4s/image.png"
+            ]
+        },
+        "pellesc": {
+            "icon": "https://i.postimg.cc/dV1TgSZ1/pelles.png",
+            "images": [
+                "https://i.postimg.cc/ZKqRqvb8/image.png",
+                "https://i.postimg.cc/vZJHXPrF/image.png",
+                "https://i.postimg.cc/sxH3WKjG/image.png",
+                "https://i.postimg.cc/DyD2yCpM/image.png",
+                "https://i.postimg.cc/25dmGCjR/image.png",
+                "https://i.postimg.cc/FRDvtGJ6/image.png",
+                "https://i.postimg.cc/NGCtpJtF/image.png",
+                "https://i.postimg.cc/9QZjXc7w/image.png"
+            ]
+        },
+        "gifmoviegear": {
+            "icon": "https://i.postimg.cc/MTcC4xqv/movgear.png",
+            "images": [
+                "https://i.postimg.cc/k4dNrvdN/image.png",
+                "https://i.postimg.cc/90gqfGvm/image.png",
+                "https://i.postimg.cc/T3gp8M2c/image.png"
+            ]
+        },
+        "navicatbiviewer": {
+            "icon": "https://i.postimg.cc/MH1KC1qc/navicatbiv.png",
+            "images": [
+                "https://i.postimg.cc/76WmFTmr/image.png",
+                "https://i.postimg.cc/sftRSBsr/image.png",
+                "https://i.postimg.cc/5tNc1LqL/image.png"
+            ]
+        },
+        "navicatbi": {
+            "icon": "https://i.postimg.cc/BQZr9xqR/navicatbi.png",
+            "images": [
+                "https://i.postimg.cc/pTqBD5gT/image.png",
+                "https://i.postimg.cc/y6pPx9hq/image.png",
+                "https://i.postimg.cc/d0FRp9FL/image.png",
+                "https://i.postimg.cc/W3bGbbhj/image.png",
+                "https://i.postimg.cc/8c7LMKdG/image.png"
+            ]
+        },
+        "pixplant": {
+            "icon": "https://i.postimg.cc/hjP8sbWs/PixPlant.png",
+            "images": [
+                "https://i.postimg.cc/VvZKnZJC/image.png",
+                "https://i.postimg.cc/T2t7z1tn/image.png",
+                "https://i.postimg.cc/vHjPmjRS/image.png",
+                "https://i.postimg.cc/VLT7NTQC/image.png",
+                "https://i.postimg.cc/7Z2KJVws/image.png",
+                "https://i.postimg.cc/1z0MJ3g1/image.png"
+            ]
+        },
+        "softroslanmessenger": {
+            "icon": "https://i.postimg.cc/DwPBcz4T/smm.png",
+            "images": [
+                "https://i.postimg.cc/gk9sFhvw/image.png",
+                "https://i.postimg.cc/XY4gX0HT/image.png",
+                "https://i.postimg.cc/g00qqHP6/image.png",
+                "https://i.postimg.cc/Bvw5hPSZ/image.png",
+                "https://i.postimg.cc/HxqwmG8B/image.png",
+                "https://i.postimg.cc/9FjdNhhV/image.png"
+            ]
+        },
+        "dbschema": {
+            "icon": "https://i.postimg.cc/wT7pPSQ3/DbSchema.png",
+            "images": [
+                "https://i.postimg.cc/QCCR2T5v/image.png",
+                "https://i.postimg.cc/c4VVz6Jn/image.png",
+                "https://i.postimg.cc/vmyCQjf6/image.png",
+                "https://i.postimg.cc/DZyDGXCZ/image.png",
+                "https://i.postimg.cc/90Dn8j5L/image.png",
+                "https://i.postimg.cc/L4W7qhLQ/image.png",
+                "https://i.postimg.cc/k57hrSPV/image.png"
+            ]
+        },
+        "fasm": {
+            "icon": "https://i.postimg.cc/gkHr44mX/fasm.png",
+            "images": [
+                "https://i.postimg.cc/sDmD5X40/image.png",
+                "https://i.postimg.cc/DwDhcbJm/image.png"
+            ]
+        },
+        "axisdevicecompatibilitytool": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/sDx7Btpj/image.png"
+            ]
+        },
+        "hotalarmclock": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/mrkgVsgw/image.png",
+                "https://i.postimg.cc/Y0K2pLf4/image.png",
+                "https://i.postimg.cc/fRTzTNX5/image.png",
+                "https://i.postimg.cc/Y9gkyqKj/image.png"
+            ]
+        },
+        "httpanalyzer": {
+            "icon": "https://i.postimg.cc/mgvH5jt1/httpanal.png",
+            "images": [
+                "https://i.postimg.cc/tT27pNC3/image.png",
+                "https://i.postimg.cc/wTSMqvgH/image.png",
+                "https://i.postimg.cc/gc7ksJw0/image.png",
+                "https://i.postimg.cc/dtTQxYrK/image.png",
+                "https://i.postimg.cc/1zy9XVTS/image.png",
+                "https://i.postimg.cc/XJJ4cS4P/image.png"
+            ]
+        },
+        "connectionqualitymonitor": {
+            "icon": "https://i.postimg.cc/Jh3rzYFm/image.png",
+            "images": [
+                "https://i.postimg.cc/Px2dmpTH/image.png",
+                "https://i.postimg.cc/QCzsy2Fp/image.png"
+            ]
+        },
+        "netgenius": {
+            "icon": "https://i.postimg.cc/yNTKHgJS/image.png",
+            "images": [
+                "https://i.postimg.cc/Sx6F62fW/image.png",
+                "https://i.postimg.cc/XqGtppvD/image.png",
+                "https://i.postimg.cc/v84mWhgK/image.png"
+            ]
+        },
+        "bandwidthmanager": {
+            "icon": "https://i.postimg.cc/XY7mCHXZ/image.png",
+            "images": [
+                "https://i.postimg.cc/7L5RB53Z/image.png",
+                "https://i.postimg.cc/XJFzbt1c/image.png",
+                "https://i.postimg.cc/Hn9vJXgy/image.png",
+                "https://i.postimg.cc/15MYsGMh/image.png",
+                "https://i.postimg.cc/cJtDRVSz/image.png"
+            ]
+        },
+        "connectionemulator": {
+            "icon": "https://i.postimg.cc/tJkDRb3S/image.png",
+            "images": [
+                "https://i.postimg.cc/NM7kbtzt/image.png"
+            ]
+        },
+        "ramdisk": {
+            "icon": "https://i.postimg.cc/zvGKjghB/image.png",
+            "images": [
+                "https://i.postimg.cc/3Nq4Fb7s/image.png",
+                "https://i.postimg.cc/SNXzxqfN/image.png",
+                "https://i.postimg.cc/Z5pB6cgZ/image.png"
+            ]
+        },
+        "switchportmapper": {
+            "icon": "https://i.postimg.cc/13GX8znf/image.png",
+            "images": [
+                "https://i.postimg.cc/XvxvgDks/image.png",
+                "https://i.postimg.cc/G25hW8Nx/image.png"
+            ]
+        },
+        "winget-softperfect-wifiguard": {
+            "icon": "https://i.postimg.cc/5Nxbsm6W/image.png",
+            "images": [
+                "https://i.postimg.cc/43hgYLFm/image.png"
+            ]
+        },
+        "winget-softperfect-networkscanner": {
+            "icon": "https://i.postimg.cc/brmMCkF7/image.png",
+            "images": [
+                "https://i.postimg.cc/Fsn80bS3/image.png",
+                "https://i.postimg.cc/2SbJGqFS/image.png",
+                "https://i.postimg.cc/5t8rcZRh/image.png",
+                "https://i.postimg.cc/B6sVJmW8/image.png"
+            ]
+        },
+        "cacherelocator": {
+            "icon": "https://i.postimg.cc/jS8RBnBZ/image.png",
+            "images": [
+                "https://i.postimg.cc/Pq9T5sXY/image.png"
             ]
         }
     }
