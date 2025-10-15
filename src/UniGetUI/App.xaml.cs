@@ -299,16 +299,17 @@ namespace UniGetUI
 
                 // Create MainWindow
                 InitializeMainWindow();
-                await MainWindow.DoEntryTextAnimationAsync();
+
+                _ = MainWindow.DoEntryTextAnimationAsync();
 
                 IEnumerable<Task> iniTasks =
                 [
+                    Task.Run(PEInterface.LoadManagers), // Takes most of the time
                     Task.Run(SetUpWebViewUserDataFolder),
                     Task.Run(IconDatabase.Instance.LoadFromCacheAsync),
                     Task.Run(RegisterNotificationService),
                     Task.Run(LoadGSudo),
                     Task.Run(InitializeBackgroundAPI),
-                    Task.Run(PEInterface.LoadManagers),
                 ];
 
                 // Load essential components
