@@ -866,7 +866,7 @@
   "Update packages automatically": "자동으로 패키지 업데이트",
   "Update selected packages": "선택한 패키지 업데이트",
   "Update selected packages with administrator privileges": "선택한 패키지를 관리자 권한으로 업데이트",
-  "Update selection": "업데이트 선택",
+  "Update selection": "선택 항목 업데이트",
   "Update succeeded": "업데이트 성공",
   "Update to version {0}": "{0} 버전으로 업데이트",
   "Update to {0} available": "{0}(으)로 업데이트 가능",
