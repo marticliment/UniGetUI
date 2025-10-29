@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 12328,
-        "done": 5829,
-        "packages_with_icon": 5829,
-        "packages_with_screenshot": 1278,
-        "total_screenshots": 3975
+        "total": 12353,
+        "done": 5833,
+        "packages_with_icon": 5833,
+        "packages_with_screenshot": 1305,
+        "total_screenshots": 4092
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -6513,7 +6513,13 @@
             "images": []
         },
         "camtasia": {
-            "icon": "https://cdn.neowin.com/news/images/uploaded/2017/09/1506235786_camtasia_studio_story.jpg",
+            "icon": "https://i.postimg.cc/wvZkFLt4/camtasia-icon.png",
+            "images": [
+                "https://i.postimg.cc/L4kScTT7/image.png"
+            ]
+        },
+        "audiate": {
+            "icon": "https://i.postimg.cc/yNrhYcTg/audiate-icon.png",
             "images": []
         },
         "camunda-bpm-tomcat": {
@@ -14662,8 +14668,15 @@
             ]
         },
         "filemenutools": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/52FyrzJ3/File-Menu-Tools.png",
+            "images": [
+                "https://i.postimg.cc/Y9ywkXfy/image.png",
+                "https://i.postimg.cc/jqmrFFjj/image.png",
+                "https://i.postimg.cc/ThMFYByw/image.png",
+                "https://i.postimg.cc/QMd83WZ3/image.png",
+                "https://i.postimg.cc/4yVZ56VQ/image.png",
+                "https://i.postimg.cc/t4Xy3VTT/image.png"
+            ]
         },
         "filen": {
             "icon": "https://community.chocolatey.org/content/packageimages/filen.2.0.16.png",
@@ -31105,7 +31118,11 @@
         },
         "pastel": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/Jnv1gC2r/image.png",
+                "https://i.postimg.cc/T1bRvNzW/image.png",
+                "https://i.postimg.cc/xjNjmqXd/image.png"
+            ]
         },
         "patch": {
             "icon": "",
@@ -39023,28 +39040,34 @@
             "images": []
         },
         "snagit": {
-            "icon": "https://community.chocolatey.org/content/packageimages/snagit.2023.0.3.png",
+            "icon": "https://i.postimg.cc/Pr6L1hBP/snagit-icon.png",
             "images": []
         },
         "snagit-2020": {
-            "icon": "https://blogs.swarthmore.edu/its/wp-content/uploads/2020/05/Snagit-1024x768.jpg",
+            "icon": "https://i.postimg.cc/Pr6L1hBP/snagit-icon.png",
             "images": []
         },
         "snagit-2021": {
-            "icon": "https://blogs.swarthmore.edu/its/wp-content/uploads/2020/05/Snagit-1024x768.jpg",
+            "icon": "https://i.postimg.cc/Pr6L1hBP/snagit-icon.png",
             "images": []
         },
         "snagit-2022": {
-            "icon": "https://blogs.swarthmore.edu/its/wp-content/uploads/2020/05/Snagit-1024x768.jpg",
+            "icon": "https://i.postimg.cc/Pr6L1hBP/snagit-icon.png",
             "images": []
         },
         "snagit-2023": {
-            "icon": "https://blogs.swarthmore.edu/its/wp-content/uploads/2020/05/Snagit-1024x768.jpg",
+            "icon": "https://i.postimg.cc/Pr6L1hBP/snagit-icon.png",
             "images": []
         },
         "snagit-2024": {
-            "icon": "https://assets.techsmith.com/Images/content/snagit_icon.svg",
+            "icon": "https://i.postimg.cc/Pr6L1hBP/snagit-icon.png",
             "images": []
+        },
+        "snagit-2025": {
+            "icon": "https://i.postimg.cc/Pr6L1hBP/snagit-icon.png",
+            "images": [
+                "https://i.postimg.cc/6513ycvf/image.png"
+            ]
         },
         "snailfm": {
             "icon": "",
@@ -42034,7 +42057,7 @@
             "images": []
         },
         "teams": {
-            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Microsoft_Office_Teams_(2018%E2%80%93present).svg/258px-Microsoft_Office_Teams_(2018%E2%80%93present).svg.png",
+            "icon": "https://upload.wikimedia.org/wikipedia/en/thumb/5/5d/Microsoft_Teams_Icon_2025_en.svg/480px-Microsoft_Teams_Icon_2025_en.svg.png",
             "images": [
                 "https://upload.wikimedia.org/wikipedia/en/f/f1/Microsoft_Teams_Desktop_Application_Screenshot.png"
             ]
@@ -54211,7 +54234,7 @@
                 "https://i.postimg.cc/zGSdwsNS/image.png"
             ]
         },
-        "DiskInternals.BootableRecoveryCD": {
+        "Winget.DiskInternals.BootableRecoveryCD": {
             "icon": "",
             "images": [
                 "https://i.postimg.cc/VNkFq5DS/image.png",
@@ -54220,7 +54243,7 @@
                 "https://i.postimg.cc/zB9SY75t/image.png"
             ]
         },
-        "DiskInternals.CD-DVDRecovery": {
+        "Winget.DiskInternals.CD-DVDRecovery": {
             "icon": "",
             "images": [
                 "https://i.postimg.cc/9QWP2r52/image.png",
@@ -54228,14 +54251,14 @@
                 "https://i.postimg.cc/YS014ZC3/image.png"
             ]
         },
-        "DiskInternals.DVRRecovery": {
+        "Winget.DiskInternals.DVRRecovery": {
             "icon": "",
             "images": [
                 "https://i.postimg.cc/7LjT5Lcv/image.png",
                 "https://i.postimg.cc/j5NnPb04/image.png"
             ]
         },
-        "DiskInternals.EFSRecovery": {
+        "Winget.DiskInternals.EFSRecovery": {
             "icon": "",
             "images": [
                 "https://i.postimg.cc/Bn68ND9k/image.png",
@@ -54246,7 +54269,7 @@
                 "https://i.postimg.cc/BQvQG0YN/image.png"
             ]
         },
-        "DiskInternals.ExcelRecovery": {
+        "Winget.DiskInternals.ExcelRecovery": {
             "icon": "",
             "images": [
                 "https://i.postimg.cc/VkCwYLjf/image.png",
@@ -54431,6 +54454,227 @@
         "iobitunlocker": {
             "icon": "https://i.imgur.com/nq6FMyG.png",
             "images": []
+        },
+        "calendartask": {
+            "icon": "https://i.postimg.cc/Qt5rXMNW/caltask.png",
+            "images": [
+                "https://i.postimg.cc/L6mMpRcZ/image.png",
+                "https://i.postimg.cc/QdVw8M0J/image.png",
+                "https://i.postimg.cc/MHd3xkBg/image.png",
+                "https://i.postimg.cc/T3Z7TJKs/image.png",
+                "https://i.postimg.cc/nzx3DVYw/image.png",
+                "https://i.postimg.cc/QCxSf6zJ/image.png",
+                "https://i.postimg.cc/sDxwSNS8/image.png"
+            ]
+        },
+        "websiteoptimizer": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/s2YbYdpf/image.png",
+                "https://i.postimg.cc/s2YbYdpf/image.png",
+                "https://i.postimg.cc/zvBMYy4V/image.png"
+            ]
+        },
+        "appletrunnerpro": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/59hGR2n5/image.png",
+                "https://i.postimg.cc/vZzNTLMx/image.png",
+                "https://i.postimg.cc/ZnpfS6Vy/image.png",
+                "https://i.postimg.cc/h4dZTqc4/image.png",
+                "https://i.postimg.cc/021WCHyn/image.png"
+            ]
+        },
+        "controldashboard": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/1XQGD2r8/image.png",
+                "https://i.postimg.cc/sfY93f33/image.png",
+                "https://i.postimg.cc/xT9G8rdy/image.png",
+                "https://i.postimg.cc/KvQPg9kZ/image.png",
+                "https://i.postimg.cc/NjM181mk/image.png",
+                "https://i.postimg.cc/0NKDFPV3/image.png"
+            ]
+        },
+        "controldashboard-pro": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/1XQGD2r8/image.png",
+                "https://i.postimg.cc/sfY93f33/image.png",
+                "https://i.postimg.cc/xT9G8rdy/image.png",
+                "https://i.postimg.cc/KvQPg9kZ/image.png",
+                "https://i.postimg.cc/NjM181mk/image.png",
+                "https://i.postimg.cc/0NKDFPV3/image.png"
+            ]
+        },
+        "decoration": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/xTjHYKxQ/image.png",
+                "https://i.postimg.cc/HkVy8T14/image.png",
+                "https://i.postimg.cc/ZRhBQ3BV/image.png",
+                "https://i.postimg.cc/rsVdVk9y/image.png",
+                "https://i.postimg.cc/L5xJhbyy/image.png",
+                "https://i.postimg.cc/h4szCXSm/image.png"
+            ]
+        },
+        "dictaphone": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/Bv2t26Y5/image.png",
+                "https://i.postimg.cc/d1v36Ypb/image.png",
+                "https://i.postimg.cc/LXTX0WMh/image.png"
+            ]
+        },
+        "discotheek": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/SQPqN4Vb/image.png"
+            ]
+        },
+        "clipboardhistory": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/LsmF084f/image.png",
+                "https://i.postimg.cc/YS8BcBhc/image.png",
+                "https://i.postimg.cc/QttGhYTp/image.png",
+                "https://i.postimg.cc/k4pr4NQZ/image.png",
+                "https://i.postimg.cc/QC92WBSr/image.png",
+                "https://i.postimg.cc/nry6KHwQ/image.png"
+            ]
+        },
+        "clipboardhistory-pro": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/MKRGCXwr/image.png",
+                "https://i.postimg.cc/JzLhMm4r/image.png",
+                "https://i.postimg.cc/y8y8N5kJ/image.png",
+                "https://i.postimg.cc/rpyFRJrf/image.png"
+            ]
+        },
+        "Winget.Japplis.Toolbox": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/zDh5BMQq/image.png",
+                "https://i.postimg.cc/YCrwdSCr/image.png",
+                "https://i.postimg.cc/XYs6m0r2/image.png",
+                "https://i.postimg.cc/W4KLp66J/image.png",
+                "https://i.postimg.cc/XqSRdjPW/image.png",
+                "https://i.postimg.cc/90dvp33v/image.png",
+                "https://i.postimg.cc/hPgFGGTF/image.png"
+            ]
+        },
+        "Winget.Japplis.Toolbox.Pro": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/R0JpdrKZ/image.png",
+                "https://i.postimg.cc/26pcXHxC/image.png",
+                "https://i.postimg.cc/C57c5wpT/image.png",
+                "https://i.postimg.cc/sDfn8G5s/image.png",
+                "https://i.postimg.cc/XqSRdjPW/image.png",
+                "https://i.postimg.cc/90dvp33v/image.png"
+            ]
+        },
+        "Winget.Japplis.Watch": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/htDfVcFw/image.png",
+                "https://i.postimg.cc/P5SN49TP/image.png",
+                "https://i.postimg.cc/BvybWFjB/image.png",
+                "https://i.postimg.cc/hjdjKGxh/image.png",
+                "https://i.postimg.cc/QCZMCrkf/image.png",
+                "https://i.postimg.cc/0jGyJHVN/image.png"
+            ]
+        },
+        "Winget.Japplis.Watch.Pro": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/4N53fqKn/image.png",
+                "https://i.postimg.cc/8zXPWvmp/image.png",
+                "https://i.postimg.cc/d07Q905C/image.png",
+                "https://i.postimg.cc/TPZdNXsz/image.png"
+            ]
+        },
+        "lopeedit": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/XqGX0B5m/image.png"
+            ]
+        },
+        "Winget.Hetman.PhotoRecovery": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/XJQnqfdm/image.png",
+                "https://i.postimg.cc/htTgTWVX/image.png",
+                "https://i.postimg.cc/nzRtpHt8/image.png"
+            ]
+        },
+        "Winget.Hetman.OfficeRecovery": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/cCF6qqF0/image.png",
+                "https://i.postimg.cc/HsLVwxLx/image.png",
+                "https://i.postimg.cc/XYGqPzFx/image.png",
+                "https://i.postimg.cc/4dZ3m4Mk/image.png",
+                "https://i.postimg.cc/C5rMPGx9/image.png"
+            ]
+        },
+        "Winget.Hetman.DataRecoveryPack": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/d32mG0Q2/image.png",
+                "https://i.postimg.cc/wvZgD64R/image.png",
+                "https://i.postimg.cc/76GyHFHt/image.png",
+                "https://i.postimg.cc/HsLVwxLx/image.png",
+                "https://i.postimg.cc/htTgTWVX/image.png"
+            ]
+        },
+        "Winget.Hetman.PartitionRecovery": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/dVHR2pv0/image.png",
+                "https://i.postimg.cc/dtnGFphF/image.png",
+                "https://i.postimg.cc/25LW4520/image.png",
+                "https://i.postimg.cc/3NYD5F7S/image.png",
+                "https://i.postimg.cc/VLsbKgDT/image.png"
+            ]
+        },
+        "Winget.Hetman.FileRepair": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/tg659D0N/image.png"
+            ]
+        },
+        "Winget.Hetman.RAIDRecovery": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/nhR5X3PC/image.png",
+                "https://i.postimg.cc/yN2bPkKt/image.png",
+                "https://i.postimg.cc/1t6YYs50/image.png",
+                "https://i.postimg.cc/5ySKbgzb/image.png",
+                "https://i.postimg.cc/7YqQmvv4/image.png",
+                "https://i.postimg.cc/GhzgfMrX/image.png"
+            ]
+        },
+        "Winget.Hetman.InternetSpy": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/jScTZ63G/image.png",
+                "https://i.postimg.cc/76GyHFHt/image.png",
+                "https://i.postimg.cc/NM3v5dLs/image.png",
+                "https://i.postimg.cc/mZ9G0W6Q/image.png",
+                "https://i.postimg.cc/QxkZdkDC/image.png",
+                "https://i.postimg.cc/SxSF22Qt/image.png"
+            ]
+        },
+        "Winget.Hetman.Uneraser": {
+            "icon": "",
+            "images": [
+                "https://i.postimg.cc/76fqCCVj/image.png",
+                "https://i.postimg.cc/wvZgD64R/image.png",
+                "https://i.postimg.cc/zvh5j949/image.png",
+                "https://i.postimg.cc/5Ncf02Fk/image.png"
+            ]
         }
     }
 }
