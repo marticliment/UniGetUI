@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Globalization;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -195,7 +196,7 @@ namespace UniGetUI.Interface
         protected string NoPackages_SubtitleText
         {
             get => NoPackages_SubtitleText_Base +
-                (SHOW_LAST_CHECKED_TIME ? " " + CoreTools.Translate("(Last checked: {0})", LastPackageLoadTime.ToString()) : "");
+                (SHOW_LAST_CHECKED_TIME ? " " + CoreTools.Translate("(Last checked: {0})", LastPackageLoadTime.ToString(CultureInfo.CurrentCulture)) : "");
         }
 
         public string QueryBackup { get; set; }
@@ -907,7 +908,7 @@ namespace UniGetUI.Interface
                     "{0} packages were found, {1} of which match the specified filters.", FilteredPackages.Count, Loader.Count())
                            + " (" + CoreTools.Translate("{0} selected", selected) + ")";
 
-                if (SHOW_LAST_CHECKED_TIME) r += " " + CoreTools.Translate("(Last checked: {0})", LastPackageLoadTime);
+                if (SHOW_LAST_CHECKED_TIME) r += " " + CoreTools.Translate("(Last checked: {0})", LastPackageLoadTime.ToString(CultureInfo.CurrentCulture));
                 return r;
             }
 
