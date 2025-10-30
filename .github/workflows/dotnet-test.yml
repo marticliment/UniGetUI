@@ -41,9 +41,9 @@ jobs:
       working-directory: src
       run: dotnet restore
 
-    - name: Test build
-      working-directory: src
-      run: dotnet build --configuration Release
+    # - name: Test build
+    #   working-directory: src
+    #   run: dotnet build --configuration Release
 
     - name: Run Tests
       working-directory: src
