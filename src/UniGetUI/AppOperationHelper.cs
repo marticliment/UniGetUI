@@ -256,22 +256,25 @@ public partial class MainApp
             }
         }
 
+        private static bool AlreadyBeingUpdated(IPackage package)
+        {
+            // Check for duplicate operations already in the queue (prevents duplicates during unattended updates)
+            return _operationList.Any(x => x.Operation is UpdatePackageOperation updateOp
+                && (x.Operation.Status is OperationStatus.InQueue or OperationStatus.Running)
+                && updateOp.Package.GetHash() == package.GetHash());
+        }
+
         public static async Task UpdateAll()
         {
             foreach (IPackage package in UpgradablePackagesLoader.Instance.Packages)
-            {
-                if (package.Tag is not PackageTag.BeingProcessed and not PackageTag.OnQueue)
+            {   // First check will only work if the package has not been reloaded, deeper check is needed, hence AlreadyBeingUpdated
+                if (package.Tag is PackageTag.BeingProcessed or PackageTag.OnQueue || AlreadyBeingUpdated(package))
                 {
-                    // Check for duplicate operations already in the queue (prevents duplicates during unattended updates)
-                    var isDuplicate = _operationList.Any(x => x.Operation is UpdatePackageOperation updateOp
-                        && updateOp.Package.GetHash() == package.GetHash()
-                        && (x.Operation.Status is OperationStatus.InQueue or OperationStatus.Running));
-
-                    if (!isDuplicate)
-                        await Update(package);
-                    else
-                        Logger.Info($"Update operation for package {package.Id} is already queued or running. Skipping duplicate in UpdateAll.");
+                    Logger.Warn($"Update operation for package {package.Id} is already queued or running. Skipping duplicate in UpdateAll.");
+                    continue;
                 }
+
+                await Update(package);
             }
         }
 
@@ -279,19 +282,17 @@ public partial class MainApp
         {
             foreach (IPackage package in UpgradablePackagesLoader.Instance.Packages)
             {
-                if (package.Tag is not PackageTag.OnQueue and not PackageTag.BeingProcessed
-                    && (package.Manager.Name == managerName || package.Manager.DisplayName == managerName))
-                {
-                    // Check for duplicate operations already in the queue (prevents duplicates during unattended updates)
-                    var isDuplicate = _operationList.Any(x => x.Operation is UpdatePackageOperation updateOp
-                        && updateOp.Package.GetHash() == package.GetHash()
-                        && (x.Operation.Status is OperationStatus.InQueue or OperationStatus.Running));
+                if (package.Manager.Name != managerName && package.Manager.DisplayName != managerName)
+                    continue; // Package not from the desired package manager
 
-                    if (!isDuplicate)
-                        await Update(package);
-                    else
-                        Logger.Info($"Update operation for package {package.Id} is already queued or running. Skipping duplicate in UpdateAllForManager.");
+                // First check will only work if the package has not been reloaded, deeper check is needed, hence AlreadyBeingUpdated
+                if (package.Tag is PackageTag.BeingProcessed or PackageTag.OnQueue || AlreadyBeingUpdated(package))
+                {
+                    Logger.Warn($"Update operation for package {package.Id} is already queued or running. Skipping duplicate in UpdateAll.");
+                    continue;
                 }
+
+                await Update(package);
             }
         }
 
