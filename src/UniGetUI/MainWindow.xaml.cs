@@ -715,12 +715,10 @@ namespace UniGetUI.Interface
             }
         }
 
-        public async Task DoEntryTextAnimationAsync()
+        public void DoEntryTextAnimationAsync()
         {
             InAnimation_Border.Start();
             InAnimation_Text.Start();
-            await Task.Delay(700);
-            LoadingIndicator.Visibility = Visibility.Visible;
         }
 
         private async Task SaveGeometry(bool Force = false)

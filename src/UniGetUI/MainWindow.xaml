@@ -180,15 +180,16 @@
                         </StackPanel>
                     </Border>
                 </StackPanel>
-                <ProgressBar
+                <ProgressRing
                     Name="LoadingIndicator"
                     Grid.Row="1"
                     Grid.Column="1"
-                    Margin="0,0,5,0"
+                    Margin="0,0,0,-48"
                     VerticalAlignment="Bottom"
+                    HorizontalAlignment="Center"
                     Foreground="#08a9c3"
                     IsIndeterminate="True"
-                    Visibility="Collapsed" />
+                    Visibility="Visible" />
             </Grid>
         </Frame>
 

@@ -260,6 +260,8 @@ namespace UniGetUI
             {
                 appWindow.Closing += MainWindow.HandleClosingEvent;
             }
+
+            MainWindow.DoEntryTextAnimationAsync();
         }
 
         /// <summary>
@@ -299,8 +301,6 @@ namespace UniGetUI
 
                 // Create MainWindow
                 InitializeMainWindow();
-
-                _ = MainWindow.DoEntryTextAnimationAsync();
 
                 IEnumerable<Task> iniTasks =
                 [
