@@ -108,7 +108,7 @@ public static class TaskRecycler<ReturnT>
         {
             // Race condition, an equivalent task got added from another thread between the TryGetValue and TryAdd,
             // so we are going to restart the call to _runTaskAndWait in order for TryGetValue to return the new task again
-            await _runTaskAndWait_VOID(task, hash, cacheTimeSecsSecs);
+            await _runTaskAndWait_VOID(task, hash, cacheTimeSecsSecs).ConfigureAwait(false);
             return;
         }
         else
@@ -118,7 +118,7 @@ public static class TaskRecycler<ReturnT>
         }
 
         // Wait for the task to finish
-        await task;
+        await task.ConfigureAwait(false);
 
         // Schedule the task for removal after the cache time expires
         _removeFromCache_VOID(hash, cacheTimeSecsSecs);
@@ -138,7 +138,7 @@ public static class TaskRecycler<ReturnT>
         {
             // Race condition, an equivalent task got added from another thread between the TryGetValue and TryAdd,
             // so we are going to restart the call to _runTaskAndWait in order for TryGetValue to return the new task again
-            return await _runTaskAndWait(task, hash, cacheTimeSecsSecs);
+            return await _runTaskAndWait(task, hash, cacheTimeSecsSecs).ConfigureAwait(false);
         }
         else
         {
@@ -147,7 +147,7 @@ public static class TaskRecycler<ReturnT>
         }
 
         // Wait for the task to finish
-        ReturnT result = await task;
+        ReturnT result = await task.ConfigureAwait(false);
 
         // Schedule the task for removal after the cache time expires
         _removeFromCache(hash, cacheTimeSecsSecs);
