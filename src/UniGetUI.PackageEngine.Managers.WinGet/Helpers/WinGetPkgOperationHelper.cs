@@ -203,6 +203,12 @@ internal sealed class WinGetPkgOperationHelper : BasePkgOperationHelper
             return OperationVeredict.AutoRetry;
         }
 
+        if (operation is OperationType.Uninstall && (uintCode is 0x8A150030) && package.OverridenOptions.RunAsAdministrator is not true)
+        {   // Sometimes, when uninstalling, error code 0x8A150030 can be caused by missing permissions.
+            package.OverridenOptions.RunAsAdministrator = true;
+            return OperationVeredict.AutoRetry;
+        }
+
         return OperationVeredict.Failure;
     }
 
