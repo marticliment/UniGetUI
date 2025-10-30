@@ -73,7 +73,8 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 UninstallVerb = "uninstall",
                 UpdateVerb = "update",
                 KnownSources = [ new ManagerSource(this, "winget", new Uri("https://cdn.winget.microsoft.com/cache")),
-                                 new ManagerSource(this, "msstore", new Uri("https://storeedgefd.dsx.mp.microsoft.com/v9.0")) ],
+                                new ManagerSource(this, "winget-fonts", new Uri("https://cdn.winget.microsoft.com/fonts")),
+                                new ManagerSource(this, "msstore", new Uri("https://storeedgefd.dsx.mp.microsoft.com/v9.0")) ],
                 DefaultSource = new ManagerSource(this, "winget", new Uri("https://cdn.winget.microsoft.com/cache"))
             };
 
