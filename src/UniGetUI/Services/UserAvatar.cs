@@ -169,6 +169,7 @@ namespace UniGetUI.Services
 
         private async Task<PointButton> GenerateLogoutControl()
         {
+            await Task.Run(CoreTools.WaitForInternetConnection);
             User user;
             try
             {

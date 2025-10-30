@@ -50,6 +50,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         public static IReadOnlyList<InnerOperation> CreateInstallPreOps(IManagerSource source, bool forceLocalWinGet)
         {
+            if (source.Manager is not WinGet) return [];
             if (forceLocalWinGet) return [];
             if (source.Manager.Status.ExecutablePath == WinGet.BundledWinGetPath) return [];
             return [new(new AddSourceOperation(source, true), mustSucceed: true)];
@@ -57,6 +58,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         public static IReadOnlyList<InnerOperation> CreateUninstallPreOps(IManagerSource source, bool forceLocalWinGet)
         {
+            if (source.Manager is not WinGet) return [];
             if (forceLocalWinGet) return [];
             if (source.Manager.Status.ExecutablePath == WinGet.BundledWinGetPath) return [];
             // In this case, must succeed is set to false since we cannot ensure that bundled WinGet will
