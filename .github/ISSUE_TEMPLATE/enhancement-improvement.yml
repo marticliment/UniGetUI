@@ -17,13 +17,13 @@ body:
           required: true
   - type: textarea
     attributes:
-      label: Describe the improvement
+      label: Describe the improvement.
       placeholder: Explain how you see this enhancement, providing as many details as possible.
     validations:
       required: true
   - type: textarea
     attributes:
-      label: Describe how this improvement could help users
+      label: Describe how this improvement could help users.
       placeholder: For what would it be useful?
     validations:
       required: true

@@ -17,20 +17,20 @@ body:
           required: true
   - type: textarea
     attributes:
-      label: Describe your crash
+      label: Describe your crash.
       placeholder: What were you doing when this happened?
     validations:
       required: true
   - type: textarea
     attributes:
-      label: Logs (if possible)
+      label: Logs (if possible).
       placeholder: If you get an error report or a message, please post it here.
       render: "text"
     validations:
       required: false
   - type: textarea
     attributes:
-      label: More details
+      label: More details.
       placeholder: Do you have any other valuable information about this issue?
     validations:
       required: false

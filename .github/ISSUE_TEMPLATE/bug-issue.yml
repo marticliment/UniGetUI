@@ -6,7 +6,7 @@ assignees: marticliment
 body:
   - type: checkboxes
     attributes:
-      label: Please confirm these before moving forward
+      label: Please confirm these before moving forward.
       description: Please confirm the following before posting your issue.
       options:
         - label: I have searched for my issue and have not found a work-in-progress/duplicate/resolved issue.
@@ -19,51 +19,51 @@ body:
           required: true
   - type: input
     attributes:
-      label: UniGetUI Version
+      label: UniGetUI Version.
       placeholder: 'x.y.z (e.g., 3.1.0)'
     validations:
       required: true
   - type: input
     attributes:
-      label: Windows version, edition, and architecture
+      label: Windows version, edition, and architecture.
       placeholder: Windows 11 Pro 10.0.22000.0 x64
     validations:
       required: true
   - type: textarea
     attributes:
-      label: Describe your issue
+      label: Describe your issue.
       placeholder: Explain the issue you are experiencing, providing as many details as possible.
     validations:
       required: true
   - type: textarea
     attributes:
-      label: Steps to reproduce the issue
+      label: Steps to reproduce the issue.
       placeholder: How can this issue be reproduced? List here, if known, the steps followed before this issue appeared.
     validations:
       required: false
   - type: textarea
     attributes:
-      label: UniGetUI Log
+      label: UniGetUI Log.
       render: "text"
       placeholder: Paste your UniGetUI logs here. Click the button on the bottom-left corner of UniGetUI -> UniGetUI Log.
     validations:
       required: true
   - type: textarea
     attributes:
-      label: Package Managers Logs
+      label: Package Managers Logs.
       render: "text"
-      placeholder: Paste your Package Manager logs here. Click the button on the bottom-left corner of UniGetUI -> Package Manager logs.
+      placeholder: Paste your Package Manager logs here. Click the button in the bottom-left corner of UniGetUI -> Package Manager logs.
     validations:
       required: true
   - type: textarea
     attributes:
-      label: Relevant information
+      label: Relevant information.
       placeholder: Other relevant information about this issue. Perhaps you have some special settings enabled or any other detail that could be related.
     validations:
       required: false
   - type: textarea
     attributes:
-      label: Screenshots and videos
+      label: Screenshots and videos.
       placeholder: If applicable, please post here a video or a screenshot of the issue.
     validations:
       required: false
