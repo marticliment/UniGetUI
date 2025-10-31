@@ -456,8 +456,8 @@ namespace UniGetUI.Interface
 
             LoadingProgressBar.Visibility = Visibility.Collapsed;
             // Required to update UI labels
-            UpdatePackageCount();
             LastPackageLoadTime = DateTime.Now;
+            UpdatePackageCount();
             WhenPackagesLoaded(ReloadReason.External);
         }
 
