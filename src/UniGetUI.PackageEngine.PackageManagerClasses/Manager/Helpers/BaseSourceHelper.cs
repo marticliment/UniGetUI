@@ -1,6 +1,7 @@
 using UniGetUI.Core.Classes;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
+using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Interfaces.ManagerProviders;
@@ -64,9 +65,13 @@ namespace UniGetUI.PackageEngine.Classes.Manager.Providers
                 if (!task.Wait(TimeSpan.FromSeconds(PackageListingTaskTimeout)))
                 {
                     if (!Settings.Get(Settings.K.DisableTimeoutOnPackageListingTasks))
+                    {
+                        CoreTools.FinalizeDangerousTask(task);
                         throw new TimeoutException($"Task _getInstalledPackages for manager {Manager.Name} did not finish after " +
                                                    $"{PackageListingTaskTimeout} seconds, aborting.  You may disable " +
                                                    $"timeouts from UniGetUI Advanced Settings");
+                    }
+
                     task.Wait();
                 }
 

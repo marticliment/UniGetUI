@@ -752,5 +752,20 @@ namespace UniGetUI.Core.Tools
         private static readonly HashSet<char> _illegalPathChars = Path.GetInvalidFileNameChars().ToHashSet();
         public static string MakeValidFileName(string name)
             => string.Concat(name.Where(x => !_illegalPathChars.Contains(x)));
+
+
+        // Safely wait for a task that may throw an exception we don't care about
+        public static async void FinalizeDangerousTask(Task t)
+        {
+            try
+            {
+                await t.ConfigureAwait(false);   
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"Task {t} crashed with exception:");
+                Logger.Error(ex);
+            }
+        }
     }
 }
