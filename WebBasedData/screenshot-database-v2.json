@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 12353,
-        "done": 5833,
-        "packages_with_icon": 5833,
-        "packages_with_screenshot": 1305,
-        "total_screenshots": 4092
+        "total": 12358,
+        "done": 5844,
+        "packages_with_icon": 5844,
+        "packages_with_screenshot": 1311,
+        "total_screenshots": 4105
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -14656,8 +14656,10 @@
             "images": []
         },
         "filelight": {
-            "icon": "",
-            "images": []
+            "icon": "https://invent.kde.org/utilities/filelight/-/raw/master/logo.png",
+            "images": [
+                "https://en.wikipedia.org/wiki/Filelight#/media/File:Filelight_21.12.0_screenshot.png"
+            ]
         },
         "filelist": {
             "icon": "https://i.postimg.cc/vDwTRXkX/filelist.png",
@@ -27847,6 +27849,12 @@
             "icon": "",
             "images": []
         },
+        "nditools": {
+            "icon": "https://i.postimg.cc/t4nMK0N7/nditools.png",
+            "images": [
+                "https://i.postimg.cc/RZpD8SHp/ndi-tools.png"
+            ]
+        },
         "ndm": {
             "icon": "https://i.imgur.com/Q3bnbu1.png",
             "images": []
@@ -32114,7 +32122,9 @@
         },
         "pingplotter": {
             "icon": "https://community.chocolatey.org/content/packageimages/pingplotter.5.23.3.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/QC2wcB03/image.png"
+            ]
         },
         "pingtracer": {
             "icon": "https://community.chocolatey.org/content/packageimages/pingtracer.1.13.png",
@@ -54054,6 +54064,12 @@
                 "https://vovsoft.com/screenshots/text-statistics-analyzer-6.png"
             ]
         },
+        "3dboxmaker": {
+            "icon": "https://vovsoft.com/icons64/3d-box-maker.png",
+            "images": [
+                "https://vovsoft.com/screenshots/3d-box-maker.png"
+            ]
+        },
         "picturepuzzle": {
             "icon": "https://vovsoft.com/icons128/picture-puzzle.png",
             "images": [
@@ -54349,23 +54365,23 @@
             "images": []
         },
         "disksorter": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/rFDPg9rn/disksorter.png",
             "images": []
         },
         "disksorterenterprise": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/rFDPg9rn/disksorter.png",
             "images": []
         },
         "disksorterpro": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/rFDPg9rn/disksorter.png",
             "images": []
         },
         "disksorterserver": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/rFDPg9rn/disksorter.png",
             "images": []
         },
         "disksorterultimate": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/rFDPg9rn/disksorter.png",
             "images": []
         },
         "dupscout": {
@@ -54674,6 +54690,25 @@
                 "https://i.postimg.cc/wvZgD64R/image.png",
                 "https://i.postimg.cc/zvh5j949/image.png",
                 "https://i.postimg.cc/5Ncf02Fk/image.png"
+            ]
+        },
+        "calendartask ": {
+            "icon": "https://i.postimg.cc/qq326gN9/image.png",
+            "images": [
+                "https://i.postimg.cc/sxQ1vSZr/image.png",
+                "https://i.postimg.cc/bwHrDqdw/image.png",
+                "https://i.postimg.cc/XvsvLxfb/image.png",
+                "https://i.postimg.cc/d3ytqYgz/image.png",
+                "https://i.postimg.cc/ry3Jy2DJ/image.png",
+                "https://i.postimg.cc/sgR4SP9J/image.png",
+                "https://i.postimg.cc/nLFKSHWB/image.png"
+            ]
+        },
+        "multiping": {
+            "icon": "https://i.postimg.cc/fTgJQMkh/multiping-icon.png",
+            "images": [
+                "https://i.postimg.cc/NGSW3VBF/image.png",
+                "https://i.postimg.cc/2SFMBSv5/image.png"
             ]
         }
     }
