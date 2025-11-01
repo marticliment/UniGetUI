@@ -30,7 +30,7 @@
   "Abort install if pre-install command fails": "Przerwij instalację, jeśli wykonanie komendy przedinstalacyjnej zakończy się niepowodzeniem",
   "Abort uninstall if pre-uninstall command fails": "Przerwij dezinstalację, jeśli wykonanie komendy przeddezinstalacyjnej zakończy się niepowodzeniem",
   "Abort update if pre-update command fails": "Przerwij aktualizację, jeśli wykonanie komendy przedaktualizacyjnej zakończy się niepowodzeniem",
-  "About": "Informacje o",
+  "About": "O programie",
   "About Qt6": "Informacje o Qt6",
   "About WingetUI": "O UniGetUI",
   "About WingetUI version {0}": "O wersji {0} UniGetUI",
