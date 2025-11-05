@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 12358,
+        "total": 12361,
         "done": 5844,
         "packages_with_icon": 5844,
-        "packages_with_screenshot": 1311,
-        "total_screenshots": 4105
+        "packages_with_screenshot": 1313,
+        "total_screenshots": 4107
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -14202,7 +14202,7 @@
             "images": []
         },
         "f-lux": {
-            "icon": "https://community.chocolatey.org/content/packageimages/f.lux.portable.4.120.png",
+            "icon": "https://justgetflux.com/press/flux-icon-transparent.png",
             "images": []
         },
         "f2": {
@@ -14657,9 +14657,7 @@
         },
         "filelight": {
             "icon": "https://invent.kde.org/utilities/filelight/-/raw/master/logo.png",
-            "images": [
-                "https://en.wikipedia.org/wiki/Filelight#/media/File:Filelight_21.12.0_screenshot.png"
-            ]
+            "images": []
         },
         "filelist": {
             "icon": "https://i.postimg.cc/vDwTRXkX/filelist.png",
@@ -16052,7 +16050,7 @@
             "images": []
         },
         "g-helper": {
-            "icon": "",
+            "icon": "https://i.ibb.co/PvLShmHH/ghelper.png",
             "images": [
                 "https://i.postimg.cc/7ZLhgWHV/image.png",
                 "https://i.postimg.cc/BbsQth7T/image.png",
@@ -21649,25 +21647,25 @@
             "images": []
         },
         "k-litecodecpack-basic": {
-            "icon": "https://www.soft-4-free.com/wp-content/plugins/download-manager/cache/K-Lite-Mega-Codec-Pack-225x225.png",
+            "icon": "",
             "images": [
                 "https://www.leawo.org/entips/wp-content/uploads/2020/09/Windows-Media-Player-codec-04.png"
             ]
         },
         "k-litecodecpack-full": {
-            "icon": "https://www.soft-4-free.com/wp-content/plugins/download-manager/cache/K-Lite-Mega-Codec-Pack-225x225.png",
+            "icon": "",
             "images": [
                 "https://www.leawo.org/entips/wp-content/uploads/2020/09/Windows-Media-Player-codec-04.png"
             ]
         },
         "k-litecodecpack-mega": {
-            "icon": "https://www.soft-4-free.com/wp-content/plugins/download-manager/cache/K-Lite-Mega-Codec-Pack-225x225.png",
+            "icon": "",
             "images": [
                 "https://www.leawo.org/entips/wp-content/uploads/2020/09/Windows-Media-Player-codec-04.png"
             ]
         },
         "k-litecodecpack-standard": {
-            "icon": "https://www.soft-4-free.com/wp-content/plugins/download-manager/cache/K-Lite-Mega-Codec-Pack-225x225.png",
+            "icon": "",
             "images": [
                 "https://www.leawo.org/entips/wp-content/uploads/2020/09/Windows-Media-Player-codec-04.png"
             ]
@@ -36370,7 +36368,7 @@
             "images": []
         },
         "roblox": {
-            "icon": "https://i.postimg.cc/yYJ7tDNj/Roblox-Player.png",
+            "icon": "https://i.ibb.co/ddqFLQ9/roblox.png",
             "images": [
                 "https://i.postimg.cc/Dy4vWSLD/image.png",
                 "https://i.postimg.cc/mrLWSk1T/image.png"
@@ -36921,6 +36919,12 @@
         "ryujinx": {
             "icon": "https://community.chocolatey.org/content/packageimages/ryujinx.1.1.645.png",
             "images": []
+        },
+        "ryujinx-canary": {
+            "icon": "https://raw.githubusercontent.com/Ryubing/Assets/refs/heads/main/RyujinxApp_1024.png",
+            "images": [
+                "https://i.ibb.co/Pv7N8rky/shell.png"
+            ]
         },
         "ryzen-controller": {
             "icon": "",
@@ -45582,6 +45586,12 @@
             "icon": "",
             "images": []
         },
+        "vesktop": {
+            "icon": "https://i.ibb.co/vGXwKRp/image.png",
+            "images": [
+                "https://i.ibb.co/qMnD6bVM/image.png"
+            ]
+        },
         "vet": {
             "icon": "https://community.chocolatey.org/content/packageimages/vet.1.4.png",
             "images": []
@@ -49285,6 +49295,12 @@
         "winscreenfetch": {
             "icon": "https://community.chocolatey.org/content/packageimages/WinScreenfetch.0.5.1.png",
             "images": []
+        },
+        "winscript": {
+            "icon": "https://i.ibb.co/5WvDZdDb/winscript-upscayl-4x-upscayl-standard-4x.png",
+            "images": [
+                "https://i.ibb.co/PvhGcy8S/image.png"
+            ]
         },
         "winsecuritybaseline": {
             "icon": "https://community.chocolatey.org/content/packageimages/WinSecurityBaseline.19.03.02.png",
