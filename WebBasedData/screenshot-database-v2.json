@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 12361,
-        "done": 5844,
-        "packages_with_icon": 5844,
-        "packages_with_screenshot": 1313,
-        "total_screenshots": 4107
+        "total": 12362,
+        "done": 5846,
+        "packages_with_icon": 5846,
+        "packages_with_screenshot": 1314,
+        "total_screenshots": 4110
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -12249,7 +12249,7 @@
             "images": []
         },
         "driverstoreexplorer": {
-            "icon": "",
+            "icon": "https://i.ibb.co/dwC17cP4/icon2-upscayl-5x-ultramix-balanced-4x.png",
             "images": []
         },
         "driverview": {
@@ -33169,6 +33169,14 @@
             "icon": "https://cdn.meowcat285.com/unigeticons/prismlauncher.8.4.20240820.png",
             "images": [
                 "https://i.postimg.cc/FHLWvyfy/q7pf-R-Cbs-L-824.png"
+            ]
+        },
+        "prismlauncher-git": {
+            "icon": "https://cdn2.steamgriddb.com/file/sgdb-cdn/logo_thumb/d89950b4a87c48fdba628160f5217844.png",
+            "images": [
+                "https://images.opencollective.com/prismlauncher/29f649e/background.png",
+                "https://i.ibb.co/wZSn327s/image.png",
+                "https://i.ibb.co/G4zyDM4R/image.png"
             ]
         },
         "pritunl-client": {
