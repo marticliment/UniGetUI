@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 12362,
-        "done": 5846,
-        "packages_with_icon": 5846,
-        "packages_with_screenshot": 1314,
-        "total_screenshots": 4110
+        "total": 12363,
+        "done": 5848,
+        "packages_with_icon": 5848,
+        "packages_with_screenshot": 1316,
+        "total_screenshots": 4114
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -3732,8 +3732,11 @@
             "images": []
         },
         "autoruns": {
-            "icon": "https://community.chocolatey.org/content/packageimages/AutoRuns.14.09.png",
-            "images": []
+            "icon": "https://i.ibb.co/hF170wpM/2021-12-16-ts3-thumbs-dfe-p-256.png",
+            "images": [
+                "https://i.ibb.co/x9YyC59/image.png",
+                "https://i.ibb.co/KptqgZ3r/image.png"
+            ]
         },
         "autoscreenrecorder": {
             "icon": "",
@@ -10379,8 +10382,11 @@
             "images": []
         },
         "deskflow": {
-            "icon": "https://raw.githubusercontent.com/deskflow/deskflow/refs/heads/master/deploy/linux/deskflow.png",
-            "images": []
+            "icon": "https://dl.flathub.org/media/org/deskflow/deskflow/d93533995feb3af980d1ee1ffc0bf6d6/icons/128x128/org.deskflow.deskflow.png",
+            "images": [
+                "https://i.ibb.co/WvkQ1Drx/image.png",
+                "https://i.ibb.co/wNXm9YWh/image.png"
+            ]
         },
         "deskgo": {
             "icon": "",
@@ -27259,7 +27265,7 @@
             "images": []
         },
         "music-pattern-genera\u2026": {
-            "icon": "",
+            "icon": "https://community.chocolatey.org/content/packageimages/music-collector.22.0.6.png",
             "images": []
         },
         "musicbee": {
@@ -54734,6 +54740,10 @@
                 "https://i.postimg.cc/NGSW3VBF/image.png",
                 "https://i.postimg.cc/2SFMBSv5/image.png"
             ]
+        },
+        "musehub": {
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/MuseHub_Logo.svg/512px-MuseHub_Logo.svg.png ",
+            "images": []
         }
     }
 }
