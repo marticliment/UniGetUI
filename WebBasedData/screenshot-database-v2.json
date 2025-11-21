@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 12364,
-        "done": 5850,
-        "packages_with_icon": 5850,
-        "packages_with_screenshot": 1319,
-        "total_screenshots": 4120
+        "total": 12367,
+        "done": 5855,
+        "packages_with_icon": 5855,
+        "packages_with_screenshot": 1322,
+        "total_screenshots": 4127
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -18779,6 +18779,22 @@
         "helioworkstation": {
             "icon": "",
             "images": []
+        },
+        "helium": {
+            "icon": "https://raw.githubusercontent.com/imputnet/helium/main/resources/branding/app_icon/raw.png",
+            "images": [
+                "https://i.ibb.co/whfhQY9H/lead.png",
+                "https://i.ibb.co/SX023htv/split-view.png",
+                "https://i.ibb.co/849XG3C3/bangs.png"
+            ]
+        },
+        "helium-pre": {
+            "icon": "https://raw.githubusercontent.com/imputnet/helium/main/resources/branding/app_icon/raw.png",
+            "images": [
+                "https://i.ibb.co/whfhQY9H/lead.png",
+                "https://i.ibb.co/SX023htv/split-view.png",
+                "https://i.ibb.co/849XG3C3/bangs.png"
+            ]
         },
         "helix": {
             "icon": "",
@@ -39699,8 +39715,10 @@
             "images": []
         },
         "specialk": {
-            "icon": "",
-            "images": []
+            "icon": "https://wiki.special-k.info/misc/sk_logo.png",
+            "images": [
+                "https://wiki.special-k.info/tools/skif_2022.png"
+            ]
         },
         "spectcl": {
             "icon": "",
@@ -41200,6 +41218,10 @@
         },
         "sunshine": {
             "icon": "https://community.chocolatey.org/content/packageimages/sunshine.0.18.3.png",
+            "images": []
+        },
+        "sunshine-pre": {
+            "icon": "https://raw.githubusercontent.com/LizardByte/Sunshine/master/sunshine.png",
             "images": []
         },
         "supd2": {
@@ -53200,7 +53222,7 @@
             ]
         },
         "logonexpert-server": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/bwwjxDYk/logonexpert.png",
             "images": [
                 "https://i.postimg.cc/1tc61Ykk/image.png",
                 "https://i.postimg.cc/6qMvy45c/image.png",
