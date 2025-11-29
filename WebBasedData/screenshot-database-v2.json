@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 12368,
-        "done": 5856,
-        "packages_with_icon": 5856,
-        "packages_with_screenshot": 1323,
-        "total_screenshots": 4128
+        "total": 12369,
+        "done": 5857,
+        "packages_with_icon": 5857,
+        "packages_with_screenshot": 1324,
+        "total_screenshots": 4132
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -54785,6 +54785,15 @@
         "musehub": {
             "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/MuseHub_Logo.svg/512px-MuseHub_Logo.svg.png ",
             "images": []
+        },
+        "antigravity": {
+            "icon": "https://unigeticons.meowcat285.com/Antigravity.png",
+            "images": [
+                "https://cdn.thenewstack.io/media/2025/11/9fa23e7d-googleantigravitylogo-whitebackground.png",
+                "https://antigravity.google/assets/image/docs/editor-open-agent-manager.png",
+                "https://antigravity.google/assets/image/docs/default-allowlist-urls.png",
+                "https://antigravity.google/assets/image/docs/editor/editor.png"
+            ]
         }
     }
 }
