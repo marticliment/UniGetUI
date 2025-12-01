@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 12369,
-        "done": 5857,
-        "packages_with_icon": 5857,
-        "packages_with_screenshot": 1324,
-        "total_screenshots": 4132
+        "total": 12370,
+        "done": 5858,
+        "packages_with_icon": 5858,
+        "packages_with_screenshot": 1325,
+        "total_screenshots": 4136
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -54793,6 +54793,15 @@
                 "https://antigravity.google/assets/image/docs/editor-open-agent-manager.png",
                 "https://antigravity.google/assets/image/docs/default-allowlist-urls.png",
                 "https://antigravity.google/assets/image/docs/editor/editor.png"
+            ]
+        },
+        "aviutl2-catalog": {
+            "icon": "https://raw.githubusercontent.com/Neosku/aviutl2-catalog/main/src-tauri/icons/icon.png",
+            "images": [
+                "https://raw.githubusercontent.com/Neosku/aviutl2-catalog/main/docs/info1.png",
+                "https://raw.githubusercontent.com/Neosku/aviutl2-catalog/main/docs/info2.png",
+                "https://raw.githubusercontent.com/Neosku/aviutl2-catalog/main/docs/info3.png",
+                "https://raw.githubusercontent.com/Neosku/aviutl2-catalog/main/docs/info4.png"
             ]
         }
     }
