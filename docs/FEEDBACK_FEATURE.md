@@ -89,11 +89,10 @@ This feature implements an in-app feedback/issue reporting system for UniGetUI, 
 - ❌ **Scoop**
 
 ### Recent Application Logs
-```
+
 [2025-12-04 19:45:23] INFO: Application started
 [2025-12-04 19:45:24] INFO: Package managers initialized
 ...
-```
 ```
 
 ## Integration Points
@@ -101,6 +100,7 @@ This feature implements an in-app feedback/issue reporting system for UniGetUI, 
 ### Where to Add Menu Items
 
 #### 1. Settings Page
+
 Add a "Send Feedback" button in the Help & Support section:
 
 **File:** `src/UniGetUI/Pages/SettingsPage.xaml`
@@ -129,6 +129,7 @@ private async void ReportIssue_Click(object sender, RoutedEventArgs e)
 ```
 
 #### 2. Help Menu (Main Window)
+
 Add to the help menu or create a dedicated "Feedback" menu item:
 
 **File:** `src/UniGetUI/MainWindow.xaml`
@@ -155,6 +156,7 @@ private async void SendFeedback_Click(object sender, RoutedEventArgs e)
 ```
 
 #### 3. After Crash/Error
+
 Automatically show feedback dialog after critical errors:
 
 **File:** `src/UniGetUI/CrashHandler.cs`
@@ -176,12 +178,14 @@ private async void ShowCrashReport(Exception ex)
 ## Dependencies
 
 ### NuGet Packages Required
+
 - Already included in project:
   - `Microsoft.Windows.SDK.Contracts`
   - `System.Net.Http`
   - `System.Text.Json`
 
 ### Existing Project References Used
+
 - `UniGetUI.Core.Logging` - For logging
 - `UniGetUI.Core.Tools` - For utility functions
 - `UniGetUI.PackageEngine.PackageManagerClasses` - For package manager info
@@ -205,6 +209,7 @@ private async void ShowCrashReport(Exception ex)
 ## Future Enhancements
 
 ### Phase 2 (Optional)
+
 1. **Direct API Submission**
    - Implement OAuth flow for GitHub authentication
    - Allow users to submit issues directly via API
@@ -233,6 +238,7 @@ private async void ShowCrashReport(Exception ex)
 ## Privacy & Security
 
 ### Data Collected
+
 - System version and architecture
 - Installed package managers
 - Application logs (user can opt-out)
@@ -240,6 +246,7 @@ private async void ShowCrashReport(Exception ex)
 - No network credentials
 
 ### User Control
+
 - Users can preview all data before submission
 - Option to exclude logs
 - Option to exclude system info
@@ -250,21 +257,25 @@ private async void ShowCrashReport(Exception ex)
 ### Common Issues
 
 **Issue:** Dialog doesn't open
+
 - Check XamlRoot is set correctly
 - Verify dialog is created on UI thread
 
 **Issue:** Logs not appearing
+
 - Check Logger.GetLogFilePath() returns valid path
 - Verify log file exists and is readable
 
 **Issue:** Package managers not detected
+
 - Verify PackageEngine is initialized
 - Check package manager status in main app
 
 **Issue:** GitHub page doesn't open
+
 - Check default browser is set
 - Verify URL encoding is correct
-- Check for special characters in title/body
+- Check for special characters in title
 
 ## Contributing
 
