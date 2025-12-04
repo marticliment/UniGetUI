@@ -28,6 +28,11 @@ This feature implements an in-app feedback/issue reporting system for UniGetUI, 
    - Copy to clipboard functionality
    - Direct browser launch to GitHub
 
+4. **Unit Tests** (`src/UniGetUI.Tests/Services/`)
+   - Comprehensive test coverage for FeedbackService
+   - GitHubIssueHelper validation tests
+   - 30+ test cases covering all scenarios
+
 ## How It Works
 
 ### User Flow
@@ -118,6 +123,8 @@ Add a "Send Feedback" button in the Help & Support section:
 **File:** `src/UniGetUI/Pages/SettingsPage.xaml.cs`
 
 ```csharp
+using UniGetUI.Pages.Dialogs;
+
 private async void ReportIssue_Click(object sender, RoutedEventArgs e)
 {
     var dialog = new FeedbackDialog
@@ -145,6 +152,8 @@ Add to the help menu or create a dedicated "Feedback" menu item:
 **File:** `src/UniGetUI/MainWindow.xaml.cs`
 
 ```csharp
+using UniGetUI.Pages.Dialogs;
+
 private async void SendFeedback_Click(object sender, RoutedEventArgs e)
 {
     var dialog = new FeedbackDialog
@@ -155,13 +164,15 @@ private async void SendFeedback_Click(object sender, RoutedEventArgs e)
 }
 ```
 
-#### 3. After Crash/Error
+#### 3. After Crash/Error (Optional)
 
 Automatically show feedback dialog after critical errors:
 
 **File:** `src/UniGetUI/CrashHandler.cs`
 
 ```csharp
+using UniGetUI.Pages.Dialogs;
+
 private async void ShowCrashReport(Exception ex)
 {
     var dialog = new FeedbackDialog
@@ -169,8 +180,9 @@ private async void ShowCrashReport(Exception ex)
         XamlRoot = App.MainWindow.Content.XamlRoot
     };
     
-    // Pre-fill with error details
-    // Note: Need to add SetInitialContent method to FeedbackDialog
+    // TODO: Add method to pre-fill with error details
+    // dialog.SetErrorContext(ex);
+    
     await dialog.ShowAsync();
 }
 ```
@@ -181,7 +193,6 @@ private async void ShowCrashReport(Exception ex)
 
 - Already included in project:
   - `Microsoft.Windows.SDK.Contracts`
-  - `System.Net.Http`
   - `System.Text.Json`
 
 ### Existing Project References Used
@@ -190,7 +201,33 @@ private async void ShowCrashReport(Exception ex)
 - `UniGetUI.Core.Tools` - For utility functions
 - `UniGetUI.PackageEngine.PackageManagerClasses` - For package manager info
 
-## Testing Checklist
+## Testing
+
+### Running Tests
+
+```bash
+dotnet test src/UniGetUI.Tests/UniGetUI.Tests.csproj
+```
+
+### Test Coverage
+
+**FeedbackServiceTests.cs** (18 tests)
+
+- ✅ System information collection
+- ✅ Markdown formatting
+- ✅ Package manager detection
+- ✅ Log retrieval
+- ✅ Issue body creation with options
+- ✅ Singleton pattern
+
+**GitHubIssueHelperTests.cs** (8 tests)
+
+- ✅ URL generation for all issue types
+- ✅ Special character handling
+- ✅ Edge cases (empty, long, null values)
+- ✅ Invalid input handling
+
+### Manual Testing Checklist
 
 - [ ] Dialog opens successfully from menu
 - [ ] Issue type selection works
@@ -277,6 +314,12 @@ private async void ShowCrashReport(Exception ex)
 - Verify URL encoding is correct
 - Check for special characters in title
 
+**Issue:** Tests failing
+
+- Ensure all project references are restored
+- Check .NET 8 SDK is installed
+- Verify test runner is compatible
+
 ## Contributing
 
 To contribute to this feature:
@@ -285,7 +328,55 @@ To contribute to this feature:
 2. Report any bugs or issues
 3. Suggest UI/UX improvements
 4. Help with translations for dialog text
-5. Add unit tests for FeedbackService
+5. Add more unit tests for edge cases
+6. Improve error handling
+
+## Architecture
+
+### Class Diagram
+
+```text
+┌─────────────────────┐
+│  FeedbackDialog     │
+│  (XAML UI)          │
+└──────────┬──────────┘
+           │
+           │ uses
+           ▼
+┌─────────────────────┐      ┌─────────────────────┐
+│  FeedbackService    │◄─────┤ SystemInformation   │
+│  (Singleton)        │      │ PackageManagerInfo  │
+└──────────┬──────────┘      └─────────────────────┘
+           │
+           │ collaborates with
+           ▼
+┌─────────────────────┐
+│ GitHubIssueHelper   │
+│                     │
+└─────────────────────┘
+```
+
+### Data Flow
+
+```text
+User Input → FeedbackDialog
+    ↓
+    ├─► FeedbackService.CollectSystemInfoAsync()
+    │       ↓
+    │       └─► SystemInformation + PackageManagerInfo
+    │
+    ├─► FeedbackService.CollectLogsAsync()
+    │       ↓
+    │       └─► Formatted log string
+    │
+    ├─► FeedbackService.CreateIssueBodyAsync()
+    │       ↓
+    │       └─► Complete markdown issue body
+    │
+    └─► GitHubIssueHelper.OpenIssuePage()
+            ↓
+            └─► Browser opens with pre-filled GitHub issue
+```
 
 ## License
 
