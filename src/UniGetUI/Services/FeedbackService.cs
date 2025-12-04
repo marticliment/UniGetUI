@@ -51,7 +51,8 @@ namespace UniGetUI.Services
                 info.DotNetVersion = Environment.Version.ToString();
 
                 // Get memory info
-                info.TotalMemoryMB = (int)(GC.GetGCMemoryInfo().TotalAvailableMemoryBytes / (1024 * 1024));
+                var totalMb = GC.GetGCMemoryInfo().TotalAvailableMemoryBytes / (1024L * 1024L);
+                info.TotalMemoryMB = totalMb > int.MaxValue ? int.MaxValue : (int)totalMb;
             }
             catch (Exception ex)
             {
