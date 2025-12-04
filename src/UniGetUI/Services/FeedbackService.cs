@@ -17,8 +17,8 @@ namespace UniGetUI.Services
     /// </summary>
     public class FeedbackService
     {
-        private static FeedbackService? _instance;
-        public static FeedbackService Instance => _instance ??= new FeedbackService();
+        private static readonly Lazy<FeedbackService> _instance = new Lazy<FeedbackService>(() => new FeedbackService());
+        public static FeedbackService Instance => _instance.Value;
 
         private FeedbackService() { }
 
