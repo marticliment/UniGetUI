@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContentDialog
+    x:Class="UniGetUI.Pages.Dialogs.FeedbackDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="Send Feedback"
+    PrimaryButtonText="Submit on GitHub"
+    SecondaryButtonText="Copy to Clipboard"
+    CloseButtonText="Cancel"
+    DefaultButton="Primary"
+    PrimaryButtonClick="PrimaryButton_Click"
+    SecondaryButtonClick="SecondaryButton_Click">
+
+    <ScrollViewer MaxHeight="600">
+        <StackPanel Spacing="16" Padding="16">
+            <!-- Issue Type Selection -->
+            <StackPanel Spacing="8">
+                <TextBlock Text="Issue Type" FontWeight="SemiBold" />
+                <ComboBox x:Name="IssueTypeComboBox" SelectedIndex="0" HorizontalAlignment="Stretch">
+                    <ComboBoxItem Content="Bug Report" Tag="bug"/>
+                    <ComboBoxItem Content="Feature Request" Tag="feature"/>
+                    <ComboBoxItem Content="Enhancement" Tag="enhancement"/>
+                </ComboBox>
+            </StackPanel>
+
+            <!-- Issue Title -->
+            <StackPanel Spacing="8">
+                <TextBlock Text="Title" FontWeight="SemiBold" />
+                <TextBox x:Name="TitleTextBox" PlaceholderText="Brief summary of the issue" />
+            </StackPanel>
+
+            <!-- Description -->
+            <StackPanel Spacing="8">
+                <TextBlock Text="Description" FontWeight="SemiBold" />
+                <TextBox 
+                    x:Name="DescriptionTextBox" 
+                    PlaceholderText="Describe the issue in detail..."
+                    AcceptsReturn="True"
+                    TextWrapping="Wrap"
+                    Height="150"
+                    ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+            </StackPanel>
+
+            <!-- Options -->
+            <StackPanel Spacing="8">
+                <TextBlock Text="Include Additional Information" FontWeight="SemiBold" />
+                <CheckBox x:Name="IncludeSystemInfoCheckBox" Content="System Information" IsChecked="True" />
+                <CheckBox x:Name="IncludeLogsCheckBox" Content="Application Logs (last 200 lines)" IsChecked="True" />
+            </StackPanel>
+
+            <!-- Info Box -->
+            <InfoBar
+                Title="Privacy Note"
+                Message="System information and logs help us diagnose issues faster. Please review the generated content before submitting."
+                Severity="Informational"
+                IsOpen="True"
+                IsClosable="False"/>
+
+            <!-- Preview Section (collapsible) -->
+            <Expander Header="Preview Issue Body" HorizontalAlignment="Stretch">
+                <ScrollViewer MaxHeight="300">
+                    <TextBlock 
+                        x:Name="PreviewTextBlock"
+                        TextWrapping="Wrap"
+                        FontFamily="Consolas"
+                        FontSize="12"
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        Padding="8"/>
+                </ScrollViewer>
+            </Expander>
+
+            <!-- Generate Preview Button -->
+            <Button 
+                x:Name="GeneratePreviewButton"
+                Content="Generate Preview"
+                Click="GeneratePreview_Click"
+                HorizontalAlignment="Stretch"/>
+
+            <!-- Loading indicator -->
+            <ProgressRing x:Name="LoadingRing" IsActive="False" />
+        </StackPanel>
+    </ScrollViewer>
+</ContentDialog>
