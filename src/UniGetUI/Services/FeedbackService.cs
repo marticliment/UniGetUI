@@ -71,7 +71,9 @@ namespace UniGetUI.Services
 
             await Task.Run(() =>
             {
-                foreach (var manager in PackageEngine.PackageEngine.PackageManagerList)
+                var snapshot = PackageEngine.PackageEngine.PackageManagerList;
+                if (snapshot == null) return;
+                foreach (var manager in snapshot.ToList())
                 {
                     managers.Add(new PackageManagerInfo
                     {
