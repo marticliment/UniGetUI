@@ -60,8 +60,17 @@ public sealed partial class OperationFailedDialog : Page, IDisposable
 
     private void InitializeColors()
     {
-        _errorColor ??= (SolidColorBrush)Application.Current.Resources["SystemFillColorCriticalBrush"];
-        _debugColor ??= (SolidColorBrush)Application.Current.Resources["SystemFillColorNeutralBrush"];
+        try
+        {
+            _errorColor ??= (SolidColorBrush)Application.Current.Resources["SystemFillColorCriticalBrush"];
+            _debugColor ??= (SolidColorBrush)Application.Current.Resources["SystemFillColorNeutralBrush"];
+        }
+        catch
+        {
+            // Fallback brushes to avoid throwing if resources aren't present or are of an unexpected type.
+            _errorColor ??= new SolidColorBrush(Microsoft.UI.Colors.Red);
+            _debugColor ??= new SolidColorBrush(Microsoft.UI.Colors.Gray);
+        }
     }
 
     private void SetupHeader(AbstractOperation operation)
