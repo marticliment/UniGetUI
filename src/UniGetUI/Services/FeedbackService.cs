@@ -101,10 +101,25 @@ namespace UniGetUI.Services
                 // Get log file path
                 var logPath = Logger.GetLogFilePath();
 
-                if (File.Exists(logPath))
+                if (string.IsNullOrWhiteSpace(logPath))
                 {
-                    var lines = await File.ReadAllLinesAsync(logPath);
-                    var recentLines = lines.TakeLast(maxLines);
+                    Logger.Error("Log file path is null or empty.");
+                    logBuilder.AppendLine("### Logs");
+                    logBuilder.AppendLine("Log file path not found.");
+                }
+                else if (File.Exists(logPath))
+                {
+                    string[] recentLines = Array.Empty<string>();
+                    await Task.Run(() =>
+                    {
+                        var q = new Queue<string>();
+                        foreach (var line in File.ReadLines(logPath))
+                        {
+                            q.Enqueue(line);
+                            if (q.Count > maxLines) q.Dequeue();
+                        }
+                        recentLines = q.ToArray();
+                    });
 
                     logBuilder.AppendLine("### Recent Application Logs");
                     logBuilder.AppendLine("```");
