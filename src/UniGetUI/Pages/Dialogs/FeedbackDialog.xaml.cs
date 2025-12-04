@@ -80,7 +80,7 @@ namespace UniGetUI.Pages.Dialogs
                 IsPrimaryButtonEnabled = false;
                 LoadingRing.IsActive = true;
 
-                if (string.IsNullOrEmpty(_generatedBody))
+                if (string.IsNullOrWhiteSpace(_generatedBody))
                 {
                     await GenerateIssueBodyAsync();
                 }
