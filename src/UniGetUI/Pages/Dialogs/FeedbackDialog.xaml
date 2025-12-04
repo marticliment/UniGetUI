@@ -67,7 +67,7 @@
                         TextWrapping="Wrap"
                         FontFamily="Consolas"
                         FontSize="12"
-                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        Foreground="{ThemeResource SystemControlForegroundBaseLowBrush}"
                         Padding="8"/>
                 </ScrollViewer>
             </Expander>
