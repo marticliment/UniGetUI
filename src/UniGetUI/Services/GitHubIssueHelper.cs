@@ -42,8 +42,9 @@ namespace UniGetUI.Services
                     _ => "bug"
                 };
 
-                var encodedTitle = Uri.EscapeDataString(title);
-                var url = $"https://github.com/{RepositoryOwner}/{RepositoryName}/issues/new?assignees={RepositoryOwner}&labels={labelParam}&template={templateName}&title={encodedTitle}";
+                var encodedTitle = Uri.EscapeDataString(title ?? string.Empty);
+                var encodedBody = Uri.EscapeDataString(body ?? string.Empty);
+                var url = $"https://github.com/{RepositoryOwner}/{RepositoryName}/issues/new?assignees={RepositoryOwner}&labels={labelParam}&template={templateName}&title={encodedTitle}&body={encodedBody}";
 
                 Logger.Info($"Opening GitHub issue page: {url}");
                 System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo { FileName = url, UseShellExecute = true });
