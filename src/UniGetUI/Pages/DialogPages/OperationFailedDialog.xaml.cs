@@ -248,6 +248,15 @@ public sealed partial class OperationFailedDialog : Page, IDisposable
         // Always update the visible message so the countdown is discoverable
         AutoDismissInfoBar.Message = message;
 
+        // Set live setting only once (on first update) before any announcements
+        if (_lastAnnouncedAutoDismissSeconds == -1)
+        {
+            AutoDismissInfoBar.SetValue(
+                Microsoft.UI.Xaml.Automation.AutomationProperties.LiveSettingProperty,
+                Microsoft.UI.Xaml.Automation.Peers.AutomationLiveSetting.Polite
+            );
+        }
+
         // Throttle accessibility announcements to avoid noisy per-second updates.
         // Only announce at key intervals (every 5 seconds) and during the last 5 seconds.
         var shouldAnnounce =
@@ -261,15 +270,6 @@ public sealed partial class OperationFailedDialog : Page, IDisposable
                 message
             );
             _lastAnnouncedAutoDismissSeconds = _remainingSeconds;
-        }
-
-        // Set live setting only once (on first update)
-        if (_lastAnnouncedAutoDismissSeconds == -1)
-        {
-            AutoDismissInfoBar.SetValue(
-                Microsoft.UI.Xaml.Automation.AutomationProperties.LiveSettingProperty,
-                Microsoft.UI.Xaml.Automation.Peers.AutomationLiveSetting.Polite
-            );
         }
     }
 
