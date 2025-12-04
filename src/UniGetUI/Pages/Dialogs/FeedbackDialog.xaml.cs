@@ -59,6 +59,14 @@ namespace UniGetUI.Pages.Dialogs
             }
         }
 
+        private Task EnsureGeneratedBodyAsync()
+        {
+            if (!string.IsNullOrEmpty(_generatedBody))
+                return Task.CompletedTask;
+
+            return GenerateIssueBodyAsync();
+        }
+
         private async void PrimaryButton_Click(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             args.Cancel = true;
@@ -80,10 +88,7 @@ namespace UniGetUI.Pages.Dialogs
                 IsPrimaryButtonEnabled = false;
                 LoadingRing.IsActive = true;
 
-                if (string.IsNullOrWhiteSpace(_generatedBody))
-                {
-                    await GenerateIssueBodyAsync();
-                }
+                await EnsureGeneratedBodyAsync();
 
                 var issueType = (IssueTypeComboBox.SelectedItem as ComboBoxItem)?.Tag?.ToString() ?? "bug";
                 var titlePrefix = issueType switch
@@ -96,7 +101,7 @@ namespace UniGetUI.Pages.Dialogs
 
                 var fullTitle = titlePrefix + TitleTextBox.Text;
 
-                _githubHelper.OpenIssuePage(issueType, fullTitle, _generatedBody);
+                _githubHelper.OpenIssuePage(issueType, fullTitle);
 
                 var copyDialog = new ContentDialog
                 {
@@ -124,25 +129,15 @@ namespace UniGetUI.Pages.Dialogs
             }
         }
 
-        private void SecondaryButton_Click(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void SecondaryButton_Click(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             args.Cancel = true;
 
-            if (string.IsNullOrEmpty(_generatedBody))
-            {
-                _ = Task.Run(async () =>
-                {
-                    await GenerateIssueBodyAsync();
-                    DispatcherQueue.TryEnqueue(() => CopyAndNotify());
-                });
-            }
-            else
-            {
-                CopyAndNotify();
-            }
+            await EnsureGeneratedBodyAsync();
+            await CopyAndNotifyAsync();
         }
 
-        private async void CopyAndNotify()
+        private async Task CopyAndNotifyAsync()
         {
             CopyToClipboard(_generatedBody);
 

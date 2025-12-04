@@ -1,28 +1,24 @@
 using System;
-using System.Net.Http;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
 using UniGetUI.Core.Logging;
 
 namespace UniGetUI.Services
 {
+    /// <summary>
+    /// Helper class for creating GitHub issues by opening pre-filled issue templates in the browser
+    /// </summary>
     public class GitHubIssueHelper
     {
-        private const string GitHubApiBaseUrl = "https://api.github.com";
         private const string RepositoryOwner = "marticliment";
         private const string RepositoryName = "UniGetUI";
 
-        private readonly HttpClient _httpClient;
-
-        public GitHubIssueHelper()
-        {
-            _httpClient = new HttpClient();
-            _httpClient.DefaultRequestHeaders.Add("User-Agent", "UniGetUI-FeedbackApp");
-            _httpClient.DefaultRequestHeaders.Add("Accept", "application/vnd.github+json");
-        }
-
-        public void OpenIssuePage(string issueType, string title, string body)
+        /// <summary>
+        /// Opens GitHub issue creation page in browser with pre-filled template.
+        /// This approach is used instead of direct API submission to avoid requiring user authentication.
+        /// The issue body should be copied to clipboard separately and pasted by the user.
+        /// </summary>
+        /// <param name="issueType">Type of issue (bug, feature, enhancement)</param>
+        /// <param name="title">Pre-filled title for the issue</param>
+        public void OpenIssuePage(string issueType, string title)
         {
             try
             {
@@ -42,12 +38,15 @@ namespace UniGetUI.Services
                     _ => "bug"
                 };
 
-                var encodedTitle = Uri.EscapeDataString(title ?? string.Empty);
-                var encodedBody = Uri.EscapeDataString(body ?? string.Empty);
-                var url = $"https://github.com/{RepositoryOwner}/{RepositoryName}/issues/new?assignees={RepositoryOwner}&labels={labelParam}&template={templateName}&title={encodedTitle}&body={encodedBody}";
+                var encodedTitle = Uri.EscapeDataString(title);
+                var url = $"https://github.com/{RepositoryOwner}/{RepositoryName}/issues/new?assignees={RepositoryOwner}&labels={labelParam}&template={templateName}&title={encodedTitle}";
 
                 Logger.Info($"Opening GitHub issue page: {url}");
-                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo { FileName = url, UseShellExecute = true });
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo 
+                { 
+                    FileName = url, 
+                    UseShellExecute = true 
+                });
             }
             catch (Exception ex)
             {
@@ -56,5 +55,13 @@ namespace UniGetUI.Services
         }
     }
 
-    public enum IssueType { Bug, Enhancement, Feature }
+    /// <summary>
+    /// Types of issues that can be created
+    /// </summary>
+    public enum IssueType
+    {
+        Bug,
+        Enhancement,
+        Feature
+    }
 }
