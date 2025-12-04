@@ -9,30 +9,66 @@
     xmlns:widgets="using:UniGetUI.Interface.Widgets"
     MaxWidth="800"
     MaxHeight="600"
+    PointerEntered="Page_PointerEntered"
+    PointerExited="Page_PointerExited"
     mc:Ignorable="d">
 
     <Grid RowSpacing="16">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
+        
+        <!--  Header with error message  -->
         <TextBlock
             Name="headerContent"
             Grid.Row="0"
-            TextWrapping="WrapWholeWords" />
-        <ScrollViewer
+            TextWrapping="WrapWholeWords"
+            AutomationProperties.HeadingLevel="Level1" />
+        
+        <!--  Auto-dismiss countdown banner  -->
+        <InfoBar
+            Name="AutoDismissInfoBar"
             Grid.Row="1"
+            IsOpen="False"
+            Severity="Informational"
+            IsClosable="False"
+            AutomationProperties.LiveSetting="Polite">
+            <InfoBar.ActionButton>
+                <Button
+                    Name="KeepOpenButton"
+                    Content="Keep Open"
+                    Click="KeepOpenButton_Click"
+                    AutomationProperties.Name="Keep this dialog open and cancel auto-dismiss"
+                    ToolTipService.ToolTip="Prevent this dialog from closing automatically" />
+            </InfoBar.ActionButton>
+        </InfoBar>
+        
+        <!--  Command output section  -->
+        <ScrollViewer
+            Grid.Row="2"
             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
             CornerRadius="6"
-            HorizontalScrollMode="Disabled">
+            HorizontalScrollMode="Disabled"
+            AutomationProperties.Name="Command-line output">
             <RichTextBlock
                 Name="CommandLineOutput"
                 Padding="6"
                 FontFamily="Consolas"
-                TextWrapping="Wrap" />
+                TextWrapping="Wrap"
+                IsTextSelectionEnabled="True" />
         </ScrollViewer>
-        <widgets:DialogCloseButton Margin="0,-64,-24,0" Click="CloseButton_Click" />
+        
+        <!--  Close button (top-right)  -->
+        <widgets:DialogCloseButton 
+            Margin="0,-64,-24,0" 
+            Click="CloseDialog"
+            AutomationProperties.Name="Close dialog"
+            ToolTipService.ToolTip="Close this dialog (Esc)" />
+        
+        <!--  Action buttons  -->
         <Grid
             Name="ButtonsLayout"
             Grid.Row="3"
