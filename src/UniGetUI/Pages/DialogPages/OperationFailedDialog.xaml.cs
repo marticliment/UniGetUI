@@ -75,7 +75,8 @@ public sealed partial class OperationFailedDialog : Page, IDisposable
 
     private void SetupHeader(AbstractOperation operation)
     {
-        headerContent.Text = $"{operation.Metadata.FailureMessage}.\n"
+        var failureMessage = operation.Metadata?.FailureMessage ?? CoreTools.Translate("An unknown error occurred");
+        headerContent.Text = $"{failureMessage}.\n"
            + CoreTools.Translate("Please see the Command-line Output or refer to the Operation History for further information about the issue.");
     }
 
