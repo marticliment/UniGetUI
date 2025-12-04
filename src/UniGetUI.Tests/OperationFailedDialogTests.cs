@@ -199,16 +199,9 @@ public class OperationFailedDialogTests
     {
         // Arrange
         var mockOperation = CreateMockOperation();
-        var mockOpControl = CreateMockOperationControl();
-
-        // Act
-        var dialog = new OperationFailedDialog(mockOperation.Object, mockOpControl.Object);
-
-        // Assert
-        Assert.IsInstanceOfType(dialog, typeof(IDisposable), "Dialog should implement IDisposable");
-        
-        // Cleanup
-        dialog.Dispose();
+        // Verify type implements IDisposable without instantiating UI types.
+        Assert.IsTrue(typeof(IDisposable).IsAssignableFrom(typeof(OperationFailedDialog)),
+            "OperationFailedDialog should implement IDisposable");
     }
 
     [TestMethod]
