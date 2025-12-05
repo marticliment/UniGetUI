@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 12370,
-        "done": 5858,
-        "packages_with_icon": 5858,
-        "packages_with_screenshot": 1325,
-        "total_screenshots": 4136
+        "total": 12378,
+        "done": 5866,
+        "packages_with_icon": 5866,
+        "packages_with_screenshot": 1329,
+        "total_screenshots": 4153
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -54802,6 +54802,59 @@
                 "https://raw.githubusercontent.com/Neosku/aviutl2-catalog/main/docs/info2.png",
                 "https://raw.githubusercontent.com/Neosku/aviutl2-catalog/main/docs/info3.png",
                 "https://raw.githubusercontent.com/Neosku/aviutl2-catalog/main/docs/info4.png"
+            ]
+        },
+        "r2modman": {
+            "icon": "https://unigeticons.meowcat285.com/r2modman.png",
+            "images": [
+                "https://unigeticons.meowcat285.com/Screenshots/r2modman/r2modman-screenshot1.png",
+                "https://unigeticons.meowcat285.com/Screenshots/r2modman/r2modman-screenshot2.png",
+                "https://unigeticons.meowcat285.com/Screenshots/r2modman/r2modman-screenshot3.png",
+                "https://unigeticons.meowcat285.com/Screenshots/r2modman/r2modman-screenshot4.png",
+                "https://unigeticons.meowcat285.com/Screenshots/r2modman/r2modman-screenshot5.png"
+            ]
+        },
+        "robotframework": {
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/e/e4/Robot-framework-logo.png",
+            "images": []
+        },
+        "Logitech.LogiTune\n": {
+            "icon": "https://resource.logitech.com/w_300,h_300,ar_1,c_fill,q_auto,f_auto,dpr_1.0/d_transparent.gif/content/dam/logitech/en/software/software-page/logi-tune.png",
+            "images": []
+        },
+        "OpenVPNTechnologies.OpenVPN\n": {
+            "icon": "https://postimg.cc/2LQGvMgm",
+            "images": []
+        },
+        "Zoom.Zoom.EXE\n": {
+            "icon": "https://i.postimg.cc/NFd1Qg5d/zoom-logo.png",
+            "images": [
+                "https://i.postimg.cc/HW0dsF59/Zoom1.png",
+                "https://i.postimg.cc/pXqvK8s9/Zoom2.png",
+                "https://i.postimg.cc/52yVg0rs/Zoom3.png"
+            ]
+        },
+        "winaero.tweaker\n": {
+            "icon": "https://winaerotweaker.com/images/tweaker-app-icon.png",
+            "images": [
+                "https://winaerotweaker.com/images/tweaker-app.png",
+                "https://winaerotweaker.com/images/tweaker-app-unblock-cm.png",
+                "https://winaerotweaker.com/images/tweaker-app-drag-drop.png",
+                "https://winaerotweaker.com/images/tweaker-app-taskbar-thumbnails.png",
+                "https://winaerotweaker.com/images/tweaker-app-this-pc.png",
+                "https://winaerotweaker.com/images/tweaker-app-remove-cm.png",
+                "https://winaerotweaker.com/images/tweaker-app-reset-gp.png",
+                "https://winaerotweaker.com/images/tweaker-app-shares-uac.png"
+            ]
+        },
+        " Microsoft.DotNet.DesktopRuntime.8\n": {
+            "icon": "https://postimg.cc/VdbmyRnY",
+            "images": []
+        },
+        "google/gemini-cli": {
+            "icon": "https://geminicli.com/icon.png",
+            "images": [
+                "https://raw.githubusercontent.com/google-gemini/gemini-cli/HEAD/docs/assets/gemini-screenshot.png"
             ]
         }
     }
