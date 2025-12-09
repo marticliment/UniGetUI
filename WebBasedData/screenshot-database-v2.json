@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 12378,
-        "done": 5866,
-        "packages_with_icon": 5866,
-        "packages_with_screenshot": 1329,
-        "total_screenshots": 4153
+        "total": 12387,
+        "done": 5875,
+        "packages_with_icon": 5875,
+        "packages_with_screenshot": 1332,
+        "total_screenshots": 4160
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -23813,9 +23813,11 @@
             "icon": "https://community.chocolatey.org/content/packageimages/lightalloy.4.10.2.png",
             "images": []
         },
-        "lightbulb": {
+        "https://i.imgur.com/BT0Gejw.png": {
             "icon": "https://community.chocolatey.org/content/packageimages/lightbulb.2.0.png",
-            "images": []
+            "images": [
+                "https://i.imgur.com/BT0Gejw.png"
+            ]
         },
         "lightburn": {
             "icon": "https://i.postimg.cc/6pNTh6p3/Lightburn.png",
@@ -42396,8 +42398,12 @@
             "images": []
         },
         "teracopy": {
-            "icon": "https://tweakers.net/ext/i/2004859552.jpeg",
-            "images": []
+            "icon": "https://i.ibb.co/VWMLqzbN/icon.png",
+            "images": [
+                "https://i.ibb.co/XZgvrZDt/s1.png",
+                "https://i.ibb.co/RT4Qpvpj/s2.png",
+                "https://i.ibb.co/S40DxfM4/s3.png"
+            ]
         },
         "teraterm": {
             "icon": "https://community.chocolatey.org/content/packageimages/teraterm.4.106.png",
@@ -54856,6 +54862,46 @@
             "images": [
                 "https://raw.githubusercontent.com/google-gemini/gemini-cli/HEAD/docs/assets/gemini-screenshot.png"
             ]
+        },
+        "codesector-teraCopy": {
+            "icon": "https://i.ibb.co/VWMLqzbN/icon.png",
+            "images": [
+                "https://i.ibb.co/XZgvrZDt/s1.png",
+                "https://i.ibb.co/RT4Qpvpj/s2.png ",
+                "https://i.ibb.co/S40DxfM4/s3.png"
+            ]
+        },
+        "XPFFCG7M673D4F": {
+            "icon": "https://images-eds-ssl.xboxlive.com/image?url=4rt9.lXDC4H_93laV1_eHHFT949fUipzkiFOBH3fAiZZUCdYojwUyX2aTonS1aIwMrx6NUIsHfUHSLzjGJFxxs6rpBN2unaNv5PNdhlS_qHGRhvdm1TQsZPByVJpM1zdYJW4EEWuEzJfMSAN6k7OiP4f5vDN5Z3B5cnmDdboFpA-&format=source&h=115",
+            "images": []
+        },
+        "setuptools": {
+            "icon": "https://postimg.cc/hfZn8kvX",
+            "images": []
+        },
+        "requests": {
+            "icon": "https://requests.readthedocs.io/en/latest/_static/requests-sidebar.png",
+            "images": []
+        },
+        "psutil": {
+            "icon": "https://github.com/giampaolo/psutil/raw/master/docs/_static/psutil-logo.png",
+            "images": []
+        },
+        "attrs": {
+            "icon": "https://postimg.cc/gLvwLYmY",
+            "images": []
+        },
+        "Lenovo.SystemUpdate\n": {
+            "icon": "https://download.lenovo.com/km/media/images/HT003029/LSU2_20200824181525152.png",
+            "images": []
+        },
+        "starlette": {
+            "icon": "https://postimg.cc/wRdzrfjX",
+            "images": []
+        },
+        "trio": {
+            "icon": "https://postimg.cc/nXmkF3FS",
+            "images": []
         }
     }
 }
