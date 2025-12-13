@@ -1,8 +1,8 @@
 {
     "package_count": {
-        "total": 12387,
-        "done": 5875,
-        "packages_with_icon": 5875,
+        "total": 12398,
+        "done": 5893,
+        "packages_with_icon": 5893,
         "packages_with_screenshot": 1332,
         "total_screenshots": 4160
     },
@@ -4945,7 +4945,7 @@
             ]
         },
         "beeper": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/j5JbY4KV/beeper_512.png",
             "images": []
         },
         "beersmith": {
@@ -6492,7 +6492,7 @@
             "images": []
         },
         "camerahub": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/fTj3gLXs/camerahub_202512_128.png",
             "images": []
         },
         "camerasettings": {
@@ -8650,7 +8650,7 @@
             "images": []
         },
         "controlcenter": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/CLHZ61DY/controlcenter_202512_128.png",
             "images": []
         },
         "controller": {
@@ -12425,7 +12425,7 @@
             "images": []
         },
         "dualmonitortools": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/hj7BR1nL/dual-monitor-tools-176.png",
             "images": []
         },
         "dualsensefwupdater": {
@@ -24337,7 +24337,7 @@
             "images": []
         },
         "logitune": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/1tNQ1rS7/logitune_200.png",
             "images": []
         },
         "logmein-client": {
@@ -26090,7 +26090,7 @@
             "images": []
         },
         "miro": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/vmpfwKmf/miro-logo-250.png",
             "images": []
         },
         "mirrorgo": {
@@ -36160,7 +36160,7 @@
             "images": []
         },
         "retroarch": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/G2q7QrKh/retroarch-300.png",
             "images": []
         },
         "retroshare": {
@@ -36184,7 +36184,7 @@
             "images": []
         },
         "revo-uninstaller": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/PqFKpK5s/Revouninstallerpro-512.png",
             "images": []
         },
         "revoltdesktop": {
@@ -36196,11 +36196,11 @@
             "images": []
         },
         "revouninstaller": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/PqFKpK5s/Revouninstallerpro-512.png",
             "images": []
         },
         "revouninstallerpro": {
-            "icon": "https://community.chocolatey.org/content/packageimages/revouninstallerpro.3.1.1.20141201.png",
+            "icon": "https://i.postimg.cc/PqFKpK5s/Revouninstallerpro-512.png",
             "images": []
         },
         "revrobotics-hardwareclient": {
@@ -36520,7 +36520,7 @@
             "images": []
         },
         "rommanager": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/qRCTHxrb/steamrommanager_256.png",
             "images": []
         },
         "romp": {
@@ -40724,7 +40724,7 @@
             "images": []
         },
         "steam-rom-manager": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/qRCTHxrb/steamrommanager_256.png",
             "images": []
         },
         "steamachievementmanager": {
@@ -40884,7 +40884,7 @@
             "images": []
         },
         "streamdeck": {
-            "icon": "https://community.chocolatey.org/content/packageimages/streamdeck.6.0.5.18168.png",
+            "icon": "https://i.postimg.cc/4NbKFdts/streamdeck_202512_128.png",
             "images": []
         },
         "streamer": {
@@ -43263,7 +43263,7 @@
             "images": []
         },
         "toggltrack": {
-            "icon": "",
+            "icon": "https://community.chocolatey.org/content/packageimages/toggl.7.5.454.png",
             "images": []
         },
         "tokei": {
@@ -48616,7 +48616,7 @@
             "images": []
         },
         "windhawk": {
-            "icon": "https://i.imgur.com/Zp8Utej.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/windhawk.1.7.2.png",
             "images": [
                 "https://i.imgur.com/fszFq44.png",
                 "https://i.imgur.com/PlkUIje.png"
@@ -54901,6 +54901,30 @@
         },
         "trio": {
             "icon": "https://postimg.cc/nXmkF3FS",
+            "images": []
+        },
+        "affinity": {
+            "icon": "https://i.postimg.cc/ZqQSQDGP/affinity_canva_256.png",
+            "images": []
+        },
+        "akiflow": {
+            "icon": "https://i.postimg.cc/MTjSJmwB/akiflow_256.png",
+            "images": []
+        },
+        "fullstackaimemegenerator": {
+            "icon": "https://i.postimg.cc/nzQJfGxG/thiojoe_96.png",
+            "images": []
+        },
+        "svgthumbnailextension": {
+            "icon": "https://i.postimg.cc/nzQJfGxG/thiojoe_96.png",
+            "images": []
+        },
+        "ytspammerpurge": {
+            "icon": "https://i.postimg.cc/nzQJfGxG/thiojoe_96.png",
+            "images": []
+        },
+        "tweaker": {
+            "icon": "https://i.postimg.cc/C1fgps0W/winaero_109.png",
             "images": []
         }
     }
