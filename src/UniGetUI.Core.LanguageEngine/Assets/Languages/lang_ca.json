@@ -1029,7 +1029,7 @@
   "{0} packages can be updated": "Es poden actualitzar {0} paquets",
   "{0} packages found": "{0} paquets trobats",
   "{0} packages were found": "s'han trobat {0} paquets",
-  "{0} packages were found, {1} of which match the specified filters.": "S'han trobat {0} paquets, {1} dels quals s'ajusten als filtres establerts.",
+  "{0} packages were found, {1} of which match the specified filters.": "S'han trobat {1} paquets, {0} dels quals s'ajusten als filtres establerts.",
   "{0} selected": "{0} seleccionats",
   "{0} settings": "Configuració del {0}",
   "{0} status": "Estat del {0}",
