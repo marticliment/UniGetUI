@@ -1,8 +1,8 @@
 {
     "package_count": {
-        "total": 12398,
-        "done": 5893,
-        "packages_with_icon": 5893,
+        "total": 12400,
+        "done": 5895,
+        "packages_with_icon": 5895,
         "packages_with_screenshot": 1332,
         "total_screenshots": 4160
     },
@@ -54925,6 +54925,14 @@
         },
         "tweaker": {
             "icon": "https://i.postimg.cc/C1fgps0W/winaero_109.png",
+            "images": []
+        },
+        "uvicorn": {
+            "icon": "https://uvicorn.dev/uvicorn.png",
+            "images": []
+        },
+        "click": {
+            "icon": "https://postimg.cc/3y4p51bv",
             "images": []
         }
     }
