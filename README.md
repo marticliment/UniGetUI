@@ -1,4 +1,7 @@
-# <img src="https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/icon.png" height="40">UniGetUI (formerly WingetUI)
+# WARNING: **wingetui<sub>•</sub>com** and **unigetui<sub>•</sub>com** are fake websites hosted by a third-party. please do NOT trust them
+<br>
+
+## <img src="https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/icon.png" height="40">UniGetUI (formerly WingetUI)
 
 [![Downloads@latest](https://img.shields.io/github/downloads/marticliment/UniGetUI/3.2.0/total?style=for-the-badge)](https://github.com/marticliment/UniGetUI/releases/latest/download/UniGetUI.Installer.exe)
 [![Release Version Badge](https://img.shields.io/github/v/release/marticliment/UniGetUI?style=for-the-badge)](https://github.com/marticliment/UniGetUI/releases)
