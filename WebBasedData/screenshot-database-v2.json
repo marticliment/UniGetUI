@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 12400,
-        "done": 5895,
-        "packages_with_icon": 5895,
-        "packages_with_screenshot": 1332,
-        "total_screenshots": 4160
+        "total": 12403,
+        "done": 5899,
+        "packages_with_icon": 5899,
+        "packages_with_screenshot": 1335,
+        "total_screenshots": 4163
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -24337,7 +24337,7 @@
             "images": []
         },
         "logitune": {
-            "icon": "https://i.postimg.cc/1tNQ1rS7/logitune_200.png",
+            "icon": "https://imgs.search.brave.com/ASjRKcLSMy8TMcfmAKV4Hte2F6IJZNgqHnCwlZv_jJw/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93d3cu/bG9naXRlY2guY29t/L2Fzc2V0cy82NTY4/Ni8yL2xvZ2ktdHVu/ZS1hcHAucG5n",
             "images": []
         },
         "logmein-client": {
@@ -30316,6 +30316,10 @@
         },
         "openssh-beta": {
             "icon": "",
+            "images": []
+        },
+        "openssh-preview": {
+            "icon": "https://i.ibb.co/nqFFVBcw/image.png",
             "images": []
         },
         "openssl": {
@@ -36742,8 +36746,10 @@
             "images": []
         },
         "rtss": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.ibb.co/vMjBYpp/image.png",
+            "images": [
+                "https://i.ibb.co/bMTYq6bG/2024-02-07-19-19-30-guru3d.png"
+            ]
         },
         "rtxvoice": {
             "icon": "",
@@ -42881,7 +42887,7 @@
             "images": []
         },
         "thunderbird": {
-            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Thunderbird_Logo%2C_2018.svg/langfr-800px-Thunderbird_Logo%2C_2018.svg.png",
+            "icon": "https://i.ibb.co/NgwCjhjJ/image.png",
             "images": [
                 "https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Thunderbird_102_screenshot.png/1024px-Thunderbird_102_screenshot.png"
             ]
@@ -45602,6 +45608,12 @@
         "velocity": {
             "icon": "",
             "images": []
+        },
+        "vencord-installer": {
+            "icon": " ",
+            "images": [
+                "https://user-images.githubusercontent.com/45497981/226734476-5fb42420-844d-4e27-ae06-4799118e086e.png"
+            ]
         },
         "vendir": {
             "icon": "https://community.chocolatey.org/content/packageimages/vendir.0.32.0.png",
@@ -54825,7 +54837,7 @@
             "images": []
         },
         "Logitech.LogiTune\n": {
-            "icon": "https://resource.logitech.com/w_300,h_300,ar_1,c_fill,q_auto,f_auto,dpr_1.0/d_transparent.gif/content/dam/logitech/en/software/software-page/logi-tune.png",
+            "icon": "https://imgs.search.brave.com/ASjRKcLSMy8TMcfmAKV4Hte2F6IJZNgqHnCwlZv_jJw/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93d3cu/bG9naXRlY2guY29t/L2Fzc2V0cy82NTY4/Ni8yL2xvZ2ktdHVu/ZS1hcHAucG5n",
             "images": []
         },
         "OpenVPNTechnologies.OpenVPN\n": {
@@ -54934,6 +54946,12 @@
         "click": {
             "icon": "https://postimg.cc/3y4p51bv",
             "images": []
+        },
+        "mirrorforphotoshopserver": {
+            "icon": "https://raw.githubusercontent.com/hex/mirror-for-photoshop-server/main/assets/icon.png",
+            "images": [
+                "https://raw.githubusercontent.com/hex/mirror-for-photoshop-server/main/assets/screenshot.png"
+            ]
         }
     }
 }
