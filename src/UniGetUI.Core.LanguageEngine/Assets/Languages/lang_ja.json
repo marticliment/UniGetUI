@@ -572,7 +572,7 @@
   "Python's library manager. Full of python libraries and other python-related utilities<br>Contains: <b>Python libraries and related utilities</b>": "Pythonのライブラリマネージャー。Pythonライブラリやその他のPython関連ユーティリティがたくさんあります<br>含まれるもの: <b>Pythonライブラリおよび関連ユーティリティ</b>",
   "Quit": "終了",
   "Quit WingetUI": "UniGetUI を終了",
-  "Ready": null,
+  "Ready": "準備完了",
   "Reduce UAC prompts, elevate installations by default, unlock certain dangerous features, etc.": "UAC プロンプトを減らす、デフォルトでインストールを昇格、特定の危険な機能のロックを解除するなど。 ",
   "Refer to the UniGetUI Logs to get more details regarding the affected file(s)": "影響を受けたファイルに関する詳細を確認するには、UniGetUI ログを参照してください。",
   "Reinstall": "再インストール",
