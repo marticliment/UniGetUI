@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 12403,
-        "done": 5899,
-        "packages_with_icon": 5899,
-        "packages_with_screenshot": 1335,
-        "total_screenshots": 4163
+        "total": 12406,
+        "done": 5902,
+        "packages_with_icon": 5902,
+        "packages_with_screenshot": 1336,
+        "total_screenshots": 4164
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -23725,7 +23725,7 @@
             "images": []
         },
         "libreoffice": {
-            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/LibreOffice_icon_3.3.1_48_px.svg/200px-LibreOffice_icon_3.3.1_48_px.svg.png",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/LibreOffice_7.5_Main_Icon.svg/250px-LibreOffice_7.5_Main_Icon.svg.png",
             "images": [
                 "https://www.libreoffice.org/assets/Uploads/writer-2020.png",
                 "https://www.libreoffice.org/assets/Uploads/calc-2020.png",
@@ -23734,7 +23734,7 @@
             ]
         },
         "libreoffice-\u2026": {
-            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/LibreOffice_icon_3.3.1_48_px.svg/200px-LibreOffice_icon_3.3.1_48_px.svg.png",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/LibreOffice_7.5_Main_Icon.svg/250px-LibreOffice_7.5_Main_Icon.svg.png",
             "images": []
         },
         "libreoffice-fresh": {
@@ -28454,7 +28454,7 @@
             "images": []
         },
         "nextclouddesktop": {
-            "icon": "https://postimg.cc/RJ17V9DG",
+            "icon": "https://raw.githubusercontent.com/nextcloud/desktop/refs/heads/master/theme/colored/wizard-nextcloud.png",
             "images": []
         },
         "nextdns": {
@@ -33588,6 +33588,10 @@
             "icon": "https://community.chocolatey.org/content/packageimages/prusaslicer.2.5.0.png",
             "images": []
         },
+        "ps3-system-software": {
+            "icon": "https://i.ibb.co/219fc7pc/playstation-logo-rounded-playstation-logo-free-png-507847634.png",
+            "images": []
+        },
         "ps-remote-play": {
             "icon": "",
             "images": []
@@ -36634,6 +36638,12 @@
         "rpc": {
             "icon": "https://community.chocolatey.org/content/packageimages/rpc.6.1.png",
             "images": []
+        },
+        "rpcs3": {
+            "icon": "https://i.ibb.co/0RZzzr7y/8070735.png",
+            "images": [
+                "https://i.ibb.co/wF17cTdm/image.png"
+            ]
         },
         "rpgmakermv-free-trial": {
             "icon": "",
@@ -42371,6 +42381,10 @@
             "icon": "https://community.chocolatey.org/content/packageimages/Temurinjre.19.0.2.700.png",
             "images": []
         },
+        "tenacity": {
+            "icon": "https://codeberg.org/tenacityteam/tenacity/raw/branch/main/images/icons/48x48/tenacity.png",
+            "images": []
+        },
         "tencentdocs": {
             "icon": "",
             "images": []
@@ -45610,7 +45624,7 @@
             "images": []
         },
         "vencord-installer": {
-            "icon": " ",
+            "icon": "https://i.ibb.co/60R4PZVv/113042587.png",
             "images": [
                 "https://user-images.githubusercontent.com/45497981/226734476-5fb42420-844d-4e27-ae06-4799118e086e.png"
             ]
