@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 12406,
-        "done": 5902,
-        "packages_with_icon": 5902,
-        "packages_with_screenshot": 1336,
-        "total_screenshots": 4164
+        "total": 12407,
+        "done": 5903,
+        "packages_with_icon": 5903,
+        "packages_with_screenshot": 1337,
+        "total_screenshots": 4165
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -54965,6 +54965,12 @@
             "icon": "https://raw.githubusercontent.com/hex/mirror-for-photoshop-server/main/assets/icon.png",
             "images": [
                 "https://raw.githubusercontent.com/hex/mirror-for-photoshop-server/main/assets/screenshot.png"
+            ]
+        },
+        "jarkviewer": {
+            "icon": "https://i.postimg.cc/4x7jNZ9r/ico.png",
+            "images": [
+                "https://i.postimg.cc/fW8PckjQ/preview.png"
             ]
         }
     }
