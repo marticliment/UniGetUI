@@ -89,7 +89,7 @@
   "Any unsaved changes will be lost": "保存されていないすべての変更は失われます",
   "App Name": "アプリ名",
   "Appearance": "インタフェース",
-  "Application theme, startup page, package icons, clear successful installs automatically": "アプリケーションテーマ、スタートアップページ、パッケージアイコン、成功したインストールを自動的にクリアします ",
+  "Application theme, startup page, package icons, clear successful installs automatically": "アプリのテーマ、スタートアップページ、パッケージアイコン、インストール成功時に自動で消去します ",
   "Application theme:": "アプリテーマ:",
   "Apply": "適用する ",
   "Architecture to install:": "インストールするアーキテクチャ:",
