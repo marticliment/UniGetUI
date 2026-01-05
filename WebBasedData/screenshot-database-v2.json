@@ -1,6 +1,6 @@
 {
     "package_count": {
-        "total": 12407,
+        "total": 12408,
         "done": 5903,
         "packages_with_icon": 5903,
         "packages_with_screenshot": 1337,
@@ -54957,8 +54957,8 @@
             "icon": "https://uvicorn.dev/uvicorn.png",
             "images": []
         },
-        "click": {
-            "icon": "https://postimg.cc/3y4p51bv",
+        "": {
+            "icon": "",
             "images": []
         },
         "mirrorforphotoshopserver": {
@@ -54972,6 +54972,10 @@
             "images": [
                 "https://i.postimg.cc/fW8PckjQ/preview.png"
             ]
+        },
+        "fastapi": {
+            "icon": "https://pypi-camo.freetls.fastly.net/f6cae0b8a7814abdafd9c6de99569205b1fcc307/68747470733a2f2f666173746170692e7469616e676f6c6f2e636f6d2f696d672f6c6f676f2d6d617267696e2f6c6f676f2d7465616c2e706e67",
+            "images": []
         }
     }
 }
