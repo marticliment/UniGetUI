@@ -189,7 +189,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
         }
 
         public override IReadOnlyList<string> FindCandidateExecutableFiles()
-            => CoreTools.WhichMultiple("npm.ps1");
+            => CoreTools.WhichMultiple("npm.cmd");
 
         protected override void _loadManagerExecutableFile(out bool found, out string path, out string callArguments)
         {
