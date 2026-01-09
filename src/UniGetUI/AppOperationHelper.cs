@@ -321,7 +321,9 @@ public partial class MainApp
             uninstallOp.OperationSucceeded += (_, _) => TelemetryHandler.UninstallPackage(package, TEL_OP_RESULT.SUCCESS);
             uninstallOp.OperationFailed += (_, _) => TelemetryHandler.UninstallPackage(package, TEL_OP_RESULT.FAILED);
 
-            var installOp = new UpdatePackageOperation(package, options, req: uninstallOp);
+            options.Version = package.NewVersionString;
+            options.OverridesNextLevelOpts = true;
+            var installOp = new InstallPackageOperation(package, options, req: uninstallOp);
             installOp.OperationSucceeded += (_, _) => TelemetryHandler.UpdatePackage(package, TEL_OP_RESULT.SUCCESS);
             installOp.OperationFailed += (_, _) => TelemetryHandler.UpdatePackage(package, TEL_OP_RESULT.FAILED);
 
