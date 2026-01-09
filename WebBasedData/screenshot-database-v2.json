@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 12408,
-        "done": 5903,
-        "packages_with_icon": 5903,
-        "packages_with_screenshot": 1337,
-        "total_screenshots": 4165
+        "total": 12412,
+        "done": 5907,
+        "packages_with_icon": 5907,
+        "packages_with_screenshot": 1339,
+        "total_screenshots": 4174
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -463,6 +463,16 @@
         "abc-update": {
             "icon": "https://community.chocolatey.org/content/packageimages/ABC-Update.3.0.1.png",
             "images": []
+        },
+        "abdownloadmanager": {
+            "icon": "https://i.postimg.cc/Px4yR0tL/abdownloadmanager.png",
+            "images": [
+                "https://raw.githubusercontent.com/amir1376/ab-download-manager/master/assets/banners/app_banner.png",
+                "https://raw.githubusercontent.com/amir1376/ab-download-manager/master/assets/screenshots/app-home_dark.png",
+                "https://raw.githubusercontent.com/amir1376/ab-download-manager/master/assets/screenshots/app-home_light.png",
+                "https://raw.githubusercontent.com/amir1376/ab-download-manager/master/assets/screenshots/app-download_dark.png",
+                "https://raw.githubusercontent.com/amir1376/ab-download-manager/master/assets/screenshots/app-download_light.png"
+            ]
         },
         "abilityoffice": {
             "icon": "https://i.postimg.cc/fbz5STZb/Ability-icon.png",
@@ -23813,7 +23823,7 @@
             "icon": "https://community.chocolatey.org/content/packageimages/lightalloy.4.10.2.png",
             "images": []
         },
-        "https://i.imgur.com/BT0Gejw.png": {
+        "lightbulb": {
             "icon": "https://community.chocolatey.org/content/packageimages/lightbulb.2.0.png",
             "images": [
                 "https://i.imgur.com/BT0Gejw.png"
@@ -27320,6 +27330,15 @@
         "musicplayer2": {
             "icon": "",
             "images": []
+        },
+        "music-presence": {
+            "icon": "https://i.imgur.com/mg9JXrI.png",
+            "images": [
+                "https://i.imgur.com/a/0bmcVo6.png",
+                "https://repository-images.githubusercontent.com/754190568/8726b1de-8ffc-4184-9ad6-a0a8f7a7b896",
+                "https://musicpresence.app/opengraph/index.png",
+                "https://media.discordapp.net/attachments/1225560362812702790/1455682313789636658/image.png?ex=6960294c&is=695ed7cc&hm=b0befccbd25eba898e6179673fa1e71881993a12c172680b23f183f624644f98&=&format=webp&quality=lossless&width=443&height=185"
+            ]
         },
         "musikcube": {
             "icon": "",
@@ -32237,6 +32256,10 @@
         },
         "pixivutil2": {
             "icon": "https://community.chocolatey.org/content/packageimages/pixivutil2.2021.11.04.png",
+            "images": []
+        },
+        "pixpin": {
+            "icon": "https://pixpin.cn/images/logo/1024.png",
             "images": []
         },
         "pixso": {
@@ -54902,7 +54925,7 @@
             "images": []
         },
         "setuptools": {
-            "icon": "https://postimg.cc/hfZn8kvX",
+            "icon": "https://imagebin.ca/v/97zq4prWK12o",
             "images": []
         },
         "requests": {
@@ -54914,7 +54937,7 @@
             "images": []
         },
         "attrs": {
-            "icon": "https://postimg.cc/gLvwLYmY",
+            "icon": "https://imagebin.ca/v/97zpbAtjbo2c",
             "images": []
         },
         "Lenovo.SystemUpdate\n": {
@@ -54975,6 +54998,10 @@
         },
         "fastapi": {
             "icon": "https://pypi-camo.freetls.fastly.net/f6cae0b8a7814abdafd9c6de99569205b1fcc307/68747470733a2f2f666173746170692e7469616e676f6c6f2e636f6d2f696d672f6c6f676f2d6d617267696e2f6c6f676f2d7465616c2e706e67",
+            "images": []
+        },
+        "applocate": {
+            "icon": "https://i.postimg.cc/gkpYhzw7/applocate.png",
             "images": []
         }
     }
