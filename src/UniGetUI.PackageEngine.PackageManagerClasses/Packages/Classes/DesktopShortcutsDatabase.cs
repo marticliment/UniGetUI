@@ -103,12 +103,21 @@ public static class DesktopShortcutsDatabase
     /// <returns>A list of desktop shortcut paths</returns>
     public static List<string> GetShortcutsOnDisk()
     {
-        List<string> shortcuts = [];
-        string UserDesktop = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-        string CommonDesktop = Environment.GetFolderPath(Environment.SpecialFolder.CommonDesktopDirectory);
-        shortcuts.AddRange(Directory.EnumerateFiles(UserDesktop, "*.lnk"));
-        shortcuts.AddRange(Directory.EnumerateFiles(CommonDesktop, "*.lnk"));
-        return shortcuts;
+        try
+        {
+            List<string> shortcuts = [];
+            string UserDesktop = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+            string CommonDesktop = Environment.GetFolderPath(Environment.SpecialFolder.CommonDesktopDirectory);
+            if (UserDesktop != "") shortcuts.AddRange(Directory.EnumerateFiles(UserDesktop, "*.lnk"));
+            if (CommonDesktop != "") shortcuts.AddRange(Directory.EnumerateFiles(CommonDesktop, "*.lnk"));
+            return shortcuts;
+        }
+        catch (Exception ex)
+        {
+            Logger.Error("Failed to load desktop shortcuts on disk");
+            Logger.Error(ex);
+            return [];
+        }
     }
 
     /// <summary>
