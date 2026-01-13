@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 12408,
-        "done": 5903,
-        "packages_with_icon": 5903,
-        "packages_with_screenshot": 1337,
-        "total_screenshots": 4165
+        "total": 12412,
+        "done": 5908,
+        "packages_with_icon": 5908,
+        "packages_with_screenshot": 1340,
+        "total_screenshots": 4174
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -463,6 +463,16 @@
         "abc-update": {
             "icon": "https://community.chocolatey.org/content/packageimages/ABC-Update.3.0.1.png",
             "images": []
+        },
+        "abdownloadmanager": {
+            "icon": "https://i.postimg.cc/Px4yR0tL/abdownloadmanager.png",
+            "images": [
+                "https://raw.githubusercontent.com/amir1376/ab-download-manager/master/assets/banners/app_banner.png",
+                "https://raw.githubusercontent.com/amir1376/ab-download-manager/master/assets/screenshots/app-home_dark.png",
+                "https://raw.githubusercontent.com/amir1376/ab-download-manager/master/assets/screenshots/app-home_light.png",
+                "https://raw.githubusercontent.com/amir1376/ab-download-manager/master/assets/screenshots/app-download_dark.png",
+                "https://raw.githubusercontent.com/amir1376/ab-download-manager/master/assets/screenshots/app-download_light.png"
+            ]
         },
         "abilityoffice": {
             "icon": "https://i.postimg.cc/fbz5STZb/Ability-icon.png",
@@ -8666,7 +8676,7 @@
             "images": []
         },
         "converseen": {
-            "icon": "",
+            "icon": "https://images.sftcdn.net/images/t_app-icon-m/p/2bb1d08a-9a63-11e6-b1e0-00163ec9f5fa/2428479783/converseen-icon.png",
             "images": []
         },
         "convert-net": {
@@ -17990,7 +18000,7 @@
             "images": []
         },
         "greenshot": {
-            "icon": "https://community.chocolatey.org/content/packageimages/greenshot.1.2.10.6.png",
+            "icon": "https://secure.gravatar.com/avatar/a39fbcebe12b5f384ec729e86139ec39.png",
             "images": []
         },
         "grep": {
@@ -20205,8 +20215,7 @@
             "icon": "https://upload.wikimedia.org/wikipedia/commons/c/cc/Inno_Setup_icon.png",
             "images": [
                 "https://jazzteam.org/en/wp-content/uploads/2020/09/image1.png",
-                "https://i.stack.imgur.com/IXyKs.png",
-                "https://www.codeproject.com/KB/install/1172906/setuptest01.png"
+                "https://i.stack.imgur.com/IXyKs.png"
             ]
         },
         "innoextract": {
@@ -20221,8 +20230,7 @@
             "icon": "https://upload.wikimedia.org/wikipedia/commons/c/cc/Inno_Setup_icon.png",
             "images": [
                 "https://jazzteam.org/en/wp-content/uploads/2020/09/image1.png",
-                "https://i.stack.imgur.com/IXyKs.png",
-                "https://www.codeproject.com/KB/install/1172906/setuptest01.png"
+                "https://i.stack.imgur.com/IXyKs.png"
             ]
         },
         "innounp": {
@@ -23813,7 +23821,7 @@
             "icon": "https://community.chocolatey.org/content/packageimages/lightalloy.4.10.2.png",
             "images": []
         },
-        "https://i.imgur.com/BT0Gejw.png": {
+        "lightbulb": {
             "icon": "https://community.chocolatey.org/content/packageimages/lightbulb.2.0.png",
             "images": [
                 "https://i.imgur.com/BT0Gejw.png"
@@ -27320,6 +27328,14 @@
         "musicplayer2": {
             "icon": "",
             "images": []
+        },
+        "music-presence": {
+            "icon": "https://i.imgur.com/mg9JXrI.png",
+            "images": [
+                "https://i.imgur.com/a/0bmcVo6.png",
+                "https://repository-images.githubusercontent.com/754190568/8726b1de-8ffc-4184-9ad6-a0a8f7a7b896",
+                "https://musicpresence.app/opengraph/index.png"
+            ]
         },
         "musikcube": {
             "icon": "",
@@ -32237,6 +32253,10 @@
         },
         "pixivutil2": {
             "icon": "https://community.chocolatey.org/content/packageimages/pixivutil2.2021.11.04.png",
+            "images": []
+        },
+        "pixpin": {
+            "icon": "https://pixpin.cn/images/logo/1024.png",
             "images": []
         },
         "pixso": {
@@ -54854,11 +54874,11 @@
             "icon": "https://imgs.search.brave.com/ASjRKcLSMy8TMcfmAKV4Hte2F6IJZNgqHnCwlZv_jJw/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93d3cu/bG9naXRlY2guY29t/L2Fzc2V0cy82NTY4/Ni8yL2xvZ2ktdHVu/ZS1hcHAucG5n",
             "images": []
         },
-        "OpenVPNTechnologies.OpenVPN\n": {
+        "Winget.OpenVPNTechnologies.OpenVPN": {
             "icon": "https://postimg.cc/2LQGvMgm",
             "images": []
         },
-        "Zoom.Zoom.EXE\n": {
+        "Winget.Zoom.Zoom.EXE": {
             "icon": "https://i.postimg.cc/NFd1Qg5d/zoom-logo.png",
             "images": [
                 "https://i.postimg.cc/HW0dsF59/Zoom1.png",
@@ -54866,7 +54886,7 @@
                 "https://i.postimg.cc/52yVg0rs/Zoom3.png"
             ]
         },
-        "winaero.tweaker\n": {
+        "Winget.winaero.tweaker": {
             "icon": "https://winaerotweaker.com/images/tweaker-app-icon.png",
             "images": [
                 "https://winaerotweaker.com/images/tweaker-app.png",
@@ -54879,8 +54899,8 @@
                 "https://winaerotweaker.com/images/tweaker-app-shares-uac.png"
             ]
         },
-        " Microsoft.DotNet.DesktopRuntime.8\n": {
-            "icon": "https://postimg.cc/VdbmyRnY",
+        "Winget.Microsoft.DotNet.DesktopRuntime.8": {
+            "icon": "https://community.chocolatey.org/content/packageimages/dotnet-8.0-desktopruntime.8.0.22.png",
             "images": []
         },
         "google/gemini-cli": {
@@ -54902,7 +54922,7 @@
             "images": []
         },
         "setuptools": {
-            "icon": "https://postimg.cc/hfZn8kvX",
+            "icon": "https://imagebin.ca/v/97zq4prWK12o",
             "images": []
         },
         "requests": {
@@ -54914,7 +54934,7 @@
             "images": []
         },
         "attrs": {
-            "icon": "https://postimg.cc/gLvwLYmY",
+            "icon": "https://imagebin.ca/v/97zpbAtjbo2c",
             "images": []
         },
         "Lenovo.SystemUpdate\n": {
@@ -54957,7 +54977,7 @@
             "icon": "https://uvicorn.dev/uvicorn.png",
             "images": []
         },
-        "": {
+        "Winget.XMediaRecode.XMediaRecode": {
             "icon": "",
             "images": []
         },
@@ -54976,6 +54996,14 @@
         "fastapi": {
             "icon": "https://pypi-camo.freetls.fastly.net/f6cae0b8a7814abdafd9c6de99569205b1fcc307/68747470733a2f2f666173746170692e7469616e676f6c6f2e636f6d2f696d672f6c6f676f2d6d617267696e2f6c6f676f2d7465616c2e706e67",
             "images": []
+        },
+        "applocate": {
+            "icon": "https://i.postimg.cc/gkpYhzw7/applocate.png",
+            "images": [
+                "https://i.postimg.cc/fLHDFw0J/applocate-unigetui-sample.png",
+                "https://i.postimg.cc/jqFR4STS/applocate-unigetui-sample-advanced.png",
+                "[applocate-unigetui-sample-json-fromat.png](https://postimg.cc/F1wK6h8T)"
+            ]
         }
     }
 }
