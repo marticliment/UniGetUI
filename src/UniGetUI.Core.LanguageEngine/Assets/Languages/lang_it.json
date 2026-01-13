@@ -1029,7 +1029,7 @@
   "{0} packages can be updated": "{0} pacchetti possono essere aggiornati",
   "{0} packages found": "{0} pacchetti trovati",
   "{0} packages were found": "Sono stati trovati {0} pacchetti",
-  "{0} packages were found, {1} of which match the specified filters.": "Pacchetti trovati: {0}. Pacchetti che corrispondono ai filtri specificati: {1}.",
+  "{0} packages were found, {1} of which match the specified filters.": "Sono stati trovati {0} pacchetti, {1} dei quali corrispondono ai filtri specificati.",
   "{0} selected": "{0} selezionati",
   "{0} settings": "{0} impostazioni",
   "{0} status": "Stato {0}\n",
