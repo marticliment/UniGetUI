@@ -251,3 +251,8 @@ Microsoft has implemented a few checks for the software available on Winget to m
 ## Command-line parameters:
 
 Check out the full list of parameters [here](https://github.com/marticliment/UniGetUI/blob/main/cli-arguments.md)
+
+
+<!-- GitAds-Verify:
+SNBQCDUIV1VMSGP638S6F56HQPWIS8F5 -->
+
