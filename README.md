@@ -256,3 +256,6 @@ Check out the full list of parameters [here](https://github.com/marticliment/Uni
 <!-- GitAds-Verify:
 SNBQCDUIV1VMSGP638S6F56HQPWIS8F5 -->
 
+## GitAds Sponsored
+[![Sponsored by GitAds](https://gitads.dev/v1/ad-serve?source=marticliment/unigetui@github)](https://gitads.dev/v1/ad-track?source=marticliment/unigetui@github)
+
