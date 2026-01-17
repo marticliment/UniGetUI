@@ -227,4 +227,10 @@ internal sealed class WinGetPkgOperationHelper : BasePkgOperationHelper
     {
         return Settings.GetDictionaryItem<string, string>(Settings.K.WinGetAlreadyUpgradedPackages, package.Id) == package.NewVersionString;
     }
+    public static string GetLastInstalledVersion(string id)
+    {
+        var val = Settings.GetDictionaryItem<string, string>(Settings.K.WinGetAlreadyUpgradedPackages, id);
+        if (val is null || val == "") val = "Unknown";
+        return val;
+    }
 }

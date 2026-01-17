@@ -9,6 +9,7 @@ using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.Structs;
+using Windows.Media.Capture;
 using WindowsPackageManager.Interop;
 
 namespace UniGetUI.PackageEngine.Managers.WingetManager;
@@ -160,10 +161,13 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
                 source = Manager.SourcesHelper.Factory.GetSourceOrDefault(nativePackage.DefaultInstallVersion
                     .PackageCatalog.Info.Name);
 
+                string version = nativePackage.InstalledVersion.Version;
+                if (version == "Unknown") version = WinGetPkgOperationHelper.GetLastInstalledVersion(nativePackage.Id);
+
                 var UniGetUIPackage = new Package(
                     nativePackage.Name,
                     nativePackage.Id,
-                    nativePackage.InstalledVersion.Version,
+                    version,
                     nativePackage.DefaultInstallVersion.Version,
                     source,
                     Manager);
@@ -172,8 +176,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
                 {
                     NativePackageHandler.AddPackage(UniGetUIPackage, nativePackage);
                     packages.Add(UniGetUIPackage);
-                    logger.Log(
-                        $"Found package {nativePackage.Name} {nativePackage.Id} on source {source.Name}, from version {nativePackage.InstalledVersion.Version} to version {nativePackage.DefaultInstallVersion.Version}");
+                    logger.Log($"Found package {nativePackage.Name} {nativePackage.Id} on source {source.Name}, from version {nativePackage.InstalledVersion.Version} to version {nativePackage.DefaultInstallVersion.Version}");
                 }
                 else
                 {
@@ -204,11 +207,15 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
             {
                 source = Manager.GetLocalSource(nativePackage.Id);
             }
+
+            string version = nativePackage.InstalledVersion.Version;
+            if (version == "Unknown") version = WinGetPkgOperationHelper.GetLastInstalledVersion(nativePackage.Id);
+
             logger.Log($"Found package {nativePackage.Name} {nativePackage.Id} on source {source.Name}");
             var UniGetUIPackage = new Package(
                 nativePackage.Name,
                 nativePackage.Id,
-                nativePackage.InstalledVersion.Version,
+                version,
                 source,
                 Manager);
             NativePackageHandler.AddPackage(UniGetUIPackage, nativePackage);
