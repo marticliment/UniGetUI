@@ -1,8 +1,8 @@
 {
     "package_count": {
-        "total": 12412,
-        "done": 5907,
-        "packages_with_icon": 5907,
+        "total": 12413,
+        "done": 5910,
+        "packages_with_icon": 5910,
         "packages_with_screenshot": 1340,
         "total_screenshots": 4174
     },
@@ -54922,7 +54922,7 @@
             "images": []
         },
         "setuptools": {
-            "icon": "",
+            "icon": "https://imgur.com/a/E92OhoW",
             "images": []
         },
         "requests": {
@@ -54934,7 +54934,7 @@
             "images": []
         },
         "attrs": {
-            "icon": "",
+            "icon": "https://imgur.com/a/JaKsNtP",
             "images": []
         },
         "Lenovo.SystemUpdate\n": {
@@ -55004,6 +55004,10 @@
                 "https://i.postimg.cc/jqFR4STS/applocate-unigetui-sample-advanced.png",
                 "https://i.postimg.cc/pXLnpTZM/applocate-unigetui-sample-json-fromat.png"
             ]
+        },
+        "click": {
+            "icon": "https://imgur.com/a/gah5KMw",
+            "images": []
         }
     }
 }
