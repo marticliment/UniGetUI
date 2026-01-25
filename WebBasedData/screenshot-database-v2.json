@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 12413,
-        "done": 5910,
-        "packages_with_icon": 5910,
-        "packages_with_screenshot": 1340,
-        "total_screenshots": 4174
+        "total": 12415,
+        "done": 5914,
+        "packages_with_icon": 5914,
+        "packages_with_screenshot": 1342,
+        "total_screenshots": 4180
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -7586,7 +7586,7 @@
             "images": []
         },
         "citrix-workspace": {
-            "icon": "https://community.chocolatey.org/content/packageimages/citrix-workspace.22.12.0.48.png",
+            "icon": "https://imgur.com/a/rrJMWst",
             "images": []
         },
         "citrix-workspace-ltsr": {
@@ -8704,8 +8704,13 @@
             "images": []
         },
         "copilot": {
-            "icon": "https://i.postimg.cc/T31K2tXf/Brand-Logo-org-Microsoft-Copilot-Logo.png",
-            "images": []
+            "icon": "https://i.postimg.cc/5yPpc3Sd/copilot-cli.png",
+            "images": [
+                "https://i.postimg.cc/fW0xMMW3/Header-Image.png",
+                "https://i.postimg.cc/59Fwff9Q/1-Get-Started-0.png",
+                "https://i.postimg.cc/ZYyrJJYy/2-MCPsearch-Issues-0.png",
+                "https://i.postimg.cc/xjbK99jz/3-Change-Color-0.png"
+            ]
         },
         "coppeliasim": {
             "icon": "",
@@ -11016,6 +11021,12 @@
         "displaycal": {
             "icon": "https://community.chocolatey.org/content/packageimages/displaycal.portable.3.8.9.3.png",
             "images": []
+        },
+        "displaydriveruninstaller": {
+            "icon": "",
+            "images": [
+                "https://kr.new-version.app/wp-content/uploads/2022/11/DDU-Display-Driver-Uninstaller.png"
+            ]
         },
         "displayfusion": {
             "icon": "https://tweakers.net/ext/i/2004839352.png",
@@ -19550,6 +19561,10 @@
             "icon": "",
             "images": []
         },
+        "hytale": {
+            "icon": "https://i.ibb.co/84gk48zK/hytale.png",
+            "images": []
+        },
         "i-am": {
             "icon": "",
             "images": []
@@ -20234,7 +20249,7 @@
             ]
         },
         "innounp": {
-            "icon": "",
+            "icon": "https://cdn2.portableapps.com/InnoUnpackerPortable_128.png",
             "images": []
         },
         "inpixiophotostudio": {
@@ -26631,7 +26646,7 @@
             "images": []
         },
         "mouseandkeyboardcenter": {
-            "icon": "",
+            "icon": "https://cdn.lo4d.com/t/icon/128/microsoft-mouse-and-keyboard-center.png",
             "images": []
         },
         "mousecontroller": {
@@ -30405,7 +30420,7 @@
             "images": []
         },
         "openvpn": {
-            "icon": "https://community.chocolatey.org/content/packageimages/openvpn.2.6.0.004.png",
+            "icon": "https://postimg.cc/2LQGvMgm",
             "images": []
         },
         "openvpn-community": {
@@ -36532,7 +36547,7 @@
             "images": []
         },
         "rode-central": {
-            "icon": "https://community.chocolatey.org/content/packageimages/rode-central.1.3.8.png",
+            "icon": "https://help.rode.com/hc/article_attachments/12943376530063",
             "images": []
         },
         "rokkr": {
@@ -39203,7 +39218,7 @@
             "images": []
         },
         "snappy-driver-installer-origin": {
-            "icon": "",
+            "icon": "https://i.ibb.co/C50n1dRK/image.png",
             "images": []
         },
         "snapraid": {
@@ -42164,9 +42179,10 @@
             "images": []
         },
         "teams": {
-            "icon": "https://upload.wikimedia.org/wikipedia/en/thumb/5/5d/Microsoft_Teams_Icon_2025_en.svg/480px-Microsoft_Teams_Icon_2025_en.svg.png",
+            "icon": "https://i.ibb.co/1YT66G0j/teams.png",
             "images": [
-                "https://upload.wikimedia.org/wikipedia/en/f/f1/Microsoft_Teams_Desktop_Application_Screenshot.png"
+                "https://i.ibb.co/qYCjdVSp/71-E48-C78-1-F38-47-AD-B28-D-047-A1175-DAAD.png",
+                "https://i.ibb.co/QvYT1bKf/F17-F108-C-65-E1-4-FD4-AA9-D-E7539-B61-A6-EA.png"
             ]
         },
         "teams-free": {
@@ -54874,7 +54890,7 @@
             "icon": "https://imgs.search.brave.com/ASjRKcLSMy8TMcfmAKV4Hte2F6IJZNgqHnCwlZv_jJw/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93d3cu/bG9naXRlY2guY29t/L2Fzc2V0cy82NTY4/Ni8yL2xvZ2ktdHVu/ZS1hcHAucG5n",
             "images": []
         },
-        "Winget.OpenVPNTechnologies.OpenVPN": {
+        "  OpenVPNTechnologies.OpenVPN\n": {
             "icon": "https://postimg.cc/2LQGvMgm",
             "images": []
         },
@@ -54994,7 +55010,7 @@
             ]
         },
         "fastapi": {
-            "icon": "https://pypi-camo.freetls.fastly.net/f6cae0b8a7814abdafd9c6de99569205b1fcc307/68747470733a2f2f666173746170692e7469616e676f6c6f2e636f6d2f696d672f6c6f676f2d6d617267696e2f6c6f676f2d7465616c2e706e67",
+            "icon": "https://avatars.githubusercontent.com/u/156354296?s=200&v=4",
             "images": []
         },
         "applocate": {
