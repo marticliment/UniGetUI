@@ -224,12 +224,12 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 maxVersions.TryGetValue(pkg.Id, out var ver);
                 if (ver is null || ver < pkg.NormalizedVersion)
                 {
-                    maxVersions[pkg.Id] = pkg.NormalizedVersion;
+                    maxVersions[pkg.Id.ToLower()] = pkg.NormalizedVersion;
                 }
             }
 
             logger.Close(errors);
-            return Packages.Where(p => maxVersions[p.Id] < p.NormalizedNewVersion).ToArray();
+            return Packages.Where(p => maxVersions[p.Id.ToLower()] < p.NormalizedNewVersion).ToArray();
         }
 
         protected sealed override IReadOnlyList<Package> GetInstalledPackages_UnSafe()
