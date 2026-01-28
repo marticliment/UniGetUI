@@ -571,18 +571,5 @@ namespace UniGetUI.Interface.SoftwarePages
             UpgradablePackagesLoader.Instance.Remove(package);
             UpgradablePackagesLoader.Instance.IgnoredPackages[package.Id] = package;
         }
-
-
-        public void UpdateAll()
-        {
-        }
-
-        public void UpdatePackageForId(string id)
-        {
-        }
-
-        public void UpdateAllPackagesForManager(string manager)
-        {
-        }
     }
 }
