@@ -124,6 +124,7 @@ namespace UniGetUI.Interface.Dialogs
                         ""
                     }.Contains(VersionComboBox.SelectedValue.ToString()));
             };
+            AutoUpdatePackageCheckbox.IsChecked = Options.AutoUpdatePackage;
 
             VersionComboBox.Items.Add(CoreTools.Translate("Latest"));
             VersionComboBox.SelectedIndex = 0;
@@ -277,12 +278,11 @@ namespace UniGetUI.Interface.Dialogs
 
         private async Task LoadIgnoredUpdates()
         {
-            IgnoreUpdatesCheckbox.IsChecked = await Package.GetIgnoredUpdatesVersionAsync() == "*";
+            IgnoreUpdatesCheckbox.IsChecked = await Package.HasUpdatesIgnoredAsync();
         }
 
         private async Task LoadVersions()
         {
-            IgnoreUpdatesCheckbox.IsChecked = await Package.HasUpdatesIgnoredAsync();
             VersionComboBox.IsEnabled = false;
 
             IReadOnlyList<string> versions = await Task.Run(() => Package.Manager.DetailsHelper.GetVersions(Package));
@@ -294,6 +294,7 @@ namespace UniGetUI.Interface.Dialogs
                     VersionComboBox.SelectedValue = ver;
                 }
             }
+            IgnoreUpdatesCheckbox.IsChecked = await Package.HasUpdatesIgnoredAsync();
 
             VersionComboBox.IsEnabled = Operation is OperationType.Install or OperationType.None
                                         && (Package.Manager.Capabilities.SupportsCustomVersions || Package.Manager.Capabilities.SupportsPreRelease);
@@ -308,6 +309,7 @@ namespace UniGetUI.Interface.Dialogs
             options.SkipHashCheck = HashCheckbox?.IsChecked ?? false;
             options.UninstallPreviousVersionsOnUpdate = UninstallPreviousOnUpdate?.IsChecked ?? false;
             options.OverridesNextLevelOpts = !FollowGlobalOptionsSwitch.IsOn;
+            options.AutoUpdatePackage = AutoUpdatePackageCheckbox.IsChecked ?? false;
 
             options.Architecture = "";
             var userSelection = ArchitectureComboBox.SelectedValue?.ToString() ?? "";

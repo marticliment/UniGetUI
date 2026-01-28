@@ -251,6 +251,9 @@
                                             <CheckBox Name="SkipMinorUpdatesCheckbox">
                                                 <widgets:TranslatedTextBlock Text="Skip minor updates for this package" />
                                             </CheckBox>
+                                            <CheckBox Name="AutoUpdatePackageCheckbox">
+                                                <widgets:TranslatedTextBlock Text="Automatically update this package" />
+                                            </CheckBox>
                                         </controls:WrapPanel>
                                     </StackPanel>
                                 </controls:Case>

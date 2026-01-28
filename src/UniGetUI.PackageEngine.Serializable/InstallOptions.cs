@@ -17,6 +17,7 @@ namespace UniGetUI.PackageEngine.Serializable
         private const string ABORT_PRE_INST_FAIL = "AbortOnPreInstallFail";
         private const string ABORT_PRE_UPD_FAIL = "AbortOnPreUpdateFail";
         private const string ABORT_PRE_UNINST_FAIL = "AbortOnPreUninstallFail";
+        private const string AUTO_UPDATE_PACKAGE = "AutoUpdatePackage";
 
         private const string ARCH = "Architecture";
         private const string SCOPE = "InstallationScope";
@@ -46,6 +47,7 @@ namespace UniGetUI.PackageEngine.Serializable
             { ABORT_PRE_INST_FAIL, true },
             { ABORT_PRE_UPD_FAIL, true },
             { ABORT_PRE_UNINST_FAIL, true },
+            { AUTO_UPDATE_PACKAGE, false },
         };
 
         public readonly IReadOnlyList<string> _stringKeys = [
@@ -83,6 +85,7 @@ namespace UniGetUI.PackageEngine.Serializable
         public bool AbortOnPreInstallFail { get => _boolVal[ABORT_PRE_INST_FAIL]; set => _boolVal[ABORT_PRE_INST_FAIL] = value; }
         public bool AbortOnPreUpdateFail { get => _boolVal[ABORT_PRE_UPD_FAIL]; set => _boolVal[ABORT_PRE_UPD_FAIL] = value; }
         public bool AbortOnPreUninstallFail { get => _boolVal[ABORT_PRE_UNINST_FAIL]; set => _boolVal[ABORT_PRE_UNINST_FAIL] = value; }
+        public bool AutoUpdatePackage { get => _boolVal[AUTO_UPDATE_PACKAGE]; set => _boolVal[AUTO_UPDATE_PACKAGE] = value; }
 
         public string Architecture { get => _strVal[ARCH]; set => _strVal[ARCH] = value; }
         public string InstallationScope { get => _strVal[SCOPE]; set => _strVal[SCOPE] = value; }
