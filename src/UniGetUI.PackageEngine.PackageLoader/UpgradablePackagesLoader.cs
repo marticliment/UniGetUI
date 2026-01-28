@@ -55,6 +55,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
         {
             return manager.GetAvailableUpdates();
         }
+
         protected override Task WhenAddingPackage(IPackage package)
         {
             package.GetAvailablePackage()?.SetTag(PackageTag.IsUpgradable);

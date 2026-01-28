@@ -350,14 +350,17 @@ namespace UniGetUI.Interface.SoftwarePages
                     NetworkInformation.GetInternetConnectionProfile()?.GetConnectionCost().NetworkCostType is NetworkCostType.Fixed or NetworkCostType.Variable)
                 {
                     Logger.Warn("Updates will not be installed automatically because the current internet connection is metered.");
+                    await ShowAvailableUpdatesNotification(upgradablePackages);
                 }
                 else if (Settings.Get(Settings.K.DisableAUPOnBattery) && PowerManager.PowerSupplyStatus is PowerSupplyStatus.NotPresent)
                 {
                     Logger.Warn("Updates will not be installed automatically because the device is on battery.");
+                    await ShowAvailableUpdatesNotification(upgradablePackages);
                 }
                 else if (Settings.Get(Settings.K.DisableAUPOnBatterySaver) && PowerManager.EnergySaverStatus is EnergySaverStatus.On)
                 {
                     Logger.Warn("Updates will not be installed automatically because battery saver is enabled.");
+                    await ShowAvailableUpdatesNotification(upgradablePackages);
                 }
                 else if (Settings.Get(Settings.K.AutomaticallyUpdatePackages))
                 {
