@@ -69,6 +69,14 @@ internal sealed class WinGetPkgOperationHelper : BasePkgOperationHelper
                 options.Architecture = Architecture.x86;
             }
             parameters.Add("--include-unknown");
+
+            if(Settings.Get(Settings.K.WinGetForceLocationOnUpdate) && options.CustomInstallLocation != "")
+                parameters.AddRange(["--location", $"\"{options.CustomInstallLocation}\""]);
+        }
+        else if (operation is OperationType.Install)
+        {
+            if (options.CustomInstallLocation != "")
+                parameters.AddRange(["--location", $"\"{options.CustomInstallLocation}\""]);
         }
 
         if (operation is not OperationType.Uninstall)
@@ -77,9 +85,6 @@ internal sealed class WinGetPkgOperationHelper : BasePkgOperationHelper
 
             if (options.SkipHashCheck)
                 parameters.Add("--ignore-security-hash");
-
-            if (options.CustomInstallLocation != "")
-                parameters.AddRange(["--location", $"\"{options.CustomInstallLocation}\""]);
 
             parameters.AddRange(options.Architecture switch
             {

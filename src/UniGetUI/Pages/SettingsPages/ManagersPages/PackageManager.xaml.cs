@@ -134,6 +134,15 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 WinGet_ResetWindowsIPackageManager.Click += (_, _) => _ = DialogHelper.HandleBrokenWinGet();
                 ExtraControls.Children.Add(WinGet_ResetWindowsIPackageManager);
 
+                CheckboxCard WinGet_ForceLocationWhenUpdating = new()
+                {
+                    Text = CoreTools.Translate("Force install location parameter when updating packages with custom locations"),
+                    SettingName = Settings.K.WinGetForceLocationOnUpdate,
+                    CornerRadius = new CornerRadius(0),
+                    BorderThickness = new Thickness(1, 0, 1, 1),
+                };
+                ExtraControls.Children.Add(WinGet_ForceLocationWhenUpdating);
+
                 CheckboxCard WinGet_UseBundled = new()
                 {
                     Text =

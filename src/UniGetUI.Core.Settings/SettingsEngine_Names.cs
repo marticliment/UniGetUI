@@ -84,6 +84,7 @@ public static partial class Settings
         ProhibitElevation,
         DisableIntegrityChecks,
         UseLegacyElevator,
+        WinGetForceLocationOnUpdate,
 
         Test1,
         Test2,
@@ -179,6 +180,7 @@ public static partial class Settings
             K.ProhibitElevation => "ProhibitElevation",
             K.DisableIntegrityChecks => "DisableIntegrityChecks",
             K.UseLegacyElevator => "UseLegacyElevator",
+            K.WinGetForceLocationOnUpdate => "WinGetForceLocationOnUpdate",
 
             K.Test1 => "TestSetting1",
             K.Test2 => "TestSetting2",
