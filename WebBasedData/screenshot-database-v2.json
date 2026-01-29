@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 12415,
-        "done": 5914,
-        "packages_with_icon": 5914,
-        "packages_with_screenshot": 1342,
-        "total_screenshots": 4180
+        "total": 12424,
+        "done": 5926,
+        "packages_with_icon": 5926,
+        "packages_with_screenshot": 1354,
+        "total_screenshots": 4210
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -6254,7 +6254,7 @@
             "images": []
         },
         "butterfly": {
-            "icon": "",
+            "icon": "https://raw.githubusercontent.com/LinwoodDev/Butterfly/refs/heads/develop/app/web/ios/128.png",
             "images": []
         },
         "butterfly-nightly": {
@@ -9890,7 +9890,7 @@
             "images": []
         },
         "dbeaver": {
-            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/DBeaver_logo.svg/2048px-DBeaver_logo.svg.png",
+            "icon": "https://unigeticons.meowcat285.com/DBeaver.png",
             "images": []
         },
         "dbeaver-ee": {
@@ -27183,6 +27183,10 @@
             "icon": "https://community.chocolatey.org/content/packageimages/mullvad-app.2023.1.png",
             "images": []
         },
+        "mullvadbrowser": {
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Mullvad_Browser_logo.svg/128px-Mullvad_Browser_logo.svg.png",
+            "images": []
+        },
         "mullvadvpn": {
             "icon": "https://i.postimg.cc/0jX6jk4D/mullvad-VPN.png",
             "images": []
@@ -28180,6 +28184,10 @@
         },
         "netbeans-php": {
             "icon": "https://community.chocolatey.org/content/packageimages/netbeans-php.8.2.png",
+            "images": []
+        },
+        "netbird": {
+            "icon": "https://netbird.io/icon.png",
             "images": []
         },
         "netbscanner": {
@@ -44602,8 +44610,13 @@
             "images": []
         },
         "uninstaller": {
-            "icon": "",
-            "images": []
+            "icon": "https://www.iobit.com/tpl/images/product-icons/icon_96_199.png",
+            "images": [
+                "https://www.iobit.com/tpl/images/screenshot/iu/software_uninstal_655.png",
+                "https://www.iobit.com/tpl/images/screenshot/iu/uninstalling_24.png",
+                "https://www.iobit.com/tpl/images/screenshot/iu/install_monitor_42.png",
+                "https://www.iobit.com/tpl/images/screenshot/iu/software_health_516.png"
+            ]
         },
         "uninstalltool": {
             "icon": "https://community.chocolatey.org/content/packageimages/uninstalltool.portable.3.7.2.png",
@@ -46151,37 +46164,98 @@
             "icon": "https://community.chocolatey.org/content/packageimages/visualparadigm-ce.17.0.png",
             "images": []
         },
-        "visualstudio-2019-buildt\u2026": {
-            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Visual_Studio_Icon_2022.svg/800px-Visual_Studio_Icon_2022.svg.png",
+        "visualstudio-buildtools": {
+            "icon": "https://raw.githubusercontent.com/jberezanski/ChocolateyPackages/master/icons/vs2026.png",
             "images": []
         },
-        "visualstudio-2019-enterp\u2026": {
-            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Visual_Studio_Icon_2022.svg/800px-Visual_Studio_Icon_2022.svg.png",
+        "visualstudio-community": {
+            "icon": "https://raw.githubusercontent.com/jberezanski/ChocolateyPackages/master/icons/vs2026.png",
+            "images": [
+                "https://learn.microsoft.com/en-us/visualstudio/ide/media/visualstudio/create-new-project-dark-theme.png?view=vs-2017",
+                "https://learn.microsoft.com/zh-cn/visualstudio/releases/2026/media/18.0/pr-comment-in-file.png"
+            ]
+        },
+        "visualstudio-enterprise": {
+            "icon": "https://raw.githubusercontent.com/jberezanski/ChocolateyPackages/master/icons/vs2026.png",
+            "images": [
+                "https://learn.microsoft.com/en-us/visualstudio/ide/media/visualstudio/create-new-project-dark-theme.png?view=vs-2018",
+                "https://learn.microsoft.com/zh-cn/visualstudio/releases/2026/media/18.0/pr-comment-in-file.png"
+            ]
+        },
+        "visualstudio-professional": {
+            "icon": "https://raw.githubusercontent.com/jberezanski/ChocolateyPackages/master/icons/vs2026.png",
+            "images": [
+                "https://learn.microsoft.com/en-us/visualstudio/ide/media/visualstudio/create-new-project-dark-theme.png?view=vs-2019",
+                "https://learn.microsoft.com/zh-cn/visualstudio/releases/2026/media/18.0/pr-comment-in-file.png"
+            ]
+        },
+        "visualstudio-remotetools": {
+            "icon": "https://raw.githubusercontent.com/jberezanski/ChocolateyPackages/master/icons/vs2026.png",
             "images": []
         },
-        "visualstudio-2019-profes\u2026": {
-            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Visual_Studio_Icon_2022.svg/800px-Visual_Studio_Icon_2022.svg.png",
-            "images": []
+        "visualstudio-2019-buildtools": {
+            "icon": "https://raw.githubusercontent.com/jberezanski/ChocolateyPackages/master/icons/vs2019.png",
+            "images": [
+                "https://learn.microsoft.com/zh-cn/visualstudio/releases/2019/media/16.9/16.9_p2_vsinstallerdarktheme.png"
+            ]
+        },
+        "visualstudio-2019-community": {
+            "icon": "https://raw.githubusercontent.com/jberezanski/ChocolateyPackages/master/icons/vs2019.png",
+            "images": [
+                "https://devblogs.microsoft.com/visualstudio/wp-content/uploads/sites/4/2019/05/Visual-Studio-2019-Start-Window.png",
+                "https://devblogs.microsoft.com/visualstudio/wp-content/uploads/sites/4/2019/08/16.3preview2x1-1024x671.png",
+                "https://learn.microsoft.com/zh-tw/visualstudio/releases/2019/media/16.8/16_8_ga_xamlbindfailwindow.png"
+            ]
+        },
+        "visualstudio-2019-enterprise": {
+            "icon": "https://raw.githubusercontent.com/jberezanski/ChocolateyPackages/master/icons/vs2019.png",
+            "images": [
+                "https://devblogs.microsoft.com/visualstudio/wp-content/uploads/sites/4/2019/05/Visual-Studio-2019-Start-Window.png",
+                "https://devblogs.microsoft.com/visualstudio/wp-content/uploads/sites/4/2019/08/16.3preview2x1-1024x671.png",
+                "https://learn.microsoft.com/zh-tw/visualstudio/releases/2019/media/16.8/16_8_ga_xamlbindfailwindow.png"
+            ]
+        },
+        "visualstudio-2019-professional": {
+            "icon": "https://raw.githubusercontent.com/jberezanski/ChocolateyPackages/master/icons/vs2019.png",
+            "images": [
+                "https://devblogs.microsoft.com/visualstudio/wp-content/uploads/sites/4/2019/05/Visual-Studio-2019-Start-Window.png",
+                "https://devblogs.microsoft.com/visualstudio/wp-content/uploads/sites/4/2019/08/16.3preview2x1-1024x671.png",
+                "https://learn.microsoft.com/zh-tw/visualstudio/releases/2019/media/16.8/16_8_ga_xamlbindfailwindow.png"
+            ]
         },
         "visualstudio-2019-remotetools": {
-            "icon": "",
+            "icon": "https://raw.githubusercontent.com/jberezanski/ChocolateyPackages/master/icons/vs2019.png",
             "images": []
         },
-        "visualstudio-2022-buildt\u2026": {
-            "icon": "https://pics.computerbase.de/9/9/2/3/0-e36f805671c3b980/logo-256.png",
-            "images": []
+        "visualstudio-2022-buildtools": {
+            "icon": "https://raw.githubusercontent.com/jberezanski/ChocolateyPackages/master/icons/vs2022.png",
+            "images": [
+                "https://learn.microsoft.com/zh-cn/visualstudio/install/media/vs-2022/update-ready-install-visual-studio-community-from-ide.png?view=vs-2017"
+            ]
         },
-        "visualstudio-2022-commun\u2026": {
-            "icon": "https://pics.computerbase.de/9/9/2/3/0-e36f805671c3b980/logo-256.png",
-            "images": []
+        "visualstudio-2022-community": {
+            "icon": "https://raw.githubusercontent.com/jberezanski/ChocolateyPackages/master/icons/vs2022.png",
+            "images": [
+                "https://learn.microsoft.com/en-us/visualstudio/ide/media/vs-2022/start-window-create-new-project.png?view=vs-2017",
+                "https://devblogs.microsoft.com/visualstudio/wp-content/uploads/sites/4/2022/02/word-image-3.png",
+                "https://devblogs.microsoft.com/visualstudio/wp-content/uploads/sites/4/2022/05/git-linestaging.png"
+            ]
         },
-        "visualstudio-2022-enterp\u2026": {
-            "icon": "https://pics.computerbase.de/9/9/2/3/0-e36f805671c3b980/logo-256.png",
-            "images": []
+        "visualstudio-2022-enterprise": {
+            "icon": "https://raw.githubusercontent.com/jberezanski/ChocolateyPackages/master/icons/vs2022.png",
+            "images": [
+                "https://learn.microsoft.com/en-us/visualstudio/ide/media/vs-2022/start-window-create-new-project.png?view=vs-2018",
+                "https://devblogs.microsoft.com/visualstudio/wp-content/uploads/sites/4/2022/02/word-image-3.png",
+                "https://devblogs.microsoft.com/visualstudio/wp-content/uploads/sites/4/2022/05/git-linestaging.png"
+            ]
         },
-        "visualstudio-2022-profes\u2026": {
-            "icon": "https://img-prod-cms-rt-microsoft-com.akamaized.net/cms/api/am/imageFileData/RWLkzw",
-            "images": []
+        "visualstudio-2022-professional": {
+            "icon": "https://raw.githubusercontent.com/jberezanski/ChocolateyPackages/master/icons/vs2022.png",
+            "images": [
+                "https://learn.microsoft.com/en-us/visualstudio/ide/media/vs-2022/start-window-create-new-project.png?view=vs-2019",
+                "https://devblogs.microsoft.com/visualstudio/wp-content/uploads/sites/4/2022/02/word-image-3.png",
+                "https://devblogs.microsoft.com/visualstudio/wp-content/uploads/sites/4/2022/05/git-linestaging.png"
+            ]
         },
         "visualstudio-codealignment": {
             "icon": "https://community.chocolatey.org/content/packageimages/visualstudio-codealignment.12.0.png",
@@ -46197,14 +46271,6 @@
         },
         "visualstudio-locator": {
             "icon": "",
-            "images": []
-        },
-        "visualstudio-2022-buildtools": {
-            "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
-            "images": []
-        },
-        "visualstudio-2022-community": {
-            "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
             "images": []
         },
         "visualstudio2012premium": {
@@ -55023,6 +55089,10 @@
         },
         "click": {
             "icon": "https://imgur.com/a/gah5KMw",
+            "images": []
+        },
+        "lin-ycv.EverythingCmdPal3": {
+            "icon": "https://store-images.s-microsoft.com/image/apps.25263.13565088367537471.1afd4527-e5f2-4286-ae89-167b4ff891b1.6b1f6c28-e687-4873-982a-ddf8c246ba6e?h=115",
             "images": []
         }
     }
