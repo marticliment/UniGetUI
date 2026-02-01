@@ -1,8 +1,8 @@
 {
     "package_count": {
-        "total": 12424,
-        "done": 5926,
-        "packages_with_icon": 5926,
+        "total": 12426,
+        "done": 5930,
+        "packages_with_icon": 5930,
         "packages_with_screenshot": 1354,
         "total_screenshots": 4210
     },
@@ -11023,9 +11023,9 @@
             "images": []
         },
         "displaydriveruninstaller": {
-            "icon": "",
+            "icon": "https://kr.new-version.app/wp-content/uploads/2022/11/DDU-Display-Driver-Uninstaller.png",
             "images": [
-                "https://kr.new-version.app/wp-content/uploads/2022/11/DDU-Display-Driver-Uninstaller.png"
+                "https://i.ibb.co/9HwQZpwt/image.png"
             ]
         },
         "displayfusion": {
@@ -11775,6 +11775,14 @@
         },
         "dotnet-desktopruntime-7": {
             "icon": "",
+            "images": []
+        },
+        "dotnet-desktopruntime-8": {
+            "icon": "https://i.ibb.co/BKz4CD7R/image.png",
+            "images": []
+        },
+        "dotnet-desktopruntime-9": {
+            "icon": "https://i.ibb.co/BKz4CD7R/image.png",
             "images": []
         },
         "dotnet-desktopruntime-pr\u2026": {
@@ -23284,7 +23292,7 @@
             "images": []
         },
         "launcher": {
-            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Python_Windows_setup_icon_2016.svg/512px-Python_Windows_setup_icon_2016.svg.png",
+            "icon": "https://i.ibb.co/PZ4CGyXW/rockstar-games-1536-433540335.png",
             "images": []
         },
         "launchy": {
@@ -36543,7 +36551,7 @@
             "images": []
         },
         "rockstar-launcher": {
-            "icon": "",
+            "icon": "https://i.ibb.co/PZ4CGyXW/rockstar-games-1536-433540335.png",
             "images": []
         },
         "rocolatey": {
@@ -49065,10 +49073,10 @@
             "images": []
         },
         "windowsterminal": {
-            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Windows_Terminal_logo.svg/320px-Windows_Terminal_logo.svg.png",
+            "icon": "https://i.ibb.co/TBjm1bMR/terminal.png",
             "images": [
-                "https://store-images.s-microsoft.com/image/apps.64156.13926773940052066.16e93a5b-b25f-4aaf-8a38-77375e237879.00013886-8351-473f-9acd-7fcce9ee7388",
-                "https://store-images.s-microsoft.com/image/apps.28865.13926773940052066.16e93a5b-b25f-4aaf-8a38-77375e237879.78e2aeac-6ede-4855-acb1-79a854b5556d"
+                "https://i.ibb.co/pv1Fg0m2/image.png",
+                "https://i.ibb.co/wZmf8Wzh/image.png"
             ]
         },
         "windowsterminal-preview": {
