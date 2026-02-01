@@ -45,8 +45,10 @@ UninstallDisplayIcon={app}\UniGetUI.exe
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern dynamic
-WizardImageFile=InstallerExtras\INSTALLER.BMP
-WizardSmallImageFile=src\UniGetUI\Assets\Images\icon.bmp
+WizardImageFile=InstallerExtras\installer-banner.png
+WizardImageFileDynamicDark=InstallerExtras\installer-banner.png
+WizardSmallImageFile=InstallerExtras\unigetui-256.png
+WizardSmallImageFileDynamicDark=InstallerExtras\unigetui-256.png
 DisableWelcomePage=no
 AllowUNCPath=no
 UsePreviousTasks=yes
@@ -223,7 +225,7 @@ Source: "unigetui_bin\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion; 
 Source: "unigetui_bin\*"; DestDir: "{app}"; Flags: createallsubdirs ignoreversion recursesubdirs;
 ; Deploy chocolatey (unless disabled)
 Source: "src\UniGetUI.PackageEngine.Managers.Chocolatey\choco-cli\*"; DestDir: "{userpf}\..\UniGetUI\Chocolatey"; Flags: createallsubdirs ignoreversion recursesubdirs uninsneveruninstall; Tasks: regularinstall\chocoinstall; Check: not CmdLineParamExists('/NoChocolatey');
-; Make installation portable (id required)
+; Make installation portable (if required)
 Source: "InstallerExtras\ForceUniGetUIPortable"; DestDir: "{app}"; Tasks: portableinstall
 
 
