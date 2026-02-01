@@ -5,7 +5,7 @@
         <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
         <!-- IF BUILD FAILS DUE TO MISSING Microsoft.Management.Deployment NAMESPACE,
             TOGGLE THE LAST NUMBER OF THE LINE BELOW 1 UNIT UP OR DOWN, AND REBUILD-->
-        <WindowsSdkPackageVersion>10.0.26100.56</WindowsSdkPackageVersion>
+        <WindowsSdkPackageVersion>10.0.26100.57</WindowsSdkPackageVersion>
 
         <SdkVersion>10.0.2</SdkVersion>
         <Authors>Martí Climent and the contributors</Authors>
