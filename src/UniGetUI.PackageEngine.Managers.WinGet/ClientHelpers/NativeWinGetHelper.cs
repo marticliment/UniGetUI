@@ -176,7 +176,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
                 {
                     NativePackageHandler.AddPackage(UniGetUIPackage, nativePackage);
                     packages.Add(UniGetUIPackage);
-                    logger.Log($"Found package {nativePackage.Name} {nativePackage.Id} on source {source.Name}, from version {nativePackage.InstalledVersion.Version} to version {nativePackage.DefaultInstallVersion.Version}");
+                    logger.Log($"Found package {nativePackage.Name} {nativePackage.Id} on source {source.Name}, from version {version} to version {nativePackage.DefaultInstallVersion.Version}");
                 }
                 else
                 {
