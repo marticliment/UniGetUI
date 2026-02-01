@@ -18,8 +18,8 @@
 | `--[enable\|disable]-secure-setting-for-user username key` | Enables/disables the given secure setting for the given key<sup>2</sup> and username. Requires administrator rights.  | 3.2.1+ | 
 | `--[enable\|disable]-secure-setting key` | Enables/disables the given secure setting<sup>2</sup> for current user. This will generate a UAC prompt  | 3.2.1+ | 
 
-1. See the available list of setting keys [here](https://github.com/marticliment/UniGetUI/blob/fc98f312a72b80e14a8ac10687f4fc506a5c9cc4/src/UniGetUI.Core.Settings/SettingsEngine_Names.cs#L89)
-2. See the available list of secure settings keys [here](https://github.com/marticliment/UniGetUI/blob/fc98f312a72b80e14a8ac10687f4fc506a5c9cc4/src/UniGetUI.Core.SecureSettings/SecureSettings.cs#L20)
+1. See the available list of setting keys [here](https://github.com/marticliment/UniGetUI/blob/fc98f312a72b80e14a8ac10687f4fc506a5c9cc4/src/UniGetUI.Core.Settings/SettingsEngine_Names.cs#L5)
+2. See the available list of secure settings keys [here](https://github.com/marticliment/UniGetUI/blob/fc98f312a72b80e14a8ac10687f4fc506a5c9cc4/src/UniGetUI.Core.SecureSettings/SecureSettings.cs#L10)
 
 
 \*After modifying the settings, you must ensure that any running instance of UniGetUI is restarted for the changes to take effect
