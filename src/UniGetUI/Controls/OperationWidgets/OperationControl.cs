@@ -573,7 +573,7 @@ public partial class OperationControl: INotifyPropertyChanged
                 skipThisVersion.Click += async (_, _) =>
                 {
                     callback();
-                    await packageOp.Package.AddToIgnoredUpdatesAsync(packageOp.Package.VersionString);
+                    await packageOp.Package.AddToIgnoredUpdatesAsync(packageOp.Package.NewVersionString);
                     UpgradablePackagesLoader.Instance.Remove(packageOp.Package);
                     Close();
                 };
