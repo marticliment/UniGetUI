@@ -65,7 +65,9 @@ namespace UniGetUI.Interface.Widgets
         {
             _checkbox = new ToggleSwitch()
             {
-                Margin = new Thickness(0, 0, 8, 0)
+                Margin = new Thickness(0, 0, 8, 0),
+                OnContent = new TextBlock() { Text = CoreTools.Translate("Enabled") },
+                OffContent = new TextBlock() { Text = CoreTools.Translate("Disabled") },
             };
             _textblock = new TextBlock()
             {

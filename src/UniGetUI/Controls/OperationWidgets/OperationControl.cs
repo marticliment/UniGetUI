@@ -611,7 +611,6 @@ public partial class OperationControl: INotifyPropertyChanged
             };
             optionsMenu.Add(details);
 
-
             var installationSettings = new BetterMenuItem
             {
                 Text = CoreTools.Translate("Installation options"),
