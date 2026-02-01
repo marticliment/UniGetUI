@@ -32,7 +32,7 @@ rem sign code
 rmdir /Q /S unigetui_bin
 
 mkdir unigetui_bin
-robocopy src\UniGetUI\bin\x64\Release\net10.0-windows10.0.26100.0\win-x64\publish unigetui_bin *.* /MOVE /E
+robocopy src\UniGetUI\bin\x64\Release\net8.0-windows10.0.26100.0\win-x64\publish unigetui_bin *.* /MOVE /E
 
 
 set /p signfiles="Do you want to sign the files? [Y/n]: "
