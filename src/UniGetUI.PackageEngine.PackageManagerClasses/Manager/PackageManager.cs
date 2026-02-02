@@ -162,11 +162,11 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             if (candidates.Count == 0)
             {
                 // No paths were found
-                return new (false, "");
+                return new(false, "");
             }
 
             // If custom package manager paths are DISABLED, get the first one (as old UniGetUI did) and return it.
-            if(!SecureSettings.Get(SecureSettings.K.AllowCustomManagerPaths))
+            if (!SecureSettings.Get(SecureSettings.K.AllowCustomManagerPaths))
             {
                 return new(true, candidates[0]);
             }

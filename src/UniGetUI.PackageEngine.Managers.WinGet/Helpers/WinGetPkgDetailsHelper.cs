@@ -25,11 +25,11 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         {
             if (package.Source is LocalWinGetSource localSource)
             {
-                if(localSource.Type is LocalWinGetSource.Type_t.MicrosftStore)
+                if (localSource.Type is LocalWinGetSource.Type_t.MicrosftStore)
                     return WinGetIconsHelper.GetAppxPackageIcon(package);
 
                 else if (localSource.Type is LocalWinGetSource.Type_t.LocalPC)
-                    return  WinGetIconsHelper.GetARPPackageIcon(package);
+                    return WinGetIconsHelper.GetARPPackageIcon(package);
 
                 return null;
             }

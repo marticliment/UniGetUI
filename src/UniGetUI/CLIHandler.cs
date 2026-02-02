@@ -51,7 +51,7 @@ public static class CLIHandler
         if (filePos < 0)
             return (int)HRESULT.STATUS_INVALID_PARAMETER; // The base paramater --import-settings was not found
 
-        if (filePos +1 >= args.Count)
+        if (filePos + 1 >= args.Count)
             return (int)HRESULT.STATUS_INVALID_PARAMETER; // The file parameter does not exist (import settings requires "--import-settings file")
 
         var file = args[filePos + 1].Trim('"').Trim('\'');
@@ -78,7 +78,7 @@ public static class CLIHandler
         if (filePos < 0)
             return (int)HRESULT.STATUS_INVALID_PARAMETER; // The base paramater --export-settings was not found
 
-        if (filePos +1 >= args.Count)
+        if (filePos + 1 >= args.Count)
             return (int)HRESULT.STATUS_INVALID_PARAMETER; // The file parameter does not exist (export settings requires "--export-settings file")
 
         var file = args[filePos + 1].Trim('"').Trim('\'');
@@ -103,7 +103,7 @@ public static class CLIHandler
         if (basePos < 0)
             return (int)HRESULT.STATUS_INVALID_PARAMETER; // The base paramater --export-settings was not found
 
-        if (basePos +1 >= args.Count)
+        if (basePos + 1 >= args.Count)
             return (int)HRESULT.STATUS_INVALID_PARAMETER; // The file parameter does not exist (export settings requires "--export-settings file")
 
         var setting = args[basePos + 1].Trim('"').Trim('\'');
@@ -130,7 +130,7 @@ public static class CLIHandler
         if (basePos < 0)
             return (int)HRESULT.STATUS_INVALID_PARAMETER; // The base paramater --export-settings was not found
 
-        if (basePos +1 >= args.Count)
+        if (basePos + 1 >= args.Count)
             return (int)HRESULT.STATUS_INVALID_PARAMETER; // The file parameter does not exist (export settings requires "--export-settings file")
 
         var setting = args[basePos + 1].Trim('"').Trim('\'');
@@ -156,7 +156,7 @@ public static class CLIHandler
         if (basePos < 0)
             return (int)HRESULT.STATUS_INVALID_PARAMETER; // The base paramater --export-settings was not found
 
-        if (basePos +2 >= args.Count)
+        if (basePos + 2 >= args.Count)
             return (int)HRESULT.STATUS_INVALID_PARAMETER; // The file parameter does not exist (export settings requires "--export-settings file")
 
         var setting = args[basePos + 1].Trim('"').Trim('\'');
@@ -250,7 +250,7 @@ public static class CLIHandler
         if (basePos < 0)
             return (int)HRESULT.STATUS_INVALID_PARAMETER; // The base paramater was not found
 
-        if (basePos +1 >= args.Count)
+        if (basePos + 1 >= args.Count)
             return (int)HRESULT.STATUS_INVALID_PARAMETER; // The file parameter does not exist (export settings requires "--export-settings file")
 
         var setting = args[basePos + 1].Trim('"').Trim('\'');
@@ -277,7 +277,7 @@ public static class CLIHandler
         if (basePos < 0)
             return (int)HRESULT.STATUS_INVALID_PARAMETER; // The base paramater was not found
 
-        if (basePos +1 >= args.Count)
+        if (basePos + 1 >= args.Count)
             return (int)HRESULT.STATUS_INVALID_PARAMETER; // The first positional argument does not exist
 
         var setting = args[basePos + 1].Trim('"').Trim('\'');
@@ -304,7 +304,7 @@ public static class CLIHandler
         if (basePos < 0)
             return (int)HRESULT.STATUS_INVALID_PARAMETER; // The base paramater was not found
 
-        if (basePos +2 >= args.Count)
+        if (basePos + 2 >= args.Count)
             return (int)HRESULT.STATUS_INVALID_PARAMETER; // The required parameters do not exist
 
         var user = args[basePos + 1].Trim('"').Trim('\'');
@@ -328,7 +328,7 @@ public static class CLIHandler
         if (basePos < 0)
             return (int)HRESULT.STATUS_INVALID_PARAMETER; // The base paramater was not found
 
-        if (basePos +2 >= args.Count)
+        if (basePos + 2 >= args.Count)
             return (int)HRESULT.STATUS_INVALID_PARAMETER; // The required parameters do not exist
 
         var user = args[basePos + 1].Trim('"').Trim('\'');

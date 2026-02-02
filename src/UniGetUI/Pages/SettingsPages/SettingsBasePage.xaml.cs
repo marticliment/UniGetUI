@@ -1,12 +1,12 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using UniGetUI.Core.Tools;
-using Microsoft.UI.Xaml.Media.Animation;
-using UniGetUI.PackageEngine.ManagerClasses.Manager;
-using UniGetUI.Pages.SettingsPages.GeneralPages;
 using UniGetUI.Interface.Pages;
 using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using UniGetUI.Pages.SettingsPages.GeneralPages;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -27,7 +27,7 @@ namespace UniGetUI.Pages.SettingsPages
             {
                 if (MainNavigationFrame.Content is ManagersHomepage or SettingsHomepage) MainApp.Instance.MainWindow.GoBack();
                 else if (MainNavigationFrame.CanGoBack) MainNavigationFrame.GoBack();
-                else MainNavigationFrame.Navigate(isManagers? typeof(ManagersHomepage): typeof(SettingsHomepage), null, new DrillInNavigationTransitionInfo());
+                else MainNavigationFrame.Navigate(isManagers ? typeof(ManagersHomepage) : typeof(SettingsHomepage), null, new DrillInNavigationTransitionInfo());
             };
             MainNavigationFrame.Navigated += MainNavigationFrame_Navigated;
             MainNavigationFrame.Navigating += MainNavigationFrame_Navigating;
@@ -80,17 +80,17 @@ namespace UniGetUI.Pages.SettingsPages
 
         private void Page_NavigationRequested(object? sender, Type e)
         {
-            if(e == typeof(ManagersHomepage))
+            if (e == typeof(ManagersHomepage))
             {
                 MainApp.Instance.MainWindow.NavigationPage.NavigateTo(Interface.PageType.Managers);
             }
-            if(e.IsSubclassOf(typeof(PackageManager)))
+            if (e.IsSubclassOf(typeof(PackageManager)))
             {
-                MainNavigationFrame.Navigate(typeof(PackageManagerPage), e, new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight} );
+                MainNavigationFrame.Navigate(typeof(PackageManagerPage), e, new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight });
             }
             else
             {
-                MainNavigationFrame.Navigate(e, null, new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight} );
+                MainNavigationFrame.Navigate(e, null, new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight });
             }
         }
 

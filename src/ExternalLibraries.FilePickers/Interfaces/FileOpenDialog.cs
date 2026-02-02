@@ -1,4 +1,4 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 using ExternalLibraries.Pickers.Classes;
 using ExternalLibraries.Pickers.Guids;
 

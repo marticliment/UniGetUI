@@ -15,7 +15,7 @@ public partial class Settings
     {
         if (Path.GetDirectoryName(path) == CoreData.UniGetUIUserConfigurationDirectory)
         {
-            var tempLocation  = Directory.CreateTempSubdirectory();
+            var tempLocation = Directory.CreateTempSubdirectory();
             var newPath = Path.Join(tempLocation.FullName, Path.GetFileName(path));
             File.Copy(path, newPath);
             path = newPath;
@@ -56,7 +56,7 @@ public partial class Settings
         {
             try
             {
-                if(new[] {"TelemetryClientToken"}.Contains(entry.Split("\\")[^1]))
+                if (new[] { "TelemetryClientToken" }.Contains(entry.Split("\\")[^1]))
                     continue;
 
                 File.Delete(entry);

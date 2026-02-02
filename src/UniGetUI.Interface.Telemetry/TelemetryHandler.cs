@@ -86,7 +86,7 @@ public static class TelemetryHandler
                 if (mask == 0x1)
                     throw new OverflowException();
             }
-            foreach (var setting in new []{"SP1", "SP2"})
+            foreach (var setting in new[] { "SP1", "SP2" })
             {
                 bool enabled;
                 if (setting == "SP1") enabled = File.Exists("ForceUniGetUIPortable");
@@ -164,8 +164,8 @@ public static class TelemetryHandler
             request.Headers.Add("packageId", package.Id);
             request.Headers.Add("managerName", package.Manager.Name);
             request.Headers.Add("sourceName", package.Source.Name);
-            if(result is not null) request.Headers.Add("operationResult", result.ToString());
-            if(eventSource is not null) request.Headers.Add("eventSource", eventSource);
+            if (result is not null) request.Headers.Add("operationResult", result.ToString());
+            if (eventSource is not null) request.Headers.Add("eventSource", eventSource);
 
             HttpClient _httpClient = new(CoreTools.GenericHttpClientParameters);
             _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);

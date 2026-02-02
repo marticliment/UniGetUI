@@ -4,7 +4,7 @@ using UniGetUI.Core.Data;
 
 namespace UniGetUI.PackageEngine.Serializable;
 
-public abstract class SerializableComponent<T> where T: class
+public abstract class SerializableComponent<T> where T : class
 {
     /// <summary>
     /// Creates a deep copy of the object

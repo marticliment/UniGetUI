@@ -4,6 +4,7 @@ using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Serializable;
 
 namespace UniGetUI.PackageEngine.Managers.PipManager;
+
 internal sealed class PipPkgOperationHelper : BasePkgOperationHelper
 {
     public PipPkgOperationHelper(Pip manager) : base(manager) { }

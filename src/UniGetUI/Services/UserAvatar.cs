@@ -1,4 +1,3 @@
-using Windows.UI;
 using Microsoft.UI;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
@@ -12,10 +11,11 @@ using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.Pages.DialogPages;
 using UniGetUI.Pages.SettingsPages.GeneralPages;
+using Windows.UI;
 
 namespace UniGetUI.Services
 {
-    public partial class PointButton: Button
+    public partial class PointButton : Button
     {
         public PointButton()
         {
@@ -23,7 +23,7 @@ namespace UniGetUI.Services
         }
     }
 
-    public partial class UserAvatar: UserControl
+    public partial class UserAvatar : UserControl
     {
         public UserAvatar()
         {
@@ -243,7 +243,7 @@ namespace UniGetUI.Services
             {
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 Content = CoreTools.Translate("Log out"),
-                Background = new SolidColorBrush(ActualTheme is ElementTheme.Dark? Colors.DarkRed: Colors.PaleVioletRed),
+                Background = new SolidColorBrush(ActualTheme is ElementTheme.Dark ? Colors.DarkRed : Colors.PaleVioletRed),
                 BorderThickness = new(0)
             };
             loginButton.Click += LogoutButton_Click;

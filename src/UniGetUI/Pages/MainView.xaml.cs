@@ -1,8 +1,8 @@
-using Windows.System;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
+using UniGetUI.Controls;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
@@ -10,16 +10,16 @@ using UniGetUI.Interface.Dialogs;
 using UniGetUI.Interface.Pages;
 using UniGetUI.Interface.Pages.LogPage;
 using UniGetUI.Interface.SoftwarePages;
-using Windows.UI.Core;
-using UniGetUI.PackageEngine.Interfaces;
-using UniGetUI.Pages.DialogPages;
-using UniGetUI.PackageEngine.Enums;
-using UniGetUI.PackageOperations;
-using UniGetUI.Pages.SettingsPages;
-using UniGetUI.Controls;
 using UniGetUI.PackageEngine;
+using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.PackageLoader;
+using UniGetUI.PackageOperations;
+using UniGetUI.Pages.DialogPages;
 using UniGetUI.Pages.PageInterfaces;
+using UniGetUI.Pages.SettingsPages;
+using Windows.System;
+using Windows.UI.Core;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -114,7 +114,7 @@ namespace UniGetUI.Interface
             /*
              * Connect different loaders and UI Sections to bundles page
              */
-            foreach(var pair in new Dictionary<CustomNavViewItem, AbstractPackageLoader>
+            foreach (var pair in new Dictionary<CustomNavViewItem, AbstractPackageLoader>
             {
                 {  DiscoverNavBtn,  DiscoverablePackagesLoader.Instance },
                 {  UpdatesNavBtn,  UpgradablePackagesLoader.Instance },
@@ -149,7 +149,7 @@ namespace UniGetUI.Interface
             if (CoreTools.IsAdministrator() && !Settings.Get(Settings.K.AlreadyWarnedAboutAdmin))
             {
                 Settings.Set(Settings.K.AlreadyWarnedAboutAdmin, true);
-                _= DialogHelper.WarnAboutAdminRights();
+                _ = DialogHelper.WarnAboutAdminRights();
             }
 
             UpdateOperationsLayout();
@@ -282,7 +282,7 @@ namespace UniGetUI.Interface
             CurrentPage_t = NewPage_t;
 
             (oldPage as IEnterLeaveListener)?.OnLeave();
-            if(oldPage is ISearchBoxPage oldSPage)
+            if (oldPage is ISearchBoxPage oldSPage)
             {
                 MainTextBlock.TextChanged -= oldSPage.SearchBox_TextChanged;
                 MainTextBlock.QuerySubmitted -= oldSPage.SearchBox_QuerySubmitted;
@@ -324,7 +324,7 @@ namespace UniGetUI.Interface
             else
             {
                 NavigateTo(NavigationHistory.Last(), toHistory: false);
-                NavigationHistory.RemoveAt(NavigationHistory.Count-1);
+                NavigationHistory.RemoveAt(NavigationHistory.Count - 1);
                 CanGoBackChanged?.Invoke(
                     this,
                     NavigationHistory.Any() || ((ContentFrame.Content as IInnerNavigationPage)?.CanGoBack() ?? false));
@@ -482,7 +482,7 @@ namespace UniGetUI.Interface
             if (_lastNavItemSelectionWasAuto)
                 return;
 
-            if(args.SelectedItem is CustomNavViewItem item && item.Tag is not PageType.Null)
+            if (args.SelectedItem is CustomNavViewItem item && item.Tag is not PageType.Null)
             {
                 NavigateTo(item.Tag);
             }

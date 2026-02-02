@@ -2,6 +2,7 @@ using System.Diagnostics;
 using UniGetUI.PackageEngine.Enums;
 
 namespace UniGetUI.PackageEngine.ManagerClasses.Classes;
+
 public interface IManagerLogger
 {
     public IReadOnlyList<ITaskLogger> Operations { get; }

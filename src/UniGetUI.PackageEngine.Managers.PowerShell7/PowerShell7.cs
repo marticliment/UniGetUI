@@ -111,7 +111,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
 
                         Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1],
                             SourcesHelper.Factory.GetSourceOrDefault(elements[2]), this,
-                            new(env == "CurrentUser"? PackageScope.User : PackageScope.Machine)));
+                            new(env == "CurrentUser" ? PackageScope.User : PackageScope.Machine)));
                     }
                 }
 

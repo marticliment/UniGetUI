@@ -245,7 +245,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
             version = $"{(IS_BUNDLED ? "Bundled" : "System")} WinGet (CLI) Version: {process.StandardOutput.ReadToEnd().Trim()}";
 
-            if(IS_BUNDLED) version += "\nUsing bundled WinGet helper (CLI parsing)";
+            if (IS_BUNDLED) version += "\nUsing bundled WinGet helper (CLI parsing)";
             else version += "\nUsing Native WinGet helper (COM Api)";
 
             string error = process.StandardError.ReadToEnd();

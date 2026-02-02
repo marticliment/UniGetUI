@@ -6,7 +6,7 @@ using UniGetUI.Core.Logging;
 
 namespace UniGetUI.Services;
 
-public class GHAuthApiRunner: IDisposable
+public class GHAuthApiRunner : IDisposable
 {
     public event EventHandler<string>? OnLogin;
     private IHost? _host;

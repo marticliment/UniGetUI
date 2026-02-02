@@ -4,6 +4,7 @@ using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Serializable;
 
 namespace UniGetUI.PackageEngine.Managers.NpmManager;
+
 internal sealed class NpmPkgOperationHelper : BasePkgOperationHelper
 {
     public NpmPkgOperationHelper(Npm manager) : base(manager) { }
@@ -11,8 +12,9 @@ internal sealed class NpmPkgOperationHelper : BasePkgOperationHelper
     protected override IReadOnlyList<string> _getOperationParameters(IPackage package,
         InstallOptions options, OperationType operation)
     {
-        List<string> parameters = operation switch {
-            OperationType.Install => [Manager.Properties.InstallVerb, $"'{package.Id}@{(options.Version == string.Empty? package.VersionString: options.Version)}'"],
+        List<string> parameters = operation switch
+        {
+            OperationType.Install => [Manager.Properties.InstallVerb, $"'{package.Id}@{(options.Version == string.Empty ? package.VersionString : options.Version)}'"],
             OperationType.Update => [Manager.Properties.UpdateVerb, $"'{package.Id}@{package.NewVersionString}'"],
             OperationType.Uninstall => [Manager.Properties.UninstallVerb, package.Id],
             _ => throw new InvalidDataException("Invalid package operation")

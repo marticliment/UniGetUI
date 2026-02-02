@@ -1,8 +1,8 @@
 using System.Net;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
-using Windows.Security.Credentials;
 using UniGetUI.Core.Logging;
+using Windows.Security.Credentials;
 
 namespace UniGetUI.Core.SettingsEngine;
 
@@ -34,7 +34,7 @@ public partial class Settings
 
         string plainUrl = GetValue(K.ProxyURL);
         Uri.TryCreate(plainUrl, UriKind.RelativeOrAbsolute, out Uri? var);
-        if(Get(K.EnableProxy) && var is null) Logger.Warn($"Proxy setting {plainUrl} is not valid");
+        if (Get(K.EnableProxy) && var is null) Logger.Warn($"Proxy setting {plainUrl} is not valid");
         return var;
     }
 

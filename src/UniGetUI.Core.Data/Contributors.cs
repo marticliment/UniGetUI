@@ -1,4 +1,4 @@
-﻿namespace UniGetUI.Core.Data
+namespace UniGetUI.Core.Data
 {
     public static class ContributorsData
     {

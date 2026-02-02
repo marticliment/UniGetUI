@@ -104,7 +104,7 @@ public abstract class AbstractProcessOperation : AbstractOperation
         try { process.BeginErrorReadLine(); }
         catch (Exception ex) { Logger.Error(ex); }
 
-        StringBuilder currentLine= new();
+        StringBuilder currentLine = new();
         char[] buffer = new char[1];
         string? lastStringBeforeLF = null;
 

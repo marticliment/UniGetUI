@@ -272,7 +272,7 @@ namespace UniGetUI.Core.SettingsEngine.Tests
         {
             foreach (Settings.K key in Enum.GetValues(typeof(Settings.K)))
             {
-                if(key is Settings.K.Unset) continue;
+                if (key is Settings.K.Unset) continue;
                 Assert.NotEmpty(Settings.ResolveKey(key));
             }
         }

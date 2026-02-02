@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using UniGetUI.Core.Logging;
 
 namespace UniGetUI.Core.Data
@@ -56,7 +56,8 @@ namespace UniGetUI.Core.Data
                             Logger.Error(ex);
                         }
                     }
-                } else if (IS_PORTABLE is true)
+                }
+                else if (IS_PORTABLE is true)
                 {
                     return PORTABLE_PATH ?? throw new Exception("This shouldn't be possible");
                 }

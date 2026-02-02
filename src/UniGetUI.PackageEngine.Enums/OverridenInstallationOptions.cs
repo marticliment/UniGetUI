@@ -1,4 +1,5 @@
 namespace UniGetUI.PackageEngine.Structs;
+
 public struct OverridenInstallationOptions
 {
     public string? Scope;

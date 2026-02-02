@@ -135,7 +135,7 @@ namespace UniGetUI.PackageEngine.Operations
         private static IReadOnlyList<InnerOperation> _getPreInstallOps(InstallOptions opts, OperationType role, IPackage package, AbstractOperation? preReq = null)
         {
             List<InnerOperation> l = new();
-            if(preReq is not null) l.Add(new(preReq, true));
+            if (preReq is not null) l.Add(new(preReq, true));
 
             foreach (var process in opts.KillBeforeOperation)
                 l.Add(new InnerOperation(
@@ -231,7 +231,7 @@ namespace UniGetUI.PackageEngine.Operations
             Metadata.Title = CoreTools.Translate("{package} Installation", new Dictionary<string, object?> { { "package", Package.Name } });
             Metadata.Status = CoreTools.Translate("{0} is being installed", Package.Name);
             Metadata.SuccessTitle = CoreTools.Translate("Installation succeeded");
-            Metadata.SuccessMessage = CoreTools.Translate("{package} was installed successfully",  new Dictionary<string, object?> { { "package", Package.Name } });
+            Metadata.SuccessMessage = CoreTools.Translate("{package} was installed successfully", new Dictionary<string, object?> { { "package", Package.Name } });
             Metadata.FailureTitle = CoreTools.Translate("Installation failed", new Dictionary<string, object?> { { "package", Package.Name } });
             Metadata.FailureMessage = CoreTools.Translate("{package} could not be installed", new Dictionary<string, object?> { { "package", Package.Name } });
 
@@ -289,7 +289,7 @@ namespace UniGetUI.PackageEngine.Operations
             Metadata.Title = CoreTools.Translate("{package} Update", new Dictionary<string, object?> { { "package", Package.Name } });
             Metadata.Status = CoreTools.Translate("{0} is being updated to version {1}", Package.Name, Package.NewVersionString);
             Metadata.SuccessTitle = CoreTools.Translate("Update succeeded");
-            Metadata.SuccessMessage = CoreTools.Translate("{package} was updated successfully",  new Dictionary<string, object?> { { "package", Package.Name } });
+            Metadata.SuccessMessage = CoreTools.Translate("{package} was updated successfully", new Dictionary<string, object?> { { "package", Package.Name } });
             Metadata.FailureTitle = CoreTools.Translate("Update failed", new Dictionary<string, object?> { { "package", Package.Name } });
             Metadata.FailureMessage = CoreTools.Translate("{package} could not be updated", new Dictionary<string, object?> { { "package", Package.Name } });
 
@@ -336,7 +336,7 @@ namespace UniGetUI.PackageEngine.Operations
             Metadata.Title = CoreTools.Translate("{package} Uninstall", new Dictionary<string, object?> { { "package", Package.Name } });
             Metadata.Status = CoreTools.Translate("{0} is being uninstalled", Package.Name);
             Metadata.SuccessTitle = CoreTools.Translate("Uninstall succeeded");
-            Metadata.SuccessMessage = CoreTools.Translate("{package} was uninstalled successfully",  new Dictionary<string, object?> { { "package", Package.Name } });
+            Metadata.SuccessMessage = CoreTools.Translate("{package} was uninstalled successfully", new Dictionary<string, object?> { { "package", Package.Name } });
             Metadata.FailureTitle = CoreTools.Translate("Uninstall failed", new Dictionary<string, object?> { { "package", Package.Name } });
             Metadata.FailureMessage = CoreTools.Translate("{package} could not be uninstalled", new Dictionary<string, object?> { { "package", Package.Name } });
         }

@@ -1,15 +1,15 @@
-using Windows.UI.Text;
+using CommunityToolkit.WinUI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
+using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Widgets;
-using UniGetUI.Pages.SettingsPages.GeneralPages;
 using UniGetUI.PackageEngine;
-using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Pages.DialogPages;
-using CommunityToolkit.WinUI;
+using UniGetUI.Pages.SettingsPages.GeneralPages;
+using Windows.UI.Text;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -36,7 +36,7 @@ namespace UniGetUI.Pages.SettingsPages
             this.InitializeComponent();
 
             bool first = true;
-            foreach(var manager in PEInterface.Managers)
+            foreach (var manager in PEInterface.Managers)
             {
                 var button = new SettingsPageButton()
                 {
@@ -46,7 +46,7 @@ namespace UniGetUI.Pages.SettingsPages
                     Padding = new Thickness(16, 2, 16, 2)
                 };
                 button.CornerRadius = first ? new CornerRadius(8, 8, 0, 0) : new CornerRadius(0);
-                button.BorderThickness = first ? new Thickness(1) : new Thickness(1,0,1,1);
+                button.BorderThickness = first ? new Thickness(1) : new Thickness(1, 0, 1, 1);
                 button.Click += (_, _) => NavigationRequested?.Invoke(this, manager.GetType());
 
                 var statusIcon = new FontIcon() { FontSize = 12, VerticalAlignment = VerticalAlignment.Center };
@@ -106,7 +106,8 @@ namespace UniGetUI.Pages.SettingsPages
                 var status = new StackPanel()
                 {
                     Orientation = Orientation.Horizontal,
-                    Spacing = 4, HorizontalAlignment = HorizontalAlignment.Center,
+                    Spacing = 4,
+                    HorizontalAlignment = HorizontalAlignment.Center,
                     Children = { statusIcon, statusText }
                 };
                 statusBorder.Child = status;
@@ -128,7 +129,7 @@ namespace UniGetUI.Pages.SettingsPages
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             _isLoadingToggles = true;
-            for(int i = 0; i < managerControls.Count; i++)
+            for (int i = 0; i < managerControls.Count; i++)
             {
                 var toggle = (ToggleSwitch)((StackPanel)managerControls[i].Content).Children.First();
                 toggle.IsOn = !Settings.GetDictionaryItem<string, bool>(Settings.K.DisabledManagers, PEInterface.Managers[i].Name);

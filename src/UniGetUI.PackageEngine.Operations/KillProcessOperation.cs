@@ -6,7 +6,7 @@ using UniGetUI.PackageEngine.Enums;
 
 namespace UniGetUI.PackageOperations;
 
-public class KillProcessOperation: AbstractOperation
+public class KillProcessOperation : AbstractOperation
 {
     private string ProcessName;
     public KillProcessOperation(string procName) : base(false)
@@ -33,13 +33,13 @@ public class KillProcessOperation: AbstractOperation
             var procs = Process.GetProcessesByName(ProcessName.Replace(".exe", ""));
             foreach (var proc in procs)
             {
-                if(proc.HasExited) continue;
+                if (proc.HasExited) continue;
                 Line($"Attempting to close process {ProcessName} with pid={proc.Id}...", LineType.VerboseDetails);
                 proc.CloseMainWindow();
                 await Task.WhenAny(proc.WaitForExitAsync(), Task.Delay(1000));
                 if (!proc.HasExited)
                 {
-                    if(Settings.Get(Settings.K.KillProcessesThatRefuseToDie))
+                    if (Settings.Get(Settings.K.KillProcessesThatRefuseToDie))
                     {
                         Line($"Timeout for process {ProcessName}, attempting to kill...", LineType.Information);
                         proc.Kill();

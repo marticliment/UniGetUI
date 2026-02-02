@@ -1,4 +1,4 @@
-﻿namespace ExternalLibraries.Pickers.Guids;
+namespace ExternalLibraries.Pickers.Guids;
 
 internal static class CLSIDGuid
 {

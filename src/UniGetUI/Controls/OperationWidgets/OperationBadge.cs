@@ -1,6 +1,7 @@
 using UniGetUI.Interface.Enums;
 
 namespace UniGetUI.Controls.OperationWidgets;
+
 public class OperationBadge
 {
     public string Tooltip;

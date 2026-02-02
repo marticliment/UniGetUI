@@ -111,6 +111,6 @@ namespace UniGetUI.Interface.Enums
         public bool IsEmpty = false;
         public Dictionary<string, List<BundleReportEntry>> Contents = new();
         public BundleReport()
-        {}
+        { }
     }
 }

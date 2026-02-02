@@ -1,23 +1,23 @@
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
-using Windows.Storage;
-using Windows.Storage.Pickers;
 using Microsoft.UI.Xaml.Controls;
 using UniGetUI.Controls.OperationWidgets;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface;
+using UniGetUI.Interface.Enums;
 using UniGetUI.Interface.Telemetry;
+using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Managers.PowerShellManager;
 using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.PackageEngine.PackageLoader;
 using UniGetUI.PackageOperations;
 using UniGetUI.Pages.DialogPages;
-using UniGetUI.Interface.Enums;
-using UniGetUI.PackageEngine;
-using UniGetUI.PackageEngine.PackageLoader;
+using Windows.Storage;
+using Windows.Storage.Pickers;
 
 namespace UniGetUI;
 
@@ -41,7 +41,7 @@ public partial class MainApp
 
         public static void Remove(AbstractOperation op)
         {
-            foreach(var control in _operationList.Where(x => x.Operation == op).ToArray())
+            foreach (var control in _operationList.Where(x => x.Operation == op).ToArray())
             {
                 _operationList.Remove(control);
             }
@@ -65,7 +65,9 @@ public partial class MainApp
                 if (details.InstallerUrl is null)
                 {
                     DialogHelper.HideLoadingDialog(loadingId);
-                    var dialog = new ContentDialog { Title = CoreTools.Translate("Download failed"),
+                    var dialog = new ContentDialog
+                    {
+                        Title = CoreTools.Translate("Download failed"),
                         Content = CoreTools.Translate("No applicable installer was found for the package {0}", package.Name),
                         PrimaryButtonText = CoreTools.Translate("Ok"),
                         DefaultButton = ContentDialogButton.Primary,

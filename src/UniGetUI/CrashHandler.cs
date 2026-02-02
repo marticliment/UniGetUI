@@ -36,7 +36,7 @@ public static class CrashHandler
                                    + "\nPress NO to close this prompt."
                                    + "\nPress CANCEL to get more details about the crash.";
 
-                var msgboxResult = MessageBox(IntPtr.Zero,  errorMessage, title, MB_ICONSTOP | MB_YESNOCANCEL);
+                var msgboxResult = MessageBox(IntPtr.Zero, errorMessage, title, MB_ICONSTOP | MB_YESNOCANCEL);
                 if (msgboxResult is IDYES)
                 {
                     Process.Start(installerPath, "/silent /NoDeployInstaller");
@@ -52,7 +52,7 @@ public static class CrashHandler
                                    + "\n\nPress OK to close this prompt."
                                    + "\nPress CANCEL to get more details about the crash.";
 
-                var msgboxResult = MessageBox(IntPtr.Zero,  errorMessage, title, MB_ICONSTOP | MB_OKCANCEL);
+                var msgboxResult = MessageBox(IntPtr.Zero, errorMessage, title, MB_ICONSTOP | MB_OKCANCEL);
                 if (msgboxResult is IDOK) showDetailedReport = false;
                 else showDetailedReport = true; // msgboxResult is IDCANCEL
             }
@@ -106,7 +106,7 @@ public static class CrashHandler
                 }
 
                 string r = b.ToString();
-                return r.Any()? r: "No extra data was provided";
+                return r.Any() ? r : "No extra data was provided";
             }
             catch (Exception ex)
             {
@@ -123,7 +123,7 @@ public static class CrashHandler
         catch (Exception ex)
         {
             iReport = "Failed to compute integrity report: ";
-            iReport +=  ex.GetType() + ": " + ex.Message;
+            iReport += ex.GetType() + ": " + ex.Message;
         }
 
 
@@ -175,12 +175,13 @@ public static class CrashHandler
             {
                 Error_String += $"\n\n\nNo inner exceptions found";
             }
-        } catch
+        }
+        catch
         {
             // ignore
         }
 
-       Console.WriteLine(Error_String);
+        Console.WriteLine(Error_String);
 
         string ErrorUrl = $"https://www.marticliment.com/error-report/" +
               $"?appName=UniGetUI" +

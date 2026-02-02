@@ -492,7 +492,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
                     details.Dependencies.Add(new()
                     {
                         Name = line.Split(' ')[0],
-                        Version = line.Contains('[') ? line.Split('[')[1].TrimEnd(']'): "",
+                        Version = line.Contains('[') ? line.Split('[')[1].TrimEnd(']') : "",
                         Mandatory = true
                     });
                 }

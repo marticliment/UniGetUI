@@ -1,7 +1,10 @@
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using Windows.UI;
+using CommunityToolkit.WinUI;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.Windows.AppNotifications;
 using Microsoft.Windows.AppNotifications.Builder;
@@ -9,23 +12,20 @@ using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
+using UniGetUI.Interface.Telemetry;
+using UniGetUI.Interface.Widgets;
+using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Classes.Packages.Classes;
 using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.Operations;
+using UniGetUI.PackageEngine.PackageLoader;
 using UniGetUI.PackageOperations;
 using UniGetUI.Pages.DialogPages;
-using CommunityToolkit.WinUI;
-using Microsoft.UI.Xaml.Controls;
-using UniGetUI.Interface.Widgets;
-using UniGetUI.PackageEngine.Operations;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using UniGetUI.Interface.Telemetry;
-using UniGetUI.PackageEngine;
-using UniGetUI.PackageEngine.PackageLoader;
+using Windows.UI;
 
 namespace UniGetUI.Controls.OperationWidgets;
 
-public partial class OperationControl: INotifyPropertyChanged
+public partial class OperationControl : INotifyPropertyChanged
 {
     public AbstractOperation Operation;
     public BetterMenu OpMenu;
@@ -88,7 +88,7 @@ public partial class OperationControl: INotifyPropertyChanged
         };
 
         _title = Operation.Metadata.Title;
-        _liveLine = operation.GetOutput().Any()? operation.GetOutput()[operation.GetOutput().Count - 1].Item1 : CoreTools.Translate("Please wait...");
+        _liveLine = operation.GetOutput().Any() ? operation.GetOutput()[operation.GetOutput().Count - 1].Item1 : CoreTools.Translate("Please wait...");
         _buttonText = "";
         OnOperationStatusChanged(this, operation.Status);
         _ = LoadIcon();
@@ -172,7 +172,7 @@ public partial class OperationControl: INotifyPropertyChanged
         }
 
         // Handle newly created shortcuts
-        if(Settings.Get(Settings.K.AskToDeleteNewDesktopShortcuts)
+        if (Settings.Get(Settings.K.AskToDeleteNewDesktopShortcuts)
             && !MainApp.Operations.AreThereRunningOperations()
             && DesktopShortcutsDatabase.GetUnknownShortcuts().Any())
         {
@@ -264,7 +264,7 @@ public partial class OperationControl: INotifyPropertyChanged
         var normalOptions = GetOperationOptions();
         if (normalOptions.Count != 0)
         {
-            foreach(var item in normalOptions)
+            foreach (var item in normalOptions)
             {
                 OpMenu.Items.Add(item);
             }
@@ -274,15 +274,15 @@ public partial class OperationControl: INotifyPropertyChanged
 
         if (Operation.Status is OperationStatus.InQueue)
         {
-            var skipQueue = new BetterMenuItem { Text = CoreTools.Translate("Run now"), Icon = new FontIcon {Glyph = "\uE768"} };
+            var skipQueue = new BetterMenuItem { Text = CoreTools.Translate("Run now"), Icon = new FontIcon { Glyph = "\uE768" } };
             skipQueue.Click += (_, _) => Operation.SkipQueue();
             OpMenu.Items.Add(skipQueue);
 
-            var putNext = new BetterMenuItem { Text = CoreTools.Translate("Run next"), Icon = new FontIcon {Glyph = "\uEB9D"} };
+            var putNext = new BetterMenuItem { Text = CoreTools.Translate("Run next"), Icon = new FontIcon { Glyph = "\uEB9D" } };
             putNext.Click += (_, _) => Operation.RunNext();
             OpMenu.Items.Add(putNext);
 
-            var putLast = new BetterMenuItem { Text = CoreTools.Translate("Run last"), Icon = new FontIcon {Glyph = "\uEB9E"} };
+            var putLast = new BetterMenuItem { Text = CoreTools.Translate("Run last"), Icon = new FontIcon { Glyph = "\uEB9E" } };
             putLast.Click += (_, _) => Operation.BackOfTheQueue();
             OpMenu.Items.Add(putLast);
 
@@ -308,7 +308,7 @@ public partial class OperationControl: INotifyPropertyChanged
             {
                 OpMenu.Items.Add(new MenuFlyoutSeparator());
 
-                foreach(var item in extraRetry)
+                foreach (var item in extraRetry)
                 {
                     OpMenu.Items.Add(item);
                 }
@@ -332,7 +332,7 @@ public partial class OperationControl: INotifyPropertyChanged
         MainApp.Instance.MainWindow.UpdateSystemTrayStatus();
 
         MainApp.Operations._operationList.Remove(this);
-        while(AbstractOperation.OperationQueue.Remove(Operation));
+        while (AbstractOperation.OperationQueue.Remove(Operation)) ;
     }
 
     private string _buttonText;
@@ -483,7 +483,8 @@ public partial class OperationControl: INotifyPropertyChanged
 
         if (Operation is SourceOperation sourceOp && !sourceOp.ForceAsAdministrator)
         {
-            var adminButton = new BetterMenuItem {
+            var adminButton = new BetterMenuItem
+            {
                 Text = CoreTools.Translate("Retry as administrator"),
                 IconName = IconType.UAC,
             };
@@ -498,7 +499,8 @@ public partial class OperationControl: INotifyPropertyChanged
         {
             if (!packageOp.Options.RunAsAdministrator && packageOp.Package.Manager.Capabilities.CanRunAsAdmin)
             {
-                var adminButton = new BetterMenuItem {
+                var adminButton = new BetterMenuItem
+                {
                     Text = CoreTools.Translate("Retry as administrator"),
                     IconName = IconType.UAC,
                 };
@@ -513,7 +515,8 @@ public partial class OperationControl: INotifyPropertyChanged
             if (!packageOp.Options.InteractiveInstallation &&
                 packageOp.Package.Manager.Capabilities.CanRunInteractively)
             {
-                var interactiveButton = new BetterMenuItem {
+                var interactiveButton = new BetterMenuItem
+                {
                     Text = CoreTools.Translate("Retry interactively"),
                     IconName = IconType.Interactive,
                 };
@@ -528,7 +531,8 @@ public partial class OperationControl: INotifyPropertyChanged
             if (!packageOp.Options.SkipHashCheck && packageOp.Package.Manager.Capabilities.CanSkipIntegrityChecks)
             {
                 var skiphashButton =
-                    new BetterMenuItem {
+                    new BetterMenuItem
+                    {
                         Text = CoreTools.Translate("Retry skipping integrity checks"),
                         IconName = IconType.Checksum,
                     };
@@ -600,7 +604,8 @@ public partial class OperationControl: INotifyPropertyChanged
         var optionsMenu = new List<MenuFlyoutItemBase>();
         if (Operation is PackageOperation packageOp)
         {
-            var details = new BetterMenuItem {
+            var details = new BetterMenuItem
+            {
                 Text = CoreTools.Translate("Package details"),
                 IconName = IconType.Info_Round,
                 IsEnabled = !packageOp.Package.Source.IsVirtualManager
@@ -624,7 +629,8 @@ public partial class OperationControl: INotifyPropertyChanged
             optionsMenu.Add(installationSettings);
 
             string? location = packageOp.Package.Manager.DetailsHelper.GetInstallLocation(packageOp.Package);
-            var openLocation = new BetterMenuItem {
+            var openLocation = new BetterMenuItem
+            {
                 Text = CoreTools.Translate("Open install location"),
                 IconName = IconType.OpenFolder,
             };
@@ -635,7 +641,8 @@ public partial class OperationControl: INotifyPropertyChanged
 
         else if (Operation is DownloadOperation downloadOp)
         {
-            var launchInstaller = new BetterMenuItem {
+            var launchInstaller = new BetterMenuItem
+            {
                 Text = CoreTools.Translate("Open"),
                 IconName = IconType.Launch,
             };
@@ -643,7 +650,8 @@ public partial class OperationControl: INotifyPropertyChanged
             launchInstaller.IsEnabled = downloadOp.Status is OperationStatus.Succeeded;
             optionsMenu.Add(launchInstaller);
 
-            var showFileInExplorer = new BetterMenuItem {
+            var showFileInExplorer = new BetterMenuItem
+            {
                 Text = CoreTools.Translate("Show in explorer"),
                 IconName = IconType.OpenFolder,
             };

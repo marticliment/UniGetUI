@@ -11,6 +11,7 @@ using Architecture = UniGetUI.PackageEngine.Enums.Architecture;
 using InstallOptions = UniGetUI.PackageEngine.Serializable.InstallOptions;
 
 namespace UniGetUI.PackageEngine.Managers.WingetManager;
+
 internal sealed class WinGetPkgOperationHelper : BasePkgOperationHelper
 {
     public static string GetIdNamePiece(IPackage package)
@@ -41,7 +42,8 @@ internal sealed class WinGetPkgOperationHelper : BasePkgOperationHelper
         parameters.AddRange(["--accept-source-agreements", "--disable-interactivity"]);
 
         // package.OverridenInstallationOptions.Scope is meaningless in WinGet packages. Default is unspecified, hence the _ => [].
-        parameters.AddRange((package.OverridenOptions.Scope ?? options.InstallationScope) switch {
+        parameters.AddRange((package.OverridenOptions.Scope ?? options.InstallationScope) switch
+        {
             PackageScope.User => ["--scope", "user"],
             PackageScope.Machine => ["--scope", "machine"],
             _ => []
@@ -70,7 +72,7 @@ internal sealed class WinGetPkgOperationHelper : BasePkgOperationHelper
             }
             parameters.Add("--include-unknown");
 
-            if(Settings.Get(Settings.K.WinGetForceLocationOnUpdate) && options.CustomInstallLocation != "")
+            if (Settings.Get(Settings.K.WinGetForceLocationOnUpdate) && options.CustomInstallLocation != "")
                 parameters.AddRange(["--location", $"\"{options.CustomInstallLocation}\""]);
         }
         else if (operation is OperationType.Install)
@@ -117,7 +119,7 @@ internal sealed class WinGetPkgOperationHelper : BasePkgOperationHelper
 
                 package.OverridenOptions.RunAsAdministrator = false;
             }
-            else if(installOptions?.Scope is PackageInstallerScope.System/* or PackageInstallerScope.Unknown*/)
+            else if (installOptions?.Scope is PackageInstallerScope.System/* or PackageInstallerScope.Unknown*/)
             {
                 Logger.Info($"WinGet package {package.Id} is installed on a system-wide scope, forcing administrator rights...");
                 package.OverridenOptions.RunAsAdministrator = true;

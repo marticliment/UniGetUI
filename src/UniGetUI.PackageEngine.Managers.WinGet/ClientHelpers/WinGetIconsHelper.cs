@@ -9,6 +9,7 @@ using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Managers.WingetManager;
 
 namespace UniGetUI.PackageEngine.Managers.WinGet.ClientHelpers;
+
 internal static class WinGetIconsHelper
 {
     private static readonly Dictionary<string, string> __msstore_package_manifests = [];

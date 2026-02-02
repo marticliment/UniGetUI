@@ -1,5 +1,5 @@
-using Windows.Security.Credentials;
 using UniGetUI.Core.Logging;
+using Windows.Security.Credentials;
 
 namespace UniGetUI.Core.SecureSettings
 {

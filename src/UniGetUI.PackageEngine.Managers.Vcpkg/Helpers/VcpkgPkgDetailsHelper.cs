@@ -14,7 +14,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
     {
         public VcpkgPkgDetailsHelper(Vcpkg manager) : base(manager) { }
 
-		protected override void GetDetails_UnSafe(IPackageDetails details)
+        protected override void GetDetails_UnSafe(IPackageDetails details)
         {
             INativeTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.LoadPackageDetails);
 

@@ -1,25 +1,25 @@
 using System.Diagnostics;
 using System.Text.RegularExpressions;
-using Windows.ApplicationModel.Activation;
 using CommunityToolkit.WinUI.Helpers;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.Windows.AppLifecycle;
+using Microsoft.Windows.AppNotifications;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
+using UniGetUI.Core.SettingsEngine.SecureSettings;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface;
+using UniGetUI.Interface.Telemetry;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Classes.Manager.Classes;
-using Microsoft.Windows.AppLifecycle;
-using Microsoft.Windows.AppNotifications;
-using UniGetUI.Core.SettingsEngine.SecureSettings;
-using UniGetUI.Interface.Telemetry;
 using UniGetUI.PackageEngine.Interfaces;
-using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
 using UniGetUI.Pages.DialogPages;
+using Windows.ApplicationModel.Activation;
+using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
 
 namespace UniGetUI
 {
@@ -168,7 +168,7 @@ namespace UniGetUI
             }
             catch (Exception ex)
             {
-                if(Debugger.IsAttached) Debugger.Break();
+                if (Debugger.IsAttached) Debugger.Break();
                 Logger.Error(ex);
             }
 

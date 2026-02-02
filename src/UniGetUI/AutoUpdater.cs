@@ -170,7 +170,7 @@ public class AutoUpdater
 
         Logger.Warn($"Received update string is {UpdateResponse[0]}");
         throw new FormatException("The updates file does not follow the FloatVersion////Sha256Hash////VersionName format");
-   }
+    }
 
     /// <summary>
     /// Checks whether the downloaded updater matches the hash.

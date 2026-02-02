@@ -120,7 +120,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
         public override List<string> FindCandidateExecutableFiles()
         {
             var candidates = CoreTools.WhichMultiple("powershell.exe");
-            if(candidates.Count is 0) candidates.Add(CoreData.PowerShell5);
+            if (candidates.Count is 0) candidates.Add(CoreData.PowerShell5);
             return candidates;
         }
 

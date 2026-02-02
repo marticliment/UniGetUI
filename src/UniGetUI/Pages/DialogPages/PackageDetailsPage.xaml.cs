@@ -1,21 +1,21 @@
 using System.Collections.ObjectModel;
-using Windows.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
-using Microsoft.UI.Xaml.Documents;
-using Windows.UI.Text;
+using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
+using UniGetUI.Interface.Enums;
+using UniGetUI.Interface.Telemetry;
+using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.PackageClasses;
-using UniGetUI.Interface.Enums;
-using UniGetUI.Interface.Telemetry;
-using UniGetUI.Interface.Widgets;
-using UniGetUI.Core.Logging;
 using UniGetUI.Pages.DialogPages;
+using Windows.UI;
+using Windows.UI.Text;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -240,7 +240,8 @@ namespace UniGetUI.Interface.Dialogs
                 ExtendedActionsMenu.Items.Add(new MenuFlyoutSeparator());
                 var Uninstall = new BetterMenuItem
                 {
-                    Text = CoreTools.Translate("Uninstall"), IconName = IconType.Delete
+                    Text = CoreTools.Translate("Uninstall"),
+                    IconName = IconType.Delete
                 };
                 Uninstall.Click += (_, _) => _ = DoAction(InstalledPackage, OperationType.Uninstall);
                 ExtendedActionsMenu.Items.Add(Uninstall);
@@ -300,7 +301,8 @@ namespace UniGetUI.Interface.Dialogs
             ExtendedActionsMenu.Items.Add(new MenuFlyoutSeparator());
             var Reinstall = new BetterMenuItem
             {
-                Text = CoreTools.Translate("Reinstall"), IconName = IconType.Download
+                Text = CoreTools.Translate("Reinstall"),
+                IconName = IconType.Download
             };
             Reinstall.Click += (_, _) => _ = DoAction(Package, OperationType.Install);
             ExtendedActionsMenu.Items.Add(Reinstall);
@@ -394,7 +396,7 @@ namespace UniGetUI.Interface.Dialogs
                     DependenciesParagraph.Inlines.Add(new Run()
                     {
                         Text = $"  • {dep.Name}",
-                        FontStyle = dep.Mandatory? FontStyle.Normal : FontStyle.Italic,
+                        FontStyle = dep.Mandatory ? FontStyle.Normal : FontStyle.Italic,
                         FontWeight = new FontWeight(600)
                     });
 
@@ -405,12 +407,12 @@ namespace UniGetUI.Interface.Dialogs
                     DependenciesParagraph.Inlines.Add(new Run()
                     {
                         Text = line,
-                        FontStyle = dep.Mandatory? FontStyle.Normal : FontStyle.Italic,
+                        FontStyle = dep.Mandatory ? FontStyle.Normal : FontStyle.Italic,
                     });
                     DependenciesParagraph.Inlines.Add(new LineBreak());
                 }
-                if(DependenciesParagraph.Inlines.Any() && DependenciesParagraph.Inlines.Last() is LineBreak)
-                    DependenciesParagraph.Inlines.RemoveAt(DependenciesParagraph.Inlines.Count-1);
+                if (DependenciesParagraph.Inlines.Any() && DependenciesParagraph.Inlines.Last() is LineBreak)
+                    DependenciesParagraph.Inlines.RemoveAt(DependenciesParagraph.Inlines.Count - 1);
             }
             else
             {

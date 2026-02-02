@@ -78,7 +78,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             UpdatePackageIcon();
             VersionComboString = package.IsUpgradable ? $"{package.VersionString} -> {package.NewVersionString}" : package.VersionString;
 
-            if(package.Name.ToLower() != package.Id.ToLower())
+            if (package.Name.ToLower() != package.Id.ToLower())
                 ExtendedTooltip = $"{package.Name} ({package.Id} from {package.Source.AsString_DisplayName})";
             else
                 ExtendedTooltip = $"{package.Name} (from {package.Source.AsString_DisplayName})";

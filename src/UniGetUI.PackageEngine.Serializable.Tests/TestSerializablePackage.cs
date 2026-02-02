@@ -92,7 +92,7 @@ public class TestSerializablePackage
         Assert.Equal(source, o2.Source);
         Assert.Equal(version, o2.Version);
         TestInstallOptions.AssertAreEqual(new() { SkipHashCheck = skipHash }, o2.InstallationOptions);
-        TestSerializableUpdatesOptions.AreEqual(new(){IgnoredVersion = ignoredVer}, o2.Updates);
+        TestSerializableUpdatesOptions.AreEqual(new() { IgnoredVersion = ignoredVer }, o2.Updates);
     }
 
     internal static void AreEqual(SerializablePackage o1, SerializablePackage o2)

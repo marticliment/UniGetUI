@@ -6,6 +6,7 @@ using UniGetUI.Interface.Enums;
 using UniGetUI.Interface.Widgets;
 
 namespace UniGetUI.Controls;
+
 internal partial class CustomNavViewItem : NavigationViewItem
 {
     int _iconSize = 28;
@@ -88,7 +89,7 @@ internal partial class CustomNavViewItem : NavigationViewItem
 
     public async Task increaseMargins()
     {
-        for(int i = (int)base.Icon.Margin.Left; i < 6; i += 2)
+        for (int i = (int)base.Icon.Margin.Left; i < 6; i += 2)
         {
             base.Icon.Margin = new Thickness(i);
             await Task.Delay(15);

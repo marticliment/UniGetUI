@@ -1,7 +1,5 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using Windows.UI;
-using Windows.UI.Text;
 using Microsoft.UI;
 using Microsoft.UI.Text;
 using Microsoft.UI.Windowing;
@@ -20,6 +18,8 @@ using UniGetUI.Interface.Dialogs;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Classes.Packages.Classes;
+using Windows.UI;
+using Windows.UI.Text;
 
 namespace UniGetUI.Pages.DialogPages;
 
@@ -52,7 +52,7 @@ public static partial class DialogHelper
                     else if (Window.NavigationPage.ActualWidth >= tresholdW + 200) maxW = 300;
                     else maxW = Window.NavigationPage.ActualWidth - (tresholdW - 100);
 
-                    if (Window.NavigationPage.ActualHeight < tresholdH) maxH = (hasTitle? 104: 64) + (hasButtons? 80: 0);
+                    if (Window.NavigationPage.ActualHeight < tresholdH) maxH = (hasTitle ? 104 : 64) + (hasButtons ? 80 : 0);
                     else if (Window.NavigationPage.ActualHeight >= tresholdH + 200) maxH = (hasTitle ? 320 : 280) + (hasButtons ? 80 : 0);
                     else maxH = Window.NavigationPage.ActualHeight - (tresholdH - (hasTitle ? 120 : 80)) + (hasButtons ? 80 : 0);
 
@@ -91,7 +91,7 @@ public static partial class DialogHelper
             IntPtr GetForWindow([In] IntPtr appWindow, [In] ref Guid riid);
             void ShowShareUIForWindow(IntPtr appWindow);
         }
-        public static readonly Guid _dtm_iid = new(0xa5caee9b,0x8708,0x49d1,0x8d,0x36,0x67,0xd2,0x5a,0x8d,0xa0,0x0c);
+        public static readonly Guid _dtm_iid = new(0xa5caee9b, 0x8708, 0x49d1, 0x8d, 0x36, 0x67, 0xd2, 0x5a, 0x8d, 0xa0, 0x0c);
     }
 
     private static readonly List<LoadingDialog> _loadingDialogQueue = new();

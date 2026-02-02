@@ -1,28 +1,28 @@
+using System.Diagnostics;
+using CommunityToolkit.WinUI.Controls;
+using ExternalLibraries.Clipboard;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-using UniGetUI.Core.Tools;
-using UniGetUI.PackageEngine.Interfaces;
-using System.Diagnostics;
-using UniGetUI.PackageEngine.Managers.WingetManager;
-using UniGetUI.PackageEngine;
-using UniGetUI.PackageEngine.Managers.ChocolateyManager;
-using UniGetUI.PackageEngine.Managers.ScoopManager;
-using UniGetUI.PackageEngine.Managers.NpmManager;
-using UniGetUI.PackageEngine.Managers.PipManager;
-using UniGetUI.PackageEngine.Managers.PowerShellManager;
-using UniGetUI.PackageEngine.Managers.PowerShell7Manager;
-using UniGetUI.PackageEngine.Managers.CargoManager;
-using UniGetUI.PackageEngine.Managers.VcpkgManager;
-using UniGetUI.PackageEngine.Managers.DotNetManager;
-using ExternalLibraries.Clipboard;
-using CommunityToolkit.WinUI.Controls;
-using UniGetUI.Interface.Widgets;
 using UniGetUI.Core.Data;
-using UniGetUI.Pages.DialogPages;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.SettingsEngine.SecureSettings;
+using UniGetUI.Core.Tools;
+using UniGetUI.Interface.Widgets;
+using UniGetUI.PackageEngine;
+using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.Managers.CargoManager;
+using UniGetUI.PackageEngine.Managers.ChocolateyManager;
+using UniGetUI.PackageEngine.Managers.DotNetManager;
+using UniGetUI.PackageEngine.Managers.NpmManager;
+using UniGetUI.PackageEngine.Managers.PipManager;
+using UniGetUI.PackageEngine.Managers.PowerShell7Manager;
+using UniGetUI.PackageEngine.Managers.PowerShellManager;
+using UniGetUI.PackageEngine.Managers.ScoopManager;
+using UniGetUI.PackageEngine.Managers.VcpkgManager;
+using UniGetUI.PackageEngine.Managers.WingetManager;
 using UniGetUI.PackageEngine.PackageLoader;
+using UniGetUI.Pages.DialogPages;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -112,7 +112,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 {
                     Margin = new(4, 24, 4, 8),
                     FontWeight = new Windows.UI.Text.FontWeight(600),
-                    Text=CoreTools.Translate("Advanced options")
+                    Text = CoreTools.Translate("Advanced options")
                 });
             }
 
@@ -195,7 +195,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
 
             else if (Manager is Scoop)
             {
-                DisableNotifsCard.CornerRadius = new CornerRadius(8,8,0,0);
+                DisableNotifsCard.CornerRadius = new CornerRadius(8, 8, 0, 0);
                 DisableNotifsCard.BorderThickness = new Thickness(1, 1, 1, 0);
                 ExtraControls.Children.Add(DisableNotifsCard);
 
@@ -257,7 +257,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
 
             else if (Manager is Chocolatey)
             {
-                DisableNotifsCard.CornerRadius = new CornerRadius(8,8,0,0);
+                DisableNotifsCard.CornerRadius = new CornerRadius(8, 8, 0, 0);
                 DisableNotifsCard.BorderThickness = new Thickness(1, 1, 1, 0);
                 ExtraControls.Children.Add(DisableNotifsCard);
 
@@ -275,7 +275,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
 
             else if (Manager is Vcpkg)
             {
-                DisableNotifsCard.CornerRadius = new CornerRadius(8,8,0,0);
+                DisableNotifsCard.CornerRadius = new CornerRadius(8, 8, 0, 0);
                 DisableNotifsCard.BorderThickness = new Thickness(1, 1, 1, 0);
                 ExtraControls.Children.Add(DisableNotifsCard);
 
@@ -386,7 +386,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             // Load executable selection
             ExecutableComboBox.SelectionChanged -= ExecutableComboBox_SelectionChanged;
             ExecutableComboBox.Items.Clear();
-            foreach(var path in Manager.FindCandidateExecutableFiles())
+            foreach (var path in Manager.FindCandidateExecutableFiles())
             {
                 ExecutableComboBox.Items.Add(path);
             }
@@ -394,7 +394,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             if (string.IsNullOrEmpty(selectedValue))
             {
                 var exe = Manager.GetExecutableFile();
-                selectedValue = exe.Item1? exe.Item2: "";
+                selectedValue = exe.Item1 ? exe.Item2 : "";
             }
 
             ExecutableComboBox.SelectedValue = selectedValue;

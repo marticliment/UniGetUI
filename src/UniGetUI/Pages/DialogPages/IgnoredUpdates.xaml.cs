@@ -43,7 +43,7 @@ namespace UniGetUI.Interface
 
             var rawIgnoredPackages = IgnoredUpdatesDatabase.GetDatabase();
 
-            foreach (var(ignoredId, version) in rawIgnoredPackages)
+            foreach (var (ignoredId, version) in rawIgnoredPackages)
             {
                 IPackageManager manager = PEInterface.WinGet; // Manager by default
                 if (ManagerNameReference.ContainsKey(ignoredId.Split("\\")[0]))
@@ -117,7 +117,7 @@ namespace UniGetUI.Interface
             }
             else if (CurrentVersion != "Unknown")
             {
-                NewVersion = CoreTools.Translate("Up to date") + $" ({CurrentVersion})";;
+                NewVersion = CoreTools.Translate("Up to date") + $" ({CurrentVersion})"; ;
             }
             else
             {

@@ -4,6 +4,7 @@ using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
 
 namespace UniGetUI.PackageEngine.Managers.CargoManager;
+
 internal sealed class CargoPkgDetailsHelper(Cargo manager) : BasePkgDetailsHelper(manager)
 {
     protected override void GetDetails_UnSafe(IPackageDetails details)
@@ -34,7 +35,7 @@ internal sealed class CargoPkgDetailsHelper(Cargo manager) : BasePkgDetailsHelpe
             details.HomepageUrl = new Uri(homepage);
         }
 
-        var keywords = manifest.crate.keywords is null ? [] : (string[]) manifest.crate.keywords.Clone();
+        var keywords = manifest.crate.keywords is null ? [] : (string[])manifest.crate.keywords.Clone();
         var categories = manifest.categories?.Select(c => c.category);
         details.Tags = [.. keywords, .. categories];
 

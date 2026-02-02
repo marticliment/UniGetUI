@@ -2,30 +2,30 @@ using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
+using CommunityToolkit.WinUI;
+using Microsoft.UI;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
+using UniGetUI.Interface.Enums;
+using UniGetUI.Interface.Pages;
+using UniGetUI.Interface.Telemetry;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.PackageLoader;
-using Windows.System;
-using Windows.UI.Core;
-using CommunityToolkit.WinUI;
-using UniGetUI.Interface.Pages;
-using UniGetUI.Interface.Telemetry;
 using UniGetUI.Pages.DialogPages;
-using DispatcherQueuePriority = Microsoft.UI.Dispatching.DispatcherQueuePriority;
-using Microsoft.UI;
-using Microsoft.UI.Xaml.Media;
-using Windows.UI;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using UniGetUI.Interface.Enums;
 using UniGetUI.Pages.PageInterfaces;
+using Windows.System;
+using Windows.UI;
+using Windows.UI.Core;
+using DispatcherQueuePriority = Microsoft.UI.Dispatching.DispatcherQueuePriority;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -140,7 +140,7 @@ namespace UniGetUI.Interface
         {
             get
             {
-                if(CurrentPackageList.SelectedItem is PackageWrapper w)
+                if (CurrentPackageList.SelectedItem is PackageWrapper w)
                     return w.Package;
 
                 var fp = FilteredPackages.GetCheckedPackages();
@@ -432,7 +432,7 @@ namespace UniGetUI.Interface
             else
             {
                 // Reset internal package cache, and update from loader
-                foreach(var wrapper in WrappedPackages) wrapper.Dispose();
+                foreach (var wrapper in WrappedPackages) wrapper.Dispose();
                 WrappedPackages.Clear();
                 ClearSourcesList();
                 foreach (var package in Loader.Packages)
@@ -859,9 +859,9 @@ namespace UniGetUI.Interface
 
             foreach (var match in LastQueryResult)
             {
-               if (visibleSources.Contains(match.Package.Source) ||
-                    (!match.Package.Manager.Capabilities.SupportsCustomSources &&
-                     visibleManagers.Contains(match.Package.Manager)))
+                if (visibleSources.Contains(match.Package.Source) ||
+                     (!match.Package.Manager.Capabilities.SupportsCustomSources &&
+                      visibleManagers.Contains(match.Package.Manager)))
                 {
                     matchingList_selectedSources.Add(match);
                 }
@@ -962,7 +962,7 @@ namespace UniGetUI.Interface
         /// <param name="sorter">The information with which to sort the packages</param>
         public void SortPackagesBy(ObservablePackageCollection.Sorter sorter)
         {
-            if(sorter == FilteredPackages.CurrentSorter) FilteredPackages.Descending = !FilteredPackages.Descending;
+            if (sorter == FilteredPackages.CurrentSorter) FilteredPackages.Descending = !FilteredPackages.Descending;
             FilteredPackages.SetSorter(sorter);
             FilteredPackages.Sort();
             UpdateSortingMenu();
@@ -1013,7 +1013,7 @@ namespace UniGetUI.Interface
             if (package is null)
                 return;
 
-            if(package.Source.IsVirtualManager || package is InvalidImportedPackage)
+            if (package.Source.IsVirtualManager || package is InvalidImportedPackage)
             {
                 DialogHelper.ShowDismissableBalloon(
                     CoreTools.Translate("Something went wrong"),
@@ -1062,7 +1062,8 @@ namespace UniGetUI.Interface
         private void SidepanelWidth_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             int rawWidth = (int)e.NewSize.Width;
-            if (rawWidth == (int)(e.NewSize.Width / 10) || rawWidth == 25) {
+            if (rawWidth == (int)(e.NewSize.Width / 10) || rawWidth == 25)
+            {
                 return;
             }
 
@@ -1110,7 +1111,7 @@ namespace UniGetUI.Interface
         {
             CurrentPackageList.Select(wrapper.Index);
             await Task.Delay(20);
-            if(_lastContextMenuButtonTapped is not null)
+            if (_lastContextMenuButtonTapped is not null)
                 (CurrentPackageList.ContextFlyout as BetterMenu)?.ShowAt(_lastContextMenuButtonTapped, new FlyoutShowOptions { Placement = FlyoutPlacementMode.RightEdgeAlignedTop });
             WhenShowingContextMenu(wrapper.Package);
         }
@@ -1163,7 +1164,7 @@ namespace UniGetUI.Interface
 
         private void ToggleFiltersButton_Click(object sender, RoutedEventArgs e)
         {
-            if(FilteringPanel.DisplayMode is SplitViewDisplayMode.Inline)
+            if (FilteringPanel.DisplayMode is SplitViewDisplayMode.Inline)
             {
                 Settings.SetDictionaryItem(Settings.K.HideToggleFilters, PAGE_NAME, !ToggleFiltersButton.IsChecked ?? false);
             }

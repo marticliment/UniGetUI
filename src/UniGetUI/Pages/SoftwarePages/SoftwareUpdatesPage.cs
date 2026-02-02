@@ -1,5 +1,3 @@
-using Windows.Networking.Connectivity;
-using Windows.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -17,9 +15,11 @@ using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Classes.Packages.Classes;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.PackageLoader;
 using UniGetUI.Pages.DialogPages;
-using UniGetUI.PackageEngine.PackageClasses;
+using Windows.Networking.Connectivity;
+using Windows.UI.Text;
 
 namespace UniGetUI.Interface.SoftwarePages
 {
@@ -171,7 +171,8 @@ namespace UniGetUI.Interface.SoftwarePages
                 {
                     Text = menuTime.StringRepresentation(),
                 };
-                menuItem.Click += (_, _) => {
+                menuItem.Click += (_, _) =>
+                {
                     if (SelectedItem != null)
                     {
                         SelectedItem.AddToIgnoredUpdatesAsync("<" + menuTime.GetDateFromNow());
@@ -337,11 +338,11 @@ namespace UniGetUI.Interface.SoftwarePages
             try
             {
                 List<IPackage> upgradablePackages = [];
-            foreach (IPackage package in Loader.Packages)
-            {
-                if (package.Tag is not PackageTag.OnQueue and not PackageTag.BeingProcessed)
-                    upgradablePackages.Add(package);
-            }
+                foreach (IPackage package in Loader.Packages)
+                {
+                    if (package.Tag is not PackageTag.OnQueue and not PackageTag.BeingProcessed)
+                        upgradablePackages.Add(package);
+                }
 
                 if (upgradablePackages.Count == 0)
                     return;
@@ -375,7 +376,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 }
                 else
                 {
-                    foreach(var package in upgradablePackages)
+                    foreach (var package in upgradablePackages)
                     {
                         if ((await InstallOptionsFactory.LoadApplicableAsync(package)).AutoUpdatePackage)
                         {
@@ -452,7 +453,7 @@ namespace UniGetUI.Interface.SoftwarePages
                     .AddText(CoreTools.Translate("Updates found!"))
                     .AddText(CoreTools.Translate("{0} packages can be updated", upgradablePackages.Count))
                     .SetAttributionText(attribution)
-                                                                            // Believe it or not, the `'` character is broken
+                    // Believe it or not, the `'` character is broken
                     .AddButton(new AppNotificationButton(CoreTools.Translate("Open UniGetUI").Replace("'", "´"))
                         .AddArgument("action", NotificationArguments.ShowOnUpdatesTab)
                     )
@@ -531,7 +532,7 @@ namespace UniGetUI.Interface.SoftwarePages
         private void MenuInstall_Invoked(object sender, RoutedEventArgs e)
             => _ = MainApp.Operations.Update(SelectedItem);
 
-        private  void MenuSkipHash_Invoked(object sender, RoutedEventArgs e)
+        private void MenuSkipHash_Invoked(object sender, RoutedEventArgs e)
             => _ = MainApp.Operations.Update(SelectedItem, no_integrity: true);
 
         private void MenuInteractive_Invoked(object sender, RoutedEventArgs e)

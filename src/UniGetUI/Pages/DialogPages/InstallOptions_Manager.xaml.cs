@@ -117,7 +117,7 @@ public sealed partial class InstallOptions_Manager : UserControl
         }
 
         // Install location
-        if(Manager.Capabilities.SupportsCustomLocations)
+        if (Manager.Capabilities.SupportsCustomLocations)
         {
             SelectDir.IsEnabled = true;
             if (options.CustomInstallLocation.Any())
@@ -191,7 +191,7 @@ public sealed partial class InstallOptions_Manager : UserControl
 
         // Location
         options.CustomInstallLocation = "";
-        if(CustomInstallLocation.Text != DefaultLocationLabel && Manager.Capabilities.SupportsCustomLocations)
+        if (CustomInstallLocation.Text != DefaultLocationLabel && Manager.Capabilities.SupportsCustomLocations)
         {
             options.CustomInstallLocation = CustomInstallLocation.Text;
         }
