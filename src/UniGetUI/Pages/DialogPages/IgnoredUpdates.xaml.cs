@@ -117,7 +117,7 @@ namespace UniGetUI.Interface
             }
             else if (CurrentVersion != "Unknown")
             {
-                NewVersion = CoreTools.Translate("Up to date") + $" ({CurrentVersion})"; ;
+                NewVersion = CoreTools.Translate("Up to date") + $" ({CurrentVersion})";
             }
             else
             {

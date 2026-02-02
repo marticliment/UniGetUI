@@ -90,7 +90,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 Text = CoreTools.AutoTranslated("Open install location"),
                 IconName = IconType.Launch,
             };
-            MenuOpenInstallLocation.Click += (_, _) => OpenPackageInstallLocation(SelectedItem); ;
+            MenuOpenInstallLocation.Click += (_, _) => OpenPackageInstallLocation(SelectedItem);
             menu.Items.Add(MenuOpenInstallLocation);
 
             menu.Items.Add(new MenuFlyoutSeparator());
@@ -343,7 +343,7 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuIgnoreUpdates.IsEnabled = false; // Will be set on the lines below;
             MenuSharePackage.IsEnabled = !IS_LOCAL;
             MenuPackageDetails.IsEnabled = !IS_LOCAL;
-            MenuDownloadInstaller.IsEnabled = !IS_LOCAL && package.Manager.Capabilities.CanDownloadInstaller; ;
+            MenuDownloadInstaller.IsEnabled = !IS_LOCAL && package.Manager.Capabilities.CanDownloadInstaller;
 
             MenuOpenInstallLocation.IsEnabled = package.Manager.DetailsHelper.GetInstallLocation(package) is not null;
             if (!IS_LOCAL)
