@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 12426,
-        "done": 5930,
-        "packages_with_icon": 5930,
-        "packages_with_screenshot": 1354,
-        "total_screenshots": 4210
+        "total": 12431,
+        "done": 5942,
+        "packages_with_icon": 5942,
+        "packages_with_screenshot": 1357,
+        "total_screenshots": 4215
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -4439,6 +4439,12 @@
                 "https://www.bandisoft.com/bandizip/screenshots/imgs.en/12_amsi.png"
             ]
         },
+        "bandiview": {
+            "icon": "",
+            "images": [
+                "https://en.bandisoft.com/bandiview/screenshots/imgs.en/01.png"
+            ]
+        },
         "banks": {
             "icon": "https://community.chocolatey.org/content/packageimages/banks.portable.1.02.png",
             "images": []
@@ -6590,7 +6596,7 @@
             "images": []
         },
         "caprine": {
-            "icon": "https://community.chocolatey.org/content/packageimages/caprine.2.57.0.png",
+            "icon": "https://raw.githubusercontent.com/sindresorhus/caprine/main/media/AppIcon-readme.png",
             "images": []
         },
         "capslockx": {
@@ -8048,7 +8054,7 @@
             "images": []
         },
         "clrtypessqlserver-2019": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Microsoft_icon.svg/250px-Microsoft_icon.svg.png",
             "images": []
         },
         "clumsy": {
@@ -11730,19 +11736,23 @@
             "images": []
         },
         "dotnet-aspnetcore-3-1": {
-            "icon": "https://community.chocolatey.org/content/packageimages/dotnetcore-aspnetruntime.3.1.32.png",
+            "icon": "https://raw.githubusercontent.com/dotnetcore-chocolatey/dotnetcore-chocolateypackages/master/icons/dotnetcore.png",
             "images": []
         },
         "dotnet-aspnetcore-5": {
-            "icon": "https://community.chocolatey.org/content/packageimages/dotnet-5.0-aspnetruntime.5.0.17.png",
+            "icon": "https://raw.githubusercontent.com/dotnetcore-chocolatey/dotnetcore-chocolateypackages/master/icons/dotnetcore.png",
             "images": []
         },
         "dotnet-aspnetcore-6": {
-            "icon": "https://community.chocolatey.org/content/packageimages/dotnet-6.0-aspnetruntime.6.0.24.png",
+            "icon": "https://raw.githubusercontent.com/dotnetcore-chocolatey/dotnetcore-chocolateypackages/master/icons/dotnetcore.png",
             "images": []
         },
         "dotnet-aspnetcore-7": {
-            "icon": "https://community.chocolatey.org/content/packageimages/dotnet-7.0-aspnetruntime.7.0.13.png",
+            "icon": "https://raw.githubusercontent.com/dotnetcore-chocolatey/dotnetcore-chocolateypackages/master/icons/dotnetcore.png",
+            "images": []
+        },
+        "dotnet-aspnetcore-8": {
+            "icon": "https://raw.githubusercontent.com/dotnetcore-chocolatey/dotnetcore-chocolateypackages/master/icons/dotnetcore.png",
             "images": []
         },
         "dotnet-aspnetcore-preview": {
@@ -11762,31 +11772,31 @@
             "images": []
         },
         "dotnet-desktopruntime-3-1": {
-            "icon": "",
+            "icon": "https://raw.githubusercontent.com/dotnetcore-chocolatey/dotnetcore-chocolateypackages/master/icons/dotnetcore.png",
             "images": []
         },
         "dotnet-desktopruntime-5": {
-            "icon": "",
+            "icon": "https://raw.githubusercontent.com/dotnetcore-chocolatey/dotnetcore-chocolateypackages/master/icons/dotnetcore.png",
             "images": []
         },
         "dotnet-desktopruntime-6": {
-            "icon": "",
+            "icon": "https://raw.githubusercontent.com/dotnetcore-chocolatey/dotnetcore-chocolateypackages/master/icons/dotnetcore.png",
             "images": []
         },
         "dotnet-desktopruntime-7": {
-            "icon": "",
+            "icon": "https://raw.githubusercontent.com/dotnetcore-chocolatey/dotnetcore-chocolateypackages/master/icons/dotnetcore.png",
             "images": []
         },
         "dotnet-desktopruntime-8": {
-            "icon": "https://i.ibb.co/BKz4CD7R/image.png",
+            "icon": "https://raw.githubusercontent.com/dotnetcore-chocolatey/dotnetcore-chocolateypackages/master/icons/dotnetcore.png",
             "images": []
         },
         "dotnet-desktopruntime-9": {
-            "icon": "https://i.ibb.co/BKz4CD7R/image.png",
+            "icon": "https://raw.githubusercontent.com/dotnetcore-chocolatey/dotnetcore-chocolateypackages/master/icons/dotnetcore.png",
             "images": []
         },
         "dotnet-desktopruntime-pr\u2026": {
-            "icon": "",
+            "icon": "https://raw.githubusercontent.com/dotnetcore-chocolatey/dotnetcore-chocolateypackages/master/icons/dotnetcore.png",
             "images": []
         },
         "dotnet-framework-develop\u2026": {
@@ -12753,7 +12763,7 @@
             "images": []
         },
         "earthpro": {
-            "icon": "",
+            "icon": "https://images.icon-icons.com/188/PNG/256/Google_Earth_22883.png",
             "images": []
         },
         "earthview": {
@@ -16689,7 +16699,7 @@
             "images": []
         },
         "gimp": {
-            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/The_GIMP_icon_-_gnome.svg/316px-The_GIMP_icon_-_gnome.svg.png",
+            "icon": "https://gitlab.gnome.org/GNOME/gimp/-/raw/f73c4ed397d797ec1b5175f27b5c0f3538a87714/data/images/gimp-logo.png",
             "images": [
                 "https://docs.gimp.org/2.10/en/images/using/multi-window.png",
                 "https://i.sooftcdn.com/screen/en/windows/gimp-1.png",
@@ -17556,6 +17566,10 @@
         },
         "google-drive-file-stream": {
             "icon": "https://community.chocolatey.org/content/packageimages/google-drive-file-stream.56.0.11.2022.png",
+            "images": []
+        },
+        "google-earth-pro": {
+            "icon": "https://images.icon-icons.com/188/PNG/256/Google_Earth_22883.png",
             "images": []
         },
         "google-hangouts-chrome": {
@@ -29584,7 +29598,11 @@
             "images": []
         },
         "office": {
-            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Microsoft_Office_logo_%282019%E2%80%93present%29.svg/640px-Microsoft_Office_logo_%282019%E2%80%93present%29.svg.png",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Microsoft_Office_logo_%282013%E2%80%932019%29.svg/250px-Microsoft_Office_logo_%282013%E2%80%932019%29.svg.png",
+            "images": []
+        },
+        "office-2010-filterpack": {
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Microsoft_Office_logo_%282013%E2%80%932019%29.svg/250px-Microsoft_Office_logo_%282013%E2%80%932019%29.svg.png",
             "images": []
         },
         "office-2021": {
@@ -32288,7 +32306,10 @@
         },
         "pixpin": {
             "icon": "https://pixpin.cn/images/logo/1024.png",
-            "images": []
+            "images": [
+                "https://pixpin.cn/docs/main.png",
+                "https://pixpin.cn/docs/images/member-features/image-2.png"
+            ]
         },
         "pixso": {
             "icon": "",
@@ -41787,7 +41808,7 @@
             "images": []
         },
         "systemupdate": {
-            "icon": "",
+            "icon": "https://download.lenovo.com/km/media/images/HT003029/LSU2_20200824181525152.png",
             "images": []
         },
         "systweaksoftwareu\u2026": {
@@ -47721,6 +47742,10 @@
             "icon": "",
             "images": []
         },
+        "": {
+            "icon": "",
+            "images": []
+        },
         "vsts-admin-tools": {
             "icon": "https://community.chocolatey.org/content/packageimages/vsts-admin-tools.1.0.12.png",
             "images": []
@@ -48313,7 +48338,10 @@
         },
         "wecom": {
             "icon": "http://dldir1.qq.com/foxmail/icon/work_logo.png",
-            "images": []
+            "images": [
+                "https://res.wx.qq.com/wxdoc/dist/assets/img/application2.803df32d.png",
+                "https://wwcdn.weixin.qq.com/node/wework/images/wecom-temp-f9247fc9ed69949f3e3cd39480410738.4145f338c0.png"
+            ]
         },
         "weebp": {
             "icon": "",
@@ -50640,7 +50668,7 @@
             "images": []
         },
         "xnaredist": {
-            "icon": "",
+            "icon": "https://community.chocolatey.org/content/packageimages/xna31.3.1.0.20160105.png",
             "images": []
         },
         "xnconvert": {
@@ -55024,19 +55052,15 @@
             "images": []
         },
         "attrs": {
-            "icon": "https://imgur.com/a/JaKsNtP",
-            "images": []
-        },
-        "Lenovo.SystemUpdate\n": {
-            "icon": "https://download.lenovo.com/km/media/images/HT003029/LSU2_20200824181525152.png",
+            "icon": "https://i.ibb.co/Tx99nQCc/attrs-logo.png",
             "images": []
         },
         "starlette": {
-            "icon": "https://postimg.cc/wRdzrfjX",
+            "icon": "https://i.postimg.cc/2y15VgpK/starlette.png",
             "images": []
         },
         "trio": {
-            "icon": "https://postimg.cc/nXmkF3FS",
+            "icon": "https://i.postimg.cc/sg60JLtz/68747470733a2f2f7261772e67697468756275736572636f6e74656e742e636f6d2f707974686f6e2d7472696f2f7472696f.png",
             "images": []
         },
         "affinity": {
@@ -55096,11 +55120,15 @@
             ]
         },
         "click": {
-            "icon": "https://imgur.com/a/gah5KMw",
+            "icon": "https://postimg.cc/21WxJpxY",
             "images": []
         },
         "lin-ycv.EverythingCmdPal3": {
             "icon": "https://store-images.s-microsoft.com/image/apps.25263.13565088367537471.1afd4527-e5f2-4286-ae89-167b4ff891b1.6b1f6c28-e687-4873-982a-ddf8c246ba6e?h=115",
+            "images": []
+        },
+        "Python.Launcher\n": {
+            "icon": "https://s3.dualstack.us-east-2.amazonaws.com/pythondotorg-assets/media/community/logos/python-logo-only.png",
             "images": []
         }
     }
