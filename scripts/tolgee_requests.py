@@ -1,5 +1,6 @@
 import json
 import os
+import getpass
 
 try:
     import requests
@@ -24,7 +25,7 @@ try:
 except FileNotFoundError:
     __api_key = os.environ.get("TOLGEE_KEY", "")
     if not __api_key:
-        __api_key = input("Write api key and press enter: ")
+        __api_key = getpass.getpass("Write api key and press enter: ")
 __headers["X-API-Key"] = __api_key
 
 
