@@ -93,7 +93,6 @@ public static class TaskRecycler<ReturnT>
 
     // ---------------------------------------------------------------------------------------------------------------
 
-
     /// <summary>
     /// Handles running the task if no such task was found on cache, and returning the cached task if it was found.
     /// </summary>
