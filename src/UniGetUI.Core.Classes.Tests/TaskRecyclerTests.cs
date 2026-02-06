@@ -8,17 +8,17 @@ public class TaskRecyclerTests
         return new Random().Next();
     }
 
-    private class TestClass
+    private sealed class TestClass
     {
         public TestClass() {}
 
-        public string SlowMethod2()
+        public static string SlowMethod2()
         {
             Thread.Sleep(1000);
             return new Random().Next().ToString();
         }
 
-        public string SlowMethod3()
+        public static string SlowMethod3()
         {
             Thread.Sleep(1000);
             return new Random().Next().ToString();
