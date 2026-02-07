@@ -144,7 +144,6 @@ public class DWMThreadHelper
             return;
         }
 
-
         if (suspend)
         {
             uint res = SuspendThread(hThread);
