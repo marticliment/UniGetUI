@@ -34,7 +34,6 @@ public static class SecureSettings
         };
     }
 
-
     private static readonly Dictionary<string, bool> _cache = new();
 
     public static class Args
