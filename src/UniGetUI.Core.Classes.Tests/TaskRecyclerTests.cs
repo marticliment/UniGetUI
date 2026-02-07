@@ -12,13 +12,13 @@ public class TaskRecyclerTests
     {
         public TestClass() {}
 
-        public static string SlowMethod2()
+        public string SlowMethod2()
         {
             Thread.Sleep(1000);
             return new Random().Next().ToString();
         }
 
-        public static string SlowMethod3()
+        public string SlowMethod3()
         {
             Thread.Sleep(1000);
             return new Random().Next().ToString();
