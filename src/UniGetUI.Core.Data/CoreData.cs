@@ -58,7 +58,7 @@ namespace UniGetUI.Core.Data
                     }
                 } else if (IS_PORTABLE is true)
                 {
-                    return PORTABLE_PATH ?? throw new Exception("This shouldn't be possible");
+                    return PORTABLE_PATH ?? throw new InvalidOperationException("IS_PORTABLE is set to true, yet PORTABLE_PATH is null. This shouldn't be possible!");
                 }
 
                 string old_path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".wingetui");
