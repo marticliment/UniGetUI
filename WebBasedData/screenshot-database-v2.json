@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 12431,
-        "done": 5942,
-        "packages_with_icon": 5942,
-        "packages_with_screenshot": 1357,
-        "total_screenshots": 4215
+        "total": 12433,
+        "done": 5945,
+        "packages_with_icon": 5945,
+        "packages_with_screenshot": 1359,
+        "total_screenshots": 4217
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -6588,8 +6588,10 @@
             "images": []
         },
         "capcut": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.imgur.com/KKlYzyU.png",
+            "images": [
+                "https://i.imgur.com/HEcgy42.png"
+            ]
         },
         "capframex": {
             "icon": "",
@@ -28514,6 +28516,10 @@
             "icon": "https://community.chocolatey.org/content/packageimages/nextcloud-client.3.7.3.png",
             "images": []
         },
+        "nextcloud-talk": {
+            "icon": "https://raw.githubusercontent.com/nextcloud/talk-desktop/refs/heads/main/img/icons/icon.png",
+            "images": []
+        },
         "nextclouddesktop": {
             "icon": "https://raw.githubusercontent.com/nextcloud/desktop/refs/heads/master/theme/colored/wizard-nextcloud.png",
             "images": []
@@ -38154,7 +38160,7 @@
             "images": []
         },
         "session": {
-            "icon": "https://community.chocolatey.org/content/packageimages/session.1.10.7.png",
+            "icon": "https://getsession.org/apple-touch-icon.png",
             "images": []
         },
         "sessionmanagerplugin": {
@@ -43983,6 +43989,10 @@
             "icon": "",
             "images": []
         },
+        "tunein": {
+            "icon": "https://community.chocolatey.org/content/packageimages/tunein-radio.1.24.0.png",
+            "images": []
+        },
         "tunein-radio": {
             "icon": "https://community.chocolatey.org/content/packageimages/tunein-radio.1.24.0.png",
             "images": []
@@ -46254,7 +46264,9 @@
         },
         "visualstudio-2019-remotetools": {
             "icon": "https://raw.githubusercontent.com/jberezanski/ChocolateyPackages/master/icons/vs2019.png",
-            "images": []
+            "images": [
+                "https://devblogs.microsoft.com/visualstudio/wp-content/uploads/sites/4/2019/05/Visual-Studio-2019-Start-Window.png"
+            ]
         },
         "visualstudio-2022-buildtools": {
             "icon": "https://raw.githubusercontent.com/jberezanski/ChocolateyPackages/master/icons/vs2022.png",
