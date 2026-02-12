@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
+using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 
 namespace UniGetUI.PackageEngine.Managers.GitHubCliManager;
@@ -39,8 +40,8 @@ internal sealed class GitHubCliPkgDetailsHelper : BasePkgDetailsHelper
         if (!GitHubCli.IsValidRepositoryId(repositoryId))
             throw new InvalidDataException($"Repository id \"{repositoryId}\" is not valid");
 
-        JsonObject? repository = _manager.GetRepositoryInfo(repositoryId, Enums.LoggableTaskType.LoadPackageDetails);
-        JsonObject? release = _manager.GetLatestReleaseInfo(repositoryId, Enums.LoggableTaskType.LoadPackageDetails);
+        JsonObject? repository = _manager.GetRepositoryInfo(repositoryId, LoggableTaskType.LoadPackageDetails);
+        JsonObject? release = _manager.GetLatestReleaseInfo(repositoryId, LoggableTaskType.LoadPackageDetails);
 
         details.ManifestUrl = new Uri($"https://github.com/{repositoryId}/releases");
 
@@ -226,7 +227,7 @@ internal sealed class GitHubCliPkgDetailsHelper : BasePkgDetailsHelper
 
     protected override CacheableIcon? GetIcon_UnSafe(IPackage package)
     {
-        JsonObject? repository = _manager.GetRepositoryInfo(package.Id, Enums.LoggableTaskType.LoadPackageDetails);
+        JsonObject? repository = _manager.GetRepositoryInfo(package.Id, LoggableTaskType.LoadPackageDetails);
         string? avatarUrl = repository?["owner"]?["avatar_url"]?.ToString();
         if (!Uri.TryCreate(avatarUrl, UriKind.Absolute, out Uri? iconUrl))
             return null;
@@ -241,7 +242,7 @@ internal sealed class GitHubCliPkgDetailsHelper : BasePkgDetailsHelper
 
     protected override string? GetInstallLocation_UnSafe(IPackage package)
     {
-        JsonObject? release = _manager.GetLatestReleaseInfo(package.Id, Enums.LoggableTaskType.LoadPackageDetails);
+        JsonObject? release = _manager.GetLatestReleaseInfo(package.Id, LoggableTaskType.LoadPackageDetails);
         bool canAutoInstall = release is not null &&
                               SelectBestAssetFromRelease(release, autoInstallableOnly: true) is not null;
         string downloadDirectory = canAutoInstall

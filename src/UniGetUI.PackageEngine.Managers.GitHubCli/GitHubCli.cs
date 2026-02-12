@@ -14,6 +14,7 @@ using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
+using Enums = UniGetUI.PackageEngine.Enums;
 
 namespace UniGetUI.PackageEngine.Managers.GitHubCliManager;
 
@@ -87,17 +88,16 @@ public partial class GitHubCli : PackageManager
         }
 
         List<Package> packages = [];
-        foreach (JsonNode? repoNode in repos)
+        foreach (string repositoryId in repos
+                     .Select(repoNode => repoNode?["nameWithOwner"]?.ToString()
+                                        ?? repoNode?["full_name"]?.ToString())
+                     .Where(IsValidRepositoryId)
+                     .Select(repositoryId => repositoryId!))
         {
-            string? repositoryId = repoNode?["nameWithOwner"]?.ToString()
-                                   ?? repoNode?["full_name"]?.ToString();
-            if (!IsValidRepositoryId(repositoryId))
+            if (!HasReleases(repositoryId, Enums.LoggableTaskType.FindPackages))
                 continue;
 
-            if (!HasReleases(repositoryId!, Enums.LoggableTaskType.FindPackages))
-                continue;
-
-            packages.Add(new Package(repositoryId!, repositoryId!, UnknownVersion, DefaultSource, this));
+            packages.Add(new Package(repositoryId, repositoryId, UnknownVersion, DefaultSource, this));
         }
         return packages;
     }
@@ -185,11 +185,10 @@ public partial class GitHubCli : PackageManager
     public override IReadOnlyList<string> FindCandidateExecutableFiles()
     {
         var candidates = CoreTools.WhichMultiple("gh.exe");
-        foreach (string candidate in CoreTools.WhichMultiple("gh"))
-        {
-            if (!candidates.Contains(candidate, StringComparer.OrdinalIgnoreCase))
-                candidates.Add(candidate);
-        }
+        foreach (string candidate in CoreTools.WhichMultiple("gh")
+                     .Where(candidate => !candidates.Contains(candidate, StringComparer.OrdinalIgnoreCase)))
+            candidates.Add(candidate);
+
         return candidates;
     }
 
@@ -337,12 +336,11 @@ public partial class GitHubCli : PackageManager
             if (pageNode is not JsonArray repoArray)
                 continue;
 
-            foreach (JsonNode? repoNode in repoArray)
-            {
-                string? fullName = repoNode?["full_name"]?.ToString();
-                if (IsValidRepositoryId(fullName))
-                    repositories.Add(fullName!);
-            }
+            repositories.UnionWith(
+                repoArray
+                    .Select(repoNode => repoNode?["full_name"]?.ToString())
+                    .Where(IsValidRepositoryId)
+                    .Select(fullName => fullName!));
         }
 
         return [.. repositories];

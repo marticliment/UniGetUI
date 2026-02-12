@@ -289,7 +289,7 @@ internal sealed class GitHubCliPkgOperationHelper : BasePkgOperationHelper
                 return OperationVeredict.Failure;
         }
 
-        string? latestVersion = _manager.GetLatestReleaseTag(package.Id, Enums.LoggableTaskType.OtherTask);
+        string? latestVersion = _manager.GetLatestReleaseTag(package.Id, LoggableTaskType.OtherTask);
         if (string.IsNullOrWhiteSpace(latestVersion))
         {
             latestVersion = operation is OperationType.Update && package.IsUpgradable
