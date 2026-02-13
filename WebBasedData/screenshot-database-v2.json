@@ -1,8 +1,8 @@
 {
     "package_count": {
-        "total": 12433,
-        "done": 5945,
-        "packages_with_icon": 5945,
+        "total": 12436,
+        "done": 5948,
+        "packages_with_icon": 5948,
         "packages_with_screenshot": 1359,
         "total_screenshots": 4217
     },
@@ -3338,6 +3338,18 @@
             "icon": "https://community.chocolatey.org/content/packageimages/astah.6.6.4.png",
             "images": []
         },
+        "astral-sh.ruff": {
+            "icon": "https://i.postimg.cc/NfT3zPTq/astral-sh-ruff.png",
+            "images": []
+        },
+        "astral-sh.ty": {
+            "icon": "https://i.postimg.cc/7PpvXyCY/astral-sh-ty.png",
+            "images": []
+        },
+        "astral-sh.uv": {
+            "icon": "https://i.postimg.cc/PrZgRFZG/astral-sh-uv.png",
+            "images": []
+        },
         "asterie": {
             "icon": "https://community.chocolatey.org/content/packageimages/asterie.1.03.png",
             "images": []
@@ -5359,7 +5371,7 @@
             "images": []
         },
         "bitwarden": {
-            "icon": "https://raw.githubusercontent.com/bitwarden/clients/master/apps/desktop/resources/icons/512x512.png",
+            "icon": "https://raw.githubusercontent.com/bitwarden/brand/main/icons/256x256.png",
             "images": [
                 "https://tweakers.net/ext/i/2003879068.png"
             ]
@@ -11770,10 +11782,10 @@
             "images": []
         },
         "dotnet-desktopruntime": {
-            "icon": "https://community.chocolatey.org/content/packageimages/dotnet-desktopruntime.7.0.3.png",
+            "icon": "https://raw.githubusercontent.com/dotnetcore-chocolatey/dotnetcore-chocolateypackages/master/icons/dotnetcore.png",
             "images": []
         },
-        "dotnet-desktopruntime-3-1": {
+        "dotnet-desktopruntime-3_1": {
             "icon": "https://raw.githubusercontent.com/dotnetcore-chocolatey/dotnetcore-chocolateypackages/master/icons/dotnetcore.png",
             "images": []
         },
