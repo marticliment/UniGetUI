@@ -7,7 +7,7 @@
 [![Release Version Badge](https://img.shields.io/github/v/release/marticliment/UniGetUI?style=for-the-badge)](https://github.com/marticliment/UniGetUI/releases)
 [![Issues Badge](https://img.shields.io/github/issues/marticliment/UniGetUI?style=for-the-badge)](https://github.com/marticliment/UniGetUI/issues)
 [![Closed Issues Badge](https://img.shields.io/github/issues-closed/marticliment/UniGetUI?color=%238256d0&style=for-the-badge)](https://github.com/marticliment/UniGetUI/issues?q=is%3Aissue+is%3Aclosed)<br>
-The main goal of this project is to create an intuitive GUI for the most common CLI package managers for Windows 10 and 11, such as [WinGet](https://learn.microsoft.com/en-us/windows/package-manager/), [Scoop](https://scoop.sh/), [Chocolatey](https://chocolatey.org/), [Pip](https://pypi.org/), [Npm](https://www.npmjs.com/), [.NET Tool](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-tool-install), [PowerShell Gallery](https://www.powershellgallery.com/) and more (Check out the package manager compatibility table)!.
+The main goal of this project is to create an intuitive GUI for the most common CLI package managers for Windows 10 and 11, such as [WinGet](https://learn.microsoft.com/en-us/windows/package-manager/), [Scoop](https://scoop.sh/), [Chocolatey](https://chocolatey.org/), [Pip](https://pypi.org/), [Npm](https://www.npmjs.com/), [Bun](https://bun.com), [.NET Tool](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-tool-install), [PowerShell Gallery](https://www.powershellgallery.com/) and more (Check out the package manager compatibility table)!.
 With this app, you can easily download, install, update, and uninstall any software published on the supported package managers — and much more!
 
 ![image](https://github.com/user-attachments/assets/7cb447ca-ee8b-4bce-8561-b9332fb0139a)
@@ -89,7 +89,7 @@ UniGetUI has a built-in autoupdater. However, it can also be updated like any ot
 
 ## Features
 
- - Install, update, and remove software from your system easily at one click: UniGetUI combines the packages from the most used package managers for windows: Winget, Chocolatey, Scoop, Pip, Npm and .NET Tool.
+ - Install, update, and remove software from your system easily at one click: UniGetUI combines the packages from the most used package managers for windows: Winget, Chocolatey, Scoop, Pip, Npm, Bun, and .NET Tool.
  - Discover new packages and filter them to easily find the package you want.
  - View detailed metadata about any package before installing it. Get the direct download URL or the name of the publisher, as well as the size of the download.
  - Easily bulk-install, update, or uninstall multiple packages at once selecting multiple packages before performing an operation
@@ -137,13 +137,13 @@ To translate UniGetUI to other languages or to update an old translation, please
 | <img src='https://flagcdn.com/ir.svg' width=20> &nbsp; Persian - فارسی‎ | 98% | [ehinium](https://github.com/ehinium), [MobinMardi](https://github.com/MobinMardi) |
 | <img src='https://flagcdn.com/fi.svg' width=20> &nbsp; Finnish - Suomi | 100% | [simakuutio](https://github.com/simakuutio) |
 | <img src='https://flagcdn.com/fil.svg' width=20> &nbsp; Filipino - Filipino | 96% | [infyProductions](https://github.com/infyProductions) |
-| <img src='https://flagcdn.com/fr.svg' width=20> &nbsp; French - Français | 100% | BreatFR, [Entropiness](https://github.com/Entropiness), Evans Costa, [PikPakPik](https://github.com/PikPakPik), Rémi Guerrero, [W1L7dev](https://github.com/W1L7dev) |
+| <img src='https://flagcdn.com/fr.svg' width=20> &nbsp; French - Français | 99% | BreatFR, [Entropiness](https://github.com/Entropiness), Evans Costa, [PikPakPik](https://github.com/PikPakPik), Rémi Guerrero, [W1L7dev](https://github.com/W1L7dev) |
 | <img src='https://flagcdn.com/in.svg' width=20> &nbsp; Gujarati - ગુજરાતી | 6% |  |
 | <img src='https://flagcdn.com/in.svg' width=20> &nbsp; Hindi - हिंदी | 92% | [Ashu-r](https://github.com/Ashu-r), [atharva_xoxo](https://github.com/atharva_xoxo), [satanarious](https://github.com/satanarious) |
 | <img src='https://flagcdn.com/hr.svg' width=20> &nbsp; Croatian - Hrvatski | 99% | [AndrejFeher](https://github.com/AndrejFeher), Ivan Nuić, Stjepan Treger |
 | <img src='https://flagcdn.com/il.svg' width=20> &nbsp; Hebrew - עִבְרִית‎ | 99% | [maximunited](https://github.com/maximunited), Oryan Hassidim |
 | <img src='https://flagcdn.com/hu.svg' width=20> &nbsp; Hungarian - Magyar | 99% | [gidano](https://github.com/gidano) |
-| <img src='https://flagcdn.com/it.svg' width=20> &nbsp; Italian - Italiano | 100% | David Senoner, [giacobot](https://github.com/giacobot), [maicol07](https://github.com/maicol07), [mapi68](https://github.com/mapi68), [mrfranza](https://github.com/mrfranza), Rosario Di Mauro |
+| <img src='https://flagcdn.com/it.svg' width=20> &nbsp; Italian - Italiano | 99% | David Senoner, [giacobot](https://github.com/giacobot), [maicol07](https://github.com/maicol07), [mapi68](https://github.com/mapi68), [mrfranza](https://github.com/mrfranza), Rosario Di Mauro |
 | <img src='https://flagcdn.com/id.svg' width=20> &nbsp; Indonesian - Bahasa Indonesia | 99% | [agrinfauzi](https://github.com/agrinfauzi), [arthackrc](https://github.com/arthackrc), [joenior](https://github.com/joenior), [nrarfn](https://github.com/nrarfn) |
 | <img src='https://flagcdn.com/jp.svg' width=20> &nbsp; Japanese - 日本語 | 99% | [anmoti](https://github.com/anmoti), [BHCrusher1](https://github.com/BHCrusher1), [nob-swik](https://github.com/nob-swik), Nobuhiro Shintaku, sho9029, [tacostea](https://github.com/tacostea), Yuki Takase |
 | <img src='https://flagcdn.com/ka.svg' width=20> &nbsp; Georgian - ქართული | 98% | [marticliment](https://github.com/marticliment), [ppvnf](https://github.com/ppvnf) |
@@ -165,7 +165,7 @@ To translate UniGetUI to other languages or to update an old translation, please
 | <img src='https://flagcdn.com/al.svg' width=20> &nbsp; Albanian - Shqip | 100% | [RDN000](https://github.com/RDN000) |
 | <img src='https://flagcdn.com/lk.svg' width=20> &nbsp; Sinhala - සිංහල | 10% | [SashikaSandeepa](https://github.com/SashikaSandeepa), [Savithu-s3](https://github.com/Savithu-s3), [ttheek](https://github.com/ttheek) |
 | <img src='https://flagcdn.com/si.svg' width=20> &nbsp; Slovene - Slovenščina | 88% | [rumplin](https://github.com/rumplin) |
-| <img src='https://flagcdn.com/se.svg' width=20> &nbsp; Swedish - Svenska | 100% | [curudel](https://github.com/curudel), [Hi-there-how-are-u](https://github.com/Hi-there-how-are-u), [kakmonster](https://github.com/kakmonster), [umeaboy](https://github.com/umeaboy) |
+| <img src='https://flagcdn.com/se.svg' width=20> &nbsp; Swedish - Svenska | 99% | [curudel](https://github.com/curudel), [Hi-there-how-are-u](https://github.com/Hi-there-how-are-u), [kakmonster](https://github.com/kakmonster), [umeaboy](https://github.com/umeaboy) |
 | <img src='https://flagcdn.com/ta.svg' width=20> &nbsp; Tamil - தமிழ் | 4% | [nochilli](https://github.com/nochilli) |
 | <img src='https://flagcdn.com/ph.svg' width=20> &nbsp; Tagalog - Tagalog | 11% | lasersPew, [znarfm](https://github.com/znarfm) |
 | <img src='https://flagcdn.com/th.svg' width=20> &nbsp; Thai - ภาษาไทย | 81% | [apaeisara](https://github.com/apaeisara), [dulapahv](https://github.com/dulapahv), [hanchain](https://github.com/hanchain), [rikoprushka](https://github.com/rikoprushka), [vestearth](https://github.com/vestearth) |
