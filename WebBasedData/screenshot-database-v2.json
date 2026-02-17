@@ -1,8 +1,8 @@
 {
     "package_count": {
-        "total": 12436,
-        "done": 5948,
-        "packages_with_icon": 5948,
+        "total": 12437,
+        "done": 5949,
+        "packages_with_icon": 5949,
         "packages_with_screenshot": 1359,
         "total_screenshots": 4217
     },
@@ -2742,7 +2742,7 @@
             "images": []
         },
         "appflowy": {
-            "icon": "https://github.com/AppFlowy-IO/AppFlowy/blob/main/frontend/appflowy_tauri/src-tauri/icons/Square310x310Logo.png",
+            "icon": "https://raw.githubusercontent.com/AppFlowy-IO/AppFlowy/refs/heads/main/frontend/appflowy_flutter/macos/Runner/Assets.xcassets/AppIcon.appiconset/256.png",
             "images": [
                 "https://github.com/AppFlowy-IO/AppFlowy-Website/blob/main/assets/images/hero-section/desktop.png",
                 "https://github.com/AppFlowy-IO/AppFlowy/blob/main/doc/imgs/welcome.png"
@@ -8378,7 +8378,11 @@
             "icon": "",
             "images": []
         },
-        "comicrack community edition": {
+        "comicrackce-nightly": {
+            "icon": "https://raw.githubusercontent.com/maforget/ComicRackCE/refs/heads/master/ComicRack/Resources/ComicRackApp256.png",
+            "images": []
+        },
+        "comicrack-community-edition": {
             "icon": "https://images.freeimages.com/fic/images/icons/2804/plex/512/comicrack.png",
             "images": []
         },
