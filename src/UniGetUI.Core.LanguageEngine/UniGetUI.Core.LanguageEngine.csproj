@@ -3,7 +3,7 @@
 
 
   <ItemGroup>
-    <PackageReference Include="MessageFormat" Version="7.1.3" />
+    <PackageReference Include="MessageFormat" />
   </ItemGroup>
 
   <ItemGroup>

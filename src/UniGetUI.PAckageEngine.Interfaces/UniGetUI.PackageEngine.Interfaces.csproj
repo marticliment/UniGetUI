@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 
@@ -17,7 +17,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="PhotoSauce.MagicScaler" Version="0.15.0" />
+	  <PackageReference Include="PhotoSauce.MagicScaler" />
 	</ItemGroup>
 
 	<ItemGroup>

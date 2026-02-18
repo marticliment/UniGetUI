@@ -21,6 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="PhotoSauce.MagicScaler" Version="0.15.0" />
+    <PackageReference Include="PhotoSauce.MagicScaler" />
   </ItemGroup>
 </Project>
