@@ -2,6 +2,7 @@ using Windows.UI;
 using Microsoft.UI;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media;
@@ -135,6 +136,7 @@ namespace UniGetUI.Services
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 Content = CoreTools.Translate("Log in")
             };
+            AutomationProperties.SetName(loginButton, CoreTools.Translate("Log in with GitHub"));
             loginButton.Click += LoginButton_Click;
 
             var stackPanel = new StackPanel
@@ -155,7 +157,7 @@ namespace UniGetUI.Services
                 Content = stackPanel
             };
 
-            return new PointButton
+            PointButton profileButton = new PointButton
             {
                 Margin = new Thickness(0),
                 Padding = new Thickness(4),
@@ -165,6 +167,8 @@ namespace UniGetUI.Services
                 Content = personPicture,
                 Flyout = flyout
             };
+            AutomationProperties.SetName(profileButton, CoreTools.Translate("Open backup profile"));
+            return profileButton;
         }
 
         private async Task<PointButton> GenerateLogoutControl()
@@ -246,6 +250,7 @@ namespace UniGetUI.Services
                 Background = new SolidColorBrush(ActualTheme is ElementTheme.Dark? Colors.DarkRed: Colors.PaleVioletRed),
                 BorderThickness = new(0)
             };
+            AutomationProperties.SetName(loginButton, CoreTools.Translate("Log out from GitHub"));
             loginButton.Click += LogoutButton_Click;
 
             var stackPanel = new StackPanel
@@ -268,7 +273,7 @@ namespace UniGetUI.Services
                 Content = stackPanel
             };
 
-            return new PointButton
+            PointButton profileButton = new PointButton
             {
                 Margin = new Thickness(0),
                 Padding = new Thickness(4),
@@ -278,6 +283,8 @@ namespace UniGetUI.Services
                 Content = personPicture,
                 Flyout = flyout
             };
+            AutomationProperties.SetName(profileButton, CoreTools.Translate("Open backup profile"));
+            return profileButton;
         }
     }
 }

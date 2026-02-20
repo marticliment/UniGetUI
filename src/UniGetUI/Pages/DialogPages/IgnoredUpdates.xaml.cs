@@ -91,6 +91,7 @@ namespace UniGetUI.Interface
         public string Version { get; }
         public string NewVersion { get; }
         public IPackageManager Manager { get; }
+        public string StopIgnoringUpdatesAutomationName => CoreTools.Translate("Stop ignoring updates for this package");
         private ObservableCollection<IgnoredPackageEntry> List { get; }
         public IgnoredPackageEntry(string id, string version, IPackageManager manager, ObservableCollection<IgnoredPackageEntry> list)
         {

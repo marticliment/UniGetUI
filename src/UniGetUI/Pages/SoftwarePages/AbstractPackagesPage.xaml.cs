@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Globalization;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using UniGetUI.Core.SettingsEngine;
@@ -203,6 +204,39 @@ namespace UniGetUI.Interface
 
         private string _searchPlaceholder;
         public string SearchBoxPlaceholder => _searchPlaceholder;
+        public string ReloadPackagesAutomationName => CoreTools.Translate("Reload packages");
+        public string MoreToolbarActionsAutomationName => CoreTools.Translate("More toolbar actions");
+        public string FilterBySourcesAutomationName => CoreTools.Translate("Filter by sources");
+        public string FilterOptionsAutomationName => CoreTools.Translate("Filter options");
+        public string SearchModeAutomationName => CoreTools.Translate("Search mode");
+        public string SelectAllPackagesAutomationName => CoreTools.Translate("Select all packages");
+        public string SortByPackageNameAutomationName => CoreTools.Translate("Sort by package name");
+        public string SortByPackageIdAutomationName => CoreTools.Translate("Sort by package ID");
+        public string SortByVersionAutomationName => CoreTools.Translate("Sort by version");
+        public string SortByNewVersionAutomationName => CoreTools.Translate("Sort by new version");
+        public string SortBySourceAutomationName => CoreTools.Translate("Sort by source");
+        public string SearchPackagesAutomationName => CoreTools.Translate("Search packages");
+        public string OrderByAutomationName => CoreTools.Translate("Order by");
+        public string ViewModeAutomationName => CoreTools.Translate("View mode");
+        public string SelectAllSourcesAutomationName => CoreTools.Translate("Select all sources");
+        public string ClearSourceSelectionAutomationName => CoreTools.Translate("Clear source selection");
+        public string InstantSearchAutomationName => CoreTools.Translate("Instant search");
+        public string DistinguishUpperLowerCaseAutomationName => CoreTools.Translate("Distinguish between uppercase and lowercase");
+        public string IgnoreSpecialCharactersAutomationName => CoreTools.Translate("Ignore special characters");
+        public string ToggleFiltersAutomationName => CoreTools.Translate("Toggle filters");
+        public string MainSelectionActionAutomationName => PAGE_ROLE switch
+        {
+            OperationType.Install => CoreTools.Translate("Install selection"),
+            OperationType.Update => CoreTools.Translate("Update selection"),
+            OperationType.Uninstall => CoreTools.Translate("Uninstall selection"),
+            _ => CoreTools.Translate("Apply action to selection")
+        };
+        public string SearchModeOptionsAutomationName => CoreTools.Translate("Search mode options");
+        public string SearchModeByNameAutomationName => CoreTools.Translate("Search by package name");
+        public string SearchModeByIdAutomationName => CoreTools.Translate("Search by package ID");
+        public string SearchModeByBothAutomationName => CoreTools.Translate("Search by package name or ID");
+        public string SearchModeExactMatchAutomationName => CoreTools.Translate("Search exact match");
+        public string SearchModeSimilarResultsAutomationName => CoreTools.Translate("Show similar packages");
 
         private string TypeQuery = "";
         private int LastKeyDown;
@@ -243,6 +277,9 @@ namespace UniGetUI.Interface
             ToolTipService.SetToolTip(Selector_List, CoreTools.Translate("List"));
             ToolTipService.SetToolTip(Selector_Grid, CoreTools.Translate("Grid"));
             ToolTipService.SetToolTip(Selector_Icons, CoreTools.Translate("Icons"));
+            AutomationProperties.SetName(Selector_List, CoreTools.Translate("List"));
+            AutomationProperties.SetName(Selector_Grid, CoreTools.Translate("Grid"));
+            AutomationProperties.SetName(Selector_Icons, CoreTools.Translate("Icons"));
 
             MainTitle.Text = data.PageTitle;
             HeaderIcon.Glyph = data.Glyph;

@@ -18,6 +18,7 @@
         Width="46"
         Height="31"
         Padding="0"
+        AutomationProperties.Name="{x:Bind CloseAutomationName, Mode=OneWay}"
         HorizontalAlignment="Stretch"
         VerticalAlignment="Stretch"
         Background="Transparent"

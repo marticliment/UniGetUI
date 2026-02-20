@@ -1,5 +1,6 @@
 using CommunityToolkit.WinUI.Controls;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media;
@@ -18,6 +19,37 @@ namespace UniGetUI.Interface.Widgets
         public TextBlock _textblock;
         public ButtonBase Button;
         private bool IS_INVERTED;
+        private string _translatedCheckboxText = string.Empty;
+        private string _translatedButtonText = string.Empty;
+
+        private void UpdateAutomationNames()
+        {
+            if (!string.IsNullOrWhiteSpace(_translatedCheckboxText))
+            {
+                AutomationProperties.SetName(_checkbox, _translatedCheckboxText);
+            }
+
+            if (!string.IsNullOrWhiteSpace(_translatedButtonText))
+            {
+                string buttonName = string.IsNullOrWhiteSpace(_translatedCheckboxText)
+                    ? _translatedButtonText
+                    : $"{_translatedButtonText}. {_translatedCheckboxText}";
+                AutomationProperties.SetName(Button, buttonName);
+            }
+
+            string cardName = _translatedCheckboxText;
+            if (!string.IsNullOrWhiteSpace(_translatedButtonText))
+            {
+                cardName = string.IsNullOrWhiteSpace(cardName)
+                    ? _translatedButtonText
+                    : $"{cardName}. {_translatedButtonText}";
+            }
+
+            if (!string.IsNullOrWhiteSpace(cardName))
+            {
+                AutomationProperties.SetName(this, cardName);
+            }
+        }
 
         private Settings.K setting_name = Settings.K.Unset;
         public Settings.K SettingName
@@ -42,12 +74,22 @@ namespace UniGetUI.Interface.Widgets
 
         public string CheckboxText
         {
-            set => _textblock.Text = CoreTools.Translate(value);
+            set
+            {
+                _translatedCheckboxText = CoreTools.Translate(value);
+                _textblock.Text = _translatedCheckboxText;
+                UpdateAutomationNames();
+            }
         }
 
         public string ButtonText
         {
-            set => Button.Content = CoreTools.Translate(value);
+            set
+            {
+                _translatedButtonText = CoreTools.Translate(value);
+                Button.Content = _translatedButtonText;
+                UpdateAutomationNames();
+            }
         }
 
         private bool _buttonAlwaysOn;
@@ -96,6 +138,7 @@ namespace UniGetUI.Interface.Widgets
             };
 
             Button.Click += (s, e) => Click?.Invoke(s, e);
+            UpdateAutomationNames();
         }
     }
 }

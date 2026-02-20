@@ -152,6 +152,12 @@ namespace UniGetUI.Interface
             get => File.Exists(Path);
         }
 
+        public string OpenShortcutLocationAutomationName => CoreTools.Translate("Open shortcut location");
+
+        public string RemoveShortcutFromListAutomationName => CoreTools.Translate("Remove shortcut from this list");
+
+        public string DeleteShortcutAutomationName => CoreTools.Translate("Delete shortcut {0}", Name);
+
         public ShortcutEntry(string path, bool isDeletable)
         {
             Path = path;

@@ -35,33 +35,35 @@
             <ListView ItemsSource="{x:Bind Licenses}" SelectionMode="None">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="local:LibraryLicense">
-                        <Grid
-                            Margin="0"
-                            Padding="0"
-                            ColumnSpacing="8">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="140" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="240" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock
-                                Grid.Column="0"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                Text="{x:Bind Name}" />
-                            <HyperlinkButton
-                                Grid.Column="1"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Content="{x:Bind License}"
-                                NavigateUri="{x:Bind LicenseURL}" />
-                            <HyperlinkButton
-                                Grid.Column="2"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Center"
-                                Content="{x:Bind HomepageText}"
-                                NavigateUri="{x:Bind HomepageUrl}" />
-                        </Grid>
+                        <ItemContainer AutomationProperties.Name="{x:Bind Name}">
+                            <Grid
+                                Margin="0"
+                                Padding="0"
+                                ColumnSpacing="8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="140" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="240" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock
+                                    Grid.Column="0"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    Text="{x:Bind Name}" />
+                                <HyperlinkButton
+                                    Grid.Column="1"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Content="{x:Bind License}"
+                                    NavigateUri="{x:Bind LicenseURL}" />
+                                <HyperlinkButton
+                                    Grid.Column="2"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    Content="{x:Bind HomepageText}"
+                                    NavigateUri="{x:Bind HomepageUrl}" />
+                            </Grid>
+                        </ItemContainer>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>

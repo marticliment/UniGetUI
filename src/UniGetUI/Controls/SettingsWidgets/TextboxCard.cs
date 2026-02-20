@@ -1,5 +1,6 @@
 using CommunityToolkit.WinUI.Controls;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation;
 using Microsoft.UI.Xaml.Controls;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
@@ -13,6 +14,25 @@ namespace UniGetUI.Interface.Widgets
     {
         private readonly TextBox _textbox;
         private readonly HyperlinkButton _helpbutton;
+        private string _translatedText = string.Empty;
+        private string _translatedPlaceholder = string.Empty;
+
+        private void UpdateAutomationNames()
+        {
+            string textboxName = _translatedText;
+            if (!string.IsNullOrWhiteSpace(_translatedPlaceholder))
+            {
+                textboxName = string.IsNullOrWhiteSpace(textboxName)
+                    ? _translatedPlaceholder
+                    : $"{textboxName}. {_translatedPlaceholder}";
+            }
+
+            if (!string.IsNullOrWhiteSpace(textboxName))
+            {
+                AutomationProperties.SetName(_textbox, textboxName);
+                AutomationProperties.SetName(this, textboxName);
+            }
+        }
 
         private Settings.K setting_name = Settings.K.Unset;
         public Settings.K SettingName
@@ -26,12 +46,22 @@ namespace UniGetUI.Interface.Widgets
 
         public string Placeholder
         {
-            set => _textbox.PlaceholderText = CoreTools.Translate(value);
+            set
+            {
+                _translatedPlaceholder = CoreTools.Translate(value);
+                _textbox.PlaceholderText = _translatedPlaceholder;
+                UpdateAutomationNames();
+            }
         }
 
         public string Text
         {
-            set => Header = CoreTools.Translate(value);
+            set
+            {
+                _translatedText = CoreTools.Translate(value);
+                Header = _translatedText;
+                UpdateAutomationNames();
+            }
         }
 
         public Uri HelpUrl
@@ -41,6 +71,7 @@ namespace UniGetUI.Interface.Widgets
                 _helpbutton.NavigateUri = value;
                 _helpbutton.Visibility = Visibility.Visible;
                 _helpbutton.Content = CoreTools.Translate("More info");
+                AutomationProperties.SetName(_helpbutton, CoreTools.Translate("More info"));
             }
         }
 
@@ -68,6 +99,7 @@ namespace UniGetUI.Interface.Widgets
             s.Children.Add(_textbox);
 
             Content = s;
+            UpdateAutomationNames();
         }
 
         public void SaveValue()

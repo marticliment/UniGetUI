@@ -26,44 +26,46 @@
             <ListView ItemsSource="{x:Bind ContributorList}" SelectionMode="None">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="local:Person">
-                        <Grid
-                            Margin="0"
-                            Padding="0"
-                            ColumnSpacing="8">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <Border
-                                Grid.Column="0"
-                                Height="32"
-                                Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                CornerRadius="16">
-                                <Image
-                                    Width="32"
+                        <ItemContainer AutomationProperties.Name="{x:Bind Name}">
+                            <Grid
+                                Margin="0"
+                                Padding="0"
+                                ColumnSpacing="8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Border
+                                    Grid.Column="0"
                                     Height="32"
+                                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                    CornerRadius="16">
+                                    <Image
+                                        Width="32"
+                                        Height="32"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center">
+                                        <Image.Source>
+                                            <BitmapImage UriSource="{x:Bind ProfilePicture}" />
+                                        </Image.Source>
+                                    </Image>
+                                </Border>
+                                <TextBlock
+                                    Grid.Column="1"
                                     HorizontalAlignment="Left"
-                                    VerticalAlignment="Center">
-                                    <Image.Source>
-                                        <BitmapImage UriSource="{x:Bind ProfilePicture}" />
-                                    </Image.Source>
-                                </Image>
-                            </Border>
-                            <TextBlock
-                                Grid.Column="1"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                Text="{x:Bind Name}" />
-                            <HyperlinkButton
-                                Grid.Column="2"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                NavigateUri="{x:Bind GitHubUrl}"
-                                Visibility="{x:Bind HasGitHubProfile}">
-                                <widgets:TranslatedTextBlock Text="View GitHub Profile" />
-                            </HyperlinkButton>
-                        </Grid>
+                                    VerticalAlignment="Center"
+                                    Text="{x:Bind Name}" />
+                                <HyperlinkButton
+                                    Grid.Column="2"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    NavigateUri="{x:Bind GitHubUrl}"
+                                    Visibility="{x:Bind HasGitHubProfile}">
+                                    <widgets:TranslatedTextBlock Text="View GitHub Profile" />
+                                </HyperlinkButton>
+                            </Grid>
+                        </ItemContainer>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
