@@ -28,7 +28,10 @@
             <widgets:TranslatedTextBlock Text="WingetUI is free, and it will be free forever. No ads, no credit card, no premium version. 100% free, forever." />
             <widgets:TranslatedTextBlock Text="Thank you ❤" />
             <TextBlock />
-            <HyperlinkButton HorizontalAlignment="Stretch" NavigateUri="https://ko-fi.com/martinet101">
+            <HyperlinkButton
+                HorizontalAlignment="Stretch"
+                AutomationProperties.Name="{x:Bind SupportKofiAutomationName, Mode=OneWay}"
+                NavigateUri="https://ko-fi.com/martinet101">
                 <StackPanel Orientation="Horizontal">
                     <Image Height="48" Source="https://storage.ko-fi.com/cdn/kofi3.png?v=3" />
                 </StackPanel>

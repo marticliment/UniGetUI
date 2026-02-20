@@ -31,6 +31,7 @@ namespace UniGetUI.Interface.Dialogs
         public IPackage? AvailablePackage;
         public IPackage? UpgradablePackage;
         public IPackage? InstalledPackage;
+        public string MorePackageActionsAutomationName => CoreTools.Translate("More package actions");
 
         private readonly InstallOptionsPage InstallOptionsPage;
         public event EventHandler? Close;

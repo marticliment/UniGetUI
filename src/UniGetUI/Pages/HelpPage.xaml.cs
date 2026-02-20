@@ -17,6 +17,10 @@ namespace UniGetUI.Interface.Dialogs
         private bool Initialized;
         private WebView2? webView;
         private Uri? lastUri;
+        public string HelpBackAutomationName => CoreTools.Translate("Go back");
+        public string HelpForwardAutomationName => CoreTools.Translate("Go forward");
+        public string HelpHomeAutomationName => CoreTools.Translate("Go to help home");
+        public string HelpReloadAutomationName => CoreTools.Translate("Reload page");
 
         public HelpPage()
         {

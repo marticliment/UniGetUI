@@ -18,6 +18,7 @@ namespace UniGetUI.Interface.Widgets
     {
         public SourceManager Parent;
         public IManagerSource Source;
+        public string RemoveSourceAutomationName => CoreTools.Translate("Remove source");
 
         public SourceItem(SourceManager Parent, IManagerSource Source)
         {
@@ -36,6 +37,7 @@ namespace UniGetUI.Interface.Widgets
     public sealed partial class SourceManager : UserControl
     {
         private IPackageManager Manager { get; set; }
+        public string ReloadSourcesAutomationName => CoreTools.Translate("Reload sources");
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
         private ObservableCollection<SourceItem> Sources = [];
 

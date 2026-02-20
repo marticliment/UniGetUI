@@ -133,7 +133,7 @@
             </ItemsView.Layout>
             <ItemsView.ItemTemplate>
                 <DataTemplate x:DataType="local:ShortcutEntry">
-                    <ItemContainer>
+                    <ItemContainer AutomationProperties.Name="{x:Bind Name}">
                         <Grid Margin="8,0" ColumnSpacing="4">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
@@ -152,6 +152,7 @@
                                 <CheckBox
                                     MaxWidth="10"
                                     Margin="0,8,0,0"
+                                    AutomationProperties.Name="{x:Bind DeleteShortcutAutomationName, Mode=OneWay}"
                                     IsChecked="{x:Bind IsDeletable, Mode=TwoWay}" />
                             </Border>
                             <widgets:TranslatedTextBlock
@@ -185,6 +186,7 @@
                                 Width="32"
                                 Height="32"
                                 Padding="0"
+                                AutomationProperties.Name="{x:Bind OpenShortcutLocationAutomationName, Mode=OneWay}"
                                 Click="{x:Bind OpenShortcutPath}"
                                 IsEnabled="{x:Bind ExistsOnDisk}">
                                 <widgets:LocalIcon
@@ -197,6 +199,7 @@
                                 Width="32"
                                 Height="32"
                                 Padding="0"
+                                AutomationProperties.Name="{x:Bind RemoveShortcutFromListAutomationName, Mode=OneWay}"
                                 Click="{x:Bind ResetShortcut}">
                                 <FontIcon FontSize="16" Glyph="&#xE74D;" />
                             </Button>

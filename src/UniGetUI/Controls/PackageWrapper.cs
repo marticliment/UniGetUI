@@ -59,6 +59,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         public int NewVersionLabelWidth { get => Package.IsUpgradable ? 125 : 0; }
         public int NewVersionIconWidth { get => Package.IsUpgradable ? 24 : 0; }
+        public string PackageOptionsAutomationName => CoreTools.Translate("Package options");
+        public string SelectPackageAutomationName => CoreTools.Translate("Select package {0}", Package.Name);
 
         public int Index { get; set; }
         public event PropertyChangedEventHandler? PropertyChanged;

@@ -85,6 +85,7 @@
                                     Margin="2"
                                     Padding="8,2,8,2"
                                     VerticalAlignment="Center"
+                                    AutomationProperties.Name="{x:Bind Text}"
                                     Background="{ThemeResource AccentAAFillColorDefaultBrush}"
                                     CornerRadius="12">
                                     <TextBlock Foreground="{ThemeResource TextOnAccentAAFillColorPrimary}" Text="{x:Bind Text}" />
@@ -188,6 +189,7 @@
                             Height="40"
                             Margin="1,0,0,0"
                             Padding="0,0,2,0"
+                            AutomationProperties.Name="{x:Bind MorePackageActionsAutomationName, Mode=OneWay}"
                             CornerRadius="0,8,8,0"
                             Style="{StaticResource AccentButtonStyle}">
                             <DropDownButton.Content>

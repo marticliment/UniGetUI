@@ -184,8 +184,14 @@
                 <Toolkit:SettingsCard.Description>
                     <StackPanel Orientation="Horizontal" Spacing="5">
                         <TextBlock Name="BackupDirectoryLabel" VerticalAlignment="Center" />
-                        <HyperlinkButton Name="ResetBackupDirectory" Click="ResetBackupPath_Click" />
-                        <HyperlinkButton Name="OpenBackupDirectory" Click="OpenBackupPath_Click" />
+                        <HyperlinkButton
+                            Name="ResetBackupDirectory"
+                            AutomationProperties.Name="{x:Bind ResetBackupDirectoryAutomationName, Mode=OneWay}"
+                            Click="ResetBackupPath_Click" />
+                        <HyperlinkButton
+                            Name="OpenBackupDirectory"
+                            AutomationProperties.Name="{x:Bind OpenBackupDirectoryAutomationName, Mode=OneWay}"
+                            Click="OpenBackupPath_Click" />
                     </StackPanel>
                 </Toolkit:SettingsCard.Description>
             </widgets:ButtonCard>

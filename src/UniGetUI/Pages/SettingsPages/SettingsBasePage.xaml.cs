@@ -19,6 +19,8 @@ namespace UniGetUI.Pages.SettingsPages
     public sealed partial class SettingsBasePage : Page, IEnterLeaveListener, IInnerNavigationPage
     {
         bool IsManagers;
+        public string BackAutomationName => CoreTools.Translate("Back");
+
         public SettingsBasePage(bool isManagers)
         {
             IsManagers = isManagers;

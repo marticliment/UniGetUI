@@ -55,6 +55,7 @@
                     <CheckBox
                         Grid.Row="0"
                         Grid.Column="0"
+                        AutomationProperties.Name="{x:Bind SelectPackageAutomationName, Mode=OneWay}"
                         VerticalAlignment="Center"
                         IsChecked="{x:Bind IsChecked, Mode=TwoWay}" />
 
@@ -273,6 +274,7 @@
                         Grid.Column="2"
                         Margin="1,-4,0,0"
                         HorizontalAlignment="Left"
+                        AutomationProperties.Name="{x:Bind SelectPackageAutomationName, Mode=OneWay}"
                         VerticalAlignment="Top"
                         IsChecked="{x:Bind IsChecked, Mode=TwoWay}" />
 
@@ -282,6 +284,7 @@
                         Height="22"
                         Padding="0"
                         VerticalAlignment="Bottom"
+                        AutomationProperties.Name="{x:Bind PackageOptionsAutomationName, Mode=OneWay}"
                         Background="Transparent"
                         BorderThickness="0"
                         Click="{x:Bind RightClick}"
@@ -396,6 +399,7 @@
                         Grid.Row="0"
                         Margin="1,-4,0,0"
                         HorizontalAlignment="Left"
+                        AutomationProperties.Name="{x:Bind SelectPackageAutomationName, Mode=OneWay}"
                         VerticalAlignment="Top"
                         IsChecked="{x:Bind IsChecked, Mode=TwoWay}" />
                     <Button
@@ -405,6 +409,7 @@
                         Padding="0"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Top"
+                        AutomationProperties.Name="{x:Bind PackageOptionsAutomationName, Mode=OneWay}"
                         Background="Transparent"
                         BorderThickness="0"
                         Click="{x:Bind RightClick}"
@@ -542,7 +547,9 @@
                     Orientation="Horizontal"
                     Spacing="4">
                     <widgets:TranslatedTextBlock VerticalAlignment="Center" Text="Order by:" />
-                    <DropDownButton x:Name="OrderByButton">
+                    <DropDownButton
+                        x:Name="OrderByButton"
+                        AutomationProperties.Name="{x:Bind OrderByAutomationName, Mode=OneWay}">
                         <DropDownButton.Flyout>
                             <widgets:BetterMenu Placement="Bottom">
                                 <widgets:BetterToggleMenuItem x:Name="OrderByName_Menu" Text="Name" />
@@ -571,6 +578,7 @@
                     <widgets:TranslatedTextBlock VerticalAlignment="Center" Text="View mode:" />
                     <Toolkit:Segmented
                         x:Name="ViewModeSelector"
+                        AutomationProperties.Name="{x:Bind ViewModeAutomationName, Mode=OneWay}"
                         SelectionChanged="ViewModeSelector_SelectionChanged"
                         SelectionMode="Single">
                         <Toolkit:SegmentedItem x:Name="Selector_List">
@@ -593,6 +601,7 @@
                     HorizontalAlignment="Right"
                     VerticalAlignment="Center"
                     x:FieldModifier="protected"
+                    AutomationProperties.Name="{x:Bind ReloadPackagesAutomationName, Mode=OneWay}"
                     AutomationProperties.HelpText="Reload packages"
                     CornerRadius="4">
                     <FontIcon FontSize="16" Glyph="&#xE72C;" />
@@ -677,6 +686,7 @@
                         Height="36"
                         Padding="4"
                         x:FieldModifier="protected"
+                        AutomationProperties.Name="{x:Bind MoreToolbarActionsAutomationName, Mode=OneWay}"
                         BorderThickness="0"
                         CornerRadius="0,4,4,0">
                         <FontIcon FontSize="14" Glyph="&#xE70D;" />
@@ -736,7 +746,7 @@
                             Padding="4,4,4,8"
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Stretch"
-                            AutomationProperties.Name="Filter by sources"
+                            AutomationProperties.Name="{x:Bind FilterBySourcesAutomationName, Mode=OneWay}"
                             Background="{ThemeResource SystemFillColorNeutralBackgroundBrush}"
                             CornerRadius="8"
                             IsExpanded="True">
@@ -822,7 +832,7 @@
                             Padding="16,8,16,8"
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Stretch"
-                            AutomationProperties.Name="Filter options"
+                            AutomationProperties.Name="{x:Bind FilterOptionsAutomationName, Mode=OneWay}"
                             Background="{ThemeResource SystemFillColorNeutralBackgroundBrush}"
                             CornerRadius="8"
                             IsExpanded="False">
@@ -876,7 +886,7 @@
                             Padding="16,8,16,8"
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Stretch"
-                            AutomationProperties.Name="Search mode"
+                            AutomationProperties.Name="{x:Bind SearchModeAutomationName, Mode=OneWay}"
                             Background="{ThemeResource SystemFillColorNeutralBackgroundBrush}"
                             CornerRadius="8"
                             IsExpanded="True">
@@ -1004,11 +1014,13 @@
                             Grid.ColumnSpan="3"
                             Padding="0"
                             HorizontalAlignment="Stretch"
+                            AutomationProperties.Name="{x:Bind SelectAllPackagesAutomationName, Mode=OneWay}"
                             BorderThickness="0"
                             CornerRadius="4,0,0,4">
                             <CheckBox
                                 Name="SelectAllCheckBox"
                                 Margin="12,4,4,4"
+                                AutomationProperties.Name="{x:Bind SelectAllPackagesAutomationName, Mode=OneWay}"
                                 Checked="SelectAllCheckBox_ValueChanged"
                                 Unchecked="SelectAllCheckBox_ValueChanged" />
                         </Button>
@@ -1018,6 +1030,7 @@
                             Grid.ColumnSpan="1"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
+                            AutomationProperties.Name="{x:Bind SortByPackageNameAutomationName, Mode=OneWay}"
                             BorderThickness="0"
                             CornerRadius="0" />
                         <Button
@@ -1026,6 +1039,7 @@
                             Grid.ColumnSpan="2"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
+                            AutomationProperties.Name="{x:Bind SortByPackageIdAutomationName, Mode=OneWay}"
                             BorderThickness="0"
                             CornerRadius="0" />
                         <Button
@@ -1034,6 +1048,7 @@
                             Grid.ColumnSpan="2"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
+                            AutomationProperties.Name="{x:Bind SortByVersionAutomationName, Mode=OneWay}"
                             BorderThickness="0"
                             CornerRadius="0" />
                         <Button
@@ -1042,6 +1057,7 @@
                             Grid.ColumnSpan="2"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
+                            AutomationProperties.Name="{x:Bind SortByNewVersionAutomationName, Mode=OneWay}"
                             BorderThickness="0"
                             CornerRadius="0"
                             Visibility="{x:Bind RoleIsUpdateLike}" />
@@ -1051,6 +1067,7 @@
                             Grid.ColumnSpan="3"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
+                            AutomationProperties.Name="{x:Bind SortBySourceAutomationName, Mode=OneWay}"
                             BorderThickness="0"
                             CornerRadius="0,4,4,0" />
                     </Grid>
@@ -1179,6 +1196,7 @@
                         Height="80"
                         Padding="12"
                         x:FieldModifier="protected"
+                        AutomationProperties.Name="{x:Bind SearchPackagesAutomationName, Mode=OneWay}"
                         AutomationProperties.HelpText="Search"
                         CornerRadius="0,8,8,0">
                         <AnimatedIcon>

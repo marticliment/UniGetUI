@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Globalization;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using UniGetUI.Core.SettingsEngine;
@@ -203,6 +204,20 @@ namespace UniGetUI.Interface
 
         private string _searchPlaceholder;
         public string SearchBoxPlaceholder => _searchPlaceholder;
+        public string ReloadPackagesAutomationName => CoreTools.Translate("Reload packages");
+        public string MoreToolbarActionsAutomationName => CoreTools.Translate("More toolbar actions");
+        public string FilterBySourcesAutomationName => CoreTools.Translate("Filter by sources");
+        public string FilterOptionsAutomationName => CoreTools.Translate("Filter options");
+        public string SearchModeAutomationName => CoreTools.Translate("Search mode");
+        public string SelectAllPackagesAutomationName => CoreTools.Translate("Select all packages");
+        public string SortByPackageNameAutomationName => CoreTools.Translate("Sort by package name");
+        public string SortByPackageIdAutomationName => CoreTools.Translate("Sort by package ID");
+        public string SortByVersionAutomationName => CoreTools.Translate("Sort by version");
+        public string SortByNewVersionAutomationName => CoreTools.Translate("Sort by new version");
+        public string SortBySourceAutomationName => CoreTools.Translate("Sort by source");
+        public string SearchPackagesAutomationName => CoreTools.Translate("Search packages");
+        public string OrderByAutomationName => CoreTools.Translate("Order by");
+        public string ViewModeAutomationName => CoreTools.Translate("View mode");
 
         private string TypeQuery = "";
         private int LastKeyDown;
@@ -243,6 +258,9 @@ namespace UniGetUI.Interface
             ToolTipService.SetToolTip(Selector_List, CoreTools.Translate("List"));
             ToolTipService.SetToolTip(Selector_Grid, CoreTools.Translate("Grid"));
             ToolTipService.SetToolTip(Selector_Icons, CoreTools.Translate("Icons"));
+            AutomationProperties.SetName(Selector_List, CoreTools.Translate("List"));
+            AutomationProperties.SetName(Selector_Grid, CoreTools.Translate("Grid"));
+            AutomationProperties.SetName(Selector_Icons, CoreTools.Translate("Icons"));
 
             MainTitle.Text = data.PageTitle;
             HeaderIcon.Glyph = data.Glyph;

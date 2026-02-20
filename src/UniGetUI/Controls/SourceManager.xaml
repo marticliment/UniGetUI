@@ -11,56 +11,59 @@
     mc:Ignorable="d">
     <UserControl.Resources>
         <DataTemplate x:Key="ManagerSourceTemplate" x:DataType="widgets:SourceItem">
-            <Grid ColumnSpacing="5">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="40" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="32" />
-                    <ColumnDefinition Width="90" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="130" />
-                    <ColumnDefinition Width="40" />
-                    <ColumnDefinition Width="32" />
-                </Grid.ColumnDefinitions>
-                <FontIcon
-                    Grid.Row="0"
-                    Grid.Column="0"
-                    VerticalAlignment="Center"
-                    Glyph="&#xE74C;" />
-                <TextBlock
-                    Grid.Row="0"
-                    Grid.Column="1"
-                    VerticalAlignment="Center"
-                    Text="{x:Bind Source.Name}" />
-                <HyperlinkButton
-                    Grid.Row="0"
-                    Grid.Column="2"
-                    VerticalAlignment="Center"
-                    Content="{x:Bind Source.Url}"
-                    NavigateUri="{x:Bind Source.Url}" />
-                <TextBlock
-                    Grid.Row="0"
-                    Grid.Column="3"
-                    VerticalAlignment="Center"
-                    Text="{x:Bind Source.UpdateDate}"
-                    Visibility="{x:Bind Source.Manager.Capabilities.Sources.KnowsUpdateDate}" />
-                <TextBlock
-                    Grid.Row="0"
-                    Grid.Column="4"
-                    VerticalAlignment="Center"
-                    Text="{x:Bind Source.PackageCount}"
-                    Visibility="{x:Bind Source.Manager.Capabilities.Sources.KnowsUpdateDate}" />
-                <Button
-                    Grid.Row="0"
-                    Grid.Column="5"
-                    Width="32"
-                    Height="32"
-                    Padding="0,0,0,0"
-                    Click="{x:Bind Remove}">
-                    <FontIcon FontSize="16" Glyph="&#xE74D;" />
-                </Button>
-            </Grid>
+            <ItemContainer AutomationProperties.Name="{x:Bind Source.Name}">
+                <Grid ColumnSpacing="5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="40" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="32" />
+                        <ColumnDefinition Width="90" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="130" />
+                        <ColumnDefinition Width="40" />
+                        <ColumnDefinition Width="32" />
+                    </Grid.ColumnDefinitions>
+                    <FontIcon
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        VerticalAlignment="Center"
+                        Glyph="&#xE74C;" />
+                    <TextBlock
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        VerticalAlignment="Center"
+                        Text="{x:Bind Source.Name}" />
+                    <HyperlinkButton
+                        Grid.Row="0"
+                        Grid.Column="2"
+                        VerticalAlignment="Center"
+                        Content="{x:Bind Source.Url}"
+                        NavigateUri="{x:Bind Source.Url}" />
+                    <TextBlock
+                        Grid.Row="0"
+                        Grid.Column="3"
+                        VerticalAlignment="Center"
+                        Text="{x:Bind Source.UpdateDate}"
+                        Visibility="{x:Bind Source.Manager.Capabilities.Sources.KnowsUpdateDate}" />
+                    <TextBlock
+                        Grid.Row="0"
+                        Grid.Column="4"
+                        VerticalAlignment="Center"
+                        Text="{x:Bind Source.PackageCount}"
+                        Visibility="{x:Bind Source.Manager.Capabilities.Sources.KnowsUpdateDate}" />
+                    <Button
+                        Grid.Row="0"
+                        Grid.Column="5"
+                        Width="32"
+                        Height="32"
+                        Padding="0,0,0,0"
+                        AutomationProperties.Name="{x:Bind RemoveSourceAutomationName, Mode=OneWay}"
+                        Click="{x:Bind Remove}">
+                        <FontIcon FontSize="16" Glyph="&#xE74D;" />
+                    </Button>
+                </Grid>
+            </ItemContainer>
         </DataTemplate>
     </UserControl.Resources>
 
@@ -109,6 +112,7 @@
                 Height="30"
                 Padding="0,0,0,0"
                 HorizontalAlignment="Right"
+                AutomationProperties.Name="{x:Bind ReloadSourcesAutomationName, Mode=OneWay}"
                 Click="ReloadButton_Click"
                 CornerRadius="4">
                 <FontIcon
