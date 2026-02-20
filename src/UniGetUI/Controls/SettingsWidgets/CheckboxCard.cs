@@ -1,5 +1,6 @@
 using CommunityToolkit.WinUI.Controls;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using UniGetUI.Core.SettingsEngine;
@@ -16,6 +17,25 @@ namespace UniGetUI.Interface.Widgets
         public TextBlock _textblock;
         public TextBlock _warningBlock;
         protected bool IS_INVERTED;
+        private string _translatedText = string.Empty;
+        private string _translatedWarningText = string.Empty;
+
+        private void UpdateAutomationName()
+        {
+            string name = _translatedText;
+            if (!string.IsNullOrWhiteSpace(_translatedWarningText))
+            {
+                name = string.IsNullOrWhiteSpace(name)
+                    ? _translatedWarningText
+                    : $"{name}. {_translatedWarningText}";
+            }
+
+            if (!string.IsNullOrWhiteSpace(name))
+            {
+                AutomationProperties.SetName(_checkbox, name);
+                AutomationProperties.SetName(this, name);
+            }
+        }
 
         private Settings.K setting_name = Settings.K.Unset;
         public Settings.K SettingName
@@ -39,15 +59,22 @@ namespace UniGetUI.Interface.Widgets
 
         public string Text
         {
-            set => _textblock.Text = CoreTools.Translate(value);
+            set
+            {
+                _translatedText = CoreTools.Translate(value);
+                _textblock.Text = _translatedText;
+                UpdateAutomationName();
+            }
         }
 
         public string WarningText
         {
             set
             {
-                _warningBlock.Text = CoreTools.Translate(value);
+                _translatedWarningText = CoreTools.Translate(value);
+                _warningBlock.Text = _translatedWarningText;
                 _warningBlock.Visibility = value.Any() ? Visibility.Visible : Visibility.Collapsed;
+                UpdateAutomationName();
             }
         }
 
@@ -95,6 +122,7 @@ namespace UniGetUI.Interface.Widgets
 
             _checkbox.HorizontalAlignment = HorizontalAlignment.Stretch;
             _checkbox.Toggled += _checkbox_Toggled;
+            UpdateAutomationName();
         }
         protected virtual void _checkbox_Toggled(object sender, RoutedEventArgs e)
         {

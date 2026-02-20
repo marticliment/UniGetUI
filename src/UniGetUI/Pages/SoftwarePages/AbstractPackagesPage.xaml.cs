@@ -218,6 +218,25 @@ namespace UniGetUI.Interface
         public string SearchPackagesAutomationName => CoreTools.Translate("Search packages");
         public string OrderByAutomationName => CoreTools.Translate("Order by");
         public string ViewModeAutomationName => CoreTools.Translate("View mode");
+        public string SelectAllSourcesAutomationName => CoreTools.Translate("Select all sources");
+        public string ClearSourceSelectionAutomationName => CoreTools.Translate("Clear source selection");
+        public string InstantSearchAutomationName => CoreTools.Translate("Instant search");
+        public string DistinguishUpperLowerCaseAutomationName => CoreTools.Translate("Distinguish between uppercase and lowercase");
+        public string IgnoreSpecialCharactersAutomationName => CoreTools.Translate("Ignore special characters");
+        public string ToggleFiltersAutomationName => CoreTools.Translate("Toggle filters");
+        public string MainSelectionActionAutomationName => PAGE_ROLE switch
+        {
+            OperationType.Install => CoreTools.Translate("Install selection"),
+            OperationType.Update => CoreTools.Translate("Update selection"),
+            OperationType.Uninstall => CoreTools.Translate("Uninstall selection"),
+            _ => CoreTools.Translate("Apply action to selection")
+        };
+        public string SearchModeOptionsAutomationName => CoreTools.Translate("Search mode options");
+        public string SearchModeByNameAutomationName => CoreTools.Translate("Search by package name");
+        public string SearchModeByIdAutomationName => CoreTools.Translate("Search by package ID");
+        public string SearchModeByBothAutomationName => CoreTools.Translate("Search by package name or ID");
+        public string SearchModeExactMatchAutomationName => CoreTools.Translate("Search exact match");
+        public string SearchModeSimilarResultsAutomationName => CoreTools.Translate("Show similar packages");
 
         private string TypeQuery = "";
         private int LastKeyDown;

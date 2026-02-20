@@ -629,6 +629,7 @@
                         Margin="1,4"
                         Padding="8,4"
                         x:FieldModifier="protected"
+                        AutomationProperties.Name="{x:Bind ToggleFiltersAutomationName, Mode=OneWay}"
                         Background="Transparent"
                         BorderThickness="0"
                         Click="ToggleFiltersButton_Click"
@@ -662,6 +663,7 @@
                         Height="36"
                         Margin="0,0,1,0"
                         x:FieldModifier="protected"
+                        AutomationProperties.Name="{x:Bind MainSelectionActionAutomationName, Mode=OneWay}"
                         BorderThickness="0"
                         CornerRadius="4,0,0,4">
                         <StackPanel
@@ -793,6 +795,7 @@
                                             Padding="2"
                                             HorizontalAlignment="Stretch"
                                             HorizontalContentAlignment="Center"
+                                            AutomationProperties.Name="{x:Bind SelectAllSourcesAutomationName, Mode=OneWay}"
                                             Click="SelectAllSourcesButton_Click">
                                             <widgets:TranslatedTextBlock
                                                 FontSize="12"
@@ -805,6 +808,7 @@
                                             Padding="2"
                                             HorizontalAlignment="Stretch"
                                             HorizontalContentAlignment="Center"
+                                            AutomationProperties.Name="{x:Bind ClearSourceSelectionAutomationName, Mode=OneWay}"
                                             Click="ClearSourceSelectionButton_Click">
                                             <widgets:TranslatedTextBlock
                                                 FontSize="12"
@@ -853,6 +857,7 @@
                                     <CheckBox
                                         x:Name="InstantSearchCheckbox"
                                         x:FieldModifier="protected"
+                                        AutomationProperties.Name="{x:Bind InstantSearchAutomationName, Mode=OneWay}"
                                         Checked="InstantSearchValueChanged"
                                         Unchecked="InstantSearchValueChanged">
                                         <CheckBox.Content>
@@ -861,6 +866,7 @@
                                     </CheckBox>
                                     <CheckBox
                                         x:Name="UpperLowerCaseCheckbox"
+                                        AutomationProperties.Name="{x:Bind DistinguishUpperLowerCaseAutomationName, Mode=OneWay}"
                                         Checked="FilterOptionsChanged"
                                         Unchecked="FilterOptionsChanged">
                                         <CheckBox.Content>
@@ -869,6 +875,7 @@
                                     </CheckBox>
                                     <CheckBox
                                         x:Name="IgnoreSpecialCharsCheckbox"
+                                        AutomationProperties.Name="{x:Bind IgnoreSpecialCharactersAutomationName, Mode=OneWay}"
                                         Checked="FilterOptionsChanged"
                                         IsChecked="True"
                                         Unchecked="FilterOptionsChanged">
@@ -908,12 +915,14 @@
                                         Name="QueryOptionsGroup"
                                         Margin="0,-4,0,6"
                                         x:FieldModifier="protected"
+                                        AutomationProperties.Name="{x:Bind SearchModeOptionsAutomationName, Mode=OneWay}"
                                         CharacterSpacing="0"
                                         SelectionChanged="FilterOptionsChanged">
                                         <RadioButton
                                             x:Name="QueryNameRadio"
                                             Height="30"
                                             Margin="0,-2,0,-2"
+                                            AutomationProperties.Name="{x:Bind SearchModeByNameAutomationName, Mode=OneWay}"
                                             x:FieldModifier="protected">
                                             <RadioButton.Content>
                                                 <widgets:TranslatedTextBlock Text="Package Name" WrappingMode="Wrap" />
@@ -923,6 +932,7 @@
                                             x:Name="QueryIdRadio"
                                             Height="30"
                                             Margin="0,-2,0,-2"
+                                            AutomationProperties.Name="{x:Bind SearchModeByIdAutomationName, Mode=OneWay}"
                                             x:FieldModifier="protected">
                                             <RadioButton.Content>
                                                 <widgets:TranslatedTextBlock Text="Package ID" WrappingMode="Wrap" />
@@ -932,6 +942,7 @@
                                             x:Name="QueryBothRadio"
                                             Height="30"
                                             Margin="0,-2,0,-2"
+                                            AutomationProperties.Name="{x:Bind SearchModeByBothAutomationName, Mode=OneWay}"
                                             x:FieldModifier="protected"
                                             IsChecked="True">
                                             <RadioButton.Content>
@@ -942,6 +953,7 @@
                                             x:Name="QueryExactMatch"
                                             Height="30"
                                             Margin="0,-2,0,-2"
+                                            AutomationProperties.Name="{x:Bind SearchModeExactMatchAutomationName, Mode=OneWay}"
                                             x:FieldModifier="protected">
                                             <RadioButton.Content>
                                                 <widgets:TranslatedTextBlock Text="Exact match" WrappingMode="Wrap" />
@@ -951,6 +963,7 @@
                                             x:Name="QuerySimilarResultsRadio"
                                             Height="30"
                                             Margin="0,-2,0,-2"
+                                            AutomationProperties.Name="{x:Bind SearchModeSimilarResultsAutomationName, Mode=OneWay}"
                                             x:FieldModifier="protected">
                                             <RadioButton.Content>
                                                 <widgets:TranslatedTextBlock Text="Show similar packages" WrappingMode="Wrap" />

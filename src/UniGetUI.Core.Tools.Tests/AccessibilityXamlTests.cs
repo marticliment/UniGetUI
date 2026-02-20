@@ -38,7 +38,8 @@ public class AccessibilityXamlTests
             [
                 "AutomationProperties.Name=\"{x:Bind OperationOptionsAutomationName, Mode=OneWay}\"",
                 "AutomationProperties.Name=\"{x:Bind OperationsListActionsAutomationName, Mode=OneWay}\"",
-                "AutomationProperties.Name=\"{x:Bind ExpandCollapseOperationsAutomationName, Mode=OneWay}\""
+                "AutomationProperties.Name=\"{x:Bind ExpandCollapseOperationsAutomationName, Mode=OneWay}\"",
+                "AutomationProperties.Name=\"{x:Bind ResizeOperationsAreaAutomationName, Mode=OneWay}\""
             ],
             ["src/UniGetUI/Pages/SettingsPages/SettingsBasePage.xaml"] =
             [
@@ -58,6 +59,14 @@ public class AccessibilityXamlTests
             [
                 "AutomationProperties.Name=\"{x:Bind MorePackageActionsAutomationName, Mode=OneWay}\""
             ],
+            ["src/UniGetUI/Pages/DialogPages/OperationFailedDialog.xaml"] =
+            [
+                "AutomationProperties.Name=\"Command-line output\""
+            ],
+            ["src/UniGetUI/Pages/DialogPages/OperationLiveLogPage.xaml"] =
+            [
+                "AutomationProperties.Name=\"Operation live log output\""
+            ],
             ["src/UniGetUI/Pages/SoftwarePages/AbstractPackagesPage.xaml"] =
             [
                 "AutomationProperties.Name=\"{x:Bind PackageOptionsAutomationName, Mode=OneWay}\"",
@@ -66,7 +75,20 @@ public class AccessibilityXamlTests
                 "AutomationProperties.Name=\"{x:Bind SelectPackageAutomationName, Mode=OneWay}\"",
                 "AutomationProperties.Name=\"{x:Bind OrderByAutomationName, Mode=OneWay}\"",
                 "AutomationProperties.Name=\"{x:Bind ViewModeAutomationName, Mode=OneWay}\"",
-                "AutomationProperties.Name=\"{x:Bind SearchPackagesAutomationName, Mode=OneWay}\""
+                "AutomationProperties.Name=\"{x:Bind SearchPackagesAutomationName, Mode=OneWay}\"",
+                "AutomationProperties.Name=\"{x:Bind SelectAllSourcesAutomationName, Mode=OneWay}\"",
+                "AutomationProperties.Name=\"{x:Bind ClearSourceSelectionAutomationName, Mode=OneWay}\"",
+                "AutomationProperties.Name=\"{x:Bind InstantSearchAutomationName, Mode=OneWay}\"",
+                "AutomationProperties.Name=\"{x:Bind DistinguishUpperLowerCaseAutomationName, Mode=OneWay}\"",
+                "AutomationProperties.Name=\"{x:Bind IgnoreSpecialCharactersAutomationName, Mode=OneWay}\"",
+                "AutomationProperties.Name=\"{x:Bind ToggleFiltersAutomationName, Mode=OneWay}\"",
+                "AutomationProperties.Name=\"{x:Bind MainSelectionActionAutomationName, Mode=OneWay}\"",
+                "AutomationProperties.Name=\"{x:Bind SearchModeOptionsAutomationName, Mode=OneWay}\"",
+                "AutomationProperties.Name=\"{x:Bind SearchModeByNameAutomationName, Mode=OneWay}\"",
+                "AutomationProperties.Name=\"{x:Bind SearchModeByIdAutomationName, Mode=OneWay}\"",
+                "AutomationProperties.Name=\"{x:Bind SearchModeByBothAutomationName, Mode=OneWay}\"",
+                "AutomationProperties.Name=\"{x:Bind SearchModeExactMatchAutomationName, Mode=OneWay}\"",
+                "AutomationProperties.Name=\"{x:Bind SearchModeSimilarResultsAutomationName, Mode=OneWay}\""
             ],
             ["src/UniGetUI/Pages/SettingsPages/GeneralPages/Backup.xaml"] =
             [
@@ -149,6 +171,76 @@ public class AccessibilityXamlTests
             foreach (Match match in matches)
             {
                 Assert.Contains("AutomationProperties.Name", match.Value);
+            }
+        }
+    }
+
+    [Fact]
+    public void AccessibilityCriticalCodePathsSetNamesAndTabFocus()
+    {
+        Dictionary<string, string[]> requiredSnippets = new()
+        {
+            ["src/UniGetUI/Controls/CustomNavViewItem.cs"] =
+            [
+                "AutomationProperties.SetName(this, text);"
+            ],
+            ["src/UniGetUI/Services/UserAvatar.cs"] =
+            [
+                "AutomationProperties.SetName(profileButton, CoreTools.Translate(\"Open backup profile\"));"
+            ],
+            ["src/UniGetUI/Controls/SettingsWidgets/SettingsPageButton.cs"] =
+            [
+                "AutomationProperties.SetName(this, name);",
+                "IsTabStop = true;",
+                "UseSystemFocusVisuals = true;"
+            ],
+            ["src/UniGetUI/Controls/SettingsWidgets/CheckboxCard.cs"] =
+            [
+                "AutomationProperties.SetName(_checkbox, name);",
+                "AutomationProperties.SetName(this, name);"
+            ],
+            ["src/UniGetUI/Controls/SettingsWidgets/SecureCheckboxCard.cs"] =
+            [
+                "AutomationProperties.SetName(_checkbox, name);",
+                "AutomationProperties.SetName(this, name);"
+            ],
+            ["src/UniGetUI/Controls/SettingsWidgets/CheckboxButtonCard.cs"] =
+            [
+                "AutomationProperties.SetName(_checkbox, _translatedCheckboxText);",
+                "AutomationProperties.SetName(Button, buttonName);"
+            ],
+            ["src/UniGetUI/Controls/SettingsWidgets/ButtonCard.cs"] =
+            [
+                "AutomationProperties.SetName(_button, buttonName);",
+                "AutomationProperties.SetName(this, cardName);"
+            ],
+            ["src/UniGetUI/Controls/SettingsWidgets/ComboboxCard.cs"] =
+            [
+                "AutomationProperties.SetName(_combobox, _translatedText);",
+                "AutomationProperties.SetName(this, _translatedText);"
+            ],
+            ["src/UniGetUI/Controls/SettingsWidgets/TextboxCard.cs"] =
+            [
+                "AutomationProperties.SetName(_textbox, textboxName);",
+                "AutomationProperties.SetName(this, textboxName);"
+            ],
+            ["src/UniGetUI/Pages/SettingsPages/SettingsBasePage.xaml.cs"] =
+            [
+                "BackButton.PreviewKeyDown += BackButton_PreviewKeyDown;",
+                "root.TabFocusNavigation = KeyboardNavigationMode.Local;",
+                "MainNavigationFrame.TabFocusNavigation = KeyboardNavigationMode.Local;",
+                "scroller.TabFocusNavigation = KeyboardNavigationMode.Local;",
+                "NeedsContextualName(currentName, toggle.OnContent, toggle.OffContent)",
+                "AutomationProperties.SetName(card, cardName);"
+            ]
+        };
+
+        foreach (var (file, snippets) in requiredSnippets)
+        {
+            string content = ReadFile(file);
+            foreach (string snippet in snippets)
+            {
+                Assert.Contains(snippet, content);
             }
         }
     }

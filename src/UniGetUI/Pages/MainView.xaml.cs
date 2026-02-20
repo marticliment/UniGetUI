@@ -60,6 +60,7 @@ namespace UniGetUI.Interface
         public string ExpandCollapseOperationsAutomationName => CoreTools.Translate("Expand or collapse operations list");
         public string OperationsListActionsAutomationName => CoreTools.Translate("Operation list actions");
         public string OperationsListAutomationName => CoreTools.Translate("Operations list");
+        public string ResizeOperationsAreaAutomationName => CoreTools.Translate("Resize operations area");
 
         AutoSuggestBox MainTextBlock;
         public event EventHandler<bool>? CanGoBackChanged;
