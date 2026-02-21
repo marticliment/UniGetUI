@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 12437,
-        "done": 5949,
-        "packages_with_icon": 5949,
-        "packages_with_screenshot": 1359,
-        "total_screenshots": 4217
+        "total": 12439,
+        "done": 5952,
+        "packages_with_icon": 5952,
+        "packages_with_screenshot": 1362,
+        "total_screenshots": 4222
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -41351,8 +41351,11 @@
             "images": []
         },
         "super-productivity": {
-            "icon": "https://community.chocolatey.org/content/packageimages/super-productivity.7.12.2.png",
-            "images": []
+            "icon": "https://i.imgur.com/UnvhxDl.png",
+            "images": [
+                "https://i.imgur.com/YUDVM3V.png",
+                "https://i.imgur.com/RMIK4fd.png"
+            ]
         },
         "superantispyware": {
             "icon": "https://community.chocolatey.org/content/packageimages/superantispyware.10.0.1246.png",
@@ -41399,8 +41402,11 @@
             "images": []
         },
         "superproductivity": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.imgur.com/UnvhxDl.png",
+            "images": [
+                "https://i.imgur.com/YUDVM3V.png",
+                "https://i.imgur.com/RMIK4fd.png"
+            ]
         },
         "superputty": {
             "icon": "https://community.chocolatey.org/content/packageimages/superputty.portable.1.5.0.0.png",
@@ -43003,6 +43009,10 @@
         },
         "thunderbird-beta": {
             "icon": "",
+            "images": []
+        },
+        "thunderbird-esr": {
+            "icon": "https://www.thunderbird.net/media/img/thunderbird/thunderbird-256.png",
             "images": []
         },
         "thymiosuite": {
@@ -55158,6 +55168,12 @@
         "Python.Launcher\n": {
             "icon": "https://s3.dualstack.us-east-2.amazonaws.com/pythondotorg-assets/media/community/logos/python-logo-only.png",
             "images": []
+        },
+        "pkhex": {
+            "icon": "https://raw.githubusercontent.com/kwsch/PKHeX/refs/heads/master/icon.png",
+            "images": [
+                "https://camo.githubusercontent.com/691f9203db46580d9f02406a7fd4574a3f0d70ec196bb948b8453469af30f217/68747470733a2f2f692e696d6775722e636f6d2f704948646f54702e706e67"
+            ]
         }
     }
 }
