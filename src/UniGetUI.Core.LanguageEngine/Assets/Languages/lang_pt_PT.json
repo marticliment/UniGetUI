@@ -380,7 +380,7 @@
   "Installer not available": "Instalador não disponível",
   "Instance {0} responded, quitting...": "A instância {0} respondeu, a encerrar...",
   "Instant search": "Procura rápida",
-  "Integrity checks can be disabled from the Experimental Settings": null,
+  "Integrity checks can be disabled from the Experimental Settings": "Verificações de integridade podem ser desativadas nas Definições Exprimentais",
   "Integrity checks skipped": "Verificações de integridade ignoradas",
   "Integrity checks will not be performed during this operation": "Verificações de integridade não serão realizadas durante esta operação",
   "Interactive installation": "Instalação interativa ",
