@@ -35,6 +35,7 @@
                 Package="{x:Bind Package}"
                 PreviewKeyDown="{x:Bind PackageItemContainer_PreviewKeyDown}"
                 RightTapped="{x:Bind PackageItemContainer_RightTapped}"
+                Tapped="{x:Bind PackageItemContainer_Tapped}"
                 Wrapper="{x:Bind Self}">
 
                 <Grid
@@ -210,6 +211,7 @@
                 Package="{x:Bind Package}"
                 PreviewKeyDown="{x:Bind PackageItemContainer_PreviewKeyDown}"
                 RightTapped="{x:Bind PackageItemContainer_RightTapped}"
+                Tapped="{x:Bind PackageItemContainer_Tapped}"
                 Wrapper="{x:Bind Self}">
 
                 <Grid
@@ -328,6 +330,7 @@
                 Package="{x:Bind Package}"
                 PreviewKeyDown="{x:Bind PackageItemContainer_PreviewKeyDown}"
                 RightTapped="{x:Bind PackageItemContainer_RightTapped}"
+                Tapped="{x:Bind PackageItemContainer_Tapped}"
                 Wrapper="{x:Bind Self}">
 
                 <Grid
@@ -1072,7 +1075,8 @@
                                 CharacterReceived="PackageList_CharacterReceived"
                                 ItemTemplate="{StaticResource PackageTemplate_List}"
                                 ItemsSource="{x:Bind FilteredPackages}"
-                                Layout="{StaticResource Layout_List}" />
+                                Layout="{StaticResource Layout_List}"
+                                SelectionMode="Extended" />
                         </Toolkit:Case>
                         <Toolkit:Case Value="1">
                             <ItemsView
@@ -1085,7 +1089,8 @@
                                 CharacterReceived="PackageList_CharacterReceived"
                                 ItemTemplate="{StaticResource PackageTemplate_Grid}"
                                 ItemsSource="{x:Bind FilteredPackages}"
-                                Layout="{StaticResource Layout_Grid}" />
+                                Layout="{StaticResource Layout_Grid}"
+                                SelectionMode="Extended" />
                         </Toolkit:Case>
                         <Toolkit:Case Value="2">
                             <ItemsView
@@ -1098,7 +1103,8 @@
                                 CharacterReceived="PackageList_CharacterReceived"
                                 ItemTemplate="{StaticResource PackageTemplate_Icons}"
                                 ItemsSource="{x:Bind FilteredPackages}"
-                                Layout="{StaticResource Layout_Icons}" />
+                                Layout="{StaticResource Layout_Icons}"
+                                SelectionMode="Extended" />
                         </Toolkit:Case>
                     </Toolkit:SwitchPresenter>
 

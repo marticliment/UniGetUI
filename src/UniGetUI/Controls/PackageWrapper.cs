@@ -90,6 +90,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public void PackageItemContainer_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
             => _page.PackageItemContainer_PreviewKeyDown(sender, e);
 
+        public void PackageItemContainer_Tapped(object sender, TappedRoutedEventArgs e)
+            => _page.PackageItemContainer_Tapped(sender, e);
+
         public void PackageItemContainer_RightTapped(object sender, RightTappedRoutedEventArgs e)
             => _page.PackageItemContainer_RightTapped(sender, e);
 

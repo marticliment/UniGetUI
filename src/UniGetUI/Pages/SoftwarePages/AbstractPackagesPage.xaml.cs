@@ -207,6 +207,16 @@ namespace UniGetUI.Interface
         private string TypeQuery = "";
         private int LastKeyDown;
         private readonly int QUERY_SEPARATION_TIME = 1000; // 500ms between keypresses starts a new query
+        private int _shiftSelectAnchorIndex = -1;
+        private int _lastNavigationIndex = -1;
+        private readonly HashSet<int> _selectedIndices = [];
+
+        private void ResetSelectionState()
+        {
+            _selectedIndices.Clear();
+            _shiftSelectAnchorIndex = -1;
+            _lastNavigationIndex = -1;
+        }
 
         protected AbstractPackagesPage(PackagesPageData data)
         {
@@ -592,12 +602,32 @@ namespace UniGetUI.Interface
             }
         }
 
-        private void SelectAndScrollTo(int index, bool focus)
+        private void SelectAndScrollTo(int index, bool focus, bool extendSelection = false)
         {
             if (index < 0 || index >= FilteredPackages.Count)
                 return;
 
-            CurrentPackageList.Select(index);
+            _selectedIndices.Clear();
+            if (extendSelection && _shiftSelectAnchorIndex >= 0 && _shiftSelectAnchorIndex < FilteredPackages.Count)
+            {
+                CurrentPackageList.DeselectAll();
+                int start = Math.Min(_shiftSelectAnchorIndex, index);
+                int end = Math.Max(_shiftSelectAnchorIndex, index);
+                for (int i = start; i <= end; i++)
+                {
+                    CurrentPackageList.Select(i);
+                    _selectedIndices.Add(i);
+                }
+            }
+            else
+            {
+                CurrentPackageList.DeselectAll();
+                CurrentPackageList.Select(index);
+                _shiftSelectAnchorIndex = index;
+                _selectedIndices.Add(index);
+            }
+
+            _lastNavigationIndex = index;
 
             double position;
             if (CurrentPackageList.Layout is StackLayout)
@@ -626,7 +656,10 @@ namespace UniGetUI.Interface
                 ));
             }
 
-            if (focus) Focus(FilteredPackages[index].Package);
+            // Skip Focus during extended selection — calling Focus(FocusState.Keyboard)
+            // on the new container triggers ItemsView's internal selection handling,
+            // which clobbers the range selection in Extended mode.
+            if (focus && !extendSelection) Focus(FilteredPackages[index].Package);
         }
 
         private void Focus(IPackage packageToFocus, int retryCount = 0)
@@ -799,6 +832,8 @@ namespace UniGetUI.Interface
         /// </summary>
         public void FilterPackages(bool forceQueryUpdate = false)
         {
+            ResetSelectionState();
+
             var previousSelection = CurrentPackageList.SelectedItem as PackageWrapper;
 
             List<IManagerSource> visibleSources = [];
@@ -965,6 +1000,7 @@ namespace UniGetUI.Interface
             if(sorter == FilteredPackages.CurrentSorter) FilteredPackages.Descending = !FilteredPackages.Descending;
             FilteredPackages.SetSorter(sorter);
             FilteredPackages.Sort();
+            ResetSelectionState();
             UpdateSortingMenu();
         }
 
@@ -972,6 +1008,7 @@ namespace UniGetUI.Interface
         {
             FilteredPackages.Descending = !ascendent;
             FilteredPackages.Sort();
+            ResetSelectionState();
             UpdateSortingMenu();
         }
 
@@ -1106,20 +1143,70 @@ namespace UniGetUI.Interface
             => CurrentPackageList.Focus(FocusState.Programmatic);
 
 
+        private void SelectSingleIndex(int index)
+        {
+            CurrentPackageList.DeselectAll();
+            CurrentPackageList.Select(index);
+            _shiftSelectAnchorIndex = index;
+            _lastNavigationIndex = index;
+            _selectedIndices.Clear();
+            _selectedIndices.Add(index);
+        }
+
         public async Task ShowContextMenu(PackageWrapper wrapper)
         {
-            CurrentPackageList.Select(wrapper.Index);
+            SelectSingleIndex(wrapper.Index);
             await Task.Delay(20);
             if(_lastContextMenuButtonTapped is not null)
                 (CurrentPackageList.ContextFlyout as BetterMenu)?.ShowAt(_lastContextMenuButtonTapped, new FlyoutShowOptions { Placement = FlyoutPlacementMode.RightEdgeAlignedTop });
             WhenShowingContextMenu(wrapper.Package);
         }
 
+        public void PackageItemContainer_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            if (sender is PackageItemContainer container && container.Package is not null)
+            {
+                int idx = container.Wrapper.Index;
+                bool isShiftPressed = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Shift)
+                    .HasFlag(CoreVirtualKeyStates.Down);
+                bool isCtrlPressed = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Control)
+                    .HasFlag(CoreVirtualKeyStates.Down);
+
+                if (isCtrlPressed && !isShiftPressed)
+                {
+                    // Ctrl+Click: toggle this item in/out of selection.
+                    // ItemsView Extended mode handles the visual toggle natively.
+                    if (!_selectedIndices.Remove(idx))
+                        _selectedIndices.Add(idx);
+                }
+                else if (isShiftPressed)
+                {
+                    if (_shiftSelectAnchorIndex < 0 || _shiftSelectAnchorIndex >= FilteredPackages.Count)
+                        _shiftSelectAnchorIndex = idx;
+
+                    // Shift+Click: select range from anchor to clicked item.
+                    // ItemsView handles the visual range natively.
+                    _selectedIndices.Clear();
+                    int start = Math.Min(_shiftSelectAnchorIndex, idx);
+                    int end = Math.Max(_shiftSelectAnchorIndex, idx);
+                    for (int i = start; i <= end; i++)
+                        _selectedIndices.Add(i);
+                }
+                else
+                {
+                    // Plain click: always collapse to single selection.
+                    // ItemsView Extended mode won't deselect the range when
+                    // clicking an already-selected item, so force it here.
+                    SelectSingleIndex(idx);
+                }
+            }
+        }
+
         public void PackageItemContainer_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
             if (sender is PackageItemContainer container && container.Package is not null)
             {
-                CurrentPackageList.Select(container.Wrapper.Index);
+                SelectSingleIndex(container.Wrapper.Index);
                 container.Focus(FocusState.Keyboard);
                 WhenShowingContextMenu(container.Package);
             }
@@ -1129,7 +1216,7 @@ namespace UniGetUI.Interface
         {
             if (sender is PackageItemContainer container && container.Package is not null)
             {
-                CurrentPackageList.Select(container.Wrapper.Index);
+                SelectSingleIndex(container.Wrapper.Index);
                 container.Focus(FocusState.Keyboard);
 
                 TEL_InstallReferral referral = TEL_InstallReferral.ALREADY_INSTALLED;
@@ -1273,17 +1360,28 @@ namespace UniGetUI.Interface
                 return;
             }
 
-            int index = FilteredPackages.IndexOf(packageItemContainer.Wrapper);
+            bool IS_SHIFT_PRESSED = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
+            bool IS_CONTROL_PRESSED = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
+            bool IS_ALT_PRESSED = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.LeftMenu).HasFlag(CoreVirtualKeyStates.Down);
+            IS_ALT_PRESSED |= InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.RightMenu).HasFlag(CoreVirtualKeyStates.Down);
+
+            // Use tracked navigation index when valid (e.g. after Shift+Arrow where
+            // focus intentionally stayed on the anchor item). Fall back to sender index.
+            int senderIndex = FilteredPackages.IndexOf(packageItemContainer.Wrapper);
+            int index = _lastNavigationIndex >= 0 && _lastNavigationIndex < FilteredPackages.Count
+                ? _lastNavigationIndex
+                : senderIndex;
+
             switch (e.Key)
             {
                 case VirtualKey.Up when index > 0:
-                    SelectAndScrollTo(index - 1, true); e.Handled = true; break;
+                    SelectAndScrollTo(index - 1, true, IS_SHIFT_PRESSED); e.Handled = true; break;
                 case VirtualKey.Down when index < FilteredPackages.Count - 1:
-                    SelectAndScrollTo(index + 1, true); e.Handled = true; break;
+                    SelectAndScrollTo(index + 1, true, IS_SHIFT_PRESSED); e.Handled = true; break;
                 case VirtualKey.Home when index > 0:
-                    SelectAndScrollTo(0, true); e.Handled = true; break;
+                    SelectAndScrollTo(0, true, IS_SHIFT_PRESSED); e.Handled = true; break;
                 case VirtualKey.End when index < FilteredPackages.Count - 1:
-                    SelectAndScrollTo(FilteredPackages.Count - 1, true); e.Handled = true; break;
+                    SelectAndScrollTo(FilteredPackages.Count - 1, true, IS_SHIFT_PRESSED); e.Handled = true; break;
             }
 
             if (e.KeyStatus.WasKeyDown)
@@ -1293,11 +1391,6 @@ namespace UniGetUI.Interface
             }
 
             IPackage? package = packageItemContainer.Package;
-
-            bool IS_CONTROL_PRESSED = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
-            //bool IS_SHIFT_PRESSED = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
-            bool IS_ALT_PRESSED = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.LeftMenu).HasFlag(CoreVirtualKeyStates.Down);
-            IS_ALT_PRESSED |= InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.RightMenu).HasFlag(CoreVirtualKeyStates.Down);
 
             if (e.Key == VirtualKey.Enter && package is not null)
             {
@@ -1325,7 +1418,25 @@ namespace UniGetUI.Interface
             }
             else if (e.Key == VirtualKey.Space && package is not null)
             {
-                package.IsChecked = !package.IsChecked;
+                if (_selectedIndices.Count > 1)
+                {
+                    // Toggle checkboxes for all selected items (contiguous or not)
+                    int currentIndex = _lastNavigationIndex >= 0 && _lastNavigationIndex < FilteredPackages.Count
+                        ? _lastNavigationIndex
+                        : senderIndex;
+                    if (currentIndex < 0 || currentIndex >= FilteredPackages.Count)
+                        return;
+                    bool newState = !FilteredPackages[currentIndex].Package.IsChecked;
+                    foreach (int i in _selectedIndices)
+                    {
+                        if (i >= 0 && i < FilteredPackages.Count)
+                            FilteredPackages[i].IsChecked = newState;
+                    }
+                }
+                else
+                {
+                    packageItemContainer.Wrapper.IsChecked = !packageItemContainer.Wrapper.IsChecked;
+                }
                 e.Handled = true;
             }
         }
@@ -1406,6 +1517,7 @@ namespace UniGetUI.Interface
         {
             Settings.SetDictionaryItem(Settings.K.PackageListViewMode, PAGE_NAME, ViewModeSelector.SelectedIndex);
             GenerateHeaderBarTitles();
+            ResetSelectionState();
         }
 
         FrameworkElement _lastContextMenuButtonTapped = null!;
