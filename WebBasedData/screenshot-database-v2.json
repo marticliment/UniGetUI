@@ -1,8 +1,8 @@
 {
     "package_count": {
-        "total": 12449,
-        "done": 5962,
-        "packages_with_icon": 5962,
+        "total": 12450,
+        "done": 5964,
+        "packages_with_icon": 5964,
         "packages_with_screenshot": 1374,
         "total_screenshots": 4246
     },
@@ -3629,6 +3629,10 @@
         },
         "authy-desktop": {
             "icon": "https://community.chocolatey.org/content/packageimages/authy-desktop.2.2.3.png",
+            "images": []
+        },
+        "auth-desktop": {
+            "icon": "https://raw.githubusercontent.com/ente-io/ente/refs/heads/main/mobile/apps/auth/assets/icons/auth-icon.png",
             "images": []
         },
         "autoactions": {
@@ -11789,6 +11793,10 @@
             "icon": "https://raw.githubusercontent.com/dotnetcore-chocolatey/dotnetcore-chocolateypackages/master/icons/dotnetcore.png",
             "images": []
         },
+        "dotnet-desktopruntime-10": {
+            "icon": "https://i.ibb.co/sdzNm4Dp/image.png",
+            "images": []
+        },
         "dotnet-desktopruntime-3_1": {
             "icon": "https://raw.githubusercontent.com/dotnetcore-chocolatey/dotnetcore-chocolateypackages/master/icons/dotnetcore.png",
             "images": []
@@ -11806,11 +11814,11 @@
             "images": []
         },
         "dotnet-desktopruntime-8": {
-            "icon": "https://raw.githubusercontent.com/dotnetcore-chocolatey/dotnetcore-chocolateypackages/master/icons/dotnetcore.png",
+            "icon": "https://i.ibb.co/sdzNm4Dp/image.png",
             "images": []
         },
         "dotnet-desktopruntime-9": {
-            "icon": "https://raw.githubusercontent.com/dotnetcore-chocolatey/dotnetcore-chocolateypackages/master/icons/dotnetcore.png",
+            "icon": "https://i.ibb.co/sdzNm4Dp/image.png",
             "images": []
         },
         "dotnet-desktopruntime-pr\u2026": {
@@ -16573,10 +16581,6 @@
             "images": []
         },
         "getter1": {
-            "icon": "",
-            "images": []
-        },
-        "gettext": {
             "icon": "",
             "images": []
         },
@@ -26263,7 +26267,7 @@
                 "https://i.postimg.cc/TPMfctVN/mkvtoolnix-gui-official-screenshot.png"
             ]
         },
-        "mlocati-gettext": {
+        "Winget.mlocati.GetText": {
             "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Heckert_GNU_white.svg/960px-Heckert_GNU_white.svg.png",
             "images": [
                 "https://i.imgur.com/KnVZQsT.png"
@@ -31735,7 +31739,7 @@
             "images": []
         },
         "peazip": {
-            "icon": "https://www.iconarchive.com/download/i106134/papirus-team/papirus-apps/peazip.512.png",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Peazip_ico.svg/256px-Peazip_ico.svg.png",
             "images": [
                 "https://i.postimg.cc/Qxybz51V/image.png",
                 "https://i.postimg.cc/DyXJ2bRS/image.png",
@@ -41983,7 +41987,7 @@
             "images": []
         },
         "tailscale": {
-            "icon": "https://community.chocolatey.org/content/packageimages/tailscale.1.62.1.png",
+            "icon": "https://tailscale.com/favicon.png",
             "images": []
         },
         "tailwindcss": {
