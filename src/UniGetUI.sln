@@ -107,6 +107,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniGetUI.PackageEngine.Seri
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniGetUI.Core.SecureSettings", "UniGetUI.Core.SecureSettings\UniGetUI.Core.SecureSettings.csproj", "{B0E59327-933E-4DB0-BD2D-FB16EB9B4194}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniGetUI.PackageEngine.Managers.Bun", "UniGetUI.PackageEngine.Managers.Bun\UniGetUI.PackageEngine.Managers.Bun.csproj", "{D592551B-5329-44BA-9446-8ED475D7539A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
