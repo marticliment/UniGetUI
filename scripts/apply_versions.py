@@ -62,6 +62,7 @@ try:
     fileReplaceLinesWith("UniGetUI.iss", {
         "#define MyAppVersion": f" \"{versionName}\"\n",
         "VersionInfoVersion=": f"{versionISS}\n",
+        "VersionInfoProductVersion=": f"{versionISS}\n",
     }, encoding="utf-8-sig")
 
     IS_BETA = (input("Is this a beta release? [y/N]: ").lower().strip() == "y")
