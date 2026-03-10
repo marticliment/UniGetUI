@@ -57,6 +57,7 @@
                 Width="40"
                 Height="40"
                 Padding="6"
+                AutomationProperties.Name="{x:Bind BackAutomationName, Mode=OneWay}"
                 VerticalAlignment="Center"
                 Background="Transparent"
                 BorderThickness="0">

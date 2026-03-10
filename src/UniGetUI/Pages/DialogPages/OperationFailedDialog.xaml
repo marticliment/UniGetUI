@@ -22,14 +22,19 @@
             Grid.Row="0"
             TextWrapping="WrapWholeWords" />
         <ScrollViewer
+            Name="CommandLineOutputScrollViewer"
             Grid.Row="1"
             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
             CornerRadius="6"
-            HorizontalScrollMode="Disabled">
+            HorizontalScrollMode="Disabled"
+            IsTabStop="True"
+            AutomationProperties.Name="Command-line output">
             <RichTextBlock
                 Name="CommandLineOutput"
                 Padding="6"
                 FontFamily="Consolas"
+                IsTextSelectionEnabled="True"
+                AutomationProperties.Name="Command-line output text"
                 TextWrapping="Wrap" />
         </ScrollViewer>
         <widgets:DialogCloseButton Margin="0,-64,-24,0" Click="CloseButton_Click" />

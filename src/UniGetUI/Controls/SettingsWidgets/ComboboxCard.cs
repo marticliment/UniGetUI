@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.WinUI.Controls;
+using Microsoft.UI.Xaml.Automation;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
 using UniGetUI.Core.Logging;
@@ -17,6 +18,16 @@ namespace UniGetUI.Interface.Widgets
         private readonly ObservableCollection<string> _elements = [];
         private readonly Dictionary<string, string> _values_ref = [];
         private readonly Dictionary<string, string> _inverted_val_ref = [];
+        private string _translatedText = string.Empty;
+
+        private void UpdateAutomationNames()
+        {
+            if (!string.IsNullOrWhiteSpace(_translatedText))
+            {
+                AutomationProperties.SetName(_combobox, _translatedText);
+                AutomationProperties.SetName(this, _translatedText);
+            }
+        }
 
         private Settings.K settings_name = Settings.K.Unset;
         public Settings.K SettingName
@@ -29,7 +40,12 @@ namespace UniGetUI.Interface.Widgets
 
         public string Text
         {
-            set => Header = CoreTools.Translate(value);
+            set
+            {
+                _translatedText = CoreTools.Translate(value);
+                Header = _translatedText;
+                UpdateAutomationNames();
+            }
         }
 
         public event EventHandler<EventArgs>? ValueChanged;
@@ -39,6 +55,7 @@ namespace UniGetUI.Interface.Widgets
             _combobox.MinWidth = 200;
             _combobox.SetBinding(ItemsControl.ItemsSourceProperty, new Binding { Source = _elements });
             Content = _combobox;
+            UpdateAutomationNames();
         }
 
         public void AddItem(string name, string value)

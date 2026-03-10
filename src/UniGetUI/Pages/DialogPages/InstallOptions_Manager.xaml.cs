@@ -1,4 +1,5 @@
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation;
 using Microsoft.UI.Xaml.Controls;
 using UniGetUI.Core.Language;
 using UniGetUI.Core.SettingsEngine.SecureSettings;
@@ -23,11 +24,22 @@ public sealed partial class InstallOptions_Manager : UserControl
     {
         Manager = manager;
         InitializeComponent();
-        AdminCheckBox.Content = CoreTools.Translate("Run as admin");
-        InteractiveCheckBox.Content = CoreTools.Translate("Interactive installation");
-        HashCheckBox.Content = CoreTools.Translate("Skip hash check");
-        UninstallPreviousVerOnUpdate.Content = CoreTools.Translate("Uninstall previous versions when updated");
-        PreReleaseCheckBox.Content = CoreTools.Translate("Allow pre-release versions");
+        string runAsAdminText = CoreTools.Translate("Run as admin");
+        string interactiveInstallText = CoreTools.Translate("Interactive installation");
+        string skipHashText = CoreTools.Translate("Skip hash check");
+        string uninstallPreviousText = CoreTools.Translate("Uninstall previous versions when updated");
+        string allowPreReleaseText = CoreTools.Translate("Allow pre-release versions");
+
+        AdminCheckBox.Content = runAsAdminText;
+        AutomationProperties.SetName(AdminCheckBox, runAsAdminText);
+        InteractiveCheckBox.Content = interactiveInstallText;
+        AutomationProperties.SetName(InteractiveCheckBox, interactiveInstallText);
+        HashCheckBox.Content = skipHashText;
+        AutomationProperties.SetName(HashCheckBox, skipHashText);
+        UninstallPreviousVerOnUpdate.Content = uninstallPreviousText;
+        AutomationProperties.SetName(UninstallPreviousVerOnUpdate, uninstallPreviousText);
+        PreReleaseCheckBox.Content = allowPreReleaseText;
+        AutomationProperties.SetName(PreReleaseCheckBox, allowPreReleaseText);
         ArchLabel.Text = CoreTools.Translate("Architecture to install:");
         ScopeLabel.Text = CoreTools.Translate("Installation scope:");
         LocationLabel.Text = CoreTools.Translate("Install location:");

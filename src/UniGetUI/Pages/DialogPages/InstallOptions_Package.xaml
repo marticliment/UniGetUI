@@ -15,7 +15,9 @@
     mc:Ignorable="d">
     <Page.Resources>
         <DataTemplate x:Key="ProcessTemplate" x:DataType="local:IOP_Proc">
-            <StackPanel Orientation="Horizontal">
+            <StackPanel
+                Orientation="Horizontal"
+                AutomationProperties.Name="{x:Bind Name}">
                 <Viewbox Width="16">
                     <FontIcon Glyph="&#xECAA;" />
                 </Viewbox>

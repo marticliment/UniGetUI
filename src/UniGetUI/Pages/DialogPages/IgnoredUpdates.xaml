@@ -87,7 +87,7 @@
             </ItemsView.Layout>
             <ItemsView.ItemTemplate>
                 <DataTemplate x:DataType="local:IgnoredPackageEntry">
-                    <ItemContainer>
+                    <ItemContainer AutomationProperties.Name="{x:Bind Name}">
                         <Grid Padding="8,0" ColumnSpacing="4">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
@@ -157,6 +157,7 @@
                                 Width="32"
                                 Height="32"
                                 Padding="0"
+                                AutomationProperties.Name="{x:Bind StopIgnoringUpdatesAutomationName, Mode=OneWay}"
                                 Click="{x:Bind RemoveFromIgnoredUpdates}">
                                 <FontIcon FontSize="16" Glyph="&#xE74D;" />
                             </Button>

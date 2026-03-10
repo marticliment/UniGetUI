@@ -95,6 +95,7 @@
                     Height="32"
                     Margin="6,0,0,0"
                     Padding="0"
+                    AutomationProperties.Name="{x:Bind Tooltip, Mode=OneWay}"
                     CornerRadius="6"
                     ToolTipService.ToolTip="{x:Bind Tooltip}">
                     <widgets:LocalIcon Icon="{x:Bind Icon}" />
@@ -224,6 +225,7 @@
                             Padding="0"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Center"
+                            AutomationProperties.Name="{x:Bind OperationOptionsAutomationName, Mode=OneWay}"
                             BorderThickness="0"
                             CornerRadius="0,6,6,0"
                             Flyout="{x:Bind OpMenu}"
@@ -373,6 +375,7 @@
                 Height="12"
                 Margin="1,0,1,0"
                 Padding="0,0,0,0"
+                AutomationProperties.Name="{x:Bind ResizeOperationsAreaAutomationName, Mode=OneWay}"
                 CornerRadius="4"
                 Orientation="Horizontal" />
             <Grid Grid.Row="1" Grid.Column="0">
@@ -387,6 +390,7 @@
                     Grid.Column="1"
                     Height="12"
                     Padding="12,0,12,0"
+                    AutomationProperties.Name="{x:Bind ExpandCollapseOperationsAutomationName, Mode=OneWay}"
                     Click="ExpandCollapseOpList_Click"
                     CornerRadius="4"
                     Foreground="{ThemeResource ScrollBarButtonPointerOverBackgroundThemeBrush}">
@@ -397,6 +401,7 @@
                     Grid.Column="2"
                     Height="12"
                     Padding="12,0,12,0"
+                    AutomationProperties.Name="{x:Bind OperationsListActionsAutomationName, Mode=OneWay}"
                     Click="OperationSplitterMenuButton_Click"
                     CornerRadius="4"
                     Foreground="{ThemeResource ScrollBarButtonPointerOverBackgroundThemeBrush}">
@@ -408,6 +413,7 @@
                 Grid.Row="2"
                 Grid.Column="0"
                 x:FieldModifier="public"
+                AutomationProperties.Name="{x:Bind OperationsListAutomationName, Mode=OneWay}"
                 ItemTemplate="{StaticResource OperationTemplate}"
                 SelectionMode="None"
                 SizeChanged="OperationScrollView_SizeChanged">

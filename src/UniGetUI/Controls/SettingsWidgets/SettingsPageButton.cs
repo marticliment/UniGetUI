@@ -1,5 +1,6 @@
 using CommunityToolkit.WinUI.Controls;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 
@@ -10,14 +11,35 @@ namespace UniGetUI.Interface.Widgets
 {
     public partial class SettingsPageButton : SettingsCard
     {
+        private string _headerText = string.Empty;
+        private string _descriptionText = string.Empty;
+
+        private void UpdateAutomationName()
+        {
+            string name = string.IsNullOrWhiteSpace(_descriptionText)
+                ? _headerText
+                : $"{_headerText}. {_descriptionText}";
+            AutomationProperties.SetName(this, name);
+        }
+
         public string Text
         {
-            set => Header = CoreTools.Translate(value);
+            set
+            {
+                _headerText = CoreTools.Translate(value);
+                Header = _headerText;
+                UpdateAutomationName();
+            }
         }
 
         public string UnderText
         {
-            set => Description = CoreTools.Translate(value);
+            set
+            {
+                _descriptionText = CoreTools.Translate(value);
+                Description = _descriptionText;
+                UpdateAutomationName();
+            }
         }
 
         public IconType Icon
@@ -30,6 +52,8 @@ namespace UniGetUI.Interface.Widgets
             CornerRadius = new CornerRadius(8);
             HorizontalAlignment = HorizontalAlignment.Stretch;
             IsClickEnabled = true;
+            IsTabStop = true;
+            UseSystemFocusVisuals = true;
         }
     }
 }

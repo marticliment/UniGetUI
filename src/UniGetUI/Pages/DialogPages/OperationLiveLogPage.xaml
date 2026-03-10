@@ -22,12 +22,16 @@
             Grid.Column="0"
             x:FieldModifier="public"
             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-            CornerRadius="6">
+            CornerRadius="6"
+            IsTabStop="True"
+            AutomationProperties.Name="Operation live log output">
             <RichTextBlock
                 Name="TextBlock"
                 Margin="8"
                 x:FieldModifier="public"
                 FontFamily="Consolas"
+                IsTextSelectionEnabled="True"
+                AutomationProperties.Name="Operation live log text"
                 TextWrapping="Wrap" />
         </ScrollViewer>
         <widgets:DialogCloseButton

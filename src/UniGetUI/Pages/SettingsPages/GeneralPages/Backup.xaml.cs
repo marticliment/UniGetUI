@@ -28,6 +28,9 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         private readonly GitHubBackupService _backupService;
         private bool _isLoggedIn;
         private bool _isLoading;
+        public string ResetBackupDirectoryAutomationName => CoreTools.Translate("Reset backup directory");
+        public string OpenBackupDirectoryAutomationName => CoreTools.Translate("Open backup directory");
+
         public Backup()
         {
             this.InitializeComponent();

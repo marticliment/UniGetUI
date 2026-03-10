@@ -57,6 +57,10 @@ namespace UniGetUI.Interface
         private PageType OldPage_t = PageType.Null;
         private PageType CurrentPage_t = PageType.Null;
         private List<PageType> NavigationHistory = new();
+        public string ExpandCollapseOperationsAutomationName => CoreTools.Translate("Expand or collapse operations list");
+        public string OperationsListActionsAutomationName => CoreTools.Translate("Operation list actions");
+        public string OperationsListAutomationName => CoreTools.Translate("Operations list");
+        public string ResizeOperationsAreaAutomationName => CoreTools.Translate("Resize operations area");
 
         AutoSuggestBox MainTextBlock;
         public event EventHandler<bool>? CanGoBackChanged;

@@ -50,6 +50,7 @@
                 Width="35"
                 Height="35"
                 Padding="5"
+                AutomationProperties.Name="{x:Bind HelpBackAutomationName, Mode=OneWay}"
                 Click="BackButton_Click"
                 CornerRadius="4,0,0,4">
                 <FontIcon FontSize="20" Glyph="&#xE76B;" />
@@ -60,6 +61,7 @@
                 Width="35"
                 Height="35"
                 Padding="5"
+                AutomationProperties.Name="{x:Bind HelpForwardAutomationName, Mode=OneWay}"
                 Click="RightButton_Click"
                 CornerRadius="0">
                 <FontIcon FontSize="20" Glyph="&#xE76C;" />
@@ -70,6 +72,7 @@
                 Width="35"
                 Height="35"
                 Padding="5"
+                AutomationProperties.Name="{x:Bind HelpHomeAutomationName, Mode=OneWay}"
                 Click="HomeButton_Click"
                 CornerRadius="0">
                 <FontIcon FontSize="16" Glyph="&#xE80F;" />
@@ -80,6 +83,7 @@
                 Width="35"
                 Height="35"
                 Padding="5"
+                AutomationProperties.Name="{x:Bind HelpReloadAutomationName, Mode=OneWay}"
                 Click="ReloadButton_Click"
                 CornerRadius="0,4,4,0">
                 <FontIcon FontSize="16" Glyph="&#xE72C;" />
