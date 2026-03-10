@@ -24,13 +24,34 @@ param(
     [string] $UpstreamRepo = "marticliment/UniGetUI",
     [string] $UpstreamRef = "main",
     [string] $UpstreamReferencePath = "src/UniGetUI.PackageEngine.Managers.WinGet/winget-cli_x64",
+    [string] $GitHubToken = "",
     [switch] $Force
 )
 
 $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
 
-$Headers = @{ "User-Agent" = "UniGetUI-build" }
+$Headers = @{
+    "User-Agent" = "UniGetUI-build"
+    "Accept" = "application/vnd.github+json"
+    "X-GitHub-Api-Version" = "2022-11-28"
+}
+
+if ([string]::IsNullOrWhiteSpace($GitHubToken)) {
+    $GitHubToken = $env:GITHUB_TOKEN
+}
+if ([string]::IsNullOrWhiteSpace($GitHubToken)) {
+    $GitHubToken = $env:GH_TOKEN
+}
+
+if (-not [string]::IsNullOrWhiteSpace($GitHubToken)) {
+    $Headers["Authorization"] = "Bearer $GitHubToken"
+    Write-Host "Using authenticated GitHub API requests."
+}
+else {
+    Write-Warning "No GitHub token found (GITHUB_TOKEN/GH_TOKEN). Requests may be rate-limited."
+}
+
 $X64OnlyReferenceFiles = @(
     "AppInstallerBackgroundTasks.dll"
 )

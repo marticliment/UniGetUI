@@ -80,6 +80,8 @@ jobs:
     runs-on: windows-latest
     needs: [preflight]
     environment: ${{ needs.preflight.outputs.package-env }}
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix:
@@ -138,6 +140,8 @@ jobs:
 
       - name: Fetch WinGet CLI bundle
         shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           $Platform = '${{ matrix.platform }}'
           .\scripts\fetch-winget-cli.ps1 -Architectures @($Platform) -Force
