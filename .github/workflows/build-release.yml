@@ -245,19 +245,6 @@ jobs:
             -CertificateName '${{ secrets.CODE_SIGNING_CERTIFICATE_NAME }}' `
             -TimestampServer '${{ vars.CODE_SIGNING_TIMESTAMP_SERVER }}'
 
-      - name: Generate checksums
-        shell: pwsh
-        run: |
-          $Platform = '${{ matrix.platform }}'
-          $ChecksumFile = "output/checksums.$Platform.txt"
-          Get-ChildItem "output" -File | Where-Object { $_.Name -notlike "checksums.*.txt" } | ForEach-Object {
-            $hash = (Get-FileHash $_.FullName -Algorithm SHA256).Hash
-            "$hash  $($_.Name)" | Tee-Object -FilePath $ChecksumFile -Append
-          }
-          echo "::group::checksums"
-          Get-Content $ChecksumFile
-          echo "::endgroup::"
-
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -300,6 +287,24 @@ jobs:
             Write-Host "Created legacy installer alias: $LegacyInstallerPath"
           }
 
+      - name: Generate consolidated checksums
+        shell: pwsh
+        working-directory: output
+        run: |
+          $ChecksumFile = Join-Path $PWD "checksums.txt"
+          $ChecksumLines = Get-ChildItem -Path . -Recurse -File | Where-Object {
+            $_.Name -notmatch '^checksums(\..+)?\.txt$'
+          } | Sort-Object Name | ForEach-Object {
+            $hash = (Get-FileHash $_.FullName -Algorithm SHA256).Hash
+            "$hash  $($_.Name)"
+          }
+
+          Set-Content -Path $ChecksumFile -Value $ChecksumLines -Encoding utf8NoBOM
+
+          echo "::group::checksums"
+          Get-Content $ChecksumFile
+          echo "::endgroup::"
+
       - name: Create GitHub Release
         shell: pwsh
         env:
@@ -310,17 +315,16 @@ jobs:
           $DryRun = [System.Boolean]::Parse('${{ needs.preflight.outputs.dry-run }}')
 
           echo "::group::checksums"
-          Get-ChildItem -Path . -Recurse -Filter "checksums.*.txt" | ForEach-Object {
-            Write-Host "--- $($_.FullName) ---"
-            Get-Content $_.FullName
-          }
+          Get-Content "./checksums.txt"
           echo "::endgroup::"
 
           $ReleaseTag = "v$PackageVersion"
           $ReleaseTitle = "UniGetUI v${PackageVersion}"
           $Repository = $Env:GITHUB_REPOSITORY
 
-          $Files = Get-ChildItem -Path . -Recurse -File
+          $Files = Get-ChildItem -Path . -Recurse -File | Where-Object {
+            $_.Name -eq 'checksums.txt' -or $_.Name -notmatch '^checksums\..+\.txt$'
+          }
 
           if ($DryRun) {
             Write-Host "Dry Run: skipping GitHub release creation!"
