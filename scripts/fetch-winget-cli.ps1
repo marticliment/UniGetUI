@@ -21,9 +21,9 @@ param(
     [string] $Version = "v1.12.470",
     [string[]] $Architectures = @("x64", "arm64"),
     [string] $DestinationRoot = (Join-Path $PSScriptRoot ".." "src" "UniGetUI.PackageEngine.Managers.WinGet"),
-    [string] $UpstreamRepo = "marticliment/UniGetUI",
+    [string] $UpstreamRepo = "",
     [string] $UpstreamRef = "main",
-    [string] $UpstreamReferencePath = "src/UniGetUI.PackageEngine.Managers.WinGet/winget-cli_x64",
+    [string] $UpstreamReferencePath = "",
     [string] $GitHubToken = "",
     [switch] $Force
 )
@@ -52,9 +52,65 @@ else {
     Write-Warning "No GitHub token found (GITHUB_TOKEN/GH_TOKEN). Requests may be rate-limited."
 }
 
-$X64OnlyReferenceFiles = @(
-    "AppInstallerBackgroundTasks.dll"
-)
+$BundledReferenceFiles = @{
+    x64 = @(
+        "concrt140_app.dll",
+        "libsmartscreenn.dll",
+        "Microsoft.Management.Configuration.dll",
+        "Microsoft.Web.WebView2.Core.dll",
+        "msvcp140_1_app.dll",
+        "msvcp140_2_app.dll",
+        "msvcp140_app.dll",
+        "msvcp140_atomic_wait_app.dll",
+        "resources.pri",
+        "vcamp140_app.dll",
+        "vccorlib140_app.dll",
+        "vcomp140_app.dll",
+        "vcruntime140_1_app.dll",
+        "vcruntime140_app.dll",
+        "WindowsPackageManager.dll",
+        "WindowsPackageManagerServer.exe",
+        "winget.exe"
+    )
+    arm64 = @(
+        "concrt140_app.dll",
+        "libsmartscreenn.dll",
+        "Microsoft.Management.Configuration.dll",
+        "Microsoft.Web.WebView2.Core.dll",
+        "msvcp140_1_app.dll",
+        "msvcp140_2_app.dll",
+        "msvcp140_app.dll",
+        "msvcp140_atomic_wait_app.dll",
+        "resources.pri",
+        "vcamp140_app.dll",
+        "vccorlib140_app.dll",
+        "vcomp140_app.dll",
+        "vcruntime140_1_app.dll",
+        "vcruntime140_app.dll",
+        "WindowsPackageManager.dll",
+        "WindowsPackageManagerServer.exe",
+        "winget.exe"
+    )
+    x86 = @(
+        "concrt140_app.dll",
+        "libsmartscreenn.dll",
+        "Microsoft.Management.Configuration.dll",
+        "Microsoft.Web.WebView2.Core.dll",
+        "msvcp140_1_app.dll",
+        "msvcp140_2_app.dll",
+        "msvcp140_app.dll",
+        "msvcp140_atomic_wait_app.dll",
+        "resources.pri",
+        "vcamp140_app.dll",
+        "vccorlib140_app.dll",
+        "vcomp140_app.dll",
+        "vcruntime140_1_app.dll",
+        "vcruntime140_app.dll",
+        "WindowsPackageManager.dll",
+        "WindowsPackageManagerServer.exe",
+        "winget.exe"
+    )
+}
 
 function Get-ReleaseInfo {
     param([string] $Tag)
@@ -126,6 +182,62 @@ function Resolve-UpstreamReferencePathForArchitecture {
     return $BasePath
 }
 
+function Get-BundledReferenceFiles {
+    param([string] $Architecture)
+
+    $archKey = $Architecture.ToLowerInvariant()
+    if ($BundledReferenceFiles.ContainsKey($archKey)) {
+        return @($BundledReferenceFiles[$archKey])
+    }
+
+    return @($BundledReferenceFiles["x64"])
+}
+
+function Get-ReferenceFiles {
+    param([string] $Architecture)
+
+    $archKey = $Architecture.ToLowerInvariant()
+    $upstreamConfigured = -not [string]::IsNullOrWhiteSpace($UpstreamRepo) -and -not [string]::IsNullOrWhiteSpace($UpstreamReferencePath)
+
+    if ($upstreamConfigured) {
+        $upstreamReferencePathForArch = Resolve-UpstreamReferencePathForArchitecture -BasePath $UpstreamReferencePath -Architecture $archKey
+
+        try {
+            $upstreamFiles = Get-UpstreamReferenceFiles -Repository $UpstreamRepo -Ref $UpstreamRef -DirectoryPath $upstreamReferencePathForArch
+
+            return @{
+                Files = @($upstreamFiles)
+                SourceDescription = "$UpstreamRepo@$UpstreamRef/$upstreamReferencePathForArch"
+            }
+        }
+        catch {
+            if ($upstreamReferencePathForArch -ne $UpstreamReferencePath) {
+                Write-Warning "Unable to load architecture-specific upstream reference '$upstreamReferencePathForArch'. Falling back to '$UpstreamReferencePath'."
+
+                try {
+                    $upstreamFiles = Get-UpstreamReferenceFiles -Repository $UpstreamRepo -Ref $UpstreamRef -DirectoryPath $UpstreamReferencePath
+
+                    return @{
+                        Files = @($upstreamFiles)
+                        SourceDescription = "$UpstreamRepo@$UpstreamRef/$UpstreamReferencePath"
+                    }
+                }
+                catch {
+                    Write-Warning "Unable to load upstream reference '$UpstreamRepo@$UpstreamRef/$UpstreamReferencePath'. Falling back to bundled reference manifest."
+                }
+            }
+            else {
+                Write-Warning "Unable to load upstream reference '$UpstreamRepo@$UpstreamRef/$UpstreamReferencePath'. Falling back to bundled reference manifest."
+            }
+        }
+    }
+
+    return @{
+        Files = @(Get-BundledReferenceFiles -Architecture $archKey)
+        SourceDescription = "bundled manifest ($archKey)"
+    }
+}
+
 $release = Get-ReleaseInfo -Tag $Version
 Write-Host "Using winget-cli release: $($release.tag_name)"
 
@@ -154,30 +266,10 @@ Expand-Archive -Path $depsPath -DestinationPath $depsDir -Force
 
 foreach ($arch in $Architectures) {
     $archKey = $arch.ToLowerInvariant()
-    $upstreamReferencePathForArch = Resolve-UpstreamReferencePathForArchitecture -BasePath $UpstreamReferencePath -Architecture $archKey
+    $reference = Get-ReferenceFiles -Architecture $archKey
+    $expectedFiles = @($reference.Files)
 
-    try {
-        $upstreamFiles = Get-UpstreamReferenceFiles -Repository $UpstreamRepo -Ref $UpstreamRef -DirectoryPath $upstreamReferencePathForArch
-    }
-    catch {
-        if ($upstreamReferencePathForArch -ne $UpstreamReferencePath) {
-            Write-Warning "Unable to load architecture-specific upstream reference '$upstreamReferencePathForArch'. Falling back to '$UpstreamReferencePath'."
-            $upstreamReferencePathForArch = $UpstreamReferencePath
-            $upstreamFiles = Get-UpstreamReferenceFiles -Repository $UpstreamRepo -Ref $UpstreamRef -DirectoryPath $upstreamReferencePathForArch
-        }
-        else {
-            throw
-        }
-    }
-
-    $expectedFiles = if ($archKey -eq 'x64') {
-        $upstreamFiles
-    }
-    else {
-        @($upstreamFiles | Where-Object { $_ -notin $X64OnlyReferenceFiles })
-    }
-
-    Write-Host "[$archKey] Using upstream reference list from $UpstreamRepo@$UpstreamRef/$upstreamReferencePathForArch ($($upstreamFiles.Count) files)"
+    Write-Host "[$archKey] Using reference list from $($reference.SourceDescription) ($($expectedFiles.Count) files)"
 
     $msix = Get-ChildItem $bundleDir -Filter "*${archKey}*.msix" -Recurse | Select-Object -First 1
     if (-not $msix) {
@@ -207,15 +299,20 @@ foreach ($arch in $Architectures) {
             $source = Get-ChildItem $depsArchDir -Recurse -Filter $fileName -File | Select-Object -First 1
         }
         if (-not $source) {
-            $fallbackUrl = "https://raw.githubusercontent.com/${UpstreamRepo}/${UpstreamRef}/${upstreamReferencePathForArch}/${fileName}"
-            Write-Warning "Release payload missing '$fileName' for $arch. Downloading fallback from upstream reference."
-            try {
-                Invoke-WebRequest -Uri $fallbackUrl -OutFile $destinationFile -Headers $Headers
-                continue
+            if (-not [string]::IsNullOrWhiteSpace($UpstreamRepo) -and -not [string]::IsNullOrWhiteSpace($UpstreamReferencePath)) {
+                $upstreamReferencePathForArch = Resolve-UpstreamReferencePathForArchitecture -BasePath $UpstreamReferencePath -Architecture $archKey
+                $fallbackUrl = "https://raw.githubusercontent.com/${UpstreamRepo}/${UpstreamRef}/${upstreamReferencePathForArch}/${fileName}"
+                Write-Warning "Release payload missing '$fileName' for $arch. Downloading fallback from upstream reference."
+                try {
+                    Invoke-WebRequest -Uri $fallbackUrl -OutFile $destinationFile -Headers $Headers
+                    continue
+                }
+                catch {
+                    throw "Required upstream file '$fileName' not found for $arch and fallback download failed: $fallbackUrl"
+                }
             }
-            catch {
-                throw "Required upstream file '$fileName' not found for $arch and fallback download failed: $fallbackUrl"
-            }
+
+            throw "Required file '$fileName' not found for $arch in the winget release payload."
         }
 
         Copy-Item $source.FullName $destinationFile -Force
