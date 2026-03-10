@@ -36,19 +36,19 @@ jobs:
         id: info
         shell: pwsh
         run: |
-          $IsMasterBranch = ('${{ github.ref_name }}' -eq 'master')
+          $IsProductionBranch = @('main', 'master') -contains '${{ github.ref_name }}'
 
           try { $SkipPublish = [System.Boolean]::Parse('${{ inputs.skip-publish }}') } catch { $SkipPublish = $false }
           try { $DryRun = [System.Boolean]::Parse('${{ inputs.dry-run }}') } catch { $DryRun = $true }
 
-          $PackageEnv = if ($IsMasterBranch) {
+          $PackageEnv = if ($IsProductionBranch) {
             "publish-prod"
           } else {
             "publish-test"
           }
 
-          if (-Not $IsMasterBranch) {
-            $DryRun = $true # force dry run when not on master branch
+          if (-Not $IsProductionBranch) {
+            $DryRun = $true # force dry run when not on main/master branch
           }
 
           if (-Not $SkipPublish -And $PackageEnv -ne 'publish-prod') {
