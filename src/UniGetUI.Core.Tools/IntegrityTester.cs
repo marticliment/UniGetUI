@@ -21,15 +21,15 @@ public static class IntegrityTester
         public Dictionary<string, MismatchedHash> CorruptedFiles;
     }
 
-    private static string GetMD5(string fullPath, bool canRetry)
+    private static string GetSHA256(string fullPath, bool canRetry)
     {
         try
         {
-            using (var md5 = MD5.Create())
+            using (var sha256 = SHA256.Create())
             {
                 using (var stream = File.OpenRead(fullPath))
                 {
-                    var hashBytes = md5.ComputeHash(stream);
+                    var hashBytes = sha256.ComputeHash(stream);
                     return BitConverter.ToString(hashBytes).Replace("-", "");
                 }
             }
@@ -39,7 +39,7 @@ public static class IntegrityTester
             if (canRetry)
             {
                 Task.Delay(1000).GetAwaiter().GetResult();
-                return GetMD5(fullPath, false);
+                return GetSHA256(fullPath, false);
             }
 
             return $"{ex.GetType()}: {ex.Message}";
@@ -97,11 +97,11 @@ public static class IntegrityTester
                 continue;
             }
 
-            var currentMd5 = GetMD5(fullPath, allowRetry).ToLower();
-            if (currentMd5 != expectedHash.ToLower())
+            var currentHash = GetSHA256(fullPath, allowRetry).ToLower();
+            if (currentHash != expectedHash.ToLower())
             {
-                mismatches.Add($"/{file}", new() { Expected = expectedHash, Got = currentMd5 });
-                Logger.Error($"File {file} expected to have md5 {expectedHash}, but had {currentMd5} insetad");
+                mismatches.Add($"/{file}", new() { Expected = expectedHash, Got = currentHash });
+                Logger.Error($"File {file} expected to have sha256 {expectedHash}, but had {currentHash} instead");
             }
         }
 
@@ -138,7 +138,7 @@ public static class IntegrityTester
         {
             Builder.Append("Corrupted files: ");
             foreach (var (file, hashes) in result.CorruptedFiles)
-                Builder.Append($"\n - {file} (md5 mismatch, got {hashes.Got} but expected {hashes.Expected} ");
+                Builder.Append($"\n - {file} (sha256 mismatch, got {hashes.Got} but expected {hashes.Expected} ");
             Builder.Append('\n');
         }
 
