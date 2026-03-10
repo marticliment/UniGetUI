@@ -7,11 +7,13 @@ using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Packages.Classes;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
-using UniGetUI.PackageEngine.Managers.WingetManager;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.PackageLoader;
 using UniGetUI.PackageEngine.Serializable;
 using UniGetUI.PackageOperations;
+#if WINDOWS
+using UniGetUI.PackageEngine.Managers.WingetManager;
+#endif
 
 namespace UniGetUI.PackageEngine.Operations
 {
@@ -106,7 +108,7 @@ namespace UniGetUI.PackageEngine.Operations
                 Arguments = $"{Package.Manager.Status.ExecutableCallArgs} {operation_args}";
             }
 
-            if (IsAdmin && Package.Manager is WinGet)
+            if (IsAdmin && IsWinGetManager(Package.Manager))
             {
                 RedirectWinGetTempFolder();
             }
@@ -125,6 +127,15 @@ namespace UniGetUI.PackageEngine.Operations
         protected sealed override Task<OperationVeredict> GetProcessVeredict(int ReturnCode, List<string> Output)
         {
             return Task.FromResult(Package.Manager.OperationHelper.GetResult(Package, Role, Output, ReturnCode));
+        }
+
+        private static bool IsWinGetManager(IPackageManager manager)
+        {
+#if WINDOWS
+            return manager is WinGet;
+#else
+            return false;
+#endif
         }
 
         public override Task<Uri> GetOperationIcon()

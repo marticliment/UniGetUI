@@ -8,7 +8,7 @@ public class MetaTests
     public void TestJsonSerializationOptions()
     {
         // This test ensures that any json operation has the proper serialization options set (required for TRIM support)
-        var solutionDirectory = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\..\..\.."));
+        var solutionDirectory = FindRepositoryRoot();
         var csFiles = Directory.GetFiles(solutionDirectory, "*.cs", SearchOption.AllDirectories)
             .Where(file => !file.Contains(@"bin\") && !file.Contains(@"obj\") && !file.EndsWith(".g.cs") && !file.EndsWith("Tests.cs"));
 
@@ -30,7 +30,7 @@ public class MetaTests
     public void TestHttpClientInstantiation()
     {
         // This test ensures that any instantiation of HttpClient contains at least one empty line after it
-        var solutionDirectory = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\..\..\.."));
+        var solutionDirectory = FindRepositoryRoot();
         var csFiles = Directory.GetFiles(solutionDirectory, "*.cs", SearchOption.AllDirectories)
             .Where(file => !file.Contains(@"bin\") && !file.Contains(@"obj\") && !file.EndsWith(".g.cs")
                            && !file.EndsWith("Tests.cs") && !file.EndsWith("LanguageEngine.cs"));
@@ -46,5 +46,22 @@ public class MetaTests
         }
     }
 
+    private static string FindRepositoryRoot()
+    {
+        DirectoryInfo? currentDirectory = new(AppDomain.CurrentDomain.BaseDirectory);
+
+        while (currentDirectory is not null)
+        {
+            if (File.Exists(Path.Join(currentDirectory.FullName, "AGENTS.md"))
+                && Directory.Exists(Path.Join(currentDirectory.FullName, "src")))
+            {
+                return currentDirectory.FullName;
+            }
+
+            currentDirectory = currentDirectory.Parent;
+        }
+
+        throw new DirectoryNotFoundException("Unable to locate the UniGetUI repository root from the test output directory.");
+    }
 
 }

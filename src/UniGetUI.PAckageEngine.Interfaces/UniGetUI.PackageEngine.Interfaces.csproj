@@ -1,19 +1,12 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-
-
-
-
-		<SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
-
-
+		<SupportedOSPlatformVersion Condition="'$(TargetFramework)' == '$(WindowsTargetFramework)'">10.0.19041.0</SupportedOSPlatformVersion>
 		<FileVersion>3.1.0.0</FileVersion>
 		<InformationalVersion>3.1.0-beta0</InformationalVersion>
 		<Product>UniGetUI</Product>
 		<ApplicationVersion>3.1.0-beta0</ApplicationVersion>
 		<Copyright>Copyright 2021-2026 Devolutions Inc.</Copyright>
-
 	</PropertyGroup>
 
 	<ItemGroup>

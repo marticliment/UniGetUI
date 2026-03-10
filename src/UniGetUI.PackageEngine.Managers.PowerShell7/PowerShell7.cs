@@ -46,7 +46,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
                 Description = CoreTools.Translate("PowerShell's package manager. Find libraries and scripts to expand PowerShell capabilities<br>Contains: <b>Modules, Scripts, Cmdlets</b>"),
                 IconId = IconType.PowerShell,
                 ColorIconId = "powershell_color",
-                ExecutableFriendlyName = "pwsh.exe",
+                ExecutableFriendlyName = OperatingSystem.IsWindows() ? "pwsh.exe" : "pwsh",
                 InstallVerb = "Install-PSResource",
                 UninstallVerb = "Uninstall-PSResource",
                 UpdateVerb = "Update-PSResource",
@@ -124,7 +124,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
         }
 
         public override IReadOnlyList<string> FindCandidateExecutableFiles()
-            => CoreTools.WhichMultiple("pwsh.exe");
+            => CoreTools.WhichMultiple(OperatingSystem.IsWindows() ? "pwsh.exe" : "pwsh");
 
         protected override void _loadManagerExecutableFile(out bool found, out string path, out string callArguments)
         {

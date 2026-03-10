@@ -1,13 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-
-
-
-
-
-
-
         <IsPackable>false</IsPackable>
         <RootNamespace>UniGetUI.Interface.Telemetry</RootNamespace>
     </PropertyGroup>

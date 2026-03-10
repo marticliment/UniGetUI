@@ -1,5 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <PropertyGroup>
+    <TargetFramework>$(PortableTargetFramework)</TargetFramework>
+    <TargetFrameworks />
+  </PropertyGroup>
+
 
 
   <PropertyGroup>

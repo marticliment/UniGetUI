@@ -1,4 +1,3 @@
-extern alias DrawingCommon;
 using System.Collections.ObjectModel;
 using System.Security.Cryptography;
 using PhotoSauce.MagicScaler;
@@ -232,7 +231,7 @@ namespace UniGetUI.Core.IconEngine
                     if (icon.ValidationMethod is IconValidationMethod.PackageVersion or IconValidationMethod.UriSource
                         && new[] { "png", "webp", "tif", "avif" }.Contains(extension))
                     {
-                        DownsizeImage(cachedIconFile, extension);
+                        DownsizeImage(cachedIconFile);
                     }
 
                     Logger.Debug($"Icon for Location={iconLocation} has been downloaded and verified properly (if applicable) ({icon.ValidationMethod})");
@@ -253,19 +252,15 @@ namespace UniGetUI.Core.IconEngine
         /// <summary>
         /// The given image will be downsized to the expected size of an icon, if required
         /// </summary>
-        private static void DownsizeImage(string cachedIconFile, string extension)
-        {   // Yes, the extension parameter could be extracted from cachedIconFile
+        private static void DownsizeImage(string cachedIconFile)
+        {
             try
             {
                 const int MAX_SIDE = 192;
-                int width, height;
-
-                using (var fileStream = new FileStream(cachedIconFile, FileMode.Open, FileAccess.Read, FileShare.Read))
-                using (var image = DrawingCommon.System.Drawing.Image.FromStream(fileStream, false, false))
-                {
-                    height = image.Height;
-                    width = image.Width;
-                }
+                ImageFileInfo imageInfo = ImageFileInfo.Load(cachedIconFile);
+                ImageFileInfo.FrameInfo frameInfo = imageInfo.Frames[0];
+                int width = frameInfo.Width;
+                int height = frameInfo.Height;
 
                 // Calculate target size for the icon to be at max 192x192.
                 if (width > MAX_SIDE || height > MAX_SIDE)

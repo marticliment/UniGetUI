@@ -1,11 +1,8 @@
 <Project>
     <PropertyGroup>
         <ImplicitUsings>enable</ImplicitUsings>
-        <TargetFramework>net8.0-windows10.0.26100.0</TargetFramework>
-        <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
         <!-- IF BUILD FAILS DUE TO MISSING Microsoft.Management.Deployment NAMESPACE,
             TOGGLE THE LAST NUMBER OF THE LINE BELOW 1 UNIT UP OR DOWN, AND REBUILD-->
-        <WindowsSdkPackageVersion>10.0.26100.56</WindowsSdkPackageVersion>
 
         <SdkVersion>8.0.407</SdkVersion>
         <Authors>Devolutions Inc. and the contributors</Authors>
@@ -14,10 +11,31 @@
     </PropertyGroup>
 
     <PropertyGroup>
+        <PortableTargetFramework>net8.0</PortableTargetFramework>
+        <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
+        <WindowsTargetFramework>$(PortableTargetFramework)-windows$(WindowsTargetPlatformVersion)</WindowsTargetFramework>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <BuildSharedWindowsTargetFrameworks Condition="$([MSBuild]::IsOSPlatform('Windows')) == 'true' or '$(EnableWindowsTargeting)' == 'true'">true</BuildSharedWindowsTargetFrameworks>
+        <SharedTargetFrameworks Condition="'$(BuildSharedWindowsTargetFrameworks)' == 'true'">$(PortableTargetFramework);$(WindowsTargetFramework)</SharedTargetFrameworks>
+        <SharedTargetFrameworks Condition="'$(SharedTargetFrameworks)' == ''">$(PortableTargetFramework)</SharedTargetFrameworks>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(TargetFramework)' == '' and '$(TargetFrameworks)' == ''">
+        <TargetFrameworks>$(SharedTargetFrameworks)</TargetFrameworks>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="$([System.String]::Copy('$(TargetFramework)').Contains('-windows'))">
+        <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
+        <WindowsSdkPackageVersion>10.0.26100.56</WindowsSdkPackageVersion>
         <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
         <RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
-        <RuntimeIdentifier>win-$(Platform)</RuntimeIdentifier>
-        <Platforms>x64</Platforms>
+        <RuntimeIdentifier Condition="'$(Platform)' != '' and '$(Platform)' != 'AnyCPU' and '$(Platform)' != 'Any CPU'">win-$(Platform)</RuntimeIdentifier>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <Platforms>x64;arm64</Platforms>
         <PublishSelfContained>true</PublishSelfContained>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
         <Configurations>Debug;Release</Configurations>

@@ -34,12 +34,25 @@ jobs:
       with:
         dotnet-version: 8.0.x
 
+    - name: Install Windows SDK UAP platform
+      shell: pwsh
+      run: |
+        # CsWinRT in WindowsPackageManager.Interop requires UAP 10.0.19041.0 platform metadata
+        $VsWhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+        $VsInstaller = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vs_installer.exe"
+        $InstallPath = & $VsWhere -latest -property installationPath
+        & $VsInstaller modify --installPath $InstallPath `
+          --add Microsoft.VisualStudio.Component.UWP.Support `
+          --add Microsoft.VisualStudio.Component.Windows10SDK.19041 `
+          --quiet --norestart --nocache | Out-Default
+        Write-Host "Windows SDK UAP platform installed"
+
     # - name: Install WinGet
     #   uses: Cyberboss/install-winget@v1
 
     - name: Install dependencies
       working-directory: src
-      run: dotnet restore
+      run: dotnet restore UniGetUI.sln
 
     # - name: Test build
     #   working-directory: src
@@ -47,5 +60,5 @@ jobs:
 
     - name: Run Tests
       working-directory: src
-      run: dotnet test --no-restore --verbosity q --nologo
+      run: dotnet test UniGetUI.sln --no-restore --verbosity q --nologo
 

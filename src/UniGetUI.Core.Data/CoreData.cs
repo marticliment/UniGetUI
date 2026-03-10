@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Text;
 using UniGetUI.Core.Logging;
 
 namespace UniGetUI.Core.Data
@@ -7,8 +8,8 @@ namespace UniGetUI.Core.Data
     {
         private static int? __code_page;
         public static int CODE_PAGE { get => __code_page ??= GetCodePage(); }
-        public const string VersionName = "3.3.7"; // Do not modify this line, use file scripts/apply_versions.py
-        public const int BuildNumber = 106; // Do not modify this line, use file scripts/apply_versions.py
+        public const string VersionName = "3.3.7"; // Do not modify this line, use file scripts/set-version.ps1
+        public const int BuildNumber = 106; // Do not modify this line, use file scripts/set-version.ps1
 
         public const string UserAgentString = $"UniGetUI/{VersionName} (https://marticliment.com/unigetui/; contact@marticliment.com)";
 
@@ -62,7 +63,7 @@ namespace UniGetUI.Core.Data
                 }
 
                 string old_path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".wingetui");
-                string new_path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "UniGetUI");
+                string new_path = Path.Join(GetLocalDataRoot(), "UniGetUI");
                 return GetNewDataDirectoryOrMoveOld(old_path, new_path);
             }
         }
@@ -190,8 +191,9 @@ namespace UniGetUI.Core.Data
         {
             get
             {
-                string old_dir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "WingetUI");
-                string new_dir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "UniGetUI");
+                string documentsDirectory = GetDocumentsRoot();
+                string old_dir = Path.Join(documentsDirectory, "WingetUI");
+                string new_dir = Path.Join(documentsDirectory, "UniGetUI");
                 return GetNewDataDirectoryOrMoveOld(old_dir, new_dir);
             }
         }
@@ -227,7 +229,7 @@ namespace UniGetUI.Core.Data
 
                 Logger.Error("System.Reflection.Assembly.GetExecutingAssembly().Location returned an empty path");
 
-                return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "UniGetUI");
+                return AppContext.BaseDirectory.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
             }
         }
 
@@ -241,12 +243,12 @@ namespace UniGetUI.Core.Data
                 string? filename = Process.GetCurrentProcess().MainModule?.FileName;
                 if (filename is not null)
                 {
-                    return filename.Replace(".dll", ".exe");
+                    return NormalizeExecutablePath(filename);
                 }
 
                 Logger.Error("System.Reflection.Assembly.GetExecutingAssembly().Location returned an empty path");
 
-                return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "UniGetUI", "UniGetUI.exe");
+                return NormalizeExecutablePath(Path.Join(UniGetUIExecutableDirectory, "UniGetUI"));
             }
         }
 
@@ -357,6 +359,11 @@ namespace UniGetUI.Core.Data
 
         private static int GetCodePage()
         {
+            if (!OperatingSystem.IsWindows())
+            {
+                return Encoding.UTF8.CodePage;
+            }
+
             try
             {
                 using Process p = new Process
@@ -390,6 +397,57 @@ namespace UniGetUI.Core.Data
             }
         }
 
-        public static readonly string PowerShell5 = Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe");
+        public static readonly string PowerShell5 = OperatingSystem.IsWindows()
+            ? Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe")
+            : "pwsh";
+
+        private static string GetLocalDataRoot()
+        {
+            string localApplicationData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            if (!string.IsNullOrWhiteSpace(localApplicationData))
+            {
+                return localApplicationData;
+            }
+
+            string? xdgDataHome = Environment.GetEnvironmentVariable("XDG_DATA_HOME");
+            if (!string.IsNullOrWhiteSpace(xdgDataHome))
+            {
+                return xdgDataHome;
+            }
+
+            return Path.Join(GetUserHomeDirectory(), ".local", "share");
+        }
+
+        private static string GetDocumentsRoot()
+        {
+            string documentsDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            if (!string.IsNullOrWhiteSpace(documentsDirectory))
+            {
+                return documentsDirectory;
+            }
+
+            return Path.Join(GetUserHomeDirectory(), "Documents");
+        }
+
+        private static string GetUserHomeDirectory()
+        {
+            string userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            if (!string.IsNullOrWhiteSpace(userProfile))
+            {
+                return userProfile;
+            }
+
+            return Environment.GetEnvironmentVariable("HOME") ?? AppContext.BaseDirectory;
+        }
+
+        private static string NormalizeExecutablePath(string path)
+        {
+            if (OperatingSystem.IsWindows() && path.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
+            {
+                return Path.ChangeExtension(path, ".exe");
+            }
+
+            return path;
+        }
     }
 }
