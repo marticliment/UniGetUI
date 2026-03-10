@@ -188,6 +188,7 @@ jobs:
           Copy-Item "unigetui_bin/UniGetUI.exe" "unigetui_bin/WingetUI.exe" -Force
 
       - name: Code-sign binaries
+        if: ${{ fromJSON(needs.preflight.outputs.dry-run) == false }}
         shell: pwsh
         run: |
           $ListPath = Join-Path $PWD "signing-files.txt"
@@ -246,6 +247,7 @@ jobs:
           # Installer is created in output during the previous step
 
       - name: Code-sign installer
+        if: ${{ fromJSON(needs.preflight.outputs.dry-run) == false }}
         shell: pwsh
         run: |
           $Platform = '${{ matrix.platform }}'
