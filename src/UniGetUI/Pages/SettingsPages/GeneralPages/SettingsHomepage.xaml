@@ -20,16 +20,6 @@
         HorizontalContentAlignment="Center"
         VerticalContentAlignment="Center">
         <StackPanel Name="SettingsEntries" Orientation="Vertical">
-            <Border
-                Name="AnnouncerBorder"
-                Padding="24,16,24,16"
-                Background="{ThemeResource ButtonBackground}"
-                CornerRadius="8">
-                <widgets:Announcer x:Name="SettingsAnnouncer" Url="https://marticliment.com/resources/annoucements/unigetui" />
-            </Border>
-
-            <UserControl Height="16" />
-
             <widgets:SettingsPageButton
                 x:Name="GeneralSettingsExpander"
                 Click="General"

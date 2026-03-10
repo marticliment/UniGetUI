@@ -154,11 +154,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="SettingsTab\Widgets\Announcer.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
     <Page Update="MainInterface.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

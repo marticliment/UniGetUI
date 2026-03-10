@@ -6,7 +6,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:UniGetUI.Pages.SettingsPages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:widgets="using:UniGetUI.Interface.Widgets"
     Background="Transparent"
     NavigationCacheMode="Required"
     mc:Ignorable="d">
@@ -19,16 +18,6 @@
         VerticalAlignment="Stretch"
         HorizontalContentAlignment="Center"
         VerticalContentAlignment="Center">
-        <StackPanel Name="SettingsEntries" Orientation="Vertical">
-            <Border
-                Name="AnnouncerBorder"
-                Padding="24,16,24,16"
-                Background="{ThemeResource ButtonBackground}"
-                CornerRadius="8">
-                <widgets:Announcer x:Name="SettingsAnnouncer" Url="https://marticliment.com/resources/annoucements/unigetui" />
-            </Border>
-
-            <UserControl Height="16" />
-        </StackPanel>
+        <StackPanel Name="SettingsEntries" Orientation="Vertical" />
     </ScrollViewer>
 </Page>
