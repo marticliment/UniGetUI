@@ -1,0 +1,806 @@
+{
+  "RDMWindows": {
+    "Current": {
+      "Version": "2025.3.32.0",
+      "Date": "2026-02-26",
+      "Files": [
+        {
+          "Arch": "Any",
+          "Type": "exe",
+          "Url": "https://cdn.devolutions.net/download/Setup.RemoteDesktopManager.2025.3.32.0.exe",
+          "Hash": "EFA2B96FF59DFEEAE6BBA3DBC425220E447C7069F408CB48B4AA9F1AC8B1E850"
+        },
+        {
+          "Arch": "Any",
+          "Type": "msi",
+          "Url": "https://cdn.devolutions.net/download/Setup.RemoteDesktopManager.2025.3.32.0.msi",
+          "Hash": "62AFE25ED724CCA3EA83AAB9FD84B7D065C643722CDDCFCFF3FD5E7A27389ED4"
+        },
+        {
+          "Arch": "arm64",
+          "Type": "exe",
+          "Url": "https://cdn.devolutions.net/download/Setup.RemoteDesktopManager.win-arm64.2025.3.32.0.exe",
+          "Hash": "5392753F8F960C426906C2DCC883491ADF2D4CB5ADF1D8B799FA543BCE939861"
+        },
+        {
+          "Arch": "x64",
+          "Type": "exe",
+          "Url": "https://cdn.devolutions.net/download/Setup.RemoteDesktopManager.win-x64.2025.3.32.0.exe",
+          "Hash": "F036DFFA06971DA7A374ECA72650BABBC19EDE83C611F3270964949A79361311"
+        },
+        {
+          "Arch": "arm64",
+          "Type": "msi",
+          "Url": "https://cdn.devolutions.net/download/Setup.RemoteDesktopManager.win-arm64.2025.3.32.0.msi",
+          "Hash": "24514E83B47233E48E6CCD522D1B03C67E421645E7760E4618E58FD306550441"
+        },
+        {
+          "Arch": "x64",
+          "Type": "msi",
+          "Url": "https://cdn.devolutions.net/download/Setup.RemoteDesktopManager.win-x64.2025.3.32.0.msi",
+          "Hash": "9AACE90721C9CC7A3C6DB073EA85B836FBC57DF7A081FBE52FC7D970DC6BB8D7"
+        },
+        {
+          "Arch": "Any",
+          "Type": "zip",
+          "Url": "https://cdn.devolutions.net/download/Devolutions.RemoteDesktopManager.Bin.2025.3.32.0.zip",
+          "Hash": "4A68FA1065F37599CC67C8F7EA0C2F8ABF3BD9A935D11CAF16A3D5BD1693507C"
+        },
+        {
+          "Arch": "arm64",
+          "Type": "7z",
+          "Url": "https://cdn.devolutions.net/download/Devolutions.RemoteDesktopManager.win-arm64.2025.3.32.0.7z",
+          "Hash": "FCC97E4D34CA8F54E1DDF6001E2E34597BAD65122B0B714B9A49249BF2CAEFBC"
+        },
+        {
+          "Arch": "x64",
+          "Type": "7z",
+          "Url": "https://cdn.devolutions.net/download/Devolutions.RemoteDesktopManager.win-x64.2025.3.32.0.7z",
+          "Hash": "857C91113F12FE629692716ABE87F7204A9CF7BC677A583ED6C4C9D8D1A42CFB"
+        }
+      ]
+    },
+    "Beta": {
+      "Version": "2026.1.8.0",
+      "Date": "2026-02-19",
+      "Files": [
+        {
+          "Arch": "Any",
+          "Type": "exe",
+          "Url": "https://cdn.devolutions.net/download/Setup.RemoteDesktopManager.2026.1.8.0.exe",
+          "Hash": "8A850F23D0F2D494D8601B2D8861A9764AF63EE36D620FB5F41C81EDE67E641F"
+        },
+        {
+          "Arch": "Any",
+          "Type": "msi",
+          "Url": "https://cdn.devolutions.net/download/Setup.RemoteDesktopManager.2026.1.8.0.msi",
+          "Hash": "4CE4F38C047D766F888F3E8128ADA4B51322D2E1A1FCB5CE9ACC0E0961522A5E"
+        },
+        {
+          "Arch": "arm64",
+          "Type": "exe",
+          "Url": "https://cdn.devolutions.net/download/Setup.RemoteDesktopManager.win-arm64.2026.1.8.0.exe",
+          "Hash": "D4FF7DDA881F12ECCB2CCC443B22FE3385151AC488BE1BBC97027D18952481AA"
+        },
+        {
+          "Arch": "x64",
+          "Type": "exe",
+          "Url": "https://cdn.devolutions.net/download/Setup.RemoteDesktopManager.win-x64.2026.1.8.0.exe",
+          "Hash": "B0E0AA4325647595AE83829794C7937D926A138C4743A2D881EC0BAEC5D98347"
+        },
+        {
+          "Arch": "arm64",
+          "Type": "msi",
+          "Url": "https://cdn.devolutions.net/download/Setup.RemoteDesktopManager.win-arm64.2026.1.8.0.msi",
+          "Hash": "4C8EF2BDD7F0DD6B2811804D6B6FF566252452C3EF6354F89598C8E3FE2AD03D"
+        },
+        {
+          "Arch": "x64",
+          "Type": "msi",
+          "Url": "https://cdn.devolutions.net/download/Setup.RemoteDesktopManager.win-x64.2026.1.8.0.msi",
+          "Hash": "DF1AD55915A54DDE0F685782843E0BABB83B5807F56488947572DD98421B1946"
+        },
+        {
+          "Arch": "Any",
+          "Type": "zip",
+          "Url": "https://cdn.devolutions.net/download/Devolutions.RemoteDesktopManager.Bin.2026.1.8.0.zip",
+          "Hash": "0598B5EAB915E42348101331DF1A57D8B6874F0C437821328AF6EA818CBE6FC6"
+        },
+        {
+          "Arch": "arm64",
+          "Type": "7z",
+          "Url": "https://cdn.devolutions.net/download/Devolutions.RemoteDesktopManager.win-arm64.2026.1.8.0.7z",
+          "Hash": "9953C9061C90E8AB6078B7FB9647C6D033C4A34FC476515A494ACA3A3DF4DED0"
+        },
+        {
+          "Arch": "x64",
+          "Type": "7z",
+          "Url": "https://cdn.devolutions.net/download/Devolutions.RemoteDesktopManager.win-x64.2026.1.8.0.7z",
+          "Hash": "FD3592CC14D6ED487023490560AD9847555B93935CB3AD9126BD7DEB93E41DCC"
+        }
+      ]
+    },
+    "Update": {
+      "Version": "2025.3.32.0",
+      "Date": "2026-02-26",
+      "Files": [
+        {
+          "Arch": "Any",
+          "Type": "exe",
+          "Url": "https://cdn.devolutions.net/download/Setup.RemoteDesktopManager.2025.3.32.0.exe",
+          "Hash": "EFA2B96FF59DFEEAE6BBA3DBC425220E447C7069F408CB48B4AA9F1AC8B1E850"
+        },
+        {
+          "Arch": "Any",
+          "Type": "msi",
+          "Url": "https://cdn.devolutions.net/download/Setup.RemoteDesktopManager.2025.3.32.0.msi",
+          "Hash": "62AFE25ED724CCA3EA83AAB9FD84B7D065C643722CDDCFCFF3FD5E7A27389ED4"
+        },
+        {
+          "Arch": "arm64",
+          "Type": "exe",
+          "Url": "https://cdn.devolutions.net/download/Setup.RemoteDesktopManager.win-arm64.2025.3.32.0.exe",
+          "Hash": "5392753F8F960C426906C2DCC883491ADF2D4CB5ADF1D8B799FA543BCE939861"
+        },
+        {
+          "Arch": "x64",
+          "Type": "exe",
+          "Url": "https://cdn.devolutions.net/download/Setup.RemoteDesktopManager.win-x64.2025.3.32.0.exe",
+          "Hash": "F036DFFA06971DA7A374ECA72650BABBC19EDE83C611F3270964949A79361311"
+        },
+        {
+          "Arch": "arm64",
+          "Type": "msi",
+          "Url": "https://cdn.devolutions.net/download/Setup.RemoteDesktopManager.win-arm64.2025.3.32.0.msi",
+          "Hash": "24514E83B47233E48E6CCD522D1B03C67E421645E7760E4618E58FD306550441"
+        },
+        {
+          "Arch": "x64",
+          "Type": "msi",
+          "Url": "https://cdn.devolutions.net/download/Setup.RemoteDesktopManager.win-x64.2025.3.32.0.msi",
+          "Hash": "9AACE90721C9CC7A3C6DB073EA85B836FBC57DF7A081FBE52FC7D970DC6BB8D7"
+        },
+        {
+          "Arch": "arm64",
+          "Type": "7z",
+          "Url": "https://cdn.devolutions.net/download/Devolutions.RemoteDesktopManager.win-arm64.2025.3.32.0.7z",
+          "Hash": "FCC97E4D34CA8F54E1DDF6001E2E34597BAD65122B0B714B9A49249BF2CAEFBC"
+        },
+        {
+          "Arch": "x64",
+          "Type": "7z",
+          "Url": "https://cdn.devolutions.net/download/Devolutions.RemoteDesktopManager.win-x64.2025.3.32.0.7z",
+          "Hash": "857C91113F12FE629692716ABE87F7204A9CF7BC677A583ED6C4C9D8D1A42CFB"
+        }
+      ]
+    }
+  },
+  "RDMMac": {
+    "Current": {
+      "Version": "2025.3.10.2",
+      "Date": "2026-02-19",
+      "Files": [
+        {
+          "Arch": "universal",
+          "Type": "dmg",
+          "Url": "https://cdn.devolutions.net/download/Mac/Devolutions.RemoteDesktopManager.Mac.2025.3.10.2.dmg",
+          "Hash": "93460DAB1FFEB28DF4DB7F2226A2858035251EB2C0104C41D9EEBFCA29731451"
+        }
+      ]
+    },
+    "Beta": {
+      "Version": "2025.3.10.2",
+      "Date": "2026-02-19",
+      "Files": [
+        {
+          "Arch": "universal",
+          "Type": "dmg",
+          "Url": "https://cdn.devolutions.net/download/Mac/Devolutions.RemoteDesktopManager.Mac.2025.3.10.2.dmg",
+          "Hash": "93460DAB1FFEB28DF4DB7F2226A2858035251EB2C0104C41D9EEBFCA29731451"
+        }
+      ]
+    }
+  },
+  "RDMLinux": {
+    "Current": {
+      "Version": "2025.3.2.3",
+      "Date": "2026-02-13",
+      "Files": [
+        {
+          "Arch": "x64",
+          "Type": "deb",
+          "Url": "https://cdn.devolutions.net/download/Linux/RDM/2025.3.2.3/RemoteDesktopManager_2025.3.2.3_amd64.deb",
+          "Hash": "545822CD95D7EAE3E1423963B1934EFBC6EFB2E8B0E9ED2ECA0393B2D447B3EB"
+        },
+        {
+          "Arch": "x64",
+          "Type": "rpm",
+          "Url": "https://cdn.devolutions.net/download/Linux/RDM/2025.3.2.3/RemoteDesktopManager_2025.3.2.3_x86_64.rpm",
+          "Hash": "3DEED02B1DB6DBC3B0721CF211B39AD4BE436A8FA06715A7D3C51FF055110DB4"
+        },
+        {
+          "Arch": "arm64",
+          "Type": "deb",
+          "Url": "https://cdn.devolutions.net/download/Linux/RDM/2025.3.2.3/RemoteDesktopManager_2025.3.2.3_arm64.deb",
+          "Hash": "611B37B4A47719E9CBC917E16E3456FCA5198EB47549BBED3487713F9D28703B"
+        },
+        {
+          "Arch": "arm64",
+          "Type": "rpm",
+          "Url": "https://cdn.devolutions.net/download/Linux/RDM/2025.3.2.3/RemoteDesktopManager_2025.3.2.3_aarch64.rpm",
+          "Hash": "BA3317B7EF80231014AB919EB54A3B2CB55B4E99E36E9A7AD34544A9C9D9DE13"
+        }
+      ]
+    }
+  },
+  "RDMAgent": {
+    "Current": {
+      "Version": "2025.3.32.0",
+      "Date": "2026-02-26",
+      "Files": [
+        {
+          "Arch": "x64",
+          "Type": "exe",
+          "Url": "https://cdn.devolutions.net/download/Setup.RemoteDesktopManagerJump.2025.3.32.0.exe",
+          "Hash": "95399330EBEE12F6526BE7879D832B112182E3E6EB2321236C7D71A51225A471"
+        },
+        {
+          "Arch": "x64",
+          "Type": "msi",
+          "Url": "https://cdn.devolutions.net/download/Setup.RemoteDesktopManagerJump.2025.3.32.0.msi",
+          "Hash": "C59B020D9F10A9A21C11F5EF6CCF167FEAA29B8B55312AA090DD192A1BDC07E4"
+        },
+        {
+          "Arch": "x64",
+          "Type": "zip",
+          "Url": "https://cdn.devolutions.net/download/Devolutions.RemoteDesktopManagerJump.Bin.2025.3.32.0.zip",
+          "Hash": "52DB422FA1ED07E028C212D7C4D26801EBF6C6EFEA480AF6B893BE816ABF2EE2"
+        }
+      ]
+    },
+    "Beta": {
+      "Version": "2026.1.8.0",
+      "Date": "2026-02-19",
+      "Files": [
+        {
+          "Arch": "x64",
+          "Type": "exe",
+          "Url": "https://cdn.devolutions.net/download/Setup.RemoteDesktopManagerJump.2026.1.8.0.exe",
+          "Hash": "4FCBB551474835226DA895B55AC1641288432F28B81E67CFEBD20F37CDEAA224"
+        },
+        {
+          "Arch": "x64",
+          "Type": "msi",
+          "Url": "https://cdn.devolutions.net/download/Setup.RemoteDesktopManagerJump.2026.1.8.0.msi",
+          "Hash": "AD90374D7230B60DC1EAABF75E9ADF16DA7B947248557C8BFE0065212151C432"
+        },
+        {
+          "Arch": "x64",
+          "Type": "zip",
+          "Url": "https://cdn.devolutions.net/download/Devolutions.RemoteDesktopManagerJump.Bin.2026.1.8.0.zip",
+          "Hash": "5A197493B43AF8434D38F3CEA9F2ACDBF4C7CC2A922D145F6656887FFD6D54B2"
+        }
+      ]
+    }
+  },
+  "Agent": {
+    "Current": {
+      "Version": "2026.1.0.0",
+      "Date": "2026-02-27",
+      "Files": [
+        {
+          "Arch": "x64",
+          "Type": "msi",
+          "Url": "https://cdn.devolutions.net/download/DevolutionsAgent-x86_64-2026.1.0.0.msi",
+          "Hash": "794DB95AA3A846D0135E7233D89AE9A61400A80CAAA046BA4EBD52F341A28CD6"
+        },
+        {
+          "Arch": "arm64",
+          "Type": "msi",
+          "Url": "https://cdn.devolutions.net/download/DevolutionsAgent-arm64-2026.1.0.0.msi",
+          "Hash": "4396B8862DF5EC49E58E4E099ADB707202E0DAA730AFAAC10EACCAD428B062FA"
+        },
+        {
+          "Arch": "x64",
+          "Type": "deb",
+          "Url": "https://cdn.devolutions.net/download/devolutions-agent_2026.1.0.0_amd64.deb",
+          "Hash": "B05A1CD591238CF2050E540F7000584AAAD1CBE3A8D5CDBAC812CBF53D6D6564"
+        }
+      ]
+    },
+    "Beta": {
+      "Version": "2026.1.0.0",
+      "Date": "2026-02-27",
+      "Files": [
+        {
+          "Arch": "x64",
+          "Type": "msi",
+          "Url": "https://cdn.devolutions.net/download/DevolutionsAgent-x86_64-2026.1.0.0.msi",
+          "Hash": "794DB95AA3A846D0135E7233D89AE9A61400A80CAAA046BA4EBD52F341A28CD6"
+        },
+        {
+          "Arch": "arm64",
+          "Type": "msi",
+          "Url": "https://cdn.devolutions.net/download/DevolutionsAgent-arm64-2026.1.0.0.msi",
+          "Hash": "4396B8862DF5EC49E58E4E099ADB707202E0DAA730AFAAC10EACCAD428B062FA"
+        },
+        {
+          "Arch": "x64",
+          "Type": "deb",
+          "Url": "https://cdn.devolutions.net/download/devolutions-agent_2026.1.0.0_amd64.deb",
+          "Hash": "B05A1CD591238CF2050E540F7000584AAAD1CBE3A8D5CDBAC812CBF53D6D6564"
+        }
+      ]
+    }
+  },
+  "PowerShell": {
+    "Current": {
+      "Version": "2025.3.4.0",
+      "Date": "2026-02-02",
+      "Files": [
+        {
+          "Arch": "Any",
+          "Type": "nupkg",
+          "Url": "https://cdn.devolutions.net/download/Devolutions.PowerShell.2025.3.4.0.nupkg",
+          "Hash": "63FB9ADECD0AB10F1FEE187F06030225AF9FF4D526AF8469AC8BC9279483BA9C"
+        }
+      ]
+    }
+  },
+  "PowerShellUniversal": {
+    "Current": {
+      "Version": "2026.1.3.0",
+      "Date": "2026-02-27",
+      "Files": [
+        {
+          "Arch": "x64",
+          "Type": "msi",
+          "Url": "https://cdn.devolutions.net/download/Devolutions.PowerShellUniversal.2026.1.3.0.msi",
+          "Hash": "E555093C06E64EA096D1162EEA08BF5FAD020D1617668DD4C8433C589D3373E9"
+        },
+        {
+          "Arch": "x64",
+          "Type": "msi",
+          "Url": "https://cdn.devolutions.net/download/Devolutions.PowerShellUniversal.Agent.2026.1.3.0.msi",
+          "Hash": "9CBE8D03EA2D41356BEC4A95DD257E5CAEEF539A8056A3BEED73F8C5ED12E17A"
+        },
+        {
+          "Arch": "x64",
+          "Type": "zip",
+          "Url": "https://cdn.devolutions.net/download/Devolutions.PowerShellUniversal.win-x64.2026.1.3.0.zip",
+          "Hash": "B5B0DC1ABE87F11FF6F7B245E50BC9538FFCF7B3328521D309F36EEB7DDA0172"
+        },
+        {
+          "Arch": "arm64",
+          "Type": "zip",
+          "Url": "https://cdn.devolutions.net/download/Devolutions.PowerShellUniversal.win-arm64.2026.1.3.0.zip",
+          "Hash": "E57F71BF173C96B8EB41317953AA8E4239EF31C5A7C1E8C870922030EA78EB47"
+        },
+        {
+          "Arch": "x64",
+          "Type": "zip",
+          "Url": "https://cdn.devolutions.net/download/Devolutions.PowerShellUniversal.linux-x64.2026.1.3.0.zip",
+          "Hash": "4ECD52E4E80BFA73F010842EC228DEB6825A1D322C3C4105D0000AE9275A1F09"
+        },
+        {
+          "Arch": "arm",
+          "Type": "zip",
+          "Url": "https://cdn.devolutions.net/download/Devolutions.PowerShellUniversal.linux-arm.2026.1.3.0.zip",
+          "Hash": "4E9267E04B036FD93AD156333138B37365ACC2FD533B6D9E727696902D0C1E7F"
+        },
+        {
+          "Arch": "arm64",
+          "Type": "zip",
+          "Url": "https://cdn.devolutions.net/download/Devolutions.PowerShellUniversal.linux-arm64.2026.1.3.0.zip",
+          "Hash": "70D47AC41B41B4A71262BAAFFDAD01E275D8EC5FE8B11FD32A0128884C433779"
+        },
+        {
+          "Arch": "x64",
+          "Type": "zip",
+          "Url": "https://cdn.devolutions.net/download/Devolutions.PowerShellUniversal.osx-x64.2026.1.3.0.zip",
+          "Hash": "9168B4EC85AE5980D50CAC0CBA2F798CB4075F7E75367919E7E0938FB1F906E7"
+        },
+        {
+          "Arch": "arm64",
+          "Type": "zip",
+          "Url": "https://cdn.devolutions.net/download/Devolutions.PowerShellUniversal.osx-arm64.2026.1.3.0.zip",
+          "Hash": "79865486934ADA2BA527E53401CCAF61C17319346E31FA869C7F5EFBF1DC9CC0"
+        }
+      ]
+    }
+  },
+  "DVLS": {
+    "Current": {
+      "Version": "2025.3.15.0",
+      "Date": "2026-02-09",
+      "Files": [
+        {
+          "Arch": "Any",
+          "Type": "zip",
+          "Url": "https://cdn.devolutions.net/download/RDMS/DVLS.2025.3.15.0.zip",
+          "Hash": "1B47D61293FB601C26B7F0F38E939B9FB8EDA87CB0AE8A3BA0EDD6B783F001DD"
+        },
+        {
+          "Arch": "x64",
+          "Type": "tar.gz",
+          "Url": "https://cdn.devolutions.net/download/RDMS/DVLS.2025.3.15.0.linux-x64.tar.gz",
+          "Hash": "4B5F44C0FFBBF297A3E61145D09AE9426ECB81B2EC87260A2282DFAF9C689523"
+        }
+      ]
+    },
+    "Stable": {
+      "Version": "2025.2.22.0",
+      "Date": "2026-01-14",
+      "Files": [
+        {
+          "Arch": "Any",
+          "Type": "zip",
+          "Url": "https://cdn.devolutions.net/download/RDMS/DVLS.2025.2.22.0.zip",
+          "Hash": "E1806A33CA37FB8BB332D58037AFDCD2BD60B536ED56D568920F738C43B2307F"
+        },
+        {
+          "Arch": "x64",
+          "Type": "tar.gz",
+          "Url": "https://cdn.devolutions.net/download/RDMS/DVLS.2025.2.22.0.linux-x64.tar.gz",
+          "Hash": "5EA811FF3C1F715E53186D4AF09DE6380DF341B8F13B82753116737055EFDC89"
+        }
+      ]
+    },
+    "Beta": {
+      "Version": "2026.1.3.0",
+      "Date": "2026-02-23",
+      "Files": [
+        {
+          "Arch": "Any",
+          "Type": "zip",
+          "Url": "https://cdn.devolutions.net/download/RDMS/DVLS.2026.1.3.0.zip",
+          "Hash": "8C085283FFB6492F9411502B8EFD7AB7B56C766C130FEE01CAA2BCCF3CF9964D"
+        },
+        {
+          "Arch": "x64",
+          "Type": "tar.gz",
+          "Url": "https://cdn.devolutions.net/download/RDMS/DVLS.2026.1.3.0.linux-x64.tar.gz",
+          "Hash": "0C49BE5EF9ED6C5ABB3A66BFBED917C60834943110DBFC98CEAEF1E8133CDBC6"
+        }
+      ]
+    }
+  },
+  "Console": {
+    "Current": {
+      "Version": "2025.3.15.0",
+      "Date": "2026-02-09",
+      "Files": [
+        {
+          "Arch": "x64",
+          "Type": "exe",
+          "Url": "https://cdn.devolutions.net/download/Setup.DVLS.Console.2025.3.15.0.exe",
+          "Hash": "5B107771BF9B6A1BFEA86C7712C25332A9FA0A314D66446C3B6A4612A3BAA6BF"
+        }
+      ]
+    },
+    "Beta": {
+      "Version": "2026.1.3.0",
+      "Date": "2026-02-23",
+      "Files": [
+        {
+          "Arch": "x64",
+          "Type": "exe",
+          "Url": "https://cdn.devolutions.net/download/Setup.DVLS.Console.2026.1.3.0.exe",
+          "Hash": "02C78B0B23A6A471C9F6CA8795F38C30C8B55FC10FFE97C2A248FBEBE2C376FB"
+        }
+      ]
+    }
+  },
+  "Gateway": {
+    "Current": {
+      "Version": "2026.1.0.0",
+      "Date": "2026-02-27",
+      "Files": [
+        {
+          "Arch": "x64",
+          "Type": "msi",
+          "Url": "https://cdn.devolutions.net/download/DevolutionsGateway-x86_64-2026.1.0.0.msi",
+          "Hash": "0253C4267FB1B1699BBBC1C783C37514D1059051C5678FFEFDE7B390724A4756"
+        },
+        {
+          "Arch": "x64",
+          "Type": "deb",
+          "Url": "https://cdn.devolutions.net/download/devolutions-gateway_2026.1.0.0_amd64.deb",
+          "Hash": "2612A9F18D9227D014CA096EDC76BA0BF34E6CBAAE773849B631FAFEA8D0DE31"
+        }
+      ]
+    },
+    "Beta": {
+      "Version": "2026.1.0.0",
+      "Date": "2026-02-27",
+      "Files": [
+        {
+          "Arch": "x64",
+          "Type": "msi",
+          "Url": "https://cdn.devolutions.net/download/DevolutionsGateway-x86_64-2026.1.0.0.msi",
+          "Hash": "0253C4267FB1B1699BBBC1C783C37514D1059051C5678FFEFDE7B390724A4756"
+        },
+        {
+          "Arch": "x64",
+          "Type": "deb",
+          "Url": "https://cdn.devolutions.net/download/devolutions-gateway_2026.1.0.0_amd64.deb",
+          "Hash": "2612A9F18D9227D014CA096EDC76BA0BF34E6CBAAE773849B631FAFEA8D0DE31"
+        }
+      ]
+    }
+  },
+  "Launcher": {
+    "Current": {
+      "Version": "2025.3.32.0",
+      "Date": "2026-02-26",
+      "Files": [
+        {
+          "Arch": "x64",
+          "Type": "exe",
+          "Url": "https://cdn.devolutions.net/download/Setup.Devolutions.Launcher.2025.3.32.0.exe",
+          "Hash": "CBC70FAFA11A0B677BE01158F9E39F407DC17A1EAB413B0F428CFC913288031D"
+        },
+        {
+          "Arch": "x64",
+          "Type": "msi",
+          "Url": "https://cdn.devolutions.net/download/Setup.Devolutions.Launcher.2025.3.32.0.msi",
+          "Hash": "968C24593650FF5C1B9D3B8888D331769199B71C0667283921DA634F176BFDD5"
+        }
+      ]
+    },
+    "Beta": {
+      "Version": "2026.1.8.0",
+      "Date": "2026-02-19",
+      "Files": [
+        {
+          "Arch": "x64",
+          "Type": "exe",
+          "Url": "https://cdn.devolutions.net/download/Setup.Devolutions.Launcher.2026.1.8.0.exe",
+          "Hash": "241AA246DC15845A505F0794F5DADB19DFC37D7F4A83A6633796C18036013021"
+        },
+        {
+          "Arch": "x64",
+          "Type": "msi",
+          "Url": "https://cdn.devolutions.net/download/Setup.Devolutions.Launcher.2026.1.8.0.msi",
+          "Hash": "FE8E895FFF609010AF2C8574DA7F22EDCE4758E5F9B76782CE8FA7076D6380D0"
+        }
+      ]
+    }
+  },
+  "HubServices": {
+    "Current": {
+      "Version": "2025.3.1.1",
+      "Date": "2025-10-07",
+      "Files": [
+        {
+          "Arch": "x64",
+          "Type": "msi",
+          "Url": "https://cdn.devolutions.net/download/Hub/Services/Setup.Devolutions.Hub.Services.2025.3.1.1.msi",
+          "Hash": "2802128648097C2C5BBD061ADCFCA0A509E9FDF29662619F9721C2494F7521F3"
+        }
+      ]
+    }
+  },
+  "WorkspaceWindows": {
+    "Current": {
+      "Version": "2025.3.4.0",
+      "Date": "2025-12-03",
+      "Files": [
+        {
+          "Arch": "x64",
+          "Type": "msix",
+          "Url": "https://cdn.devolutions.net/download/Devolutions.Workspace-2025.3.4.0-x64.msix",
+          "Hash": "445968BFDC0CC208D95BD55ED59C6E124C3E0FF0EEE2F8F101662663173A3FB6"
+        },
+        {
+          "Arch": "x64",
+          "Type": "msi",
+          "Url": "https://cdn.devolutions.net/download/Devolutions.Workspace-2025.3.4.0-x64.msi",
+          "Hash": "9D6CABD84990E69BD774EA6E7BDDF7CCD759C133CA564098F6816AC1E8266524"
+        }
+      ]
+    },
+    "Beta": {
+      "Version": "2025.3.4.0",
+      "Date": "2025-12-03",
+      "Files": [
+        {
+          "Arch": "x64",
+          "Type": "msix",
+          "Url": "https://cdn.devolutions.net/download/Devolutions.Workspace-2025.3.4.0-x64.msix",
+          "Hash": "445968BFDC0CC208D95BD55ED59C6E124C3E0FF0EEE2F8F101662663173A3FB6"
+        },
+        {
+          "Arch": "x64",
+          "Type": "msi",
+          "Url": "https://cdn.devolutions.net/download/Devolutions.Workspace-2025.3.4.0-x64.msi",
+          "Hash": "9D6CABD84990E69BD774EA6E7BDDF7CCD759C133CA564098F6816AC1E8266524"
+        }
+      ]
+    }
+  },
+  "WorkspaceMac": {
+    "Current": {
+      "Version": "2025.3.4.0",
+      "Date": "2025-12-03",
+      "Files": [
+        {
+          "Arch": "universal",
+          "Type": "dmg",
+          "Url": "https://cdn.devolutions.net/download/Mac/Workspace/2025.3.4.0/Devolutions.Workspace.2025.3.4.0.dmg",
+          "Hash": "B83F7DC1C47A0384B63DEE9154C76609A27A4B4C11A7AB95893C2125F78FB44F"
+        },
+        {
+          "Arch": "universal",
+          "Type": "pkg",
+          "Url": "https://cdn.devolutions.net/download/Mac/Workspace/2025.3.4.0/Devolutions.Workspace.2025.3.4.0.pkg",
+          "Hash": "1C7D173E919D420D34208AEE9C8D389911CF4917F08E9B34659022B9028D1A3F"
+        }
+      ]
+    },
+    "Beta": {
+      "Version": "2025.3.4.0",
+      "Date": "2025-12-03",
+      "Files": [
+        {
+          "Arch": "universal",
+          "Type": "dmg",
+          "Url": "https://cdn.devolutions.net/download/Mac/Workspace/2025.3.4.0/Devolutions.Workspace.2025.3.4.0.dmg",
+          "Hash": "B83F7DC1C47A0384B63DEE9154C76609A27A4B4C11A7AB95893C2125F78FB44F"
+        },
+        {
+          "Arch": "universal",
+          "Type": "pkg",
+          "Url": "https://cdn.devolutions.net/download/Mac/Workspace/2025.3.4.0/Devolutions.Workspace.2025.3.4.0.pkg",
+          "Hash": "1C7D173E919D420D34208AEE9C8D389911CF4917F08E9B34659022B9028D1A3F"
+        }
+      ]
+    }
+  },
+  "WorkspaceLinux": {
+    "Current": {
+      "Version": "2025.3.4.0",
+      "Date": "2025-12-03",
+      "Files": [
+        {
+          "Arch": "x64",
+          "Type": "deb",
+          "Url": "https://cdn.devolutions.net/download/Linux/Workspace/2025.3.4.0/workspace_2025.3.4.0_amd64.deb",
+          "Hash": "AACED08BDE0800A6D998683A8651DA1608D140C1C9C526C85833564C0DD980CC"
+        }
+      ]
+    },
+    "Beta": {
+      "Version": "2025.3.4.0",
+      "Date": "2025-12-03",
+      "Files": [
+        {
+          "Arch": "x64",
+          "Type": "deb",
+          "Url": "https://cdn.devolutions.net/download/Linux/Workspace/2025.3.4.0/workspace_2025.3.4.0_amd64.deb",
+          "Hash": "AACED08BDE0800A6D998683A8651DA1608D140C1C9C526C85833564C0DD980CC"
+        }
+      ]
+    }
+  },
+  "WorkspaceFirefox": {
+    "Current": {
+      "Version": "2025.3.3.5",
+      "Date": "2026-01-14",
+      "Files": [
+        {
+          "Arch": "Any",
+          "Type": "xpi",
+          "Url": "https://cdn.devolutions.net/download/BrowserExtension/DevolutionsWebLoginFirefox.2025.3.3.5.xpi",
+          "Hash": ""
+        }
+      ]
+    }
+  },
+  "WorkspaceChrome": {
+    "Current": {
+      "Version": "2025.3.3.4",
+      "Date": "2026-01-14",
+      "Files": [
+        {
+          "Arch": "Any",
+          "Type": "web",
+          "Url": "https://chrome.google.com/webstore/detail/devolutions-web-login/neimonjjffhehnojilepgfejkneaidmo?hl=en-US&gl=CA",
+          "Hash": ""
+        }
+      ]
+    }
+  },
+  "WorkspaceEdge": {
+    "Current": {
+      "Version": "2025.3.3.4",
+      "Date": "2026-01-14",
+      "Files": [
+        {
+          "Arch": "Any",
+          "Type": "web",
+          "Url": "https://microsoftedge.microsoft.com/addons/detail/ddloeodolhdfbohkokiflfbacbfpjahp",
+          "Hash": ""
+        }
+      ]
+    }
+  },
+  "WorkspaceOpera": {
+    "Current": {
+      "Version": "2025.3.3.5",
+      "Date": "2026-01-14",
+      "Files": [
+        {
+          "Arch": "Any",
+          "Type": "crx",
+          "Url": "https://cdn.devolutions.net/download/BrowserExtension/DevolutionsWebLoginOpera.2025.3.3.5.crx",
+          "Hash": ""
+        }
+      ]
+    }
+  },
+  "WorkspaceSafari": {
+    "Current": {
+      "Version": "2025.3.0.3",
+      "Date": "2025-10-07",
+      "Files": [
+        {
+          "Arch": "Any",
+          "Type": "web",
+          "Url": "https://apps.apple.com/us/app/devolutions-workspace/id1462282993",
+          "Hash": ""
+        }
+      ]
+    }
+  },
+  "Devolutions.UniGetUI": {
+    "Current": {
+      "Version": "3.3.99.0",
+      "Date": "2026-02-27",
+      "Files": [
+        {
+          "Arch": "x64",
+          "Type": "exe",
+          "Url": "http://127.0.0.1:8080/UniGetUI.Installer.x64.exe",
+          "Hash": "E870E68BAF732DFAD6275BC0F851D2BB8FCD2CB00DEB514459A997FCDDBFFC35"
+        },
+        {
+          "Arch": "arm64",
+          "Type": "exe",
+          "Url": "http://127.0.0.1:8080/UniGetUI.Installer.arm64.exe",
+          "Hash": "67F89B83907851552925F16262DE6F2DB3E551A4DF6C37265C625AAC0E79AB14"
+        },
+        {
+          "Arch": "x64",
+          "Type": "zip",
+          "Url": "http://127.0.0.1:8080/UniGetUI.x64.zip",
+          "Hash": "7CB3F3D725AC1FE4DF0835FB291E8F9611826ACF57FB3842AE374BD5B121542C"
+        },
+        {
+          "Arch": "arm64",
+          "Type": "zip",
+          "Url": "http://127.0.0.1:8080/UniGetUI.arm64.zip",
+          "Hash": "5D4B3606BC772BCFF375226249DAF63524551BBAE7F18B1AE6110BD326680FCD"
+        }
+      ]
+    },
+    "Beta": {
+      "Version": "3.4.0.0",
+      "Date": "2026-02-27",
+      "Files": [
+        {
+          "Arch": "x64",
+          "Type": "exe",
+          "Url": "http://127.0.0.1:8080/UniGetUI.Installer.x64.exe",
+          "Hash": "E870E68BAF732DFAD6275BC0F851D2BB8FCD2CB00DEB514459A997FCDDBFFC35"
+        },
+        {
+          "Arch": "arm64",
+          "Type": "exe",
+          "Url": "http://127.0.0.1:8080/UniGetUI.Installer.arm64.exe",
+          "Hash": "67F89B83907851552925F16262DE6F2DB3E551A4DF6C37265C625AAC0E79AB14"
+        }
+      ]
+    }
+  }
+}
