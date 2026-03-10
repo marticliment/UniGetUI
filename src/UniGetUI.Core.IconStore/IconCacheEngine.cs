@@ -187,14 +187,20 @@ namespace UniGetUI.Core.IconEngine
                 using HttpClient client = new(CoreTools.GenericHttpClientParameters);
                 client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
 
-                HttpResponseMessage response = client.GetAsync(icon.Url).GetAwaiter().GetResult();
+                using HttpResponseMessage response = client.GetAsync(icon.Url, HttpCompletionOption.ResponseHeadersRead).GetAwaiter().GetResult();
                 if (!response.IsSuccessStatusCode)
                 {
                     Logger.Warn($"Icon download attempt at {icon.Url} failed with code {response.StatusCode}");
                     return null;
                 }
 
-                string mimeType = response.Content.Headers.GetValues("Content-Type").First();
+                string? mimeType = response.Content.Headers.ContentType?.MediaType;
+                if (string.IsNullOrWhiteSpace(mimeType))
+                {
+                    Logger.Warn($"No Content-Type was returned for icon {icon.Url}, aborting download");
+                    return null;
+                }
+
                 if (!MimeToExtension.TryGetValue(mimeType, out string? extension))
                 {
                     Logger.Warn($"Unknown mimetype {mimeType} for icon {icon.Url}, aborting download");
@@ -241,6 +247,22 @@ namespace UniGetUI.Core.IconEngine
 
                 Logger.Warn($"NEWLY DOWNLOADED Icon for Location={iconLocation} Uri={icon.Url} is NOT VALID and will be discarded (verification method is {icon.ValidationMethod})");
                 DeteteCachedFiles(iconLocation);
+                return null;
+            }
+            catch (HttpRequestException ex)
+            {
+                string socketData = "";
+                if (ex.InnerException is IOException ioEx && ioEx.InnerException is System.Net.Sockets.SocketException socketEx)
+                {
+                    socketData = $" [SocketErrorCode={socketEx.SocketErrorCode}, NativeError={socketEx.NativeErrorCode}]";
+                }
+
+                Logger.Warn($"Failed to download icon from {icon.Url}: {ex.Message}{socketData}");
+                return null;
+            }
+            catch (IOException ex)
+            {
+                Logger.Warn($"I/O error while saving icon from {icon.Url}: {ex.Message}");
                 return null;
             }
             catch (Exception ex)

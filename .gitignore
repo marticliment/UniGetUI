@@ -1,5 +1,6 @@
 /.vscode/
 src/.vscode/
+*.code-workspace
 "UniGetUI Store.exe"
 UniGetUI Store Installer.exe
 UniGetUI Installer.exe

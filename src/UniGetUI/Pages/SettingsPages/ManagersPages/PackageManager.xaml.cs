@@ -15,6 +15,7 @@ using UniGetUI.PackageEngine.Managers.PowerShell7Manager;
 using UniGetUI.PackageEngine.Managers.CargoManager;
 using UniGetUI.PackageEngine.Managers.VcpkgManager;
 using UniGetUI.PackageEngine.Managers.DotNetManager;
+using UniGetUI.PackageEngine.Managers.GitHubCliManager;
 using ExternalLibraries.Clipboard;
 using CommunityToolkit.WinUI.Controls;
 using UniGetUI.Interface.Widgets;
@@ -61,6 +62,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             else if (Manager_T == typeof(PowerShell7)) Manager = PEInterface.PowerShell7;
             else if (Manager_T == typeof(Cargo)) Manager = PEInterface.Cargo;
             else if (Manager_T == typeof(Vcpkg)) Manager = PEInterface.Vcpkg;
+            else if (Manager_T == typeof(GitHubCli)) Manager = PEInterface.GitHubCli;
             else if (Manager_T == typeof(DotNet)) Manager = PEInterface.DotNet;
             else throw new InvalidCastException("The specified type was not a package manager!");
 

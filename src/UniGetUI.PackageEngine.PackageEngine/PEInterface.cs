@@ -4,6 +4,7 @@ using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Managers.CargoManager;
 using UniGetUI.PackageEngine.Managers.ChocolateyManager;
 using UniGetUI.PackageEngine.Managers.DotNetManager;
+using UniGetUI.PackageEngine.Managers.GitHubCliManager;
 using UniGetUI.PackageEngine.Managers.NpmManager;
 using UniGetUI.PackageEngine.Managers.PipManager;
 using UniGetUI.PackageEngine.Managers.PowerShell7Manager;
@@ -33,8 +34,9 @@ namespace UniGetUI.PackageEngine
         public static readonly PowerShell7 PowerShell7 = new();
         public static readonly Cargo Cargo = new();
         public static readonly Vcpkg Vcpkg = new();
+        public static readonly GitHubCli GitHubCli = new();
 
-        public static readonly IPackageManager[] Managers = [WinGet, Scoop, Chocolatey, Npm, Pip, Cargo, Vcpkg, DotNet, PowerShell, PowerShell7];
+        public static readonly IPackageManager[] Managers = [WinGet, Scoop, Chocolatey, Npm, Pip, Cargo, Vcpkg, GitHubCli, DotNet, PowerShell, PowerShell7];
 
         public static void LoadLoaders()
         {
