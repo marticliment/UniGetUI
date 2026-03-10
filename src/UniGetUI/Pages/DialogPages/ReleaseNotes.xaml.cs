@@ -26,7 +26,7 @@ namespace UniGetUI.Interface.Dialogs
         private async Task InitializeWebView()
         {
             await WebView.EnsureCoreWebView2Async();
-            WebView.Source = new Uri("https://github.com/marticliment/WingetUI/releases/tag/" + CoreData.VersionName);
+            WebView.Source = new Uri("https://github.com/Devolutions/UniGetUI/releases/tag/" + CoreData.VersionName);
         }
 
         public void Dispose()

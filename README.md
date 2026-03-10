@@ -1,50 +1,56 @@
 # WARNING: **wingetui<sub>•</sub>com** and **unigetui<sub>•</sub>com** are fake websites hosted by a third-party. please do NOT trust them
 <br>
 
-## <img src="https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/icon.png" height="40">UniGetUI (formerly WingetUI)
+## <img src="media/icon.png" height="40">Devolutions UniGetUI
 
-[![Downloads@latest](https://img.shields.io/github/downloads/marticliment/UniGetUI/3.2.0/total?style=for-the-badge)](https://github.com/marticliment/UniGetUI/releases/latest/download/UniGetUI.Installer.exe)
-[![Release Version Badge](https://img.shields.io/github/v/release/marticliment/UniGetUI?style=for-the-badge)](https://github.com/marticliment/UniGetUI/releases)
-[![Issues Badge](https://img.shields.io/github/issues/marticliment/UniGetUI?style=for-the-badge)](https://github.com/marticliment/UniGetUI/issues)
-[![Closed Issues Badge](https://img.shields.io/github/issues-closed/marticliment/UniGetUI?color=%238256d0&style=for-the-badge)](https://github.com/marticliment/UniGetUI/issues?q=is%3Aissue+is%3Aclosed)<br>
-The main goal of this project is to create an intuitive GUI for the most common CLI package managers for Windows 10 and 11, such as [WinGet](https://learn.microsoft.com/en-us/windows/package-manager/), [Scoop](https://scoop.sh/), [Chocolatey](https://chocolatey.org/), [Pip](https://pypi.org/), [Npm](https://www.npmjs.com/), [.NET Tool](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-tool-install), [PowerShell Gallery](https://www.powershellgallery.com/) and more (Check out the package manager compatibility table)!.
-With this app, you can easily download, install, update, and uninstall any software published on the supported package managers — and much more!
+> [!IMPORTANT]
+> **Major announcement:** UniGetUI has entered its next chapter with Devolutions.
+> Read the [blog post](https://devolutions.net/blog/2026/03/unigetui-enters-its-next-chapter-with-devolutions/) and the [official press release](https://www.globenewswire.com/news-release/2026/03/10/3253012/0/en/Devolutions-Acquires-UniGetUI-Strengthening-Security-and-Enterprise-Readiness.html).
+
+[![Downloads](https://img.shields.io/github/downloads/Devolutions/UniGetUI/total?style=for-the-badge)](https://github.com/Devolutions/UniGetUI/releases/latest/download/UniGetUI.Installer.exe)
+[![Release Version Badge](https://img.shields.io/github/v/release/Devolutions/UniGetUI?style=for-the-badge)](https://github.com/Devolutions/UniGetUI/releases)
+[![Issues Badge](https://img.shields.io/github/issues/Devolutions/UniGetUI?style=for-the-badge)](https://github.com/Devolutions/UniGetUI/issues)
+[![Closed Issues Badge](https://img.shields.io/github/issues-closed/Devolutions/UniGetUI?color=%238256d0&style=for-the-badge)](https://github.com/Devolutions/UniGetUI/issues?q=is%3Aissue+is%3Aclosed)<br>
+UniGetUI is an intuitive GUI for the most common CLI package managers on Windows 10 and 11, including [WinGet](https://learn.microsoft.com/en-us/windows/package-manager/), [Scoop](https://scoop.sh/), [Chocolatey](https://chocolatey.org/), [Pip](https://pypi.org/), [Npm](https://www.npmjs.com/), [.NET Tool](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-tool-install), [PowerShell Gallery](https://www.powershellgallery.com/), and more.
+With UniGetUI, you can discover, install, update, and uninstall software from multiple package managers through one interface.
 
 ![image](https://github.com/user-attachments/assets/7cb447ca-ee8b-4bce-8561-b9332fb0139a)
 View more screenshots [here](#screenshots)
 
 Check out the [Supported Package Managers Table](#supported-package-managers) for more details!
 
-**Disclaimer:** This project has no connection with any supported package managers — it's completely unofficial. Be aware that I, the developer of UniGetUI, am NOT responsible for the downloaded software. Proceed with caution
+**Disclaimer:** UniGetUI is not affiliated with the package managers it integrates with. Packages are provided by third parties, so review sources and publishers before installation.
 
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/marticliment/WingetUI/dotnet-test.yml?branch=main&style=for-the-badge&label=Tests)<br>
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/Devolutions/UniGetUI/dotnet-test.yml?branch=main&style=for-the-badge&label=Tests)<br>
 
 
 > [!CAUTION]
-> **The OFFICIAL website for UniGetUI is [https://www.marticliment.com/unigetui/](https://www.marticliment.com/unigetui/)**<br>
+> **The official website for UniGetUI is [https://devolutions.net/unigetui/](https://devolutions.net/unigetui/).**<br>
+> **The official source repository is [https://github.com/Devolutions/UniGetUI](https://github.com/Devolutions/UniGetUI).**<br>
 > **Any other website should be considered unofficial, despite what they may say.**
 
 🔒 Found a security issue? Please report it via [our disclosure program](https://whitehub.net/programs/unigetui/)
 
-## Support the developer
+## Project stewardship
 
-It really does make a big difference, and is very much appreciated. Thanks :)<br>
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/P5P86KKPB)
+UniGetUI was created by Martí Climent and is now maintained by Devolutions. The project remains free, open source, and MIT-licensed. Devolutions' stewardship brings long-term investment, structured governance, stronger security processes, and a roadmap for broader enterprise readiness while keeping UniGetUI standalone and community-driven.
+
+Read more in the [Devolutions announcement](https://devolutions.net/blog/2026/03/unigetui-enters-its-next-chapter-with-devolutions/) and the [official press release](https://www.globenewswire.com/news-release/2026/03/10/3253012/0/en/Devolutions-Acquires-UniGetUI-Strengthening-Security-and-Enterprise-Readiness.html).
 
 ## Table of contents
- - **[UniGetUI Homepage](https://www.marticliment.com/unigetui/)**
+ - **[UniGetUI Homepage](https://devolutions.net/unigetui/)**
  - [Table of contents](#table-of-contents)
  - [Installation](#installation)
- - [Update UniGetUI](#update-UniGetUI)
- - [Support the developer](#support-the-developer)
+ - [Update UniGetUI](#update-unigetui)
+ - [Project stewardship](#project-stewardship)
  - [Features](#features)
    - [Supported Package Managers](#supported-package-managers)
- - [Translating UniGetUI](#translating-UniGetUI-to-other-languages)
+ - [Translating UniGetUI](#translating-unigetui-to-other-languages)
    - [Currently supported languages](#currently-supported-languages)
  - [Contributors](#contributors)
  - [Screenshots](#screenshots)
  - [Frequently Asked Questions](#frequently-asked-questions)
- - [Command-line Arguments](https://github.com/marticliment/UniGetUI/blob/main/cli-arguments.md)
+ - [Command-line Arguments](cli-arguments.md)
 
 
 <a href="https://hellogithub.com/repository/46bec642537f449a857215e39a1d64ae" target="_blank"><img src="https://abroad.hellogithub.com/v1/widgets/recommend.svg?rid=46bec642537f449a857215e39a1d64ae&claim_uid=u6sFoX4hC2HztbD&theme=small" alt="Featured｜HelloGitHub" /></a>
@@ -57,8 +63,8 @@ It really does make a big difference, and is very much appreciated. Thanks :)<br
 
  
 ### Download UniGetUI installer:
-![GitHub Release](https://img.shields.io/github/v/release/marticliment/UniGetUI?style=for-the-badge)
-<p align="left"><b><a href="https://github.com/marticliment/UniGetUI/releases/latest/download/WingetUI.Installer.exe">Click here to download UniGetUI</a></b></p>
+![GitHub Release](https://img.shields.io/github/v/release/Devolutions/UniGetUI?style=for-the-badge)
+<p align="left"><b><a href="https://github.com/Devolutions/UniGetUI/releases/latest/download/UniGetUI.Installer.exe">Click here to download UniGetUI</a></b></p>
 
 
 ### Install UniGetUI via WinGet:
@@ -97,7 +103,7 @@ UniGetUI has a built-in autoupdater. However, it can also be updated like any ot
  - Manage your available updates at the touch of a button from the **Widgets pane** or from **Dev Home** pane with [Widgets for UniGetUI](https://apps.microsoft.com/detail/9NB9M5KZ8SLX)*.
  - The system tray icon will also show the available updates and installed packages, to efficiently update a program or remove a package from your system.
  - Easily customize how and where packages are installed. Select different installation options and switches for each package. Install an older version or force to install a 32 bit architecture. \[But don't worry, those options will be saved for future updates for this package*]
- - Share packages with your friends to show them off that program you found. Here is an example: [Hey \@friend, Check out this program!](https://marticliment.com/unigetui/share/?pname=Google%20Chrome&pid=Google.Chrome&psource=Winget:%20winget)
+ - Share packages with your friends using generated package links.
  - Export custom lists of packages to then import them to another machine and install those packages with previously specified, custom installation parameters. Setting up machines or configuring a specific software setup has never been easier.
  - Backup your packages to a local file to easily recover your setup in a matter of seconds when migrating to a new machine*
 
@@ -105,7 +111,7 @@ UniGetUI has a built-in autoupdater. However, it can also be updated like any ot
 
 **NOTE:** All package managers do support basic install, update, and uninstall processes, as well as checking for updates, finding new packages, and retrieving details from a package.
 
-<img src="https://marticliment.com/unigetui/extra/supported-managers.svg"/>
+<img src="https://devolutions.net/unigetui/extra/supported-managers.svg"/>
 
 ✅: Supported on UniGetUI<br>
 ☑️: Not directly supported but can be easily achieved<br>
@@ -114,7 +120,7 @@ UniGetUI has a built-in autoupdater. However, it can also be updated like any ot
 <br>
 
 # Translating UniGetUI to other languages
-To translate UniGetUI to other languages or to update an old translation, please see [Translating UniGetUI - UniGetUI Wiki](https://github.com/marticliment/UniGetUI/wiki#translating-wingetui) for more info.
+To translate UniGetUI to other languages or to update an old translation, please see [Translating UniGetUI - UniGetUI Wiki](https://github.com/Devolutions/UniGetUI/wiki#translating-wingetui) for more info.
 
 
 ## Currently Supported languages
@@ -184,30 +190,30 @@ Last updated: Fri Feb 27 00:46:32 2026
  UniGetUI wouldn't have been possible without the help of our dear contributors. From the person who fixed a typo to the person who improved half of the code, UniGetUI wouldn't be possible without them! :smile:<br><br>
 
 ## Contributors:
- [![My dear contributors](https://contrib.rocks/image?repo=marticliment/UniGetUI)](https://github.com/marticliment/UniGetUI/graphs/contributors)<br><br>
+ [![My dear contributors](https://contrib.rocks/image?repo=Devolutions/UniGetUI)](https://github.com/Devolutions/UniGetUI/graphs/contributors)<br><br>
  
 
 # Screenshots
  
-![image](https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/UniGetUI_1.png)
+![image](media/UniGetUI_1.png)
 
-![image](https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/UniGetUI_2.png)
+![image](media/UniGetUI_2.png)
 
-![image](https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/UniGetUI_3.png)
+![image](media/UniGetUI_3.png)
 
-![image](https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/UniGetUI_4.png)
+![image](media/UniGetUI_4.png)
 
-![image](https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/UniGetUI_5.png)
+![image](media/UniGetUI_5.png)
 
-![image](https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/UniGetUI_6.png)
+![image](media/UniGetUI_6.png)
 
-![image](https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/UniGetUI_7.png)
+![image](media/UniGetUI_7.png)
 
-![image](https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/UniGetUI_8.png)
+![image](media/UniGetUI_8.png)
 
-![image](https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/UniGetUI_9.png)
+![image](media/UniGetUI_9.png)
 
-![image](https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/UniGetUI_10.png)
+![image](media/UniGetUI_10.png)
 
 
 # Frequently asked questions
@@ -246,8 +252,8 @@ A: UniGetUI, Microsoft, and Scoop aren't responsible for the packages available 
 
 Microsoft has implemented a few checks for the software available on Winget to mitigate the risks of downloading malware. Even so, it's recommended that you only download software from trusted publishers. 
 
-<br><p align="center"><i>Check out the <a href="https://github.com/marticliment/UniGetUI/wiki">Wiki</a> for more information!</i></p>
+<br><p align="center"><i>Check out the <a href="https://github.com/Devolutions/UniGetUI/wiki">Wiki</a> for more information!</i></p>
 
 ## Command-line parameters:
 
-Check out the full list of parameters [here](https://github.com/marticliment/UniGetUI/blob/main/cli-arguments.md)
+Check out the full list of parameters [here](cli-arguments.md)

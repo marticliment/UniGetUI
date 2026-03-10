@@ -43,8 +43,8 @@ public class AutoUpdater
     //------------------------------------------------------------------------------------------------------------------
     private const string STABLE_ENDPOINT = "https://www.marticliment.com/versions/unigetui/stable.ver";
     private const string BETA_ENDPOINT = "https://www.marticliment.com/versions/unigetui/beta.ver";
-    private const string STABLE_INSTALLER_URL = "https://github.com/marticliment/UniGetUI/releases/latest/download/UniGetUI.Installer.exe";
-    private const string BETA_INSTALLER_URL = "https://github.com/marticliment/UniGetUI/releases/download/$TAG/UniGetUI.Installer.exe";
+    private const string STABLE_INSTALLER_URL = "https://github.com/Devolutions/UniGetUI/releases/latest/download/UniGetUI.Installer.exe";
+    private const string BETA_INSTALLER_URL = "https://github.com/Devolutions/UniGetUI/releases/download/$TAG/UniGetUI.Installer.exe";
     //------------------------------------------------------------------------------------------------------------------
     public static bool ReleaseLockForAutoupdate_Notification;
     public static bool ReleaseLockForAutoupdate_Window;

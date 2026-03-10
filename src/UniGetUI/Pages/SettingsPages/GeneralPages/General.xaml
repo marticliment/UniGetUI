@@ -39,7 +39,7 @@
                             VerticalAlignment="Center"
                             Opacity=".8"
                             Text="Is your language missing or incomplete?" />
-                        <HyperlinkButton Padding="0" NavigateUri="https://github.com/marticliment/WingetUI/wiki#translating-wingetui">
+                        <HyperlinkButton Padding="0" NavigateUri="https://github.com/Devolutions/UniGetUI/wiki#translating-wingetui">
                             <widgets:TranslatedTextBlock Text="Become a translator" />
                         </HyperlinkButton>
                     </StackPanel>

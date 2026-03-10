@@ -38,7 +38,7 @@ public static class CLIHandler
 
     public static int Help()
     {
-        var url = "https://github.com/marticliment/UniGetUI/blob/main/cli-arguments.md#unigetui-command-line-parameters";
+        var url = "https://github.com/Devolutions/UniGetUI/blob/main/cli-arguments.md#unigetui-command-line-parameters";
         CoreTools.Launch(url);
         return 0;
     }

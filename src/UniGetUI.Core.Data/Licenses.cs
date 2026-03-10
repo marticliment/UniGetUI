@@ -36,7 +36,7 @@ namespace UniGetUI.Core.Data
         };
 
         public static Dictionary<string, Uri> LicenseURLs = new(){
-            {"UniGetUI",                new Uri("https://github.com/marticliment/WingetUI/blob/main/LICENSE")},
+            {"UniGetUI",                new Uri("https://github.com/Devolutions/UniGetUI/blob/main/LICENSE")},
 
             // C# Libraries
             {"Pickers",                 new Uri("https://github.com/PavlikBender/Pickers/blob/master/LICENSE")},
