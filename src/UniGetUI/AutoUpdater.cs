@@ -98,9 +98,8 @@ public class AutoUpdater
             );
 
             // Check for updates
-            UpdateCandidate updateCandidate = updaterOverrides.UseLegacyGithub
-                ? await CheckForUpdatesFromLegacyGitHub(updaterOverrides)
-                : await CheckForUpdatesFromProductInfo(updaterOverrides);
+            UpdateCandidate updateCandidate = await GetUpdateCandidate(updaterOverrides);
+            Logger.Info($"Updater source '{updateCandidate.SourceName}' returned version {updateCandidate.VersionName} (upgradable={updateCandidate.IsUpgradable})");
 
             if (updateCandidate.IsUpgradable)
             {
@@ -163,6 +162,25 @@ public class AutoUpdater
                 true
             );
             return false;
+        }
+    }
+
+    private static async Task<UpdateCandidate> GetUpdateCandidate(UpdaterOverrides updaterOverrides)
+    {
+        if (updaterOverrides.UseLegacyGithub)
+        {
+            return await CheckForUpdatesFromLegacyGitHub(updaterOverrides);
+        }
+
+        try
+        {
+            return await CheckForUpdatesFromProductInfo(updaterOverrides);
+        }
+        catch (Exception ex)
+        {
+            Logger.Warn("Productinfo updater source failed. Falling back to legacy GitHub updater source.");
+            Logger.Warn(ex);
+            return await CheckForUpdatesFromLegacyGitHub(updaterOverrides);
         }
     }
 

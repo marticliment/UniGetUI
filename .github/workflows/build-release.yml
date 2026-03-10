@@ -7,6 +7,11 @@ on:
         description: 'Release version (e.g. 3.3.7)'
         default: "latest"
         required: true
+      draft-release:
+        description: 'Create the GitHub Release as a draft'
+        required: true
+        type: boolean
+        default: false
       skip-publish:
         description: 'Skip publishing to GitHub Releases'
         required: true
@@ -25,6 +30,7 @@ jobs:
     outputs:
       package-env: ${{ steps.info.outputs.package-env }}
       package-version: ${{ steps.info.outputs.package-version }}
+      draft-release: ${{ steps.info.outputs.draft-release }}
       skip-publish: ${{ steps.info.outputs.skip-publish }}
       dry-run: ${{ steps.info.outputs.dry-run }}
 
@@ -38,6 +44,7 @@ jobs:
         run: |
           $IsProductionBranch = @('main', 'master') -contains '${{ github.ref_name }}'
 
+          try { $DraftRelease = [System.Boolean]::Parse('${{ inputs.draft-release }}') } catch { $DraftRelease = $false }
           try { $SkipPublish = [System.Boolean]::Parse('${{ inputs.skip-publish }}') } catch { $SkipPublish = $false }
           try { $DryRun = [System.Boolean]::Parse('${{ inputs.dry-run }}') } catch { $DryRun = $true }
 
@@ -68,11 +75,13 @@ jobs:
 
           echo "package-env=$PackageEnv" >> $Env:GITHUB_OUTPUT
           echo "package-version=$PackageVersion" >> $Env:GITHUB_OUTPUT
+          echo "draft-release=$($DraftRelease.ToString().ToLower())" >> $Env:GITHUB_OUTPUT
           echo "skip-publish=$($SkipPublish.ToString().ToLower())" >> $Env:GITHUB_OUTPUT
           echo "dry-run=$($DryRun.ToString().ToLower())" >> $Env:GITHUB_OUTPUT
 
           echo "::notice::Environment: $PackageEnv"
           echo "::notice::Version: $PackageVersion"
+          echo "::notice::DraftRelease: $DraftRelease"
           echo "::notice::DryRun: $DryRun"
 
   build:
@@ -316,6 +325,7 @@ jobs:
         working-directory: output
         run: |
           $PackageVersion = '${{ needs.preflight.outputs.package-version }}'
+          $DraftRelease = [System.Boolean]::Parse('${{ needs.preflight.outputs.draft-release }}')
           $DryRun = [System.Boolean]::Parse('${{ needs.preflight.outputs.dry-run }}')
 
           echo "::group::checksums"
@@ -325,6 +335,7 @@ jobs:
           $ReleaseTag = "v$PackageVersion"
           $ReleaseTitle = "UniGetUI v${PackageVersion}"
           $Repository = $Env:GITHUB_REPOSITORY
+          $DraftArg = if ($DraftRelease) { '--draft' } else { $null }
 
           $Files = Get-ChildItem -Path . -Recurse -File | Where-Object {
             $_.Name -eq 'checksums.txt' -or $_.Name -notmatch '^checksums\..+\.txt$'
@@ -332,8 +343,12 @@ jobs:
 
           if ($DryRun) {
             Write-Host "Dry Run: skipping GitHub release creation!"
-            Write-Host "Would create release $ReleaseTag with title '$ReleaseTitle'"
+            Write-Host "Would create release $ReleaseTag with title '$ReleaseTitle' (draft=$DraftRelease)"
             $Files | ForEach-Object { Write-Host "  - $($_.FullName)" }
           } else {
-            & gh release create $ReleaseTag --repo $Repository --title $ReleaseTitle $Files.FullName
+            if ($DraftArg) {
+              & gh release create $ReleaseTag --repo $Repository --title $ReleaseTitle $DraftArg $Files.FullName
+            } else {
+              & gh release create $ReleaseTag --repo $Repository --title $ReleaseTitle $Files.FullName
+            }
           }
