@@ -13,10 +13,10 @@
 	<FileVersion>3.1.0.0</FileVersion>
 	<InformationalVersion>3.1.0-alpha2</InformationalVersion>
 	<Product>UniGetUI</Product>
-	<Authors>Martí Climent and the contributors</Authors>
-	<PublisherName>Martí Climent</PublisherName>
+	<Authors>Devolutions Inc. and the contributors</Authors>
+	<PublisherName>Devolutions Inc.</PublisherName>
 	<ApplicationVersion>3.1.0-alpha2</ApplicationVersion>
-	<Copyright>2025, Martí Climent</Copyright>
+	<Copyright>Copyright 2021-2026 Devolutions Inc.</Copyright>
 	<Nullable>enable</Nullable>
  </PropertyGroup>
 </Project>
