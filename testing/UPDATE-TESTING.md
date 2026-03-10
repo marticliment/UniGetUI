@@ -2,6 +2,8 @@
 
 This guide validates the new default auto-update flow that reads from `productinfo.json`.
 
+If `productinfo.json` lookup fails for any reason, UniGetUI now falls back to the legacy updater logic that uses the existing version endpoint and GitHub release download URL.
+
 ## Files used
 
 - `testing/productinfo.unigetui.test.json`
@@ -114,7 +116,39 @@ Expected result:
 - Legacy endpoint/GitHub code path is used.
 - Productinfo path is bypassed for that run.
 
-## 7) Optional: disable signer thumbprint check (test-only)
+## 7) Fallback test: broken productinfo with successful legacy fallback
+
+Use one of these methods:
+
+- Point `UpdaterProductInfoUrl` to a missing URL, or
+- Point `UpdaterProductInfoUrl` to a malformed JSON file, or
+- Point `UpdaterProductKey` to a non-existent product.
+
+Example:
+
+```powershell
+Set-ItemProperty -Path 'HKCU:\Software\Devolutions\UniGetUI' -Name 'UpdaterProductInfoUrl' -Value 'http://127.0.0.1:8080/does-not-exist.json'
+Set-ItemProperty -Path 'HKCU:\Software\Devolutions\UniGetUI' -Name 'UpdaterUseLegacyGithub' -Type DWord -Value 0
+```
+
+Expected result:
+
+- Productinfo check fails.
+- UniGetUI logs that it is falling back to the legacy GitHub updater source.
+- Legacy updater path is used automatically.
+- If the legacy source has a newer version, the update flow continues normally.
+
+## 8) Fallback test: both sources fail
+
+Use a broken productinfo override and also make the legacy source unavailable in your test environment.
+
+Expected result:
+
+- Productinfo check fails first.
+- UniGetUI attempts the legacy updater path.
+- The updater shows the existing terminal error because neither source succeeded.
+
+## 9) Optional: disable signer thumbprint check (test-only)
 
 Use this only if your local installer is unsigned or signed with a non-Devolutions certificate.
 
@@ -122,7 +156,7 @@ Use this only if your local installer is unsigned or signed with a non-Devolutio
 Set-ItemProperty -Path 'HKCU:\Software\Devolutions\UniGetUI' -Name 'UpdaterSkipSignerThumbprintCheck' -Type DWord -Value 1
 ```
 
-## 8) Cleanup after testing
+## 10) Cleanup after testing
 
 Reset to default production behavior:
 
