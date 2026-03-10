@@ -47,6 +47,8 @@ src/ExternalLibraries.*/obj
 src/ExternalLibraries.*/out
 src/ExternalLibraries.*/outpublish
 
+src/UniGetUI.PackageEngine.Managers.WinGet/winget-cli_*/
+
 src/.vs
 src/.vscode
 new-names.docx

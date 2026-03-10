@@ -1,5 +1,21 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <PropertyGroup>
+    <WingetCliArchitecture Condition="'$(Platform)' == 'x64' or '$(Platform)' == 'arm64' or '$(Platform)' == 'x86'">$(Platform)</WingetCliArchitecture>
+    <WingetCliArchitecture Condition="'$(WingetCliArchitecture)' == ''">x64</WingetCliArchitecture>
+    <WingetCliDirectory>$(MSBuildProjectDirectory)\winget-cli_$(WingetCliArchitecture)</WingetCliDirectory>
+    <WingetCliExePath>$(WingetCliDirectory)\winget.exe</WingetCliExePath>
+    <WingetFetchScriptPath>$(MSBuildProjectDirectory)\..\..\scripts\fetch-winget-cli.ps1</WingetFetchScriptPath>
+  </PropertyGroup>
+
+  <Target Name="EnsureBundledWingetCli"
+          BeforeTargets="PrepareForBuild"
+          Condition="'$(DesignTimeBuild)' != 'true' and '$(OS)' == 'Windows_NT' and !Exists('$(WingetCliExePath)')">
+    <Message Importance="High" Text="Bundled WinGet payload missing for $(WingetCliArchitecture). Fetching it now..." />
+    <Exec Command="pwsh -NoProfile -ExecutionPolicy Bypass -File &quot;$(WingetFetchScriptPath)&quot; -Architectures &quot;$(WingetCliArchitecture)&quot; -Force"
+          WorkingDirectory="$(MSBuildProjectDirectory)\..\.." />
+  </Target>
+
 
 
   <ItemGroup>
@@ -18,52 +34,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="winget-cli_x64\AppInstallerBackgroundTasks.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="winget-cli_x64\concrt140_app.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="winget-cli_x64\Microsoft.Management.Configuration.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="winget-cli_x64\Microsoft.Web.WebView2.Core.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="winget-cli_x64\msvcp140_1_app.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="winget-cli_x64\msvcp140_2_app.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="winget-cli_x64\msvcp140_app.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="winget-cli_x64\resources.pri">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="winget-cli_x64\vcamp140_app.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="winget-cli_x64\vccorlib140_app.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="winget-cli_x64\vcomp140_app.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="winget-cli_x64\vcruntime140_1_app.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="winget-cli_x64\vcruntime140_app.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="winget-cli_x64\WindowsPackageManager.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="winget-cli_x64\WindowsPackageManagerServer.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="winget-cli_x64\winget.exe">
+    <None Include="winget-cli_$(Platform)\**\*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

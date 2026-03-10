@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Text;
+using System.Runtime.InteropServices;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
@@ -32,9 +33,28 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         public static string BundledWinGetPath = "";
 
+        private static string GetBundledWinGetPath()
+        {
+            string folder = RuntimeInformation.ProcessArchitecture switch
+            {
+                System.Runtime.InteropServices.Architecture.Arm64 => "winget-cli_arm64",
+                System.Runtime.InteropServices.Architecture.X64 => "winget-cli_x64",
+                System.Runtime.InteropServices.Architecture.X86 => "winget-cli_x86",
+                _ => "winget-cli_x64"
+            };
+
+            var path = Path.Join(CoreData.UniGetUIExecutableDirectory, folder, "winget.exe");
+            if (!File.Exists(path) && folder != "winget-cli_x64")
+            {
+                path = Path.Join(CoreData.UniGetUIExecutableDirectory, "winget-cli_x64", "winget.exe");
+            }
+
+            return path;
+        }
+
         public WinGet()
         {
-            BundledWinGetPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "winget-cli_x64", "winget.exe");
+            BundledWinGetPath = GetBundledWinGetPath();
 
             Capabilities = new ManagerCapabilities
             {
