@@ -20,6 +20,12 @@
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
 </PropertyGroup>
 
+  <PropertyGroup>
+    <ElevatorPackageArchitecture Condition="'$(Platform)' == 'arm64'">arm64</ElevatorPackageArchitecture>
+    <ElevatorPackageArchitecture Condition="'$(ElevatorPackageArchitecture)' == ''">x64</ElevatorPackageArchitecture>
+    <ElevatorPackageExePath>$(PkgDevolutions_UniGetUI_Elevator)\runtimes\win-$(ElevatorPackageArchitecture)\native\UniGetUI Elevator.exe</ElevatorPackageExePath>
+  </PropertyGroup>
+
     <PropertyGroup>
       <GeneratedBuildInfoFile>$(IntermediateOutputPath)\Generated Files\Secrets.Generated.cs</GeneratedBuildInfoFile>
   </PropertyGroup>
@@ -33,7 +39,14 @@
     </Target>
 
   <Target Name="PostBuildGenerateIntegrityTree" AfterTargets="PostBuildEvent">
-    <Exec Command="python3 ../../scripts/generate_integrity_tree.py $(OutputPath) --min-output" />
+    <Exec Command="pwsh -NoProfile -File ../../scripts/generate-integrity-tree.ps1 -Path $(OutputPath) -MinOutput" />
+  </Target>
+
+  <Target Name="EnsureBundledElevatorFromNuGet"
+          BeforeTargets="PrepareForBuild"
+          Condition="'$(DesignTimeBuild)' != 'true'">
+    <Error Condition="!Exists('$(ElevatorPackageExePath)')"
+           Text="NuGet elevator executable not found at '$(ElevatorPackageExePath)'. Ensure package restore has completed for Devolutions.UniGetUI.Elevator." />
   </Target>
 
     <ItemGroup>
@@ -104,6 +117,7 @@
     <PackageReference Include="YamlDotNet" Version="16.3.0" />
     <PackageReference Include="IdentityModel.OidcClient" Version="6.0.0" />
     <PackageReference Include="Octokit" Version="14.0.0" />
+    <PackageReference Include="Devolutions.UniGetUI.Elevator" Version="2.6.1" GeneratePathProperty="true" ExcludeAssets="build;buildTransitive" />
 
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>
@@ -308,13 +322,13 @@
     <Content Update="Assets\Symbols\Font\fonts\UniGetUI-Symbols.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Update="Assets\Utilities\UniGetUI Elevator.exe">
+    <Content Include="$(ElevatorPackageExePath)" Link="Assets\Utilities\UniGetUI Elevator.exe" Condition="Exists('$(ElevatorPackageExePath)')">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <Visible>false</Visible>
+      <Pack>false</Pack>
     </Content>
-    <Content Update="Assets\Utilities\UniGetUI Elevator (Legacy).exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-      <Content Update="Assets\Utilities\getfilesiginforedist.dll">
+        <Content Update="Assets\Utilities\getfilesiginforedist.dll" Condition="'$(Platform)' == 'x64'">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
     <Content Update="Assets\Utilities\install_scoop.cmd">

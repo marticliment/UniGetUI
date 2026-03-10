@@ -55,16 +55,10 @@
 
             <widgets:SecureCheckboxCard
                 x:Name="UseUserGSudoToggle"
-                CornerRadius="8,8,0,0"
-                BorderThickness="1,1,1,0"
+                CornerRadius="8"
                 SettingName="ForceUserGSudo"
                 StateChanged="ShowRestartBanner"
                 Text="Use installed GSudo instead of UniGetUI Elevator" />
-
-            <widgets:CheckboxCard
-                CornerRadius="0,0,8,8"
-                SettingName="UseLegacyElevator"
-                Text="Use legacy UniGetUI Elevator (disable AdminByRequest support)" />
 
             <UserControl Height="16" />
 
