@@ -186,7 +186,7 @@ public class AutoUpdater
             productInfo = await client.GetStringAsync(updaterOverrides.ProductInfoUrl);
         }
 
-        Dictionary<string, ProductInfoProduct>? productInfoRoot = JsonSerializer.Deserialize<Dictionary<string, ProductInfoProduct>>(productInfo);
+        Dictionary<string, ProductInfoProduct>? productInfoRoot = JsonSerializer.Deserialize<Dictionary<string, ProductInfoProduct>>(productInfo, SerializationHelpers.DefaultOptions);
         if (productInfoRoot is null || productInfoRoot.Count == 0)
         {
             throw new FormatException("productinfo.json content is empty or invalid");
