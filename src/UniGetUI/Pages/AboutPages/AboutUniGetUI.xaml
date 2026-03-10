@@ -48,10 +48,10 @@
             <HyperlinkButton HorizontalAlignment="Stretch" NavigateUri="https://www.marticliment.com/unigetui">
                 <widgets:TranslatedTextBlock Text="WingetUI Homepage" />
             </HyperlinkButton>
-            <HyperlinkButton HorizontalAlignment="Stretch" NavigateUri="https://github.com/marticliment/wingetui/issues/new/choose">
+            <HyperlinkButton HorizontalAlignment="Stretch" NavigateUri="https://github.com/Devolutions/UniGetUI/issues/new/choose">
                 <widgets:TranslatedTextBlock Text="Report an issue or submit a feature request" />
             </HyperlinkButton>
-            <HyperlinkButton HorizontalAlignment="Stretch" NavigateUri="https://github.com/marticliment/wingetui/">
+            <HyperlinkButton HorizontalAlignment="Stretch" NavigateUri="https://github.com/Devolutions/UniGetUI/">
                 <widgets:TranslatedTextBlock Text="WingetUI Repository" />
             </HyperlinkButton>
 

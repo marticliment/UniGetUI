@@ -4,7 +4,7 @@
 #define MyAppVersion "3.3.7"
 #define MyAppName "UniGetUI"
 #define MyAppPublisher "Devolutions Inc."
-#define MyAppURL "https://github.com/marticliment/UniGetUI"
+#define MyAppURL "https://github.com/Devolutions/UniGetUI"
 #define MyAppExeName "UniGetUI.exe"
 
 #define public Dependency_Path_NetCoreCheck "InstallerExtras\"

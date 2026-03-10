@@ -13,7 +13,7 @@ namespace UniGetUI.Services
         private const string ReadMeContents = "" +
               "This special Gist is used by UniGetUI to store your package backups. \n" +
               "Please DO NOT EDIT the contents or the description of this gist, or unexpected behaviours may occur.\n" +
-              "Learn more about UniGetUI at https://github.com/marticliment/UniGetUI\n";
+              "Learn more about UniGetUI at https://github.com/Devolutions/UniGetUI\n";
 
         private readonly GitHubAuthService _authService;
 

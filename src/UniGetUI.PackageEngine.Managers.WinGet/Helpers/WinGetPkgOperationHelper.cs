@@ -204,7 +204,7 @@ internal sealed class WinGetPkgOperationHelper : BasePkgOperationHelper
 
         if ((uintCode is 0x8A150019 or 0x80073D28) && package.OverridenOptions.RunAsAdministrator is not true)
         {   // Installer needs to run elevated, handle autoelevation
-            // Code 0x80073D28 was added after https://github.com/marticliment/UniGetUI/issues/3093
+            // Code 0x80073D28 was added after https://github.com/Devolutions/UniGetUI/issues/3093
             package.OverridenOptions.RunAsAdministrator = true;
             return OperationVeredict.AutoRetry;
         }

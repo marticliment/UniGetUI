@@ -27,7 +27,7 @@
                 Margin="0,4,0,4"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Center"
-                NavigateUri="https://github.com/marticliment/WingetUI/wiki#translating-wingetui">
+                NavigateUri="https://github.com/Devolutions/UniGetUI/wiki#translating-wingetui">
                 <widgets:TranslatedTextBlock Text="Become a translator" />
             </HyperlinkButton>
             <TextBlock />
