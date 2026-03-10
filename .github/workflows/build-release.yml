@@ -1,0 +1,331 @@
+name: Build and Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g. 3.3.7)'
+        default: "latest"
+        required: true
+      skip-publish:
+        description: 'Skip publishing to GitHub Releases'
+        required: true
+        type: boolean
+        default: false
+      dry-run:
+        description: 'Dry run (simulate without publishing)'
+        required: true
+        type: boolean
+        default: true
+
+jobs:
+  preflight:
+    name: Preflight
+    runs-on: ubuntu-latest
+    outputs:
+      package-env: ${{ steps.info.outputs.package-env }}
+      package-version: ${{ steps.info.outputs.package-version }}
+      skip-publish: ${{ steps.info.outputs.skip-publish }}
+      dry-run: ${{ steps.info.outputs.dry-run }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Resolve build parameters
+        id: info
+        shell: pwsh
+        run: |
+          $IsMasterBranch = ('${{ github.ref_name }}' -eq 'master')
+
+          try { $SkipPublish = [System.Boolean]::Parse('${{ inputs.skip-publish }}') } catch { $SkipPublish = $false }
+          try { $DryRun = [System.Boolean]::Parse('${{ inputs.dry-run }}') } catch { $DryRun = $true }
+
+          $PackageEnv = if ($IsMasterBranch) {
+            "publish-prod"
+          } else {
+            "publish-test"
+          }
+
+          if (-Not $IsMasterBranch) {
+            $DryRun = $true # force dry run when not on master branch
+          }
+
+          if (-Not $SkipPublish -And $PackageEnv -ne 'publish-prod') {
+            $DryRun = $true # force dry run when publishing outside production environment
+          }
+
+          $PackageVersion = '${{ inputs.version }}'
+          if ([string]::IsNullOrEmpty($PackageVersion) -or $PackageVersion -eq 'latest') {
+            # Read version from SharedAssemblyInfo.cs
+            $match = Select-String -Path 'src/SharedAssemblyInfo.cs' -Pattern 'AssemblyInformationalVersion\("([^"]+)"\)'
+            if ($match) {
+              $PackageVersion = $match.Matches[0].Groups[1].Value
+            } else {
+              $PackageVersion = (Get-Date -Format "yyyy.M.d") + ".0"
+            }
+          }
+
+          echo "package-env=$PackageEnv" >> $Env:GITHUB_OUTPUT
+          echo "package-version=$PackageVersion" >> $Env:GITHUB_OUTPUT
+          echo "skip-publish=$($SkipPublish.ToString().ToLower())" >> $Env:GITHUB_OUTPUT
+          echo "dry-run=$($DryRun.ToString().ToLower())" >> $Env:GITHUB_OUTPUT
+
+          echo "::notice::Environment: $PackageEnv"
+          echo "::notice::Version: $PackageVersion"
+          echo "::notice::DryRun: $DryRun"
+
+  build:
+    name: Build & Sign (${{ matrix.platform }})
+    runs-on: windows-latest
+    needs: [preflight]
+    environment: ${{ needs.preflight.outputs.package-env }}
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [x64, arm64]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Windows SDK UAP platform
+        shell: pwsh
+        run: |
+          # CsWinRT in WindowsPackageManager.Interop requires UAP 10.0.19041.0 platform metadata
+          $VsWhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+          $VsInstaller = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vs_installer.exe"
+          $InstallPath = & $VsWhere -latest -property installationPath
+          & $VsInstaller modify --installPath $InstallPath `
+            --add Microsoft.VisualStudio.Component.UWP.Support `
+            --add Microsoft.VisualStudio.Component.Windows10SDK.19041 `
+            --quiet --norestart --nocache | Out-Default
+          Write-Host "Windows SDK UAP platform installed"
+
+      - name: Install .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install Inno Setup
+        shell: pwsh
+        run: |
+          choco install innosetup -y --no-progress
+          echo "C:\Program Files (x86)\Inno Setup 6" >> $Env:GITHUB_PATH
+
+      - name: Install code-signing tools
+        shell: pwsh
+        run: |
+          dotnet tool install --global AzureSignTool
+          Install-Module -Name Devolutions.Authenticode -Force
+
+          # Trust test code-signing CA
+          $TestCertsUrl = "https://raw.githubusercontent.com/Devolutions/devolutions-authenticode/master/data/certs"
+          Invoke-WebRequest -Uri "$TestCertsUrl/authenticode-test-ca.crt" -OutFile ".\authenticode-test-ca.crt"
+          Import-Certificate -FilePath ".\authenticode-test-ca.crt" -CertStoreLocation "cert:\LocalMachine\Root"
+          Remove-Item ".\authenticode-test-ca.crt" -ErrorAction SilentlyContinue | Out-Null
+
+      - name: Set version
+        shell: pwsh
+        run: |
+          $PackageVersion = '${{ needs.preflight.outputs.package-version }}'
+          .\scripts\set-version.ps1 -Version $PackageVersion
+
+      - name: Fetch WinGet CLI bundle
+        shell: pwsh
+        run: |
+          $Platform = '${{ matrix.platform }}'
+          .\scripts\fetch-winget-cli.ps1 -Architectures @($Platform) -Force
+
+      - name: Restore dependencies
+        working-directory: src
+        run: dotnet restore
+
+      - name: Run tests
+        working-directory: src
+        shell: pwsh
+        run: |
+          # Retry once to handle flaky tests (e.g. TaskRecyclerTests uses Random)
+          dotnet test --no-restore --verbosity q --nologo
+          if ($LASTEXITCODE -ne 0) {
+            Write-Host "::warning::First test run failed, retrying..."
+            dotnet test --no-restore --verbosity q --nologo
+            if ($LASTEXITCODE -ne 0) { exit 1 }
+          }
+
+      - name: Publish
+        shell: pwsh
+        run: |
+          $Platform = '${{ matrix.platform }}'
+          dotnet publish src/UniGetUI/UniGetUI.csproj /noLogo /p:Configuration=Release /p:Platform=$Platform -v m
+          if ($LASTEXITCODE -ne 0) { throw "dotnet publish failed" }
+
+          # Stage binaries
+          $PublishDir = "src/UniGetUI/bin/$Platform/Release/net8.0-windows10.0.26100.0/win-$Platform/publish"
+          if (Test-Path "unigetui_bin") { Remove-Item "unigetui_bin" -Recurse -Force }
+          New-Item "unigetui_bin" -ItemType Directory | Out-Null
+          Get-ChildItem $PublishDir | Move-Item -Destination "unigetui_bin" -Force
+
+          # Backward-compat alias
+          Copy-Item "unigetui_bin/UniGetUI.exe" "unigetui_bin/WingetUI.exe" -Force
+
+      - name: Code-sign binaries
+        shell: pwsh
+        run: |
+          $ListPath = Join-Path $PWD "signing-files.txt"
+          $files = Get-ChildItem "unigetui_bin" -Recurse -Include "*.exe", "*.dll" | Where-Object {
+            (Get-AuthenticodeSignature $_.FullName).Status -eq "NotSigned"
+          }
+          $files.FullName | Set-Content $ListPath
+          Write-Host "Signing list contains $($files.Count) files."
+
+          .\scripts\sign.ps1 `
+            -FileListPath $ListPath `
+            -AzureTenantId '${{ secrets.AZURE_TENANT_ID }}' `
+            -KeyVaultUrl '${{ secrets.CODE_SIGNING_KEYVAULT_URL }}' `
+            -ClientId '${{ secrets.CODE_SIGNING_CLIENT_ID }}' `
+            -ClientSecret '${{ secrets.CODE_SIGNING_CLIENT_SECRET }}' `
+            -CertificateName '${{ secrets.CODE_SIGNING_CERTIFICATE_NAME }}' `
+            -TimestampServer '${{ vars.CODE_SIGNING_TIMESTAMP_SERVER }}'
+
+      - name: Generate integrity tree
+        shell: pwsh
+        run: .\scripts\generate-integrity-tree.ps1 -Path $PWD/unigetui_bin -MinOutput
+
+      - name: Build installer
+        shell: pwsh
+        run: |
+          $Platform = '${{ matrix.platform }}'
+          $OutputDir = Join-Path $PWD "output"
+          New-Item $OutputDir -ItemType Directory -ErrorAction SilentlyContinue | Out-Null
+
+          # Configure Inno Setup to use AzureSignTool
+          $IssPath = "UniGetUI.iss"
+
+          # Build the installer (signing of the installer itself happens in the next step)
+          # Temporarily remove SignTool line so ISCC doesn't try to sign during build
+          $issContent = Get-Content $IssPath -Raw
+          $issContentNoSign = $issContent -Replace '(?m)^SignTool=.*$', '; SignTool=azsign (disabled for CI, signed separately)'
+          $issContentNoSign = $issContentNoSign -Replace '(?m)^SignedUninstaller=yes', 'SignedUninstaller=no'
+          Set-Content $IssPath $issContentNoSign -NoNewline
+
+          $InstallerBaseName = "UniGetUI.Installer.$Platform"
+          & ISCC.exe $IssPath /F"$InstallerBaseName" /O"$OutputDir"
+          if ($LASTEXITCODE -ne 0) { throw "Inno Setup failed with exit code $LASTEXITCODE" }
+
+          # Restore original ISS content
+          Set-Content $IssPath $issContent -NoNewline
+
+      - name: Stage output
+        shell: pwsh
+        run: |
+          $Platform = '${{ matrix.platform }}'
+          New-Item "output" -ItemType Directory -ErrorAction SilentlyContinue | Out-Null
+
+          # Zip
+          Compress-Archive -Path "unigetui_bin/*" -DestinationPath "output/UniGetUI.$Platform.zip" -CompressionLevel Optimal
+
+          # Installer is created in output during the previous step
+
+      - name: Code-sign installer
+        shell: pwsh
+        run: |
+          $Platform = '${{ matrix.platform }}'
+          .\scripts\sign.ps1 `
+            -InstallerPath "output/UniGetUI.Installer.$Platform.exe" `
+            -AzureTenantId '${{ secrets.AZURE_TENANT_ID }}' `
+            -KeyVaultUrl '${{ secrets.CODE_SIGNING_KEYVAULT_URL }}' `
+            -ClientId '${{ secrets.CODE_SIGNING_CLIENT_ID }}' `
+            -ClientSecret '${{ secrets.CODE_SIGNING_CLIENT_SECRET }}' `
+            -CertificateName '${{ secrets.CODE_SIGNING_CERTIFICATE_NAME }}' `
+            -TimestampServer '${{ vars.CODE_SIGNING_TIMESTAMP_SERVER }}'
+
+      - name: Generate checksums
+        shell: pwsh
+        run: |
+          $Platform = '${{ matrix.platform }}'
+          $ChecksumFile = "output/checksums.$Platform.txt"
+          Get-ChildItem "output" -File | Where-Object { $_.Name -notlike "checksums.*.txt" } | ForEach-Object {
+            $hash = (Get-FileHash $_.FullName -Algorithm SHA256).Hash
+            "$hash  $($_.Name)" | Tee-Object -FilePath $ChecksumFile -Append
+          }
+          echo "::group::checksums"
+          Get-Content $ChecksumFile
+          echo "::endgroup::"
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: UniGetUI-release-${{ matrix.platform }}
+          path: output/*
+
+      - name: Cleanup
+        if: always()
+        shell: pwsh
+        run: |
+          Remove-Item "unigetui_bin" -Recurse -Force -ErrorAction SilentlyContinue
+
+  publish:
+    name: Publish GitHub Release
+    runs-on: ubuntu-latest
+    needs: [preflight, build]
+    if: ${{ fromJSON(needs.preflight.outputs.skip-publish) == false }}
+    environment: ${{ needs.preflight.outputs.package-env }}
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: output
+
+      - name: Add legacy installer filename
+        shell: pwsh
+        working-directory: output
+        run: |
+          $InstallerFiles = Get-ChildItem -Path . -Recurse -File -Filter "UniGetUI.Installer.x64.exe"
+          if (-not $InstallerFiles) {
+            throw "Could not find UniGetUI.Installer.x64.exe in downloaded artifacts"
+          }
+
+          $InstallerFiles | ForEach-Object {
+            $LegacyInstallerPath = Join-Path $_.DirectoryName "UniGetUI.Installer.exe"
+            Copy-Item -Path $_.FullName -Destination $LegacyInstallerPath -Force
+            Write-Host "Created legacy installer alias: $LegacyInstallerPath"
+          }
+
+      - name: Create GitHub Release
+        shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        working-directory: output
+        run: |
+          $PackageVersion = '${{ needs.preflight.outputs.package-version }}'
+          $DryRun = [System.Boolean]::Parse('${{ needs.preflight.outputs.dry-run }}')
+
+          echo "::group::checksums"
+          Get-ChildItem -Path . -Recurse -Filter "checksums.*.txt" | ForEach-Object {
+            Write-Host "--- $($_.FullName) ---"
+            Get-Content $_.FullName
+          }
+          echo "::endgroup::"
+
+          $ReleaseTag = "v$PackageVersion"
+          $ReleaseTitle = "UniGetUI v${PackageVersion}"
+          $Repository = $Env:GITHUB_REPOSITORY
+
+          $Files = Get-ChildItem -Path . -Recurse -File
+
+          if ($DryRun) {
+            Write-Host "Dry Run: skipping GitHub release creation!"
+            Write-Host "Would create release $ReleaseTag with title '$ReleaseTitle'"
+            $Files | ForEach-Object { Write-Host "  - $($_.FullName)" }
+          } else {
+            & gh release create $ReleaseTag --repo $Repository --title $ReleaseTitle $Files.FullName
+          }
