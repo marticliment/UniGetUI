@@ -127,7 +127,7 @@ public partial class OperationControl: INotifyPropertyChanged
     private async Task _onOperationFinished()
     {
         // Remove progress notification (if any)
-        AppNotificationManager.Default.RemoveByTagAsync(Operation.Metadata.Identifier + "progress");
+        _ = AppNotificationManager.Default.RemoveByTagAsync(Operation.Metadata.Identifier + "progress");
 
         if (Operation.Status is OperationStatus.Failed)
         {
@@ -405,7 +405,7 @@ public partial class OperationControl: INotifyPropertyChanged
 
         try
         {
-            AppNotificationManager.Default.RemoveByTagAsync(Operation.Metadata.Identifier + "progress");
+            _ = AppNotificationManager.Default.RemoveByTagAsync(Operation.Metadata.Identifier + "progress");
             AppNotificationBuilder builder = new AppNotificationBuilder()
                 .SetScenario(AppNotificationScenario.Default)
                 .SetTag(Operation.Metadata.Identifier + "progress")
@@ -434,7 +434,7 @@ public partial class OperationControl: INotifyPropertyChanged
 
         try
         {
-            AppNotificationManager.Default.RemoveByTagAsync(Operation.Metadata.Identifier);
+            _ = AppNotificationManager.Default.RemoveByTagAsync(Operation.Metadata.Identifier);
             AppNotificationBuilder builder = new AppNotificationBuilder()
                 .SetScenario(AppNotificationScenario.Default)
                 .SetTag(Operation.Metadata.Identifier)
@@ -459,7 +459,7 @@ public partial class OperationControl: INotifyPropertyChanged
 
         try
         {
-            AppNotificationManager.Default.RemoveByTagAsync(Operation.Metadata.Identifier);
+            _ = AppNotificationManager.Default.RemoveByTagAsync(Operation.Metadata.Identifier);
             AppNotificationBuilder builder = new AppNotificationBuilder()
                 .SetScenario(AppNotificationScenario.Urgent)
                 .SetTag(Operation.Metadata.Identifier)
