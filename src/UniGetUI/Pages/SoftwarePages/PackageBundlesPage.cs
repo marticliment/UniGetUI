@@ -812,7 +812,7 @@ namespace UniGetUI.Interface.SoftwarePages
             }
         }
 
-        private string GenerateCommandString(IReadOnlyList<string> names, IReadOnlyList<string> commands)
+        private static string GenerateCommandString(IReadOnlyList<string> names, IReadOnlyList<string> commands)
         {
             return $$"""
             Clear-Host
