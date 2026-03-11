@@ -677,13 +677,22 @@ namespace UniGetUI.Core.Tools
             int done = (int)((progressPercent / 100.0) * (length));
             int rest = length - done;
 
-            return new StringBuilder()
+            StringBuilder builder = new StringBuilder()
                 .Append('[')
-                .Append(new string('#', done))
-                .Append(new string('.', rest))
-                .Append($"] {progressPercent}%")
-                .Append(extra is null ? "" : $" ({extra})")
-                .ToString();
+                .Append('#', done)
+                .Append('.', rest)
+                .Append("] ")
+                .Append(progressPercent)
+                .Append('%');
+
+            if (extra is not null)
+            {
+                builder.Append(" (")
+                    .Append(extra)
+                    .Append(')');
+            }
+
+            return builder.ToString();
         }
 
         public static string FormatAsSize(long number, int decimals = 1)

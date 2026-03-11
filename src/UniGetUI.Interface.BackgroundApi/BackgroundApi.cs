@@ -264,7 +264,7 @@ namespace UniGetUI.Interface
             var bytes = await File.ReadAllBytesAsync(iconPath);
             var ext = Path.GetExtension(iconPath).TrimStart('.').ToLower();
             context.Response.ContentType = IconCacheEngine.ExtensionToMime.GetValueOrDefault(ext, "image/png");
-            await context.Response.Body.WriteAsync(bytes, 0, bytes.Length);
+            await context.Response.Body.WriteAsync(bytes.AsMemory());
         }
 
         public async Task Stop()
