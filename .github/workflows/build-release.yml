@@ -84,6 +84,8 @@ jobs:
     environment: ${{ needs.preflight.outputs.package-env }}
     permissions:
       contents: read
+    env:
+      NUGET_PACKAGES: ${{ github.workspace }}\.nuget\packages
     strategy:
       fail-fast: false
       matrix:
@@ -93,23 +95,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - name: Install Windows SDK UAP platform
-        shell: pwsh
-        run: |
-          # CsWinRT in WindowsPackageManager.Interop requires UAP 10.0.19041.0 platform metadata
-          $VsWhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
-          $VsInstaller = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vs_installer.exe"
-          $InstallPath = & $VsWhere -latest -property installationPath
-          & $VsInstaller modify --installPath $InstallPath `
-            --add Microsoft.VisualStudio.Component.UWP.Support `
-            --add Microsoft.VisualStudio.Component.Windows10SDK.19041 `
-            --quiet --norestart --nocache | Out-Default
-          Write-Host "Windows SDK UAP platform installed"
-
       - name: Install .NET
         uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 8.0.x
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.NUGET_PACKAGES }}
+          key: ${{ runner.os }}-nuget-${{ hashFiles('src/**/*.csproj', 'src/**/*.props', 'src/**/*.targets', 'src/**/*.sln') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
 
       - name: Install Python
         uses: actions/setup-python@v6
