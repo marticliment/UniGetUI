@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.Win32;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -17,7 +18,7 @@ using UniGetUI.Interface.Enums;
 
 namespace UniGetUI;
 
-public class AutoUpdater
+public partial class AutoUpdater
 {
     private const string REGISTRY_PATH = @"Software\Devolutions\UniGetUI";
     private const string DEFAULT_PRODUCTINFO_URL = "https://devolutions.net/productinfo.json";
@@ -204,7 +205,10 @@ public class AutoUpdater
             productInfo = await client.GetStringAsync(updaterOverrides.ProductInfoUrl);
         }
 
-        Dictionary<string, ProductInfoProduct>? productInfoRoot = JsonSerializer.Deserialize<Dictionary<string, ProductInfoProduct>>(productInfo, SerializationHelpers.DefaultOptions);
+        Dictionary<string, ProductInfoProduct>? productInfoRoot = JsonSerializer.Deserialize(
+            productInfo,
+            typeof(Dictionary<string, ProductInfoProduct>),
+            AutoUpdaterJsonContext.Default) as Dictionary<string, ProductInfoProduct>;
         if (productInfoRoot is null || productInfoRoot.Count == 0)
         {
             throw new FormatException("productinfo.json content is empty or invalid");
@@ -697,6 +701,12 @@ public class AutoUpdater
         public string Type { get; set; } = string.Empty;
         public string Url { get; set; } = string.Empty;
         public string Hash { get; set; } = string.Empty;
+    }
+
+    [JsonSourceGenerationOptions(AllowTrailingCommas = true)]
+    [JsonSerializable(typeof(Dictionary<string, ProductInfoProduct>))]
+    private sealed partial class AutoUpdaterJsonContext : JsonSerializerContext
+    {
     }
 
 }

@@ -16,15 +16,7 @@ public static class DesktopShortcutsDatabase
 
     public static IReadOnlyDictionary<string, bool> GetDatabase()
     {
-        var database = Settings.GetDictionary<string, bool>(Settings.K.DeletableDesktopShortcuts);
-        if (database is null)
-        {
-            return new Dictionary<string, bool>();
-        }
-
-        return database
-            .Where(item => item.Value.HasValue)
-            .ToDictionary(item => item.Key, item => item.Value!.Value);
+        return Settings.GetDictionary<string, bool>(Settings.K.DeletableDesktopShortcuts) ?? new Dictionary<string, bool>();
     }
 
     public static void ResetDatabase()

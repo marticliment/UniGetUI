@@ -30,11 +30,11 @@ namespace UniGetUI.Interface.Dialogs
         public event EventHandler? Close;
         private readonly OperationType Operation;
         private readonly string packageInstallLocation;
-        private bool _uiLoaded;
+        private bool UiLoaded { get; set; }
 
-        public ObservableCollection<IOP_Proc> ProcessesToKill = new();
+        public ObservableCollection<IOP_Proc> ProcessesToKill { get; set; } = new();
         private readonly ObservableCollection<IOP_Proc> _runningProcesses = new();
-        public ObservableCollection<IOP_Proc> SuggestedProcesses = new();
+        public ObservableCollection<IOP_Proc> SuggestedProcesses { get; set; } = new();
 
         public InstallOptionsPage(IPackage package, InstallOptions options) : this(package, OperationType.None, options) { }
         public InstallOptionsPage(IPackage package, OperationType operation, InstallOptions options)
@@ -187,7 +187,7 @@ namespace UniGetUI.Interface.Dialogs
             AbortUpdFailedCheck.IsChecked = Options.AbortOnPreUpdateFail;
             AbortUniFailedCheck.IsChecked = Options.AbortOnPreUninstallFail;
 
-            _uiLoaded = true;
+            UiLoaded = true;
             EnableDisableControls(operation);
             _ = LoadIgnoredUpdates();
             _ = _loadProcesses();
@@ -407,7 +407,7 @@ namespace UniGetUI.Interface.Dialogs
 
         private async Task GenerateCommand()
         {
-            if (!_uiLoaded) return;
+            if (!UiLoaded) return;
             InstallOptions options = await GetUpdatedOptions(updateDetachedOptions: false);
             options = await InstallOptionsFactory.LoadApplicableAsync(this.Package, overridePackageOptions: options);
 
