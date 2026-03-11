@@ -362,3 +362,52 @@ jobs:
               & gh release create $ReleaseTag --repo $Repository --title $ReleaseTitle $Files.FullName
             }
           }
+
+      - name: Check out Devolutions/actions
+        if: ${{ fromJSON(needs.preflight.outputs.dry-run) == false }}
+        uses: actions/checkout@v4
+        with:
+          repository: Devolutions/actions
+          ref: v1
+          token: ${{ secrets.DEVOLUTIONSBOT_TOKEN }}
+          path: ./.github/workflows
+
+      - name: Install Devolutions Toolbox
+        if: ${{ fromJSON(needs.preflight.outputs.dry-run) == false }}
+        uses: ./.github/workflows/toolbox-install
+        with:
+          github_token: ${{ secrets.DEVOLUTIONSBOT_TOKEN }}
+
+      - name: Stage files for OneDrive upload
+        if: ${{ fromJSON(needs.preflight.outputs.dry-run) == false }}
+        shell: pwsh
+        run: |
+          $PackageVersion = '${{ needs.preflight.outputs.package-version }}'
+          New-Item -Path "onedrive-staging" -ItemType Directory -Force | Out-Null
+
+          $Mappings = @{
+            "output/UniGetUI-release-x64/UniGetUI.Installer.x64.exe" = "Devolutions.UniGetUI.win-x64.$PackageVersion.exe"
+            "output/UniGetUI-release-arm64/UniGetUI.Installer.arm64.exe" = "Devolutions.UniGetUI.win-arm64.$PackageVersion.exe"
+            "output/UniGetUI-release-x64/UniGetUI.x64.zip" = "Devolutions.UniGetUI.win-x64.$PackageVersion.zip"
+            "output/UniGetUI-release-arm64/UniGetUI.arm64.zip" = "Devolutions.UniGetUI.win-arm64.$PackageVersion.zip"
+          }
+
+          foreach ($entry in $Mappings.GetEnumerator()) {
+            if (-not (Test-Path $entry.Key)) {
+              throw "File not found: $($entry.Key)"
+            }
+            Copy-Item -Path $entry.Key -Destination "onedrive-staging/$($entry.Value)"
+            Write-Host "Staged: $($entry.Key) -> $($entry.Value)"
+          }
+
+      - name: Upload to OneDrive
+        if: ${{ fromJSON(needs.preflight.outputs.dry-run) == false }}
+        uses: ./.github/workflows/onedrive-upload
+        with:
+          azure_client_id: ${{ secrets.ONEDRIVE_AUTOMATION_CLIENT_ID }}
+          azure_client_secret: ${{ secrets.ONEDRIVE_AUTOMATION_CLIENT_SECRET }}
+          conflict_behavior: replace
+          destination_path: /UniGetUI/${{ needs.preflight.outputs.package-version }}
+          remote: releases
+          source_path: Devolutions.UniGetUI.*
+          working_directory: onedrive-staging
