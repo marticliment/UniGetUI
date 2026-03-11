@@ -4,8 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Release version (e.g. 3.3.7)'
-        default: "latest"
+        description: 'Release version (required, e.g. 2026.1.0)'
         required: true
       draft-release:
         description: 'Create the GitHub Release as a draft'
@@ -63,14 +62,8 @@ jobs:
           }
 
           $PackageVersion = '${{ inputs.version }}'
-          if ([string]::IsNullOrEmpty($PackageVersion) -or $PackageVersion -eq 'latest') {
-            # Read version from SharedAssemblyInfo.cs
-            $match = Select-String -Path 'src/SharedAssemblyInfo.cs' -Pattern 'AssemblyInformationalVersion\("([^"]+)"\)'
-            if ($match) {
-              $PackageVersion = $match.Matches[0].Groups[1].Value
-            } else {
-              $PackageVersion = (Get-Date -Format "yyyy.M.d") + ".0"
-            }
+          if ([string]::IsNullOrWhiteSpace($PackageVersion)) {
+            throw "The workflow_dispatch version input is required."
           }
 
           echo "package-env=$PackageEnv" >> $Env:GITHUB_OUTPUT
