@@ -248,7 +248,9 @@ namespace UniGetUI.Core.Data
 
                 Logger.Error("System.Reflection.Assembly.GetExecutingAssembly().Location returned an empty path");
 
-                return NormalizeExecutablePath(Path.Join(UniGetUIExecutableDirectory, "UniGetUI"));
+                return OperatingSystem.IsWindows()
+                    ? Path.Join(UniGetUIExecutableDirectory, "UniGetUI.exe")
+                    : NormalizeExecutablePath(Path.Join(UniGetUIExecutableDirectory, "UniGetUI"));
             }
         }
 
