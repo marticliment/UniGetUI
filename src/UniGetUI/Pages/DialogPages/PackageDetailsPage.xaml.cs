@@ -46,7 +46,7 @@ namespace UniGetUI.Interface.Dialogs
             Unset
         }
 
-        private TEL_InstallReferral InstallReferral;
+        private readonly TEL_InstallReferral InstallReferral;
 
         private LayoutMode __layout_mode = LayoutMode.Unset;
         public PackageDetailsPage(IPackage package, OperationType role, TEL_InstallReferral referral)

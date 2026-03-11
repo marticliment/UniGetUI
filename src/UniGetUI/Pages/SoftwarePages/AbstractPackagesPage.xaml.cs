@@ -201,7 +201,7 @@ namespace UniGetUI.Interface
 
         public string QueryBackup { get; set; }
 
-        private string _searchPlaceholder;
+        private readonly string _searchPlaceholder;
         public string SearchBoxPlaceholder => _searchPlaceholder;
 
         private string TypeQuery = "";

@@ -95,7 +95,7 @@ public static class CrashHandler
             // ignored
         }
 
-        string GetExceptionData(Exception e)
+        static string GetExceptionData(Exception e)
         {
             try
             {

@@ -70,7 +70,7 @@ public static class NativePackageHandler
 
             return metadata;
         }
-        catch (Exception ex)
+        catch
         {
             throw;
         }

@@ -23,10 +23,10 @@ public class TestSerializablePackage
     };
 
     [Theory]
-    [InlineData("", "", "", "", "")]
-    [InlineData("UniGetUI", "MartiCliment.UniGetUI.Pre-Release", "3.2.1-beta1", "WinGet", "winget")]
-    [InlineData("Mr. Trololo", "\n\n\n", "\x12", "\r", "beanz")]
-    public void ToAndFromJsonNode(string id, string name, string version, string manager, string source)
+    [InlineData("", "", "", "")]
+    [InlineData("UniGetUI", "MartiCliment.UniGetUI.Pre-Release", "3.2.1-beta1", "WinGet")]
+    [InlineData("Mr. Trololo", "\n\n\n", "\x12", "\r")]
+    public void ToAndFromJsonNode(string id, string name, string version, string manager)
     {
         var originalObject1 = new SerializablePackage()
         {

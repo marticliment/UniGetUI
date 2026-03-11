@@ -43,10 +43,10 @@ namespace UniGetUI.Interface
 
     public sealed partial class MainView : UserControl
     {
-        private DiscoverSoftwarePage DiscoverPage;
-        private SoftwareUpdatesPage UpdatesPage;
-        private InstalledPackagesPage InstalledPage;
-        private PackageBundlesPage BundlesPage;
+        private readonly DiscoverSoftwarePage DiscoverPage;
+        private readonly SoftwareUpdatesPage UpdatesPage;
+        private readonly InstalledPackagesPage InstalledPage;
+        private readonly PackageBundlesPage BundlesPage;
         private SettingsBasePage? SettingsPage;
         private SettingsBasePage? ManagersPage;
         private UniGetUILogPage? UniGetUILogPage;
@@ -56,9 +56,9 @@ namespace UniGetUI.Interface
 
         private PageType OldPage_t = PageType.Null;
         private PageType CurrentPage_t = PageType.Null;
-        private List<PageType> NavigationHistory = new();
+        private readonly List<PageType> NavigationHistory = new();
 
-        AutoSuggestBox MainTextBlock;
+        private readonly AutoSuggestBox MainTextBlock;
         public event EventHandler<bool>? CanGoBackChanged;
 
         public MainView(AutoSuggestBox mainTextBlock)

@@ -28,9 +28,9 @@ namespace UniGetUI.Pages.SettingsPages
 
         public event EventHandler<Type>? NavigationRequested;
 
-        private List<SettingsPageButton> managerControls = new();
+        private readonly List<SettingsPageButton> managerControls = new();
 
-        private bool _isLoadingToggles = false;
+        private bool _isLoadingToggles;
         public ManagersHomepage()
         {
             this.InitializeComponent();

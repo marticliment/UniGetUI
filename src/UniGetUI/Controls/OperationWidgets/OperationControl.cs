@@ -31,7 +31,7 @@ public partial class OperationControl: INotifyPropertyChanged
     public BetterMenu OpMenu;
     public OperationStatus? MenuStateOnLoaded;
     public ObservableCollection<OperationBadge> Badges = [];
-    private int _errorCount = 0;
+    private int _errorCount;
 
     public OperationControl(AbstractOperation operation)
     {

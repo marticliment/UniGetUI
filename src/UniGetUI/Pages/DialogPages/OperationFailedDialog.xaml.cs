@@ -17,7 +17,7 @@ namespace UniGetUI.Pages.DialogPages;
 public sealed partial class OperationFailedDialog : Page
 {
     public event EventHandler<EventArgs>? Close;
-    Paragraph par;
+    private readonly Paragraph par;
 
     private static SolidColorBrush errorColor = null!;
     private static SolidColorBrush debugColor = null!;

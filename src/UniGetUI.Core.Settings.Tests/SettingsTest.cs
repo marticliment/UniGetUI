@@ -18,7 +18,7 @@ namespace UniGetUI.Core.SettingsEngine.Tests
         public SerializableTestSub sub { get; set; }
     }
 
-    public class SettingsTest
+    public class SettingsTest : IDisposable
     {
         private readonly string _testRoot;
 

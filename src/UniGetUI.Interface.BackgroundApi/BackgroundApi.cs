@@ -31,7 +31,6 @@ namespace UniGetUI.Interface
         public event EventHandler<string>? OnUpgradePackage;
 
         private IHost? _host;
-        private bool _running;
 
         public BackgroundApiRunner()
         {
@@ -86,7 +85,6 @@ namespace UniGetUI.Interface
                 webBuilder.UseUrls("http://localhost:7058");
             });
             _host = builder.Build();
-            _running = true;
             await _host.StartAsync();
             Logger.Info("Api running on http://localhost:7058");
         }

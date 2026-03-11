@@ -40,7 +40,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         public event EventHandler? ReapplyProperties;
         public bool CanGoBack => true;
         public string ShortTitle => Manager is null ? "" : CoreTools.Translate("{0} settings", Manager.DisplayName);
-        private bool _isLoading = false;
+        private bool _isLoading;
 
         public PackageManagerPage()
         {

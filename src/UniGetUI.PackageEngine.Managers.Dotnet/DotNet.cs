@@ -17,8 +17,8 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
 {
     public class DotNet : BaseNuGet
     {
-        public static new string[] FALSE_PACKAGE_IDS = [""];
-        public static new string[] FALSE_PACKAGE_VERSIONS = [""];
+        public static string[] FALSE_PACKAGE_IDS = [""];
+        public static string[] FALSE_PACKAGE_VERSIONS = [""];
 
         public DotNet()
         {

@@ -18,7 +18,7 @@ namespace UniGetUI.Pages.SettingsPages
     /// </summary>
     public sealed partial class SettingsBasePage : Page, IEnterLeaveListener, IInnerNavigationPage
     {
-        bool IsManagers;
+        private readonly bool IsManagers;
         public SettingsBasePage(bool isManagers)
         {
             IsManagers = isManagers;
