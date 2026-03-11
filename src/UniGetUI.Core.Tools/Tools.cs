@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Diagnostics;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Security.Cryptography;
 using System.Security.Principal;
 using System.Text;
+#if WINDOWS
 using Windows.Networking.Connectivity;
-using ABI.Windows.ApplicationModel.UserDataTasks;
+#endif
 using UniGetUI.Core.Classes;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Language;
@@ -88,8 +90,8 @@ namespace UniGetUI.Core.Tools
         /// </summary>
         public static void RelaunchProcess()
         {
-            Logger.Debug("Launching process: " + Environment.GetCommandLineArgs()[0].Replace(".dll", ".exe"));
-            Process.Start(Environment.GetCommandLineArgs()[0].Replace(".dll", ".exe"));
+            Logger.Debug("Launching process: " + CoreData.UniGetUIExecutableFile);
+            Process.Start(CoreData.UniGetUIExecutableFile);
             Logger.Warn("About to kill process");
             Environment.Exit(0);
         }
@@ -109,30 +111,27 @@ namespace UniGetUI.Core.Tools
             command = command.Replace(";", "").Replace("&", "").Trim();
             Logger.Debug($"Begin \"which\" search for command {command}");
 
-            string PATH = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.User) + ";";
-            PATH += Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Machine) + ";";
-            PATH += Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Process);
-            PATH = PATH.Replace(";;", ";").Trim(';');
+            string pathValue = GetSearchPath();
 
             Process process = new()
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = Path.Join(Environment.SystemDirectory, "where.exe"),
+                    FileName = OperatingSystem.IsWindows() ? Path.Join(Environment.SystemDirectory, "where.exe") : "which",
                     Arguments = command,
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     CreateNoWindow = true,
-                    StandardOutputEncoding = CodePagesEncodingProvider.Instance.GetEncoding(CoreData.CODE_PAGE),
-                    StandardErrorEncoding = CodePagesEncodingProvider.Instance.GetEncoding(CoreData.CODE_PAGE),
+                    StandardOutputEncoding = GetCommandOutputEncoding(),
+                    StandardErrorEncoding = GetCommandOutputEncoding(),
                 }
             };
             if (updateEnv)
             {
                 process.StartInfo = UpdateEnvironmentVariables(process.StartInfo);
             }
-            process.StartInfo.Environment["PATH"] = PATH;
+            process.StartInfo.Environment["PATH"] = pathValue;
 
             try
             {
@@ -219,11 +218,20 @@ namespace UniGetUI.Core.Tools
             try
             {
                 using Process p = new();
-                p.StartInfo.FileName = "cmd.exe";
-                p.StartInfo.Arguments = "/C start \"" + WindowTitle + "\" \"" + path + "\"";
-                p.StartInfo.UseShellExecute = true;
+                if (OperatingSystem.IsWindows())
+                {
+                    p.StartInfo.FileName = "cmd.exe";
+                    p.StartInfo.Arguments = "/C start \"" + WindowTitle + "\" \"" + path + "\"";
+                    p.StartInfo.UseShellExecute = true;
+                    p.StartInfo.Verb = RunAsAdmin ? "runas" : "";
+                }
+                else
+                {
+                    p.StartInfo.FileName = "/bin/sh";
+                    p.StartInfo.ArgumentList.Add(path);
+                    p.StartInfo.UseShellExecute = false;
+                }
                 p.StartInfo.CreateNoWindow = true;
-                p.StartInfo.Verb = RunAsAdmin ? "runas" : "";
                 p.Start();
                 await p.WaitForExitAsync();
             }
@@ -241,6 +249,11 @@ namespace UniGetUI.Core.Tools
         {
             try
             {
+                if (!OperatingSystem.IsWindows())
+                {
+                    return string.Equals(Environment.UserName, "root", StringComparison.Ordinal);
+                }
+
                 return new WindowsPrincipal(WindowsIdentity.GetCurrent())
                     .IsInRole(WindowsBuiltInRole.Administrator);
             }
@@ -550,23 +563,11 @@ namespace UniGetUI.Core.Tools
         /// <param name="targetPath">The location of the real folder where to point</param>
         public static void CreateSymbolicLinkDir(string linkPath, string targetPath)
         {
-            var startInfo = new ProcessStartInfo
-            {
-                FileName = "cmd.exe",
-                Arguments = $"/c mklink /D \"{linkPath}\" \"{targetPath}\"",
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true
-            };
+            Directory.CreateSymbolicLink(linkPath, targetPath);
 
-            Process? p = Process.Start(startInfo);
-            p?.WaitForExit();
-
-            if (p is null || p.ExitCode != 0)
+            if (!Directory.Exists(linkPath))
             {
-                throw new InvalidOperationException(
-                    $"The operation did not complete successfully: \n{p?.StandardOutput.ReadToEnd()}\n{p?.StandardError.ReadToEnd()}\n");
+                throw new InvalidOperationException($"The symbolic link '{linkPath}' was not created successfully.");
             }
         }
 
@@ -601,6 +602,16 @@ namespace UniGetUI.Core.Tools
         /// <returns></returns>
         public static ProcessStartInfo UpdateEnvironmentVariables(ProcessStartInfo info)
         {
+            if (!OperatingSystem.IsWindows())
+            {
+                foreach (DictionaryEntry env in Environment.GetEnvironmentVariables())
+                {
+                    info.Environment[env.Key?.ToString() ?? "UNKNOWN"] = env.Value?.ToString();
+                }
+
+                return info;
+            }
+
             foreach (DictionaryEntry env in Environment.GetEnvironmentVariables(EnvironmentVariableTarget.Machine))
             {
                 info.Environment[env.Key?.ToString() ?? "UNKNOWN"] = env.Value?.ToString();
@@ -637,6 +648,7 @@ namespace UniGetUI.Core.Tools
             Logger.Debug("Checking for internet connectivity...");
             bool internetLost = false;
 
+#if WINDOWS
             var profile = NetworkInformation.GetInternetConnectionProfile();
             while (profile is null || profile.GetNetworkConnectivityLevel() is not NetworkConnectivityLevel.InternetAccess)
             {
@@ -648,6 +660,17 @@ namespace UniGetUI.Core.Tools
                     internetLost = true;
                 }
             }
+#else
+            while (!NetworkInterface.GetIsNetworkAvailable())
+            {
+                Thread.Sleep(1000);
+                if (!internetLost)
+                {
+                    Logger.Warn("User is not connected to the internet, waiting for an internet connection to be available...");
+                    internetLost = true;
+                }
+            }
+#endif
             Logger.Debug("Internet connectivity was established.");
         }
 
@@ -700,6 +723,12 @@ namespace UniGetUI.Core.Tools
             try
             {
                 if (!File.Exists(path)) throw new FileNotFoundException($"The file {path} was not found");
+
+                if (!OperatingSystem.IsWindows())
+                {
+                    Launch(Path.GetDirectoryName(path));
+                    return;
+                }
 
                 Process p = new()
                 {
@@ -766,6 +795,25 @@ namespace UniGetUI.Core.Tools
                 Logger.Error($"Task {t} crashed with exception:");
                 Logger.Error(ex);
             }
+        }
+
+        private static Encoding GetCommandOutputEncoding()
+            => OperatingSystem.IsWindows()
+                ? CodePagesEncodingProvider.Instance.GetEncoding(CoreData.CODE_PAGE) ?? Encoding.UTF8
+                : Encoding.UTF8;
+
+        private static string GetSearchPath()
+        {
+            if (!OperatingSystem.IsWindows())
+            {
+                return Environment.GetEnvironmentVariable("PATH") ?? string.Empty;
+            }
+
+            string separator = Path.PathSeparator.ToString();
+            string pathValue = (Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.User) ?? string.Empty) + separator;
+            pathValue += (Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Machine) ?? string.Empty) + separator;
+            pathValue += Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Process) ?? string.Empty;
+            return pathValue.Replace(separator + separator, separator).Trim(Path.PathSeparator);
         }
     }
 }

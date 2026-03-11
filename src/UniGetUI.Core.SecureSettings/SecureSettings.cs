@@ -53,8 +53,7 @@ public static class SecureSettings
 
         string purifiedUser = CoreTools.MakeValidFileName(Environment.UserName);
 
-        var appData = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
-        var settingsLocation = Path.Join(appData, "UniGetUI\\SecureSettings", purifiedUser);
+        var settingsLocation = Path.Join(GetSecureSettingsRoot(), purifiedUser);
         var settingFile = Path.Join(settingsLocation, purifiedSetting);
 
         if (!Directory.Exists(settingsLocation))
@@ -74,6 +73,11 @@ public static class SecureSettings
         _cache.Remove(purifiedSetting);
 
         string purifiedUser = CoreTools.MakeValidFileName(Environment.UserName);
+
+        if (!OperatingSystem.IsWindows())
+        {
+            return ApplyForUser(purifiedUser, purifiedSetting, enabled) is 0;
+        }
 
         using Process p = new Process();
         p.StartInfo = new()
@@ -104,8 +108,7 @@ public static class SecureSettings
 
             string purifiedUser = CoreTools.MakeValidFileName(username);
 
-            var appData = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
-            var settingsLocation = Path.Join(appData, "UniGetUI\\SecureSettings", purifiedUser);
+            var settingsLocation = Path.Join(GetSecureSettingsRoot(), purifiedUser);
             var settingFile = Path.Join(settingsLocation, purifiedSetting);
 
             if (!Directory.Exists(settingsLocation))
@@ -132,5 +135,15 @@ public static class SecureSettings
             Console.WriteLine(ex);
             return -1;
         }
+    }
+
+    private static string GetSecureSettingsRoot()
+    {
+        if (OperatingSystem.IsWindows())
+        {
+            return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "UniGetUI", "SecureSettings");
+        }
+
+        return Path.Join(CoreData.UniGetUIDataDirectory, "SecureSettings");
     }
 }

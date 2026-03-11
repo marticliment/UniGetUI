@@ -1,6 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <TargetFramework>$(WindowsTargetFramework)</TargetFramework>
+    <TargetFrameworks />
     <WingetCliArchitecture Condition="'$(Platform)' == 'x64' or '$(Platform)' == 'arm64' or '$(Platform)' == 'x86'">$(Platform)</WingetCliArchitecture>
     <WingetCliArchitecture Condition="'$(WingetCliArchitecture)' == ''">x64</WingetCliArchitecture>
     <WingetCliDirectory>$(MSBuildProjectDirectory)\winget-cli_$(WingetCliArchitecture)</WingetCliDirectory>

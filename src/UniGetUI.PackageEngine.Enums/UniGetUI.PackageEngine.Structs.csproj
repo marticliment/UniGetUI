@@ -1,7 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-
-
   <ItemGroup>
     <Compile Include="..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />
   </ItemGroup>

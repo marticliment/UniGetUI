@@ -1,7 +1,7 @@
 using System.Net;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
-using Windows.Security.Credentials;
+using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 
 namespace UniGetUI.Core.SettingsEngine;
@@ -44,14 +44,8 @@ public partial class Settings
     {
         try
         {
-            var vault = new PasswordVault();
-            var credentials = vault.Retrieve(PROXY_RES_ID, GetValue(K.ProxyUsername));
-
-            return new NetworkCredential()
-            {
-                UserName = credentials.UserName,
-                Password = credentials.Password,
-            };
+            string username = GetValue(K.ProxyUsername);
+            return username.Length is 0 ? null : CoreCredentialStore.GetCredential(PROXY_RES_ID, username);
         }
         catch (Exception ex)
         {
@@ -65,9 +59,8 @@ public partial class Settings
     {
         try
         {
-            var vault = new PasswordVault();
             SetValue(K.ProxyUsername, username);
-            vault.Add(new PasswordCredential(PROXY_RES_ID, username, password));
+            CoreCredentialStore.SetCredential(PROXY_RES_ID, username, password);
         }
         catch (Exception ex)
         {

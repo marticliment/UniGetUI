@@ -2,7 +2,7 @@
 <#
 .SYNOPSIS
     Stamps version information into all required source files.
-    CI-friendly replacement for the interactive scripts/apply_versions.py.
+    CI-friendly version stamping script for local builds and CI.
 
 .PARAMETER Version
     Semantic version string, e.g. "3.3.7" or "3.4.0-beta1".
@@ -68,8 +68,8 @@ function Set-LinesByPrefix {
 
 # --- CoreData.cs ---
 Set-LinesByPrefix -FilePath (Join-Path $RepoRoot "src" "UniGetUI.Core.Data" "CoreData.cs") -Replacements @{
-    'public const string VersionName =' = "        public const string VersionName = `"$Version`"; // Do not modify this line, use file scripts/apply_versions.py"
-    'public const int BuildNumber ='    = "        public const int BuildNumber = $BuildNumber; // Do not modify this line, use file scripts/apply_versions.py"
+    'public const string VersionName =' = "        public const string VersionName = `"$Version`"; // Do not modify this line, use file scripts/set-version.ps1"
+    'public const int BuildNumber ='    = "        public const int BuildNumber = $BuildNumber; // Do not modify this line, use file scripts/set-version.ps1"
 }
 
 # --- SharedAssemblyInfo.cs ---
@@ -90,7 +90,7 @@ Set-LinesByPrefix -FilePath (Join-Path $RepoRoot "UniGetUI.iss") -Replacements @
 $ManifestPath = Join-Path $RepoRoot "src" "UniGetUI" "app.manifest"
 if (Test-Path $ManifestPath) {
     $content = Get-Content $ManifestPath -Raw -Encoding utf8BOM
-    $content = $content -Replace '(?<!manifest)(version=\s*")[^"]*(")', "`${1}$FourPartVersion`${2}"
+    $content = $content -Replace '(?s)(<assemblyIdentity\b.*?\bversion\s*=\s*")[^"]*(")', "`${1}$FourPartVersion`${2}"
     Set-Content $ManifestPath $content -Encoding utf8BOM -NoNewline
 }
 

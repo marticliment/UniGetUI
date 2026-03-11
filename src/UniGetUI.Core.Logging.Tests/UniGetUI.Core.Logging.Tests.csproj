@@ -3,6 +3,8 @@
 
 
   <PropertyGroup>
+    <TargetFramework>$(PortableTargetFramework)</TargetFramework>
+    <TargetFrameworks />
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>

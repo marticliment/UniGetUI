@@ -34,7 +34,8 @@ namespace UniGetUI.Core.Tools.Tests
         [Fact]
         public async Task TestWhichFunctionForExistingFile()
         {
-            Tuple<bool, string> result = await CoreTools.WhichAsync("cmd.exe");
+            string existingCommand = OperatingSystem.IsWindows() ? "cmd.exe" : "sh";
+            Tuple<bool, string> result = await CoreTools.WhichAsync(existingCommand);
             Assert.True(result.Item1);
             Assert.True(File.Exists(result.Item2));
         }
@@ -42,7 +43,7 @@ namespace UniGetUI.Core.Tools.Tests
         [Fact]
         public async Task TestWhichFunctionForNonExistingFile()
         {
-            Tuple<bool, string> result = await CoreTools.WhichAsync("nonexistentfile.exe");
+            Tuple<bool, string> result = await CoreTools.WhichAsync("nonexistentfile-does-not-exist");
             Assert.False(result.Item1);
             Assert.Equal("", result.Item2);
         }

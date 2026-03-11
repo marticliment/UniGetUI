@@ -3,8 +3,10 @@ using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
-using UniGetUI.PackageEngine.Managers.WingetManager;
 using UniGetUI.PackageOperations;
+#if WINDOWS
+using UniGetUI.PackageEngine.Managers.WingetManager;
+#endif
 
 namespace UniGetUI.PackageEngine.Operations
 {
@@ -50,20 +52,38 @@ namespace UniGetUI.PackageEngine.Operations
 
         public static IReadOnlyList<InnerOperation> CreateInstallPreOps(IManagerSource source, bool forceLocalWinGet)
         {
-            if (source.Manager is not WinGet) return [];
+            if (!IsWinGetManager(source.Manager)) return [];
             if (forceLocalWinGet) return [];
-            if (source.Manager.Status.ExecutablePath == WinGet.BundledWinGetPath) return [];
+            if (source.Manager.Status.ExecutablePath == GetBundledWinGetPath()) return [];
             return [new(new AddSourceOperation(source, true), mustSucceed: true)];
         }
 
         public static IReadOnlyList<InnerOperation> CreateUninstallPreOps(IManagerSource source, bool forceLocalWinGet)
         {
-            if (source.Manager is not WinGet) return [];
+            if (!IsWinGetManager(source.Manager)) return [];
             if (forceLocalWinGet) return [];
-            if (source.Manager.Status.ExecutablePath == WinGet.BundledWinGetPath) return [];
+            if (source.Manager.Status.ExecutablePath == GetBundledWinGetPath()) return [];
             // In this case, must succeed is set to false since we cannot ensure that bundled WinGet will
             // have this source added
             return [new(new RemoveSourceOperation(source, true), mustSucceed: false)];
+        }
+
+        protected static bool IsWinGetManager(IPackageManager manager)
+        {
+#if WINDOWS
+            return manager is WinGet;
+#else
+            return false;
+#endif
+        }
+
+        protected static string? GetBundledWinGetPath()
+        {
+#if WINDOWS
+            return WinGet.BundledWinGetPath;
+#else
+            return null;
+#endif
         }
     }
 
@@ -79,9 +99,9 @@ namespace UniGetUI.PackageEngine.Operations
         protected override void PrepareProcessStartInfo()
         {
             var exePath = Source.Manager.Status.ExecutablePath;
-            if (Source.Manager is WinGet && _forceLocalWinGet)
+            if (IsWinGetManager(Source.Manager) && _forceLocalWinGet)
             {
-                exePath = WinGet.BundledWinGetPath;
+                exePath = GetBundledWinGetPath() ?? exePath;
             }
 
             bool admin = false;
@@ -90,7 +110,7 @@ namespace UniGetUI.PackageEngine.Operations
                 if (Settings.Get(Settings.K.DoCacheAdminRights) || Settings.Get(Settings.K.DoCacheAdminRightsForBatches))
                     RequestCachingOfUACPrompt();
 
-                if (Source.Manager is WinGet)
+                if (IsWinGetManager(Source.Manager))
                     RedirectWinGetTempFolder();
 
                 admin = true;
@@ -140,9 +160,9 @@ namespace UniGetUI.PackageEngine.Operations
         protected override void PrepareProcessStartInfo()
         {
             var exePath = Source.Manager.Status.ExecutablePath;
-            if (Source.Manager is WinGet && _forceLocalWinGet)
+            if (IsWinGetManager(Source.Manager) && _forceLocalWinGet)
             {
-                exePath = WinGet.BundledWinGetPath;
+                exePath = GetBundledWinGetPath() ?? exePath;
             }
             bool admin = false;
             if (RequiresAdminRights())
@@ -150,7 +170,7 @@ namespace UniGetUI.PackageEngine.Operations
                 if (Settings.Get(Settings.K.DoCacheAdminRights) || Settings.Get(Settings.K.DoCacheAdminRightsForBatches))
                     RequestCachingOfUACPrompt();
 
-                if (Source.Manager is WinGet)
+                if (IsWinGetManager(Source.Manager))
                     RedirectWinGetTempFolder();
 
                 admin = true;

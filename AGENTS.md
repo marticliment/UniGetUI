@@ -1,4 +1,4 @@
-# UniGetUI ΓÇô Copilot Instructions
+# UniGetUI - Copilot Instructions
 
 ## Project Overview
 
@@ -8,13 +8,13 @@ UniGetUI is a WinUI 3 desktop app (C#/.NET 8, Windows App SDK) providing a GUI f
 
 The codebase follows a **layered, modular structure** with ~40 projects:
 
-- **`UniGetUI/`** ΓÇô WinUI 3 entry point, XAML pages, controls, and app shell (`EntryPoint.cs`, `MainWindow.xaml`)
-- **`UniGetUI.Core.*`** ΓÇô Shared infrastructure: `Logger`, `Settings`, `Tools` (includes `CoreTools.Translate()`), `IconEngine`, `LanguageEngine`
-- **`UniGetUI.PackageEngine.Interfaces`** ΓÇô Contracts: `IPackageManager`, `IPackage`, `IManagerSource`, `IPackageDetails`
-- **`UniGetUI.PackageEngine.PackageManagerClasses`** ΓÇô Base implementations: `PackageManager` (abstract), `Package`, helpers (`BasePkgDetailsHelper`, `BasePkgOperationHelper`, `BaseSourceHelper`)
-- **`UniGetUI.PackageEngine.Managers.*`** ΓÇô Concrete manager implementations (one project per manager: `WinGet`, `Scoop`, `Chocolatey`, `Pip`, `Npm`, etc.)
-- **`UniGetUI.PackageEngine.Operations`** ΓÇô Install/update/uninstall operation orchestration
-- **`UniGetUI.Interface.*`** ΓÇô Enums, telemetry, background API
+- **`UniGetUI/`** - WinUI 3 entry point, XAML pages, controls, and app shell (`EntryPoint.cs`, `MainWindow.xaml`)
+- **`UniGetUI.Core.*`** - Shared infrastructure: `Logger`, `Settings`, `Tools` (includes `CoreTools.Translate()`), `IconEngine`, `LanguageEngine`
+- **`UniGetUI.PackageEngine.Interfaces`** - Contracts: `IPackageManager`, `IPackage`, `IManagerSource`, `IPackageDetails`
+- **`UniGetUI.PackageEngine.PackageManagerClasses`** - Base implementations: `PackageManager` (abstract), `Package`, helpers (`BasePkgDetailsHelper`, `BasePkgOperationHelper`, `BaseSourceHelper`)
+- **`UniGetUI.PackageEngine.Managers.*`** - Concrete manager implementations (one project per manager: `WinGet`, `Scoop`, `Chocolatey`, `Pip`, `Npm`, etc.)
+- **`UniGetUI.PackageEngine.Operations`** - Install/update/uninstall operation orchestration
+- **`UniGetUI.Interface.*`** - Enums, telemetry, background API
 
 ## Adding a New Package Manager
 
@@ -27,9 +27,9 @@ protected override IReadOnlyList<Package> GetInstalledPackages_UnSafe();
 ```
 
 Each manager also provides three helper classes (in a `Helpers/` subfolder):
-- `*PkgDetailsHelper` extends `BasePkgDetailsHelper` ΓÇô overrides `GetDetails_UnSafe`, `GetInstallableVersions_UnSafe`, `GetIcon_UnSafe`, etc.
-- `*PkgOperationHelper` extends `BasePkgOperationHelper` ΓÇô overrides `_getOperationParameters`, `_getOperationResult`
-- `*SourceHelper` extends `BaseSourceHelper` ΓÇô overrides `GetSources_UnSafe`, `GetAddSourceParameters`, etc.
+- `*PkgDetailsHelper` extends `BasePkgDetailsHelper` - overrides `GetDetails_UnSafe`, `GetInstallableVersions_UnSafe`, `GetIcon_UnSafe`, etc.
+- `*PkgOperationHelper` extends `BasePkgOperationHelper` - overrides `_getOperationParameters`, `_getOperationResult`
+- `*SourceHelper` extends `BaseSourceHelper` - overrides `GetSources_UnSafe`, `GetAddSourceParameters`, etc.
 
 The constructor sets `Capabilities`, `Properties`, and wires the helpers. See `src/UniGetUI.PackageEngine.Managers.Scoop/Scoop.cs` as a clean reference implementation.
 
@@ -42,13 +42,10 @@ dotnet test --verbosity q --nologo
 
 # Publish release build
 dotnet publish src/UniGetUI/UniGetUI.csproj /p:Configuration=Release /p:Platform=x64
-
-# Full release (runs version script, tests, publish, installer)
-build_release.cmd
 ```
 
 - Target framework: `net8.0-windows10.0.26100.0` (min `10.0.19041`)
-- Build generates secrets via `src/UniGetUI/Services/generate-secrets.ps1` and integrity tree via `scripts/generate_integrity_tree.py`
+- Build generates secrets via `src/UniGetUI/Services/generate-secrets.ps1` and integrity tree via `scripts/generate-integrity-tree.ps1`
 - Self-contained, publish-trimmed (partial), Windows App SDK self-contained
 - Tests use **xUnit** (`[Fact]`, `Assert.*`)
 
@@ -72,7 +69,7 @@ Use `CoreTools.Translate("text")` for all user-facing strings. Parameterized: `C
 
 ### Manager conventions
 - `FALSE_PACKAGE_NAMES`, `FALSE_PACKAGE_IDS`, `FALSE_PACKAGE_VERSIONS` static arrays filter CLI parsing noise
-- Manager initialization flows through `Initialize()` ΓåÆ `_loadManagerExecutableFile()` ΓåÆ `_loadManagerVersion()` ΓåÆ `_performExtraLoadingSteps()`
+- Manager initialization flows through `Initialize()` -> `_loadManagerExecutableFile()` -> `_loadManagerVersion()` -> `_performExtraLoadingSteps()`
 - Operations that may fail return `OperationVeredict` (note: intentional misspelling used throughout codebase)
 
 ## Key Files

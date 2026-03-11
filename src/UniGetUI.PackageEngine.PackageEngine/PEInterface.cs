@@ -2,17 +2,19 @@ using System.Diagnostics.CodeAnalysis;
 using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Managers.CargoManager;
-using UniGetUI.PackageEngine.Managers.ChocolateyManager;
 using UniGetUI.PackageEngine.Managers.DotNetManager;
 using UniGetUI.PackageEngine.Managers.NpmManager;
 using UniGetUI.PackageEngine.Managers.PipManager;
 using UniGetUI.PackageEngine.Managers.PowerShell7Manager;
-using UniGetUI.PackageEngine.Managers.PowerShellManager;
-using UniGetUI.PackageEngine.Managers.ScoopManager;
-using UniGetUI.PackageEngine.Managers.WingetManager;
 using UniGetUI.PackageEngine.Managers.VcpkgManager;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.PackageLoader;
+#if WINDOWS
+using UniGetUI.PackageEngine.Managers.ChocolateyManager;
+using UniGetUI.PackageEngine.Managers.PowerShellManager;
+using UniGetUI.PackageEngine.Managers.ScoopManager;
+using UniGetUI.PackageEngine.Managers.WingetManager;
+#endif
 
 namespace UniGetUI.PackageEngine
 {
@@ -23,18 +25,32 @@ namespace UniGetUI.PackageEngine
     {
         private const int ManagerLoadTimeout = 60; // 60 seconds timeout for Package Manager initialization (in seconds)
 
+#if WINDOWS
         public static readonly WinGet WinGet = new();
         public static readonly Scoop Scoop = new();
         public static readonly Chocolatey Chocolatey = new();
+#endif
         public static readonly Npm Npm = new();
         public static readonly Pip Pip = new();
         public static readonly DotNet DotNet = new();
-        public static readonly PowerShell PowerShell = new();
         public static readonly PowerShell7 PowerShell7 = new();
+#if WINDOWS
+        public static readonly PowerShell PowerShell = new();
+#endif
         public static readonly Cargo Cargo = new();
         public static readonly Vcpkg Vcpkg = new();
 
-        public static readonly IPackageManager[] Managers = [WinGet, Scoop, Chocolatey, Npm, Pip, Cargo, Vcpkg, DotNet, PowerShell, PowerShell7];
+        public static readonly IPackageManager[] Managers = CreateManagers();
+
+        private static IPackageManager[] CreateManagers()
+        {
+            List<IPackageManager> managers = [Npm, Pip, Cargo, Vcpkg, DotNet, PowerShell7];
+#if WINDOWS
+            managers.InsertRange(0, [WinGet, Scoop, Chocolatey]);
+            managers.Add(PowerShell);
+#endif
+            return [.. managers];
+        }
 
         public static void LoadLoaders()
         {

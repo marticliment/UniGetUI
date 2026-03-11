@@ -1,7 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-
-
   <ItemGroup>
     <PackageReference Include="MessageFormat" Version="7.1.3" />
   </ItemGroup>
