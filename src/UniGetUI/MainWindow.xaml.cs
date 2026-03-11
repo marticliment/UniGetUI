@@ -196,14 +196,6 @@ namespace UniGetUI.Interface
             TitleBar.Subtitle = subtitleCollapsed is true? "": _currentSubtitle;
         }
 
-        private void ClearSubtitle()
-        {
-            TitleBar.Subtitle = "";
-            _currentSubtitle = "";
-            _currentSubtitlePxLength = 0;
-            Title = "UniGetUI";
-        }
-
         public void HandleNotificationActivation(AppNotificationActivatedEventArgs args)
         {
             args.Arguments.TryGetValue("action", out string? action);

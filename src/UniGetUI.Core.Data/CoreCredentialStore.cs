@@ -93,6 +93,7 @@ public static class CoreCredentialStore
         }
     }
 
+#if !WINDOWS
     private static string GetStorageDirectory()
         => Path.Join(CoreData.UniGetUIDataDirectory, "SecureStorage");
 
@@ -104,4 +105,5 @@ public static class CoreCredentialStore
         byte[] hash = SHA256.HashData(Encoding.UTF8.GetBytes($"{resourceName}\n{userName}"));
         return Convert.ToHexString(hash) + ".secret";
     }
+#endif
 }
