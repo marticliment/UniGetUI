@@ -50,7 +50,6 @@ namespace UniGetUI.Core.SettingsEngine.Tests
         private string GetNewSettingPath(string fileName) => Path.Combine(_newConfigurationDirectory, fileName);
         private string GetOldSettingsPath(string fileName) => Path.Combine(_oldConfigurationDirectory, fileName);
 
-
         [Fact]
         public void TestSettingsSaveToNewDirectory()
         {

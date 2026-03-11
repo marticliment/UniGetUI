@@ -18,11 +18,9 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
     public sealed partial class Internet : Page, ISettingsPage
     {
 
-
         public Internet()
         {
             this.InitializeComponent();
-
 
             UsernameBox.PlaceholderText = CoreTools.Translate("Username");
             PasswordBox.PlaceholderText = CoreTools.Translate("Password");

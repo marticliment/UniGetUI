@@ -12,7 +12,6 @@ namespace UniGetUI.PackageEngine.Classes.Serializable
                                               "or because the package manager was unavailable. " +
                                               "Nevertheless, they have been listed here for logging purposes.";
 
-
         public double export_version { get; set; } = 3;
         public List<SerializablePackage> packages { get; set; } = [];
         public string incompatible_packages_info { get; set; } = IncompatMessage;

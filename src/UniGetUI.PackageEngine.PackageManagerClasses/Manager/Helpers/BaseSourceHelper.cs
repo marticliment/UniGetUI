@@ -12,7 +12,6 @@ namespace UniGetUI.PackageEngine.Classes.Manager.Providers
     {
         private const int PackageListingTaskTimeout = 60;
 
-
         public ISourceFactory Factory { get; }
         protected IPackageManager Manager;
 

@@ -88,7 +88,6 @@ namespace UniGetUI.PackageEngine
         }
     }
 
-
     public class PackageBundlesLoader_I : PackageBundlesLoader
     {
         public PackageBundlesLoader_I(IReadOnlyList<IPackageManager> managers): base(managers)

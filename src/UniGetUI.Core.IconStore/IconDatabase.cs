@@ -19,7 +19,6 @@ namespace UniGetUI.Core.IconEngine
             public IconCount() { }
         }
 
-
         private static IconDatabase? __instance;
         public static IconDatabase Instance
         {
@@ -57,7 +56,6 @@ namespace UniGetUI.Core.IconEngine
 
                 Logger.ImportantInfo("Downloaded new icons and screenshots successfully!");
 
-
                 if (!File.Exists(IconsAndScreenshotsFile))
                 {
                     Logger.Error("Icon Database file not found");
@@ -73,7 +71,6 @@ namespace UniGetUI.Core.IconEngine
             // Update data with new cached file
             await LoadFromCacheAsync();
         }
-
 
         public async Task LoadFromCacheAsync()
         {

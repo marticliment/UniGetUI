@@ -26,7 +26,6 @@ public static class CLIHandler
     public const string ENABLE_SECURE_SETTING_FOR_USER = SecureSettings.Args.ENABLE_FOR_USER;
     public const string DISABLE_SECURE_SETTING_FOR_USER = SecureSettings.Args.DISABLE_FOR_USER;
 
-
     private enum HRESULT
     {
         SUCCESS = 0,

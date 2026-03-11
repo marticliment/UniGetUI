@@ -44,8 +44,6 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             _ = UpdateGitHubLoginStatus();
         }
 
-
-
         public bool CanGoBack => true;
 
         public string ShortTitle => CoreTools.Translate("Backup and Restore");

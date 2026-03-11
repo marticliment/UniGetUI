@@ -187,7 +187,6 @@ public static class TelemetryHandler
         }
     }
 
-
     // -------------------------------------------------------------------------
 
     public static void ImportBundle(BundleFormatType type)

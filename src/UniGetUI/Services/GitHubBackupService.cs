@@ -92,7 +92,6 @@ namespace UniGetUI.Services
             if (GHClient is null)
                 throw new Exception("The GitHub user is not authenticated");
 
-
             User user = await GHClient.User.Current();
 
             var candidates = await GHClient.Gist.GetAllForUser(user.Login);

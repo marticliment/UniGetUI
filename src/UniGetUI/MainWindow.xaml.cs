@@ -63,7 +63,6 @@ namespace UniGetUI.Interface
             SetTitleBar(MainContentGrid);
             AppWindow.SetIcon(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Images", "icon.ico"));
 
-
             LoadTrayMenu();
             ApplyTheme();
             ApplyProxyVariableToProcess();

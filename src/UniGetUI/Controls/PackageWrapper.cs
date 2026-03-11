@@ -93,7 +93,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public void PackageItemContainer_RightTapped(object sender, RightTappedRoutedEventArgs e)
             => _page.PackageItemContainer_RightTapped(sender, e);
 
-
         public async Task RightClick()
         {
             await _page.ShowContextMenu(this);

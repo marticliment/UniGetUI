@@ -45,6 +45,5 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         public void RestartCache(object sender, EventArgs e)
             => _ = CoreTools.ResetUACForCurrentProcess();
 
-
     }
 }

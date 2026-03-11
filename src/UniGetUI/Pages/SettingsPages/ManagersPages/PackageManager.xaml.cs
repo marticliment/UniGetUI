@@ -400,7 +400,6 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             ExecutableComboBox.SelectedValue = selectedValue;
             ExecutableComboBox.SelectionChanged += ExecutableComboBox_SelectionChanged;
 
-
             // Load version block text and style
             if (_isLoading)
             {
