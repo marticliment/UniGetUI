@@ -42,7 +42,7 @@ public static class SerializationHelpers
         }
 
         // Attributes dictionary
-        var dict = new Dictionary<string, object>();
+        var dict = new Dictionary<string, object?>();
         if (node.Attributes?.Count > 0)
         {
             foreach (XmlAttribute attr in node.Attributes)
@@ -52,14 +52,14 @@ public static class SerializationHelpers
         }
 
         // Group child elements
-        var children = new Dictionary<string, List<object>>();
+        var children = new Dictionary<string, List<object?>>();
         foreach (XmlNode child in node.ChildNodes)
         {
             if (child is XmlElement childElement)
             {
                 var value = _convertXmlNode(childElement);
                 if (!children.ContainsKey(childElement.Name))
-                    children[childElement.Name] = new List<object>();
+                    children[childElement.Name] = new List<object?>();
                 children[childElement.Name].Add(value);
             }
         }

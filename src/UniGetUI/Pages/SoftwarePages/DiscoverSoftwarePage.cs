@@ -232,7 +232,7 @@ namespace UniGetUI.Interface.SoftwarePages
             }
         }
 
-        private void Event_SearchPackages(object sender, RoutedEventArgs e)
+        private void Event_SearchPackages(object? sender, RoutedEventArgs e)
         {
             if (QueryBlock.Text.Trim() != "")
             {

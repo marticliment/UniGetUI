@@ -198,7 +198,7 @@ namespace UniGetUI.Interface
                 (SHOW_LAST_CHECKED_TIME ? " " + CoreTools.Translate("(Last checked: {0})", LastPackageLoadTime.ToString(CultureInfo.CurrentCulture)) : "");
         }
 
-        public string QueryBackup { get; set; }
+        public string QueryBackup { get; set; } = "";
 
         private readonly string _searchPlaceholder;
         public string SearchBoxPlaceholder => _searchPlaceholder;

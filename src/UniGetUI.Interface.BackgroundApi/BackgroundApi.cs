@@ -98,7 +98,9 @@ namespace UniGetUI.Interface
                 return;
             }
 
-            OnShowSharedPackage?.Invoke(null, new KeyValuePair<string, string>(query["pid"], query["psource"]));
+            string packageId = query["pid"].ToString();
+            string packageSource = query["psource"].ToString();
+            OnShowSharedPackage?.Invoke(null, new KeyValuePair<string, string>(packageId, packageSource));
 
             await context.Response.WriteAsync("{\"status\": \"success\"}");
         }
@@ -191,7 +193,8 @@ namespace UniGetUI.Interface
                 return;
             }
 
-            OnUpgradePackage?.Invoke(null, id);
+            string packageId = id.ToString();
+            OnUpgradePackage?.Invoke(null, packageId);
             context.Response.StatusCode = 200;
         }
 
@@ -223,8 +226,9 @@ namespace UniGetUI.Interface
                 return;
             }
 
-            Logger.Info($"[WIDGETS] Updating all packages for manager {source}");
-            OnUpgradeAllForManager?.Invoke(null, source);
+            string sourceName = source.ToString();
+            Logger.Info($"[WIDGETS] Updating all packages for manager {sourceName}");
+            OnUpgradeAllForManager?.Invoke(null, sourceName);
             context.Response.StatusCode = 200;
         }
 
@@ -246,7 +250,8 @@ namespace UniGetUI.Interface
 
             string iconPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Images", "package_color.png");
 
-            IPackage? package = UpgradablePackagesLoader.Instance.GetPackageForId(packageId, packageSource);
+            string resolvedPackageId = packageId.ToString();
+            IPackage? package = UpgradablePackagesLoader.Instance.GetPackageForId(resolvedPackageId, packageSource);
             if (package != null)
             {
                 var iconUrl = await Task.Run(package.GetIconUrl);

@@ -174,7 +174,9 @@ namespace UniGetUI.Core.SettingsEngine.Tests
             Assert.Equal("this is now a test case", Settings.GetListItem<string>(SettingName, 3));
             Assert.Null(Settings.GetListItem<string>(SettingName, 4));
 
-            Assert.Equal(Settings.GetListItem<string>(SettingName, 0), JsonSerializer.Deserialize<List<string>>(File.ReadAllText(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, $"{SettingName}.json")), Settings.SerializationOptions)[0]);
+            List<string>? persistedList = JsonSerializer.Deserialize<List<string>>(File.ReadAllText(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, $"{SettingName}.json")), Settings.SerializationOptions);
+            Assert.NotNull(persistedList);
+            Assert.Equal(Settings.GetListItem<string>(SettingName, 0), persistedList[0]);
             Settings.ClearList(SettingName);
             Assert.Empty(Settings.GetList<object>(SettingName) ?? ["this shouldn't be null; something's wrong"]);
 

@@ -70,7 +70,9 @@ public static class IgnoredUpdatesDatabase
 
     public static IReadOnlyDictionary<string, string> GetDatabase()
     {
-        return Settings.GetDictionary<string, string>(Settings.K.IgnoredPackageUpdates) ?? new Dictionary<string, string>();
+        return Settings.GetDictionary<string, string>(Settings.K.IgnoredPackageUpdates)?
+            .Where(kvp => kvp.Value is not null)
+            .ToDictionary(kvp => kvp.Key, kvp => kvp.Value!) ?? new Dictionary<string, string>();
     }
 
     public static string GetIgnoredIdForPackage(IPackage package)
