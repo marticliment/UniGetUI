@@ -6,7 +6,7 @@ using UniGetUI.Interface.Enums;
 using UniGetUI.Interface.Widgets;
 
 namespace UniGetUI.Controls;
-internal partial class CustomNavViewItem : NavigationViewItem
+internal sealed partial class CustomNavViewItem : NavigationViewItem
 {
     int _iconSize = 28;
     public IconType LocalIcon

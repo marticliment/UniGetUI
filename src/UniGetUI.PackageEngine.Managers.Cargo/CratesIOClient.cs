@@ -4,21 +4,21 @@ using UniGetUI.Core.Tools;
 
 namespace UniGetUI.PackageEngine.Managers.CargoManager;
 
-internal record CargoManifest
+internal sealed record CargoManifest
 {
     public CargoManifestCategory[]? categories { get; init; }
     public required CargoManifestCrate crate { get; init; }
     public required CargoManifestVersion[] versions { get; init; }
 }
 
-internal record CargoManifestCategory
+internal sealed record CargoManifestCategory
 {
     public required string category { get; init; }
     public required string description { get; init; }
     public required string id { get; init; }
 }
 
-internal record CargoManifestCrate
+internal sealed record CargoManifestCrate
 {
     public string[]? categories { get; init; }
     public string? description { get; init; }
@@ -34,7 +34,7 @@ internal record CargoManifestCrate
     public string? updated_at { get; init; }
 }
 
-internal record CargoManifestVersion
+internal sealed record CargoManifestVersion
 {
     public string[]? bin_names { get; init; }
     public required string checksum { get; init; }
@@ -48,19 +48,19 @@ internal record CargoManifestVersion
     public bool yanked { get; init; }
 }
 
-internal record CargoManifestVersionWrapper
+internal sealed record CargoManifestVersionWrapper
 {
     public required CargoManifestVersion version { get; init; }
 }
 
-internal class CargoManifestPublisher
+internal sealed class CargoManifestPublisher
 {
     public string? avatar { get; init; }
     public required string name { get; init; }
     public string? url { get; init; }
 }
 
-internal class CratesIOClient
+internal sealed class CratesIOClient
 {
     public const string ApiUrl = "https://crates.io/api/v1";
 

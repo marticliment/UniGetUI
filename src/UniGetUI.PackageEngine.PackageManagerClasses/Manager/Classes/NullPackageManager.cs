@@ -72,7 +72,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager
         public Tuple<bool, string> GetExecutableFile() => throw new NotImplementedException();
     }
 
-    internal class NullSourceHelper : IMultiSourceHelper
+    internal sealed class NullSourceHelper : IMultiSourceHelper
     {
         public ISourceFactory Factory => throw new NotImplementedException();
         public string[] GetAddSourceParameters(IManagerSource source) => throw new NotImplementedException();
