@@ -5,6 +5,7 @@ using UniGetUI.PackageEngine.Serializable;
 using Architecture = UniGetUI.PackageEngine.Enums.Architecture;
 
 namespace UniGetUI.PackageEngine.Managers.ChocolateyManager;
+
 internal sealed class ChocolateyPkgOperationHelper : BasePkgOperationHelper
 {
     public ChocolateyPkgOperationHelper(Chocolatey manager) : base(manager) { }

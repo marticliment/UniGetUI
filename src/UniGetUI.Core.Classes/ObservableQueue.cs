@@ -18,7 +18,7 @@ public class ObservableQueue<T> : Queue<T>
 
     public new T Dequeue()
     {
-        T item =  base.Dequeue();
+        T item = base.Dequeue();
         ItemDequeued?.Invoke(this, new EventArgs(item));
         return item;
     }

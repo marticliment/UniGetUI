@@ -10,7 +10,7 @@ public class TaskRecyclerTests
 
     private class TestClass
     {
-        public TestClass() {}
+        public TestClass() { }
 
         public string SlowMethod2()
         {
@@ -38,7 +38,7 @@ public class TaskRecyclerTests
         var task1 = TaskRecycler<int>.RunOrAttachAsync(MySlowMethod1);
         var task2 = TaskRecycler<int>.RunOrAttachAsync(MySlowMethod1);
         int result1 = await task1;
-        int result2 = await  task2;
+        int result2 = await task2;
         Assert.Equal(result1, result2);
 
         // The same static method should be cached, and therefore the return value should be the same, but different from previous runs

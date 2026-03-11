@@ -79,7 +79,8 @@ namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders
                 if (iconUrl is not null) return new CacheableIcon(new Uri(iconUrl));
 
                 return null;
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 Logger.Error($"Error when loading the package icon for the package {package.Id} on manager " + Manager.Name);
                 Logger.Error(e);

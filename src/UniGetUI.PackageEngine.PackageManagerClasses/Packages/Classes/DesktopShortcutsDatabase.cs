@@ -183,7 +183,7 @@ public static class DesktopShortcutsDatabase
             {
                 // If a shortcut has not been detected yet, and it
                 // existed before an operation started, then do nothing.
-                if(PreviousShortcuts.Contains(shortcut))
+                if (PreviousShortcuts.Contains(shortcut))
                     continue;
 
                 if (DeleteUnknownShortcuts)

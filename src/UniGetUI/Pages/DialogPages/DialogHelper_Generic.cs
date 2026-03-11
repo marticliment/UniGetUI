@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using Windows.UI;
 using Microsoft.UI;
 using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
@@ -18,6 +17,7 @@ using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Classes.Packages.Classes;
 using UniGetUI.PackageEngine.PackageLoader;
+using Windows.UI;
 
 namespace UniGetUI.Pages.DialogPages;
 
@@ -199,7 +199,7 @@ public static partial class DialogHelper
         await ShowDialogAsync(dialog);
     }
 
-    public static async Task ManageDesktopShortcuts(IReadOnlyList<string>? NewShortucts  = null)
+    public static async Task ManageDesktopShortcuts(IReadOnlyList<string>? NewShortucts = null)
     {
         ContentDialog dialog = DialogFactory.Create_AsWindow(true);
 
@@ -482,7 +482,7 @@ public static partial class DialogHelper
             Settings.Set(Settings.K.ShownTelemetryBanner, true);
         };
 
-        StackPanel btns = new() { Margin = new Thickness(4,0,4,0), Spacing = 4, Orientation = Orientation.Horizontal };
+        StackPanel btns = new() { Margin = new Thickness(4, 0, 4, 0), Spacing = 4, Orientation = Orientation.Horizontal };
         btns.Children.Add(AcceptBtn);
         btns.Children.Add(SettingsBtn);
 
@@ -540,8 +540,8 @@ public static partial class DialogHelper
         dialog.CloseButtonText = CoreTools.Translate("Close");
         dialog.DefaultButton = ContentDialogButton.None;
         var result = await ShowDialogAsync(dialog);
-        if(result is ContentDialogResult.Primary) Window.NavigationPage.NavigateTo(PageType.Discover);
-        else if(result is ContentDialogResult.Secondary) Window.NavigationPage.NavigateTo(PageType.Installed);
+        if (result is ContentDialogResult.Primary) Window.NavigationPage.NavigateTo(PageType.Discover);
+        else if (result is ContentDialogResult.Secondary) Window.NavigationPage.NavigateTo(PageType.Installed);
     }
 
     public static void ShowDismissableBalloon(string title, string message)
@@ -561,7 +561,7 @@ public static partial class DialogHelper
         dialog.IsPrimaryButtonEnabled = false;
 
         RadioButtons buttons = new RadioButtons();
-        foreach(var name in availableBackups) buttons.Items.Add(name);
+        foreach (var name in availableBackups) buttons.Items.Add(name);
         buttons.SelectionChanged += (_, _) => dialog.IsPrimaryButtonEnabled = true;
 
         dialog.Content = new StackPanel()
@@ -583,7 +583,7 @@ public static partial class DialogHelper
             }
         };
 
-        if(await ShowDialogAsync(dialog) is ContentDialogResult.Primary)
+        if (await ShowDialogAsync(dialog) is ContentDialogResult.Primary)
             return buttons.SelectedItem.ToString() ?? null;
 
         return null;

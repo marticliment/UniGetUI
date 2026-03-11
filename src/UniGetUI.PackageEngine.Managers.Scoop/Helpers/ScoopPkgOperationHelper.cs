@@ -5,6 +5,7 @@ using UniGetUI.PackageEngine.Serializable;
 using Architecture = UniGetUI.PackageEngine.Enums.Architecture;
 
 namespace UniGetUI.PackageEngine.Managers.ScoopManager;
+
 internal sealed class ScoopPkgOperationHelper : BasePkgOperationHelper
 {
     public ScoopPkgOperationHelper(Scoop manager) : base(manager) { }
@@ -51,7 +52,7 @@ internal sealed class ScoopPkgOperationHelper : BasePkgOperationHelper
                 parameters.Add("--skip-hash-check");
         }
 
-        if(operation is OperationType.Install)
+        if (operation is OperationType.Install)
         {
             parameters.AddRange(options.Architecture switch
             {

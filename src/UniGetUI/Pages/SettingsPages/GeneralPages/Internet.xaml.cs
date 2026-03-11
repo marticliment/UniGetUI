@@ -58,12 +58,12 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 {
                     CornerRadius = new CornerRadius(4),
                     Padding = new Thickness(2),
-                    Background = level is ProxySupport.No? ERROR_BG: (level is ProxySupport.Partially? WARN_BG: SUCCESS_BG),
+                    Background = level is ProxySupport.No ? ERROR_BG : (level is ProxySupport.Partially ? WARN_BG : SUCCESS_BG),
                     BorderBrush = BORDER_FG,
                     BorderThickness = new Thickness(1),
                     Child = new TextBlock()
                     {
-                        Text = (level is ProxySupport.No ? no : (level is ProxySupport.Partially ? part: yes)),
+                        Text = (level is ProxySupport.No ? no : (level is ProxySupport.Partially ? part : yes)),
                         TextAlignment = TextAlignment.Center,
                         Foreground = TEXT_FG
                     }

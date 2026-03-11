@@ -5,7 +5,7 @@ using UniGetUI.Core.Data;
 
 namespace UniGetUI.PackageEngine.Serializable
 {
-    public class InstallOptions: SerializableComponent<InstallOptions>
+    public class InstallOptions : SerializableComponent<InstallOptions>
     {
         private const string SKIP_HASH = "SkipHashCheck";
         private const string INTERACTIVE = "InteractiveInstallation";
@@ -136,7 +136,7 @@ namespace UniGetUI.PackageEngine.Serializable
 
             // Handle case where setting has not been migrated yet to have three different entries for CustomParameters
             if (this.CustomParameters_Install.Count is 0 &&
-                this.CustomParameters_Update.Count  is 0 &&
+                this.CustomParameters_Update.Count is 0 &&
                 this.CustomParameters_Uninstall.Count is 0 &&
                 ((data as JsonObject)?.ContainsKey("CustomParameters") ?? false))
             {

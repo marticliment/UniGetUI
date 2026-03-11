@@ -9,8 +9,8 @@ using UniGetUI.PackageEngine.Managers.PipManager;
 using UniGetUI.PackageEngine.Managers.PowerShell7Manager;
 using UniGetUI.PackageEngine.Managers.PowerShellManager;
 using UniGetUI.PackageEngine.Managers.ScoopManager;
-using UniGetUI.PackageEngine.Managers.WingetManager;
 using UniGetUI.PackageEngine.Managers.VcpkgManager;
+using UniGetUI.PackageEngine.Managers.WingetManager;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.PackageLoader;
 
@@ -75,7 +75,7 @@ namespace UniGetUI.PackageEngine
 
     public class PackageBundlesLoader_I : PackageBundlesLoader
     {
-        public PackageBundlesLoader_I(IReadOnlyList<IPackageManager> managers): base(managers)
+        public PackageBundlesLoader_I(IReadOnlyList<IPackageManager> managers) : base(managers)
         {
         }
 

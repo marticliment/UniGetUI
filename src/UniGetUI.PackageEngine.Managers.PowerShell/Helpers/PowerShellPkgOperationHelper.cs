@@ -4,6 +4,7 @@ using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Serializable;
 
 namespace UniGetUI.PackageEngine.Managers.PowerShellManager;
+
 internal sealed class PowerShellPkgOperationHelper : BasePkgOperationHelper
 {
     public PowerShellPkgOperationHelper(PowerShell manager) : base(manager) { }

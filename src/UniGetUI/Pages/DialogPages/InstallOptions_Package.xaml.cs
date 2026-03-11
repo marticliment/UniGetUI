@@ -117,7 +117,7 @@ namespace UniGetUI.Interface.Dialogs
             VersionComboBox.SelectionChanged += (_, _) =>
             {
                 IgnoreUpdatesCheckbox.IsChecked =
-                    !(new []
+                    !(new[]
                     {
                         CoreTools.Translate("Latest"),
                         CoreTools.Translate("PreRelease"),
@@ -165,7 +165,7 @@ namespace UniGetUI.Interface.Dialogs
                 }
             }
 
-            foreach(var p in Options.KillBeforeOperation)
+            foreach (var p in Options.KillBeforeOperation)
             {
                 ProcessesToKill.Add(new(p));
             }
@@ -201,12 +201,12 @@ namespace UniGetUI.Interface.Dialogs
             _runningProcesses.Clear();
             foreach (var name in processNames)
             {
-                if(name.Any()) _runningProcesses.Add(new(name + ".exe"));
+                if (name.Any()) _runningProcesses.Add(new(name + ".exe"));
             }
         }
         private void EnableDisableControls(OperationType operation)
         {
-            if(FollowGlobalOptionsSwitch.IsOn)
+            if (FollowGlobalOptionsSwitch.IsOn)
             {
                 OptionsPanel0.Opacity = 0.3;
                 SettingsSwitchPresenter.Opacity = 0.3;
@@ -229,7 +229,7 @@ namespace UniGetUI.Interface.Dialogs
                     && Package.Manager.Capabilities.CanSkipIntegrityChecks;
 
                 UninstallPreviousOnUpdate.IsEnabled = Package.Manager.Capabilities.CanUninstallPreviousVersionsAfterUpdate;
-                UninstallPreviousOnUpdate.Visibility = Package.Manager.Capabilities.CanUninstallPreviousVersionsAfterUpdate? Visibility.Visible: Visibility.Collapsed;
+                UninstallPreviousOnUpdate.Visibility = Package.Manager.Capabilities.CanUninstallPreviousVersionsAfterUpdate ? Visibility.Visible : Visibility.Collapsed;
 
                 ArchitectureComboBox.IsEnabled =
                     operation is not OperationType.Uninstall
@@ -344,7 +344,7 @@ namespace UniGetUI.Interface.Dialogs
             options.AbortOnPreUninstallFail = AbortUniFailedCheck.IsChecked ?? true;
 
             options.KillBeforeOperation.Clear();
-            foreach(var p in ProcessesToKill) options.KillBeforeOperation.Add(p.Name);
+            foreach (var p in ProcessesToKill) options.KillBeforeOperation.Add(p.Name);
 
             if (VersionComboBox.SelectedValue.ToString() != CoreTools.Translate("PreRelease") && VersionComboBox.SelectedValue.ToString() != CoreTools.Translate("Latest"))
             {
@@ -423,7 +423,7 @@ namespace UniGetUI.Interface.Dialogs
 
         private void LayoutGrid_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if(LayoutGrid.ActualSize.Y > 1 && LayoutGrid.ActualSize.Y < double.PositiveInfinity) MaxHeight = LayoutGrid.ActualSize.Y;
+            if (LayoutGrid.ActualSize.Y > 1 && LayoutGrid.ActualSize.Y < double.PositiveInfinity) MaxHeight = LayoutGrid.ActualSize.Y;
         }
 
         private void UnlockSettingsButton_Click(object sender, RoutedEventArgs e)
@@ -446,7 +446,7 @@ namespace UniGetUI.Interface.Dialogs
         private void KillProcessesBox_TokenItemAdding(TokenizingTextBox sender, TokenItemAddingEventArgs args)
         {
             args.Item = _runningProcesses.FirstOrDefault((item) => item.Name.Contains(args.TokenText));
-            if(args.Item is null)
+            if (args.Item is null)
             {
                 string text = args.TokenText;
                 if (!text.EndsWith(".exe")) text += ".exe";

@@ -4,13 +4,13 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Security.Principal;
 using System.Text;
-using Windows.Networking.Connectivity;
 using ABI.Windows.ApplicationModel.UserDataTasks;
 using UniGetUI.Core.Classes;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Language;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
+using Windows.Networking.Connectivity;
 
 namespace UniGetUI.Core.Tools
 {
@@ -151,7 +151,7 @@ namespace UniGetUI.Core.Tools
                     return [];
                 }
 
-                Logger.Debug($"Command {command} was found on {lines[0]} (with {lines.Length-1} more occurrences)");
+                Logger.Debug($"Command {command} was found on {lines[0]} (with {lines.Length - 1} more occurrences)");
                 return lines.ToList();
             }
             catch
@@ -164,7 +164,7 @@ namespace UniGetUI.Core.Tools
         public static Tuple<bool, string> Which(string command, bool updateEnv = true)
         {
             var paths = WhichMultiple(command, updateEnv);
-            return new(paths.Any(), paths.Any() ? paths[0]: "");
+            return new(paths.Any(), paths.Any() ? paths[0] : "");
         }
 
         /// <summary>
@@ -306,7 +306,7 @@ namespace UniGetUI.Core.Tools
             => Task.Run(() => GetFileName(url));
 
 
-        public struct Version: IComparable
+        public struct Version : IComparable
         {
             public static readonly Version Null = new(-1, -1, -1, -1);
 
@@ -759,7 +759,7 @@ namespace UniGetUI.Core.Tools
         {
             try
             {
-                await t.ConfigureAwait(false);   
+                await t.ConfigureAwait(false);
             }
             catch (Exception ex)
             {

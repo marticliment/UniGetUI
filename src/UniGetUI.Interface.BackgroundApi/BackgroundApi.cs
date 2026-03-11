@@ -1,9 +1,9 @@
+using System.Text;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Hosting;
-using System.Text;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
@@ -91,7 +91,7 @@ namespace UniGetUI.Interface
             Logger.Info("Api running on http://localhost:7058");
         }
 
-    private async Task V2_ShowPackage(HttpContext context)
+        private async Task V2_ShowPackage(HttpContext context)
         {
             var query = context.Request.Query;
             if (string.IsNullOrEmpty(query["pid"]) || string.IsNullOrEmpty(query["psource"]))

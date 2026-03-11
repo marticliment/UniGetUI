@@ -74,13 +74,13 @@ public abstract partial class AbstractOperation : IDisposable
                 break;
             case OperationStatus.Running:
                 Status = OperationStatus.Canceled;
-                while(OperationQueue.Remove(this));
+                while (OperationQueue.Remove(this)) ;
                 CancelRequested?.Invoke(this, EventArgs.Empty);
                 Status = OperationStatus.Canceled;
                 break;
             case OperationStatus.InQueue:
                 Status = OperationStatus.Canceled;
-                while(OperationQueue.Remove(this));
+                while (OperationQueue.Remove(this)) ;
                 Status = OperationStatus.Canceled;
                 break;
             case OperationStatus.Succeeded:
@@ -149,7 +149,7 @@ public abstract partial class AbstractOperation : IDisposable
             // END QUEUE HANDLER
 
             var result = await _runOperation();
-            while (OperationQueue.Remove(this));
+            while (OperationQueue.Remove(this)) ;
 
             if (result == OperationVeredict.Success)
             {
@@ -215,7 +215,7 @@ public abstract partial class AbstractOperation : IDisposable
 
         // Process preoperations
         int i = 0, count = PreOperations.Count;
-        if(count > 0) Line("", LineType.VerboseDetails);
+        if (count > 0) Line("", LineType.VerboseDetails);
         foreach (var preReq in PreOperations)
         {
             i++;
@@ -299,7 +299,7 @@ public abstract partial class AbstractOperation : IDisposable
     public void SkipQueue()
     {
         if (Status != OperationStatus.InQueue) return;
-        while(OperationQueue.Remove(this));
+        while (OperationQueue.Remove(this)) ;
         SKIP_QUEUE = true;
     }
 
@@ -309,7 +309,7 @@ public abstract partial class AbstractOperation : IDisposable
         if (!OperationQueue.Contains(this)) return;
 
         FORCE_HOLD_QUEUE = true;
-        while(OperationQueue.Remove(this));
+        while (OperationQueue.Remove(this)) ;
         OperationQueue.Insert(Math.Min(MAX_OPERATIONS, OperationQueue.Count), this);
         FORCE_HOLD_QUEUE = false;
     }
@@ -320,7 +320,7 @@ public abstract partial class AbstractOperation : IDisposable
         if (!OperationQueue.Contains(this)) return;
 
         FORCE_HOLD_QUEUE = true;
-        while(OperationQueue.Remove(this));
+        while (OperationQueue.Remove(this)) ;
         OperationQueue.Add(this);
         FORCE_HOLD_QUEUE = false;
     }
@@ -344,6 +344,6 @@ public abstract partial class AbstractOperation : IDisposable
     public abstract Task<Uri> GetOperationIcon();
     public void Dispose()
     {
-        while(OperationQueue.Remove(this));
+        while (OperationQueue.Remove(this)) ;
     }
 }

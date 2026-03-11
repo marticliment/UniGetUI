@@ -4,6 +4,7 @@ using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Serializable;
 
 namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager;
+
 internal sealed class PowerShell7PkgOperationHelper : BasePkgOperationHelper
 {
     public PowerShell7PkgOperationHelper(PowerShell7 manager) : base(manager) { }
@@ -21,7 +22,7 @@ internal sealed class PowerShell7PkgOperationHelper : BasePkgOperationHelper
 
         if (operation is OperationType.Install)
         {
-            if(options.Version != "")
+            if (options.Version != "")
                 parameters.AddRange(["-Version", options.Version]);
         }
         else if (operation is OperationType.Update)

@@ -74,7 +74,7 @@ namespace UniGetUI.Interface.Widgets
                 OffContent = new TextBlock() { Text = CoreTools.Translate("Disabled") },
             };
 
-            _loading = new ProgressRing() { IsIndeterminate = true, Visibility = Visibility.Collapsed};
+            _loading = new ProgressRing() { IsIndeterminate = true, Visibility = Visibility.Collapsed };
             _textblock = new TextBlock()
             {
                 VerticalAlignment = VerticalAlignment.Center,

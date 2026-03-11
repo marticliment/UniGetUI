@@ -17,7 +17,8 @@ namespace UniGetUI.Interface.Widgets
         private Settings.K setting_name = Settings.K.Unset;
         public Settings.K SettingName
         {
-            set {
+            set
+            {
                 setting_name = value;
                 _textbox.Text = Settings.GetValue(setting_name);
                 _textbox.TextChanged += (_, _) => SaveValue();

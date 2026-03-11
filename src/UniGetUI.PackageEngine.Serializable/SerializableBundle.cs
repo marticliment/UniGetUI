@@ -1,10 +1,10 @@
 using System.Text.Json.Nodes;
-using UniGetUI.PackageEngine.Serializable;
 using UniGetUI.Core.Data;
+using UniGetUI.PackageEngine.Serializable;
 
 namespace UniGetUI.PackageEngine.Classes.Serializable
 {
-    public class SerializableBundle: SerializableComponent<SerializableBundle>
+    public class SerializableBundle : SerializableComponent<SerializableBundle>
     {
         public const double ExpectedVersion = 3;
         public const string IncompatMessage = "Incompatible packages cannot be installed from UniGetUI, " +
@@ -23,10 +23,10 @@ namespace UniGetUI.PackageEngine.Classes.Serializable
             var _packages = new List<SerializablePackage>();
             var _incompatPackages = new List<SerializableIncompatiblePackage>();
 
-            foreach(var package in this.packages)
+            foreach (var package in this.packages)
                 _packages.Add(package.Copy());
 
-            foreach(var incompatPackage in this.incompatible_packages)
+            foreach (var incompatPackage in this.incompatible_packages)
                 _incompatPackages.Add(incompatPackage.Copy());
 
             return new()

@@ -1,8 +1,8 @@
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Text;
-using System.Runtime.InteropServices;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
@@ -265,7 +265,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
             version = $"{(IS_BUNDLED ? "Bundled" : "System")} WinGet (CLI) Version: {process.StandardOutput.ReadToEnd().Trim()}";
 
-            if(IS_BUNDLED) version += "\nUsing bundled WinGet helper (CLI parsing)";
+            if (IS_BUNDLED) version += "\nUsing bundled WinGet helper (CLI parsing)";
             else version += "\nUsing Native WinGet helper (COM Api)";
 
             string error = process.StandardError.ReadToEnd();

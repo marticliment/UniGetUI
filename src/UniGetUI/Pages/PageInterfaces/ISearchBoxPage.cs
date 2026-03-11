@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 
 namespace UniGetUI.Pages.PageInterfaces;
+
 internal interface ISearchBoxPage
 {
     public string QueryBackup { get; set; }

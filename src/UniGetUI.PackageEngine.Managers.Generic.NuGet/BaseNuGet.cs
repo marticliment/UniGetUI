@@ -55,12 +55,12 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             }
             else
             {
-                sources = [ Properties.DefaultSource ];
+                sources = [Properties.DefaultSource];
             }
 
             bool canPrerelease = InstallOptionsFactory.LoadForManager(this).PreRelease;
 
-            foreach(IManagerSource source in sources)
+            foreach (IManagerSource source in sources)
             {
                 try
                 {

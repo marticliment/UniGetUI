@@ -1,6 +1,4 @@
 using System.Web;
-using Windows.ApplicationModel.DataTransfer;
-using Windows.UI.Text;
 using ABI.Microsoft.UI.Text;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
@@ -19,6 +17,8 @@ using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.PackageLoader;
 using UniGetUI.PackageEngine.Serializable;
 using UniGetUI.Pages.SettingsPages.GeneralPages;
+using Windows.ApplicationModel.DataTransfer;
+using Windows.UI.Text;
 
 namespace UniGetUI.Pages.DialogPages;
 
@@ -224,7 +224,7 @@ public static partial class DialogHelper
         Hyperlink a;
         Paragraph p = new();
 
-        foreach(var pair in packageReport)
+        foreach (var pair in packageReport)
         {
             p.Inlines.Add(new Run()
             {
@@ -238,7 +238,7 @@ public static partial class DialogHelper
                 {
                     Text = $"   * {issue.Line}\n",
                     FontFamily = new("Consolas"),
-                    Foreground = issue.Allowed? bad: good
+                    Foreground = issue.Allowed ? bad : good
                 });
             }
             p.Inlines.Add(new LineBreak());
@@ -293,7 +293,8 @@ public static partial class DialogHelper
                 }
             }
         };
-        a.Click += (_, _) => {
+        a.Click += (_, _) =>
+        {
             dialog.Hide();
             Window.NavigationPage.OpenSettingsPage(typeof(Administrator));
         };
@@ -353,9 +354,9 @@ public static partial class DialogHelper
         RichTextBlock rtb = new();
         var p = new Paragraph();
         rtb.Blocks.Add(p);
-        p.Inlines.Add(new Run {Text = CoreTools.Translate("Are you sure you want to create a new package bundle? ")});
+        p.Inlines.Add(new Run { Text = CoreTools.Translate("Are you sure you want to create a new package bundle? ") });
         p.Inlines.Add(new LineBreak());
-        p.Inlines.Add(new Run {Text = CoreTools.Translate("Any unsaved changes will be lost"), FontWeight = new FontWeight(600)});
+        p.Inlines.Add(new Run { Text = CoreTools.Translate("Any unsaved changes will be lost"), FontWeight = new FontWeight(600) });
 
         ContentDialog dialog = DialogFactory.Create();
         dialog.Title = CoreTools.Translate("Warning!");

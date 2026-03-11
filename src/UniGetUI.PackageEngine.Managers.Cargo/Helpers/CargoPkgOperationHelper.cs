@@ -23,10 +23,10 @@ internal sealed class CargoPkgOperationHelper(Cargo cargo) : BasePkgOperationHel
         {
             parameters.Add("--no-confirm");
 
-            if(options.SkipHashCheck)
+            if (options.SkipHashCheck)
                 parameters.Add("--skip-signatures");
 
-            if(options.CustomInstallLocation != "")
+            if (options.CustomInstallLocation != "")
                 parameters.AddRange(["--install-path", options.CustomInstallLocation]);
         }
 

@@ -4,10 +4,10 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using UniGetUI.PackageEngine.Classes.Packages.Classes;
-using UniGetUI.Pages.DialogPages;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
+using UniGetUI.PackageEngine.Classes.Packages.Classes;
+using UniGetUI.Pages.DialogPages;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -112,7 +112,7 @@ namespace UniGetUI.Interface
         {
             foreach (var shortcut in Shortcuts)
             {
-                DesktopShortcutsDatabase.AddToDatabase(shortcut.Path, shortcut.IsDeletable? DesktopShortcutsDatabase.Status.Delete: DesktopShortcutsDatabase.Status.Maintain);
+                DesktopShortcutsDatabase.AddToDatabase(shortcut.Path, shortcut.IsDeletable ? DesktopShortcutsDatabase.Status.Delete : DesktopShortcutsDatabase.Status.Maintain);
                 DesktopShortcutsDatabase.RemoveFromUnknownShortcuts(shortcut.Path);
 
                 if (shortcut.IsDeletable && File.Exists(shortcut.Path))
@@ -139,7 +139,7 @@ namespace UniGetUI.Interface
 
         public bool IsDeletable
         {
-            get =>  _deletable;
+            get => _deletable;
             set
             {
                 _deletable = value;

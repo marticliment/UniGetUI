@@ -50,7 +50,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
 
         public void RemoveRange(IReadOnlyList<IPackage> packages)
         {
-            foreach(IPackage package in packages)
+            foreach (IPackage package in packages)
             {
                 if (!Contains(package)) continue;
                 PackageReference.Remove(HashPackage(package), out IPackage? _);

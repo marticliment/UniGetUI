@@ -2,7 +2,6 @@ using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Xml.Serialization;
-using Windows.UI.Text;
 using ExternalLibraries.Pickers;
 using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
@@ -24,6 +23,7 @@ using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.PackageLoader;
 using UniGetUI.Pages.DialogPages;
+using Windows.UI.Text;
 
 namespace UniGetUI.Interface.SoftwarePages
 {
@@ -283,7 +283,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             IReadOnlyList<IPackage> GetCheckedNonInstalledPackages()
             {
-                if(Settings.Get(Settings.K.InstallInstalledPackagesBundlesPage))
+                if (Settings.Get(Settings.K.InstallInstalledPackagesBundlesPage))
                     return FilteredPackages.GetCheckedPackages().ToList();
                 else
                     return FilteredPackages.GetCheckedPackages().Where(p => p.Tag is not PackageTag.AlreadyInstalled).ToList();
@@ -439,7 +439,7 @@ namespace UniGetUI.Interface.SoftwarePages
             TelemetryHandler.ImportBundle(format);
             HasUnsavedChanges = false;
 
-            if ((int)(open_version*10) != (int)(SerializableBundle.ExpectedVersion*10))
+            if ((int)(open_version * 10) != (int)(SerializableBundle.ExpectedVersion * 10))
             {   // Check only up to first decimal digit, prevent floating point precision error.
                 Logger.Warn($"The loaded bundle \"{source}\" is based on schema version {open_version}, " +
                             $"while this UniGetUI build expects version {SerializableBundle.ExpectedVersion}." +
@@ -534,9 +534,9 @@ namespace UniGetUI.Interface.SoftwarePages
 
                     DialogHelper.HideLoadingDialog(loadingId);
 
-                       DialogHelper.ShowDismissableBalloon(
-                        CoreTools.Translate("Success!"),
-                        CoreTools.Translate("The bundle was created successfully on {0}", file));
+                    DialogHelper.ShowDismissableBalloon(
+                     CoreTools.Translate("Success!"),
+                     CoreTools.Translate("The bundle was created successfully on {0}", file));
 
                     await CoreTools.ShowFileOnExplorer(file);
                     HasUnsavedChanges = false;
@@ -637,21 +637,21 @@ namespace UniGetUI.Interface.SoftwarePages
                     report.IsEmpty = false;
                     if (!report.Contents.ContainsKey(pkg.Id)) report.Contents[pkg.Id] = new();
                     report.Contents[pkg.Id].Add(new($"Custom install arguments: [{string.Join(", ", opts.CustomParameters_Install)}]", AllowCLIParameters));
-                    if(!AllowCLIParameters) opts.CustomParameters_Install.Clear();
+                    if (!AllowCLIParameters) opts.CustomParameters_Install.Clear();
                 }
                 if (opts.CustomParameters_Update.Where(x => x.Any()).Any())
                 {
                     report.IsEmpty = false;
                     if (!report.Contents.ContainsKey(pkg.Id)) report.Contents[pkg.Id] = new();
                     report.Contents[pkg.Id].Add(new($"Custom update arguments: [{string.Join(", ", opts.CustomParameters_Update)}]", AllowCLIParameters));
-                    if(!AllowCLIParameters) opts.CustomParameters_Update.Clear();
+                    if (!AllowCLIParameters) opts.CustomParameters_Update.Clear();
                 }
                 if (opts.CustomParameters_Uninstall.Where(x => x.Any()).Any())
                 {
                     report.IsEmpty = false;
                     if (!report.Contents.ContainsKey(pkg.Id)) report.Contents[pkg.Id] = new();
                     report.Contents[pkg.Id].Add(new($"Custom uninstall arguments: [{string.Join(", ", opts.CustomParameters_Uninstall)}]", AllowCLIParameters));
-                    if(!AllowCLIParameters) opts.CustomParameters_Uninstall.Clear();
+                    if (!AllowCLIParameters) opts.CustomParameters_Uninstall.Clear();
                 }
 
                 if (opts.PreInstallCommand.Any())
@@ -782,7 +782,7 @@ namespace UniGetUI.Interface.SoftwarePages
                             var exeName = package.Manager.Properties.ExecutableFriendlyName;
                             var param = package.Manager.OperationHelper.GetParameters(package,
                                 package.installation_options, OperationType.Install);
-                            commands.Add($"{exeName} {string.Join(' ',param)}");
+                            commands.Add($"{exeName} {string.Join(' ', param)}");
 
                             if (package.installation_options.PostInstallCommand != "")
                             {   // Add post-operation

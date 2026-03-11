@@ -408,7 +408,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
         protected override void _performExtraLoadingSteps()
         {
-            if(Settings.Get(Settings.K.EnableScoopCleanup))
+            if (Settings.Get(Settings.K.EnableScoopCleanup))
             {
                 RunCleanup();
             }

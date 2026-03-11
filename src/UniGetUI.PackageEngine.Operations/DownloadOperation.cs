@@ -4,6 +4,7 @@ using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageOperations;
 
 namespace UniGetUI.PackageEngine.Operations;
+
 public class DownloadOperation : AbstractOperation
 {
     private readonly IPackage _package;
@@ -14,7 +15,7 @@ public class DownloadOperation : AbstractOperation
     }
     private bool canceled;
 
-    public DownloadOperation(IPackage package, string downloadPath): base(true, null)
+    public DownloadOperation(IPackage package, string downloadPath) : base(true, null)
     {
         downloadLocation = downloadPath;
         _package = package;
@@ -82,7 +83,7 @@ public class DownloadOperation : AbstractOperation
             using var contentStream = await response.Content.ReadAsStreamAsync();
             using var fileStream = new FileStream(downloadLocation, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true);
 
-            var buffer = new byte[4*1024*1024];
+            var buffer = new byte[4 * 1024 * 1024];
             long totalRead = 0;
             int bytesRead;
 

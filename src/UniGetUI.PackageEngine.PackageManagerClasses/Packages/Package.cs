@@ -172,7 +172,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             {
                 CacheableIcon? icon = TaskRecycler<CacheableIcon?>.RunOrAttach(Manager.DetailsHelper.GetIcon, this);
                 string? path = IconCacheEngine.GetCacheOrDownloadIcon(icon, Manager.Name, CoreTools.MakeValidFileName(Id));
-                return path is null? null: new Uri("file:///" + path);
+                return path is null ? null : new Uri("file:///" + path);
             }
             catch (Exception ex)
             {
@@ -192,7 +192,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             try
             {
                 await Task.Run(() => IgnoredUpdatesDatabase.Add(_ignoredId, version));
-                foreach(var p in GetInstalledPackages())
+                foreach (var p in GetInstalledPackages())
                     p.SetTag(PackageTag.Pinned);
             }
             catch (Exception ex)
@@ -207,7 +207,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             try
             {
                 await Task.Run(() => IgnoredUpdatesDatabase.Remove(_ignoredId));
-                foreach(var p in GetInstalledPackages())
+                foreach (var p in GetInstalledPackages())
                     p.SetTag(PackageTag.Default);
             }
             catch (Exception ex)
@@ -286,7 +286,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
                     return true;
                 }
             }
-            
+
             return false;
         }
 

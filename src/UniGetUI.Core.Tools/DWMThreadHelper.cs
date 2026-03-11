@@ -92,7 +92,7 @@ public class DWMThreadHelper
 
         IntPtr adress = 0x00;
         int status = NtQueryInformationThread(hThread, ThreadQuerySetWin32StartAddress, ref adress, Marshal.SizeOf(typeof(IntPtr)), out _);
-        if(status != 0) Logger.Warn($"NtQueryInformationThread returned non-zero status code 0x{(uint)status:X}");
+        if (status != 0) Logger.Warn($"NtQueryInformationThread returned non-zero status code 0x{(uint)status:X}");
         CloseHandle(hThread);
         return adress;
     }
@@ -126,7 +126,7 @@ public class DWMThreadHelper
         {
             Logger.Error($"No thread matching {loggerName} with start adress {expectedAdress:X} was found. " +
                          $"Best guess was {minId} with adress offset {LastDiff:X}");
-            if(Debugger.IsAttached) Debugger.Break();
+            if (Debugger.IsAttached) Debugger.Break();
             return;
         }
 

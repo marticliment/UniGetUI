@@ -1,32 +1,32 @@
 extern alias DrawingCommon;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Web;
 using H.NotifyIcon;
+using H.NotifyIcon.EfficiencyMode;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.Win32;
+using Microsoft.Windows.AppNotifications;
+using UniGetUI.Core.Classes;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
+using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.Interfaces;
-using Windows.ApplicationModel.DataTransfer;
-using H.NotifyIcon.EfficiencyMode;
-using Microsoft.Windows.AppNotifications;
-using UniGetUI.Core.Classes;
-using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.PackageClasses;
-using UniGetUI.Pages.DialogPages;
-using WindowExtensions = H.NotifyIcon.WindowExtensions;
-using System.Diagnostics;
-using Windows.UI.Text.Core;
 using UniGetUI.PackageEngine.PackageLoader;
+using UniGetUI.Pages.DialogPages;
+using Windows.ApplicationModel.DataTransfer;
+using Windows.UI.Text.Core;
+using WindowExtensions = H.NotifyIcon.WindowExtensions;
 
 namespace UniGetUI.Interface
 {
@@ -194,7 +194,7 @@ namespace UniGetUI.Interface
             _currentSubtitle += line;
             _currentSubtitlePxLength = _currentSubtitle.Length * 4;
             Title = "UniGetUI - " + _currentSubtitle;
-            TitleBar.Subtitle = subtitleCollapsed is true? "": _currentSubtitle;
+            TitleBar.Subtitle = subtitleCollapsed is true ? "" : _currentSubtitle;
         }
 
         private void ClearSubtitle()
@@ -534,7 +534,7 @@ namespace UniGetUI.Interface
             UpdateSystemTrayStatus();
         }
 
-        private string LastTrayIcon  = "";
+        private string LastTrayIcon = "";
         public void UpdateSystemTrayStatus()
         {
             try
@@ -648,7 +648,7 @@ namespace UniGetUI.Interface
 
             Activated += (_, e) =>
             {
-                if(e.WindowActivationState is WindowActivationState.CodeActivated or WindowActivationState.PointerActivated)
+                if (e.WindowActivationState is WindowActivationState.CodeActivated or WindowActivationState.PointerActivated)
                     MainContentFrame.Content = NavigationPage;
             };
 
@@ -874,7 +874,7 @@ namespace UniGetUI.Interface
             if (NavigationPage is null)
                 return;
 
-            if(this.AppWindow.Size.Width >= 1600)
+            if (this.AppWindow.Size.Width >= 1600)
             {
                 Settings.Set(Settings.K.CollapseNavMenuOnWideScreen, NavigationPage.NavView.IsPaneOpen);
             }
@@ -892,7 +892,7 @@ namespace UniGetUI.Interface
         private const int MAX_SEARCHBOX_W = 400;
         private void TitleBar_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if(TitleBar.ActualWidth <= DYNAMIC_SEARCHBOX_LIMIT)
+            if (TitleBar.ActualWidth <= DYNAMIC_SEARCHBOX_LIMIT)
             {
                 GlobalSearchBox.Width = Math.Max(MIN_SEARCHBOX_W, MAX_SEARCHBOX_W - (DYNAMIC_SEARCHBOX_LIMIT - TitleBar.ActualWidth));
             }

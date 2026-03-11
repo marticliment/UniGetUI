@@ -1,4 +1,4 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 using ExternalLibraries.Pickers.Enums;
 using ExternalLibraries.Pickers.Interfaces;
 using ExternalLibraries.Pickers.Structures;
@@ -78,7 +78,7 @@ internal static class Helper
             if (fileExtension.Length > 0 && fileExtension[0] == '*')
                 fileExtension = fileExtension.TrimStart('*');
 
-            return path.Contains(fileExtension)? path: path + fileExtension;
+            return path.Contains(fileExtension) ? path : path + fileExtension;
         }
         finally
         {

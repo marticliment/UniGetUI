@@ -104,7 +104,7 @@ namespace UniGetUI.PackageEngine.Operations
                 process.StartInfo.Arguments = Source.Manager.Status.ExecutableCallArgs + " " + string.Join(" ", Source.Manager.SourcesHelper.GetAddSourceParameters(Source));
             }
 
-           ApplyCapabilities(admin, false, false, null);
+            ApplyCapabilities(admin, false, false, null);
         }
 
         protected override Task<OperationVeredict> GetProcessVeredict(int ReturnCode, List<string> Output)
@@ -118,7 +118,7 @@ namespace UniGetUI.PackageEngine.Operations
                                             "with Manager=" + Source.Manager.Name;
 
             Metadata.Title = CoreTools.Translate("Adding source {source}", new Dictionary<string, object?> { { "source", Source.Name } });
-            Metadata.Status = CoreTools.Translate("Adding source {source} to {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });;
+            Metadata.Status = CoreTools.Translate("Adding source {source} to {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } }); ;
             Metadata.SuccessTitle = CoreTools.Translate("Source added successfully");
             Metadata.SuccessMessage = CoreTools.Translate("The source {source} was added to {manager} successfully",
                 new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });
@@ -175,7 +175,7 @@ namespace UniGetUI.PackageEngine.Operations
             Metadata.OperationInformation = "Starting remove source operation for source=" + Source.Name + "with Manager=" + Source.Manager.Name;
 
             Metadata.Title = CoreTools.Translate("Removing source {source}", new Dictionary<string, object?> { { "source", Source.Name } });
-            Metadata.Status = CoreTools.Translate("Removing source {source} from {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });;
+            Metadata.Status = CoreTools.Translate("Removing source {source} from {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } }); ;
             Metadata.SuccessTitle = CoreTools.Translate("Source removed successfully");
             Metadata.SuccessMessage = CoreTools.Translate("The source {source} was removed from {manager} successfully",
                 new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });

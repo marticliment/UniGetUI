@@ -111,7 +111,7 @@ namespace UniGetUI.Core.IconEngine
 
             var icon = _icon.Value;
 
-            if(icon.IsLocalPath)
+            if (icon.IsLocalPath)
                 return icon.LocalPath;
 
             string iconLocation = Path.Join(CoreData.UniGetUICacheDirectory_Icons, ManagerName, PackageId);

@@ -112,17 +112,20 @@ namespace UniGetUI.Interface.Widgets
         private bool _disableStateChangedEvent = false;
 
         private string _keyName = "";
-        public string KeyName { set
+        public string KeyName
         {
-            _keyName = value;
-            if (_dictName != Settings.K.Unset && _keyName.Any())
+            set
             {
-                _disableStateChangedEvent = true;
-                _checkbox.IsOn = Settings.GetDictionaryItem<string, bool>(_dictName, _keyName) ^ IS_INVERTED ^ ForceInversion;
-                _textblock.Opacity = _checkbox.IsOn ? 1 : 0.7;
-                _disableStateChangedEvent = false;
+                _keyName = value;
+                if (_dictName != Settings.K.Unset && _keyName.Any())
+                {
+                    _disableStateChangedEvent = true;
+                    _checkbox.IsOn = Settings.GetDictionaryItem<string, bool>(_dictName, _keyName) ^ IS_INVERTED ^ ForceInversion;
+                    _textblock.Opacity = _checkbox.IsOn ? 1 : 0.7;
+                    _disableStateChangedEvent = false;
+                }
             }
-        } }
+        }
 
         public Settings.K DictionaryName
         {

@@ -4,7 +4,7 @@ using UniGetUI.PackageEngine.Serializable;
 
 namespace UniGetUI.PackageEngine.Classes.Serializable
 {
-    public class SerializableUpdatesOptions: SerializableComponent<SerializableUpdatesOptions>
+    public class SerializableUpdatesOptions : SerializableComponent<SerializableUpdatesOptions>
     {
         public bool UpdatesIgnored { get; set; }
         public string IgnoredVersion { get; set; } = "";
@@ -23,8 +23,8 @@ namespace UniGetUI.PackageEngine.Classes.Serializable
         public override JsonObject AsJsonNode()
         {
             JsonObject obj = new();
-            if(UpdatesIgnored is not false) obj.Add(nameof(UpdatesIgnored), UpdatesIgnored);
-            if(IgnoredVersion.Any()) obj.Add(nameof(IgnoredVersion), IgnoredVersion);
+            if (UpdatesIgnored is not false) obj.Add(nameof(UpdatesIgnored), UpdatesIgnored);
+            if (IgnoredVersion.Any()) obj.Add(nameof(IgnoredVersion), IgnoredVersion);
             return obj;
         }
 

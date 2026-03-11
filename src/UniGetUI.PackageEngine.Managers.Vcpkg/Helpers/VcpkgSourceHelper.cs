@@ -25,9 +25,10 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
         {
             List<ManagerSource> Sources = [];
 
-			foreach (string Triplet in Vcpkg.GetSystemTriplets()) {
-				Sources.Add(new ManagerSource(Manager, Triplet, Vcpkg.URI_VCPKG_IO));
-			}
+            foreach (string Triplet in Vcpkg.GetSystemTriplets())
+            {
+                Sources.Add(new ManagerSource(Manager, Triplet, Vcpkg.URI_VCPKG_IO));
+            }
 
             return Sources;
         }

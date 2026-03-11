@@ -5,6 +5,7 @@ using UniGetUI.PackageEngine.Serializable;
 using Architecture = UniGetUI.PackageEngine.Enums.Architecture;
 
 namespace UniGetUI.PackageEngine.Managers.DotNetManager;
+
 internal sealed class DotNetPkgOperationHelper : BasePkgOperationHelper
 {
     public DotNetPkgOperationHelper(DotNet manager) : base(manager) { }

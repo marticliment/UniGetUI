@@ -84,12 +84,12 @@ namespace UniGetUI.Interface.Widgets
             // The invisible U+200E character here is used to prevent the text from being
             // trimmed in the TabViewItem header, adding a little bit of padding at the end.
             if (line1 != "") text += CoreTools.Translate(line1) + " ‎‎ ";
-            if (line2 != "") text += (text.Length> 0?"\n":"") + CoreTools.Translate(line2) + " ‎ ";
+            if (line2 != "") text += (text.Length > 0 ? "\n" : "") + CoreTools.Translate(line2) + " ‎ ";
             Header = text;
         }
     }
 
-    public partial class BetterFlyout: Flyout
+    public partial class BetterFlyout : Flyout
     {
         public BetterFlyout() : base()
         {

@@ -5,14 +5,14 @@ using UniGetUI.Core.Classes;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
-using UniGetUI.PackageEngine.Classes.Manager;
 using UniGetUI.Interface.Enums;
+using UniGetUI.PackageEngine.Classes.Manager;
 using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
-using UniGetUI.PackageEngine.ManagerClasses.Classes;
 
 namespace UniGetUI.PackageEngine.Managers.CargoManager;
 
@@ -160,7 +160,7 @@ public partial class Cargo : PackageManager
     private IReadOnlyList<Package> GetPackages(LoggableTaskType taskType)
     {
         List<Package> Packages = [];
-        foreach(var match in TaskRecycler<List<Match>>.RunOrAttach(GetInstalledCommandOutput, 15))
+        foreach (var match in TaskRecycler<List<Match>>.RunOrAttach(GetInstalledCommandOutput, 15))
         {
             var id = match.Groups[1]?.Value?.Trim() ?? "";
             var name = CoreTools.FormatAsName(id);

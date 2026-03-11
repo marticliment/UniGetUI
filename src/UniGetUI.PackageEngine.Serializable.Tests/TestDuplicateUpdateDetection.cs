@@ -185,7 +185,7 @@ public class TestDuplicateUpdateDetection
         Assert.Equal(hash1, hash2);
         Assert.Equal(hash2, hash3);
         Assert.Equal(hash1, hash3);
-        
+
         // In the actual implementation, the second and third calls would find
         // an existing operation with matching hash and skip creating duplicates
     }

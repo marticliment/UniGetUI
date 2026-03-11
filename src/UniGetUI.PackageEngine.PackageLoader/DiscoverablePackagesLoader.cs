@@ -51,7 +51,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
                 return [];
             }
 
-            return  manager.FindPackages(text);
+            return manager.FindPackages(text);
         }
 
         protected override Task WhenAddingPackage(IPackage package)

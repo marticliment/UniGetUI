@@ -81,7 +81,8 @@ namespace UniGetUI.Interface.Pages.LogPage
                     {
                         p.Inlines.Add(new Run { Text = new string(' ', date_length) + line + "\n", Foreground = color });
                     }
-                } ((Run)p.Inlines[^1]).Text = ((Run)p.Inlines[^1]).Text.TrimEnd();
+                }
+                ((Run)p.Inlines[^1]).Text = ((Run)p.Inlines[^1]).Text.TrimEnd();
                 LogTextBox.Blocks.Add(p);
             }
             if (isReload) MainScroller.ScrollToVerticalOffset(MainScroller.ScrollableHeight);

@@ -306,7 +306,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             var (rootFound, _) = GetVcpkgRoot();
 
 
-            if(!rootFound) Logger.Error("Vcpkg root was not found. Please define the %VCPKG_ROOT% environment variable or define it from UniGetUI Settings");
+            if (!rootFound) Logger.Error("Vcpkg root was not found. Please define the %VCPKG_ROOT% environment variable or define it from UniGetUI Settings");
             found = exeFound && rootFound;
             path = exePath;
 

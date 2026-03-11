@@ -4,7 +4,7 @@ using UniGetUI.PackageEngine.Serializable;
 
 namespace UniGetUI.PackageEngine.Classes.Serializable
 {
-    public class SerializablePackage: SerializableComponent<SerializablePackage>
+    public class SerializablePackage : SerializableComponent<SerializablePackage>
     {
         public string Id { get; set; } = "";
         public string Name { get; set; } = "";

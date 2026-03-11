@@ -60,7 +60,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
         {
             package.GetAvailablePackage()?.SetTag(PackageTag.IsUpgradable);
 
-            foreach(var p in package.GetInstalledPackages())
+            foreach (var p in package.GetInstalledPackages())
                 p.SetTag(PackageTag.IsUpgradable);
 
             return Task.CompletedTask;

@@ -76,7 +76,7 @@ namespace UniGetUI.Interface.Dialogs
         private void RightButton_Click(object sender, RoutedEventArgs e)
         {
 
-            if (Initialized && webView is not null &&  webView.CanGoForward)
+            if (Initialized && webView is not null && webView.CanGoForward)
             {
                 webView.GoForward();
             }

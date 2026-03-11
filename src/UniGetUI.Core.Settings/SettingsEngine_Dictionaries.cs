@@ -12,7 +12,7 @@ namespace UniGetUI.Core.SettingsEngine
         // Returns an empty dictionary if the setting doesn't exist and null if the types are invalid
         private static Dictionary<KeyT, ValueT?> _getDictionary<KeyT, ValueT>(K key)
             where KeyT : notnull
-         {
+        {
             string setting = ResolveKey(key);
             try
             {

@@ -171,17 +171,17 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             {
                 List<string> innerDeps = [];
 
-                if(rawDep.Value is JsonValue value) innerDeps.Add(value.GetValue<string>());
+                if (rawDep.Value is JsonValue value) innerDeps.Add(value.GetValue<string>());
                 else
                 {
                     foreach (var iDep in rawDep.Value?.AsArray() ?? [])
                     {
                         string? val = iDep?.GetValue<string>();
-                        if(val is not null) innerDeps.Add(val);
+                        if (val is not null) innerDeps.Add(val);
                     }
                 }
 
-                foreach(var val in innerDeps)
+                foreach (var val in innerDeps)
                     details.Dependencies.Add(new()
                     {
                         Name = val,
@@ -197,17 +197,17 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             List<string> innerDeps = [];
 
 
-            if(node is JsonValue value) innerDeps.Add(value.GetValue<string>());
+            if (node is JsonValue value) innerDeps.Add(value.GetValue<string>());
             else
             {
                 foreach (var iDep in node?.AsArray() ?? [])
                 {
                     string? val = iDep?.GetValue<string>();
-                    if(val is not null) innerDeps.Add(val);
+                    if (val is not null) innerDeps.Add(val);
                 }
             }
 
-            foreach(var val in innerDeps)
+            foreach (var val in innerDeps)
                 details.Dependencies.Add(new()
                 {
                     Name = val,
