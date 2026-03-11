@@ -228,7 +228,10 @@ public partial class OperationControl: INotifyPropertyChanged
         }
     }
 
-    public async Task LiveLineClick()
+    public void LiveLineClick()
+        => _ = LiveLineClickAsync();
+
+    private async Task LiveLineClickAsync()
     {
         if (Operation.Status is OperationStatus.Failed or OperationStatus.Canceled)
         {
