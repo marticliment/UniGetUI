@@ -111,7 +111,7 @@ UniGetUI has a built-in autoupdater. However, it can also be updated like any ot
 
 **NOTE:** All package managers do support basic install, update, and uninstall processes, as well as checking for updates, finding new packages, and retrieving details from a package.
 
-<img src="https://devolutions.net/unigetui/extra/supported-managers.svg"/>
+![image](media/supported-managers.svg)
 
 ✅: Supported on UniGetUI<br>
 ☑️: Not directly supported but can be easily achieved<br>
@@ -120,7 +120,7 @@ UniGetUI has a built-in autoupdater. However, it can also be updated like any ot
 <br>
 
 # Translating UniGetUI to other languages
-To translate UniGetUI to other languages or to update an old translation, please see [Translating UniGetUI - UniGetUI Wiki](https://github.com/Devolutions/UniGetUI/wiki#translating-wingetui) for more info.
+To translate UniGetUI to other languages or to update an old translation, please see [Translating UniGetUI - UniGetUI Wiki](https://github.com/Devolutions/UniGetUI/wiki/Translating-UniGetUI#translating-wingetui) for more info.
 
 
 ## Currently Supported languages
