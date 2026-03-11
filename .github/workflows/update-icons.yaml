@@ -7,7 +7,7 @@ on:
 
 jobs:
   load-icons:
-    if: github.repository == 'marticliment/UniGetUI'
+    if: github.repository == 'Devolutions/UniGetUI'
     runs-on: windows-latest
 
     steps:
