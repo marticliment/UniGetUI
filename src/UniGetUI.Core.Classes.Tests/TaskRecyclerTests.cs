@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace UniGetUI.Core.Classes.Tests;
 
 public class TaskRecyclerTests
@@ -12,12 +14,14 @@ public class TaskRecyclerTests
     {
         public TestClass() {}
 
+        [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Instance methods are required to validate TaskRecycler instance-bound delegate behavior.")]
         public string SlowMethod2()
         {
             Thread.Sleep(1000);
             return new Random().Next().ToString();
         }
 
+        [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Instance methods are required to validate TaskRecycler instance-bound delegate behavior.")]
         public string SlowMethod3()
         {
             Thread.Sleep(1000);

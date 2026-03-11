@@ -16,7 +16,15 @@ public static class DesktopShortcutsDatabase
 
     public static IReadOnlyDictionary<string, bool> GetDatabase()
     {
-        return Settings.GetDictionary<string, bool>(Settings.K.DeletableDesktopShortcuts) ?? new Dictionary<string, bool>();
+        var database = Settings.GetDictionary<string, bool>(Settings.K.DeletableDesktopShortcuts);
+        if (database is null)
+        {
+            return new Dictionary<string, bool>();
+        }
+
+        return database
+            .Where(item => item.Value.HasValue)
+            .ToDictionary(item => item.Key, item => item.Value!.Value);
     }
 
     public static void ResetDatabase()
@@ -128,7 +136,7 @@ public static class DesktopShortcutsDatabase
     {
         var shortcuts = GetShortcutsOnDisk();
 
-        foreach (var item in Settings.GetDictionary<string, bool>(Settings.K.DeletableDesktopShortcuts) ?? new Dictionary<string, bool?>())
+        foreach (var item in GetDatabase())
         {
             if (!shortcuts.Contains(item.Key))
                 shortcuts.Add(item.Key);
