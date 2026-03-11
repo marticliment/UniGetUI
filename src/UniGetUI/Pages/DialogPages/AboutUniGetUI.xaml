@@ -53,14 +53,6 @@
                         Glyph="&#xF2B7;" />
                 </SelectorBarItem.Icon>
             </SelectorBarItem>
-            <SelectorBarItem x:Name="SelectorBarItemPage5">
-                <SelectorBarItem.Icon>
-                    <FontIcon
-                        VerticalAlignment="Center"
-                        FontSize="16"
-                        Glyph="&#xED56;" />
-                </SelectorBarItem.Icon>
-            </SelectorBarItem>
         </SelectorBar>
 
         <Frame

@@ -74,7 +74,6 @@
     <None Remove="Interface\MainView.xaml" />
     <None Remove="Interface\Pages\AboutPages\AboutUniGetUI.xaml" />
     <None Remove="Interface\Pages\AboutPages\Contributors.xaml" />
-    <None Remove="Interface\Pages\AboutPages\SupportMe.xaml" />
     <None Remove="Interface\Pages\AboutPages\ThirdPartyLicenses.xaml" />
     <None Remove="Interface\Pages\AboutPages\Translators.xaml" />
     <None Remove="Interface\Pages\LogPage.xaml" />

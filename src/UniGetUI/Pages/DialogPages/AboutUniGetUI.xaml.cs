@@ -24,7 +24,6 @@ namespace UniGetUI.Interface
             SelectorBarItemPage2.Text = CoreTools.Translate("Third-party licenses");
             SelectorBarItemPage3.Text = CoreTools.Translate("Contributors");
             SelectorBarItemPage4.Text = CoreTools.Translate("Translators");
-            SelectorBarItemPage5.Text = CoreTools.Translate("Support me");
         }
 
         private void SelectorBar_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs args)
@@ -36,8 +35,7 @@ namespace UniGetUI.Interface
                 0 => typeof(Pages.AboutPages.AboutUniGetUI),
                 1 => typeof(ThirdPartyLicenses),
                 2 => typeof(Contributors),
-                3 => typeof(Translators),
-                _ => typeof(SupportMe),
+                _ => typeof(Translators),
             };
             SlideNavigationTransitionEffect slideNavigationTransitionEffect = currentSelectedIndex - previousSelectedIndex > 0 ? SlideNavigationTransitionEffect.FromRight : SlideNavigationTransitionEffect.FromLeft;
 
