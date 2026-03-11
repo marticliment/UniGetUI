@@ -29,7 +29,7 @@ Check out the [Supported Package Managers Table](#supported-package-managers) fo
 > **The official source repository is [https://github.com/Devolutions/UniGetUI](https://github.com/Devolutions/UniGetUI).**<br>
 > **Any other website should be considered unofficial, despite what they may say.**
 
-🔒 Found a security issue? Please report it via [our disclosure program](https://whitehub.net/programs/unigetui/)
+🔒 Found a security issue? Please report it via the [Devolutions security page](https://devolutions.net/security/)
 
 ## Project stewardship
 
