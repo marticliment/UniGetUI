@@ -16,7 +16,7 @@ namespace UniGetUI.Pages.SettingsPages
         public bool CanGoBack => false;
         public string ShortTitle => CoreTools.Translate("WingetUI Settings");
 
-        public event EventHandler? RestartRequired;
+        public event EventHandler? RestartRequired { add { } remove { } }
 
         public event EventHandler<Type>? NavigationRequested;
 

@@ -45,7 +45,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         public bool CanGoBack => true;
         public string ShortTitle => CoreTools.Translate("Notification preferences");
 
-        public event EventHandler? RestartRequired;
-        public event EventHandler<Type>? NavigationRequested;
+        public event EventHandler? RestartRequired { add { } remove { } }
+        public event EventHandler<Type>? NavigationRequested { add { } remove { } }
     }
 }

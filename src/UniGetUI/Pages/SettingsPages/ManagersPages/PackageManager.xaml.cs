@@ -36,7 +36,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
     {
         IPackageManager? Manager;
         public event EventHandler? RestartRequired;
-        public event EventHandler<Type>? NavigationRequested;
+        public event EventHandler<Type>? NavigationRequested { add { } remove { } }
         public event EventHandler? ReapplyProperties;
         public bool CanGoBack => true;
         public string ShortTitle => Manager is null ? "" : CoreTools.Translate("{0} settings", Manager.DisplayName);
