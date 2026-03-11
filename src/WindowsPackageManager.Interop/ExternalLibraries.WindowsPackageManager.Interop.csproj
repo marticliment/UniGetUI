@@ -17,7 +17,8 @@
   https://github.com/microsoft/CsWinRT/blob/master/nuget/readme.md
   -->
   <PropertyGroup>
-    <CsWinRTWindowsMetadata>10.0.19041.0</CsWinRTWindowsMetadata>
+    <CsWinRTWindowsMetadata Condition="'$(PkgMicrosoft_Windows_SDK_Contracts)' != ''">$(PkgMicrosoft_Windows_SDK_Contracts)\ref\netstandard2.0</CsWinRTWindowsMetadata>
+    <CsWinRTWindowsMetadata Condition="'$(PkgMicrosoft_Windows_SDK_Contracts)' == ''">10.0.26100.0</CsWinRTWindowsMetadata>
     <CsWinRTIncludes>Microsoft.Management.Deployment</CsWinRTIncludes>
   </PropertyGroup>
 
@@ -29,6 +30,10 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.26100.4948">
+      <GeneratePathProperty>true</GeneratePathProperty>
+      <IncludeAssets>none</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.183">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
