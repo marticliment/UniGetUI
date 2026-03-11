@@ -376,7 +376,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
 
             if (process.ExitCode is 9009)
             {
-                throw new Exception("Microsoft Store python alias is not a valid python install");
+                throw new InvalidOperationException("Microsoft Store python alias is not a valid python install");
             }
         }
 
