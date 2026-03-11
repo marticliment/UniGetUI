@@ -39,6 +39,8 @@ public partial class AutoUpdater
         "50f753333811ff11f1920274afde3ffd4468b210",
     ];
 
+    private static readonly AutoUpdaterJsonContext ProductInfoJsonContext = new(SerializationHelpers.DefaultOptions);
+
     public static Window Window = null!;
     public static InfoBar Banner = null!;
     //------------------------------------------------------------------------------------------------------------------
@@ -208,7 +210,7 @@ public partial class AutoUpdater
         Dictionary<string, ProductInfoProduct>? productInfoRoot = JsonSerializer.Deserialize(
             productInfo,
             typeof(Dictionary<string, ProductInfoProduct>),
-            AutoUpdaterJsonContext.Default) as Dictionary<string, ProductInfoProduct>;
+            ProductInfoJsonContext) as Dictionary<string, ProductInfoProduct>;
         if (productInfoRoot is null || productInfoRoot.Count == 0)
         {
             throw new FormatException("productinfo.json content is empty or invalid");
