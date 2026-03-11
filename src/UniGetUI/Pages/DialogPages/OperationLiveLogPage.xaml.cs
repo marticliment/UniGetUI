@@ -14,7 +14,7 @@ namespace UniGetUI.Pages.DialogPages;
 public sealed partial class OperationLiveLogPage : Page
 {
     public event EventHandler<EventArgs>? Close;
-    private Paragraph par;
+    private readonly Paragraph par;
     private static SolidColorBrush errorColor = null!;
     private static SolidColorBrush debugColor = null!;
     private bool LastLineWasProgress;

@@ -5,11 +5,13 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
 {
     public struct ManagerProperties
     {
+        private const IconType DefaultIconId = (IconType)'\uE916';
+
         public bool IsDummy = false;
         public string Name { get; set; } = "Unset";
         public string? DisplayName { get; set; }
         public string Description { get; set; } = "Unset";
-        public IconType IconId { get; set; } = IconType.Help;
+        public IconType IconId { get; set; } = DefaultIconId;
         public string ColorIconId { get; set; } = "Unset";
         // public string ExecutableCallArgs { get; set; } = "Unset";
         public string ExecutableFriendlyName { get; set; } = "Unset";

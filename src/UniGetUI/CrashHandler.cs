@@ -67,7 +67,6 @@ public static class CrashHandler
     {
         Debugger.Break();
 
-
         if (!Environment.GetCommandLineArgs().Contains(CLIHandler.NO_CORRUPT_DIALOG))
         {
             Exception? fileEx = e;
@@ -95,7 +94,7 @@ public static class CrashHandler
             // ignored
         }
 
-        string GetExceptionData(Exception e)
+        static string GetExceptionData(Exception e)
         {
             try
             {
@@ -125,7 +124,6 @@ public static class CrashHandler
             iReport = "Failed to compute integrity report: ";
             iReport +=  ex.GetType() + ": " + ex.Message;
         }
-
 
         string Error_String = $$"""
             Environment details:

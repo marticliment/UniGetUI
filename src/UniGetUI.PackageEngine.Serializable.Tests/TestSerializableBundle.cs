@@ -44,7 +44,6 @@ public class TestSerializableBundle
         Version = "5.0",
     };
 
-
     [Fact]
     public void ToAndFromJsonNode()
     {

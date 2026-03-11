@@ -10,8 +10,8 @@ public static class IntegrityTester
 {
     public class MismatchedHash
     {
-        public string Got;
-        public string Expected;
+        public string Got = string.Empty;
+        public string Expected = string.Empty;
     }
 
     public struct Result

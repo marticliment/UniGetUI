@@ -31,7 +31,7 @@ public partial class OperationControl: INotifyPropertyChanged
     public BetterMenu OpMenu;
     public OperationStatus? MenuStateOnLoaded;
     public ObservableCollection<OperationBadge> Badges = [];
-    private int _errorCount = 0;
+    private int _errorCount;
 
     public OperationControl(AbstractOperation operation)
     {
@@ -127,7 +127,7 @@ public partial class OperationControl: INotifyPropertyChanged
     private async Task _onOperationFinished()
     {
         // Remove progress notification (if any)
-        AppNotificationManager.Default.RemoveByTagAsync(Operation.Metadata.Identifier + "progress");
+        _ = AppNotificationManager.Default.RemoveByTagAsync(Operation.Metadata.Identifier + "progress");
 
         if (Operation.Status is OperationStatus.Failed)
         {
@@ -228,7 +228,10 @@ public partial class OperationControl: INotifyPropertyChanged
         }
     }
 
-    public async Task LiveLineClick()
+    public void LiveLineClick()
+        => _ = LiveLineClickAsync();
+
+    private async Task LiveLineClickAsync()
     {
         if (Operation.Status is OperationStatus.Failed or OperationStatus.Canceled)
         {
@@ -405,7 +408,7 @@ public partial class OperationControl: INotifyPropertyChanged
 
         try
         {
-            AppNotificationManager.Default.RemoveByTagAsync(Operation.Metadata.Identifier + "progress");
+            _ = AppNotificationManager.Default.RemoveByTagAsync(Operation.Metadata.Identifier + "progress");
             AppNotificationBuilder builder = new AppNotificationBuilder()
                 .SetScenario(AppNotificationScenario.Default)
                 .SetTag(Operation.Metadata.Identifier + "progress")
@@ -434,7 +437,7 @@ public partial class OperationControl: INotifyPropertyChanged
 
         try
         {
-            AppNotificationManager.Default.RemoveByTagAsync(Operation.Metadata.Identifier);
+            _ = AppNotificationManager.Default.RemoveByTagAsync(Operation.Metadata.Identifier);
             AppNotificationBuilder builder = new AppNotificationBuilder()
                 .SetScenario(AppNotificationScenario.Default)
                 .SetTag(Operation.Metadata.Identifier)
@@ -459,7 +462,7 @@ public partial class OperationControl: INotifyPropertyChanged
 
         try
         {
-            AppNotificationManager.Default.RemoveByTagAsync(Operation.Metadata.Identifier);
+            _ = AppNotificationManager.Default.RemoveByTagAsync(Operation.Metadata.Identifier);
             AppNotificationBuilder builder = new AppNotificationBuilder()
                 .SetScenario(AppNotificationScenario.Urgent)
                 .SetTag(Operation.Metadata.Identifier)

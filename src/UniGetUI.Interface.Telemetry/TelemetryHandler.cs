@@ -152,7 +152,7 @@ public static class TelemetryHandler
     {
         try
         {
-            if (result is null && eventSource is null) throw new NullReferenceException("result and eventSource cannot be both null!");
+            if (result is null && eventSource is null) throw new ArgumentException("result and eventSource cannot both be null");
             if (Settings.Get(Settings.K.DisableTelemetry)) return;
             await CoreTools.WaitForInternetConnection();
             string ID = GetRandomizedId();
@@ -186,7 +186,6 @@ public static class TelemetryHandler
             Logger.Error(ex);
         }
     }
-
 
     // -------------------------------------------------------------------------
 

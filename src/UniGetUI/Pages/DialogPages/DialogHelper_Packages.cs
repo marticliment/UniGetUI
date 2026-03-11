@@ -130,7 +130,6 @@ public static partial class DialogHelper
         dialog.SecondaryButtonText = CoreTools.Translate("No");
         dialog.DefaultButton = ContentDialogButton.Secondary;
 
-
         StackPanel p = new();
         p.Children.Add(new TextBlock
         {
@@ -366,6 +365,5 @@ public static partial class DialogHelper
 
         return await DialogHelper.ShowDialogAsync(dialog) is ContentDialogResult.Primary;
     }
-
 
 }

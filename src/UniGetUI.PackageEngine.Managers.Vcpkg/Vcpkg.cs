@@ -305,7 +305,6 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             var (exeFound, exePath) = GetExecutableFile();
             var (rootFound, _) = GetVcpkgRoot();
 
-
             if(!rootFound) Logger.Error("Vcpkg root was not found. Please define the %VCPKG_ROOT% environment variable or define it from UniGetUI Settings");
             found = exeFound && rootFound;
             path = exePath;
@@ -409,7 +408,12 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 var paths = CoreTools.WhichMultiple("vcpkg");
                 foreach (string path in paths)
                 {
-                    string dir = Path.GetDirectoryName(path);
+                    string? dir = Path.GetDirectoryName(path);
+                    if (string.IsNullOrEmpty(dir))
+                    {
+                        continue;
+                    }
+
                     // Make sure the root is a valid root not just a random directory
                     if (Path.Exists($"{dir}\\triplets"))
                     {

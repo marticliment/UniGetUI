@@ -71,7 +71,6 @@ namespace UniGetUI.Interface.Widgets
 
         public IconType IconName { set => IconSource = new LocalIconSource(value); }
 
-
         public BetterTabViewItem()
         {
             IsClosable = false;

@@ -63,7 +63,6 @@ namespace UniGetUI.Interface
             SetTitleBar(MainContentGrid);
             AppWindow.SetIcon(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Images", "icon.ico"));
 
-
             LoadTrayMenu();
             ApplyTheme();
             ApplyProxyVariableToProcess();
@@ -195,14 +194,6 @@ namespace UniGetUI.Interface
             _currentSubtitlePxLength = _currentSubtitle.Length * 4;
             Title = "UniGetUI - " + _currentSubtitle;
             TitleBar.Subtitle = subtitleCollapsed is true? "": _currentSubtitle;
-        }
-
-        private void ClearSubtitle()
-        {
-            TitleBar.Subtitle = "";
-            _currentSubtitle = "";
-            _currentSubtitlePxLength = 0;
-            Title = "UniGetUI";
         }
 
         public void HandleNotificationActivation(AppNotificationActivatedEventArgs args)

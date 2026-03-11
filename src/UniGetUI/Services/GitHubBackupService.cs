@@ -33,7 +33,7 @@ namespace UniGetUI.Services
         {
             var GHClient = _authService.CreateGitHubClient();
             if (GHClient is null)
-                throw new Exception("The GitHub user is not authenticated");
+                throw new InvalidOperationException("The GitHub user is not authenticated");
 
             User user = await GHClient.User.Current();
 
@@ -90,8 +90,7 @@ namespace UniGetUI.Services
         {
             var GHClient = _authService.CreateGitHubClient();
             if (GHClient is null)
-                throw new Exception("The GitHub user is not authenticated");
-
+                throw new InvalidOperationException("The GitHub user is not authenticated");
 
             User user = await GHClient.User.Current();
 
@@ -110,14 +109,14 @@ namespace UniGetUI.Services
         {
             var GHClient = _authService.CreateGitHubClient();
             if (GHClient is null)
-                throw new Exception("The GitHub user is not authenticated");
+                throw new InvalidOperationException("The GitHub user is not authenticated");
 
             User user = await GHClient.User.Current();
 
             var candidates = await GHClient.Gist.GetAllForUser(user.Login);
             Gist? existingBackup = candidates?.FirstOrDefault(g => g?.Description?.EndsWith(GistDescription_EndingKey) ?? false);
             if (existingBackup is null)
-                throw new Exception($"The backup {backupName} was not found, yet this name was passed by argument");
+                throw new KeyNotFoundException($"The backup {backupName} was not found, yet this name was passed by argument");
 
             existingBackup = await GHClient.Gist.Get(existingBackup.Id);
             return existingBackup.Files

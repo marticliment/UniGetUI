@@ -589,7 +589,6 @@ public static partial class DialogHelper
         return null;
     }
 
-
     /// <summary>
     /// Asks the user whether to quit or not (there are running operations)
     /// </summary>

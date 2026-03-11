@@ -83,7 +83,6 @@ public abstract partial class AbstractOperation
         Error
     }
 
-
     public struct InnerOperation
     {
         public readonly AbstractOperation Operation;

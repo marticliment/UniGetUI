@@ -170,7 +170,6 @@ namespace UniGetUI.Interface
         private readonly ObservableCollection<PackageWrapper> WrappedPackages = [];
         private IEnumerable<PackageWrapper>? LastQueryResult;
 
-
         protected List<IPackageManager> UsedManagers = [];
         protected ConcurrentDictionary<IPackageManager, List<IManagerSource>> UsedSourcesForManager = [];
         protected ConcurrentDictionary<IPackageManager, TreeViewNode> RootNodeForManager = [];
@@ -199,9 +198,9 @@ namespace UniGetUI.Interface
                 (SHOW_LAST_CHECKED_TIME ? " " + CoreTools.Translate("(Last checked: {0})", LastPackageLoadTime.ToString(CultureInfo.CurrentCulture)) : "");
         }
 
-        public string QueryBackup { get; set; }
+        public string QueryBackup { get; set; } = "";
 
-        private string _searchPlaceholder;
+        private readonly string _searchPlaceholder;
         public string SearchBoxPlaceholder => _searchPlaceholder;
 
         private string TypeQuery = "";
@@ -277,7 +276,6 @@ namespace UniGetUI.Interface
 
             ReloadButton.Click += async (_, _) => await LoadPackages();
             ReloadButton.Visibility = DISABLE_RELOAD ? Visibility.Collapsed : Visibility.Visible;
-
 
             // Handle the Enter Pressed event on the MegaQueryBlock
             MegaQueryBlock.KeyUp += (_, e) =>
@@ -443,7 +441,6 @@ namespace UniGetUI.Interface
             }
             FilterPackages();
         }
-
 
         private void Loader_FinishedLoading(object? sender, EventArgs e)
         {
@@ -615,7 +612,6 @@ namespace UniGetUI.Interface
             {
                 throw new InvalidCastException("The layout was not recognized");
             }
-
 
             if (position < CurrentPackageList.ScrollView.VerticalOffset || position >
                 CurrentPackageList.ScrollView.VerticalOffset + CurrentPackageList.ScrollView.ActualHeight)
@@ -792,7 +788,6 @@ namespace UniGetUI.Interface
             }
         }
 
-
         /// <summary>
         /// Will filter the packages with the query on QueryBlock.Text and put the
         /// resulting packages on the ItemsView
@@ -901,7 +896,6 @@ namespace UniGetUI.Interface
             else if (selected is not 0 && unSelected is 0) SelectAllCheckBox.IsChecked = true;
             else if (selected is not 0 && unSelected is not 0) SelectAllCheckBox.IsChecked = null;
 
-
             string GetSubtitleText()
             {
                 string r = CoreTools.Translate(
@@ -911,7 +905,6 @@ namespace UniGetUI.Interface
                 if (SHOW_LAST_CHECKED_TIME) r += " " + CoreTools.Translate("(Last checked: {0})", LastPackageLoadTime.ToString(CultureInfo.CurrentCulture));
                 return r;
             }
-
 
             if (FilteredPackages.Any())
             {
@@ -1104,7 +1097,6 @@ namespace UniGetUI.Interface
 
         public void FocusPackageList()
             => CurrentPackageList.Focus(FocusState.Programmatic);
-
 
         public async Task ShowContextMenu(PackageWrapper wrapper)
         {

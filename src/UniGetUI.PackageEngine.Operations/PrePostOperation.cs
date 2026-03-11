@@ -5,7 +5,7 @@ namespace UniGetUI.PackageEngine.Operations;
 
 public class PrePostOperation : AbstractOperation
 {
-    private string Payload;
+    private readonly string Payload;
     public PrePostOperation(string payload) : base(true)
     {
         Payload = payload.Replace("\r", "\n").Replace("\n\n", "\n").Replace("\n", "&");

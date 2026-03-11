@@ -25,7 +25,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 => package.Manager.Name.Replace(" ", "").Replace(".", "") + "." + package.Id + ".json";
         }
 
-
         // Loading from disk (package and manager)
         public static InstallOptions LoadForPackage(IPackage package)
             => _loadFromDisk(StoragePath.Get(package));

@@ -76,7 +76,6 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                     logger.Log($"Begin package search with url={SearchUrl} on manager {Name}");
                     Dictionary<string, SearchResult> AlreadyProcessedPackages = [];
 
-
                     using HttpClient client = new(CoreTools.GenericHttpClientParameters);
                     client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
 
@@ -236,7 +235,6 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             => TaskRecycler<IReadOnlyList<Package>>.RunOrAttach(_getInstalledPackages_UnSafe);
 
         protected abstract IReadOnlyList<Package> _getInstalledPackages_UnSafe();
-
 
     }
 

@@ -12,7 +12,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             ["--type", "Microsoft.PreIndexed.Package"],
             ["--type", "Microsoft.Rest"],
         ];
-        private Dictionary<string, int> _attemptedSourceTypes = new();
+        private readonly Dictionary<string, int> _attemptedSourceTypes = new();
 
         public WinGetSourceHelper(WinGet manager) : base(manager) { }
 

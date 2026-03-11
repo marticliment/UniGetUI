@@ -110,7 +110,6 @@ public partial class MainApp
                 savePicker.FileTypeChoices.Add("Tarball", [".tar"]);
                 savePicker.FileTypeChoices.Add("Compressed Tarball", [".tgz"]);
 
-
                 StorageFile file = await savePicker.PickSaveFileAsync();
 
                 DialogHelper.HideLoadingDialog(loadingId);

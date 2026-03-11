@@ -24,13 +24,13 @@ namespace UniGetUI.Pages.SettingsPages
         public bool CanGoBack => false;
         public string ShortTitle => CoreTools.Translate("Package manager preferences");
 
-        public event EventHandler? RestartRequired;
+        public event EventHandler? RestartRequired { add { } remove { } }
 
         public event EventHandler<Type>? NavigationRequested;
 
-        private List<SettingsPageButton> managerControls = new();
+        private readonly List<SettingsPageButton> managerControls = new();
 
-        private bool _isLoadingToggles = false;
+        private bool _isLoadingToggles;
         public ManagersHomepage()
         {
             this.InitializeComponent();

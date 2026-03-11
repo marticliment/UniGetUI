@@ -35,7 +35,7 @@ namespace UniGetUI.PackageEngine.Operations
             OperationType role,
             bool IgnoreParallelInstalls = false,
             AbstractOperation? req = null)
-            : base(!IgnoreParallelInstalls, _getPreInstallOps(options, role, package, req), _getPostInstallOps(options, role, package))
+            : base(!IgnoreParallelInstalls, _getPreInstallOps(options, role, req), _getPostInstallOps(options, role, package))
         {
             Package = package;
             Options = options;
@@ -143,7 +143,7 @@ namespace UniGetUI.PackageEngine.Operations
             return TaskRecycler<Uri>.RunOrAttachAsync(Package.GetIconUrl);
         }
 
-        private static IReadOnlyList<InnerOperation> _getPreInstallOps(InstallOptions opts, OperationType role, IPackage package, AbstractOperation? preReq = null)
+        private static IReadOnlyList<InnerOperation> _getPreInstallOps(InstallOptions opts, OperationType role, AbstractOperation? preReq = null)
         {
             List<InnerOperation> l = new();
             if(preReq is not null) l.Add(new(preReq, true));

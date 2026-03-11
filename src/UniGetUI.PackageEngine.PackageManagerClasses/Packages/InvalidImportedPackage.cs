@@ -132,7 +132,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         public IReadOnlyList<IPackage> GetInstalledPackages()
         {
-            return null;
+            return [];
         }
 
         public IReadOnlyList<Uri> GetScreenshots()
@@ -170,9 +170,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
             return false;
         }
 
-        public Task<string> GetInstallerFileName()
+        public Task<string?> GetInstallerFileName()
         {
-            return Task.FromResult("");
+            return Task.FromResult<string?>("");
         }
 
         public bool IsUpdateMinor()

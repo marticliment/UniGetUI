@@ -73,7 +73,6 @@ namespace UniGetUI.PackageEngine.Classes.Serializable
         {
         }
 
-
         /// <summary>
         /// Returns an equivalent copy of the current package as an Invalid Serializable Package.
         /// The reverse operation is not possible, since data is lost.

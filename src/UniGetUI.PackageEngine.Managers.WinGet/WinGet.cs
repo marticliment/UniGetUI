@@ -20,9 +20,9 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 {
     public class WinGet : PackageManager
     {
-        public static new string[] FALSE_PACKAGE_NAMES = ["", "e(s)", "have", "the", "Id"];
-        public static new string[] FALSE_PACKAGE_IDS = ["", "e(s)", "have", "an", "'winget", "pin'", "have", "an", "Version"];
-        public static new string[] FALSE_PACKAGE_VERSIONS = ["", "have", "an", "'winget", "pin'", "have", "an", "Version"];
+        public static string[] FALSE_PACKAGE_NAMES = ["", "e(s)", "have", "the", "Id"];
+        public static string[] FALSE_PACKAGE_IDS = ["", "e(s)", "have", "an", "'winget", "pin'", "have", "an", "Version"];
+        public static string[] FALSE_PACKAGE_VERSIONS = ["", "have", "an", "'winget", "pin'", "have", "an", "Version"];
         public LocalWinGetSource LocalPcSource { get; }
         public LocalWinGetSource AndroidSubsystemSource { get; }
         public LocalWinGetSource SteamSource { get; }

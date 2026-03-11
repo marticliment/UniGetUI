@@ -262,7 +262,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
-
         public IPackage? GetAvailablePackage()
             => DiscoverablePackagesLoader.Instance.GetEquivalentPackage(this);
 

@@ -37,14 +37,13 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         public string ShortTitle => CoreTools.Translate("Administrator rights and other dangerous settings");
 
         public event EventHandler? RestartRequired;
-        public event EventHandler<Type>? NavigationRequested;
+        public event EventHandler<Type>? NavigationRequested { add { } remove { } }
 
         public void ShowRestartBanner(object sender, EventArgs e)
             => RestartRequired?.Invoke(this, e);
 
         public void RestartCache(object sender, EventArgs e)
             => _ = CoreTools.ResetUACForCurrentProcess();
-
 
     }
 }

@@ -253,10 +253,7 @@ namespace UniGetUI
             var windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWnd);
             var appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
 
-            if (appWindow is not null)
-            {
-                appWindow.Closing += MainWindow.HandleClosingEvent;
-            }
+            appWindow?.Closing += MainWindow.HandleClosingEvent;
 
             MainWindow.DoEntryTextAnimationAsync();
         }

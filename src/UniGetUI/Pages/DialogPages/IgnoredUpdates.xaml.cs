@@ -73,7 +73,7 @@ namespace UniGetUI.Interface
         {
             foreach (IgnoredPackageEntry package in ignoredPackages.ToArray())
             {
-                await package.RemoveFromIgnoredUpdates();
+                await package.RemoveFromIgnoredUpdatesAsync();
             }
             ConfirmResetFlyout.Hide();
         }
@@ -128,7 +128,10 @@ namespace UniGetUI.Interface
             List = list;
         }
 
-        public async Task RemoveFromIgnoredUpdates()
+        public void RemoveFromIgnoredUpdates()
+            => _ = RemoveFromIgnoredUpdatesAsync();
+
+        public async Task RemoveFromIgnoredUpdatesAsync()
         {
             string ignoredId = $"{Manager.Properties.Name.ToLower()}\\{Id}";
             await Task.Run(() => IgnoredUpdatesDatabase.Remove(ignoredId));

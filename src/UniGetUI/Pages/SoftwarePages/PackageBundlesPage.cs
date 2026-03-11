@@ -627,7 +627,6 @@ namespace UniGetUI.Interface.SoftwarePages
                 SecureSettings.Get(SecureSettings.K.AllowPrePostOpCommand) &&
                 SecureSettings.Get(SecureSettings.K.AllowImportPrePostOpCommands);
 
-
             foreach (var pkg in DeserializedData.packages)
             {
                 var opts = pkg.InstallationOptions;
@@ -747,7 +746,6 @@ namespace UniGetUI.Interface.SoftwarePages
             return new InvalidImportedPackage(raw_package, source);
         }
 
-
         public async Task CreateBatchScript()
         {
             try
@@ -814,8 +812,7 @@ namespace UniGetUI.Interface.SoftwarePages
             }
         }
 
-
-        private string GenerateCommandString(IReadOnlyList<string> names, IReadOnlyList<string> commands)
+        private static string GenerateCommandString(IReadOnlyList<string> names, IReadOnlyList<string> commands)
         {
             return $$"""
             Clear-Host

@@ -52,5 +52,6 @@
     <PropertyGroup>
         <LangVersion>latest</LangVersion>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+        <NoWarn>$(NoWarn);EnableGenerateDocumentationFile</NoWarn>
     </PropertyGroup>
 </Project>

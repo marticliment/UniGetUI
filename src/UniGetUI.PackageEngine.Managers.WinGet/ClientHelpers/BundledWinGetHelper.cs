@@ -669,7 +669,6 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         }
         p.Start();
 
-
         bool dashesPassed = false;
         string? line;
         while ((line = p.StandardOutput.ReadLine()) is not null)

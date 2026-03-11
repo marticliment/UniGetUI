@@ -44,14 +44,12 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             _ = UpdateGitHubLoginStatus();
         }
 
-
-
         public bool CanGoBack => true;
 
         public string ShortTitle => CoreTools.Translate("Backup and Restore");
 
         public event EventHandler? RestartRequired;
-        public event EventHandler<Type>? NavigationRequested;
+        public event EventHandler<Type>? NavigationRequested { add { } remove { } }
 
         public void ShowRestartBanner(object? sender, EventArgs e)
             => RestartRequired?.Invoke(this, e);
@@ -188,9 +186,9 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         }
 
         private void LoginWithGitHubButton_Click(object sender, RoutedEventArgs e)
-            => _ = _loginWithGitHubButton_Click(sender, e);
+            => _ = _loginWithGitHubButton_Click();
 
-        private async Task _loginWithGitHubButton_Click(object sender, RoutedEventArgs e)
+        private async Task _loginWithGitHubButton_Click()
         {
             _isLoading = true;
             UpdateCloudControlsEnabled();

@@ -196,7 +196,6 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             var node = contents?["depends"];
             List<string> innerDeps = [];
 
-
             if(node is JsonValue value) innerDeps.Add(value.GetValue<string>());
             else
             {

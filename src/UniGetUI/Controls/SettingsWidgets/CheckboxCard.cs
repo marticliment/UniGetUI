@@ -109,7 +109,7 @@ namespace UniGetUI.Interface.Widgets
         public override event EventHandler<EventArgs>? StateChanged;
 
         private Settings.K _dictName = Settings.K.Unset;
-        private bool _disableStateChangedEvent = false;
+        private bool _disableStateChangedEvent;
 
         private string _keyName = "";
         public string KeyName { set

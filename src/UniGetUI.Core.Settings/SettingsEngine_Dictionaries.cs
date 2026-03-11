@@ -10,7 +10,7 @@ namespace UniGetUI.Core.SettingsEngine
         private static readonly ConcurrentDictionary<K, Dictionary<object, object?>> _dictionarySettings = new();
 
         // Returns an empty dictionary if the setting doesn't exist and null if the types are invalid
-        private static Dictionary<KeyT, ValueT?> _getDictionary<KeyT, ValueT>(K key)
+        private static Dictionary<KeyT, ValueT?>? _getDictionary<KeyT, ValueT>(K key)
             where KeyT : notnull
          {
             string setting = ResolveKey(key);
@@ -73,7 +73,7 @@ namespace UniGetUI.Core.SettingsEngine
         }
 
         // Returns an empty dictionary if the setting doesn't exist and null if the types are invalid
-        public static IReadOnlyDictionary<KeyT, ValueT?> GetDictionary<KeyT, ValueT>(K settingsKey)
+        public static IReadOnlyDictionary<KeyT, ValueT?>? GetDictionary<KeyT, ValueT>(K settingsKey)
             where KeyT : notnull
         {
             return _getDictionary<KeyT, ValueT?>(settingsKey);

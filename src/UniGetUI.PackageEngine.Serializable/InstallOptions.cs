@@ -74,7 +74,6 @@ namespace UniGetUI.PackageEngine.Serializable
         public readonly ConcurrentDictionary<string, string> _strVal = new();
         public readonly ConcurrentDictionary<string, List<string>> _listVal = new();
 
-
         public bool SkipHashCheck { get => _boolVal[SKIP_HASH]; set => _boolVal[SKIP_HASH] = value; }
         public bool InteractiveInstallation { get => _boolVal[INTERACTIVE]; set => _boolVal[INTERACTIVE] = value; }
         public bool RunAsAdministrator { get => _boolVal[AS_ADMIN]; set => _boolVal[AS_ADMIN] = value; }

@@ -128,7 +128,7 @@ public static class DesktopShortcutsDatabase
     {
         var shortcuts = GetShortcutsOnDisk();
 
-        foreach (var item in Settings.GetDictionary<string, bool>(Settings.K.DeletableDesktopShortcuts))
+        foreach (var item in GetDatabase())
         {
             if (!shortcuts.Contains(item.Key))
                 shortcuts.Add(item.Key);

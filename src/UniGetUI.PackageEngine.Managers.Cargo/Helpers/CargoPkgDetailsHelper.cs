@@ -35,7 +35,7 @@ internal sealed class CargoPkgDetailsHelper(Cargo manager) : BasePkgDetailsHelpe
         }
 
         var keywords = manifest.crate.keywords is null ? [] : (string[]) manifest.crate.keywords.Clone();
-        var categories = manifest.categories?.Select(c => c.category);
+    var categories = manifest.categories?.Select(c => c.category) ?? [];
         details.Tags = [.. keywords, .. categories];
 
         var versionData = manifest.versions.Where((v) => v.num == details.Package.VersionString).First();

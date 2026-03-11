@@ -21,7 +21,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         public string ShortTitle => CoreTools.Translate("Experimental settings and developer options");
 
         public event EventHandler? RestartRequired;
-        public event EventHandler<Type>? NavigationRequested;
+        public event EventHandler<Type>? NavigationRequested { add { } remove { } }
 
         public void ShowRestartBanner(object sender, EventArgs e)
             => RestartRequired?.Invoke(this, e);

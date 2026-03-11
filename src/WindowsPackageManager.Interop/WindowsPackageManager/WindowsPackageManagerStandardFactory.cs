@@ -2,12 +2,14 @@
 // Licensed under the MIT License.
 
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using Windows.Win32;
 using Windows.Win32.System.Com;
 using WinRT;
 
 namespace WindowsPackageManager.Interop;
 
+[SupportedOSPlatform("windows5.0")]
 public class WindowsPackageManagerStandardFactory : WindowsPackageManagerFactory
 {
     public WindowsPackageManagerStandardFactory(ClsidContext clsidContext = ClsidContext.Prod, bool allowLowerTrustRegistration = false)

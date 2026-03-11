@@ -18,11 +18,9 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
     public sealed partial class Internet : Page, ISettingsPage
     {
 
-
         public Internet()
         {
             this.InitializeComponent();
-
 
             UsernameBox.PlaceholderText = CoreTools.Translate("Username");
             PasswordBox.PlaceholderText = CoreTools.Translate("Password");
@@ -92,7 +90,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         public string ShortTitle => CoreTools.Translate("Internet connection settings");
 
         public event EventHandler? RestartRequired;
-        public event EventHandler<Type>? NavigationRequested;
+        public event EventHandler<Type>? NavigationRequested { add { } remove { } }
 
         public void ShowRestartBanner(object sender, EventArgs e)
             => RestartRequired?.Invoke(this, e);

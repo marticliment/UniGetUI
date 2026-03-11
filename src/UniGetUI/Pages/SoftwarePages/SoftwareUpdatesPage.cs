@@ -286,7 +286,6 @@ namespace UniGetUI.Interface.SoftwarePages
                 { HelpButton,           CoreTools.Translate("Help") }
             };
 
-
             Dictionary<DependencyObject, IconType> Icons = new()
             {
                 { UpdateAsAdmin,        IconType.UAC },

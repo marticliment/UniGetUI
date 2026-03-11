@@ -8,7 +8,7 @@ namespace UniGetUI.PackageOperations;
 
 public class KillProcessOperation: AbstractOperation
 {
-    private string ProcessName;
+    private readonly string ProcessName;
     public KillProcessOperation(string procName) : base(false)
     {
         ProcessName = CoreTools.MakeValidFileName(procName);

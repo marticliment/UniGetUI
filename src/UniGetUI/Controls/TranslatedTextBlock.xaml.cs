@@ -42,10 +42,7 @@ namespace UniGetUI.Interface.Widgets
             try
             {
                 if (text is not null) __text = CoreTools.Translate(text);
-                if (_textBlock is not null)
-                {
-                    _textBlock.Text = __prefix + __text + __suffix;
-                }
+                _textBlock?.Text = __prefix + __text + __suffix;
             }
             catch (Exception ex)
             {

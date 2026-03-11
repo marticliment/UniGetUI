@@ -36,11 +36,11 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
     {
         IPackageManager? Manager;
         public event EventHandler? RestartRequired;
-        public event EventHandler<Type>? NavigationRequested;
+        public event EventHandler<Type>? NavigationRequested { add { } remove { } }
         public event EventHandler? ReapplyProperties;
         public bool CanGoBack => true;
         public string ShortTitle => Manager is null ? "" : CoreTools.Translate("{0} settings", Manager.DisplayName);
-        private bool _isLoading = false;
+        private bool _isLoading;
 
         public PackageManagerPage()
         {
@@ -399,7 +399,6 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
 
             ExecutableComboBox.SelectedValue = selectedValue;
             ExecutableComboBox.SelectionChanged += ExecutableComboBox_SelectionChanged;
-
 
             // Load version block text and style
             if (_isLoading)

@@ -22,8 +22,8 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
     public class Scoop : PackageManager
     {
-        public static new string[] FALSE_PACKAGE_IDS = ["No", "WARN"];
-        public static new string[] FALSE_PACKAGE_VERSIONS = ["Matches", "Install", "failed", "failed,", "Manifest", "removed", "removed,"];
+        public static string[] FALSE_PACKAGE_IDS = ["No", "WARN"];
+        public static string[] FALSE_PACKAGE_VERSIONS = ["Matches", "Install", "failed", "failed,", "Manifest", "removed", "removed,"];
 
         private long LastScoopSourceUpdateTime;
 
