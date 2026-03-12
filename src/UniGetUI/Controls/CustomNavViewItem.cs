@@ -8,7 +8,7 @@ using UniGetUI.Interface.Widgets;
 namespace UniGetUI.Controls;
 internal sealed partial class CustomNavViewItem : NavigationViewItem
 {
-    int _iconSize = 28;
+    int _iconSize = 24;
     public IconType LocalIcon
     {
         set => base.Icon = new LocalIcon(value);
@@ -61,15 +61,15 @@ internal sealed partial class CustomNavViewItem : NavigationViewItem
 
     public CustomNavViewItem()
     {
-        Height = 60;
+        Height = 54;
         Resources["NavigationViewItemOnLeftIconBoxHeight"] = _iconSize;
         Resources["NavigationViewItemContentPresenterMargin"] = new Thickness(0);
 
-        var grid = new Grid { Height = 50 };
+        var grid = new Grid { Height = 44 };
 
         _progressRing = new ProgressRing
         {
-            Margin = new Thickness(-46, 0, 0, 0),
+            Margin = new Thickness(-42, 0, 0, 0),
             HorizontalAlignment = HorizontalAlignment.Left,
             VerticalAlignment = VerticalAlignment.Center,
             IsIndeterminate = true,

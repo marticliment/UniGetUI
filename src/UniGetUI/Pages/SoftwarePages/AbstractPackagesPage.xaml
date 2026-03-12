@@ -488,10 +488,10 @@
                 x:Name="HeaderIcon"
                 Grid.Row="0"
                 Grid.Column="0"
-                Width="60"
-                MinHeight="60"
-                Margin="0,0,-8,0"
-                FontSize="50"
+                Width="52"
+                MinHeight="52"
+                Margin="0,0,-6,0"
+                FontSize="40"
                 FontWeight="Normal" />
 
             <StackPanel
@@ -501,11 +501,11 @@
                 Spacing="0">
                 <TextBlock
                     x:Name="MainTitle"
-                    MaxHeight="70"
+                    MaxHeight="60"
                     HorizontalAlignment="Left"
                     x:FieldModifier="protected"
                     FontFamily="Segoe UI Variable Display"
-                    FontSize="30"
+                    FontSize="24"
                     FontWeight="Bold"
                     TextWrapping="Wrap" />
                 <TextBlock
@@ -513,7 +513,7 @@
                     MaxHeight="40"
                     HorizontalAlignment="Left"
                     x:FieldModifier="protected"
-                    FontSize="11"
+                    FontSize="12"
                     FontWeight="Normal"
                     Foreground="{ThemeResource AppBarItemDisabledForegroundThemeBrush}"
                     TextWrapping="Wrap" />

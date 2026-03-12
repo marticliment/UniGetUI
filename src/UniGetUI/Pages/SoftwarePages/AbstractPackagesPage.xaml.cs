@@ -1434,14 +1434,14 @@ namespace UniGetUI.Interface
                 if (_pageIsWide != false)
                 {
                     _pageIsWide = false;
-                    MainTitle.FontSize = 20;
+                    MainTitle.FontSize = 18;
                 }
             }
             else
             {
                 if (_pageIsWide != true)
                 {
-                    MainTitle.FontSize = 30;
+                    MainTitle.FontSize = 24;
                     _pageIsWide = true;
                 }
             }

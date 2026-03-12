@@ -49,15 +49,15 @@
                     </Grid.ColumnDefinitions>
                     <Border
                         Grid.Column="0"
-                        Width="128"
-                        Height="128"
+                        Width="112"
+                        Height="112"
                         Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                        BorderThickness="10"
-                        CornerRadius="24">
+                        BorderThickness="8"
+                        CornerRadius="20">
                         <Image
                             Name="PackageIcon"
-                            Width="80"
-                            Height="80"
+                            Width="72"
+                            Height="72"
                             Margin="8" />
                     </Border>
 
@@ -67,7 +67,7 @@
                         HorizontalAlignment="Left"
                         VerticalAlignment="Center"
                         FontFamily="Segoe UI Variable Display"
-                        FontSize="50"
+                        FontSize="40"
                         FontWeight="Bold"
                         TextWrapping="Wrap" />
                 </Grid>
