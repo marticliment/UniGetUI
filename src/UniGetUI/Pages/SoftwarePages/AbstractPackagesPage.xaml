@@ -509,21 +509,21 @@
         x:Name="HeaderIcon"
         Grid.Row="0"
         Grid.Column="0"
-        Width="60"
-        MinHeight="60"
-        Margin="0,0,-8,0"
-        FontSize="50"
+        Width="52"
+        MinHeight="52"
+        Margin="0,0,-6,0"
+        FontSize="40"
         FontWeight="Normal"
       />
 
       <StackPanel Grid.Column="1" VerticalAlignment="Center" Orientation="Vertical" Spacing="0">
         <TextBlock
           x:Name="MainTitle"
-          MaxHeight="70"
+          MaxHeight="60"
           HorizontalAlignment="Left"
           x:FieldModifier="protected"
           FontFamily="Segoe UI Variable Display"
-          FontSize="30"
+          FontSize="24"
           FontWeight="Bold"
           TextWrapping="Wrap"
         />
@@ -532,7 +532,7 @@
           MaxHeight="40"
           HorizontalAlignment="Left"
           x:FieldModifier="protected"
-          FontSize="11"
+          FontSize="12"
           FontWeight="Normal"
           Foreground="{ThemeResource AppBarItemDisabledForegroundThemeBrush}"
           TextWrapping="Wrap"
@@ -1228,31 +1228,31 @@
         >
           <Grid.RowDefinitions>
             <RowDefinition Height="*" />
-            <RowDefinition Height="80" />
+            <RowDefinition Height="64" />
             <RowDefinition Height="*" />
           </Grid.RowDefinitions>
           <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="8*" MaxWidth="800" />
-            <ColumnDefinition Width="80" />
+            <ColumnDefinition Width="8*" MaxWidth="720" />
+            <ColumnDefinition Width="64" />
             <ColumnDefinition Width="*" />
           </Grid.ColumnDefinitions>
           <TextBox
             x:Name="MegaQueryBlock"
             Grid.Row="1"
             Grid.Column="1"
-            Padding="20,11,10,11"
+            Padding="16,8,10,8"
             x:FieldModifier="protected"
             CornerRadius="8,0,0,8"
-            FontSize="40"
+            FontSize="28"
             FontWeight="SemiBold"
           />
           <Button
             x:Name="MegaFindButton"
             Grid.Row="1"
             Grid.Column="2"
-            Width="80"
-            Height="80"
+            Width="64"
+            Height="64"
             Padding="12"
             x:FieldModifier="protected"
             AutomationProperties.HelpText="Search"
