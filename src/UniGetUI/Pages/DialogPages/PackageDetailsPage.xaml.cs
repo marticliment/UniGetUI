@@ -522,7 +522,7 @@ namespace UniGetUI.Interface.Dialogs
 
         public void PackageDetailsPage_SizeChanged(object? sender = null, SizeChangedEventArgs? e = null)
         {
-            if (MainApp.Instance.MainWindow.AppWindow.Size.Width < 950)
+            if (ActualWidth < 950)
             {
                 if (__layout_mode != LayoutMode.Normal)
                 {

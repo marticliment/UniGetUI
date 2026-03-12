@@ -695,6 +695,27 @@ namespace UniGetUI.Interface
             return WinRT.Interop.WindowNative.GetWindowHandle(this);
         }
 
+        private double GetWindowRasterizationScale()
+        {
+            uint dpi = NativeHelpers.GetDpiForWindow(GetWindowHandle());
+            if (dpi > 0)
+            {
+                return dpi / 96.0;
+            }
+
+            return MainContentGrid.XamlRoot?.RasterizationScale ?? 1.0;
+        }
+
+        private int ConvertPhysicalPixelsToDips(int physicalPixels)
+        {
+            return (int)Math.Round(physicalPixels / Math.Max(GetWindowRasterizationScale(), 0.01));
+        }
+
+        private int ConvertDipsToPhysicalPixels(int dips)
+        {
+            return Math.Max(1, (int)Math.Round(dips * GetWindowRasterizationScale()));
+        }
+
         public async Task HandleMissingDependencies(IReadOnlyList<ManagerDependency> dependencies)
         {
             int current = 1;
@@ -742,7 +763,7 @@ namespace UniGetUI.Interface
                 }
 
                 string geometry =
-                    $"{AppWindow.Position.X},{AppWindow.Position.Y},{AppWindow.Size.Width},{AppWindow.Size.Height},{windowState}";
+                    $"v2,{AppWindow.Position.X},{AppWindow.Position.Y},{ConvertPhysicalPixelsToDips(AppWindow.Size.Width)},{ConvertPhysicalPixelsToDips(AppWindow.Size.Height)},{windowState}";
 
                 Logger.Debug($"Saving window geometry {geometry}");
                 Settings.SetValue(Settings.K.WindowGeometry, geometry);
@@ -758,20 +779,31 @@ namespace UniGetUI.Interface
 
             string geometry = Settings.GetValue(Settings.K.WindowGeometry);
             string[] items = geometry.Split(",");
-            if (items.Length != 5)
+            if (items.Length is not (5 or 6))
             {
-                Logger.Warn($"The restored geometry did not have exactly 5 items (found length was {items.Length})");
+                Logger.Warn($"The restored geometry did not have a supported item count (found length was {items.Length})");
                 return;
             }
 
             int X, Y, Width, Height, State;
             try
             {
-                X = int.Parse(items[0]);
-                Y = int.Parse(items[1]);
-                Width = int.Parse(items[2]);
-                Height = int.Parse(items[3]);
-                State = int.Parse(items[4]);
+                if (items.Length == 6 && items[0] == "v2")
+                {
+                    X = int.Parse(items[1]);
+                    Y = int.Parse(items[2]);
+                    Width = ConvertDipsToPhysicalPixels(int.Parse(items[3]));
+                    Height = ConvertDipsToPhysicalPixels(int.Parse(items[4]));
+                    State = int.Parse(items[5]);
+                }
+                else
+                {
+                    X = int.Parse(items[0]);
+                    Y = int.Parse(items[1]);
+                    Width = int.Parse(items[2]);
+                    Height = int.Parse(items[3]);
+                    State = int.Parse(items[4]);
+                }
             }
             catch (Exception ex)
             {
@@ -865,7 +897,7 @@ namespace UniGetUI.Interface
             if (NavigationPage is null)
                 return;
 
-            if(this.AppWindow.Size.Width >= 1600)
+            if (MainContentGrid.ActualWidth >= 1600)
             {
                 Settings.Set(Settings.K.CollapseNavMenuOnWideScreen, NavigationPage.NavView.IsPaneOpen);
             }
@@ -919,6 +951,9 @@ namespace UniGetUI.Interface
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool SetForegroundWindow(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        public static extern uint GetDpiForWindow(IntPtr hWnd);
 
         public const int MONITORINFOF_PRIMARY = 0x00000001;
 

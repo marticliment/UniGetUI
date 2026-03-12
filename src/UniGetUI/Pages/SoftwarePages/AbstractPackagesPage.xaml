@@ -1153,30 +1153,30 @@
                     Visibility="Collapsed">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
-                        <RowDefinition Height="80" />
+                        <RowDefinition Height="64" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="8*" MaxWidth="800" />
-                        <ColumnDefinition Width="80" />
+                        <ColumnDefinition Width="8*" MaxWidth="720" />
+                        <ColumnDefinition Width="64" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <TextBox
                         x:Name="MegaQueryBlock"
                         Grid.Row="1"
                         Grid.Column="1"
-                        Padding="20,11,10,11"
+                        Padding="16,8,10,8"
                         x:FieldModifier="protected"
                         CornerRadius="8,0,0,8"
-                        FontSize="40"
+                        FontSize="28"
                         FontWeight="SemiBold" />
                     <Button
                         x:Name="MegaFindButton"
                         Grid.Row="1"
                         Grid.Column="2"
-                        Width="80"
-                        Height="80"
+                        Width="64"
+                        Height="64"
                         Padding="12"
                         x:FieldModifier="protected"
                         AutomationProperties.HelpText="Search"
