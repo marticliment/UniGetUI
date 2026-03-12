@@ -22,12 +22,13 @@ namespace UniGetUI.Interface.Widgets
         private Settings.K setting_name = Settings.K.Unset;
         public Settings.K SettingName
         {
-            set {
+            set
+            {
                 setting_name = value;
                 IS_INVERTED = Settings.ResolveKey(value).StartsWith("Disable");
                 _checkbox.IsOn = Settings.Get(setting_name) ^ IS_INVERTED ^ ForceInversion;
                 _textblock.Opacity = _checkbox.IsOn ? 1 : 0.7;
-                Button.IsEnabled = (_checkbox.IsOn) || _buttonAlwaysOn ;
+                Button.IsEnabled = (_checkbox.IsOn) || _buttonAlwaysOn;
             }
         }
 
@@ -56,31 +57,27 @@ namespace UniGetUI.Interface.Widgets
             set
             {
                 _buttonAlwaysOn = value;
-                Button.IsEnabled = (_checkbox.IsOn) || _buttonAlwaysOn ;
+                Button.IsEnabled = (_checkbox.IsOn) || _buttonAlwaysOn;
             }
         }
 
         public CheckboxButtonCard()
         {
-            Button = new Button()
-            {
-                Margin = new Thickness(0, 8, 0, 0)
-
-            };
+            Button = new Button() { Margin = new Thickness(0, 8, 0, 0) };
             _checkbox = new ToggleSwitch()
             {
-                 Margin = new Thickness(0, 0, 8, 0),
+                Margin = new Thickness(0, 0, 8, 0),
                 OnContent = new TextBlock() { Text = CoreTools.Translate("Enabled") },
                 OffContent = new TextBlock() { Text = CoreTools.Translate("Disabled") },
             };
             _textblock = new TextBlock()
             {
-                Margin = new Thickness(2,0,0,0),
+                Margin = new Thickness(2, 0, 0, 0),
                 VerticalAlignment = VerticalAlignment.Center,
                 TextWrapping = TextWrapping.Wrap,
                 Style = (Style)Application.Current.Resources["BaseTextBlockStyle"],
                 FontWeight = new FontWeight(450),
-                Foreground = (SolidColorBrush)Application.Current.Resources["ButtonForeground"]
+                Foreground = (SolidColorBrush)Application.Current.Resources["ButtonForeground"],
             };
             IS_INVERTED = false;
 

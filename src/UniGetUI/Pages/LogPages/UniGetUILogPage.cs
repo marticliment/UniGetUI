@@ -7,9 +7,8 @@ namespace UniGetUI.Interface.Pages.LogPage
 {
     public sealed partial class UniGetUILogPage : BaseLogPage
     {
-        public UniGetUILogPage() : base(true)
-        {
-        }
+        public UniGetUILogPage()
+            : base(true) { }
 
         protected override void LoadLogLevels()
         {
@@ -39,17 +38,38 @@ namespace UniGetUI.Interface.Pages.LogPage
                     continue;
                 }
 
-                if (LOG_LEVEL == 1 && (log_entry.Severity == LogEntry.SeverityLevel.Debug || log_entry.Severity == LogEntry.SeverityLevel.Info || log_entry.Severity == LogEntry.SeverityLevel.Success || log_entry.Severity == LogEntry.SeverityLevel.Warning))
+                if (
+                    LOG_LEVEL == 1
+                    && (
+                        log_entry.Severity == LogEntry.SeverityLevel.Debug
+                        || log_entry.Severity == LogEntry.SeverityLevel.Info
+                        || log_entry.Severity == LogEntry.SeverityLevel.Success
+                        || log_entry.Severity == LogEntry.SeverityLevel.Warning
+                    )
+                )
                 {
                     continue;
                 }
 
-                if (LOG_LEVEL == 2 && (log_entry.Severity == LogEntry.SeverityLevel.Debug || log_entry.Severity == LogEntry.SeverityLevel.Info || log_entry.Severity == LogEntry.SeverityLevel.Success))
+                if (
+                    LOG_LEVEL == 2
+                    && (
+                        log_entry.Severity == LogEntry.SeverityLevel.Debug
+                        || log_entry.Severity == LogEntry.SeverityLevel.Info
+                        || log_entry.Severity == LogEntry.SeverityLevel.Success
+                    )
+                )
                 {
                     continue;
                 }
 
-                if (LOG_LEVEL == 3 && (log_entry.Severity == LogEntry.SeverityLevel.Debug || log_entry.Severity == LogEntry.SeverityLevel.Info))
+                if (
+                    LOG_LEVEL == 3
+                    && (
+                        log_entry.Severity == LogEntry.SeverityLevel.Debug
+                        || log_entry.Severity == LogEntry.SeverityLevel.Info
+                    )
+                )
                 {
                     continue;
                 }
@@ -61,11 +81,26 @@ namespace UniGetUI.Interface.Pages.LogPage
 
                 Brush color = log_entry.Severity switch
                 {
-                    LogEntry.SeverityLevel.Debug => new SolidColorBrush { Color = IS_DARK ? DARK_GREY : LIGHT_GREY },
-                    LogEntry.SeverityLevel.Info => new SolidColorBrush { Color = IS_DARK ? DARK_LIGHT_GREY : LIGHT_LIGHT_GREY },
-                    LogEntry.SeverityLevel.Success => new SolidColorBrush { Color = IS_DARK ? DARK_WHITE : LIGHT_WHITE },
-                    LogEntry.SeverityLevel.Warning => new SolidColorBrush { Color = IS_DARK ? DARK_YELLOW : LIGHT_YELLOW },
-                    LogEntry.SeverityLevel.Error => new SolidColorBrush { Color = IS_DARK ? DARK_RED : LIGHT_RED },
+                    LogEntry.SeverityLevel.Debug => new SolidColorBrush
+                    {
+                        Color = IS_DARK ? DARK_GREY : LIGHT_GREY,
+                    },
+                    LogEntry.SeverityLevel.Info => new SolidColorBrush
+                    {
+                        Color = IS_DARK ? DARK_LIGHT_GREY : LIGHT_LIGHT_GREY,
+                    },
+                    LogEntry.SeverityLevel.Success => new SolidColorBrush
+                    {
+                        Color = IS_DARK ? DARK_WHITE : LIGHT_WHITE,
+                    },
+                    LogEntry.SeverityLevel.Warning => new SolidColorBrush
+                    {
+                        Color = IS_DARK ? DARK_YELLOW : LIGHT_YELLOW,
+                    },
+                    LogEntry.SeverityLevel.Error => new SolidColorBrush
+                    {
+                        Color = IS_DARK ? DARK_RED : LIGHT_RED,
+                    },
                     _ => new SolidColorBrush { Color = IS_DARK ? DARK_GREY : LIGHT_GREY },
                 };
                 string[] lines = log_entry.Content.Split('\n');
@@ -74,17 +109,27 @@ namespace UniGetUI.Interface.Pages.LogPage
                 {
                     if (date_length == -1)
                     {
-                        p.Inlines.Add(new Run { Text = $"[{log_entry.Time}] {line}\n", Foreground = color });
+                        p.Inlines.Add(
+                            new Run { Text = $"[{log_entry.Time}] {line}\n", Foreground = color }
+                        );
                         date_length = $"[{log_entry.Time}] ".Length;
                     }
                     else
                     {
-                        p.Inlines.Add(new Run { Text = new string(' ', date_length) + line + "\n", Foreground = color });
+                        p.Inlines.Add(
+                            new Run
+                            {
+                                Text = new string(' ', date_length) + line + "\n",
+                                Foreground = color,
+                            }
+                        );
                     }
-                } ((Run)p.Inlines[^1]).Text = ((Run)p.Inlines[^1]).Text.TrimEnd();
+                }
+                ((Run)p.Inlines[^1]).Text = ((Run)p.Inlines[^1]).Text.TrimEnd();
                 LogTextBox.Blocks.Add(p);
             }
-            if (isReload) MainScroller.ScrollToVerticalOffset(MainScroller.ScrollableHeight);
+            if (isReload)
+                MainScroller.ScrollToVerticalOffset(MainScroller.ScrollableHeight);
         }
     }
 }

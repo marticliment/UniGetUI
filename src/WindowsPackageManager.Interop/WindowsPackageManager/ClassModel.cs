@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 namespace WindowsPackageManager.Interop;
@@ -30,7 +30,9 @@ internal sealed class ClassModel
     {
         if (!Clsids.TryGetValue(context, out Guid clsid))
         {
-            throw new InvalidOperationException($"{ProjectedClassType.FullName} is not implemented in context {context}");
+            throw new InvalidOperationException(
+                $"{ProjectedClassType.FullName} is not implemented in context {context}"
+            );
         }
 
         return clsid;

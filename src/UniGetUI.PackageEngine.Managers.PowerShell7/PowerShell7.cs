@@ -36,23 +36,40 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
                     KnowsUpdateDate = false,
                 },
                 SupportsProxy = ProxySupport.Partially,
-                SupportsProxyAuth = true
+                SupportsProxyAuth = true,
             };
 
             Properties = new ManagerProperties
             {
                 Name = "PowerShell7",
                 DisplayName = "PowerShell 7.x",
-                Description = CoreTools.Translate("PowerShell's package manager. Find libraries and scripts to expand PowerShell capabilities<br>Contains: <b>Modules, Scripts, Cmdlets</b>"),
+                Description = CoreTools.Translate(
+                    "PowerShell's package manager. Find libraries and scripts to expand PowerShell capabilities<br>Contains: <b>Modules, Scripts, Cmdlets</b>"
+                ),
                 IconId = IconType.PowerShell,
                 ColorIconId = "powershell_color",
                 ExecutableFriendlyName = OperatingSystem.IsWindows() ? "pwsh.exe" : "pwsh",
                 InstallVerb = "Install-PSResource",
                 UninstallVerb = "Uninstall-PSResource",
                 UpdateVerb = "Update-PSResource",
-                KnownSources = [new ManagerSource(this, "PSGallery", new Uri("https://www.powershellgallery.com/api/v2")),
-                                new ManagerSource(this, "PoshTestGallery", new Uri("https://www.poshtestgallery.com/api/v2"))],
-                DefaultSource = new ManagerSource(this, "PSGallery", new Uri("https://www.powershellgallery.com/api/v2")),
+                KnownSources =
+                [
+                    new ManagerSource(
+                        this,
+                        "PSGallery",
+                        new Uri("https://www.powershellgallery.com/api/v2")
+                    ),
+                    new ManagerSource(
+                        this,
+                        "PoshTestGallery",
+                        new Uri("https://www.poshtestgallery.com/api/v2")
+                    ),
+                ],
+                DefaultSource = new ManagerSource(
+                    this,
+                    "PSGallery",
+                    new Uri("https://www.powershellgallery.com/api/v2")
+                ),
             };
 
             DetailsHelper = new PowerShell7DetailsHelper(this);
@@ -70,18 +87,22 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
                     StartInfo = new ProcessStartInfo
                     {
                         FileName = Status.ExecutablePath,
-                        Arguments = Status.ExecutableCallArgs +
-                                    $" \"Get-InstalledPSResource -Scope {env} | Format-Table -Property Name,Version,Repository\"",
+                        Arguments =
+                            Status.ExecutableCallArgs
+                            + $" \"Get-InstalledPSResource -Scope {env} | Format-Table -Property Name,Version,Repository\"",
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,
                         RedirectStandardInput = true,
                         UseShellExecute = false,
                         CreateNoWindow = true,
-                        StandardOutputEncoding = Encoding.UTF8
-                    }
+                        StandardOutputEncoding = Encoding.UTF8,
+                    },
                 };
 
-                IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
+                IProcessTaskLogger logger = TaskLogger.CreateNew(
+                    LoggableTaskType.ListInstalledPackages,
+                    p
+                );
 
                 p.Start();
                 string? line;
@@ -109,9 +130,16 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
                             elements[i] = elements[i].Trim();
                         }
 
-                        Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1],
-                            SourcesHelper.Factory.GetSourceOrDefault(elements[2]), this,
-                            new(env == "CurrentUser"? PackageScope.User : PackageScope.Machine)));
+                        Packages.Add(
+                            new Package(
+                                CoreTools.FormatAsName(elements[0]),
+                                elements[0],
+                                elements[1],
+                                SourcesHelper.Factory.GetSourceOrDefault(elements[2]),
+                                this,
+                                new(env == "CurrentUser" ? PackageScope.User : PackageScope.Machine)
+                            )
+                        );
                     }
                 }
 
@@ -123,10 +151,14 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
             return Packages;
         }
 
-        public override IReadOnlyList<string> FindCandidateExecutableFiles()
-            => CoreTools.WhichMultiple(OperatingSystem.IsWindows() ? "pwsh.exe" : "pwsh");
+        public override IReadOnlyList<string> FindCandidateExecutableFiles() =>
+            CoreTools.WhichMultiple(OperatingSystem.IsWindows() ? "pwsh.exe" : "pwsh");
 
-        protected override void _loadManagerExecutableFile(out bool found, out string path, out string callArguments)
+        protected override void _loadManagerExecutableFile(
+            out bool found,
+            out string path,
+            out string callArguments
+        )
         {
             var (_found, _path) = GetExecutableFile();
             found = _found;
@@ -146,8 +178,8 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     CreateNoWindow = true,
-                    StandardOutputEncoding = Encoding.UTF8
-                }
+                    StandardOutputEncoding = Encoding.UTF8,
+                },
             };
             process.Start();
             version = process.StandardOutput.ReadToEnd().Trim();

@@ -6,7 +6,9 @@ namespace UniGetUI.PackageEngine.Operations;
 public class PrePostOperation : AbstractOperation
 {
     private readonly string Payload;
-    public PrePostOperation(string payload) : base(true)
+
+    public PrePostOperation(string payload)
+        : base(true)
     {
         Payload = payload.Replace("\r", "\n").Replace("\n\n", "\n").Replace("\n", "&");
         Metadata.Status = $"Running custom operation {Payload}";
@@ -16,12 +18,9 @@ public class PrePostOperation : AbstractOperation
         Metadata.SuccessMessage = $"Done!";
         Metadata.FailureTitle = $"Custom operation failed";
         Metadata.FailureMessage = $"The custom operation {Payload} failed to run";
-
     }
 
-    protected override void ApplyRetryAction(string retryMode)
-    {
-    }
+    protected override void ApplyRetryAction(string retryMode) { }
 
     protected override async Task<OperationVeredict> PerformOperation()
     {
@@ -35,8 +34,8 @@ public class PrePostOperation : AbstractOperation
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,
-                CreateNoWindow = true
-            }
+                CreateNoWindow = true,
+            },
         };
 
         process.Start();
@@ -44,11 +43,13 @@ public class PrePostOperation : AbstractOperation
         process.BeginOutputReadLine();
         process.OutputDataReceived += (s, e) =>
         {
-            if (e.Data is not null) Line(e.Data, LineType.Information);
+            if (e.Data is not null)
+                Line(e.Data, LineType.Information);
         };
         process.ErrorDataReceived += (s, e) =>
         {
-            if (e.Data is not null) Line(e.Data, LineType.Error);
+            if (e.Data is not null)
+                Line(e.Data, LineType.Error);
         };
         await process.WaitForExitAsync();
 
@@ -57,7 +58,5 @@ public class PrePostOperation : AbstractOperation
         return (exitCode == 0 ? OperationVeredict.Success : OperationVeredict.Failure);
     }
 
-    public override Task<Uri> GetOperationIcon()
-        => Task.FromResult(new Uri("about:blank"));
-
+    public override Task<Uri> GetOperationIcon() => Task.FromResult(new Uri("about:blank"));
 }

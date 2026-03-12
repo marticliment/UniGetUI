@@ -37,47 +37,78 @@ public static class TaskRecycler<ReturnT>
     }
 
     /// Asynchronous entry point for 1 parameter
-    public static Task<ReturnT> RunOrAttachAsync<ParamT>(Func<ParamT, ReturnT> method, ParamT arg1, int cacheTimeSecs = 0)
+    public static Task<ReturnT> RunOrAttachAsync<ParamT>(
+        Func<ParamT, ReturnT> method,
+        ParamT arg1,
+        int cacheTimeSecs = 0
+    )
     {
         int hash = method.GetHashCode() + (arg1?.GetHashCode() ?? 0);
         return _runTaskAndWait(new Task<ReturnT>(() => method(arg1)), hash, cacheTimeSecs);
     }
 
     /// Asynchronous entry point for 2 parameters
-    public static Task<ReturnT> RunOrAttachAsync<Param1T, Param2T>(Func<Param1T, Param2T, ReturnT> method,
-        Param1T arg1, Param2T arg2, int cacheTimeSecs = 0)
+    public static Task<ReturnT> RunOrAttachAsync<Param1T, Param2T>(
+        Func<Param1T, Param2T, ReturnT> method,
+        Param1T arg1,
+        Param2T arg2,
+        int cacheTimeSecs = 0
+    )
     {
         int hash = method.GetHashCode() + (arg1?.GetHashCode() ?? 0) + (arg2?.GetHashCode() ?? 0);
         return _runTaskAndWait(new Task<ReturnT>(() => method(arg1, arg2)), hash, cacheTimeSecs);
     }
 
     /// Asynchronous entry point for 3 parameters
-    public static Task<ReturnT> RunOrAttachAsync<Param1T, Param2T, Param3T>(Func<Param1T, Param2T, Param3T, ReturnT> method,
-        Param1T arg1, Param2T arg2, Param3T arg3, int cacheTimeSecs = 0)
+    public static Task<ReturnT> RunOrAttachAsync<Param1T, Param2T, Param3T>(
+        Func<Param1T, Param2T, Param3T, ReturnT> method,
+        Param1T arg1,
+        Param2T arg2,
+        Param3T arg3,
+        int cacheTimeSecs = 0
+    )
     {
-        int hash = method.GetHashCode() + (arg1?.GetHashCode() ?? 0) + (arg2?.GetHashCode() ?? 0) + (arg3?.GetHashCode() ?? 0);
-        return _runTaskAndWait(new Task<ReturnT>(() => method(arg1, arg2, arg3)), hash, cacheTimeSecs);
+        int hash =
+            method.GetHashCode()
+            + (arg1?.GetHashCode() ?? 0)
+            + (arg2?.GetHashCode() ?? 0)
+            + (arg3?.GetHashCode() ?? 0);
+        return _runTaskAndWait(
+            new Task<ReturnT>(() => method(arg1, arg2, arg3)),
+            hash,
+            cacheTimeSecs
+        );
     }
 
     // ---------------------------------------------------------------------------------------------------------------
 
     /// Synchronous entry point for 0 parameters
-    public static ReturnT RunOrAttach(Func<ReturnT> method, int cacheTimeSecs = 0)
-        => RunOrAttachAsync(method, cacheTimeSecs).GetAwaiter().GetResult();
+    public static ReturnT RunOrAttach(Func<ReturnT> method, int cacheTimeSecs = 0) =>
+        RunOrAttachAsync(method, cacheTimeSecs).GetAwaiter().GetResult();
 
     /// Synchronous entry point for 1 parameter1
-    public static ReturnT RunOrAttach<ParamT>(Func<ParamT, ReturnT> method, ParamT arg1, int cacheTimeSecs = 0)
-        => RunOrAttachAsync(method, arg1, cacheTimeSecs).GetAwaiter().GetResult();
+    public static ReturnT RunOrAttach<ParamT>(
+        Func<ParamT, ReturnT> method,
+        ParamT arg1,
+        int cacheTimeSecs = 0
+    ) => RunOrAttachAsync(method, arg1, cacheTimeSecs).GetAwaiter().GetResult();
 
     /// Synchronous entry point for 2 parameters
-    public static ReturnT RunOrAttach<Param1T, Param2T>(Func<Param1T, Param2T, ReturnT> method, Param1T arg1,
-        Param2T arg2, int cacheTimeSecs = 0)
-        => RunOrAttachAsync(method, arg1, arg2, cacheTimeSecs).GetAwaiter().GetResult();
+    public static ReturnT RunOrAttach<Param1T, Param2T>(
+        Func<Param1T, Param2T, ReturnT> method,
+        Param1T arg1,
+        Param2T arg2,
+        int cacheTimeSecs = 0
+    ) => RunOrAttachAsync(method, arg1, arg2, cacheTimeSecs).GetAwaiter().GetResult();
 
     /// Synchronous entry point for 3 parameters
-    public static ReturnT RunOrAttach<Param1T, Param2T, Param3T>(Func<Param1T, Param2T, Param3T, ReturnT> method, Param1T arg1,
-        Param2T arg2, Param3T arg3, int cacheTimeSecs = 0)
-        => RunOrAttachAsync(method, arg1, arg2, arg3, cacheTimeSecs).GetAwaiter().GetResult();
+    public static ReturnT RunOrAttach<Param1T, Param2T, Param3T>(
+        Func<Param1T, Param2T, Param3T, ReturnT> method,
+        Param1T arg1,
+        Param2T arg2,
+        Param3T arg3,
+        int cacheTimeSecs = 0
+    ) => RunOrAttachAsync(method, arg1, arg2, arg3, cacheTimeSecs).GetAwaiter().GetResult();
 
     // ---------------------------------------------------------------------------------------------------------------
 
@@ -88,8 +119,8 @@ public static class TaskRecycler<ReturnT>
     /// If the given function call is not present in the cache, nothing will be done.
     /// </summary>
     /// <param name="method"></param>
-    public static void RemoveFromCache(Func<ReturnT> method)
-        => _removeFromCache(method.GetHashCode(), 0);
+    public static void RemoveFromCache(Func<ReturnT> method) =>
+        _removeFromCache(method.GetHashCode(), 0);
 
     // ---------------------------------------------------------------------------------------------------------------
 
@@ -126,7 +157,11 @@ public static class TaskRecycler<ReturnT>
     /// <summary>
     /// Handles running the task if no such task was found on cache, and returning the cached task if it was found.
     /// </summary>
-    private static async Task<ReturnT> _runTaskAndWait(Task<ReturnT> task, int hash, int cacheTimeSecsSecs)
+    private static async Task<ReturnT> _runTaskAndWait(
+        Task<ReturnT> task,
+        int hash,
+        int cacheTimeSecsSecs
+    )
     {
         if (_tasks.TryGetValue(hash, out Task<ReturnT>? _task))
         {

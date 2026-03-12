@@ -16,7 +16,11 @@ namespace UniGetUI.Pages.SettingsPages
         public bool CanGoBack => false;
         public string ShortTitle => CoreTools.Translate("WingetUI Settings");
 
-        public event EventHandler? RestartRequired { add { } remove { } }
+        public event EventHandler? RestartRequired
+        {
+            add { }
+            remove { }
+        }
 
         public event EventHandler<Type>? NavigationRequested;
 
@@ -24,15 +28,35 @@ namespace UniGetUI.Pages.SettingsPages
         {
             this.InitializeComponent();
         }
-        public void Administrator(object s, RoutedEventArgs e) => NavigationRequested?.Invoke(this, typeof(Administrator));
-        public void Backup(object s, RoutedEventArgs e) => NavigationRequested?.Invoke(this, typeof(Backup));
-        public void Experimental(object s, RoutedEventArgs e) => NavigationRequested?.Invoke(this, typeof(Experimental));
-        public void General(object s, RoutedEventArgs e) => NavigationRequested?.Invoke(this, typeof(General));
-        public void Interface(object s, RoutedEventArgs e) => NavigationRequested?.Invoke(this, typeof(Interface_P));
-        public void Notifications(object s, RoutedEventArgs e) => NavigationRequested?.Invoke(this, typeof(Notifications));
-        public void Operations(object s, RoutedEventArgs e) => NavigationRequested?.Invoke(this, typeof(Operations));
-        public void Startup(object s, RoutedEventArgs e) => NavigationRequested?.Invoke(this, typeof(Updates));
-        private void Internet(object sender, RoutedEventArgs e) => NavigationRequested?.Invoke(this, typeof(Internet));
-        private void ManagersShortcut(object sender, RoutedEventArgs e) => NavigationRequested?.Invoke(this, typeof(ManagersHomepage));
+
+        public void Administrator(object s, RoutedEventArgs e) =>
+            NavigationRequested?.Invoke(this, typeof(Administrator));
+
+        public void Backup(object s, RoutedEventArgs e) =>
+            NavigationRequested?.Invoke(this, typeof(Backup));
+
+        public void Experimental(object s, RoutedEventArgs e) =>
+            NavigationRequested?.Invoke(this, typeof(Experimental));
+
+        public void General(object s, RoutedEventArgs e) =>
+            NavigationRequested?.Invoke(this, typeof(General));
+
+        public void Interface(object s, RoutedEventArgs e) =>
+            NavigationRequested?.Invoke(this, typeof(Interface_P));
+
+        public void Notifications(object s, RoutedEventArgs e) =>
+            NavigationRequested?.Invoke(this, typeof(Notifications));
+
+        public void Operations(object s, RoutedEventArgs e) =>
+            NavigationRequested?.Invoke(this, typeof(Operations));
+
+        public void Startup(object s, RoutedEventArgs e) =>
+            NavigationRequested?.Invoke(this, typeof(Updates));
+
+        private void Internet(object sender, RoutedEventArgs e) =>
+            NavigationRequested?.Invoke(this, typeof(Internet));
+
+        private void ManagersShortcut(object sender, RoutedEventArgs e) =>
+            NavigationRequested?.Invoke(this, typeof(ManagersHomepage));
     }
 }

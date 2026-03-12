@@ -9,8 +9,8 @@ namespace UniGetUI.PackageEngine.Managers.Choco
 {
     public class ChocolateyDetailsHelper : BaseNuGetDetailsHelper
     {
-        public ChocolateyDetailsHelper(BaseNuGet manager) : base(manager)
-        { }
+        public ChocolateyDetailsHelper(BaseNuGet manager)
+            : base(manager) { }
 
         protected override IReadOnlyList<string> GetInstallableVersions_UnSafe(IPackage package)
         {
@@ -19,17 +19,23 @@ namespace UniGetUI.PackageEngine.Managers.Choco
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Manager.Status.ExecutablePath,
-                    Arguments = Manager.Status.ExecutableCallArgs + $" search {package.Id} --exact --all-versions " + Chocolatey.GetProxyArgument(),
+                    Arguments =
+                        Manager.Status.ExecutableCallArgs
+                        + $" search {package.Id} --exact --all-versions "
+                        + Chocolatey.GetProxyArgument(),
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     RedirectStandardInput = true,
                     CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8
-                }
+                    StandardOutputEncoding = System.Text.Encoding.UTF8,
+                },
             };
 
-           IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.LoadPackageVersions, p);
+            IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(
+                LoggableTaskType.LoadPackageVersions,
+                p
+            );
 
             p.Start();
 
@@ -52,24 +58,36 @@ namespace UniGetUI.PackageEngine.Managers.Choco
 
         protected override string? GetInstallLocation_UnSafe(IPackage package)
         {
-            string portable_path = Manager.Status.ExecutablePath.Replace("choco.exe", $"bin\\{package.Id}.exe");
+            string portable_path = Manager.Status.ExecutablePath.Replace(
+                "choco.exe",
+                $"bin\\{package.Id}.exe"
+            );
             if (File.Exists(portable_path))
                 return Path.GetDirectoryName(portable_path);
 
-            foreach (var base_path in new[]
-                     {
-                         Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
-                         Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86),
-                         Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs"),
-                         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                     })
+            foreach (
+                var base_path in new[]
+                {
+                    Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
+                    Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86),
+                    Path.Join(
+                        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                        "Programs"
+                    ),
+                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                }
+            )
             {
                 var path_with_id = Path.Join(base_path, package.Id);
-                if (Directory.Exists(path_with_id)) return path_with_id;
+                if (Directory.Exists(path_with_id))
+                    return path_with_id;
             }
 
-            return Path.Join(Path.GetDirectoryName(Manager.Status.ExecutablePath), "lib", package.Id);
-
+            return Path.Join(
+                Path.GetDirectoryName(Manager.Status.ExecutablePath),
+                "lib",
+                package.Id
+            );
         }
     }
 }

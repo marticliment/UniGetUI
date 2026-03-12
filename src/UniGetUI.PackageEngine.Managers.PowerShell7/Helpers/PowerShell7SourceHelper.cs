@@ -11,7 +11,8 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
 {
     internal sealed class PowerShell7SourceHelper : BaseSourceHelper
     {
-        public PowerShell7SourceHelper(PowerShell7 manager) : base(manager) { }
+        public PowerShell7SourceHelper(PowerShell7 manager)
+            : base(manager) { }
 
         public override string[] GetAddSourceParameters(IManagerSource source)
         {
@@ -20,7 +21,14 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
                 return ["Register-PSRepository", "-Default"];
             }
 
-            return ["Register-PSRepository", "-Name", source.Name, "-SourceLocation", source.Url.ToString()];
+            return
+            [
+                "Register-PSRepository",
+                "-Name",
+                source.Name,
+                "-SourceLocation",
+                source.Url.ToString(),
+            ];
         }
 
         public override string[] GetRemoveSourceParameters(IManagerSource source)
@@ -28,12 +36,20 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
             return ["Unregister-PSRepository", "-Name", source.Name];
         }
 
-        protected override OperationVeredict _getAddSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
+        protected override OperationVeredict _getAddSourceOperationVeredict(
+            IManagerSource source,
+            int ReturnCode,
+            string[] Output
+        )
         {
             return ReturnCode == 0 ? OperationVeredict.Success : OperationVeredict.Failure;
         }
 
-        protected override OperationVeredict _getRemoveSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
+        protected override OperationVeredict _getRemoveSourceOperationVeredict(
+            IManagerSource source,
+            int ReturnCode,
+            string[] Output
+        )
         {
             return ReturnCode == 0 ? OperationVeredict.Success : OperationVeredict.Failure;
         }
@@ -47,18 +63,23 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
                 StartInfo = new()
                 {
                     FileName = Manager.Status.ExecutablePath,
-                    Arguments = Manager.Status.ExecutableCallArgs + " \"Get-PSRepository | Format-Table -Property " +
-                                "Name,@{N='SourceLocation';E={If ($_.Uri) {$_.Uri.AbsoluteUri} Else {$_.SourceLocation}}}\"",
+                    Arguments =
+                        Manager.Status.ExecutableCallArgs
+                        + " \"Get-PSRepository | Format-Table -Property "
+                        + "Name,@{N='SourceLocation';E={If ($_.Uri) {$_.Uri.AbsoluteUri} Else {$_.SourceLocation}}}\"",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     RedirectStandardInput = true,
                     UseShellExecute = false,
                     CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8
-                }
+                    StandardOutputEncoding = System.Text.Encoding.UTF8,
+                },
             };
 
-            IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListSources, p);
+            IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(
+                LoggableTaskType.ListSources,
+                p
+            );
 
             p.Start();
 
@@ -86,8 +107,14 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
                         string[] parts = Regex.Replace(line.Trim(), " {2,}", " ").Split(' ');
                         if (parts.Length >= 2)
                         {
-                            string uri = Regex.Match(line, "https?:\\/\\/([\\w%-]+\\.)+[\\w%-]+(\\/[\\w%-]+)+\\/?").Value;
-                            if (uri == "") continue;
+                            string uri = Regex
+                                .Match(
+                                    line,
+                                    "https?:\\/\\/([\\w%-]+\\.)+[\\w%-]+(\\/[\\w%-]+)+\\/?"
+                                )
+                                .Value;
+                            if (uri == "")
+                                continue;
                             sources.Add(new ManagerSource(Manager, parts[0].Trim(), new Uri(uri)));
                         }
                     }

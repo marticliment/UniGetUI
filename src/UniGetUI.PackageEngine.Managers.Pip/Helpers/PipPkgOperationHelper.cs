@@ -4,25 +4,33 @@ using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Serializable;
 
 namespace UniGetUI.PackageEngine.Managers.PipManager;
+
 internal sealed class PipPkgOperationHelper : BasePkgOperationHelper
 {
-    public PipPkgOperationHelper(Pip manager) : base(manager) { }
+    public PipPkgOperationHelper(Pip manager)
+        : base(manager) { }
 
-    protected override IReadOnlyList<string> _getOperationParameters(IPackage package,
+    protected override IReadOnlyList<string> _getOperationParameters(
+        IPackage package,
         InstallOptions options,
-        OperationType operation)
+        OperationType operation
+    )
     {
-        List<string> parameters = [operation switch {
-            OperationType.Install => Manager.Properties.InstallVerb,
-            OperationType.Update => Manager.Properties.UpdateVerb,
-            OperationType.Uninstall => Manager.Properties.UninstallVerb,
-            _ => throw new InvalidDataException("Invalid package operation")
-        }];
+        List<string> parameters =
+        [
+            operation switch
+            {
+                OperationType.Install => Manager.Properties.InstallVerb,
+                OperationType.Update => Manager.Properties.UpdateVerb,
+                OperationType.Uninstall => Manager.Properties.UninstallVerb,
+                _ => throw new InvalidDataException("Invalid package operation"),
+            },
+        ];
         parameters.AddRange([
-            options.Version.Any()? $"{package.Id}=={options.Version}" : package.Id,
+            options.Version.Any() ? $"{package.Id}=={options.Version}" : package.Id,
             "--no-input",
             "--no-color",
-            "--no-cache"
+            "--no-cache",
         ]);
 
         if (operation is OperationType.Uninstall)
@@ -34,19 +42,26 @@ internal sealed class PipPkgOperationHelper : BasePkgOperationHelper
             if (options.PreRelease)
                 parameters.Add("--pre");
 
-            if (package.OverridenOptions.Scope == PackageScope.User ||
-                (package.OverridenOptions.Scope is null && options.InstallationScope == PackageScope.User))
+            if (
+                package.OverridenOptions.Scope == PackageScope.User
+                || (
+                    package.OverridenOptions.Scope is null
+                    && options.InstallationScope == PackageScope.User
+                )
+            )
                 parameters.Add("--user");
         }
 
         parameters.Add(Pip.GetProxyArgument());
 
-        parameters.AddRange(operation switch
-        {
-            OperationType.Update => options.CustomParameters_Update,
-            OperationType.Uninstall => options.CustomParameters_Uninstall,
-            _ => options.CustomParameters_Install,
-        });
+        parameters.AddRange(
+            operation switch
+            {
+                OperationType.Update => options.CustomParameters_Update,
+                OperationType.Uninstall => options.CustomParameters_Uninstall,
+                _ => options.CustomParameters_Install,
+            }
+        );
 
         return parameters;
     }
@@ -55,7 +70,8 @@ internal sealed class PipPkgOperationHelper : BasePkgOperationHelper
         IPackage package,
         OperationType operation,
         IReadOnlyList<string> processOutput,
-        int returnCode)
+        int returnCode
+    )
     {
         if (returnCode == 0)
         {
@@ -70,6 +86,5 @@ internal sealed class PipPkgOperationHelper : BasePkgOperationHelper
             return OperationVeredict.AutoRetry;
         }
         return OperationVeredict.Failure;
-
     }
 }

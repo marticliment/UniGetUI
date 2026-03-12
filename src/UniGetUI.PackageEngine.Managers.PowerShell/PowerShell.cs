@@ -35,23 +35,40 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                     KnowsUpdateDate = false,
                 },
                 SupportsProxy = ProxySupport.Partially,
-                SupportsProxyAuth = true
+                SupportsProxyAuth = true,
             };
 
             Properties = new ManagerProperties
             {
                 Name = "PowerShell",
                 DisplayName = "PowerShell 5.x",
-                Description = CoreTools.Translate("PowerShell's package manager. Find libraries and scripts to expand PowerShell capabilities<br>Contains: <b>Modules, Scripts, Cmdlets</b>"),
+                Description = CoreTools.Translate(
+                    "PowerShell's package manager. Find libraries and scripts to expand PowerShell capabilities<br>Contains: <b>Modules, Scripts, Cmdlets</b>"
+                ),
                 IconId = IconType.PowerShell,
                 ColorIconId = "powershell_color",
                 ExecutableFriendlyName = "powershell.exe",
                 InstallVerb = "Install-Module",
                 UninstallVerb = "Uninstall-Module",
                 UpdateVerb = "Update-Module",
-                KnownSources = [new ManagerSource(this, "PSGallery", new Uri("https://www.powershellgallery.com/api/v2")),
-                                new ManagerSource(this, "PoshTestGallery", new Uri("https://www.poshtestgallery.com/api/v2"))],
-                DefaultSource = new ManagerSource(this, "PSGallery", new Uri("https://www.powershellgallery.com/api/v2")),
+                KnownSources =
+                [
+                    new ManagerSource(
+                        this,
+                        "PSGallery",
+                        new Uri("https://www.powershellgallery.com/api/v2")
+                    ),
+                    new ManagerSource(
+                        this,
+                        "PoshTestGallery",
+                        new Uri("https://www.poshtestgallery.com/api/v2")
+                    ),
+                ],
+                DefaultSource = new ManagerSource(
+                    this,
+                    "PSGallery",
+                    new Uri("https://www.powershellgallery.com/api/v2")
+                ),
             };
 
             DetailsHelper = new PowerShellDetailsHelper(this);
@@ -72,11 +89,14 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                     RedirectStandardInput = true,
                     UseShellExecute = false,
                     CreateNoWindow = true,
-                    StandardOutputEncoding = Encoding.UTF8
-                }
+                    StandardOutputEncoding = Encoding.UTF8,
+                },
             };
 
-            IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
+            IProcessTaskLogger logger = TaskLogger.CreateNew(
+                LoggableTaskType.ListInstalledPackages,
+                p
+            );
 
             p.Start();
             string? line;
@@ -105,8 +125,15 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                         elements[i] = elements[i].Trim();
                     }
 
-                    Packages.Add(new Package(CoreTools.FormatAsName(elements[1]), elements[1], elements[0],
-                        SourcesHelper.Factory.GetSourceOrDefault(elements[2]), this));
+                    Packages.Add(
+                        new Package(
+                            CoreTools.FormatAsName(elements[1]),
+                            elements[1],
+                            elements[0],
+                            SourcesHelper.Factory.GetSourceOrDefault(elements[2]),
+                            this
+                        )
+                    );
                 }
             }
 
@@ -120,11 +147,16 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
         public override List<string> FindCandidateExecutableFiles()
         {
             var candidates = CoreTools.WhichMultiple("powershell.exe");
-            if(candidates.Count is 0) candidates.Add(CoreData.PowerShell5);
+            if (candidates.Count is 0)
+                candidates.Add(CoreData.PowerShell5);
             return candidates;
         }
 
-        protected override void _loadManagerExecutableFile(out bool found, out string path, out string callArguments)
+        protected override void _loadManagerExecutableFile(
+            out bool found,
+            out string path,
+            out string callArguments
+        )
         {
             var (_found, _path) = GetExecutableFile();
             found = _found;
@@ -144,8 +176,8 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     CreateNoWindow = true,
-                    StandardOutputEncoding = Encoding.UTF8
-                }
+                    StandardOutputEncoding = Encoding.UTF8,
+                },
             };
             process.Start();
             version = process.StandardOutput.ReadToEnd().Trim();

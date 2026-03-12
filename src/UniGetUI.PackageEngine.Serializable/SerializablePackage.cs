@@ -4,7 +4,7 @@ using UniGetUI.PackageEngine.Serializable;
 
 namespace UniGetUI.PackageEngine.Classes.Serializable
 {
-    public class SerializablePackage: SerializableComponent<SerializablePackage>
+    public class SerializablePackage : SerializableComponent<SerializablePackage>
     {
         public string Id { get; set; } = "";
         public string Name { get; set; } = "";
@@ -65,13 +65,11 @@ namespace UniGetUI.PackageEngine.Classes.Serializable
             return obj;
         }
 
-        public SerializablePackage() : base()
-        {
-        }
+        public SerializablePackage()
+            : base() { }
 
-        public SerializablePackage(JsonNode data) : base(data)
-        {
-        }
+        public SerializablePackage(JsonNode data)
+            : base(data) { }
 
         /// <summary>
         /// Returns an equivalent copy of the current package as an Invalid Serializable Package.

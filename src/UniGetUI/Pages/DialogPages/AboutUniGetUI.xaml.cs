@@ -11,12 +11,11 @@ namespace UniGetUI.Interface
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-
     public sealed partial class AboutUniGetUI : Page
     {
-
         public event EventHandler? Close;
         private int previousSelectedIndex;
+
         public AboutUniGetUI()
         {
             InitializeComponent();
@@ -26,7 +25,10 @@ namespace UniGetUI.Interface
             SelectorBarItemPage4.Text = CoreTools.Translate("Translators");
         }
 
-        private void SelectorBar_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs args)
+        private void SelectorBar_SelectionChanged(
+            SelectorBar sender,
+            SelectorBarSelectionChangedEventArgs args
+        )
         {
             SelectorBarItem selectedItem = sender.SelectedItem;
             int currentSelectedIndex = sender.Items.IndexOf(selectedItem);
@@ -37,12 +39,18 @@ namespace UniGetUI.Interface
                 2 => typeof(Contributors),
                 _ => typeof(Translators),
             };
-            SlideNavigationTransitionEffect slideNavigationTransitionEffect = currentSelectedIndex - previousSelectedIndex > 0 ? SlideNavigationTransitionEffect.FromRight : SlideNavigationTransitionEffect.FromLeft;
+            SlideNavigationTransitionEffect slideNavigationTransitionEffect =
+                currentSelectedIndex - previousSelectedIndex > 0
+                    ? SlideNavigationTransitionEffect.FromRight
+                    : SlideNavigationTransitionEffect.FromLeft;
 
-            ContentFrame.Navigate(pageType, null, new SlideNavigationTransitionInfo { Effect = slideNavigationTransitionEffect });
+            ContentFrame.Navigate(
+                pageType,
+                null,
+                new SlideNavigationTransitionInfo { Effect = slideNavigationTransitionEffect }
+            );
 
             previousSelectedIndex = currentSelectedIndex;
-
         }
 
         private void CloseButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)

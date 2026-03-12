@@ -13,7 +13,8 @@ namespace UniGetUI.PackageEngine.Classes.Manager.Classes
             string installFileName,
             string installArguments,
             string fancyInstallCommand,
-            Func<Task<bool>> isInstalled)
+            Func<Task<bool>> isInstalled
+        )
         {
             Name = name;
             InstallFileName = installFileName;

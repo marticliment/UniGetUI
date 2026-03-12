@@ -9,11 +9,13 @@ namespace UniGetUI.Services
         private const string GistDescription_EndingKey = "@[UNIGETUI_BACKUP_V1]";
         private const string PackageBackup_StartingKey = "@[PACKAGES]";
 
-        private const string GistDescription = $"UniGetUI package backups - DO NOT RENAME OR MODIFY {GistDescription_EndingKey}";
-        private const string ReadMeContents = "" +
-              "This special Gist is used by UniGetUI to store your package backups. \n" +
-              "Please DO NOT EDIT the contents or the description of this gist, or unexpected behaviours may occur.\n" +
-              "Learn more about UniGetUI at https://github.com/Devolutions/UniGetUI\n";
+        private const string GistDescription =
+            $"UniGetUI package backups - DO NOT RENAME OR MODIFY {GistDescription_EndingKey}";
+        private const string ReadMeContents =
+            ""
+            + "This special Gist is used by UniGetUI to store your package backups. \n"
+            + "Please DO NOT EDIT the contents or the description of this gist, or unexpected behaviours may occur.\n"
+            + "Learn more about UniGetUI at https://github.com/Devolutions/UniGetUI\n";
 
         private readonly GitHubAuthService _authService;
 
@@ -22,7 +24,8 @@ namespace UniGetUI.Services
         public GitHubBackupService(GitHubAuthService authService)
         {
             _authService = authService;
-            string deviceUserUniqueIdentifier = $"{Environment.MachineName}\\{Environment.UserName}".Replace(" ", "");
+            string deviceUserUniqueIdentifier =
+                $"{Environment.MachineName}\\{Environment.UserName}".Replace(" ", "");
             GistFileKey = $"{PackageBackup_StartingKey} {deviceUserUniqueIdentifier}";
         }
 
@@ -38,16 +41,22 @@ namespace UniGetUI.Services
             User user = await GHClient.User.Current();
 
             var candidates = await GHClient.Gist.GetAllForUser(user.Login);
-            Gist? existingBackup = candidates?.FirstOrDefault(g => g?.Description?.EndsWith(GistDescription_EndingKey) ?? false);
+            Gist? existingBackup = candidates?.FirstOrDefault(g =>
+                g?.Description?.EndsWith(GistDescription_EndingKey) ?? false
+            );
 
             if (existingBackup is null)
             {
-                Logger.Warn($"No matching gist was found as a valid backup, a new gist will be created...");
+                Logger.Warn(
+                    $"No matching gist was found as a valid backup, a new gist will be created..."
+                );
                 existingBackup = await _createBackupGistAsync(GHClient);
             }
 
             await _updateBackupGistAsync(GHClient, existingBackup, bundleContents);
-            Logger.Info($"Cloud backup completed successfully to gist {user.Login}/{existingBackup.Id}");
+            Logger.Info(
+                $"Cloud backup completed successfully to gist {user.Login}/{existingBackup.Id}"
+            );
         }
 
         /// <summary>
@@ -74,11 +83,7 @@ namespace UniGetUI.Services
         /// </summary>
         private static Task<Gist> _createBackupGistAsync(GitHubClient client)
         {
-            var newGist = new NewGist
-            {
-                Description = GistDescription,
-                Public = false,
-            };
+            var newGist = new NewGist { Description = GistDescription, Public = false };
             newGist.Files.Add("- UniGetUI Package Backups", ReadMeContents);
             return client.Gist.Create(newGist);
         }
@@ -95,11 +100,14 @@ namespace UniGetUI.Services
             User user = await GHClient.User.Current();
 
             var candidates = await GHClient.Gist.GetAllForUser(user.Login);
-            Gist? existingBackup = candidates?.FirstOrDefault(g => g?.Description?.EndsWith(GistDescription_EndingKey) ?? false);
+            Gist? existingBackup = candidates?.FirstOrDefault(g =>
+                g?.Description?.EndsWith(GistDescription_EndingKey) ?? false
+            );
 
-            return existingBackup?.Files
-                .Where(f => f.Key.StartsWith(PackageBackup_StartingKey))
-                .Select(f => $"{f.Key.Split(' ')[^1]} ({CoreTools.FormatAsSize(f.Value.Size)})") ?? [];
+            return existingBackup
+                    ?.Files.Where(f => f.Key.StartsWith(PackageBackup_StartingKey))
+                    .Select(f => $"{f.Key.Split(' ')[^1]} ({CoreTools.FormatAsSize(f.Value.Size)})")
+                ?? [];
         }
 
         /// <summary>
@@ -114,13 +122,19 @@ namespace UniGetUI.Services
             User user = await GHClient.User.Current();
 
             var candidates = await GHClient.Gist.GetAllForUser(user.Login);
-            Gist? existingBackup = candidates?.FirstOrDefault(g => g?.Description?.EndsWith(GistDescription_EndingKey) ?? false);
+            Gist? existingBackup = candidates?.FirstOrDefault(g =>
+                g?.Description?.EndsWith(GistDescription_EndingKey) ?? false
+            );
             if (existingBackup is null)
-                throw new KeyNotFoundException($"The backup {backupName} was not found, yet this name was passed by argument");
+                throw new KeyNotFoundException(
+                    $"The backup {backupName} was not found, yet this name was passed by argument"
+                );
 
             existingBackup = await GHClient.Gist.Get(existingBackup.Id);
-            return existingBackup.Files
-                .FirstOrDefault(f => f.Key.StartsWith(PackageBackup_StartingKey) && f.Key.EndsWith(backupName))
+            return existingBackup
+                .Files.FirstOrDefault(f =>
+                    f.Key.StartsWith(PackageBackup_StartingKey) && f.Key.EndsWith(backupName)
+                )
                 .Value.Content;
         }
     }

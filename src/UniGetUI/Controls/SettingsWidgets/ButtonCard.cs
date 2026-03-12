@@ -26,7 +26,10 @@ namespace UniGetUI.Interface.Widgets
         public ButtonCard()
         {
             _button.MinWidth = 200;
-            _button.Click += (_, _) => { Click?.Invoke(this, EventArgs.Empty); };
+            _button.Click += (_, _) =>
+            {
+                Click?.Invoke(this, EventArgs.Empty);
+            };
             Content = _button;
         }
     }

@@ -17,6 +17,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             NewVersion,
             Source,
         }
+
         public Sorter CurrentSorter { get; private set; }
 
         public ObservablePackageCollection()

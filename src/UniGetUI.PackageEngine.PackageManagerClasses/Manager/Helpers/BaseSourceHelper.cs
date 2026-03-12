@@ -23,26 +23,52 @@ namespace UniGetUI.PackageEngine.Classes.Manager.Providers
 
         public abstract string[] GetAddSourceParameters(IManagerSource source);
         public abstract string[] GetRemoveSourceParameters(IManagerSource source);
-        protected abstract OperationVeredict _getAddSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output);
-        protected abstract OperationVeredict _getRemoveSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output);
+        protected abstract OperationVeredict _getAddSourceOperationVeredict(
+            IManagerSource source,
+            int ReturnCode,
+            string[] Output
+        );
+        protected abstract OperationVeredict _getRemoveSourceOperationVeredict(
+            IManagerSource source,
+            int ReturnCode,
+            string[] Output
+        );
 
-        public OperationVeredict GetAddOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
+        public OperationVeredict GetAddOperationVeredict(
+            IManagerSource source,
+            int ReturnCode,
+            string[] Output
+        )
         {
             TaskRecycler<IReadOnlyList<IManagerSource>>.RemoveFromCache(_getSources);
-            if (ReturnCode is 999 && Output.Last() == "Error: The operation was canceled by the user.")
+            if (
+                ReturnCode is 999
+                && Output.Last() == "Error: The operation was canceled by the user."
+            )
             {
-                Logger.Warn("Elevator [or GSudo] UAC prompt was canceled, not showing error message...");
+                Logger.Warn(
+                    "Elevator [or GSudo] UAC prompt was canceled, not showing error message..."
+                );
                 return OperationVeredict.Canceled;
             }
             return _getAddSourceOperationVeredict(source, ReturnCode, Output);
         }
 
-        public OperationVeredict GetRemoveOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
+        public OperationVeredict GetRemoveOperationVeredict(
+            IManagerSource source,
+            int ReturnCode,
+            string[] Output
+        )
         {
             TaskRecycler<IReadOnlyList<IManagerSource>>.RemoveFromCache(_getSources);
-            if (ReturnCode is 999 && Output.Last() == "Error: The operation was canceled by the user.")
+            if (
+                ReturnCode is 999
+                && Output.Last() == "Error: The operation was canceled by the user."
+            )
             {
-                Logger.Warn("Elevator [or GSudo] UAC prompt was canceled, not showing error message...");
+                Logger.Warn(
+                    "Elevator [or GSudo] UAC prompt was canceled, not showing error message..."
+                );
                 return OperationVeredict.Canceled;
             }
             return _getRemoveSourceOperationVeredict(source, ReturnCode, Output);
@@ -53,8 +79,8 @@ namespace UniGetUI.PackageEngine.Classes.Manager.Providers
         /// </summary>
         protected abstract IReadOnlyList<IManagerSource> GetSources_UnSafe();
 
-        public virtual IReadOnlyList<IManagerSource> GetSources()
-            => TaskRecycler<IReadOnlyList<IManagerSource>>.RunOrAttach(_getSources, 15);
+        public virtual IReadOnlyList<IManagerSource> GetSources() =>
+            TaskRecycler<IReadOnlyList<IManagerSource>>.RunOrAttach(_getSources, 15);
 
         public virtual IReadOnlyList<IManagerSource> _getSources()
         {
@@ -66,9 +92,11 @@ namespace UniGetUI.PackageEngine.Classes.Manager.Providers
                     if (!Settings.Get(Settings.K.DisableTimeoutOnPackageListingTasks))
                     {
                         CoreTools.FinalizeDangerousTask(task);
-                        throw new TimeoutException($"Task _getInstalledPackages for manager {Manager.Name} did not finish after " +
-                                                   $"{PackageListingTaskTimeout} seconds, aborting.  You may disable " +
-                                                   $"timeouts from UniGetUI Advanced Settings");
+                        throw new TimeoutException(
+                            $"Task _getInstalledPackages for manager {Manager.Name} did not finish after "
+                                + $"{PackageListingTaskTimeout} seconds, aborting.  You may disable "
+                                + $"timeouts from UniGetUI Advanced Settings"
+                        );
                     }
 
                     task.Wait();

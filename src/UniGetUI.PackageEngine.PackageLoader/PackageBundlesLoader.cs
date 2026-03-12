@@ -8,12 +8,14 @@ namespace UniGetUI.PackageEngine.PackageLoader
         public static PackageBundlesLoader Instance = null!;
 
         public PackageBundlesLoader(IReadOnlyList<IPackageManager> managers)
-        : base(managers,
-            identifier: "PACKAGE_BUNDLES",
-            AllowMultiplePackageVersions: true,
-            DisableReload: true,
-            CheckedBydefault: false,
-            RequiresInternet: false)
+            : base(
+                managers,
+                identifier: "PACKAGE_BUNDLES",
+                AllowMultiplePackageVersions: true,
+                DisableReload: true,
+                CheckedBydefault: false,
+                RequiresInternet: false
+            )
         {
             Instance = this;
         }
@@ -50,9 +52,10 @@ namespace UniGetUI.PackageEngine.PackageLoader
 
         public void RemoveRange(IReadOnlyList<IPackage> packages)
         {
-            foreach(IPackage package in packages)
+            foreach (IPackage package in packages)
             {
-                if (!Contains(package)) continue;
+                if (!Contains(package))
+                    continue;
                 PackageReference.Remove(HashPackage(package), out IPackage? _);
             }
             InvokePackagesChangedEvent(true, [], packages);

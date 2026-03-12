@@ -12,31 +12,45 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
 {
     internal sealed class NpmPkgDetailsHelper : BasePkgDetailsHelper
     {
-        public NpmPkgDetailsHelper(Npm manager) : base(manager) { }
+        public NpmPkgDetailsHelper(Npm manager)
+            : base(manager) { }
 
         protected override void GetDetails_UnSafe(IPackageDetails details)
         {
             try
             {
                 details.InstallerType = "Tarball";
-                details.ManifestUrl = new Uri($"https://www.npmjs.com/package/{details.Package.Id}");
-                details.ReleaseNotesUrl = new Uri($"https://www.npmjs.com/package/{details.Package.Id}?activeTab=versions");
+                details.ManifestUrl = new Uri(
+                    $"https://www.npmjs.com/package/{details.Package.Id}"
+                );
+                details.ReleaseNotesUrl = new Uri(
+                    $"https://www.npmjs.com/package/{details.Package.Id}?activeTab=versions"
+                );
 
                 using Process p = new();
                 p.StartInfo = new ProcessStartInfo
                 {
                     FileName = Manager.Status.ExecutablePath,
-                    Arguments = Manager.Status.ExecutableCallArgs + " show " + details.Package.Id + " --json",
+                    Arguments =
+                        Manager.Status.ExecutableCallArgs
+                        + " show "
+                        + details.Package.Id
+                        + " --json",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     RedirectStandardInput = true,
                     CreateNoWindow = true,
-                    WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-                    StandardOutputEncoding = System.Text.Encoding.UTF8
+                    WorkingDirectory = Environment.GetFolderPath(
+                        Environment.SpecialFolder.UserProfile
+                    ),
+                    StandardOutputEncoding = System.Text.Encoding.UTF8,
                 };
 
-                IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.LoadPackageDetails, p);
+                IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(
+                    LoggableTaskType.LoadPackageDetails,
+                    p
+                );
                 p.Start();
 
                 string strContents = p.StandardOutput.ReadToEnd();
@@ -46,17 +60,38 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 details.License = contents?["license"]?.ToString();
                 details.Description = contents?["description"]?.ToString();
 
-                if (Uri.TryCreate(contents?["homepage"]?.ToString() ?? "", UriKind.RelativeOrAbsolute, out var homepageUrl))
+                if (
+                    Uri.TryCreate(
+                        contents?["homepage"]?.ToString() ?? "",
+                        UriKind.RelativeOrAbsolute,
+                        out var homepageUrl
+                    )
+                )
                     details.HomepageUrl = homepageUrl;
 
                 details.Publisher = (contents?["maintainers"] as JsonArray)?[0]?.ToString();
                 details.Author = contents?["author"]?.ToString();
-                details.UpdateDate = contents?["time"]?[contents?["dist-tags"]?["latest"]?.ToString() ?? details.Package.VersionString]?.ToString();
+                details.UpdateDate = contents?["time"]?[
+                    contents?["dist-tags"]?["latest"]?.ToString() ?? details.Package.VersionString
+                ]?.ToString();
 
-                if (Uri.TryCreate(contents?["dist"]?["tarball"]?.ToString() ?? "", UriKind.RelativeOrAbsolute, out var installerUrl))
+                if (
+                    Uri.TryCreate(
+                        contents?["dist"]?["tarball"]?.ToString() ?? "",
+                        UriKind.RelativeOrAbsolute,
+                        out var installerUrl
+                    )
+                )
                     details.InstallerUrl = installerUrl;
 
-                if (int.TryParse(contents?["dist"]?["unpackedSize"]?.ToString() ?? "", NumberStyles.Any, CultureInfo.InvariantCulture, out int installerSize))
+                if (
+                    int.TryParse(
+                        contents?["dist"]?["unpackedSize"]?.ToString() ?? "",
+                        NumberStyles.Any,
+                        CultureInfo.InvariantCulture,
+                        out int installerSize
+                    )
+                )
                     details.InstallerSize = installerSize;
 
                 details.InstallerHash = contents?["dist"]?["integrity"]?.ToString();
@@ -65,41 +100,50 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 HashSet<string> addedDeps = new();
                 foreach (var rawDep in (contents?["dependencies"]?.AsObject() ?? []))
                 {
-                    if(addedDeps.Contains(rawDep.Key)) continue;
+                    if (addedDeps.Contains(rawDep.Key))
+                        continue;
                     addedDeps.Add(rawDep.Key);
 
-                    details.Dependencies.Add(new()
-                    {
-                        Name = rawDep.Key,
-                        Version = rawDep.Value?.GetValue<string>() ?? "",
-                        Mandatory = true,
-                    });
+                    details.Dependencies.Add(
+                        new()
+                        {
+                            Name = rawDep.Key,
+                            Version = rawDep.Value?.GetValue<string>() ?? "",
+                            Mandatory = true,
+                        }
+                    );
                 }
 
                 foreach (var rawDep in (contents?["devDependencies"]?.AsObject() ?? []))
                 {
-                    if(addedDeps.Contains(rawDep.Key)) continue;
+                    if (addedDeps.Contains(rawDep.Key))
+                        continue;
                     addedDeps.Add(rawDep.Key);
 
-                    details.Dependencies.Add(new()
-                    {
-                        Name = rawDep.Key,
-                        Version = rawDep.Value?.GetValue<string>() ?? "",
-                        Mandatory = false,
-                    });
+                    details.Dependencies.Add(
+                        new()
+                        {
+                            Name = rawDep.Key,
+                            Version = rawDep.Value?.GetValue<string>() ?? "",
+                            Mandatory = false,
+                        }
+                    );
                 }
 
                 foreach (var rawDep in (contents?["peerDependencies"]?.AsObject() ?? []))
                 {
-                    if(addedDeps.Contains(rawDep.Key)) continue;
+                    if (addedDeps.Contains(rawDep.Key))
+                        continue;
                     addedDeps.Add(rawDep.Key);
 
-                    details.Dependencies.Add(new()
-                    {
-                        Name = rawDep.Key,
-                        Version = rawDep.Value?.GetValue<string>() ?? "",
-                        Mandatory = false,
-                    });
+                    details.Dependencies.Add(
+                        new()
+                        {
+                            Name = rawDep.Key,
+                            Version = rawDep.Value?.GetValue<string>() ?? "",
+                            Mandatory = false,
+                        }
+                    );
                 }
 
                 logger.AddToStdErr(p.StandardError.ReadToEnd());
@@ -127,9 +171,18 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
         protected override string? GetInstallLocation_UnSafe(IPackage package)
         {
             if (package.OverridenOptions.Scope is PackageScope.Local)
-                return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "node_modules", package.Id);
-            return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Roaming", "npm",
-                "node_modules", package.Id);
+                return Path.Join(
+                    Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                    "node_modules",
+                    package.Id
+                );
+            return Path.Join(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "Roaming",
+                "npm",
+                "node_modules",
+                package.Id
+            );
         }
 
         protected override IReadOnlyList<string> GetInstallableVersions_UnSafe(IPackage package)
@@ -140,18 +193,26 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 {
                     FileName = Manager.Status.ExecutablePath,
                     Arguments =
-                        Manager.Status.ExecutableCallArgs + " show " + package.Id + " versions --json",
+                        Manager.Status.ExecutableCallArgs
+                        + " show "
+                        + package.Id
+                        + " versions --json",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     RedirectStandardInput = true,
                     CreateNoWindow = true,
-                    WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-                    StandardOutputEncoding = System.Text.Encoding.UTF8
-                }
+                    WorkingDirectory = Environment.GetFolderPath(
+                        Environment.SpecialFolder.UserProfile
+                    ),
+                    StandardOutputEncoding = System.Text.Encoding.UTF8,
+                },
             };
 
-            IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.LoadPackageVersions, p);
+            IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(
+                LoggableTaskType.LoadPackageVersions,
+                p
+            );
             p.Start();
 
             string strContents = p.StandardOutput.ReadToEnd();
@@ -159,7 +220,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             JsonArray? rawVersions = JsonNode.Parse(strContents) as JsonArray;
 
             List<string> versions = [];
-            foreach(JsonNode? raw_ver in rawVersions ?? [])
+            foreach (JsonNode? raw_ver in rawVersions ?? [])
             {
                 if (raw_ver is not null)
                     versions.Add(raw_ver.ToString());

@@ -7,7 +7,6 @@ using UniGetUI.Core.Tools;
 
 namespace UniGetUI.Interface.Pages.AboutPages
 {
-
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
@@ -16,9 +15,14 @@ namespace UniGetUI.Interface.Pages.AboutPages
         public AboutUniGetUI()
         {
             InitializeComponent();
-            VersionText.Text = CoreTools.Translate("You have installed WingetUI Version {0}", CoreData.VersionName);
+            VersionText.Text = CoreTools.Translate(
+                "You have installed WingetUI Version {0}",
+                CoreData.VersionName
+            );
             DisclaimerBanner.Title = CoreTools.Translate("Disclaimer");
-            DisclaimerBanner.Message = CoreTools.Translate("UniGetUI is not related to any of the compatible package managers. UniGetUI is an independent project.");
+            DisclaimerBanner.Message = CoreTools.Translate(
+                "UniGetUI is not related to any of the compatible package managers. UniGetUI is an independent project."
+            );
         }
     }
 }

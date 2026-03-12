@@ -9,6 +9,7 @@ using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Managers.WingetManager;
 
 namespace UniGetUI.PackageEngine.Managers.WinGet.ClientHelpers;
+
 internal static class WinGetIconsHelper
 {
     private static readonly Dictionary<string, string> __msstore_package_manifests = [];
@@ -20,7 +21,8 @@ internal static class WinGetIconsHelper
 
         string CountryCode = CultureInfo.CurrentCulture.Name.Split("-")[^1];
         string Locale = CultureInfo.CurrentCulture.Name;
-        string url = $"https://storeedgefd.dsx.mp.microsoft.com/v8.0/sdk/products?market={CountryCode}&locale={Locale}&deviceFamily=Windows.Desktop";
+        string url =
+            $"https://storeedgefd.dsx.mp.microsoft.com/v8.0/sdk/products?market={CountryCode}&locale={Locale}&deviceFamily=Windows.Desktop";
 
 #pragma warning disable SYSLIB0014
         var httpRequest = (HttpWebRequest)WebRequest.Create(url);
@@ -75,11 +77,17 @@ internal static class WinGetIconsHelper
             if (!ImageEntry.Success)
                 continue;
 
-            Match ImagePurpose = Regex.Match(CurrentImage, "(?:\"|')ImagePurpose(?:\"|'): ?(?:\"|')([^'\"]+)(?:\"|')");
+            Match ImagePurpose = Regex.Match(
+                CurrentImage,
+                "(?:\"|')ImagePurpose(?:\"|'): ?(?:\"|')([^'\"]+)(?:\"|')"
+            );
             if (!ImagePurpose.Success || ImagePurpose.Groups[1].Value != "Tile")
                 continue;
 
-            Match ImageUrl = Regex.Match(CurrentImage, "(?:\"|')Uri(?:\"|'): ?(?:\"|')([^'\"]+)(?:\"|')");
+            Match ImageUrl = Regex.Match(
+                CurrentImage,
+                "(?:\"|')Uri(?:\"|'): ?(?:\"|')([^'\"]+)(?:\"|')"
+            );
             Match ImageSize = Regex.Match(CurrentImage, "(?:\"|')Height(?:\"|'): ?([^,]+)");
 
             if (!ImageUrl.Success || !ImageSize.Success)
@@ -90,11 +98,19 @@ internal static class WinGetIconsHelper
 
         if (FoundIcons.Count == 0)
         {
-            Logger.Warn($"No Logo image found for package {package.Id} in Microsoft Store response");
+            Logger.Warn(
+                $"No Logo image found for package {package.Id} in Microsoft Store response"
+            );
             return null;
         }
 
-        Logger.Debug("Choosing icon with size " + FoundIcons.Keys.Max() + " for package " + package.Id + " from Microsoft Store");
+        Logger.Debug(
+            "Choosing icon with size "
+                + FoundIcons.Keys.Max()
+                + " for package "
+                + package.Id
+                + " from Microsoft Store"
+        );
 
         string uri = "https:" + FoundIcons[FoundIcons.Keys.Max()];
 
@@ -104,7 +120,8 @@ internal static class WinGetIconsHelper
     public static CacheableIcon? GetWinGetPackageIcon(IPackage package)
     {
         CatalogPackageMetadata? NativeDetails = NativePackageHandler.GetDetails(package);
-        if (NativeDetails is null) return null;
+        if (NativeDetails is null)
+            return null;
 
         // Get the actual icon and return it
         foreach (Icon? icon in NativeDetails.Icons.ToArray())
@@ -119,10 +136,18 @@ internal static class WinGetIconsHelper
     public static CacheableIcon? GetAppxPackageIcon(IPackage package)
     {
         string appxId = package.Id.Replace("MSIX\\", "");
-        string globalPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "WindowsApps", appxId);
+        string globalPath = Path.Join(
+            Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
+            "WindowsApps",
+            appxId
+        );
 
         if (!Directory.Exists(globalPath))
-            globalPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "SystemApps", appxId);
+            globalPath = Path.Join(
+                Environment.GetFolderPath(Environment.SpecialFolder.Windows),
+                "SystemApps",
+                appxId
+            );
 
         if (!Directory.Exists(globalPath))
             return null;
@@ -135,9 +160,21 @@ internal static class WinGetIconsHelper
             return null;
         }
 
-        string path = string.Join('.', Path.Join(globalPath, match.Groups[1].ToString()).Split('.')[..^1]);
-        foreach (string ending in new[] { ".png", ".scale-100.png", ".scale-125.png", ".scale-150.png",
-                     ".scale-175.png", ".scale-200.png" })
+        string path = string.Join(
+            '.',
+            Path.Join(globalPath, match.Groups[1].ToString()).Split('.')[..^1]
+        );
+        foreach (
+            string ending in new[]
+            {
+                ".png",
+                ".scale-100.png",
+                ".scale-125.png",
+                ".scale-150.png",
+                ".scale-175.png",
+                ".scale-200.png",
+            }
+        )
             if (Path.Exists(path + ending))
             {
                 return new CacheableIcon(path + ending);
@@ -149,7 +186,8 @@ internal static class WinGetIconsHelper
     public static CacheableIcon? GetARPPackageIcon(IPackage package)
     {
         var bits = package.Id.Split("\\");
-        if (bits.Length < 4) return null;
+        if (bits.Length < 4)
+            return null;
 
         string regKey = "";
         regKey += bits[1] == "Machine" ? "HKEY_LOCAL_MACHINE" : "HKEY_CURRENT_USER";
@@ -161,7 +199,11 @@ internal static class WinGetIconsHelper
         regKey += bits[3];
 
         string? displayIcon = (string?)Registry.GetValue(regKey, "DisplayIcon", null);
-        if (!string.IsNullOrEmpty(displayIcon) && File.Exists(displayIcon) && !displayIcon.EndsWith(".exe"))
+        if (
+            !string.IsNullOrEmpty(displayIcon)
+            && File.Exists(displayIcon)
+            && !displayIcon.EndsWith(".exe")
+        )
             return new CacheableIcon(displayIcon);
 
         return null;

@@ -24,7 +24,10 @@ namespace UniGetUI
                     int ret = CLIHandler.WingetUIToUniGetUIMigrator();
                     Environment.Exit(ret);
                 }
-                else if (args.Contains(CLIHandler.UNINSTALL_UNIGETUI) || args.Contains(CLIHandler.UNINSTALL_WINGETUI))
+                else if (
+                    args.Contains(CLIHandler.UNINSTALL_UNIGETUI)
+                    || args.Contains(CLIHandler.UNINSTALL_WINGETUI)
+                )
                 {
                     int ret = CLIHandler.UninstallUniGetUI();
                     Environment.Exit(ret);
@@ -94,13 +97,13 @@ namespace UniGetUI
             try
             {
                 string textart = $"""
-                     __  __      _ ______     __  __  ______
-                    / / / /___  (_) ____/__  / /_/ / / /  _/
-                   / / / / __ \/ / / __/ _ \/ __/ / / // /
-                  / /_/ / / / / / /_/ /  __/ /_/ /_/ // /
-                  \____/_/ /_/_/\____/\___/\__/\____/___/
-                      Welcome to UniGetUI Version {CoreData.VersionName}
-                  """;
+                       __  __      _ ______     __  __  ______
+                      / / / /___  (_) ____/__  / /_/ / / /  _/
+                     / / / / __ \/ / / __/ _ \/ __/ / / // /
+                    / /_/ / / / / / /_/ /  __/ /_/ /_/ // /
+                    \____/_/ /_/_/\____/\___/\__/\____/___/
+                        Welcome to UniGetUI Version {CoreData.VersionName}
+                    """;
 
                 Logger.ImportantInfo(textart);
                 Logger.ImportantInfo("  ");
@@ -115,12 +118,16 @@ namespace UniGetUI
                 // If this is the main instance, start the app
                 if (!isRedirect)
                 {
-                    Application.Start((_) =>
-                    {
-                        DispatcherQueueSynchronizationContext context = new(DispatcherQueue.GetForCurrentThread());
-                        SynchronizationContext.SetSynchronizationContext(context);
-                        var app = new MainApp();
-                    });
+                    Application.Start(
+                        (_) =>
+                        {
+                            DispatcherQueueSynchronizationContext context = new(
+                                DispatcherQueue.GetForCurrentThread()
+                            );
+                            SynchronizationContext.SetSynchronizationContext(context);
+                            var app = new MainApp();
+                        }
+                    );
                 }
             }
             catch (Exception e)

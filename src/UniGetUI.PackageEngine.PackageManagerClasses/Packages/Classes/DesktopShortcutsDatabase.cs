@@ -16,7 +16,8 @@ public static class DesktopShortcutsDatabase
 
     public static IReadOnlyDictionary<string, bool> GetDatabase()
     {
-        return Settings.GetDictionary<string, bool>(Settings.K.DeletableDesktopShortcuts) ?? new Dictionary<string, bool>();
+        return Settings.GetDictionary<string, bool>(Settings.K.DeletableDesktopShortcuts)
+            ?? new Dictionary<string, bool>();
     }
 
     public static void ResetDatabase()
@@ -32,9 +33,16 @@ public static class DesktopShortcutsDatabase
     public static void AddToDatabase(string shortcutPath, Status shortcutStatus)
     {
         if (shortcutStatus is Status.Unknown)
-            Settings.RemoveDictionaryKey<string, bool>(Settings.K.DeletableDesktopShortcuts, shortcutPath);
+            Settings.RemoveDictionaryKey<string, bool>(
+                Settings.K.DeletableDesktopShortcuts,
+                shortcutPath
+            );
         else
-            Settings.SetDictionaryItem<string, bool>(Settings.K.DeletableDesktopShortcuts, shortcutPath, shortcutStatus is Status.Delete);
+            Settings.SetDictionaryItem<string, bool>(
+                Settings.K.DeletableDesktopShortcuts,
+                shortcutPath,
+                shortcutStatus is Status.Delete
+            );
     }
 
     /// <summary>
@@ -45,7 +53,12 @@ public static class DesktopShortcutsDatabase
     public static bool Remove(string shortcutPath)
     {
         // Remove the entry if present
-        if (Settings.DictionaryContainsKey<string, bool>(Settings.K.DeletableDesktopShortcuts, shortcutPath))
+        if (
+            Settings.DictionaryContainsKey<string, bool>(
+                Settings.K.DeletableDesktopShortcuts,
+                shortcutPath
+            )
+        )
         {
             // Remove the entry and propagate changes to disk
             Settings.SetDictionaryItem(Settings.K.DeletableDesktopShortcuts, shortcutPath, false);
@@ -53,7 +66,9 @@ public static class DesktopShortcutsDatabase
         }
 
         // Do nothing if the entry was not there
-        Logger.Warn($"Attempted to remove from deletable desktop shortcuts a shortcut {{shortcutPath={shortcutPath}}} that was not found there");
+        Logger.Warn(
+            $"Attempted to remove from deletable desktop shortcuts a shortcut {{shortcutPath={shortcutPath}}} that was not found there"
+        );
         return false;
     }
 
@@ -88,9 +103,17 @@ public static class DesktopShortcutsDatabase
     public static Status GetStatus(string shortcutPath)
     {
         // Check if the package is ignored
-        if (Settings.DictionaryContainsKey<string, bool>(Settings.K.DeletableDesktopShortcuts, shortcutPath))
+        if (
+            Settings.DictionaryContainsKey<string, bool>(
+                Settings.K.DeletableDesktopShortcuts,
+                shortcutPath
+            )
+        )
         {
-            bool canDelete = Settings.GetDictionaryItem<string, bool>(Settings.K.DeletableDesktopShortcuts, shortcutPath);
+            bool canDelete = Settings.GetDictionaryItem<string, bool>(
+                Settings.K.DeletableDesktopShortcuts,
+                shortcutPath
+            );
             return canDelete ? Status.Delete : Status.Maintain;
         }
 
@@ -106,10 +129,16 @@ public static class DesktopShortcutsDatabase
         try
         {
             List<string> shortcuts = [];
-            string UserDesktop = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-            string CommonDesktop = Environment.GetFolderPath(Environment.SpecialFolder.CommonDesktopDirectory);
-            if (UserDesktop != "") shortcuts.AddRange(Directory.EnumerateFiles(UserDesktop, "*.lnk"));
-            if (CommonDesktop != "") shortcuts.AddRange(Directory.EnumerateFiles(CommonDesktop, "*.lnk"));
+            string UserDesktop = Environment.GetFolderPath(
+                Environment.SpecialFolder.DesktopDirectory
+            );
+            string CommonDesktop = Environment.GetFolderPath(
+                Environment.SpecialFolder.CommonDesktopDirectory
+            );
+            if (UserDesktop != "")
+                shortcuts.AddRange(Directory.EnumerateFiles(UserDesktop, "*.lnk"));
+            if (CommonDesktop != "")
+                shortcuts.AddRange(Directory.EnumerateFiles(CommonDesktop, "*.lnk"));
             return shortcuts;
         }
         catch (Exception ex)
@@ -183,14 +212,16 @@ public static class DesktopShortcutsDatabase
             {
                 // If a shortcut has not been detected yet, and it
                 // existed before an operation started, then do nothing.
-                if(PreviousShortcuts.Contains(shortcut))
+                if (PreviousShortcuts.Contains(shortcut))
                     continue;
 
                 if (DeleteUnknownShortcuts)
                 {
                     // If the shortcut was created during an operation
                     // and autodelete is enabled, delete that icon
-                    Logger.Warn($"New shortcut {shortcut} will be set for deletion (this shortcut was never seen before)");
+                    Logger.Warn(
+                        $"New shortcut {shortcut} will be set for deletion (this shortcut was never seen before)"
+                    );
                     AddToDatabase(shortcut, Status.Delete);
                     DeleteFromDisk(shortcut);
                 }

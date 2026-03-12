@@ -30,7 +30,11 @@ namespace UniGetUI.PackageEngine.Interfaces.ManagerProviders
         /// <param name="ReturnCode">The return code of the operation</param>
         /// <param name="Output">the command-line output of the operation</param>
         /// <returns>An OperationVeredict value</returns>
-        public OperationVeredict GetAddOperationVeredict(IManagerSource source, int ReturnCode, string[] Output);
+        public OperationVeredict GetAddOperationVeredict(
+            IManagerSource source,
+            int ReturnCode,
+            string[] Output
+        );
 
         /// <summary>
         /// Checks the result of attempting to remove a source
@@ -39,7 +43,11 @@ namespace UniGetUI.PackageEngine.Interfaces.ManagerProviders
         /// <param name="ReturnCode">The return code of the operation</param>
         /// <param name="Output">the command-line output of the operation</param>
         /// <returns>An OperationVeredict value</returns>
-        public OperationVeredict GetRemoveOperationVeredict(IManagerSource source, int ReturnCode, string[] Output);
+        public OperationVeredict GetRemoveOperationVeredict(
+            IManagerSource source,
+            int ReturnCode,
+            string[] Output
+        );
 
         /// <summary>
         /// Returns the available sources

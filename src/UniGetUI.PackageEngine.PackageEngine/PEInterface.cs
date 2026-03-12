@@ -24,7 +24,6 @@ namespace UniGetUI.PackageEngine
     public static class PEInterface
     {
         private const int ManagerLoadTimeout = 60; // 60 seconds timeout for Package Manager initialization (in seconds)
-
 #if WINDOWS
         public static readonly WinGet WinGet = new();
         public static readonly Scoop Scoop = new();
@@ -90,9 +89,8 @@ namespace UniGetUI.PackageEngine
 
     public class PackageBundlesLoader_I : PackageBundlesLoader
     {
-        public PackageBundlesLoader_I(IReadOnlyList<IPackageManager> managers): base(managers)
-        {
-        }
+        public PackageBundlesLoader_I(IReadOnlyList<IPackageManager> managers)
+            : base(managers) { }
 
         public override async Task AddPackagesAsync(IReadOnlyList<IPackage> foreign_packages)
         {
@@ -105,32 +103,49 @@ namespace UniGetUI.PackageEngine
                 {
                     if (native.Source.IsVirtualManager)
                     {
-                        Logger.Debug($"Adding native package with id={native.Id} to bundle as an INVALID package...");
-                        package = new InvalidImportedPackage(native.AsSerializable_Incompatible(), NullSource.Instance);
+                        Logger.Debug(
+                            $"Adding native package with id={native.Id} to bundle as an INVALID package..."
+                        );
+                        package = new InvalidImportedPackage(
+                            native.AsSerializable_Incompatible(),
+                            NullSource.Instance
+                        );
                     }
                     else
                     {
-                        Logger.Debug($"Adding native package with id={native.Id} to bundle as a VALID package...");
-                        package = new ImportedPackage(await native.AsSerializableAsync(), native.Manager, native.Source);
+                        Logger.Debug(
+                            $"Adding native package with id={native.Id} to bundle as a VALID package..."
+                        );
+                        package = new ImportedPackage(
+                            await native.AsSerializableAsync(),
+                            native.Manager,
+                            native.Source
+                        );
                     }
                 }
                 else if (foreign is ImportedPackage imported)
                 {
-                    Logger.Debug($"Adding loaded imported package with id={imported.Id} to bundle...");
+                    Logger.Debug(
+                        $"Adding loaded imported package with id={imported.Id} to bundle..."
+                    );
                     package = imported;
                 }
                 else if (foreign is InvalidImportedPackage invalid)
                 {
-                    Logger.Debug($"Adding loaded incompatible package with id={invalid.Id} to bundle...");
+                    Logger.Debug(
+                        $"Adding loaded incompatible package with id={invalid.Id} to bundle..."
+                    );
                     package = invalid;
                 }
                 else
                 {
-                    Logger.Error($"An IPackage instance id={foreign.Id} did not match the types Package, ImportedPackage or InvalidImportedPackage. This should never be the case");
+                    Logger.Error(
+                        $"An IPackage instance id={foreign.Id} did not match the types Package, ImportedPackage or InvalidImportedPackage. This should never be the case"
+                    );
                 }
 
                 if (package is not null)
-                {   // Here, AddForeign is not used so a single PackagesChangedEvent can be invoked.
+                { // Here, AddForeign is not used so a single PackagesChangedEvent can be invoked.
                     await AddPackage(package);
                     added.Add(package);
                 }

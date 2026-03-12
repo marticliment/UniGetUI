@@ -7,7 +7,11 @@ namespace UniGetUI.Core.Classes.Tests
         {
             public int Value { get; set; }
             public int Index { get; set; }
-            public SortableInt(int value) { Value = value; }
+
+            public SortableInt(int value)
+            {
+                Value = value;
+            }
         }
 
         [Fact]
@@ -16,8 +20,14 @@ namespace UniGetUI.Core.Classes.Tests
             int EventTriggeredCount = 0;
 
             SortableObservableCollection<SortableInt> SortableCollection = [];
-            SortableCollection.CollectionChanged += (_, _) => { EventTriggeredCount++; };
-            SortableCollection.SortingSelector = (s) => { return s.Value; };
+            SortableCollection.CollectionChanged += (_, _) =>
+            {
+                EventTriggeredCount++;
+            };
+            SortableCollection.SortingSelector = (s) =>
+            {
+                return s.Value;
+            };
             SortableCollection.Add(new(1));
             SortableCollection.Add(new(2));
             SortableCollection.Add(new(4));

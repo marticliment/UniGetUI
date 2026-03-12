@@ -26,7 +26,9 @@ namespace UniGetUI.Core.SecureSettings
             }
             catch (Exception ex)
             {
-                Logger.Error("An error occurred while attempting to delete the currently stored GitHub Token");
+                Logger.Error(
+                    "An error occurred while attempting to delete the currently stored GitHub Token"
+                );
                 Logger.Error(ex);
             }
         }
@@ -60,7 +62,9 @@ namespace UniGetUI.Core.SecureSettings
             }
             catch (Exception ex)
             {
-                Logger.Error("An error occurred while attempting to delete the currently stored GitHub Token");
+                Logger.Error(
+                    "An error occurred while attempting to delete the currently stored GitHub Token"
+                );
                 Logger.Error(ex);
             }
         }

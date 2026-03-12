@@ -15,7 +15,9 @@ namespace UniGetUI.PackageEngine.Managers.Generic.NuGet.Internal
         /// <returns>A Uri object</returns>
         public static Uri GetManifestUrl(IPackage package)
         {
-            return new Uri($"{package.Source.Url}/Packages(Id='{package.Id}',Version='{package.VersionString}')");
+            return new Uri(
+                $"{package.Source.Url}/Packages(Id='{package.Id}',Version='{package.VersionString}')"
+            );
         }
 
         /// <summary>
@@ -37,7 +39,9 @@ namespace UniGetUI.PackageEngine.Managers.Generic.NuGet.Internal
         {
             if (BaseNuGet.Manifests.TryGetValue(package.GetHash(), out string? manifest))
             {
-                Logger.Debug($"Loading cached NuGet manifest for package {package.Id} on manager {package.Manager.Name}");
+                Logger.Debug(
+                    $"Loading cached NuGet manifest for package {package.Id} on manager {package.Manager.Name}"
+                );
                 return manifest;
             }
 
@@ -49,26 +53,39 @@ namespace UniGetUI.PackageEngine.Managers.Generic.NuGet.Internal
                 using (HttpClient client = new(CoreTools.GenericHttpClientParameters))
                 {
                     client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
-                    HttpResponseMessage response = client.GetAsync(PackageManifestUrl).GetAwaiter().GetResult();
+                    HttpResponseMessage response = client
+                        .GetAsync(PackageManifestUrl)
+                        .GetAwaiter()
+                        .GetResult();
                     if (!response.IsSuccessStatusCode && package.VersionString.EndsWith(".0"))
                     {
-                        response = client.GetAsync(new Uri(PackageManifestUrl.ToString().Replace(".0')", "')"))).GetAwaiter().GetResult();
+                        response = client
+                            .GetAsync(new Uri(PackageManifestUrl.ToString().Replace(".0')", "')")))
+                            .GetAwaiter()
+                            .GetResult();
                     }
 
                     if (!response.IsSuccessStatusCode)
                     {
-                        Logger.Warn($"Failed to download the {package.Manager.Name} manifest at Url={PackageManifestUrl.ToString()} with status code {response.StatusCode}");
+                        Logger.Warn(
+                            $"Failed to download the {package.Manager.Name} manifest at Url={PackageManifestUrl.ToString()} with status code {response.StatusCode}"
+                        );
                         return null;
                     }
 
-                    PackageManifestContent = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                    PackageManifestContent = response
+                        .Content.ReadAsStringAsync()
+                        .GetAwaiter()
+                        .GetResult();
                 }
                 BaseNuGet.Manifests[package.GetHash()] = PackageManifestContent;
                 return PackageManifestContent;
             }
             catch (Exception e)
             {
-                Logger.Warn($"Failed to download the {package.Manager.Name} manifest at Url={PackageManifestUrl.ToString()}");
+                Logger.Warn(
+                    $"Failed to download the {package.Manager.Name} manifest at Url={PackageManifestUrl.ToString()}"
+                );
                 Logger.Warn(e);
                 return null;
             }

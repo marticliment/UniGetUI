@@ -1,10 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-	<PropertyGroup>
-		<TargetFramework>$(WindowsTargetFramework)</TargetFramework>
-		<TargetFrameworks />
-	</PropertyGroup>
-
-
-
+    <PropertyGroup>
+        <TargetFramework>$(WindowsTargetFramework)</TargetFramework>
+        <TargetFrameworks />
+    </PropertyGroup>
 </Project>

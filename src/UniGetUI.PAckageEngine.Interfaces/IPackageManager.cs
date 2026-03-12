@@ -74,6 +74,5 @@ namespace UniGetUI.PackageEngine.Interfaces
         /// <returns></returns>
         public IReadOnlyList<string> FindCandidateExecutableFiles();
         public Tuple<bool, string> GetExecutableFile();
-
     }
 }

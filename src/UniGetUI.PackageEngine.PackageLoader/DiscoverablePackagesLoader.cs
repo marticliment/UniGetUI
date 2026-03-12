@@ -11,12 +11,14 @@ namespace UniGetUI.PackageEngine.PackageLoader
         private string QUERY_TEXT = string.Empty;
 
         public DiscoverablePackagesLoader(IReadOnlyList<IPackageManager> managers)
-            : base(managers,
+            : base(
+                managers,
                 identifier: "DISCOVERABLE_PACKAGES",
                 AllowMultiplePackageVersions: false,
                 DisableReload: false,
                 CheckedBydefault: false,
-                RequiresInternet: true)
+                RequiresInternet: true
+            )
         {
             Instance = this;
         }
@@ -51,7 +53,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
                 return [];
             }
 
-            return  manager.FindPackages(text);
+            return manager.FindPackages(text);
         }
 
         protected override Task WhenAddingPackage(IPackage package)
@@ -67,7 +69,11 @@ namespace UniGetUI.PackageEngine.PackageLoader
             return Task.CompletedTask;
         }
 
-        public (IPackage?, string?) GetPackageFromIdAndManager(string id, string managerName, string sourceName)
+        public (IPackage?, string?) GetPackageFromIdAndManager(
+            string id,
+            string managerName,
+            string sourceName
+        )
         {
             IPackageManager? manager = null;
 
@@ -81,19 +87,41 @@ namespace UniGetUI.PackageEngine.PackageLoader
             }
 
             if (manager is null)
-                return (null, CoreTools.Translate("The package manager \"{0}\" was not found", managerName));
+                return (
+                    null,
+                    CoreTools.Translate("The package manager \"{0}\" was not found", managerName)
+                );
 
             if (!manager.IsEnabled())
-                return (null, CoreTools.Translate("The package manager \"{0}\" is disabled", manager.DisplayName));
+                return (
+                    null,
+                    CoreTools.Translate(
+                        "The package manager \"{0}\" is disabled",
+                        manager.DisplayName
+                    )
+                );
 
             if (!manager.Status.Found)
-                return (null, CoreTools.Translate("There is an error with the configuration of the package manager \"{0}\"", manager.DisplayName));
+                return (
+                    null,
+                    CoreTools.Translate(
+                        "There is an error with the configuration of the package manager \"{0}\"",
+                        manager.DisplayName
+                    )
+                );
 
             var results = manager.FindPackages(id);
             var candidates = results.Where(p => p.Id == id).ToArray();
 
             if (candidates.Length == 0)
-                return (null, CoreTools.Translate("The package \"{0}\" was not found on the package manager \"{1}\"", id, manager.DisplayName));
+                return (
+                    null,
+                    CoreTools.Translate(
+                        "The package \"{0}\" was not found on the package manager \"{1}\"",
+                        id,
+                        manager.DisplayName
+                    )
+                );
 
             IPackage package = candidates[0];
 

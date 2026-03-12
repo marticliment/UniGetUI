@@ -1,4 +1,3 @@
-
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
@@ -9,7 +8,9 @@ namespace UniGetUI.Interface.Widgets
 {
     public partial class BetterMenu : MenuFlyout
     {
-        private readonly Style menuyStyle = (Style)Application.Current.Resources["BetterContextMenu"];
+        private readonly Style menuyStyle = (Style)
+            Application.Current.Resources["BetterContextMenu"];
+
         public BetterMenu()
         {
             MenuFlyoutPresenterStyle = menuyStyle;
@@ -29,8 +30,14 @@ namespace UniGetUI.Interface.Widgets
             }
         }
 
-        public string UntranslatedText { set => base.Text = value; }
-        public new string Text { set => base.Text = CoreTools.Translate(value); }
+        public string UntranslatedText
+        {
+            set => base.Text = value;
+        }
+        public new string Text
+        {
+            set => base.Text = CoreTools.Translate(value);
+        }
 
         public BetterMenuItem()
         {
@@ -40,7 +47,8 @@ namespace UniGetUI.Interface.Widgets
 
     public partial class BetterToggleMenuItem : ToggleMenuFlyoutItem
     {
-        private readonly Style menuStyle = (Style)Application.Current.Resources["BetterToggleMenuItem"];
+        private readonly Style menuStyle = (Style)
+            Application.Current.Resources["BetterToggleMenuItem"];
 
         public IconType IconName
         {
@@ -66,10 +74,27 @@ namespace UniGetUI.Interface.Widgets
     {
         string line1 = "";
         string line2 = "";
-        public string Line1 { set { line1 = value; LoadText(); } }
-        public string Line2 { set { line2 = value; LoadText(); } }
+        public string Line1
+        {
+            set
+            {
+                line1 = value;
+                LoadText();
+            }
+        }
+        public string Line2
+        {
+            set
+            {
+                line2 = value;
+                LoadText();
+            }
+        }
 
-        public IconType IconName { set => IconSource = new LocalIconSource(value); }
+        public IconType IconName
+        {
+            set => IconSource = new LocalIconSource(value);
+        }
 
         public BetterTabViewItem()
         {
@@ -82,20 +107,23 @@ namespace UniGetUI.Interface.Widgets
             string text = "";
             // The invisible U+200E character here is used to prevent the text from being
             // trimmed in the TabViewItem header, adding a little bit of padding at the end.
-            if (line1 != "") text += CoreTools.Translate(line1) + " ‎‎ ";
-            if (line2 != "") text += (text.Length> 0?"\n":"") + CoreTools.Translate(line2) + " ‎ ";
+            if (line1 != "")
+                text += CoreTools.Translate(line1) + " ‎‎ ";
+            if (line2 != "")
+                text += (text.Length > 0 ? "\n" : "") + CoreTools.Translate(line2) + " ‎ ";
             Header = text;
         }
     }
 
-    public partial class BetterFlyout: Flyout
+    public partial class BetterFlyout : Flyout
     {
-        public BetterFlyout() : base()
+        public BetterFlyout()
+            : base()
         {
             ShouldConstrainToRootBounds = false;
             SystemBackdrop = new DesktopAcrylicBackdrop();
-            FlyoutPresenterStyle = (Style)Application.Current.Resources["BetterFlyoutPresenterStyle"];
+            FlyoutPresenterStyle = (Style)
+                Application.Current.Resources["BetterFlyoutPresenterStyle"];
         }
     }
-
 }

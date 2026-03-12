@@ -11,9 +11,14 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 {
     internal sealed class ScoopSourceHelper : BaseSourceHelper
     {
-        public ScoopSourceHelper(Scoop manager) : base(manager) { }
+        public ScoopSourceHelper(Scoop manager)
+            : base(manager) { }
 
-        protected override OperationVeredict _getAddSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
+        protected override OperationVeredict _getAddSourceOperationVeredict(
+            IManagerSource source,
+            int ReturnCode,
+            string[] Output
+        )
         {
             return ReturnCode == 0 ? OperationVeredict.Success : OperationVeredict.Failure;
         }
@@ -23,7 +28,11 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             return ["bucket", "add", source.Name, source.Url.ToString()];
         }
 
-        protected override OperationVeredict _getRemoveSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
+        protected override OperationVeredict _getRemoveSourceOperationVeredict(
+            IManagerSource source,
+            int ReturnCode,
+            string[] Output
+        )
         {
             return ReturnCode == 0 ? OperationVeredict.Success : OperationVeredict.Failure;
         }
@@ -48,10 +57,13 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     CreateNoWindow = true,
                     StandardInputEncoding = System.Text.Encoding.UTF8,
                     StandardOutputEncoding = System.Text.Encoding.UTF8,
-                }
+                },
             };
 
-            IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListSources, p);
+            IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(
+                LoggableTaskType.ListSources,
+                p
+            );
             List<ManagerSource> sources = [];
 
             p.Start();
@@ -73,13 +85,28 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     }
                     else if (line.Trim() != "")
                     {
-                        string[] elements = Regex.Replace(Regex.Replace(line, "[1234567890 :.-][AaPp][Mm][\\W]", "").Trim(), " {2,}", " ").Split(' ');
+                        string[] elements = Regex
+                            .Replace(
+                                Regex.Replace(line, "[1234567890 :.-][AaPp][Mm][\\W]", "").Trim(),
+                                " {2,}",
+                                " "
+                            )
+                            .Split(' ');
                         if (elements.Length >= 5)
                         {
-                            if (!elements[1].Contains("https://") && !elements[1].Contains("http://"))
+                            if (
+                                !elements[1].Contains("https://")
+                                && !elements[1].Contains("http://")
+                            )
                             {
-                                elements[1] = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-                                    "scoop", "buckets", elements[0].Trim());
+                                elements[1] = Path.Join(
+                                    Environment.GetFolderPath(
+                                        Environment.SpecialFolder.UserProfile
+                                    ),
+                                    "scoop",
+                                    "buckets",
+                                    elements[0].Trim()
+                                );
                             }
                             else
                             {
@@ -88,13 +115,28 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
                             try
                             {
-                                sources.Add(new ManagerSource(Manager, elements[0].Trim(), new Uri(elements[1]),
-                                    int.Parse(elements[4].Trim()), elements[2].Trim() + " " + elements[3].Trim()));
+                                sources.Add(
+                                    new ManagerSource(
+                                        Manager,
+                                        elements[0].Trim(),
+                                        new Uri(elements[1]),
+                                        int.Parse(elements[4].Trim()),
+                                        elements[2].Trim() + " " + elements[3].Trim()
+                                    )
+                                );
                             }
                             catch (Exception ex)
                             {
                                 logger.AddToStdErr(ex.ToString());
-                                sources.Add(new ManagerSource(Manager, elements[0].Trim(), new Uri(elements[1]), -1, "1/1/1970"));
+                                sources.Add(
+                                    new ManagerSource(
+                                        Manager,
+                                        elements[0].Trim(),
+                                        new Uri(elements[1]),
+                                        -1,
+                                        "1/1/1970"
+                                    )
+                                );
                             }
                         }
                     }

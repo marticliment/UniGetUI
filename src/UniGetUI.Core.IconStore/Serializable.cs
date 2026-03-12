@@ -1,4 +1,4 @@
-﻿namespace UniGetUI.Core.IconEngine
+namespace UniGetUI.Core.IconEngine
 {
     internal struct IconScreenshotDatabase_v2
     {
@@ -10,6 +10,7 @@
             public int packages_with_screenshot { get; set; }
             public int total_screenshots { get; set; }
         }
+
         public struct PackageIconAndScreenshots
         {
             public string icon { get; set; }

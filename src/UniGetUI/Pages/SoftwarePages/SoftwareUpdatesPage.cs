@@ -1,5 +1,3 @@
-using Windows.Networking.Connectivity;
-using Windows.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -17,9 +15,11 @@ using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Classes.Packages.Classes;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.PackageLoader;
 using UniGetUI.Pages.DialogPages;
-using UniGetUI.PackageEngine.PackageClasses;
+using Windows.Networking.Connectivity;
+using Windows.UI.Text;
 
 namespace UniGetUI.Interface.SoftwarePages
 {
@@ -32,31 +32,36 @@ namespace UniGetUI.Interface.SoftwarePages
         private BetterMenuItem? MenuOpenInstallLocation;
 
         public SoftwareUpdatesPage()
-        : base(new PackagesPageData
-        {
-            DisableAutomaticPackageLoadOnStart = false,
-            DisableFilterOnQueryChange = false,
-            MegaQueryBlockEnabled = false,
-            ShowLastLoadTime = true,
-            DisableReload = false,
-            PackagesAreCheckedByDefault = true,
-            DisableSuggestedResultsRadio = true,
-            PageName = "Updates",
+            : base(
+                new PackagesPageData
+                {
+                    DisableAutomaticPackageLoadOnStart = false,
+                    DisableFilterOnQueryChange = false,
+                    MegaQueryBlockEnabled = false,
+                    ShowLastLoadTime = true,
+                    DisableReload = false,
+                    PackagesAreCheckedByDefault = true,
+                    DisableSuggestedResultsRadio = true,
+                    PageName = "Updates",
 
-            Loader = UpgradablePackagesLoader.Instance,
-            PageRole = OperationType.Update,
+                    Loader = UpgradablePackagesLoader.Instance,
+                    PageRole = OperationType.Update,
 
-            NoPackages_BackgroundText = CoreTools.Translate("Hooray! No updates were found."),
-            NoPackages_SourcesText = CoreTools.Translate("Everything is up to date"),
-            NoPackages_SubtitleText_Base = CoreTools.Translate("Everything is up to date"),
-            MainSubtitle_StillLoading = CoreTools.Translate("Loading packages"),
-            NoMatches_BackgroundText = CoreTools.Translate("No results were found matching the input criteria"),
+                    NoPackages_BackgroundText = CoreTools.Translate(
+                        "Hooray! No updates were found."
+                    ),
+                    NoPackages_SourcesText = CoreTools.Translate("Everything is up to date"),
+                    NoPackages_SubtitleText_Base = CoreTools.Translate("Everything is up to date"),
+                    MainSubtitle_StillLoading = CoreTools.Translate("Loading packages"),
+                    NoMatches_BackgroundText = CoreTools.Translate(
+                        "No results were found matching the input criteria"
+                    ),
 
-            PageTitle = CoreTools.Translate("Software Updates"),
-            Glyph = "\uE895"
-        })
-        {
-        }
+                    PageTitle = CoreTools.Translate("Software Updates"),
+                    Glyph = "\uE895",
+                }
+            )
+        { }
 
         public override BetterMenu GenerateContextMenu()
         {
@@ -66,7 +71,7 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 Text = CoreTools.AutoTranslated("Update"),
                 IconName = IconType.Update,
-                KeyboardAcceleratorTextOverride = "Ctrl+Enter"
+                KeyboardAcceleratorTextOverride = "Ctrl+Enter",
             };
             menuInstall.Click += MenuInstall_Invoked;
 
@@ -74,9 +79,10 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 Text = CoreTools.AutoTranslated("Update options"),
                 IconName = IconType.Options,
-                KeyboardAcceleratorTextOverride = "Alt+Enter"
+                KeyboardAcceleratorTextOverride = "Alt+Enter",
             };
-            menuInstallSettings.Click += (_, _) => _ = ShowInstallationOptionsForPackage(SelectedItem);
+            menuInstallSettings.Click += (_, _) =>
+                _ = ShowInstallationOptionsForPackage(SelectedItem);
 
             MenuOpenInstallLocation = new()
             {
@@ -109,9 +115,13 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuDownloadInstaller = new BetterMenuItem
             {
                 Text = CoreTools.AutoTranslated("Download installer"),
-                IconName = IconType.Download
+                IconName = IconType.Download,
             };
-            MenuDownloadInstaller.Click += (_, _) => _ = MainApp.Operations.AskLocationAndDownload(SelectedItem, TEL_InstallReferral.ALREADY_INSTALLED);
+            MenuDownloadInstaller.Click += (_, _) =>
+                _ = MainApp.Operations.AskLocationAndDownload(
+                    SelectedItem,
+                    TEL_InstallReferral.ALREADY_INSTALLED
+                );
 
             BetterMenuItem menuUpdateAfterUninstall = new()
             {
@@ -152,30 +162,38 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 Text = CoreTools.AutoTranslated("Package details"),
                 IconName = IconType.Info_Round,
-                KeyboardAcceleratorTextOverride = "Enter"
+                KeyboardAcceleratorTextOverride = "Enter",
             };
-            menuDetails.Click += (_, _) => ShowDetailsForPackage(SelectedItem, TEL_InstallReferral.ALREADY_INSTALLED);
+            menuDetails.Click += (_, _) =>
+                ShowDetailsForPackage(SelectedItem, TEL_InstallReferral.ALREADY_INSTALLED);
 
             MenuFlyoutSubItem menuPause = new()
             {
                 Text = CoreTools.Translate("Pause updates for"),
                 Icon = new FontIcon { Glyph = "\uE769" },
             };
-            foreach (IgnoredUpdatesDatabase.PauseTime menuTime in new List<IgnoredUpdatesDatabase.PauseTime>{
-                new() { Days = 1 }, new() { Days = 3 },
-                new() { Weeks = 1 }, new() { Weeks = 2 }, new() { Weeks = 4 },
-                new() { Months = 3 }, new() { Months = 6 }, new() { Months = 12 },
-            })
-            {
-                BetterMenuItem menuItem = new()
+            foreach (
+                IgnoredUpdatesDatabase.PauseTime menuTime in new List<IgnoredUpdatesDatabase.PauseTime>
                 {
-                    Text = menuTime.StringRepresentation(),
-                };
-                menuItem.Click += (_, _) => {
+                    new() { Days = 1 },
+                    new() { Days = 3 },
+                    new() { Weeks = 1 },
+                    new() { Weeks = 2 },
+                    new() { Weeks = 4 },
+                    new() { Months = 3 },
+                    new() { Months = 6 },
+                    new() { Months = 12 },
+                }
+            )
+            {
+                BetterMenuItem menuItem = new() { Text = menuTime.StringRepresentation() };
+                menuItem.Click += (_, _) =>
+                {
                     if (SelectedItem != null)
                     {
                         SelectedItem.AddToIgnoredUpdatesAsync("<" + menuTime.GetDateFromNow());
-                        UpgradablePackagesLoader.Instance.IgnoredPackages[SelectedItem.Id] = SelectedItem;
+                        UpgradablePackagesLoader.Instance.IgnoredPackages[SelectedItem.Id] =
+                            SelectedItem;
                         Loader.Remove(SelectedItem);
                     }
                 };
@@ -207,11 +225,13 @@ namespace UniGetUI.Interface.SoftwarePages
 
         protected override void WhenShowingContextMenu(IPackage package)
         {
-            if (MenuAsAdmin is null
+            if (
+                MenuAsAdmin is null
                 || MenuInteractive is null
                 || MenuskipHash is null
                 || MenuDownloadInstaller is null
-                || MenuOpenInstallLocation is null)
+                || MenuOpenInstallLocation is null
+            )
             {
                 Logger.Error("Menu items are null on SoftwareUpdatesTab");
                 return;
@@ -222,7 +242,8 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuskipHash.IsEnabled = package.Manager.Capabilities.CanSkipIntegrityChecks;
             MenuDownloadInstaller.IsEnabled = package.Manager.Capabilities.CanDownloadInstaller;
 
-            MenuOpenInstallLocation.IsEnabled = package.Manager.DetailsHelper.GetInstallLocation(package) is not null;
+            MenuOpenInstallLocation.IsEnabled =
+                package.Manager.DetailsHelper.GetInstallLocation(package) is not null;
         }
 
         public override void GenerateToolBar()
@@ -235,16 +256,17 @@ namespace UniGetUI.Interface.SoftwarePages
 
             MainToolbarButtonDropdown.Flyout = new BetterMenu()
             {
-                Items = {
+                Items =
+                {
                     UpdateAsAdmin,
                     UpdateSkipHash,
                     UpdateInteractive,
                     new MenuFlyoutSeparator(),
                     DownloadInstallers,
                     new MenuFlyoutSeparator(),
-                    UninstallSelection
+                    UninstallSelection,
                 },
-                Placement = FlyoutPlacementMode.Bottom
+                Placement = FlyoutPlacementMode.Bottom,
             };
             MainToolbarButtonIcon.Icon = IconType.Update;
             MainToolbarButtonText.Text = CoreTools.Translate("Update selection");
@@ -272,40 +294,42 @@ namespace UniGetUI.Interface.SoftwarePages
 
             Dictionary<DependencyObject, string> Labels = new()
             { // Entries with a leading space are collapsed
-              // Their texts will be used as the tooltip
-                { UpdateAsAdmin,        CoreTools.Translate("Update as administrator") },
-                { UpdateSkipHash,       CoreTools.Translate("Skip integrity checks") },
-                { UpdateInteractive,    CoreTools.Translate("Interactive update") },
-                { DownloadInstallers,   CoreTools.Translate("Download selected installers") },
-                { UninstallSelection,   CoreTools.Translate("Uninstall selected packages") },
+                // Their texts will be used as the tooltip
+                { UpdateAsAdmin, CoreTools.Translate("Update as administrator") },
+                { UpdateSkipHash, CoreTools.Translate("Skip integrity checks") },
+                { UpdateInteractive, CoreTools.Translate("Interactive update") },
+                { DownloadInstallers, CoreTools.Translate("Download selected installers") },
+                { UninstallSelection, CoreTools.Translate("Uninstall selected packages") },
                 { InstallationSettings, " " + CoreTools.Translate("Update options") },
-                { PackageDetails,       " " + CoreTools.Translate("Package details") },
-                { SharePackage,         " " + CoreTools.Translate("Share") },
-                { IgnoreSelected,       CoreTools.Translate("Ignore selected packages") },
-                { ManageIgnored,        CoreTools.Translate("Manage ignored updates") },
-                { HelpButton,           CoreTools.Translate("Help") }
+                { PackageDetails, " " + CoreTools.Translate("Package details") },
+                { SharePackage, " " + CoreTools.Translate("Share") },
+                { IgnoreSelected, CoreTools.Translate("Ignore selected packages") },
+                { ManageIgnored, CoreTools.Translate("Manage ignored updates") },
+                { HelpButton, CoreTools.Translate("Help") },
             };
 
             Dictionary<DependencyObject, IconType> Icons = new()
             {
-                { UpdateAsAdmin,        IconType.UAC },
-                { UpdateSkipHash,       IconType.Checksum },
-                { UpdateInteractive,    IconType.Interactive },
+                { UpdateAsAdmin, IconType.UAC },
+                { UpdateSkipHash, IconType.Checksum },
+                { UpdateInteractive, IconType.Interactive },
                 { InstallationSettings, IconType.Options },
-                { DownloadInstallers,   IconType.Download },
-                { UninstallSelection,   IconType.Delete },
-                { PackageDetails,       IconType.Info_Round },
-                { SharePackage,         IconType.Share },
-                { IgnoreSelected,       IconType.Pin },
-                { ManageIgnored,        IconType.ClipboardList },
-                { HelpButton,           IconType.Help }
+                { DownloadInstallers, IconType.Download },
+                { UninstallSelection, IconType.Delete },
+                { PackageDetails, IconType.Info_Round },
+                { SharePackage, IconType.Share },
+                { IgnoreSelected, IconType.Pin },
+                { ManageIgnored, IconType.ClipboardList },
+                { HelpButton, IconType.Help },
             };
 
             ApplyTextAndIconsToToolbar(Labels, Icons);
 
-            PackageDetails.Click += (_, _) => ShowDetailsForPackage(SelectedItem, TEL_InstallReferral.ALREADY_INSTALLED);
+            PackageDetails.Click += (_, _) =>
+                ShowDetailsForPackage(SelectedItem, TEL_InstallReferral.ALREADY_INSTALLED);
             HelpButton.Click += (_, _) => MainApp.Instance.MainWindow.NavigationPage.ShowHelp();
-            InstallationSettings.Click += (_, _) => _ = ShowInstallationOptionsForPackage(SelectedItem);
+            InstallationSettings.Click += (_, _) =>
+                _ = ShowInstallationOptionsForPackage(SelectedItem);
             ManageIgnored.Click += async (_, _) => await DialogHelper.ManageIgnoredUpdates();
             IgnoreSelected.Click += async (_, _) =>
             {
@@ -317,12 +341,24 @@ namespace UniGetUI.Interface.SoftwarePages
                 }
             };
 
-            MainToolbarButton.Click += (_, _) => MainApp.Operations.Update(FilteredPackages.GetCheckedPackages());
-            UpdateAsAdmin.Click += (_, _) => MainApp.Operations.Update(FilteredPackages.GetCheckedPackages(), elevated: true);
-            UpdateSkipHash.Click += (_, _) => MainApp.Operations.Update(FilteredPackages.GetCheckedPackages(), no_integrity: true);
-            UpdateInteractive.Click += (_, _) => MainApp.Operations.Update(FilteredPackages.GetCheckedPackages(), interactive: true);
-            DownloadInstallers.Click += (_, _) => _ = MainApp.Operations.Download(FilteredPackages.GetCheckedPackages(), TEL_InstallReferral.ALREADY_INSTALLED);
-            UninstallSelection.Click += (_, _) => _ = MainApp.Operations.ConfirmAndUninstall(FilteredPackages.GetCheckedPackages());
+            MainToolbarButton.Click += (_, _) =>
+                MainApp.Operations.Update(FilteredPackages.GetCheckedPackages());
+            UpdateAsAdmin.Click += (_, _) =>
+                MainApp.Operations.Update(FilteredPackages.GetCheckedPackages(), elevated: true);
+            UpdateSkipHash.Click += (_, _) =>
+                MainApp.Operations.Update(
+                    FilteredPackages.GetCheckedPackages(),
+                    no_integrity: true
+                );
+            UpdateInteractive.Click += (_, _) =>
+                MainApp.Operations.Update(FilteredPackages.GetCheckedPackages(), interactive: true);
+            DownloadInstallers.Click += (_, _) =>
+                _ = MainApp.Operations.Download(
+                    FilteredPackages.GetCheckedPackages(),
+                    TEL_InstallReferral.ALREADY_INSTALLED
+                );
+            UninstallSelection.Click += (_, _) =>
+                _ = MainApp.Operations.ConfirmAndUninstall(FilteredPackages.GetCheckedPackages());
             SharePackage.Click += (_, _) => DialogHelper.SharePackage(SelectedItem);
         }
 
@@ -336,29 +372,48 @@ namespace UniGetUI.Interface.SoftwarePages
             try
             {
                 List<IPackage> upgradablePackages = [];
-            foreach (IPackage package in Loader.Packages)
-            {
-                if (package.Tag is not PackageTag.OnQueue and not PackageTag.BeingProcessed)
-                    upgradablePackages.Add(package);
-            }
+                foreach (IPackage package in Loader.Packages)
+                {
+                    if (package.Tag is not PackageTag.OnQueue and not PackageTag.BeingProcessed)
+                        upgradablePackages.Add(package);
+                }
 
                 if (upgradablePackages.Count == 0)
                     return;
 
-                if (Settings.Get(Settings.K.DisableAUPOnMeteredConnections) &&
-                    NetworkInformation.GetInternetConnectionProfile()?.GetConnectionCost().NetworkCostType is NetworkCostType.Fixed or NetworkCostType.Variable)
+                if (
+                    Settings.Get(Settings.K.DisableAUPOnMeteredConnections)
+                    && NetworkInformation
+                        .GetInternetConnectionProfile()
+                        ?.GetConnectionCost()
+                        .NetworkCostType
+                        is NetworkCostType.Fixed
+                            or NetworkCostType.Variable
+                )
                 {
-                    Logger.Warn("Updates will not be installed automatically because the current internet connection is metered.");
+                    Logger.Warn(
+                        "Updates will not be installed automatically because the current internet connection is metered."
+                    );
                     await ShowAvailableUpdatesNotification(upgradablePackages);
                 }
-                else if (Settings.Get(Settings.K.DisableAUPOnBattery) && PowerManager.PowerSupplyStatus is PowerSupplyStatus.NotPresent)
+                else if (
+                    Settings.Get(Settings.K.DisableAUPOnBattery)
+                    && PowerManager.PowerSupplyStatus is PowerSupplyStatus.NotPresent
+                )
                 {
-                    Logger.Warn("Updates will not be installed automatically because the device is on battery.");
+                    Logger.Warn(
+                        "Updates will not be installed automatically because the device is on battery."
+                    );
                     await ShowAvailableUpdatesNotification(upgradablePackages);
                 }
-                else if (Settings.Get(Settings.K.DisableAUPOnBatterySaver) && PowerManager.EnergySaverStatus is EnergySaverStatus.On)
+                else if (
+                    Settings.Get(Settings.K.DisableAUPOnBatterySaver)
+                    && PowerManager.EnergySaverStatus is EnergySaverStatus.On
+                )
                 {
-                    Logger.Warn("Updates will not be installed automatically because battery saver is enabled.");
+                    Logger.Warn(
+                        "Updates will not be installed automatically because battery saver is enabled."
+                    );
                     await ShowAvailableUpdatesNotification(upgradablePackages);
                 }
                 else if (Settings.Get(Settings.K.AutomaticallyUpdatePackages))
@@ -370,13 +425,19 @@ namespace UniGetUI.Interface.SoftwarePages
                 {
                     _ = MainApp.Operations.UpdateAll();
                     await ShowUpgradingPackagesNotification(upgradablePackages);
-                    Logger.Warn("Automatic install of updates has been enabled via Command Line (user settings have been overriden)");
+                    Logger.Warn(
+                        "Automatic install of updates has been enabled via Command Line (user settings have been overriden)"
+                    );
                 }
                 else
                 {
-                    foreach(var package in upgradablePackages)
+                    foreach (var package in upgradablePackages)
                     {
-                        if ((await InstallOptionsFactory.LoadApplicableAsync(package)).AutoUpdatePackage)
+                        if (
+                            (
+                                await InstallOptionsFactory.LoadApplicableAsync(package)
+                            ).AutoUpdatePackage
+                        )
                         {
                             await MainApp.Operations.Update(package);
                         }
@@ -390,7 +451,9 @@ namespace UniGetUI.Interface.SoftwarePages
             }
         }
 
-        static async Task ShowAvailableUpdatesNotification(IReadOnlyList<IPackage> upgradablePackages)
+        static async Task ShowAvailableUpdatesNotification(
+            IReadOnlyList<IPackage> upgradablePackages
+        )
         {
             if (Settings.AreUpdatesNotificationsDisabled())
                 return;
@@ -399,7 +462,12 @@ namespace UniGetUI.Interface.SoftwarePages
             foreach (var Package in upgradablePackages)
             {
                 // This allows to disable update notifications only for certain package managers
-                if (!Settings.GetDictionaryItem<string, bool>(Settings.K.DisabledPackageManagerNotifications, Package.Manager.Name))
+                if (
+                    !Settings.GetDictionaryItem<string, bool>(
+                        Settings.K.DisabledPackageManagerNotifications,
+                        Package.Manager.Name
+                    )
+                )
                 {
                     SendNotification = true;
                     break;
@@ -409,7 +477,9 @@ namespace UniGetUI.Interface.SoftwarePages
             if (!SendNotification)
                 return;
 
-            await AppNotificationManager.Default.RemoveByTagAsync(CoreData.UpdatesAvailableNotificationTag.ToString());
+            await AppNotificationManager.Default.RemoveByTagAsync(
+                CoreData.UpdatesAvailableNotificationTag.ToString()
+            );
 
             AppNotification notification;
             if (upgradablePackages.Count == 1)
@@ -417,19 +487,31 @@ namespace UniGetUI.Interface.SoftwarePages
                 AppNotificationBuilder builder = new AppNotificationBuilder()
                     .SetScenario(AppNotificationScenario.Default)
                     .SetTag(CoreData.UpdatesAvailableNotificationTag.ToString())
-
                     .AddText(CoreTools.Translate("An update was found!"))
-                    .AddText(CoreTools.Translate("{0} can be updated to version {1}",
-                        upgradablePackages[0].Name, upgradablePackages[0].NewVersionString))
-                    .SetAttributionText(CoreTools.Translate("You have currently version {0} installed",
-                        upgradablePackages[0].VersionString))
-
-                    .AddArgument("action", NotificationArguments.ShowOnUpdatesTab)     // Believe it or not, the `'` character is broken
-                    .AddButton(new AppNotificationButton(CoreTools.Translate("View on UniGetUI").Replace("'", "´"))
-                        .AddArgument("action", NotificationArguments.ShowOnUpdatesTab)
+                    .AddText(
+                        CoreTools.Translate(
+                            "{0} can be updated to version {1}",
+                            upgradablePackages[0].Name,
+                            upgradablePackages[0].NewVersionString
+                        )
                     )
-                    .AddButton(new AppNotificationButton(CoreTools.Translate("Update"))
-                        .AddArgument("action", NotificationArguments.UpdateAllPackages)
+                    .SetAttributionText(
+                        CoreTools.Translate(
+                            "You have currently version {0} installed",
+                            upgradablePackages[0].VersionString
+                        )
+                    )
+                    .AddArgument("action", NotificationArguments.ShowOnUpdatesTab) // Believe it or not, the `'` character is broken
+                    .AddButton(
+                        new AppNotificationButton(
+                            CoreTools.Translate("View on UniGetUI").Replace("'", "´")
+                        ).AddArgument("action", NotificationArguments.ShowOnUpdatesTab)
+                    )
+                    .AddButton(
+                        new AppNotificationButton(CoreTools.Translate("Update")).AddArgument(
+                            "action",
+                            NotificationArguments.UpdateAllPackages
+                        )
                     );
                 notification = builder.BuildNotification();
             }
@@ -438,7 +520,12 @@ namespace UniGetUI.Interface.SoftwarePages
                 string attribution = "";
                 foreach (IPackage package in upgradablePackages)
                 {
-                    if (!Settings.GetDictionaryItem<string, bool>(Settings.K.DisabledPackageManagerNotifications, package.Manager.Name))
+                    if (
+                        !Settings.GetDictionaryItem<string, bool>(
+                            Settings.K.DisabledPackageManagerNotifications,
+                            package.Manager.Name
+                        )
+                    )
                         attribution += package.Name + ", ";
                 }
 
@@ -447,16 +534,22 @@ namespace UniGetUI.Interface.SoftwarePages
                 AppNotificationBuilder builder = new AppNotificationBuilder()
                     .SetScenario(AppNotificationScenario.Default)
                     .SetTag(CoreData.UpdatesAvailableNotificationTag.ToString())
-
                     .AddText(CoreTools.Translate("Updates found!"))
-                    .AddText(CoreTools.Translate("{0} packages can be updated", upgradablePackages.Count))
-                    .SetAttributionText(attribution)
-                                                                            // Believe it or not, the `'` character is broken
-                    .AddButton(new AppNotificationButton(CoreTools.Translate("Open UniGetUI").Replace("'", "´"))
-                        .AddArgument("action", NotificationArguments.ShowOnUpdatesTab)
+                    .AddText(
+                        CoreTools.Translate("{0} packages can be updated", upgradablePackages.Count)
                     )
-                    .AddButton(new AppNotificationButton(CoreTools.Translate("Update all"))
-                        .AddArgument("action", NotificationArguments.UpdateAllPackages)
+                    .SetAttributionText(attribution)
+                    // Believe it or not, the `'` character is broken
+                    .AddButton(
+                        new AppNotificationButton(
+                            CoreTools.Translate("Open UniGetUI").Replace("'", "´")
+                        ).AddArgument("action", NotificationArguments.ShowOnUpdatesTab)
+                    )
+                    .AddButton(
+                        new AppNotificationButton(CoreTools.Translate("Update all")).AddArgument(
+                            "action",
+                            NotificationArguments.UpdateAllPackages
+                        )
                     )
                     .AddArgument("action", NotificationArguments.ShowOnUpdatesTab);
                 notification = builder.BuildNotification();
@@ -466,7 +559,9 @@ namespace UniGetUI.Interface.SoftwarePages
             AppNotificationManager.Default.Show(notification);
         }
 
-        static async Task ShowUpgradingPackagesNotification(IReadOnlyList<IPackage> upgradablePackages)
+        static async Task ShowUpgradingPackagesNotification(
+            IReadOnlyList<IPackage> upgradablePackages
+        )
         {
             if (Settings.AreUpdatesNotificationsDisabled())
                 return;
@@ -474,7 +569,12 @@ namespace UniGetUI.Interface.SoftwarePages
             bool SendNotification = false;
             foreach (var Package in upgradablePackages)
             {
-                if (!Settings.GetDictionaryItem<string, bool>(Settings.K.DisabledPackageManagerNotifications, Package.Manager.Name))
+                if (
+                    !Settings.GetDictionaryItem<string, bool>(
+                        Settings.K.DisabledPackageManagerNotifications,
+                        Package.Manager.Name
+                    )
+                )
                 {
                     SendNotification = true;
                     break;
@@ -484,7 +584,9 @@ namespace UniGetUI.Interface.SoftwarePages
             if (!SendNotification)
                 return;
 
-            await AppNotificationManager.Default.RemoveByTagAsync(CoreData.UpdatesAvailableNotificationTag.ToString());
+            await AppNotificationManager.Default.RemoveByTagAsync(
+                CoreData.UpdatesAvailableNotificationTag.ToString()
+            );
 
             AppNotification notification;
             if (upgradablePackages.Count == 1)
@@ -492,11 +594,20 @@ namespace UniGetUI.Interface.SoftwarePages
                 AppNotificationBuilder builder = new AppNotificationBuilder()
                     .SetScenario(AppNotificationScenario.Default)
                     .SetTag(CoreData.UpdatesAvailableNotificationTag.ToString())
-
                     .AddText(CoreTools.Translate("An update was found!"))
-                    .AddText(CoreTools.Translate("{0} is being updated to version {1}", upgradablePackages[0].Name, upgradablePackages[0].NewVersionString))
-                    .SetAttributionText(CoreTools.Translate("You have currently version {0} installed", upgradablePackages[0].VersionString))
-
+                    .AddText(
+                        CoreTools.Translate(
+                            "{0} is being updated to version {1}",
+                            upgradablePackages[0].Name,
+                            upgradablePackages[0].NewVersionString
+                        )
+                    )
+                    .SetAttributionText(
+                        CoreTools.Translate(
+                            "You have currently version {0} installed",
+                            upgradablePackages[0].VersionString
+                        )
+                    )
                     .AddArgument("action", NotificationArguments.ShowOnUpdatesTab);
                 notification = builder.BuildNotification();
             }
@@ -505,7 +616,12 @@ namespace UniGetUI.Interface.SoftwarePages
                 string attribution = "";
                 foreach (IPackage package in upgradablePackages)
                 {
-                    if (!Settings.GetDictionaryItem<string, bool>(Settings.K.DisabledPackageManagerNotifications, package.Manager.Name))
+                    if (
+                        !Settings.GetDictionaryItem<string, bool>(
+                            Settings.K.DisabledPackageManagerNotifications,
+                            package.Manager.Name
+                        )
+                    )
                         attribution += package.Name + ", ";
                 }
 
@@ -514,11 +630,14 @@ namespace UniGetUI.Interface.SoftwarePages
                 AppNotificationBuilder builder = new AppNotificationBuilder()
                     .SetScenario(AppNotificationScenario.Default)
                     .SetTag(CoreData.UpdatesAvailableNotificationTag.ToString())
-
-                    .AddText(CoreTools.Translate("{0} packages are being updated", upgradablePackages.Count))
+                    .AddText(
+                        CoreTools.Translate(
+                            "{0} packages are being updated",
+                            upgradablePackages.Count
+                        )
+                    )
                     .SetAttributionText(attribution)
                     .AddText(CoreTools.Translate("Updates found!"))
-
                     .AddArgument("action", NotificationArguments.ShowOnUpdatesTab);
                 notification = builder.BuildNotification();
             }
@@ -527,23 +646,23 @@ namespace UniGetUI.Interface.SoftwarePages
             AppNotificationManager.Default.Show(notification);
         }
 
-        private void MenuInstall_Invoked(object sender, RoutedEventArgs e)
-            => _ = MainApp.Operations.Update(SelectedItem);
+        private void MenuInstall_Invoked(object sender, RoutedEventArgs e) =>
+            _ = MainApp.Operations.Update(SelectedItem);
 
-        private  void MenuSkipHash_Invoked(object sender, RoutedEventArgs e)
-            => _ = MainApp.Operations.Update(SelectedItem, no_integrity: true);
+        private void MenuSkipHash_Invoked(object sender, RoutedEventArgs e) =>
+            _ = MainApp.Operations.Update(SelectedItem, no_integrity: true);
 
-        private void MenuInteractive_Invoked(object sender, RoutedEventArgs e)
-            => _ = MainApp.Operations.Update(SelectedItem, interactive: true);
+        private void MenuInteractive_Invoked(object sender, RoutedEventArgs e) =>
+            _ = MainApp.Operations.Update(SelectedItem, interactive: true);
 
-        private void MenuAsAdmin_Invoked(object sender, RoutedEventArgs e)
-            => _ = MainApp.Operations.Update(SelectedItem, elevated: true);
+        private void MenuAsAdmin_Invoked(object sender, RoutedEventArgs e) =>
+            _ = MainApp.Operations.Update(SelectedItem, elevated: true);
 
-        private void MenuUpdateAfterUninstall_Invoked(object sender, RoutedEventArgs e)
-            => _ = MainApp.Operations.UninstallThenUpdate(SelectedItem);
+        private void MenuUpdateAfterUninstall_Invoked(object sender, RoutedEventArgs e) =>
+            _ = MainApp.Operations.UninstallThenUpdate(SelectedItem);
 
-        private void MenuUninstall_Invoked(object sender, RoutedEventArgs e)
-            => _ = MainApp.Operations.Uninstall(SelectedItem);
+        private void MenuUninstall_Invoked(object sender, RoutedEventArgs e) =>
+            _ = MainApp.Operations.Uninstall(SelectedItem);
 
         private void MenuIgnorePackage_Invoked(object sender, RoutedEventArgs e)
         {

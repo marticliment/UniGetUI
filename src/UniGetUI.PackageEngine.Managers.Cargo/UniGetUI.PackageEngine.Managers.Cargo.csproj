@@ -1,4 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>$(SharedTargetFrameworks)</TargetFrameworks>
+    </PropertyGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\UniGetUI.Core.Classes\UniGetUI.Core.Classes.csproj" />
@@ -19,6 +22,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="PhotoSauce.MagicScaler" Version="0.15.0" />
+        <PackageReference Include="PhotoSauce.MagicScaler" Version="0.15.0" />
     </ItemGroup>
 </Project>

@@ -5,8 +5,8 @@ using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SecureSettings;
 using UniGetUI.Core.SettingsEngine;
-using Windows.System;
 using UniGetUI.Interface;
+using Windows.System;
 
 namespace UniGetUI.Services
 {
@@ -18,6 +18,7 @@ namespace UniGetUI.Services
         private readonly GitHubClient _client;
 
         public static event EventHandler<EventArgs>? AuthStatusChanged;
+
         public GitHubAuthService()
         {
             _client = new GitHubClient(new ProductHeaderValue("UniGetUI", CoreData.VersionName));
@@ -28,17 +29,20 @@ namespace UniGetUI.Services
             var token = SecureGHTokenManager.GetToken();
             if (string.IsNullOrEmpty(token))
             {
-                Logger.Error("GitHub access token is not available. Cannot perform Gist operation.");
+                Logger.Error(
+                    "GitHub access token is not available. Cannot perform Gist operation."
+                );
                 return null;
             }
 
             return new GitHubClient(new ProductHeaderValue("UniGetUI", CoreData.VersionName))
             {
-                Credentials = new Credentials(token)
+                Credentials = new Credentials(token),
             };
         }
 
         private GHAuthApiRunner? loginBackend;
+
         public async Task<bool> SignInAsync()
         {
             try
@@ -48,7 +52,7 @@ namespace UniGetUI.Services
                 var request = new OauthLoginRequest(GitHubClientId)
                 {
                     Scopes = { "read:user", "gist" },
-                    RedirectUri = new Uri(RedirectUri)
+                    RedirectUri = new Uri(RedirectUri),
                 };
 
                 var oauthLoginUrl = _client.Oauth.GetGitHubLoginUrl(request);
@@ -72,7 +76,8 @@ namespace UniGetUI.Services
                 await loginBackend.Start();
                 await Launcher.LaunchUriAsync(oauthLoginUrl);
 
-                while (codeFromAPI is null) await Task.Delay(100);
+                while (codeFromAPI is null)
+                    await Task.Delay(100);
 
                 loginBackend.OnLogin -= BackgroundApiOnOnLogin;
                 await loginBackend.Stop();
@@ -92,6 +97,7 @@ namespace UniGetUI.Services
         }
 
         private string? codeFromAPI;
+
         private void BackgroundApiOnOnLogin(object? sender, string c)
         {
             codeFromAPI = c;
@@ -103,7 +109,7 @@ namespace UniGetUI.Services
             {
                 var tokenRequest = new OauthTokenRequest(GitHubClientId, GitHubClientSecret, code)
                 {
-                    RedirectUri = new Uri(RedirectUri) // The same redirect_uri must be sent
+                    RedirectUri = new Uri(RedirectUri), // The same redirect_uri must be sent
                 };
                 var token = await _client.Oauth.CreateAccessToken(tokenRequest);
 
@@ -119,7 +125,7 @@ namespace UniGetUI.Services
 
                 var userClient = new GitHubClient(new ProductHeaderValue("UniGetUI"))
                 {
-                    Credentials = new Credentials(token.AccessToken)
+                    Credentials = new Credentials(token.AccessToken),
                 };
 
                 var user = await userClient.User.Current();

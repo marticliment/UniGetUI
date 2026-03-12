@@ -10,25 +10,29 @@ namespace UniGetUI.Interface.Pages.LogPage
 {
     public partial class ManagerLogsPage : BaseLogPage
     {
-
-        public ManagerLogsPage() : base(true)
-        {
-
-        }
+        public ManagerLogsPage()
+            : base(true) { }
 
         public void LoadForManager(IPackageManager manager)
         {
             bool IS_DARK = this.ActualTheme == ElementTheme.Dark;
-            bool verbose = LogLevelCombo.SelectedValue?.ToString()?.Contains(CoreTools.Translate("Verbose")) ?? false;
+            bool verbose =
+                LogLevelCombo.SelectedValue?.ToString()?.Contains(CoreTools.Translate("Verbose"))
+                ?? false;
 
-            if (!verbose) SelectLogLevelByName(manager.DisplayName);
+            if (!verbose)
+                SelectLogLevelByName(manager.DisplayName);
 
             IManagerLogger TaskLogger = manager.TaskLogger;
             LogTextBox.Blocks.Clear();
             Paragraph versionParagraph = new();
-            versionParagraph.Inlines.Add(new Run { Text = $"Manager {manager.DisplayName} with version:\n" });
+            versionParagraph.Inlines.Add(
+                new Run { Text = $"Manager {manager.DisplayName} with version:\n" }
+            );
             versionParagraph.Inlines.Add(new Run { Text = manager.Status.Version });
-            versionParagraph.Inlines.Add(new Run { Text = "\n\n——————————————————————————————————————————\n\n" });
+            versionParagraph.Inlines.Add(
+                new Run { Text = "\n\n——————————————————————————————————————————\n\n" }
+            );
             LogTextBox.Blocks.Add(versionParagraph);
 
             foreach (ITaskLogger operation in TaskLogger.Operations)
@@ -39,7 +43,10 @@ namespace UniGetUI.Interface.Pages.LogPage
                     Brush color = line[0] switch
                     {
                         '0' => new SolidColorBrush { Color = IS_DARK ? DARK_WHITE : LIGHT_WHITE },
-                        '1' => new SolidColorBrush { Color = IS_DARK ? DARK_LIGHT_GREY : LIGHT_LIGHT_GREY },
+                        '1' => new SolidColorBrush
+                        {
+                            Color = IS_DARK ? DARK_LIGHT_GREY : LIGHT_LIGHT_GREY,
+                        },
                         '2' => new SolidColorBrush { Color = IS_DARK ? DARK_RED : LIGHT_RED },
                         '3' => new SolidColorBrush { Color = IS_DARK ? DARK_BLUE : LIGHT_BLUE },
                         '4' => new SolidColorBrush { Color = IS_DARK ? DARK_GREEN : LIGHT_GREEN },
@@ -63,7 +70,8 @@ namespace UniGetUI.Interface.Pages.LogPage
                     break;
                 }
 
-                if (isReload) MainScroller.ScrollToVerticalOffset(MainScroller.ScrollableHeight);
+                if (isReload)
+                    MainScroller.ScrollToVerticalOffset(MainScroller.ScrollableHeight);
             }
         }
 
@@ -73,7 +81,9 @@ namespace UniGetUI.Interface.Pages.LogPage
             foreach (IPackageManager manager in PEInterface.Managers)
             {
                 LogLevelCombo.Items.Add(manager.DisplayName);
-                LogLevelCombo.Items.Add($"{manager.DisplayName} ({CoreTools.Translate("Verbose")})");
+                LogLevelCombo.Items.Add(
+                    $"{manager.DisplayName} ({CoreTools.Translate("Verbose")})"
+                );
             }
             LogLevelCombo.SelectedIndex = 0;
         }

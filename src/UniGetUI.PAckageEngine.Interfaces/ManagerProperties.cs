@@ -13,6 +13,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         public string Description { get; set; } = "Unset";
         public IconType IconId { get; set; } = DefaultIconId;
         public string ColorIconId { get; set; } = "Unset";
+
         // public string ExecutableCallArgs { get; set; } = "Unset";
         public string ExecutableFriendlyName { get; set; } = "Unset";
         public string InstallVerb { get; set; } = "Unset";
@@ -20,7 +21,12 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         public string UninstallVerb { get; set; } = "Unset";
         public IManagerSource[] KnownSources { get; set; } = [];
         public IManagerSource DefaultSource { get; set; } = null!;
+
         public ManagerProperties() { }
-        public ManagerProperties(bool IsDummy) { this.IsDummy = IsDummy; }
+
+        public ManagerProperties(bool IsDummy)
+        {
+            this.IsDummy = IsDummy;
+        }
     }
 }

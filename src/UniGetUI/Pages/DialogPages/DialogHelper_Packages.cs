@@ -1,6 +1,4 @@
 using System.Web;
-using Windows.ApplicationModel.DataTransfer;
-using Windows.UI.Text;
 using ABI.Microsoft.UI.Text;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
@@ -19,6 +17,8 @@ using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.PackageLoader;
 using UniGetUI.PackageEngine.Serializable;
 using UniGetUI.Pages.SettingsPages.GeneralPages;
+using Windows.ApplicationModel.DataTransfer;
+using Windows.UI.Text;
 
 namespace UniGetUI.Pages.DialogPages;
 
@@ -27,7 +27,10 @@ public static partial class DialogHelper
     /// <summary>
     /// Will update the Installation Options for the given Package, and will return whether the user choose to continue
     /// </summary>
-    public static async Task<bool> ShowInstallatOptions_Continue(IPackage package, OperationType operation)
+    public static async Task<bool> ShowInstallatOptions_Continue(
+        IPackage package,
+        OperationType operation
+    )
     {
         var options = await InstallOptionsFactory.LoadForPackageAsync(package);
         var (dialogOptions, dialogResult) = await ShowInstallOptions(package, operation, options);
@@ -39,7 +42,9 @@ public static partial class DialogHelper
         }
         else
         {
-            Logger.Debug($"Install options dialog for {package.Id} was canceled, no changes will be saved");
+            Logger.Debug(
+                $"Install options dialog for {package.Id} was canceled, no changes will be saved"
+            );
         }
 
         return dialogResult is ContentDialogResult.Secondary;
@@ -48,10 +53,15 @@ public static partial class DialogHelper
     /// <summary>
     /// Will update the Installation Options for the given imported package
     /// </summary>
-    public static async Task<ContentDialogResult> ShowInstallOptions_ImportedPackage(ImportedPackage importedPackage)
+    public static async Task<ContentDialogResult> ShowInstallOptions_ImportedPackage(
+        ImportedPackage importedPackage
+    )
     {
-        var (options, dialogResult) =
-            await ShowInstallOptions(importedPackage, OperationType.None, importedPackage.installation_options.Copy());
+        var (options, dialogResult) = await ShowInstallOptions(
+            importedPackage,
+            OperationType.None,
+            importedPackage.installation_options.Copy()
+        );
 
         if (dialogResult != ContentDialogResult.None)
         {
@@ -65,7 +75,8 @@ public static partial class DialogHelper
     private static async Task<(InstallOptions, ContentDialogResult)> ShowInstallOptions(
         IPackage package,
         OperationType operation,
-        InstallOptions options)
+        InstallOptions options
+    )
     {
         InstallOptionsPage OptionsPage = new(package, operation, options);
 
@@ -76,26 +87,36 @@ public static partial class DialogHelper
             OperationType.Install => CoreTools.Translate("Install"),
             OperationType.Uninstall => CoreTools.Translate("Uninstall"),
             OperationType.Update => CoreTools.Translate("Update"),
-            _ => ""
+            _ => "",
         };
         OptionsDialog.PrimaryButtonText = CoreTools.Translate("Save and close");
         OptionsDialog.DefaultButton = ContentDialogButton.Secondary;
         // OptionsDialog.Title = CoreTools.Translate("{0} installation options", package.Name);
         OptionsDialog.Content = OptionsPage;
 
-        OptionsPage.Close += (_, _) => { OptionsDialog.Hide(); };
+        OptionsPage.Close += (_, _) =>
+        {
+            OptionsDialog.Hide();
+        };
 
         ContentDialogResult result = await ShowDialogAsync(OptionsDialog);
         return (await OptionsPage.GetUpdatedOptions(), result);
     }
 
-    public static async Task ShowPackageDetails(IPackage package, OperationType operation, TEL_InstallReferral referral)
+    public static async Task ShowPackageDetails(
+        IPackage package,
+        OperationType operation,
+        TEL_InstallReferral referral
+    )
     {
         PackageDetailsPage DetailsPage = new(package, operation, referral);
 
         ContentDialog DetailsDialog = DialogFactory.Create_AsWindow(false);
         DetailsDialog.Content = DetailsPage;
-        DetailsPage.Close += (_, _) => { DetailsDialog.Hide(); };
+        DetailsPage.Close += (_, _) =>
+        {
+            DetailsDialog.Hide();
+        };
 
         await ShowDialogAsync(DetailsDialog);
     }
@@ -131,12 +152,16 @@ public static partial class DialogHelper
         dialog.DefaultButton = ContentDialogButton.Secondary;
 
         StackPanel p = new();
-        p.Children.Add(new TextBlock
-        {
-            Text = CoreTools.Translate("Do you really want to uninstall the following {0} packages?",
-                packages.Count),
-            Margin = new Thickness(0, 0, 0, 5)
-        });
+        p.Children.Add(
+            new TextBlock
+            {
+                Text = CoreTools.Translate(
+                    "Do you really want to uninstall the following {0} packages?",
+                    packages.Count
+                ),
+                Margin = new Thickness(0, 0, 0, 5),
+            }
+        );
 
         string pkgList = "";
         foreach (IPackage package in packages)
@@ -144,8 +169,11 @@ public static partial class DialogHelper
             pkgList += " ● " + package.Name + "\x0a";
         }
 
-        TextBlock PackageListTextBlock =
-            new() { FontFamily = new FontFamily("Consolas"), Text = pkgList };
+        TextBlock PackageListTextBlock = new()
+        {
+            FontFamily = new FontFamily("Consolas"),
+            Text = pkgList,
+        };
         p.Children.Add(new ScrollView { Content = PackageListTextBlock, MaxHeight = 200 });
 
         dialog.Content = p;
@@ -158,11 +186,16 @@ public static partial class DialogHelper
         var contents = combinedSourceName.Split(':');
         string managerName = contents[0];
         string sourceName = "";
-        if (contents.Length > 1) sourceName = contents[1];
+        if (contents.Length > 1)
+            sourceName = contents[1];
         _ = GetPackageFromIdAndManager(id, managerName, sourceName, "LEGACY_COMBINEDSOURCE");
     }
 
-    public static void ShowSharedPackage_ThreadSafe(string id, string managerName, string sourceName)
+    public static void ShowSharedPackage_ThreadSafe(
+        string id,
+        string managerName,
+        string sourceName
+    )
     {
         MainApp.Instance.MainWindow.DispatcherQueue.TryEnqueue(() =>
         {
@@ -170,22 +203,37 @@ public static partial class DialogHelper
         });
     }
 
-    private static async Task GetPackageFromIdAndManager(string id, string managerName, string sourceName, string eventSource)
+    private static async Task GetPackageFromIdAndManager(
+        string id,
+        string managerName,
+        string sourceName,
+        string eventSource
+    )
     {
         int loadingId = ShowLoadingDialog(CoreTools.Translate("Please wait..."));
         try
         {
             Window.Activate();
 
-            var findResult = await Task.Run(() => DiscoverablePackagesLoader.Instance.GetPackageFromIdAndManager(id, managerName, sourceName));
+            var findResult = await Task.Run(() =>
+                DiscoverablePackagesLoader.Instance.GetPackageFromIdAndManager(
+                    id,
+                    managerName,
+                    sourceName
+                )
+            );
 
             HideLoadingDialog(loadingId);
 
-            if (findResult.Item1 is null) throw new KeyNotFoundException(findResult.Item2 ?? "Unknown error");
+            if (findResult.Item1 is null)
+                throw new KeyNotFoundException(findResult.Item2 ?? "Unknown error");
 
             TelemetryHandler.SharedPackage(findResult.Item1, eventSource);
-            _ = ShowPackageDetails(findResult.Item1, OperationType.Install, TEL_InstallReferral.FROM_WEB_SHARE);
-
+            _ = ShowPackageDetails(
+                findResult.Item1,
+                OperationType.Install,
+                TEL_InstallReferral.FROM_WEB_SHARE
+            );
         }
         catch (Exception ex)
         {
@@ -195,18 +243,25 @@ public static partial class DialogHelper
             var warningDialog = new ContentDialog
             {
                 Title = CoreTools.Translate("Package not found"),
-                Content = CoreTools.Translate("An error occurred when attempting to show the package with Id {0}", id) + ":\n" + ex.Message,
+                Content =
+                    CoreTools.Translate(
+                        "An error occurred when attempting to show the package with Id {0}",
+                        id
+                    )
+                    + ":\n"
+                    + ex.Message,
                 CloseButtonText = CoreTools.Translate("Ok"),
                 DefaultButton = ContentDialogButton.Close,
-                XamlRoot = MainApp.Instance.MainWindow.Content.XamlRoot // Ensure the dialog is shown in the correct context
+                XamlRoot = MainApp.Instance.MainWindow.Content.XamlRoot, // Ensure the dialog is shown in the correct context
             };
 
             await ShowDialogAsync(warningDialog);
-
         }
     }
 
-    public static async Task ShowBundleSecurityReport(Dictionary<string, List<BundleReportEntry>> packageReport)
+    public static async Task ShowBundleSecurityReport(
+        Dictionary<string, List<BundleReportEntry>> packageReport
+    )
     {
         var dialog = DialogFactory.Create_AsWindow(true, true);
         Brush bad = new SolidColorBrush(Colors.PaleVioletRed);
@@ -223,22 +278,26 @@ public static partial class DialogHelper
         Hyperlink a;
         Paragraph p = new();
 
-        foreach(var pair in packageReport)
+        foreach (var pair in packageReport)
         {
-            p.Inlines.Add(new Run()
-            {
-                Text = $" - {CoreTools.Translate("Package")}: {pair.Key}:\n",
-                FontFamily = new("Consolas")
-            });
+            p.Inlines.Add(
+                new Run()
+                {
+                    Text = $" - {CoreTools.Translate("Package")}: {pair.Key}:\n",
+                    FontFamily = new("Consolas"),
+                }
+            );
 
             foreach (var issue in pair.Value)
             {
-                p.Inlines.Add(new Run()
-                {
-                    Text = $"   * {issue.Line}\n",
-                    FontFamily = new("Consolas"),
-                    Foreground = issue.Allowed? bad: good
-                });
+                p.Inlines.Add(
+                    new Run()
+                    {
+                        Text = $"   * {issue.Line}\n",
+                        FontFamily = new("Consolas"),
+                        Foreground = issue.Allowed ? bad : good,
+                    }
+                );
             }
             p.Inlines.Add(new LineBreak());
         }
@@ -246,53 +305,84 @@ public static partial class DialogHelper
         dialog.Content = new ScrollViewer()
         {
             MaxWidth = 800,
-            Background = (Brush)Application.Current.Resources["ApplicationPageBackgroundThemeBrush"],
+            Background = (Brush)
+                Application.Current.Resources["ApplicationPageBackgroundThemeBrush"],
             CornerRadius = new CornerRadius(8),
             Padding = new Thickness(16),
             Content = new RichTextBlock()
             {
-                Blocks = {
+                Blocks =
+                {
                     new Paragraph()
                     {
-                        Inlines = {
+                        Inlines =
+                        {
                             new Run()
                             {
-                                Text = CoreTools.Translate("This package bundle had some settings that are potentially dangerous, and may be ignored by default.")
+                                Text = CoreTools.Translate(
+                                    "This package bundle had some settings that are potentially dangerous, and may be ignored by default."
+                                ),
                             },
                             new Run()
                             {
-                                Text = "\n - " + CoreTools.Translate("Entries that show in YELLOW will be IGNORED."),
+                                Text =
+                                    "\n - "
+                                    + CoreTools.Translate(
+                                        "Entries that show in YELLOW will be IGNORED."
+                                    ),
                                 Foreground = good,
                             },
                             new Run()
                             {
-                                Text = "\n - " + CoreTools.Translate("Entries that show in RED will be IMPORTED."),
-                                Foreground = bad
+                                Text =
+                                    "\n - "
+                                    + CoreTools.Translate(
+                                        "Entries that show in RED will be IMPORTED."
+                                    ),
+                                Foreground = bad,
                             },
                             new Run()
                             {
-                                Text = "\n" + CoreTools.Translate("You can change this behavior on UniGetUI security settings.") + " "
+                                Text =
+                                    "\n"
+                                    + CoreTools.Translate(
+                                        "You can change this behavior on UniGetUI security settings."
+                                    )
+                                    + " ",
                             },
-                            (a = new Hyperlink
-                            {
-                                Inlines = { new Run() { Text = CoreTools.Translate("Open UniGetUI security settings") } },
-                            }),
+                            (
+                                a = new Hyperlink
+                                {
+                                    Inlines =
+                                    {
+                                        new Run()
+                                        {
+                                            Text = CoreTools.Translate(
+                                                "Open UniGetUI security settings"
+                                            ),
+                                        },
+                                    },
+                                }
+                            ),
                             new LineBreak(),
                             new Run()
                             {
-                                Text = CoreTools.Translate("Should you modify the security settings, you will need to open the bundle again for the changes to take effect.")
+                                Text = CoreTools.Translate(
+                                    "Should you modify the security settings, you will need to open the bundle again for the changes to take effect."
+                                ),
                             },
                             new LineBreak(),
                             new LineBreak(),
                             new Run() { Text = CoreTools.Translate("Details of the report:") },
                             new LineBreak(),
-                        }
+                        },
                     },
-                    p
-                }
-            }
+                    p,
+                },
+            },
         };
-        a.Click += (_, _) => {
+        a.Click += (_, _) =>
+        {
             dialog.Hide();
             Window.NavigationPage.OpenSettingsPage(typeof(Administrator));
         };
@@ -320,23 +410,30 @@ public static partial class DialogHelper
             DataTransferManager.As<NativeHelpers.IDataTransferManagerInterop>();
 
         IntPtr result = interop.GetForWindow(hWnd, NativeHelpers._dtm_iid);
-        DataTransferManager dataTransferManager = WinRT.MarshalInterface
-            <DataTransferManager>.FromAbi(result);
+        DataTransferManager dataTransferManager =
+            WinRT.MarshalInterface<DataTransferManager>.FromAbi(result);
 
         dataTransferManager.DataRequested += (_, args) =>
         {
             DataRequest dataPackage = args.Request;
-            Uri ShareUrl = new("https://marticliment.com/unigetui/share?"
-                               + "name=" + HttpUtility.UrlEncode(package.Name)
-                               + "&id=" + HttpUtility.UrlEncode(package.Id)
-                               + "&sourceName=" + HttpUtility.UrlEncode(package.Source.Name)
-                               + "&managerName=" + HttpUtility.UrlEncode(package.Manager.DisplayName));
+            Uri ShareUrl = new(
+                "https://marticliment.com/unigetui/share?"
+                    + "name="
+                    + HttpUtility.UrlEncode(package.Name)
+                    + "&id="
+                    + HttpUtility.UrlEncode(package.Id)
+                    + "&sourceName="
+                    + HttpUtility.UrlEncode(package.Source.Name)
+                    + "&managerName="
+                    + HttpUtility.UrlEncode(package.Manager.DisplayName)
+            );
 
             dataPackage.Data.SetWebLink(ShareUrl);
             dataPackage.Data.Properties.Title = "Sharing " + package.Name;
             dataPackage.Data.Properties.ApplicationName = "WingetUI";
             dataPackage.Data.Properties.ContentSourceWebLink = ShareUrl;
-            dataPackage.Data.Properties.Description = "Share " + package.Name + " with your friends";
+            dataPackage.Data.Properties.Description =
+                "Share " + package.Name + " with your friends";
             dataPackage.Data.Properties.PackageFamilyName = "WingetUI";
         };
 
@@ -352,9 +449,22 @@ public static partial class DialogHelper
         RichTextBlock rtb = new();
         var p = new Paragraph();
         rtb.Blocks.Add(p);
-        p.Inlines.Add(new Run {Text = CoreTools.Translate("Are you sure you want to create a new package bundle? ")});
+        p.Inlines.Add(
+            new Run
+            {
+                Text = CoreTools.Translate(
+                    "Are you sure you want to create a new package bundle? "
+                ),
+            }
+        );
         p.Inlines.Add(new LineBreak());
-        p.Inlines.Add(new Run {Text = CoreTools.Translate("Any unsaved changes will be lost"), FontWeight = new FontWeight(600)});
+        p.Inlines.Add(
+            new Run
+            {
+                Text = CoreTools.Translate("Any unsaved changes will be lost"),
+                FontWeight = new FontWeight(600),
+            }
+        );
 
         ContentDialog dialog = DialogFactory.Create();
         dialog.Title = CoreTools.Translate("Warning!");
@@ -365,5 +475,4 @@ public static partial class DialogHelper
 
         return await DialogHelper.ShowDialogAsync(dialog) is ContentDialogResult.Primary;
     }
-
 }

@@ -16,7 +16,7 @@ public class TestSerializableIncompatiblePackage
             Id = id,
             Name = name,
             Source = manager,
-            Version = version
+            Version = version,
         };
 
         var object2 = new SerializableIncompatiblePackage();
@@ -36,23 +36,34 @@ public class TestSerializableIncompatiblePackage
 
     [Theory]
     [InlineData("{}", "", "", "", "")]
-    [InlineData("""
-                {
-                  "Name": "name",
-                  "Id": "true"
-                }
-                """, "true", "name", "", "")]
-
-    [InlineData("""
-                {
-                  "Version": "false",
-                  "Source": "lol",
-                  "UNKNOWN_VAL1": true,
-                  "UNKNOWN_VAL2": null,
-                  "UNKNOWN_VAL3": 22,
-                  "UNKNOWN_VAL4": "hehe"
-                }
-                """, "", "", "false", "lol")]
+    [InlineData(
+        """
+            {
+              "Name": "name",
+              "Id": "true"
+            }
+            """,
+        "true",
+        "name",
+        "",
+        ""
+    )]
+    [InlineData(
+        """
+            {
+              "Version": "false",
+              "Source": "lol",
+              "UNKNOWN_VAL1": true,
+              "UNKNOWN_VAL2": null,
+              "UNKNOWN_VAL3": 22,
+              "UNKNOWN_VAL4": "hehe"
+            }
+            """,
+        "",
+        "",
+        "false",
+        "lol"
+    )]
     public void FromJson(string JSON, string id, string name, string version, string manager)
     {
         Assert.NotEmpty(JSON);
@@ -64,10 +75,12 @@ public class TestSerializableIncompatiblePackage
         Assert.Equal(id, o2.Id);
         Assert.Equal(manager, o2.Source);
         Assert.Equal(version, o2.Version);
-
     }
 
-    internal static void AreEqual(SerializableIncompatiblePackage o1, SerializableIncompatiblePackage o2)
+    internal static void AreEqual(
+        SerializableIncompatiblePackage o1,
+        SerializableIncompatiblePackage o2
+    )
     {
         Assert.Equal(o1.Name, o2.Name);
         Assert.Equal(o1.Id, o2.Id);

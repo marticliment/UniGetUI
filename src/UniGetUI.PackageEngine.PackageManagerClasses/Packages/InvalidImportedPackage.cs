@@ -15,20 +15,31 @@ namespace UniGetUI.PackageEngine.PackageClasses
     {
         public IPackageDetails Details { get; }
 
-        public PackageTag Tag { get => PackageTag.Unavailable; set { } }
+        public PackageTag Tag
+        {
+            get => PackageTag.Unavailable;
+            set { }
+        }
 
         private bool __is_checked;
         public bool IsChecked
         {
             get { return __is_checked; }
-            set { __is_checked = value; OnPropertyChanged(nameof(IsChecked)); }
+            set
+            {
+                __is_checked = value;
+                OnPropertyChanged(nameof(IsChecked));
+            }
         }
 
         private readonly long __hash;
         private readonly long __extended_hash;
 
         private static OverridenInstallationOptions __overriden_options;
-        public ref OverridenInstallationOptions OverridenOptions { get => ref __overriden_options; }
+        public ref OverridenInstallationOptions OverridenOptions
+        {
+            get => ref __overriden_options;
+        }
 
         public string Name { get; }
 
@@ -38,17 +49,30 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         public CoreTools.Version NormalizedVersion { get; }
 
-        public CoreTools.Version NormalizedNewVersion { get => CoreTools.Version.Null; }
+        public CoreTools.Version NormalizedNewVersion
+        {
+            get => CoreTools.Version.Null;
+        }
 
         public IManagerSource Source { get; }
 
         public IPackageManager Manager { get; }
 
-        public string NewVersionString { get => ""; }
+        public string NewVersionString
+        {
+            get => "";
+        }
 
-        public bool IsUpgradable { get => false; }
+        public bool IsUpgradable
+        {
+            get => false;
+        }
 
-        public string Scope { get => PackageScope.Local; set { } }
+        public string Scope
+        {
+            get => PackageScope.Local;
+            set { }
+        }
 
         public string SourceAsString { get; }
 
@@ -71,13 +95,13 @@ namespace UniGetUI.PackageEngine.PackageClasses
             __hash = CoreTools.HashStringAsLong(data.Name + data.Id);
             __extended_hash = CoreTools.HashStringAsLong(data.Name + data.Id + data.Version);
         }
+
         public Task AddToIgnoredUpdatesAsync(string version = "*")
         {
             return Task.CompletedTask;
         }
 
-        public Task<InstallOptions> GetInstallOptions()
-            => Task.FromResult(new InstallOptions());
+        public Task<InstallOptions> GetInstallOptions() => Task.FromResult(new InstallOptions());
 
         public Task<SerializablePackage> AsSerializableAsync()
         {
@@ -204,8 +228,14 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public int? PackageCount { get; }
         public string? UpdateDate { get; }
 
-        public string AsString { get => Name; }
-        public string AsString_DisplayName { get => Name; }
+        public string AsString
+        {
+            get => Name;
+        }
+        public string AsString_DisplayName
+        {
+            get => Name;
+        }
 
         public NullSource(string name)
         {
@@ -224,8 +254,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
             return Name;
         }
 
-        public void RefreshSourceNames()
-        { }
-
+        public void RefreshSourceNames() { }
     }
 }

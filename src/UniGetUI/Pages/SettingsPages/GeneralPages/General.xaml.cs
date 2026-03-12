@@ -1,10 +1,10 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using UniGetUI.Core.Language;
+using UniGetUI.Core.Logging;
+using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Pages.DialogPages;
-using UniGetUI.Core.Logging;
-using UniGetUI.Core.Language;
-using UniGetUI.Core.SettingsEngine;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -20,12 +20,19 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         {
             this.InitializeComponent();
 
-            Dictionary<string, string> lang_dict = new(LanguageData.LanguageReference.AsEnumerable());
+            Dictionary<string, string> lang_dict = new(
+                LanguageData.LanguageReference.AsEnumerable()
+            );
 
             foreach (string key in lang_dict.Keys)
             {
-                if (key != "en" &&
-                    LanguageData.TranslationPercentages.TryGetValue(key, out var translationPercentage))
+                if (
+                    key != "en"
+                    && LanguageData.TranslationPercentages.TryGetValue(
+                        key,
+                        out var translationPercentage
+                    )
+                )
                 {
                     lang_dict[key] = lang_dict[key] + " (" + translationPercentage + ")";
                 }
@@ -47,27 +54,38 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         public event EventHandler? RestartRequired;
         public event EventHandler<Type>? NavigationRequested;
 
-        public void ShowRestartBanner(object sender, EventArgs e)
-            => RestartRequired?.Invoke(this, e);
+        public void ShowRestartBanner(object sender, EventArgs e) =>
+            RestartRequired?.Invoke(this, e);
 
         private void ForceUpdateUniGetUI_OnClick(object sender, RoutedEventArgs e)
         {
             var mainWindow = MainApp.Instance.MainWindow;
-            _ = AutoUpdater.CheckAndInstallUpdates(mainWindow, mainWindow.UpdatesBanner, true, false, true);
+            _ = AutoUpdater.CheckAndInstallUpdates(
+                mainWindow,
+                mainWindow.UpdatesBanner,
+                true,
+                false,
+                true
+            );
         }
 
-        private void ManageTelemetrySettings_Click(object sender, EventArgs e)
-            => _ = DialogHelper.ShowTelemetryDialog();
+        private void ManageTelemetrySettings_Click(object sender, EventArgs e) =>
+            _ = DialogHelper.ShowTelemetryDialog();
 
         private void ImportSettings_Click(object sender, EventArgs e) => _ = _importSettings();
+
         private async Task _importSettings()
         {
-            ExternalLibraries.Pickers.FileOpenPicker picker = new(MainApp.Instance.MainWindow.GetWindowHandle());
+            ExternalLibraries.Pickers.FileOpenPicker picker = new(
+                MainApp.Instance.MainWindow.GetWindowHandle()
+            );
             string file = picker.Show(["*.json"]);
 
             if (file != string.Empty)
             {
-                int loadingId = DialogHelper.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
+                int loadingId = DialogHelper.ShowLoadingDialog(
+                    CoreTools.Translate("Please wait...")
+                );
                 await Task.Run(() => Settings.ImportFromFile_JSON(file));
                 DialogHelper.HideLoadingDialog(loadingId);
                 ShowRestartBanner(this, new());
@@ -75,16 +93,24 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         }
 
         private void ExportSettings_Click(object sender, EventArgs e) => _ = _exportSettings();
+
         private static async Task _exportSettings()
         {
             try
             {
-                ExternalLibraries.Pickers.FileSavePicker picker = new(MainApp.Instance.MainWindow.GetWindowHandle());
-                string file = picker.Show(["*.json"], CoreTools.Translate("WingetUI Settings") + ".json");
+                ExternalLibraries.Pickers.FileSavePicker picker = new(
+                    MainApp.Instance.MainWindow.GetWindowHandle()
+                );
+                string file = picker.Show(
+                    ["*.json"],
+                    CoreTools.Translate("WingetUI Settings") + ".json"
+                );
 
                 if (file != string.Empty)
                 {
-                    int loadingId = DialogHelper.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
+                    int loadingId = DialogHelper.ShowLoadingDialog(
+                        CoreTools.Translate("Please wait...")
+                    );
                     await Task.Run(() => Settings.ExportToFile_JSON(file));
                     DialogHelper.HideLoadingDialog(loadingId);
                     _ = CoreTools.ShowFileOnExplorer(file);

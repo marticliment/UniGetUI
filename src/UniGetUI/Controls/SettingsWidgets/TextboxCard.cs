@@ -17,7 +17,8 @@ namespace UniGetUI.Interface.Widgets
         private Settings.K setting_name = Settings.K.Unset;
         public Settings.K SettingName
         {
-            set {
+            set
+            {
                 setting_name = value;
                 _textbox.Text = Settings.GetValue(setting_name);
                 _textbox.TextChanged += (_, _) => SaveValue();
@@ -48,22 +49,11 @@ namespace UniGetUI.Interface.Widgets
 
         public TextboxCard()
         {
+            _helpbutton = new HyperlinkButton { Visibility = Visibility.Collapsed };
 
-            _helpbutton = new HyperlinkButton
-            {
-                Visibility = Visibility.Collapsed
-            };
+            _textbox = new TextBox { MinWidth = 200, MaxWidth = 300 };
 
-            _textbox = new TextBox
-            {
-                MinWidth = 200,
-                MaxWidth = 300
-            };
-
-            StackPanel s = new()
-            {
-                Orientation = Orientation.Horizontal
-            };
+            StackPanel s = new() { Orientation = Orientation.Horizontal };
             s.Children.Add(_helpbutton);
             s.Children.Add(_textbox);
 
@@ -90,6 +80,5 @@ namespace UniGetUI.Interface.Widgets
 
             ValueChanged?.Invoke(this, EventArgs.Empty);
         }
-
     }
 }

@@ -28,6 +28,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         private readonly GitHubBackupService _backupService;
         private bool _isLoggedIn;
         private bool _isLoading;
+
         public Backup()
         {
             this.InitializeComponent();
@@ -40,7 +41,8 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             OpenBackupDirectory.Content = CoreTools.Translate("Open");
 
             GitHubAuthService.AuthStatusChanged += (_, _) => _ = UpdateGitHubLoginStatus();
-            EnablePackageBackupCheckBox_CLOUD.StateChanged += EnablePackageBackupCheckBox_CLOUD_StateChanged;
+            EnablePackageBackupCheckBox_CLOUD.StateChanged +=
+                EnablePackageBackupCheckBox_CLOUD_StateChanged;
             _ = UpdateGitHubLoginStatus();
         }
 
@@ -49,14 +51,20 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         public string ShortTitle => CoreTools.Translate("Backup and Restore");
 
         public event EventHandler? RestartRequired;
-        public event EventHandler<Type>? NavigationRequested { add { } remove { } }
+        public event EventHandler<Type>? NavigationRequested
+        {
+            add { }
+            remove { }
+        }
 
-        public void ShowRestartBanner(object? sender, EventArgs e)
-            => RestartRequired?.Invoke(this, e);
+        public void ShowRestartBanner(object? sender, EventArgs e) =>
+            RestartRequired?.Invoke(this, e);
 
         private void ChangeBackupDirectory_Click(object sender, EventArgs e)
         {
-            ExternalLibraries.Pickers.FolderPicker openPicker = new(MainApp.Instance.MainWindow.GetWindowHandle());
+            ExternalLibraries.Pickers.FolderPicker openPicker = new(
+                MainApp.Instance.MainWindow.GetWindowHandle()
+            );
             string folder = openPicker.Show();
             if (folder != string.Empty)
             {
@@ -82,7 +90,9 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 }
                 else
                 {
-                    BackupDirectoryLabel.Text = Settings.GetValue(Settings.K.ChangeBackupOutputDirectory);
+                    BackupDirectoryLabel.Text = Settings.GetValue(
+                        Settings.K.ChangeBackupOutputDirectory
+                    );
                     ResetBackupDirectory.IsEnabled = true;
                 }
             }
@@ -98,18 +108,24 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         private void OpenBackupPath_Click(object sender, RoutedEventArgs e)
         {
             string directory = Settings.GetValue(Settings.K.ChangeBackupOutputDirectory);
-            if (directory == "") directory = CoreData.UniGetUI_DefaultBackupDirectory;
+            if (directory == "")
+                directory = CoreData.UniGetUI_DefaultBackupDirectory;
 
             directory = directory.Replace("/", "\\");
-            if (!Directory.Exists(directory)) Directory.CreateDirectory(directory);
+            if (!Directory.Exists(directory))
+                Directory.CreateDirectory(directory);
 
             CoreTools.Launch(directory);
         }
 
-        private void DoBackup_LOCAL_Click(object sender, EventArgs e) => _ = _doBackup_LOCAL_Click();
+        private void DoBackup_LOCAL_Click(object sender, EventArgs e) =>
+            _ = _doBackup_LOCAL_Click();
+
         private static async Task _doBackup_LOCAL_Click()
         {
-            int loadingId = DialogHelper.ShowLoadingDialog(CoreTools.Translate("Performing backup, please wait..."));
+            int loadingId = DialogHelper.ShowLoadingDialog(
+                CoreTools.Translate("Performing backup, please wait...")
+            );
             await InstalledPackagesPage.BackupPackages_LOCAL();
             DialogHelper.HideLoadingDialog(loadingId);
         }
@@ -130,7 +146,9 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error("An error occurred while attempting to generate settings login UI: ");
+                    Logger.Error(
+                        "An error occurred while attempting to generate settings login UI: "
+                    );
                     Logger.Error(ex);
                     GenerateLoginUI();
                 }
@@ -155,14 +173,23 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         private async Task GenerateLogoutUI(GitHubAuthService authService)
         {
             var client = authService.CreateGitHubClient();
-            if (client is null) throw new AuthenticationException("How can it be authenticated and fail to create a client?");
+            if (client is null)
+                throw new AuthenticationException(
+                    "How can it be authenticated and fail to create a client?"
+                );
             var user = await client.User.Current();
 
             _isLoggedIn = true;
             LogInButton.Visibility = Visibility.Collapsed;
             LogOutButton.Visibility = Visibility.Visible;
-            GitHubUserTitle.Text = CoreTools.Translate("You are logged in as {0} (@{1})", user.Name, user.Login);
-            GitHubUserSubtitle.Text = CoreTools.Translate("Nice! Backups will be uploaded to a private gist on your account");
+            GitHubUserTitle.Text = CoreTools.Translate(
+                "You are logged in as {0} (@{1})",
+                user.Name,
+                user.Login
+            );
+            GitHubUserSubtitle.Text = CoreTools.Translate(
+                "Nice! Backups will be uploaded to a private gist on your account"
+            );
             GitHubImage.Initials = "";
             GitHubImage.ProfilePicture = new BitmapImage(new Uri(user.AvatarUrl));
         }
@@ -175,7 +202,9 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             {
                 EnablePackageBackupCheckBox_CLOUD.IsEnabled = true;
                 RestorePackagesFromGitHubButton.IsEnabled = true;
-                BackupNowButton_Cloud.IsEnabled = Settings.Get(Settings.K.EnablePackageBackup_CLOUD);
+                BackupNowButton_Cloud.IsEnabled = Settings.Get(
+                    Settings.K.EnablePackageBackup_CLOUD
+                );
             }
             else
             {
@@ -185,8 +214,8 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             }
         }
 
-        private void LoginWithGitHubButton_Click(object sender, RoutedEventArgs e)
-            => _ = _loginWithGitHubButton_Click();
+        private void LoginWithGitHubButton_Click(object sender, RoutedEventArgs e) =>
+            _ = _loginWithGitHubButton_Click();
 
         private async Task _loginWithGitHubButton_Click()
         {
@@ -216,13 +245,17 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             UpdateCloudControlsEnabled();
         }
 
-        private void RestoreFromGitHubButton_Click(object sender, EventArgs e) => _ = _restoreFromGitHubButton_Click();
+        private void RestoreFromGitHubButton_Click(object sender, EventArgs e) =>
+            _ = _restoreFromGitHubButton_Click();
+
         private async Task _restoreFromGitHubButton_Click()
         {
             RestorePackagesFromGitHubButton.IsEnabled = false;
             try
             {
-                int loadingId = DialogHelper.ShowLoadingDialog(CoreTools.Translate("Fetching available backups..."));
+                int loadingId = DialogHelper.ShowLoadingDialog(
+                    CoreTools.Translate("Fetching available backups...")
+                );
                 var availableBackups = await _backupService.GetAvailableBackups();
                 DialogHelper.HideLoadingDialog(loadingId);
 
@@ -234,21 +267,30 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 }
                 selectedBackup = selectedBackup.Split(' ')[0];
 
-                loadingId = DialogHelper.ShowLoadingDialog(CoreTools.Translate("Downloading backup..."));
+                loadingId = DialogHelper.ShowLoadingDialog(
+                    CoreTools.Translate("Downloading backup...")
+                );
                 var backupContents = await _backupService.GetBackupContents(selectedBackup);
                 // DialogHelper.HideLoadingDialog(loadingId);
                 await Task.Delay(500); // Prevent race conditions with dialogs
 
                 if (backupContents is null)
-                    throw new DataException($"The backupContents for backup {selectedBackup} returned null");
+                    throw new DataException(
+                        $"The backupContents for backup {selectedBackup} returned null"
+                    );
 
                 Logger.Info("Successfully loaded package bundle from GitHub Gist.");
                 DialogHelper.ShowDismissableBalloon(
                     CoreTools.Translate("Done!"),
-                    CoreTools.Translate("The cloud backup has been loaded successfully."));
+                    CoreTools.Translate("The cloud backup has been loaded successfully.")
+                );
 
                 MainApp.Instance.MainWindow.NavigationPage.LoadBundleFromString(
-                    backupContents, BundleFormatType.UBUNDLE, $"GitHub Gist {selectedBackup}", loadingId);
+                    backupContents,
+                    BundleFormatType.UBUNDLE,
+                    $"GitHub Gist {selectedBackup}",
+                    loadingId
+                );
             }
             catch (Exception ex)
             {
@@ -258,17 +300,22 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 DialogHelper.HideAllLoadingDialogs();
                 var errorDialog = DialogHelper.DialogFactory.Create();
                 errorDialog.Title = CoreTools.Translate("An error occurred");
-                errorDialog.Content = CoreTools.Translate("An error occurred while loading a backup: ") + ex.Message;
+                errorDialog.Content =
+                    CoreTools.Translate("An error occurred while loading a backup: ") + ex.Message;
                 errorDialog.PrimaryButtonText = CoreTools.Translate("OK");
                 errorDialog.DefaultButton = ContentDialogButton.Primary;
                 await DialogHelper.ShowDialogAsync(errorDialog);
             }
         }
 
-        private void BackupToGitHubButton_Click(object sender, EventArgs e) => _ = _backupToGitHubButton_Click();
+        private void BackupToGitHubButton_Click(object sender, EventArgs e) =>
+            _ = _backupToGitHubButton_Click();
+
         private async Task _backupToGitHubButton_Click()
         {
-            int loadingId = DialogHelper.ShowLoadingDialog(CoreTools.Translate("Backing up packages to GitHub Gist..."));
+            int loadingId = DialogHelper.ShowLoadingDialog(
+                CoreTools.Translate("Backing up packages to GitHub Gist...")
+            );
 
             var packagesContent = await InstalledPackagesPage.GenerateBackupContents();
 
@@ -279,7 +326,8 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 Logger.Info("Successfully backed up packages to GitHub Gist.");
                 DialogHelper.ShowDismissableBalloon(
                     CoreTools.Translate("Backup Successful"),
-                    CoreTools.Translate("The cloud backup completed successfully."));
+                    CoreTools.Translate("The cloud backup completed successfully.")
+                );
             }
             catch (Exception ex)
             {
@@ -290,7 +338,8 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
 
                 var dialog = DialogHelper.DialogFactory.Create();
                 dialog.Title = CoreTools.Translate("Backup Failed");
-                dialog.Content = CoreTools.Translate("Could not back up packages to GitHub Gist: ") + ex.Message;
+                dialog.Content =
+                    CoreTools.Translate("Could not back up packages to GitHub Gist: ") + ex.Message;
                 dialog.PrimaryButtonText = CoreTools.Translate("OK");
                 dialog.DefaultButton = ContentDialogButton.Primary;
                 await DialogHelper.ShowDialogAsync(dialog);

@@ -1,4 +1,4 @@
-﻿using System.Runtime.CompilerServices;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using ExternalLibraries.Pickers.Enums;
 using ExternalLibraries.Pickers.Guids;
@@ -6,21 +6,24 @@ using ExternalLibraries.Pickers.Structures;
 
 namespace ExternalLibraries.Pickers.Interfaces;
 
-[ComImport(),
-Guid(IIDGuid.IFileDialog),
-InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+[ComImport(), Guid(IIDGuid.IFileDialog), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 internal interface IFileDialog : IModalWindow
 {
     // Defined on IModalWindow - repeated here due to requirements of COM interop layer
     // --------------------------------------------------------------------------------
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime),
-    PreserveSig]
+    [
+        MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime),
+        PreserveSig
+    ]
     new int Show([In] IntPtr parent);
 
     // IFileDialog-Specific interface members
     // --------------------------------------------------------------------------------
     [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    void SetFileTypes([In] uint cFileTypes, [In, MarshalAs(UnmanagedType.LPArray)] COMDLG_FILTERSPEC[] rgFilterSpec);
+    void SetFileTypes(
+        [In] uint cFileTypes,
+        [In, MarshalAs(UnmanagedType.LPArray)] COMDLG_FILTERSPEC[] rgFilterSpec
+    );
 
     [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
     void SetFileTypeIndex([In] uint iFileType);
@@ -29,7 +32,10 @@ internal interface IFileDialog : IModalWindow
     void GetFileTypeIndex(out uint piFileType);
 
     [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    void Advise([In, MarshalAs(UnmanagedType.Interface)] IFileDialogEvents pfde, out uint pdwCookie);
+    void Advise(
+        [In, MarshalAs(UnmanagedType.Interface)] IFileDialogEvents pfde,
+        out uint pdwCookie
+    );
 
     [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
     void Unadvise([In] uint dwCookie);

@@ -35,21 +35,28 @@ public class TestSerializableUpdatesOptions
 
     [Theory]
     [InlineData("{}", false, "")]
-    [InlineData("""
-                {
-                  "UpdatesIgnored": true
-                }
-                """, true, "")]
-
-    [InlineData("""
-                {
-                  "IgnoredVersion": "lol",
-                  "UNKNOWN_VAL1": true,
-                  "UNKNOWN_VAL2": null,
-                  "UNKNOWN_VAL3": 22,
-                  "UNKNOWN_VAL4": "hehe"
-                }
-                """, false, "lol")]
+    [InlineData(
+        """
+            {
+              "UpdatesIgnored": true
+            }
+            """,
+        true,
+        ""
+    )]
+    [InlineData(
+        """
+            {
+              "IgnoredVersion": "lol",
+              "UNKNOWN_VAL1": true,
+              "UNKNOWN_VAL2": null,
+              "UNKNOWN_VAL3": 22,
+              "UNKNOWN_VAL4": "hehe"
+            }
+            """,
+        false,
+        "lol"
+    )]
     public void FromJson(string JSON, bool ign, string ver)
     {
         Assert.NotEmpty(JSON);

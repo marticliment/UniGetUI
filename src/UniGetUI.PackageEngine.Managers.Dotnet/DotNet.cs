@@ -28,28 +28,43 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                 CanDownloadInstaller = true,
                 SupportsCustomScopes = true,
                 SupportsCustomArchitectures = true,
-                SupportedCustomArchitectures = [Architecture.x86, Architecture.x64, Architecture.arm64, Architecture.arm32],
+                SupportedCustomArchitectures =
+                [
+                    Architecture.x86,
+                    Architecture.x64,
+                    Architecture.arm64,
+                    Architecture.arm32,
+                ],
                 SupportsPreRelease = true,
                 CanListDependencies = true,
                 SupportsCustomLocations = true,
                 SupportsCustomPackageIcons = true,
                 SupportsCustomVersions = true,
                 SupportsProxy = ProxySupport.Partially,
-                SupportsProxyAuth = true
+                SupportsProxyAuth = true,
             };
 
             Properties = new ManagerProperties
             {
                 Name = ".NET Tool",
-                Description = CoreTools.Translate("A repository full of tools and executables designed with Microsoft's .NET ecosystem in mind.<br>Contains: <b>.NET related tools and scripts</b>"),
+                Description = CoreTools.Translate(
+                    "A repository full of tools and executables designed with Microsoft's .NET ecosystem in mind.<br>Contains: <b>.NET related tools and scripts</b>"
+                ),
                 IconId = IconType.DotNet,
                 ColorIconId = "dotnet_color",
                 ExecutableFriendlyName = "dotnet tool",
                 InstallVerb = "install",
                 UninstallVerb = "uninstall",
                 UpdateVerb = "update",
-                DefaultSource = new ManagerSource(this, "nuget.org", new Uri("https://www.nuget.org/api/v2")),
-                KnownSources = [new ManagerSource(this, "nuget.org", new Uri("https://www.nuget.org/api/v2"))],
+                DefaultSource = new ManagerSource(
+                    this,
+                    "nuget.org",
+                    new Uri("https://www.nuget.org/api/v2")
+                ),
+                KnownSources =
+                [
+                    new ManagerSource(this, "nuget.org", new Uri("https://www.nuget.org/api/v2")),
+                ],
             };
 
             DetailsHelper = new DotNetDetailsHelper(this);
@@ -59,23 +74,35 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
         protected override IReadOnlyList<Package> _getInstalledPackages_UnSafe()
         {
             List<Package> Packages = [];
-            foreach (var options in new OverridenInstallationOptions[] { new(PackageScope.Local), new(PackageScope.Global) })
+            foreach (
+                var options in new OverridenInstallationOptions[]
+                {
+                    new(PackageScope.Local),
+                    new(PackageScope.Global),
+                }
+            )
             {
                 using Process p = new()
                 {
                     StartInfo = new ProcessStartInfo
                     {
                         FileName = Status.ExecutablePath,
-                        Arguments = Status.ExecutableCallArgs + " list" + (options.Scope == PackageScope.Global ? " --global" : ""),
+                        Arguments =
+                            Status.ExecutableCallArgs
+                            + " list"
+                            + (options.Scope == PackageScope.Global ? " --global" : ""),
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,
                         UseShellExecute = false,
                         CreateNoWindow = true,
-                        StandardOutputEncoding = System.Text.Encoding.UTF8
-                    }
+                        StandardOutputEncoding = System.Text.Encoding.UTF8,
+                    },
                 };
 
-                IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
+                IProcessTaskLogger logger = TaskLogger.CreateNew(
+                    LoggableTaskType.ListInstalledPackages,
+                    p
+                );
                 p.Start();
 
                 string? line;
@@ -103,19 +130,24 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                             elements[i] = elements[i].Trim();
                         }
 
-                        if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
+                        if (
+                            FALSE_PACKAGE_IDS.Contains(elements[0])
+                            || FALSE_PACKAGE_VERSIONS.Contains(elements[1])
+                        )
                         {
                             continue;
                         }
 
-                        Packages.Add(new Package(
-                            CoreTools.FormatAsName(elements[0]),
-                            elements[0],
-                            elements[1],
-                            DefaultSource,
-                            this,
-                            options
-                        ));
+                        Packages.Add(
+                            new Package(
+                                CoreTools.FormatAsName(elements[0]),
+                                elements[0],
+                                elements[1],
+                                DefaultSource,
+                                this,
+                                options
+                            )
+                        );
                     }
                 }
                 logger.AddToStdErr(p.StandardError.ReadToEnd());
@@ -125,10 +157,14 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
             return Packages;
         }
 
-        public override IReadOnlyList<string> FindCandidateExecutableFiles()
-            => CoreTools.WhichMultiple("dotnet.exe");
+        public override IReadOnlyList<string> FindCandidateExecutableFiles() =>
+            CoreTools.WhichMultiple("dotnet.exe");
 
-        protected override void _loadManagerExecutableFile(out bool found, out string path, out string callArguments)
+        protected override void _loadManagerExecutableFile(
+            out bool found,
+            out string path,
+            out string callArguments
+        )
         {
             var (_found, _path) = GetExecutableFile();
             found = _found;
@@ -136,7 +172,8 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
             callArguments = "tool ";
 
             // Ensure .NET SDK is installed
-            if (!found) return;
+            if (!found)
+                return;
             var process = new Process()
             {
                 StartInfo = new ProcessStartInfo
@@ -147,8 +184,8 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8
-                }
+                    StandardOutputEncoding = System.Text.Encoding.UTF8,
+                },
             };
             process.Start();
             process.WaitForExit();
@@ -167,8 +204,8 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8
-                }
+                    StandardOutputEncoding = System.Text.Encoding.UTF8,
+                },
             };
 
             process.Start();

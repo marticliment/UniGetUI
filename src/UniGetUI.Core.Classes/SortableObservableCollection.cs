@@ -6,7 +6,8 @@ namespace UniGetUI.Core.Classes
     /*
      * An observable sorted collection that keeps IIndexableListItem indexes up to date
      */
-    public class SortableObservableCollection<T> : ObservableCollection<T> where T : IIndexableListItem
+    public class SortableObservableCollection<T> : ObservableCollection<T>
+        where T : IIndexableListItem
     {
         public Func<T, object>? SortingSelector { get; set; }
         public bool Descending { get; set; }
@@ -18,7 +19,12 @@ namespace UniGetUI.Core.Classes
                 return;
 
             base.OnCollectionChanged(e);
-            if (SortingSelector is null || e.Action is NotifyCollectionChangedAction.Remove or NotifyCollectionChangedAction.Reset)
+            if (
+                SortingSelector is null
+                || e.Action
+                    is NotifyCollectionChangedAction.Remove
+                        or NotifyCollectionChangedAction.Reset
+            )
                 return;
 
             Sort();
@@ -33,10 +39,14 @@ namespace UniGetUI.Core.Classes
 
             if (SortingSelector is null)
             {
-                throw new InvalidOperationException("SortableObservableCollection<T>.SortingSelector must not be null when sorting");
+                throw new InvalidOperationException(
+                    "SortableObservableCollection<T>.SortingSelector must not be null when sorting"
+                );
             }
 
-            List<T> sorted = Descending ? this.OrderByDescending(SortingSelector).ToList() : this.OrderBy(SortingSelector).ToList();
+            List<T> sorted = Descending
+                ? this.OrderByDescending(SortingSelector).ToList()
+                : this.OrderBy(SortingSelector).ToList();
             foreach (T item in sorted)
             {
                 Move(IndexOf(item), sorted.IndexOf(item));
@@ -48,7 +58,9 @@ namespace UniGetUI.Core.Classes
             }
 
             BlockSorting = false;
-            base.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+            base.OnCollectionChanged(
+                new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset)
+            );
         }
     }
 }

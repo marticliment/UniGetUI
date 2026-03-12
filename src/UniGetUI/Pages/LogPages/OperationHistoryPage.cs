@@ -1,14 +1,12 @@
-﻿using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Documents;
 using UniGetUI.Core.SettingsEngine;
 
 namespace UniGetUI.Interface.Pages.LogPage
 {
     public partial class OperationHistoryPage : BaseLogPage
     {
-        public OperationHistoryPage() : base(false)
-        {
-
-        }
+        public OperationHistoryPage()
+            : base(false) { }
 
         public override void LoadLog(bool isReload = false)
         {
@@ -25,7 +23,6 @@ namespace UniGetUI.Interface.Pages.LogPage
             }
             LogTextBox.Blocks.Clear();
             LogTextBox.Blocks.Add(paragraph);
-
         }
 
         protected override void LoadLogLevels()

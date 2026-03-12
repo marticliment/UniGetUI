@@ -1,71 +1,72 @@
 <Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>$(WindowsTargetFramework)</TargetFramework>
+        <TargetFrameworks />
 
-  <PropertyGroup>
-    <TargetFramework>$(WindowsTargetFramework)</TargetFramework>
-    <TargetFrameworks />
-
-
-    <SelfContained>true</SelfContained>
-    <RootNamespace>WindowsPackageManager.Interop</RootNamespace>
-    <!--Platforms>x86;x64;arm64</Platforms>
+        <SelfContained>true</SelfContained>
+        <RootNamespace>WindowsPackageManager.Interop</RootNamespace>
+        <!--Platforms>x86;x64;arm64</Platforms>
     <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers-->
+    </PropertyGroup>
 
-  </PropertyGroup>
-
-  <!--
+    <!--
   CsWinRT properties:
   https://github.com/microsoft/CsWinRT/blob/master/nuget/readme.md
   -->
-  <PropertyGroup>
-    <CsWinRTWindowsMetadata Condition="'$(PkgMicrosoft_Windows_SDK_Contracts)' != ''">$(PkgMicrosoft_Windows_SDK_Contracts)\ref\netstandard2.0</CsWinRTWindowsMetadata>
-    <CsWinRTWindowsMetadata Condition="'$(PkgMicrosoft_Windows_SDK_Contracts)' == ''">10.0.26100.0</CsWinRTWindowsMetadata>
-    <CsWinRTIncludes>Microsoft.Management.Deployment</CsWinRTIncludes>
-  </PropertyGroup>
+    <PropertyGroup>
+        <CsWinRTWindowsMetadata Condition="'$(PkgMicrosoft_Windows_SDK_Contracts)' != ''"
+            >$(PkgMicrosoft_Windows_SDK_Contracts)\ref\netstandard2.0</CsWinRTWindowsMetadata
+        >
+        <CsWinRTWindowsMetadata Condition="'$(PkgMicrosoft_Windows_SDK_Contracts)' == ''"
+            >10.0.26100.0</CsWinRTWindowsMetadata
+        >
+        <CsWinRTIncludes>Microsoft.Management.Deployment</CsWinRTIncludes>
+        <WindowsPackageManagerWinmd>$(PkgMicrosoft_WindowsPackageManager_InProcCom)\lib\Microsoft.Management.Deployment.winmd</WindowsPackageManagerWinmd>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <CsWinRTInputs Include="$(TargetDir)\Microsoft.Management.Deployment.winmd" />
-    <Content Include="$(TargetDir)\Microsoft.Management.Deployment.winmd" Link="Microsoft.Management.Deployment.winmd" CopyToOutputDirectory="PreserveNewest" />
-    <!--Content Include="$(TargetDir)\winrtact.dll" Link="winrtact.dll" CopyToOutputDirectory="PreserveNewest" /-->
-  </ItemGroup>
+    <ItemGroup>
+        <CsWinRTInputs Include="$(WindowsPackageManagerWinmd)" />
+        <Content
+            Include="$(WindowsPackageManagerWinmd)"
+            Link="Microsoft.Management.Deployment.winmd"
+            CopyToOutputDirectory="PreserveNewest"
+        />
+        <!--Content Include="$(TargetDir)\winrtact.dll" Link="winrtact.dll" CopyToOutputDirectory="PreserveNewest" /-->
+    </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.26100.4948">
-      <GeneratePathProperty>true</GeneratePathProperty>
-      <IncludeAssets>none</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.183">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-    </PackageReference>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.2.0" />
+        <PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.26100.4948">
+            <GeneratePathProperty>true</GeneratePathProperty>
+            <IncludeAssets>none</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.183">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
 
-    <!--
+        <!--
     Microsoft.WindowsPackageManager.ComInterop nuget targets .NET Framework:
     https://www.nuget.org/packages/Microsoft.WindowsPackageManager.ComInterop#readme-body-tab
     To workaround this issue in this .net project:
     - Suppress warning 1701 (Package not compatible)
     - Do not include nuget assets
     - Generate a property for this package so the path can be referenced
-    - Copy the WINMD to the $(TargetDir) before the build starts
-    - Feed the $(TargetDir)\WINMD path to CsWinRT in order to generate the projected classes
+    - Copy the WINMD to the output directory for runtime consumption
+    - Feed the package WINMD path to CsWinRT in order to generate the projected classes
     NOTE: Suppressing the warning only is not enough as this will cause CoreClrInitFailure (0x80008089) error.
     -->
-    <PackageReference Include="Microsoft.WindowsPackageManager.ComInterop" Version="1.12.350">
-      <NoWarn>NU1701</NoWarn>
-      <GeneratePathProperty>true</GeneratePathProperty>
-      <IncludeAssets>none</IncludeAssets>
-      <WindowsAppSdkUndockedRegFreeWinRTInitialize>false</WindowsAppSdkUndockedRegFreeWinRTInitialize>
-    </PackageReference>
+        <PackageReference Include="Microsoft.WindowsPackageManager.ComInterop" Version="1.12.350">
+            <NoWarn>NU1701</NoWarn>
+            <GeneratePathProperty>true</GeneratePathProperty>
+            <IncludeAssets>none</IncludeAssets>
+            <WindowsAppSdkUndockedRegFreeWinRTInitialize>false</WindowsAppSdkUndockedRegFreeWinRTInitialize>
+        </PackageReference>
 
-    <PackageReference Include="Microsoft.WindowsPackageManager.InProcCom" Version="1.12.350">
-      <NoWarn>NU1701</NoWarn>
-      <GeneratePathProperty>true</GeneratePathProperty>
-      <IncludeAssets>none</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
-
-  <Target Name="CopyWinmdToTargetDir" BeforeTargets="BeforeBuild">
-    <Copy SourceFiles="$(PkgMicrosoft_WindowsPackageManager_InProcCom)\lib\Microsoft.Management.Deployment.winmd" DestinationFolder="$(TargetDir)" />
-    <!--Copy SourceFiles="$(PkgMicrosoft_WindowsPackageManager_ComInterop)\runtimes\win10-$(Platform)\native\winrtact.dll" DestinationFolder="$(TargetDir)" /-->
-  </Target>
+        <PackageReference Include="Microsoft.WindowsPackageManager.InProcCom" Version="1.12.350">
+            <NoWarn>NU1701</NoWarn>
+            <GeneratePathProperty>true</GeneratePathProperty>
+            <IncludeAssets>none</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
 </Project>

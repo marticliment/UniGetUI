@@ -4,6 +4,7 @@ using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageOperations;
 
 namespace UniGetUI.PackageEngine.Operations;
+
 public class DownloadOperation : AbstractOperation
 {
     private readonly IPackage _package;
@@ -14,24 +15,40 @@ public class DownloadOperation : AbstractOperation
     }
     private bool canceled;
 
-    public DownloadOperation(IPackage package, string downloadPath): base(true, null)
+    public DownloadOperation(IPackage package, string downloadPath)
+        : base(true, null)
     {
         downloadLocation = downloadPath;
         _package = package;
 
-        Metadata.OperationInformation = "Downloading installer for Package=" + _package.Id + " with Manager=" + _package.Manager.Name;
-        Metadata.Title = CoreTools.Translate("{package} installer download", new Dictionary<string, object?> { { "package", _package.Name } });
+        Metadata.OperationInformation =
+            "Downloading installer for Package="
+            + _package.Id
+            + " with Manager="
+            + _package.Manager.Name;
+        Metadata.Title = CoreTools.Translate(
+            "{package} installer download",
+            new Dictionary<string, object?> { { "package", _package.Name } }
+        );
         Metadata.Status = CoreTools.Translate("{0} installer is being downloaded", _package.Name);
         Metadata.SuccessTitle = CoreTools.Translate("Download succeeded");
-        Metadata.SuccessMessage = CoreTools.Translate("{package} installer was downloaded successfully", new Dictionary<string, object?> { { "package", _package.Name } });
-        Metadata.FailureTitle = CoreTools.Translate("Download failed", new Dictionary<string, object?> { { "package", _package.Name } });
-        Metadata.FailureMessage = CoreTools.Translate("{package} installer could not be downloaded", new Dictionary<string, object?> { { "package", _package.Name } });
+        Metadata.SuccessMessage = CoreTools.Translate(
+            "{package} installer was downloaded successfully",
+            new Dictionary<string, object?> { { "package", _package.Name } }
+        );
+        Metadata.FailureTitle = CoreTools.Translate(
+            "Download failed",
+            new Dictionary<string, object?> { { "package", _package.Name } }
+        );
+        Metadata.FailureMessage = CoreTools.Translate(
+            "{package} installer could not be downloaded",
+            new Dictionary<string, object?> { { "package", _package.Name } }
+        );
 
         CancelRequested += (_, _) =>
         {
             canceled = true;
         };
-
     }
 
     public override Task<Uri> GetOperationIcon()
@@ -49,13 +66,19 @@ public class DownloadOperation : AbstractOperation
         canceled = false;
         try
         {
-            Line($"Fetching download url for package {_package.Name} from {_package.Manager.DisplayName}...", LineType.Information);
+            Line(
+                $"Fetching download url for package {_package.Name} from {_package.Manager.DisplayName}...",
+                LineType.Information
+            );
             await _package.Details.Load();
             Uri? downloadUrl = _package.Details.InstallerUrl;
             if (downloadUrl is null)
             {
-                Line($"UniGetUI was not able to find any installer for this package. " +
-                     $"Please check that this package has an applicable installer and try again later", LineType.Error);
+                Line(
+                    $"UniGetUI was not able to find any installer for this package. "
+                        + $"Please check that this package has an applicable installer and try again later",
+                    LineType.Error
+                );
                 return OperationVeredict.Failure;
             }
 
@@ -64,7 +87,10 @@ public class DownloadOperation : AbstractOperation
                 string? fileName = await _package.GetInstallerFileName();
                 if (fileName is null)
                 {
-                    Line("An error occurred while retrieving file name, default will be used!", LineType.Error);
+                    Line(
+                        "An error occurred while retrieving file name, default will be used!",
+                        LineType.Error
+                    );
                     fileName = CoreTools.MakeValidFileName(_package.Name);
                 }
                 downloadLocation = Path.Join(downloadLocation, fileName);
@@ -72,7 +98,10 @@ public class DownloadOperation : AbstractOperation
 
             Line($"Download URL found at {downloadUrl} ", LineType.Information);
             using var httpClient = new HttpClient(CoreTools.GenericHttpClientParameters);
-            using var response = await httpClient.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead);
+            using var response = await httpClient.GetAsync(
+                downloadUrl,
+                HttpCompletionOption.ResponseHeadersRead
+            );
 
             response.EnsureSuccessStatusCode();
 
@@ -80,9 +109,16 @@ public class DownloadOperation : AbstractOperation
             var canReportProgress = totalBytes > 0;
 
             using var contentStream = await response.Content.ReadAsStreamAsync();
-            using var fileStream = new FileStream(downloadLocation, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true);
+            using var fileStream = new FileStream(
+                downloadLocation,
+                FileMode.Create,
+                FileAccess.Write,
+                FileShare.None,
+                8192,
+                true
+            );
 
-            var buffer = new byte[4*1024*1024];
+            var buffer = new byte[4 * 1024 * 1024];
             long totalRead = 0;
             int bytesRead;
 
@@ -98,10 +134,14 @@ public class DownloadOperation : AbstractOperation
                     if (progress != oldProgress)
                     {
                         oldProgress = progress;
-                        Line(CoreTools.TextProgressGenerator(
-                            30, progress,
-                            $"{CoreTools.FormatAsSize(totalRead)}/{CoreTools.FormatAsSize(totalBytes)}"
-                        ), LineType.ProgressIndicator);
+                        Line(
+                            CoreTools.TextProgressGenerator(
+                                30,
+                                progress,
+                                $"{CoreTools.FormatAsSize(totalRead)}/{CoreTools.FormatAsSize(totalBytes)}"
+                            ),
+                            LineType.ProgressIndicator
+                        );
                     }
                 }
 

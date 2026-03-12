@@ -1,10 +1,11 @@
-﻿using System.Text.Json.Nodes;
+using System.Text.Json.Nodes;
 using UniGetUI.Core.Data;
 using UniGetUI.PackageEngine.Serializable;
 
 namespace UniGetUI.PackageEngine.Classes.Serializable
 {
-    public class SerializableIncompatiblePackage: SerializableComponent<SerializableIncompatiblePackage>
+    public class SerializableIncompatiblePackage
+        : SerializableComponent<SerializableIncompatiblePackage>
     {
         public string Id { get; set; } = "";
         public string Name { get; set; } = "";
@@ -15,7 +16,10 @@ namespace UniGetUI.PackageEngine.Classes.Serializable
         {
             return new()
             {
-                Id = this.Id, Name = this.Name, Version = this.Version, Source = this.Source,
+                Id = this.Id,
+                Name = this.Name,
+                Version = this.Version,
+                Source = this.Source,
             };
         }
 
@@ -37,12 +41,10 @@ namespace UniGetUI.PackageEngine.Classes.Serializable
             return obj;
         }
 
-        public SerializableIncompatiblePackage(JsonNode data) : base(data)
-        {
-        }
+        public SerializableIncompatiblePackage(JsonNode data)
+            : base(data) { }
 
-        public SerializableIncompatiblePackage(): base()
-        {
-        }
+        public SerializableIncompatiblePackage()
+            : base() { }
     }
 }

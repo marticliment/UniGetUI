@@ -21,10 +21,7 @@ namespace UniGetUI.Interface.Widgets
         private Settings.K settings_name = Settings.K.Unset;
         public Settings.K SettingName
         {
-            set
-            {
-                settings_name = value;
-            }
+            set { settings_name = value; }
         }
 
         public string Text
@@ -37,7 +34,10 @@ namespace UniGetUI.Interface.Widgets
         public ComboboxCard()
         {
             _combobox.MinWidth = 200;
-            _combobox.SetBinding(ItemsControl.ItemsSourceProperty, new Binding { Source = _elements });
+            _combobox.SetBinding(
+                ItemsControl.ItemsSourceProperty,
+                new Binding { Source = _elements }
+            );
             Content = _combobox;
         }
 
@@ -73,7 +73,10 @@ namespace UniGetUI.Interface.Widgets
             {
                 try
                 {
-                    Settings.SetValue(settings_name, _values_ref[_combobox.SelectedItem?.ToString() ?? ""]);
+                    Settings.SetValue(
+                        settings_name,
+                        _values_ref[_combobox.SelectedItem?.ToString() ?? ""]
+                    );
                     ValueChanged?.Invoke(this, EventArgs.Empty);
                 }
                 catch (Exception ex)
@@ -83,7 +86,9 @@ namespace UniGetUI.Interface.Widgets
             };
         }
 
-        public string SelectedValue() => _combobox.SelectedValue.ToString() ?? throw new InvalidCastException();
+        public string SelectedValue() =>
+            _combobox.SelectedValue.ToString() ?? throw new InvalidCastException();
+
         public void SelectIndex(int index) => _combobox.SelectedIndex = index;
     }
 }

@@ -15,37 +15,52 @@ public abstract class BasePkgOperationHelper : IPackageOperationHelper
         Manager = manager;
     }
 
-    protected abstract IReadOnlyList<string> _getOperationParameters(IPackage package,
+    protected abstract IReadOnlyList<string> _getOperationParameters(
+        IPackage package,
         InstallOptions options,
-        OperationType operation);
+        OperationType operation
+    );
 
     protected abstract OperationVeredict _getOperationResult(
         IPackage package,
         OperationType operation,
         IReadOnlyList<string> processOutput,
-        int returnCode);
+        int returnCode
+    );
 
-    public IReadOnlyList<string> GetParameters(IPackage package,
+    public IReadOnlyList<string> GetParameters(
+        IPackage package,
         InstallOptions options,
-        OperationType operation)
+        OperationType operation
+    )
     {
         var parameters = _getOperationParameters(package, options, operation);
-        Logger.Info($"Loaded operation parameters for package id={package.Id} on manager {Manager.Name} and operation {operation}: " +
-                    string.Join(' ', parameters));
+        Logger.Info(
+            $"Loaded operation parameters for package id={package.Id} on manager {Manager.Name} and operation {operation}: "
+                + string.Join(' ', parameters)
+        );
         return parameters.Where(x => x.Any()).ToArray();
-
     }
 
     public OperationVeredict GetResult(
         IPackage package,
         OperationType operation,
         IReadOnlyList<string> processOutput,
-        int returnCode)
+        int returnCode
+    )
     {
-
-        if (returnCode is 999 && (!processOutput.Any() || processOutput[processOutput.Count - 1] == "Error: The operation was canceled by the user."))
+        if (
+            returnCode is 999
+            && (
+                !processOutput.Any()
+                || processOutput[processOutput.Count - 1]
+                    == "Error: The operation was canceled by the user."
+            )
+        )
         {
-            Logger.Warn("Elevator [or GSudo] UAC prompt was canceled, not showing error message...");
+            Logger.Warn(
+                "Elevator [or GSudo] UAC prompt was canceled, not showing error message..."
+            );
             return OperationVeredict.Canceled;
         }
 

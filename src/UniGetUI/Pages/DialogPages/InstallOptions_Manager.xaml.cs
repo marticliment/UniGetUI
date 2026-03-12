@@ -19,6 +19,7 @@ public sealed partial class InstallOptions_Manager : UserControl
 {
     private readonly IPackageManager Manager;
     private static string DefaultLocationLabel = null!;
+
     public InstallOptions_Manager(IPackageManager manager)
     {
         Manager = manager;
@@ -26,7 +27,9 @@ public sealed partial class InstallOptions_Manager : UserControl
         AdminCheckBox.Content = CoreTools.Translate("Run as admin");
         InteractiveCheckBox.Content = CoreTools.Translate("Interactive installation");
         HashCheckBox.Content = CoreTools.Translate("Skip hash check");
-        UninstallPreviousVerOnUpdate.Content = CoreTools.Translate("Uninstall previous versions when updated");
+        UninstallPreviousVerOnUpdate.Content = CoreTools.Translate(
+            "Uninstall previous versions when updated"
+        );
         PreReleaseCheckBox.Content = CoreTools.Translate("Allow pre-release versions");
         ArchLabel.Text = CoreTools.Translate("Architecture to install:");
         ScopeLabel.Text = CoreTools.Translate("Installation scope:");
@@ -39,7 +42,10 @@ public sealed partial class InstallOptions_Manager : UserControl
         DefaultLocationLabel ??= CoreTools.Translate("Package's default");
         ResetButton.Content = CoreTools.Translate("Reset");
         ApplyButton.Content = CoreTools.Translate("Apply");
-        HeaderLabel.Text = CoreTools.Translate("The following options will be applied by default each time a {0} package is installed, upgraded or uninstalled.", Manager.DisplayName);
+        HeaderLabel.Text = CoreTools.Translate(
+            "The following options will be applied by default each time a {0} package is installed, upgraded or uninstalled.",
+            Manager.DisplayName
+        );
 
         DisableAllInput();
         _ = LoadOptions();
@@ -103,13 +109,17 @@ public sealed partial class InstallOptions_Manager : UserControl
         if (Manager.Capabilities.SupportsCustomScopes)
         {
             ScopeCombo.IsEnabled = true;
-            ScopeCombo.Items.Add(CoreTools.Translate(CommonTranslations.ScopeNames[PackageScope.Local]));
+            ScopeCombo.Items.Add(
+                CoreTools.Translate(CommonTranslations.ScopeNames[PackageScope.Local])
+            );
             if (options.InstallationScope == PackageScope.Local)
             {
                 ScopeCombo.SelectedValue = CommonTranslations.ScopeNames[PackageScope.Local];
             }
 
-            ScopeCombo.Items.Add(CoreTools.Translate(CommonTranslations.ScopeNames[PackageScope.Global]));
+            ScopeCombo.Items.Add(
+                CoreTools.Translate(CommonTranslations.ScopeNames[PackageScope.Global])
+            );
             if (options.InstallationScope == PackageScope.Global)
             {
                 ScopeCombo.SelectedValue = CommonTranslations.ScopeNames[PackageScope.Global];
@@ -117,7 +127,7 @@ public sealed partial class InstallOptions_Manager : UserControl
         }
 
         // Install location
-        if(Manager.Capabilities.SupportsCustomLocations)
+        if (Manager.Capabilities.SupportsCustomLocations)
         {
             SelectDir.IsEnabled = true;
             if (options.CustomInstallLocation.Any())
@@ -133,7 +143,10 @@ public sealed partial class InstallOptions_Manager : UserControl
         }
         else
         {
-            CustomInstallLocation.Text = CoreTools.Translate("Install location can't be changed for {0} packages", Manager.DisplayName);
+            CustomInstallLocation.Text = CoreTools.Translate(
+                "Install location can't be changed for {0} packages",
+                Manager.DisplayName
+            );
         }
 
         bool IsCLIEnabled = SecureSettings.Get(SecureSettings.K.AllowCLIArguments);
@@ -150,7 +163,9 @@ public sealed partial class InstallOptions_Manager : UserControl
         CustomParameters2.Text = string.Join(' ', options.CustomParameters_Update);
         CustomParameters3.Text = string.Join(' ', options.CustomParameters_Uninstall);
 
-        UninstallPreviousVerOnUpdate.IsEnabled = Manager.Capabilities.CanUninstallPreviousVersionsAfterUpdate;
+        UninstallPreviousVerOnUpdate.IsEnabled = Manager
+            .Capabilities
+            .CanUninstallPreviousVersionsAfterUpdate;
         UninstallPreviousVerOnUpdate.IsChecked = options.UninstallPreviousVersionsOnUpdate;
 
         ResetButton.IsEnabled = true;
@@ -191,15 +206,27 @@ public sealed partial class InstallOptions_Manager : UserControl
 
         // Location
         options.CustomInstallLocation = "";
-        if(CustomInstallLocation.Text != DefaultLocationLabel && Manager.Capabilities.SupportsCustomLocations)
+        if (
+            CustomInstallLocation.Text != DefaultLocationLabel
+            && Manager.Capabilities.SupportsCustomLocations
+        )
         {
             options.CustomInstallLocation = CustomInstallLocation.Text;
         }
 
         // Command-line parameters
-        options.CustomParameters_Install = CustomParameters1.Text.Split(' ').Where(x => x.Any()).ToList();
-        options.CustomParameters_Update = CustomParameters2.Text.Split(' ').Where(x => x.Any()).ToList();
-        options.CustomParameters_Uninstall = CustomParameters3.Text.Split(' ').Where(x => x.Any()).ToList();
+        options.CustomParameters_Install = CustomParameters1
+            .Text.Split(' ')
+            .Where(x => x.Any())
+            .ToList();
+        options.CustomParameters_Update = CustomParameters2
+            .Text.Split(' ')
+            .Where(x => x.Any())
+            .ToList();
+        options.CustomParameters_Uninstall = CustomParameters3
+            .Text.Split(' ')
+            .Where(x => x.Any())
+            .ToList();
 
         await InstallOptionsFactory.SaveForManagerAsync(options, Manager);
         await LoadOptions();
@@ -246,7 +273,9 @@ public sealed partial class InstallOptions_Manager : UserControl
 
     private void SelectDir_Click(object sender, RoutedEventArgs e)
     {
-        ExternalLibraries.Pickers.FolderPicker openPicker = new(MainApp.Instance.MainWindow.GetWindowHandle());
+        ExternalLibraries.Pickers.FolderPicker openPicker = new(
+            MainApp.Instance.MainWindow.GetWindowHandle()
+        );
         string folder = openPicker.Show();
         if (folder != string.Empty)
         {

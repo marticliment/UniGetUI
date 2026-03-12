@@ -29,13 +29,17 @@ namespace UniGetUI.Interface.Widgets
         {
             var op = new OperationControl(new RemoveSourceOperation(Source));
             MainApp.Operations._operationList.Add(op);
-            op.Operation.OperationSucceeded += (_, _) => { Parent.RemoveSourceItem(this); };
+            op.Operation.OperationSucceeded += (_, _) =>
+            {
+                Parent.RemoveSourceItem(this);
+            };
         }
     }
 
     public sealed partial class SourceManager : UserControl
     {
         private IPackageManager Manager { get; set; }
+
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
         private ObservableCollection<SourceItem> Sources = [];
 
@@ -48,7 +52,9 @@ namespace UniGetUI.Interface.Widgets
 
             if (!Manager.Capabilities.SupportsCustomSources)
             {
-                throw new InvalidOperationException($"Attempted to create a SourceManager class from Manager {Manager.Name}, which does not support custom sources");
+                throw new InvalidOperationException(
+                    $"Attempted to create a SourceManager class from Manager {Manager.Name}, which does not support custom sources"
+                );
             }
 
             Header.Text = CoreTools.Translate("Manage {0} sources", Manager.DisplayName);
@@ -57,10 +63,7 @@ namespace UniGetUI.Interface.Widgets
             {
                 try
                 {
-                    ContentDialog d = new()
-                    {
-                        Title = CoreTools.Translate("Add source")
-                    };
+                    ContentDialog d = new() { Title = CoreTools.Translate("Add source") };
 
                     ComboBox SourcesCombo = new();
                     Dictionary<string, IManagerSource> NameSourceRef = [];
@@ -71,22 +74,51 @@ namespace UniGetUI.Interface.Widgets
                     }
 
                     d.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-                    StackPanel p = new()
-                    {
-                        Spacing = 8
-                    };
-                    p.Children.Add(new TextBlock { Text = CoreTools.Translate("Select the source you want to add:") });
+                    StackPanel p = new() { Spacing = 8 };
+                    p.Children.Add(
+                        new TextBlock
+                        {
+                            Text = CoreTools.Translate("Select the source you want to add:"),
+                        }
+                    );
                     p.Children.Add(SourcesCombo);
 
-                    TextBox SourceNameTextBox = new() { HorizontalAlignment = HorizontalAlignment.Stretch, Width = 400 };
-                    TextBox SourceUrlTextBox = new() { HorizontalAlignment = HorizontalAlignment.Stretch };
+                    TextBox SourceNameTextBox = new()
+                    {
+                        HorizontalAlignment = HorizontalAlignment.Stretch,
+                        Width = 400,
+                    };
+                    TextBox SourceUrlTextBox = new()
+                    {
+                        HorizontalAlignment = HorizontalAlignment.Stretch,
+                    };
 
-                    StackPanel p1 = new() { Spacing = 2, HorizontalAlignment = HorizontalAlignment.Stretch };
-                    p1.Children.Add(new TextBlock { Text = CoreTools.Translate("Source name:"), VerticalAlignment = VerticalAlignment.Center });
+                    StackPanel p1 = new()
+                    {
+                        Spacing = 2,
+                        HorizontalAlignment = HorizontalAlignment.Stretch,
+                    };
+                    p1.Children.Add(
+                        new TextBlock
+                        {
+                            Text = CoreTools.Translate("Source name:"),
+                            VerticalAlignment = VerticalAlignment.Center,
+                        }
+                    );
                     p1.Children.Add(SourceNameTextBox);
 
-                    StackPanel p2 = new() { Spacing = 2, HorizontalAlignment = HorizontalAlignment.Stretch };
-                    p2.Children.Add(new TextBlock { Text = CoreTools.Translate("Source URL:"), VerticalAlignment = VerticalAlignment.Center });
+                    StackPanel p2 = new()
+                    {
+                        Spacing = 2,
+                        HorizontalAlignment = HorizontalAlignment.Stretch,
+                    };
+                    p2.Children.Add(
+                        new TextBlock
+                        {
+                            Text = CoreTools.Translate("Source URL:"),
+                            VerticalAlignment = VerticalAlignment.Center,
+                        }
+                    );
                     p2.Children.Add(SourceUrlTextBox);
 
                     p.Children.Add(p1);
@@ -112,7 +144,9 @@ namespace UniGetUI.Interface.Widgets
                             }
                             else
                             {
-                                Logger.Warn("SourcesCombo.SelectedValue.ToString() was null on SourceManager.SourceManager");
+                                Logger.Warn(
+                                    "SourcesCombo.SelectedValue.ToString() was null on SourceManager.SourceManager"
+                                );
                             }
                         }
                     };
@@ -128,9 +162,17 @@ namespace UniGetUI.Interface.Widgets
                     {
                         PackageOperations.AbstractOperation op;
                         if (CoreTools.Translate("Other") != SourcesCombo.SelectedValue.ToString())
-                            op = new AddSourceOperation(NameSourceRef[SourcesCombo.SelectedValue.ToString() ?? ""]);
+                            op = new AddSourceOperation(
+                                NameSourceRef[SourcesCombo.SelectedValue.ToString() ?? ""]
+                            );
                         else
-                            op = new AddSourceOperation(new ManagerSource(this.Manager, SourceNameTextBox.Text, new Uri(SourceUrlTextBox.Text)));
+                            op = new AddSourceOperation(
+                                new ManagerSource(
+                                    this.Manager,
+                                    SourceNameTextBox.Text,
+                                    new Uri(SourceUrlTextBox.Text)
+                                )
+                            );
 
                         MainApp.Operations.Add(op);
                         op.OperationSucceeded += (_, _) => _ = LoadSources();
@@ -143,7 +185,9 @@ namespace UniGetUI.Interface.Widgets
                         XamlRoot = XamlRoot,
                         Title = CoreTools.Translate("An error occurred"),
                         Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
-                        Content = CoreTools.Translate("An error occurred when adding the source: ") + ex.Message
+                        Content =
+                            CoreTools.Translate("An error occurred when adding the source: ")
+                            + ex.Message,
                     };
                     _ = DialogHelper.ShowDialogAsync(d, HighPriority: true);
                     d.PrimaryButtonText = CoreTools.Translate("Close");
@@ -184,7 +228,6 @@ namespace UniGetUI.Interface.Widgets
             Sources.Remove(Item);
         }
 
-        private void ReloadButton_Click(object sender, RoutedEventArgs e)
-            => _ = LoadSources();
+        private void ReloadButton_Click(object sender, RoutedEventArgs e) => _ = LoadSources();
     }
 }

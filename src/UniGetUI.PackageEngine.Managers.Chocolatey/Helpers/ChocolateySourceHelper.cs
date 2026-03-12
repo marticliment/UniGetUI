@@ -9,11 +9,21 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
 {
     internal sealed class ChocolateySourceHelper : BaseSourceHelper
     {
-        public ChocolateySourceHelper(Chocolatey manager) : base(manager) { }
+        public ChocolateySourceHelper(Chocolatey manager)
+            : base(manager) { }
 
         public override string[] GetAddSourceParameters(IManagerSource source)
         {
-            return ["source", "add", "--name", source.Name, "--source", source.Url.ToString(), "-y"];
+            return
+            [
+                "source",
+                "add",
+                "--name",
+                source.Name,
+                "--source",
+                source.Url.ToString(),
+                "-y",
+            ];
         }
 
         public override string[] GetRemoveSourceParameters(IManagerSource source)
@@ -21,12 +31,20 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             return ["source", "remove", "--name", source.Name, "-y"];
         }
 
-        protected override OperationVeredict _getAddSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
+        protected override OperationVeredict _getAddSourceOperationVeredict(
+            IManagerSource source,
+            int ReturnCode,
+            string[] Output
+        )
         {
             return ReturnCode == 0 ? OperationVeredict.Success : OperationVeredict.Failure;
         }
 
-        protected override OperationVeredict _getRemoveSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
+        protected override OperationVeredict _getRemoveSourceOperationVeredict(
+            IManagerSource source,
+            int ReturnCode,
+            string[] Output
+        )
         {
             return ReturnCode == 0 ? OperationVeredict.Success : OperationVeredict.Failure;
         }
@@ -40,17 +58,23 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 StartInfo = new()
                 {
                     FileName = Manager.Status.ExecutablePath,
-                    Arguments = Manager.Status.ExecutableCallArgs + " source list " + Chocolatey.GetProxyArgument(),
+                    Arguments =
+                        Manager.Status.ExecutableCallArgs
+                        + " source list "
+                        + Chocolatey.GetProxyArgument(),
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     RedirectStandardInput = true,
                     UseShellExecute = false,
                     CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8
-                }
+                    StandardOutputEncoding = System.Text.Encoding.UTF8,
+                },
             };
 
-            IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListSources, p);
+            IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(
+                LoggableTaskType.ListSources,
+                p
+            );
             p.Start();
 
             string? line;
@@ -67,13 +91,28 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                     if (line.Contains(" - ") && line.Contains("| "))
                     {
                         string[] parts = line.Trim().Split('|')[0].Trim().Split(" - ");
-                        if (parts[1].Trim() == "https://community.chocolatey.org/api/v2/" || parts[1].Trim() == "https://chocolatey.org/api/v2/")
+                        if (
+                            parts[1].Trim() == "https://community.chocolatey.org/api/v2/"
+                            || parts[1].Trim() == "https://chocolatey.org/api/v2/"
+                        )
                         {
-                            sources.Add(new ManagerSource(Manager, "community", new Uri("https://community.chocolatey.org/api/v2/")));
+                            sources.Add(
+                                new ManagerSource(
+                                    Manager,
+                                    "community",
+                                    new Uri("https://community.chocolatey.org/api/v2/")
+                                )
+                            );
                         }
                         else
                         {
-                            sources.Add(new ManagerSource(Manager, parts[0].Trim(), new Uri(parts[1].Split(" ")[0].Trim())));
+                            sources.Add(
+                                new ManagerSource(
+                                    Manager,
+                                    parts[0].Trim(),
+                                    new Uri(parts[1].Split(" ")[0].Trim())
+                                )
+                            );
                         }
                     }
                 }

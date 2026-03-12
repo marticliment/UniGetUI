@@ -48,10 +48,15 @@ public static class IntegrityTester
 
     public static Result CheckIntegrity(bool allowRetry = true)
     {
-        string integrityTreePath = Path.Join(CoreData.UniGetUIExecutableDirectory, "IntegrityTree.json");
+        string integrityTreePath = Path.Join(
+            CoreData.UniGetUIExecutableDirectory,
+            "IntegrityTree.json"
+        );
         if (!File.Exists(integrityTreePath))
         {
-            Logger.Error("/IntegrityTree.json does not exist, integrity check will not be performed!");
+            Logger.Error(
+                "/IntegrityTree.json does not exist, integrity check will not be performed!"
+            );
             return new()
             {
                 Passed = false,
@@ -65,7 +70,10 @@ public static class IntegrityTester
 
         try
         {
-            data = JsonSerializer.Deserialize<Dictionary<string, string>>(rawData, SerializationHelpers.DefaultOptions);
+            data = JsonSerializer.Deserialize<Dictionary<string, string>>(
+                rawData,
+                SerializationHelpers.DefaultOptions
+            );
         }
         catch (Exception ex)
         {
@@ -80,7 +88,12 @@ public static class IntegrityTester
                 Passed = false,
                 MissingFiles = [],
                 CorruptedFiles = new()
-                { {"", new MismatchedHash() {Got = rawData, Expected = "A valid JSON"} } },
+                {
+                    {
+                        "",
+                        new MismatchedHash() { Got = rawData, Expected = "A valid JSON" }
+                    },
+                },
             };
         }
 
@@ -101,7 +114,9 @@ public static class IntegrityTester
             if (currentHash != expectedHash.ToLower())
             {
                 mismatches.Add($"/{file}", new() { Expected = expectedHash, Got = currentHash });
-                Logger.Error($"File {file} expected to have sha256 {expectedHash}, but had {currentHash} instead");
+                Logger.Error(
+                    $"File {file} expected to have sha256 {expectedHash}, but had {currentHash} instead"
+                );
             }
         }
 
@@ -109,7 +124,7 @@ public static class IntegrityTester
         {
             Passed = !misses.Any() && !mismatches.Any(),
             MissingFiles = misses,
-            CorruptedFiles = mismatches
+            CorruptedFiles = mismatches,
         };
 
         if (result.Passed)
@@ -138,7 +153,9 @@ public static class IntegrityTester
         {
             Builder.Append("Corrupted files: ");
             foreach (var (file, hashes) in result.CorruptedFiles)
-                Builder.Append($"\n - {file} (sha256 mismatch, got {hashes.Got} but expected {hashes.Expected} ");
+                Builder.Append(
+                    $"\n - {file} (sha256 mismatch, got {hashes.Got} but expected {hashes.Expected} "
+                );
             Builder.Append('\n');
         }
 

@@ -1,4 +1,4 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 using ExternalLibraries.Pickers.Enums;
 using ExternalLibraries.Pickers.Interfaces;
 using ExternalLibraries.Pickers.Structures;
@@ -24,7 +24,9 @@ internal static class Helper
             if (typeFilters is not null)
             {
                 typeFilters.Insert(0, string.Join("; ", typeFilters));
-                COMDLG_FILTERSPEC[] filterSpecs = typeFilters.Select(f => new COMDLG_FILTERSPEC(f)).ToArray();
+                COMDLG_FILTERSPEC[] filterSpecs = typeFilters
+                    .Select(f => new COMDLG_FILTERSPEC(f))
+                    .ToArray();
 
                 dialog.SetFileTypes((uint)filterSpecs.Length, filterSpecs);
             }
@@ -46,7 +48,12 @@ internal static class Helper
         }
     }
 
-    internal static string ShowSave(nint windowHandle, FOS fos, List<string>? typeFilters = null, string name = "")
+    internal static string ShowSave(
+        nint windowHandle,
+        FOS fos,
+        List<string>? typeFilters = null,
+        string name = ""
+    )
     {
         FileSaveDialog dialog = new();
         try
@@ -55,7 +62,9 @@ internal static class Helper
 
             if (typeFilters is not null)
             {
-                COMDLG_FILTERSPEC[] filterSpecs = typeFilters.Select(f => new COMDLG_FILTERSPEC(f)).ToArray();
+                COMDLG_FILTERSPEC[] filterSpecs = typeFilters
+                    .Select(f => new COMDLG_FILTERSPEC(f))
+                    .ToArray();
 
                 dialog.SetFileTypes((uint)filterSpecs.Length, filterSpecs);
             }
@@ -78,7 +87,7 @@ internal static class Helper
             if (fileExtension.Length > 0 && fileExtension[0] == '*')
                 fileExtension = fileExtension.TrimStart('*');
 
-            return path.Contains(fileExtension)? path: path + fileExtension;
+            return path.Contains(fileExtension) ? path : path + fileExtension;
         }
         finally
         {

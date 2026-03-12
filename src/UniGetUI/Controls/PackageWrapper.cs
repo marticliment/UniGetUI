@@ -57,8 +57,14 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public readonly string ExtendedTooltip = "";
         public float ListedOpacity = 1.0f;
 
-        public int NewVersionLabelWidth { get => Package.IsUpgradable ? 125 : 0; }
-        public int NewVersionIconWidth { get => Package.IsUpgradable ? 24 : 0; }
+        public int NewVersionLabelWidth
+        {
+            get => Package.IsUpgradable ? 125 : 0;
+        }
+        public int NewVersionIconWidth
+        {
+            get => Package.IsUpgradable ? 24 : 0;
+        }
 
         public int Index { get; set; }
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -76,25 +82,29 @@ namespace UniGetUI.PackageEngine.PackageClasses
             WhenTagHasChanged();
             Package.PropertyChanged += Package_PropertyChanged;
             UpdatePackageIcon();
-            VersionComboString = package.IsUpgradable ? $"{package.VersionString} -> {package.NewVersionString}" : package.VersionString;
+            VersionComboString = package.IsUpgradable
+                ? $"{package.VersionString} -> {package.NewVersionString}"
+                : package.VersionString;
 
-            if(package.Name.ToLower() != package.Id.ToLower())
-                ExtendedTooltip = $"{package.Name} ({package.Id} from {package.Source.AsString_DisplayName})";
+            if (package.Name.ToLower() != package.Id.ToLower())
+                ExtendedTooltip =
+                    $"{package.Name} ({package.Id} from {package.Source.AsString_DisplayName})";
             else
                 ExtendedTooltip = $"{package.Name} (from {package.Source.AsString_DisplayName})";
         }
 
-        public void PackageItemContainer_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
-            => _page.PackageItemContainer_DoubleTapped(sender, e);
+        public void PackageItemContainer_DoubleTapped(
+            object sender,
+            DoubleTappedRoutedEventArgs e
+        ) => _page.PackageItemContainer_DoubleTapped(sender, e);
 
-        public void PackageItemContainer_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
-            => _page.PackageItemContainer_PreviewKeyDown(sender, e);
+        public void PackageItemContainer_PreviewKeyDown(object sender, KeyRoutedEventArgs e) =>
+            _page.PackageItemContainer_PreviewKeyDown(sender, e);
 
-        public void PackageItemContainer_RightTapped(object sender, RightTappedRoutedEventArgs e)
-            => _page.PackageItemContainer_RightTapped(sender, e);
+        public void PackageItemContainer_RightTapped(object sender, RightTappedRoutedEventArgs e) =>
+            _page.PackageItemContainer_RightTapped(sender, e);
 
-        public void RightClick()
-            => _ = RightClickAsync();
+        public void RightClick() => _ = RightClickAsync();
 
         private async Task RightClickAsync()
         {
@@ -108,11 +118,23 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 if (e.PropertyName == nameof(Package.Tag))
                 {
                     WhenTagHasChanged();
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ListedOpacity)));
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AlternateIconId)));
+                    PropertyChanged?.Invoke(
+                        this,
+                        new PropertyChangedEventArgs(nameof(ListedOpacity))
+                    );
+                    PropertyChanged?.Invoke(
+                        this,
+                        new PropertyChangedEventArgs(nameof(AlternateIconId))
+                    );
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MainIconId)));
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AlternateIdIconVisible)));
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ListedNameTooltip)));
+                    PropertyChanged?.Invoke(
+                        this,
+                        new PropertyChangedEventArgs(nameof(AlternateIdIconVisible))
+                    );
+                    PropertyChanged?.Invoke(
+                        this,
+                        new PropertyChangedEventArgs(nameof(ListedNameTooltip))
+                    );
                 }
                 else if (e.PropertyName == nameof(Package.IsChecked))
                 {
@@ -166,19 +188,32 @@ namespace UniGetUI.PackageEngine.PackageClasses
             };
             AlternateIdIconVisible = AlternateIconId != IconType.Empty;
 
-            ListedNameTooltip = Package.Tag switch
-            {
-                PackageTag.Default => "",
-                PackageTag.AlreadyInstalled => CoreTools.Translate("This package is already installed") + " - ",
-                PackageTag.IsUpgradable => CoreTools.Translate("This package can be upgraded to version {0}",
-                    Package.GetUpgradablePackage()?.NewVersionString ?? "-1") + " - ",
-                PackageTag.Pinned => CoreTools.Translate("Updates for this package are ignored") + " - ",
-                PackageTag.OnQueue => CoreTools.Translate("This package is on the queue" + " - "),
-                PackageTag.BeingProcessed => CoreTools.Translate("This package is being processed") + " - ",
-                PackageTag.Failed => CoreTools.Translate("An error occurred while processing this package") + " - ",
-                PackageTag.Unavailable => CoreTools.Translate("This package is not available") + " - ",
-                _ => throw new ArgumentException($"Unknown tag {Package.Tag}"),
-            } + Package.Name;
+            ListedNameTooltip =
+                Package.Tag switch
+                {
+                    PackageTag.Default => "",
+                    PackageTag.AlreadyInstalled => CoreTools.Translate(
+                        "This package is already installed"
+                    ) + " - ",
+                    PackageTag.IsUpgradable => CoreTools.Translate(
+                        "This package can be upgraded to version {0}",
+                        Package.GetUpgradablePackage()?.NewVersionString ?? "-1"
+                    ) + " - ",
+                    PackageTag.Pinned => CoreTools.Translate("Updates for this package are ignored")
+                        + " - ",
+                    PackageTag.OnQueue => CoreTools.Translate(
+                        "This package is on the queue" + " - "
+                    ),
+                    PackageTag.BeingProcessed => CoreTools.Translate(
+                        "This package is being processed"
+                    ) + " - ",
+                    PackageTag.Failed => CoreTools.Translate(
+                        "An error occurred while processing this package"
+                    ) + " - ",
+                    PackageTag.Unavailable => CoreTools.Translate("This package is not available")
+                        + " - ",
+                    _ => throw new ArgumentException($"Unknown tag {Package.Tag}"),
+                } + Package.Name;
 
             ListedOpacity = Package.Tag switch
             {
@@ -193,7 +228,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 _ => throw new ArgumentException($"Unknown tag {Package.Tag}"),
             };
 #pragma warning restore CS8524
-
         }
 
         public void UpdatePackageIcon()
@@ -215,8 +249,14 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 ShowCustomPackageIcon = false;
                 ShowDefaultPackageIcon = true;
             }
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ShowCustomPackageIcon)));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ShowDefaultPackageIcon)));
+            PropertyChanged?.Invoke(
+                this,
+                new PropertyChangedEventArgs(nameof(ShowCustomPackageIcon))
+            );
+            PropertyChanged?.Invoke(
+                this,
+                new PropertyChangedEventArgs(nameof(ShowDefaultPackageIcon))
+            );
         }
     }
 }

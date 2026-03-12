@@ -5,7 +5,10 @@ namespace UniGetUI.PackageEngine.Classes.Manager
 {
     public class ManagerSource : IManagerSource
     {
-        public virtual IconType IconId { get { return Manager.Properties.IconId; } }
+        public virtual IconType IconId
+        {
+            get { return Manager.Properties.IconId; }
+        }
 
         public IPackageManager Manager { get; }
         public string Name { get; }
@@ -17,7 +20,14 @@ namespace UniGetUI.PackageEngine.Classes.Manager
 
         public bool IsVirtualManager { get; }
 
-        public ManagerSource(IPackageManager manager, string name, Uri url, int? packageCount = 0, string updateDate = "", bool isVirtualManager = false)
+        public ManagerSource(
+            IPackageManager manager,
+            string name,
+            Uri url,
+            int? packageCount = 0,
+            string updateDate = "",
+            bool isVirtualManager = false
+        )
         {
             IsVirtualManager = isVirtualManager;
             Manager = manager;
@@ -35,6 +45,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager
         }
 
         public override string ToString() => AsString;
+
         /// <summary>
         /// Replaces the current URL with the new one. Must be used only when a placeholder URL is used.
         /// </summary>
@@ -48,9 +59,13 @@ namespace UniGetUI.PackageEngine.Classes.Manager
         /// </summary>
         public void RefreshSourceNames()
         {
-            AsString = Manager.Capabilities.SupportsCustomSources ? $"{Manager.Properties.Name}: {Name}" : Manager.Properties.Name;
+            AsString = Manager.Capabilities.SupportsCustomSources
+                ? $"{Manager.Properties.Name}: {Name}"
+                : Manager.Properties.Name;
             if (Manager.Properties.DisplayName is string display_name)
-                AsString_DisplayName = Manager.Capabilities.SupportsCustomSources ? $"{display_name}: {Name}" : display_name;
+                AsString_DisplayName = Manager.Capabilities.SupportsCustomSources
+                    ? $"{display_name}: {Name}"
+                    : display_name;
             else
                 AsString_DisplayName = AsString;
         }

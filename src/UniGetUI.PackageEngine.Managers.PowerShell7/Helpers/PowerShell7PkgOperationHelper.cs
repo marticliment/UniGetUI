@@ -4,24 +4,33 @@ using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Serializable;
 
 namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager;
+
 internal sealed class PowerShell7PkgOperationHelper : BasePkgOperationHelper
 {
-    public PowerShell7PkgOperationHelper(PowerShell7 manager) : base(manager) { }
+    public PowerShell7PkgOperationHelper(PowerShell7 manager)
+        : base(manager) { }
 
-    protected override IReadOnlyList<string> _getOperationParameters(IPackage package,
-        InstallOptions options, OperationType operation)
+    protected override IReadOnlyList<string> _getOperationParameters(
+        IPackage package,
+        InstallOptions options,
+        OperationType operation
+    )
     {
-        List<string> parameters = [operation switch {
-            OperationType.Install => Manager.Properties.InstallVerb,
-            OperationType.Update => Manager.Properties.UpdateVerb,
-            OperationType.Uninstall => Manager.Properties.UninstallVerb,
-            _ => throw new InvalidDataException("Invalid package operation")
-        }];
+        List<string> parameters =
+        [
+            operation switch
+            {
+                OperationType.Install => Manager.Properties.InstallVerb,
+                OperationType.Update => Manager.Properties.UpdateVerb,
+                OperationType.Uninstall => Manager.Properties.UninstallVerb,
+                _ => throw new InvalidDataException("Invalid package operation"),
+            },
+        ];
         parameters.AddRange(["-Name", package.Id, "-Confirm:$false"]);
 
         if (operation is OperationType.Install)
         {
-            if(options.Version != "")
+            if (options.Version != "")
                 parameters.AddRange(["-Version", options.Version]);
         }
         else if (operation is OperationType.Update)
@@ -40,19 +49,26 @@ internal sealed class PowerShell7PkgOperationHelper : BasePkgOperationHelper
             if (options.PreRelease)
                 parameters.Add("-Prerelease");
 
-            if (package.OverridenOptions.Scope is PackageScope.Global ||
-                (package.OverridenOptions.Scope is null && options.InstallationScope is PackageScope.Global))
+            if (
+                package.OverridenOptions.Scope is PackageScope.Global
+                || (
+                    package.OverridenOptions.Scope is null
+                    && options.InstallationScope is PackageScope.Global
+                )
+            )
                 parameters.AddRange(["-Scope", "AllUsers"]);
             else
                 parameters.AddRange(["-Scope", "CurrentUser"]);
         }
 
-        parameters.AddRange(operation switch
-        {
-            OperationType.Update => options.CustomParameters_Update,
-            OperationType.Uninstall => options.CustomParameters_Uninstall,
-            _ => options.CustomParameters_Install,
-        });
+        parameters.AddRange(
+            operation switch
+            {
+                OperationType.Update => options.CustomParameters_Update,
+                OperationType.Uninstall => options.CustomParameters_Uninstall,
+                _ => options.CustomParameters_Install,
+            }
+        );
 
         return parameters;
     }
@@ -61,12 +77,18 @@ internal sealed class PowerShell7PkgOperationHelper : BasePkgOperationHelper
         IPackage package,
         OperationType operation,
         IReadOnlyList<string> processOutput,
-        int returnCode)
+        int returnCode
+    )
     {
         string output_string = string.Join("\n", processOutput);
 
-        if (package.OverridenOptions.RunAsAdministrator is not true &&
-            (output_string.Contains("AdminPrivilegesAreRequired") || output_string.Contains("AdminPrivilegeRequired")))
+        if (
+            package.OverridenOptions.RunAsAdministrator is not true
+            && (
+                output_string.Contains("AdminPrivilegesAreRequired")
+                || output_string.Contains("AdminPrivilegeRequired")
+            )
+        )
         {
             package.OverridenOptions.RunAsAdministrator = true;
             return OperationVeredict.AutoRetry;

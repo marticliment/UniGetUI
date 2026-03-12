@@ -1,361 +1,394 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>$(WindowsTargetFramework)</TargetFramework>
+        <TargetFrameworks />
+        <OutputType>WinExe</OutputType>
+        <RootNamespace>UniGetUI</RootNamespace>
+        <ApplicationManifest>app.manifest</ApplicationManifest>
+        <UseWinUI>true</UseWinUI>
+        <EnableMsixTooling>true</EnableMsixTooling>
+        <StartupObject>UniGetUI.EntryPoint</StartupObject>
+        <SignAssembly>False</SignAssembly>
+        <ApplicationIcon>icon.ico</ApplicationIcon>
 
-  <PropertyGroup>
-    <TargetFramework>$(WindowsTargetFramework)</TargetFramework>
-    <TargetFrameworks />
-    <OutputType>WinExe</OutputType>
-    <RootNamespace>UniGetUI</RootNamespace>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-    <UseWinUI>true</UseWinUI>
-    <EnableMsixTooling>true</EnableMsixTooling>
-    <StartupObject>UniGetUI.EntryPoint</StartupObject>
-    <SignAssembly>False</SignAssembly>
-    <ApplicationIcon>icon.ico</ApplicationIcon>
+        <!-- .NET & AppSdk publish options -->
+        <WindowsAppSDKWinUI>true</WindowsAppSDKWinUI>
+        <WindowsPackageType>None</WindowsPackageType>
 
-    <!-- .NET & AppSdk publish options -->
-    <WindowsAppSDKWinUI>true</WindowsAppSDKWinUI>
-    <WindowsPackageType>None</WindowsPackageType>
-
-    <!--PublishAot>true</PublishAot-->
-    <PublishTrimmed>true</PublishTrimmed>
-    <TrimMode>partial</TrimMode>
-    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
-</PropertyGroup>
-
-  <PropertyGroup>
-    <ElevatorPackageArchitecture Condition="'$(Platform)' == 'arm64'">arm64</ElevatorPackageArchitecture>
-    <ElevatorPackageArchitecture Condition="'$(ElevatorPackageArchitecture)' == ''">x64</ElevatorPackageArchitecture>
-    <ElevatorPackageExePath>$(PkgDevolutions_UniGetUI_Elevator)\runtimes\win-$(ElevatorPackageArchitecture)\native\UniGetUI Elevator.exe</ElevatorPackageExePath>
-  </PropertyGroup>
+        <!--PublishAot>true</PublishAot-->
+        <PublishTrimmed>true</PublishTrimmed>
+        <TrimMode>partial</TrimMode>
+        <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    </PropertyGroup>
 
     <PropertyGroup>
-      <GeneratedBuildInfoFile>$(IntermediateOutputPath)\Generated Files\Secrets.Generated.cs</GeneratedBuildInfoFile>
-  </PropertyGroup>
-    
+        <ElevatorPackageArchitecture Condition="'$(Platform)' == 'arm64'"
+            >arm64</ElevatorPackageArchitecture
+        >
+        <ElevatorPackageArchitecture Condition="'$(ElevatorPackageArchitecture)' == ''"
+            >x64</ElevatorPackageArchitecture
+        >
+        <ElevatorPackageExePath>$(PkgDevolutions_UniGetUI_Elevator)\runtimes\win-$(ElevatorPackageArchitecture)\native\UniGetUI Elevator.exe</ElevatorPackageExePath>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <GeneratedBuildInfoFile>$(IntermediateOutputPath)\Generated Files\Secrets.Generated.cs</GeneratedBuildInfoFile>
+    </PropertyGroup>
+
     <Target Name="GenerateBuildInfo" BeforeTargets="BeforeBuild">
         <Exec Command="pwsh -File Services/generate-secrets.ps1 $(IntermediateOutputPath)" />
         <ItemGroup>
-            <Compile Include="**/*$(DefaultLanguageSourceExtension)"
-                     Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder);$(BaseIntermediateOutputPath)**;$(BaseOutputPath)**;@(Compile)" />
+            <Compile
+                Include="**/*$(DefaultLanguageSourceExtension)"
+                Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder);$(BaseIntermediateOutputPath)**;$(BaseOutputPath)**;@(Compile)"
+            />
         </ItemGroup>
     </Target>
 
-  <Target Name="PostBuildGenerateIntegrityTree" AfterTargets="PostBuildEvent">
-    <Exec Command="pwsh -NoProfile -File ../../scripts/generate-integrity-tree.ps1 -Path $(OutputPath) -MinOutput" />
-  </Target>
+    <Target Name="PostBuildGenerateIntegrityTree" AfterTargets="PostBuildEvent">
+        <Exec Command="pwsh -NoProfile -File ../../scripts/generate-integrity-tree.ps1 -Path $(OutputPath) -MinOutput" />
+    </Target>
 
-  <Target Name="EnsureBundledElevatorFromNuGet"
-          BeforeTargets="PrepareForBuild"
-          Condition="'$(DesignTimeBuild)' != 'true'">
-    <Error Condition="!Exists('$(ElevatorPackageExePath)')"
-           Text="NuGet elevator executable not found at '$(ElevatorPackageExePath)'. Ensure package restore has completed for Devolutions.UniGetUI.Elevator." />
-  </Target>
+    <Target
+        Name="EnsureBundledElevatorFromNuGet"
+        BeforeTargets="PrepareForBuild"
+        Condition="'$(DesignTimeBuild)' != 'true'"
+    >
+        <Error
+            Condition="!Exists('$(ElevatorPackageExePath)')"
+            Text="NuGet elevator executable not found at '$(ElevatorPackageExePath)'. Ensure package restore has completed for Devolutions.UniGetUI.Elevator."
+        />
+    </Target>
 
     <ItemGroup>
-      <Content Include="icon.ico" />
+        <Content Include="icon.ico" />
     </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="Intereface\**" />
-    <EmbeddedResource Remove="Intereface\**" />
-    <None Remove="Intereface\**" />
-    <Page Remove="Intereface\**" />
-    <Page Update="Pages\MainView.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="Interface\Dialogs\HelpInterface.xaml" />
-    <None Remove="Interface\Dialogs\InstallOptions.xaml" />
-    <None Remove="Interface\Dialogs\PackageDetailsPage.xaml" />
-    <None Remove="Interface\Dialogs\ReleaseNotes.xaml" />
-    <None Remove="Interface\DiscoverPackages.xaml" />
-    <None Remove="Interface\IgnoredUpdates.xaml" />
-    <None Remove="Interface\InstalledPackages.xaml" />
-    <None Remove="Interface\MainView.xaml" />
-    <None Remove="Interface\Pages\AboutPages\AboutUniGetUI.xaml" />
-    <None Remove="Interface\Pages\AboutPages\Contributors.xaml" />
-    <None Remove="Interface\Pages\AboutPages\ThirdPartyLicenses.xaml" />
-    <None Remove="Interface\Pages\AboutPages\Translators.xaml" />
-    <None Remove="Interface\Pages\LogPage.xaml" />
-    <None Remove="Interface\Pages\PackageBundle.xaml" />
-    <None Remove="Interface\SoftwarePages\AbstractPackagesPage.xaml" />
-    <None Remove="Interface\SoftwareUpdates.xaml" />
-    <None Remove="Interface\Widgets\DialogCloseButton.xaml" />
-    <None Remove="Interface\Widgets\NavButton.xaml" />
-    <None Remove="MainWindow.xaml" />
-    <None Remove="PackageEngine\OperationControl.xaml" />
-    <None Remove="Pages\DialogPages\InstallOptions_Manager.xaml" />
-    <None Remove="Pages\DialogPages\OperationFailedDialog.xaml" />
-    <None Remove="Pages\SettingsPages\GeneralPages\Administrator.xaml" />
-    <None Remove="Pages\SettingsPages\GeneralPages\Backup.xaml" />
-    <None Remove="Pages\SettingsPages\GeneralPages\Experimental.xaml" />
-    <None Remove="Pages\SettingsPages\GeneralPages\General.xaml" />
-    <None Remove="Pages\SettingsPages\GeneralPages\Notifications.xaml" />
-    <None Remove="Pages\SettingsPages\GeneralPages\Operations.xaml" />
-    <None Remove="Pages\SettingsPages\GeneralPages\PackageManager.xaml" />
-    <None Remove="Pages\SettingsPages\SettingsHomepage.xaml" />
-  </ItemGroup>
+    <ItemGroup>
+        <Compile Remove="Intereface\**" />
+        <EmbeddedResource Remove="Intereface\**" />
+        <None Remove="Intereface\**" />
+        <Page Remove="Intereface\**" />
+        <Page Update="Pages\MainView.xaml">
+            <SubType>Designer</SubType>
+        </Page>
+    </ItemGroup>
+    <ItemGroup>
+        <None Remove="Interface\Dialogs\HelpInterface.xaml" />
+        <None Remove="Interface\Dialogs\InstallOptions.xaml" />
+        <None Remove="Interface\Dialogs\PackageDetailsPage.xaml" />
+        <None Remove="Interface\Dialogs\ReleaseNotes.xaml" />
+        <None Remove="Interface\DiscoverPackages.xaml" />
+        <None Remove="Interface\IgnoredUpdates.xaml" />
+        <None Remove="Interface\InstalledPackages.xaml" />
+        <None Remove="Interface\MainView.xaml" />
+        <None Remove="Interface\Pages\AboutPages\AboutUniGetUI.xaml" />
+        <None Remove="Interface\Pages\AboutPages\Contributors.xaml" />
+        <None Remove="Interface\Pages\AboutPages\ThirdPartyLicenses.xaml" />
+        <None Remove="Interface\Pages\AboutPages\Translators.xaml" />
+        <None Remove="Interface\Pages\LogPage.xaml" />
+        <None Remove="Interface\Pages\PackageBundle.xaml" />
+        <None Remove="Interface\SoftwarePages\AbstractPackagesPage.xaml" />
+        <None Remove="Interface\SoftwareUpdates.xaml" />
+        <None Remove="Interface\Widgets\DialogCloseButton.xaml" />
+        <None Remove="Interface\Widgets\NavButton.xaml" />
+        <None Remove="MainWindow.xaml" />
+        <None Remove="PackageEngine\OperationControl.xaml" />
+        <None Remove="Pages\DialogPages\InstallOptions_Manager.xaml" />
+        <None Remove="Pages\DialogPages\OperationFailedDialog.xaml" />
+        <None Remove="Pages\SettingsPages\GeneralPages\Administrator.xaml" />
+        <None Remove="Pages\SettingsPages\GeneralPages\Backup.xaml" />
+        <None Remove="Pages\SettingsPages\GeneralPages\Experimental.xaml" />
+        <None Remove="Pages\SettingsPages\GeneralPages\General.xaml" />
+        <None Remove="Pages\SettingsPages\GeneralPages\Notifications.xaml" />
+        <None Remove="Pages\SettingsPages\GeneralPages\Operations.xaml" />
+        <None Remove="Pages\SettingsPages\GeneralPages\PackageManager.xaml" />
+        <None Remove="Pages\SettingsPages\SettingsHomepage.xaml" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Common" Version="8.4.0" />
-    <PackageReference Include="CommunityToolkit.WinUI.Animations" Version="8.2.250402" />
-    <PackageReference Include="CommunityToolkit.WinUI.Controls.Primitives" Version="8.2.250402" />
-    <PackageReference Include="CommunityToolkit.WinUI.Controls.Segmented" Version="8.2.250402" />
-    <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.2.250402" />
-    <PackageReference Include="CommunityToolkit.WinUI.Controls.Sizers" Version="8.2.250402" />
-    <PackageReference Include="CommunityToolkit.WinUI.Controls.TokenizingTextBox" Version="8.2.250402" />
-    <PackageReference Include="CommunityToolkit.WinUI.Converters" Version="8.2.250402" />
-    <PackageReference Include="CommunityToolkit.WinUI.Media" Version="8.2.250402" />
-    <PackageReference Include="H.NotifyIcon.WinUI" Version="2.3.0" />
-    <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.2.0" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.250606001" />
-    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.4948" />
-    <PackageReference Include="PhotoSauce.MagicScaler" Version="0.15.0" />
-      <PackageReference Include="System.Drawing.Common" Version="9.0.8" Aliases="DrawingCommon" />
-    <PackageReference Include="System.Net.Http" Version="4.3.4" />
-    <PackageReference Include="System.Private.Uri" Version="4.3.2" />
-    <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
-    <PackageReference Include="YamlDotNet" Version="16.3.0" />
-    <PackageReference Include="IdentityModel.OidcClient" Version="6.0.0" />
-    <PackageReference Include="Octokit" Version="14.0.0" />
-    <PackageReference Include="Devolutions.UniGetUI.Elevator" Version="2.6.1" GeneratePathProperty="true" ExcludeAssets="build;buildTransitive" />
+    <ItemGroup>
+        <PackageReference Include="CommunityToolkit.Common" Version="8.4.0" />
+        <PackageReference Include="CommunityToolkit.WinUI.Animations" Version="8.2.250402" />
+        <PackageReference
+            Include="CommunityToolkit.WinUI.Controls.Primitives"
+            Version="8.2.250402"
+        />
+        <PackageReference
+            Include="CommunityToolkit.WinUI.Controls.Segmented"
+            Version="8.2.250402"
+        />
+        <PackageReference
+            Include="CommunityToolkit.WinUI.Controls.SettingsControls"
+            Version="8.2.250402"
+        />
+        <PackageReference Include="CommunityToolkit.WinUI.Controls.Sizers" Version="8.2.250402" />
+        <PackageReference
+            Include="CommunityToolkit.WinUI.Controls.TokenizingTextBox"
+            Version="8.2.250402"
+        />
+        <PackageReference Include="CommunityToolkit.WinUI.Converters" Version="8.2.250402" />
+        <PackageReference Include="CommunityToolkit.WinUI.Media" Version="8.2.250402" />
+        <PackageReference Include="H.NotifyIcon.WinUI" Version="2.3.0" />
+        <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.2.0" />
+        <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.250606001" />
+        <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.4948" />
+        <PackageReference Include="PhotoSauce.MagicScaler" Version="0.15.0" />
+        <PackageReference Include="System.Drawing.Common" Version="9.0.8" Aliases="DrawingCommon" />
+        <PackageReference Include="System.Net.Http" Version="4.3.4" />
+        <PackageReference Include="System.Private.Uri" Version="4.3.2" />
+        <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
+        <PackageReference Include="YamlDotNet" Version="16.3.0" />
+        <PackageReference Include="IdentityModel.OidcClient" Version="6.0.0" />
+        <PackageReference Include="Octokit" Version="14.0.0" />
+        <PackageReference
+            Include="Devolutions.UniGetUI.Elevator"
+            Version="2.6.1"
+            GeneratePathProperty="true"
+            ExcludeAssets="build;buildTransitive"
+        />
 
-    <Manifest Include="$(ApplicationManifest)" />
-  </ItemGroup>
+        <Manifest Include="$(ApplicationManifest)" />
+    </ItemGroup>
 
-  <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
-    <ProjectCapability Include="Msix" />
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="Interface\Dialogs\HelpInterface.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Interface\InstalledPackages.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Interface\Pages\PackageBundle.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-    </Page>
-    <Page Update="Interface\SoftwareUpdates.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Pages\SettingsPages\GeneralPages\Internet.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="SettingsTab\Widgets\SourceManager.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="SettingsTab\Widgets\TranslatedTextBlock.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="MainInterface.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <!--
+    <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
+        <ProjectCapability Include="Msix" />
+    </ItemGroup>
+    <ItemGroup>
+        <Page Update="Interface\Dialogs\HelpInterface.xaml">
+            <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+            <SubType>Designer</SubType>
+        </Page>
+        <Page Update="Interface\InstalledPackages.xaml">
+            <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+            <SubType>Designer</SubType>
+        </Page>
+        <Page Update="Interface\Pages\PackageBundle.xaml">
+            <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+        </Page>
+        <Page Update="Interface\SoftwareUpdates.xaml">
+            <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+            <SubType>Designer</SubType>
+        </Page>
+        <Page Update="Pages\SettingsPages\GeneralPages\Internet.xaml">
+            <SubType>Designer</SubType>
+        </Page>
+        <Page Update="SettingsTab\Widgets\SourceManager.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+    </ItemGroup>
+    <ItemGroup>
+        <Page Update="SettingsTab\Widgets\TranslatedTextBlock.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+    </ItemGroup>
+    <ItemGroup>
+        <Page Update="MainInterface.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+    </ItemGroup>
+    <!--
     Defining the "HasPackageAndPublishMenuAddedByProject" property here allows the Solution
     Explorer "Package and Publish" context menu entry to be enabled for this project even if
     the Windows App SDK Nuget package has not yet been restored.
   -->
-  <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
-    <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
-    <DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
-    <DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
-  </PropertyGroup>
-  <ItemGroup>
-    <PRIResource Remove="Intereface\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Update="Assets\Images\*.png">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\*.ico">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Utilities\install_scoop.cmd">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Utilities\install_scoop.ps1">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Utilities\reset_winget_sources.cmd">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Utilities\scoop_cleanup.cmd">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Utilities\uninstall_scoop.cmd">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <Page Update="Pages\DialogPages\InstallOptions_Manager.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Pages\DialogPages\OperationFailedDialog.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Pages\DialogPages\OperationLiveLogPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Pages\SettingsPages\GeneralPages\PackageManager.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Pages\SettingsPages\GeneralPages\Experimental.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Pages\SettingsPages\GeneralPages\Administrator.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Pages\SettingsPages\GeneralPages\Operations.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Pages\SettingsPages\GeneralPages\Backup.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Pages\SettingsPages\GeneralPages\Updates.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Pages\SettingsPages\GeneralPages\Notifications.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Pages\SettingsPages\GeneralPages\Interface_P.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Pages\SettingsPages\GeneralPages\General.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Pages\SettingsPages\SettingsHomepage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Pages\SettingsPages\SettingsBasePage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="Interface\Dialogs\PackageDetailsPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="Interface\Dialogs\ReleaseNotes.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="Interface\IgnoredUpdates.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="Interface\AboutWingetUI.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="PackageEngine\OperationControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="Interface\DiscoverPackages.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="Interface\Dialogs\InstallOptions.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="Interface\Pages\LogPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ExternalLibraries.Clipboard\ExternalLibraries.Clipboard.csproj" />
-    <ProjectReference Include="..\ExternalLibraries.FilePickers\ExternalLibraries.FilePickers.csproj" />
-    <ProjectReference Include="..\UniGetUI.Core.Classes\UniGetUI.Core.Classes.csproj" />
-    <ProjectReference Include="..\UniGetUI.Core.Data\UniGetUI.Core.Data.csproj" />
-    <ProjectReference Include="..\UniGetUI.Core.IconStore\UniGetUI.Core.IconEngine.csproj" />
-    <ProjectReference Include="..\UniGetUI.Core.LanguageEngine\UniGetUI.Core.LanguageEngine.csproj" />
-    <ProjectReference Include="..\UniGetUI.Core.Logger\UniGetUI.Core.Logging.csproj" />
-    <ProjectReference Include="..\UniGetUI.Core.SecureSettings\UniGetUI.Core.SecureSettings.csproj" />
-    <ProjectReference Include="..\UniGetUI.Core.Settings\UniGetUI.Core.Settings.csproj" />
-    <ProjectReference Include="..\UniGetUI.Core.Tools\UniGetUI.Core.Tools.csproj" />
-    <ProjectReference Include="..\UniGetUI.Interface.BackgroundApi\UniGetUI.Interface.BackgroundApi.csproj" />
-    <ProjectReference Include="..\UniGetUI.Interface.Enums\UniGetUI.Interface.Enums.csproj" />
-    <ProjectReference Include="..\UniGetUI.Interface.Telemetry\UniGetUI.Interface.Telemetry.csproj" />
-    <ProjectReference Include="..\UniGetUI.PackageEngine.Enums\UniGetUI.PackageEngine.Structs.csproj" />
-    <ProjectReference Include="..\UniGetUI.PackageEngine.Managers.Cargo\UniGetUI.PackageEngine.Managers.Cargo.csproj" />
-    <ProjectReference Include="..\UniGetUI.PackageEngine.Managers.Chocolatey\UniGetUI.PackageEngine.Managers.Chocolatey.csproj" />
-    <ProjectReference Include="..\UniGetUI.PackageEngine.Managers.Dotnet\UniGetUI.PackageEngine.Managers.Dotnet.csproj" />
-    <ProjectReference Include="..\UniGetUI.PackageEngine.Managers.Npm\UniGetUI.PackageEngine.Managers.Npm.csproj" />
-    <ProjectReference Include="..\UniGetUI.PackageEngine.Managers.Pip\UniGetUI.PackageEngine.Managers.Pip.csproj" />
-    <ProjectReference Include="..\UniGetUI.PackageEngine.Managers.PowerShell\UniGetUI.PackageEngine.Managers.PowerShell.csproj" />
-    <ProjectReference Include="..\UniGetUI.PackageEngine.Managers.Scoop\UniGetUI.PackageEngine.Managers.Scoop.csproj" />
-    <ProjectReference Include="..\UniGetUI.PackageEngine.Managers.WinGet\UniGetUI.PackageEngine.Managers.WinGet.csproj" />
-    <ProjectReference Include="..\UniGetUI.PackageEngine.PackageEngine\UniGetUI.PackageEngine.PEInterface.csproj" />
-    <ProjectReference Include="..\UniGetUI.PackageEngine.PackageLoader\UniGetUI.PackageEngine.PackageLoaders.csproj" />
-    <ProjectReference Include="..\UniGetUI.PackageEngine.PackageManagerClasses\UniGetUI.PackageEngine.Classes.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Update="Assets\Symbols\Font\fonts\UniGetUI-Symbols.ttf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="$(ElevatorPackageExePath)" Link="Assets\Utilities\UniGetUI Elevator.exe" Condition="Exists('$(ElevatorPackageExePath)')">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      <Visible>false</Visible>
-      <Pack>false</Pack>
-    </Content>
-        <Content Update="Assets\Utilities\getfilesiginforedist.dll" Condition="'$(Platform)' == 'x64'">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-    <Content Update="Assets\Utilities\install_scoop.cmd">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Assets\Utilities\install_scoop.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Assets\Utilities\scoop_cleanup.cmd">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Assets\Utilities\uninstall_scoop.cmd">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
+    <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
+        <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
+        <DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+        <DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
+        <DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+        <DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
+    </PropertyGroup>
+    <ItemGroup>
+        <PRIResource Remove="Intereface\**" />
+    </ItemGroup>
+    <ItemGroup>
+        <None Update="Assets\Images\*.png">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Assets\Images\*.ico">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Assets\Utilities\install_scoop.cmd">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Assets\Utilities\install_scoop.ps1">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Assets\Utilities\reset_winget_sources.cmd">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Assets\Utilities\scoop_cleanup.cmd">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Assets\Utilities\uninstall_scoop.cmd">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <Page Update="Pages\DialogPages\InstallOptions_Manager.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="Pages\DialogPages\OperationFailedDialog.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="Pages\DialogPages\OperationLiveLogPage.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="Pages\SettingsPages\GeneralPages\PackageManager.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="Pages\SettingsPages\GeneralPages\Experimental.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="Pages\SettingsPages\GeneralPages\Administrator.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="Pages\SettingsPages\GeneralPages\Operations.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="Pages\SettingsPages\GeneralPages\Backup.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="Pages\SettingsPages\GeneralPages\Updates.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="Pages\SettingsPages\GeneralPages\Notifications.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="Pages\SettingsPages\GeneralPages\Interface_P.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="Pages\SettingsPages\GeneralPages\General.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="Pages\SettingsPages\SettingsHomepage.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="Pages\SettingsPages\SettingsBasePage.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+    </ItemGroup>
+    <ItemGroup>
+        <Page Update="Interface\Dialogs\PackageDetailsPage.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+    </ItemGroup>
+    <ItemGroup>
+        <Page Update="Interface\Dialogs\ReleaseNotes.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+    </ItemGroup>
+    <ItemGroup>
+        <Page Update="Interface\IgnoredUpdates.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+    </ItemGroup>
+    <ItemGroup>
+        <Page Update="Interface\AboutWingetUI.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+    </ItemGroup>
+    <ItemGroup>
+        <Page Update="PackageEngine\OperationControl.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+    </ItemGroup>
+    <ItemGroup>
+        <Page Update="Interface\DiscoverPackages.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+    </ItemGroup>
+    <ItemGroup>
+        <Page Update="Interface\Dialogs\InstallOptions.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+    </ItemGroup>
+    <ItemGroup>
+        <Page Update="Interface\Pages\LogPage.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\ExternalLibraries.Clipboard\ExternalLibraries.Clipboard.csproj" />
+        <ProjectReference Include="..\ExternalLibraries.FilePickers\ExternalLibraries.FilePickers.csproj" />
+        <ProjectReference Include="..\UniGetUI.Core.Classes\UniGetUI.Core.Classes.csproj" />
+        <ProjectReference Include="..\UniGetUI.Core.Data\UniGetUI.Core.Data.csproj" />
+        <ProjectReference Include="..\UniGetUI.Core.IconStore\UniGetUI.Core.IconEngine.csproj" />
+        <ProjectReference Include="..\UniGetUI.Core.LanguageEngine\UniGetUI.Core.LanguageEngine.csproj" />
+        <ProjectReference Include="..\UniGetUI.Core.Logger\UniGetUI.Core.Logging.csproj" />
+        <ProjectReference Include="..\UniGetUI.Core.SecureSettings\UniGetUI.Core.SecureSettings.csproj" />
+        <ProjectReference Include="..\UniGetUI.Core.Settings\UniGetUI.Core.Settings.csproj" />
+        <ProjectReference Include="..\UniGetUI.Core.Tools\UniGetUI.Core.Tools.csproj" />
+        <ProjectReference Include="..\UniGetUI.Interface.BackgroundApi\UniGetUI.Interface.BackgroundApi.csproj" />
+        <ProjectReference Include="..\UniGetUI.Interface.Enums\UniGetUI.Interface.Enums.csproj" />
+        <ProjectReference Include="..\UniGetUI.Interface.Telemetry\UniGetUI.Interface.Telemetry.csproj" />
+        <ProjectReference Include="..\UniGetUI.PackageEngine.Enums\UniGetUI.PackageEngine.Structs.csproj" />
+        <ProjectReference Include="..\UniGetUI.PackageEngine.Managers.Cargo\UniGetUI.PackageEngine.Managers.Cargo.csproj" />
+        <ProjectReference Include="..\UniGetUI.PackageEngine.Managers.Chocolatey\UniGetUI.PackageEngine.Managers.Chocolatey.csproj" />
+        <ProjectReference Include="..\UniGetUI.PackageEngine.Managers.Dotnet\UniGetUI.PackageEngine.Managers.Dotnet.csproj" />
+        <ProjectReference Include="..\UniGetUI.PackageEngine.Managers.Npm\UniGetUI.PackageEngine.Managers.Npm.csproj" />
+        <ProjectReference Include="..\UniGetUI.PackageEngine.Managers.Pip\UniGetUI.PackageEngine.Managers.Pip.csproj" />
+        <ProjectReference Include="..\UniGetUI.PackageEngine.Managers.PowerShell\UniGetUI.PackageEngine.Managers.PowerShell.csproj" />
+        <ProjectReference Include="..\UniGetUI.PackageEngine.Managers.Scoop\UniGetUI.PackageEngine.Managers.Scoop.csproj" />
+        <ProjectReference Include="..\UniGetUI.PackageEngine.Managers.WinGet\UniGetUI.PackageEngine.Managers.WinGet.csproj" />
+        <ProjectReference Include="..\UniGetUI.PackageEngine.PackageEngine\UniGetUI.PackageEngine.PEInterface.csproj" />
+        <ProjectReference Include="..\UniGetUI.PackageEngine.PackageLoader\UniGetUI.PackageEngine.PackageLoaders.csproj" />
+        <ProjectReference Include="..\UniGetUI.PackageEngine.PackageManagerClasses\UniGetUI.PackageEngine.Classes.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <Content Update="Assets\Symbols\Font\fonts\UniGetUI-Symbols.ttf">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <Content
+            Include="$(ElevatorPackageExePath)"
+            Link="Assets\Utilities\UniGetUI Elevator.exe"
+            Condition="Exists('$(ElevatorPackageExePath)')"
+        >
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+            <Visible>false</Visible>
+            <Pack>false</Pack>
+        </Content>
+        <Content
+            Update="Assets\Utilities\getfilesiginforedist.dll"
+            Condition="'$(Platform)' == 'x64'"
+        >
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Update="Assets\Utilities\install_scoop.cmd">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Update="Assets\Utilities\install_scoop.ps1">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Update="Assets\Utilities\scoop_cleanup.cmd">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Update="Assets\Utilities\uninstall_scoop.cmd">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
 
-  <ItemGroup>
-    <Compile Include="..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />
-  </ItemGroup>
+    <ItemGroup>
+        <Compile Include="..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <CustomAdditionalCompileInputs Remove="Interface\Widgets\DialogCloseButton.xaml" />
-  </ItemGroup>
+    <ItemGroup>
+        <CustomAdditionalCompileInputs Remove="Interface\Widgets\DialogCloseButton.xaml" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <Resource Remove="Interface\Widgets\DialogCloseButton.xaml" />
-    <Resource Remove="SoftwarePages\AbstractPackagesPage.xaml" />
-    <Resource Remove="PackageOperations\OperationControl.xaml" />
-  </ItemGroup>
+    <ItemGroup>
+        <Resource Remove="Interface\Widgets\DialogCloseButton.xaml" />
+        <Resource Remove="SoftwarePages\AbstractPackagesPage.xaml" />
+        <Resource Remove="PackageOperations\OperationControl.xaml" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Generated Files\" />
-  </ItemGroup>
+    <ItemGroup>
+        <Folder Include="Generated Files\" />
+    </ItemGroup>
 </Project>

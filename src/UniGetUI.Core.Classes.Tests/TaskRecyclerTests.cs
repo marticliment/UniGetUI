@@ -12,16 +12,24 @@ public class TaskRecyclerTests
 
     private sealed class TestClass
     {
-        public TestClass() {}
+        public TestClass() { }
 
-        [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Instance methods are required to validate TaskRecycler instance-bound delegate behavior.")]
+        [SuppressMessage(
+            "Performance",
+            "CA1822:Mark members as static",
+            Justification = "Instance methods are required to validate TaskRecycler instance-bound delegate behavior."
+        )]
         public string SlowMethod2()
         {
             Thread.Sleep(1000);
             return new Random().Next().ToString();
         }
 
-        [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Instance methods are required to validate TaskRecycler instance-bound delegate behavior.")]
+        [SuppressMessage(
+            "Performance",
+            "CA1822:Mark members as static",
+            Justification = "Instance methods are required to validate TaskRecycler instance-bound delegate behavior."
+        )]
         public string SlowMethod3()
         {
             Thread.Sleep(1000);
@@ -42,7 +50,7 @@ public class TaskRecyclerTests
         var task1 = TaskRecycler<int>.RunOrAttachAsync(MySlowMethod1);
         var task2 = TaskRecycler<int>.RunOrAttachAsync(MySlowMethod1);
         int result1 = await task1;
-        int result2 = await  task2;
+        int result2 = await task2;
         Assert.Equal(result1, result2);
 
         // The same static method should be cached, and therefore the return value should be the same, but different from previous runs

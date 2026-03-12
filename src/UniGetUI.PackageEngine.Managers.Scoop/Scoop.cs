@@ -19,31 +19,42 @@ using Architecture = UniGetUI.PackageEngine.Enums.Architecture;
 
 namespace UniGetUI.PackageEngine.Managers.ScoopManager
 {
-
     public class Scoop : PackageManager
     {
         public static string[] FALSE_PACKAGE_IDS = ["No", "WARN"];
-        public static string[] FALSE_PACKAGE_VERSIONS = ["Matches", "Install", "failed", "failed,", "Manifest", "removed", "removed,"];
+        public static string[] FALSE_PACKAGE_VERSIONS =
+        [
+            "Matches",
+            "Install",
+            "failed",
+            "failed,",
+            "Manifest",
+            "removed",
+            "removed,",
+        ];
 
         private long LastScoopSourceUpdateTime;
 
         public Scoop()
         {
-            Dependencies = [
+            Dependencies =
+            [
                 // Scoop-Search is required for search to work
                 new ManagerDependency(
                     "Scoop-Search",
                     CoreData.PowerShell5,
                     "-ExecutionPolicy Bypass -NoLogo -NoProfile -Command \"& {scoop install main/scoop-search; if($error.count -ne 0){pause}}\"",
                     "scoop install main/scoop-search",
-                    async () => (await CoreTools.WhichAsync("scoop-search.exe")).Item1),
+                    async () => (await CoreTools.WhichAsync("scoop-search.exe")).Item1
+                ),
                 // GIT is required for scoop updates to work
                 new ManagerDependency(
                     "Git",
                     CoreData.PowerShell5,
                     "-ExecutionPolicy Bypass -NoLogo -NoProfile -Command \"& {scoop install main/git; if($error.count -ne 0){pause}}\"",
                     "scoop install main/git",
-                    async () => (await CoreTools.WhichAsync("git.exe")).Item1)
+                    async () => (await CoreTools.WhichAsync("git.exe")).Item1
+                ),
             ];
 
             Capabilities = new ManagerCapabilities
@@ -54,39 +65,93 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 CanListDependencies = true,
                 CanRemoveDataOnUninstall = true,
                 SupportsCustomArchitectures = true,
-                SupportedCustomArchitectures = [Architecture.x86, Architecture.x64, Architecture.arm64],
+                SupportedCustomArchitectures =
+                [
+                    Architecture.x86,
+                    Architecture.x64,
+                    Architecture.arm64,
+                ],
                 SupportsCustomScopes = true,
                 SupportsCustomSources = true,
                 Sources = new SourceCapabilities
                 {
                     KnowsPackageCount = true,
-                    KnowsUpdateDate = true
+                    KnowsUpdateDate = true,
                 },
                 SupportsProxy = ProxySupport.No,
-                SupportsProxyAuth = false
+                SupportsProxyAuth = false,
             };
 
             Properties = new ManagerProperties
             {
                 Name = "Scoop",
-                Description = CoreTools.Translate("Great repository of unknown but useful utilities and other interesting packages.<br>Contains: <b>Utilities, Command-line programs, General Software (extras bucket required)</b>"),
+                Description = CoreTools.Translate(
+                    "Great repository of unknown but useful utilities and other interesting packages.<br>Contains: <b>Utilities, Command-line programs, General Software (extras bucket required)</b>"
+                ),
                 IconId = IconType.Scoop,
                 ColorIconId = "scoop_color",
                 ExecutableFriendlyName = "scoop",
                 InstallVerb = "install",
                 UpdateVerb = "update",
                 UninstallVerb = "uninstall",
-                KnownSources = [new ManagerSource(this, "main", new Uri("https://github.com/ScoopInstaller/Main")),
-                                new ManagerSource(this, "extras", new Uri("https://github.com/ScoopInstaller/Extras")),
-                                new ManagerSource(this, "versions", new Uri("https://github.com/ScoopInstaller/Versions")),
-                                new ManagerSource(this, "nirsoft", new Uri("https://github.com/ScoopInstaller/Nirsoft")),
-                                new ManagerSource(this, "sysinternals", new Uri("https://github.com/niheaven/scoop-sysinternals")),
-                                new ManagerSource(this, "php", new Uri("https://github.com/ScoopInstaller/PHP")),
-                                new ManagerSource(this, "nerd-fonts", new Uri("https://github.com/matthewjberger/scoop-nerd-fonts")),
-                                new ManagerSource(this, "nonportable", new Uri("https://github.com/ScoopInstaller/Nonportable")),
-                                new ManagerSource(this, "java", new Uri("https://github.com/ScoopInstaller/Java")),
-                                new ManagerSource(this, "games", new Uri("https://github.com/Calinou/scoop-games"))],
-                DefaultSource = new ManagerSource(this, "main", new Uri("https://github.com/ScoopInstaller/Main")),
+                KnownSources =
+                [
+                    new ManagerSource(
+                        this,
+                        "main",
+                        new Uri("https://github.com/ScoopInstaller/Main")
+                    ),
+                    new ManagerSource(
+                        this,
+                        "extras",
+                        new Uri("https://github.com/ScoopInstaller/Extras")
+                    ),
+                    new ManagerSource(
+                        this,
+                        "versions",
+                        new Uri("https://github.com/ScoopInstaller/Versions")
+                    ),
+                    new ManagerSource(
+                        this,
+                        "nirsoft",
+                        new Uri("https://github.com/ScoopInstaller/Nirsoft")
+                    ),
+                    new ManagerSource(
+                        this,
+                        "sysinternals",
+                        new Uri("https://github.com/niheaven/scoop-sysinternals")
+                    ),
+                    new ManagerSource(
+                        this,
+                        "php",
+                        new Uri("https://github.com/ScoopInstaller/PHP")
+                    ),
+                    new ManagerSource(
+                        this,
+                        "nerd-fonts",
+                        new Uri("https://github.com/matthewjberger/scoop-nerd-fonts")
+                    ),
+                    new ManagerSource(
+                        this,
+                        "nonportable",
+                        new Uri("https://github.com/ScoopInstaller/Nonportable")
+                    ),
+                    new ManagerSource(
+                        this,
+                        "java",
+                        new Uri("https://github.com/ScoopInstaller/Java")
+                    ),
+                    new ManagerSource(
+                        this,
+                        "games",
+                        new Uri("https://github.com/Calinou/scoop-games")
+                    ),
+                ],
+                DefaultSource = new ManagerSource(
+                    this,
+                    "main",
+                    new Uri("https://github.com/ScoopInstaller/Main")
+                ),
             };
 
             SourcesHelper = new ScoopSourceHelper(this);
@@ -110,10 +175,13 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                         UseShellExecute = false,
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,
-                        CreateNoWindow = true
-                    }
+                        CreateNoWindow = true,
+                    },
                 };
-                IProcessTaskLogger aux_logger = TaskLogger.CreateNew(LoggableTaskType.InstallManagerDependency, proc);
+                IProcessTaskLogger aux_logger = TaskLogger.CreateNew(
+                    LoggableTaskType.InstallManagerDependency,
+                    proc
+                );
                 proc.Start();
                 aux_logger.AddToStdOut(proc.StandardOutput.ReadToEnd());
                 aux_logger.AddToStdErr(proc.StandardError.ReadToEnd());
@@ -132,8 +200,8 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     RedirectStandardError = true,
                     UseShellExecute = false,
                     CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8
-                }
+                    StandardOutputEncoding = System.Text.Encoding.UTF8,
+                },
             };
             p.StartInfo = CoreTools.UpdateEnvironmentVariables(p.StartInfo);
             IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
@@ -163,18 +231,23 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                         elements[i] = elements[i].Trim();
                     }
 
-                    if (FALSE_PACKAGE_IDS.Contains(elements[0])
-                        || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
+                    if (
+                        FALSE_PACKAGE_IDS.Contains(elements[0])
+                        || FALSE_PACKAGE_VERSIONS.Contains(elements[1])
+                    )
                     {
                         continue;
                     }
 
-                    Packages.Add(new Package(
-                        CoreTools.FormatAsName(elements[0]),
-                        elements[0],
-                        elements[1].Replace("(", "").Replace(")", ""),
-                        source,
-                        this));
+                    Packages.Add(
+                        new Package(
+                            CoreTools.FormatAsName(elements[0]),
+                            elements[0],
+                            elements[1].Replace("(", "").Replace(")", ""),
+                            source,
+                            this
+                        )
+                    );
                 }
             }
             logger.AddToStdErr(p.StandardError.ReadToEnd());
@@ -188,9 +261,16 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             Dictionary<string, IPackage> InstalledPackages = [];
             foreach (IPackage InstalledPackage in GetInstalledPackages())
             {
-                if (!InstalledPackages.ContainsKey(InstalledPackage.Id + "." + InstalledPackage.VersionString))
+                if (
+                    !InstalledPackages.ContainsKey(
+                        InstalledPackage.Id + "." + InstalledPackage.VersionString
+                    )
+                )
                 {
-                    InstalledPackages.Add(InstalledPackage.Id + "." + InstalledPackage.VersionString, InstalledPackage);
+                    InstalledPackages.Add(
+                        InstalledPackage.Id + "." + InstalledPackage.VersionString,
+                        InstalledPackage
+                    );
                 }
             }
 
@@ -206,8 +286,8 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     RedirectStandardError = true,
                     UseShellExecute = false,
                     CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8
-                }
+                    StandardOutputEncoding = System.Text.Encoding.UTF8,
+                },
             };
             IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
 
@@ -238,28 +318,43 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                         elements[i] = elements[i].Trim();
                     }
 
-                    if (FALSE_PACKAGE_IDS.Contains(elements[0])
+                    if (
+                        FALSE_PACKAGE_IDS.Contains(elements[0])
                         || FALSE_PACKAGE_VERSIONS.Contains(elements[1])
-                        || FALSE_PACKAGE_VERSIONS.Contains(elements[2]))
+                        || FALSE_PACKAGE_VERSIONS.Contains(elements[2])
+                    )
                     {
                         continue;
                     }
 
-                    if (InstalledPackages.TryGetValue(elements[0] + "." + elements[1], out IPackage? InstalledPackage))
+                    if (
+                        InstalledPackages.TryGetValue(
+                            elements[0] + "." + elements[1],
+                            out IPackage? InstalledPackage
+                        )
+                    )
                     {
-                        OverridenInstallationOptions options = new(InstalledPackage.OverridenOptions.Scope);
-                        Packages.Add(new Package(
-                            CoreTools.FormatAsName(elements[0]),
-                            elements[0],
-                            elements[1],
-                            elements[2],
-                            InstalledPackage.Source,
-                            this,
-                            options));
+                        OverridenInstallationOptions options = new(
+                            InstalledPackage.OverridenOptions.Scope
+                        );
+                        Packages.Add(
+                            new Package(
+                                CoreTools.FormatAsName(elements[0]),
+                                elements[0],
+                                elements[1],
+                                elements[2],
+                                InstalledPackage.Source,
+                                this,
+                                options
+                            )
+                        );
                     }
                     else
                     {
-                        Logger.Warn("Upgradable scoop package not listed on installed packages - id=" + elements[0]);
+                        Logger.Warn(
+                            "Upgradable scoop package not listed on installed packages - id="
+                                + elements[0]
+                        );
                     }
                 }
             }
@@ -269,8 +364,9 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             return Packages;
         }
 
-        protected override IReadOnlyList<Package> GetInstalledPackages_UnSafe()
-            => TaskRecycler<IReadOnlyList<Package>>.RunOrAttach(_getInstalledPackages_UnSafe, 15);
+        protected override IReadOnlyList<Package> GetInstalledPackages_UnSafe() =>
+            TaskRecycler<IReadOnlyList<Package>>.RunOrAttach(_getInstalledPackages_UnSafe, 15);
+
         private IReadOnlyList<Package> _getInstalledPackages_UnSafe()
         {
             List<Package> Packages = [];
@@ -285,10 +381,13 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     RedirectStandardError = true,
                     UseShellExecute = false,
                     CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8
-                }
+                    StandardOutputEncoding = System.Text.Encoding.UTF8,
+                },
             };
-            IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
+            IProcessTaskLogger logger = TaskLogger.CreateNew(
+                LoggableTaskType.ListInstalledPackages,
+                p
+            );
             p.Start();
 
             string? line;
@@ -311,7 +410,10 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
                     if (elements[2].Contains(":\\"))
                     {
-                        var path = Regex.Match(line, "[A-Za-z]:(?:[\\\\\\/][^\\\\\\/\\n]+)+(?:.json|…)");
+                        var path = Regex.Match(
+                            line,
+                            "[A-Za-z]:(?:[\\\\\\/][^\\\\\\/\\n]+)+(?:.json|…)"
+                        );
                         elements[2] = path.Value;
                     }
 
@@ -320,7 +422,10 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                         elements[i] = elements[i].Trim();
                     }
 
-                    if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
+                    if (
+                        FALSE_PACKAGE_IDS.Contains(elements[0])
+                        || FALSE_PACKAGE_VERSIONS.Contains(elements[1])
+                    )
                     {
                         continue;
                     }
@@ -329,13 +434,16 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                         line.Contains("Global install") ? PackageScope.Global : PackageScope.User
                     );
 
-                    Packages.Add(new Package(
-                        CoreTools.FormatAsName(elements[0]),
-                        elements[0],
-                        elements[1],
-                        SourcesHelper.Factory.GetSourceOrDefault(elements[2]),
-                        this,
-                        options));
+                    Packages.Add(
+                        new Package(
+                            CoreTools.FormatAsName(elements[0]),
+                            elements[0],
+                            elements[1],
+                            SourcesHelper.Factory.GetSourceOrDefault(elements[2]),
+                            this,
+                            options
+                        )
+                    );
                 }
             }
             logger.AddToStdErr(p.StandardError.ReadToEnd());
@@ -348,7 +456,9 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
         {
             if (new TimeSpan(DateTime.Now.Ticks - LastScoopSourceUpdateTime).TotalMinutes < 10)
             {
-                Logger.Info("Scoop buckets have been already refreshed in the last ten minutes, skipping.");
+                Logger.Info(
+                    "Scoop buckets have been already refreshed in the last ten minutes, skipping."
+                );
                 return;
             }
             LastScoopSourceUpdateTime = DateTime.Now.Ticks;
@@ -362,7 +472,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 RedirectStandardError = true,
                 RedirectStandardInput = true,
                 CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8
+                StandardOutputEncoding = System.Text.Encoding.UTF8,
             };
             p.StartInfo = StartInfo;
             IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes, p);
@@ -373,18 +483,24 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             logger.Close(p.ExitCode);
         }
 
-        public override IReadOnlyList<string> FindCandidateExecutableFiles()
-            => CoreTools.WhichMultiple("scoop.ps1");
+        public override IReadOnlyList<string> FindCandidateExecutableFiles() =>
+            CoreTools.WhichMultiple("scoop.ps1");
 
-        protected override void _loadManagerExecutableFile(out bool found, out string path, out string callArguments)
+        protected override void _loadManagerExecutableFile(
+            out bool found,
+            out string path,
+            out string callArguments
+        )
         {
             path = CoreData.PowerShell5;
             var (pwshFound, pwshPath) = CoreTools.Which("pwsh.exe");
-            if (pwshFound) path = pwshPath;
+            if (pwshFound)
+                path = pwshPath;
 
             var (_found, executable) = GetExecutableFile();
             found = _found;
-            callArguments = $"-NoProfile -ExecutionPolicy Bypass -Command \"{executable.Replace(" ", "` ")}\" ";
+            callArguments =
+                $"-NoProfile -ExecutionPolicy Bypass -Command \"{executable.Replace(" ", "` ")}\" ";
         }
 
         protected override void _loadManagerVersion(out string version)
@@ -399,8 +515,8 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8
-                }
+                    StandardOutputEncoding = System.Text.Encoding.UTF8,
+                },
             };
             process.Start();
             version = process.StandardOutput.ReadToEnd().Trim();
@@ -408,17 +524,25 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
         protected override void _performExtraLoadingSteps()
         {
-            if(Settings.Get(Settings.K.EnableScoopCleanup))
+            if (Settings.Get(Settings.K.EnableScoopCleanup))
             {
                 RunCleanup();
             }
         }
 
         private void RunCleanup() => _ = _runCleanup();
+
         private async Task _runCleanup()
         {
             Logger.Info("Starting scoop cleanup...");
-            foreach (string command in new[] { " cache rm *", " cleanup --all --cache", " cleanup --all --global --cache" })
+            foreach (
+                string command in new[]
+                {
+                    " cache rm *",
+                    " cleanup --all --cache",
+                    " cleanup --all --global --cache",
+                }
+            )
             {
                 using Process p = new()
                 {
@@ -430,8 +554,8 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,
                         CreateNoWindow = true,
-                        StandardOutputEncoding = System.Text.Encoding.UTF8
-                    }
+                        StandardOutputEncoding = System.Text.Encoding.UTF8,
+                    },
                 };
                 p.Start();
                 await p.WaitForExitAsync();

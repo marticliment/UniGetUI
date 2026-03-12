@@ -1,13 +1,11 @@
-﻿using System.Runtime.CompilerServices;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using ExternalLibraries.Pickers.Guids;
 using ExternalLibraries.Pickers.Structures;
 
 namespace ExternalLibraries.Pickers.Interfaces;
 
-[ComImport(),
-Guid(IIDGuid.IFileOpenDialog),
-InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+[ComImport(), Guid(IIDGuid.IFileOpenDialog), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 internal interface IFileOpenDialog : IFileDialog
 {
     // Defined on IFileDialog - repeated here due to requirements of COM interop layer

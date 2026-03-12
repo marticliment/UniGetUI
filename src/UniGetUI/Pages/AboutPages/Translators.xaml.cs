@@ -14,6 +14,7 @@ namespace UniGetUI.Interface.Pages.AboutPages
     public sealed partial class Translators : Page
     {
         public ObservableCollection<Person> TranslatorList = [];
+
         public Translators()
         {
             InitializeComponent();

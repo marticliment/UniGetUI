@@ -30,7 +30,11 @@ namespace UniGetUI.Core.Language.Tests
         [Theory]
         [InlineData("en", "UniGetUI Log", "UniGetUI (formerly WingetUI)")]
         [InlineData("ca", "Registre de l'UniGetUI", "UniGetUI (abans WingetUI)")]
-        public void TestUniGetUIRefactoring(string language, string uniGetUILogTranslation, string uniGetUITranslation)
+        public void TestUniGetUIRefactoring(
+            string language,
+            string uniGetUILogTranslation,
+            string uniGetUITranslation
+        )
         {
             LanguageEngine engine = new();
 
@@ -56,8 +60,14 @@ namespace UniGetUI.Core.Language.Tests
             Assert.Equal("Usuari | Local", CommonTranslations.ScopeNames[PackageScope.Local]);
             Assert.Equal("Màquina | Global", CommonTranslations.ScopeNames[PackageScope.Global]);
 
-            Assert.Equal(PackageScope.Global, CommonTranslations.InvertedScopeNames["Màquina | Global"]);
-            Assert.Equal(PackageScope.Local, CommonTranslations.InvertedScopeNames["Usuari | Local"]);
+            Assert.Equal(
+                PackageScope.Global,
+                CommonTranslations.InvertedScopeNames["Màquina | Global"]
+            );
+            Assert.Equal(
+                PackageScope.Local,
+                CommonTranslations.InvertedScopeNames["Usuari | Local"]
+            );
         }
 
         /*

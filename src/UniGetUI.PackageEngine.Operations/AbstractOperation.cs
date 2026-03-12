@@ -29,7 +29,11 @@ public abstract partial class AbstractOperation : IDisposable
     public OperationStatus Status
     {
         get => _status;
-        set { _status = value; StatusChanged?.Invoke(this, value); }
+        set
+        {
+            _status = value;
+            StatusChanged?.Invoke(this, value);
+        }
     }
 
     public void ApplyCapabilities(bool admin, bool interactive, bool skiphash, string? scope)
@@ -43,11 +47,14 @@ public abstract partial class AbstractOperation : IDisposable
     public AbstractOperation(
         bool queue_enabled,
         IReadOnlyList<InnerOperation>? preOps = null,
-        IReadOnlyList<InnerOperation>? postOps = null)
+        IReadOnlyList<InnerOperation>? postOps = null
+    )
     {
         QUEUE_ENABLED = queue_enabled;
-        if (preOps is not null) PreOperations = preOps;
-        if (postOps is not null) PostOperations = postOps;
+        if (preOps is not null)
+            PreOperations = preOps;
+        if (postOps is not null)
+            PostOperations = postOps;
 
         Status = OperationStatus.InQueue;
         Line("Please wait...", LineType.ProgressIndicator);
@@ -74,13 +81,15 @@ public abstract partial class AbstractOperation : IDisposable
                 break;
             case OperationStatus.Running:
                 Status = OperationStatus.Canceled;
-                while(OperationQueue.Remove(this));
+                while (OperationQueue.Remove(this))
+                    ;
                 CancelRequested?.Invoke(this, EventArgs.Empty);
                 Status = OperationStatus.Canceled;
                 break;
             case OperationStatus.InQueue:
                 Status = OperationStatus.Canceled;
-                while(OperationQueue.Remove(this));
+                while (OperationQueue.Remove(this))
+                    ;
                 Status = OperationStatus.Canceled;
                 break;
             case OperationStatus.Succeeded:
@@ -90,7 +99,8 @@ public abstract partial class AbstractOperation : IDisposable
 
     protected void Line(string line, LineType type)
     {
-        if (type != LineType.ProgressIndicator) LogList.Add((line, type));
+        if (type != LineType.ProgressIndicator)
+            LogList.Add((line, type));
         LogLineAdded?.Invoke(this, (line, type));
     }
 
@@ -103,14 +113,20 @@ public abstract partial class AbstractOperation : IDisposable
     {
         try
         {
-            if (Metadata.Status == "") throw new InvalidDataException("Metadata.Status was not set!");
-            if (Metadata.Title == "") throw new InvalidDataException("Metadata.Title was not set!");
+            if (Metadata.Status == "")
+                throw new InvalidDataException("Metadata.Status was not set!");
+            if (Metadata.Title == "")
+                throw new InvalidDataException("Metadata.Title was not set!");
             if (Metadata.OperationInformation == "")
                 throw new InvalidDataException("Metadata.OperationInformation was not set!");
-            if (Metadata.SuccessTitle == "") throw new InvalidDataException("Metadata.SuccessTitle was not set!");
-            if (Metadata.SuccessMessage == "") throw new InvalidDataException("Metadata.SuccessMessage was not set!");
-            if (Metadata.FailureTitle == "") throw new InvalidDataException("Metadata.FailureTitle was not set!");
-            if (Metadata.FailureMessage == "") throw new InvalidDataException("Metadata.FailureMessage was not set!");
+            if (Metadata.SuccessTitle == "")
+                throw new InvalidDataException("Metadata.SuccessTitle was not set!");
+            if (Metadata.SuccessMessage == "")
+                throw new InvalidDataException("Metadata.SuccessMessage was not set!");
+            if (Metadata.FailureTitle == "")
+                throw new InvalidDataException("Metadata.FailureTitle was not set!");
+            if (Metadata.FailureMessage == "")
+                throw new InvalidDataException("Metadata.FailureMessage was not set!");
 
             Started = true;
 
@@ -130,17 +146,24 @@ public abstract partial class AbstractOperation : IDisposable
                 OperationQueue.Add(this);
                 int lastPos = -2;
 
-                while (FORCE_HOLD_QUEUE || (OperationQueue.IndexOf(this) >= MAX_OPERATIONS && !SKIP_QUEUE))
+                while (
+                    FORCE_HOLD_QUEUE
+                    || (OperationQueue.IndexOf(this) >= MAX_OPERATIONS && !SKIP_QUEUE)
+                )
                 {
                     int pos = OperationQueue.IndexOf(this) - MAX_OPERATIONS + 1;
 
-                    if (pos == -1) return;
+                    if (pos == -1)
+                        return;
                     // In this case, operation was canceled;
 
                     if (pos != lastPos)
                     {
                         lastPos = pos;
-                        Line(CoreTools.Translate("Operation on queue (position {0})...", pos), LineType.ProgressIndicator);
+                        Line(
+                            CoreTools.Translate("Operation on queue (position {0})...", pos),
+                            LineType.ProgressIndicator
+                        );
                     }
 
                     await Task.Delay(100);
@@ -149,7 +172,8 @@ public abstract partial class AbstractOperation : IDisposable
             // END QUEUE HANDLER
 
             var result = await _runOperation();
-            while (OperationQueue.Remove(this));
+            while (OperationQueue.Remove(this))
+                ;
 
             if (result == OperationVeredict.Success)
             {
@@ -164,8 +188,12 @@ public abstract partial class AbstractOperation : IDisposable
                 OperationFailed?.Invoke(this, EventArgs.Empty);
                 OperationFinished?.Invoke(this, EventArgs.Empty);
                 Line(Metadata.FailureMessage, LineType.Error);
-                Line(Metadata.FailureMessage + " - " + CoreTools.Translate("Click here for more details"),
-                    LineType.ProgressIndicator);
+                Line(
+                    Metadata.FailureMessage
+                        + " - "
+                        + CoreTools.Translate("Click here for more details"),
+                    LineType.ProgressIndicator
+                );
             }
             else if (result == OperationVeredict.Canceled)
             {
@@ -186,7 +214,8 @@ public abstract partial class AbstractOperation : IDisposable
                 Line(line, LineType.Error);
             }
 
-            while (OperationQueue.Remove(this)) ;
+            while (OperationQueue.Remove(this))
+                ;
 
             Status = OperationStatus.Failed;
             try
@@ -196,7 +225,10 @@ public abstract partial class AbstractOperation : IDisposable
             }
             catch (Exception e2)
             {
-                Line("An internal error occurred while handling an internal error:", LineType.Error);
+                Line(
+                    "An internal error occurred while handling an internal error:",
+                    LineType.Error
+                );
                 foreach (var line in e2.ToString().Split("\n"))
                 {
                     Line(line, LineType.Error);
@@ -204,8 +236,12 @@ public abstract partial class AbstractOperation : IDisposable
             }
 
             Line(Metadata.FailureMessage, LineType.Error);
-            Line(Metadata.FailureMessage + " - " + CoreTools.Translate("Click here for more details"),
-                LineType.ProgressIndicator);
+            Line(
+                Metadata.FailureMessage
+                    + " - "
+                    + CoreTools.Translate("Click here for more details"),
+                LineType.ProgressIndicator
+            );
         }
     }
 
@@ -214,29 +250,43 @@ public abstract partial class AbstractOperation : IDisposable
         OperationVeredict result;
 
         // Process preoperations
-        int i = 0, count = PreOperations.Count;
-        if(count > 0) Line("", LineType.VerboseDetails);
+        int i = 0,
+            count = PreOperations.Count;
+        if (count > 0)
+            Line("", LineType.VerboseDetails);
         foreach (var preReq in PreOperations)
         {
             i++;
-            Line(CoreTools.Translate($"Running PreOperation ({i}/{count})..."), LineType.Information);
+            Line(
+                CoreTools.Translate($"Running PreOperation ({i}/{count})..."),
+                LineType.Information
+            );
             preReq.Operation.LogLineAdded += (_, line) => Line(line.Item1, line.Item2);
             await preReq.Operation.MainThread();
             if (preReq.Operation.Status is not OperationStatus.Succeeded && preReq.MustSucceed)
             {
                 Line(
-                    CoreTools.Translate($"PreOperation {i} out of {count} failed, and was tagged as necessary. Aborting..."),
-                    LineType.Error);
+                    CoreTools.Translate(
+                        $"PreOperation {i} out of {count} failed, and was tagged as necessary. Aborting..."
+                    ),
+                    LineType.Error
+                );
                 return OperationVeredict.Failure;
             }
-            Line(CoreTools.Translate($"PreOperation {i} out of {count} finished with result {preReq.Operation.Status}"), LineType.Information);
+            Line(
+                CoreTools.Translate(
+                    $"PreOperation {i} out of {count} finished with result {preReq.Operation.Status}"
+                ),
+                LineType.Information
+            );
             Line("--------------------------------", LineType.Information);
             Line("", LineType.VerboseDetails);
         }
 
         // BEGIN ACTUAL OPERATION
         Line(CoreTools.Translate("Starting operation..."), LineType.Information);
-        if (Status is OperationStatus.InQueue) Status = OperationStatus.Running;
+        if (Status is OperationStatus.InQueue)
+            Status = OperationStatus.Running;
 
         do
         {
@@ -252,10 +302,13 @@ public abstract partial class AbstractOperation : IDisposable
                 }
 
                 Task<OperationVeredict> op = PerformOperation();
-                while (Status != OperationStatus.Canceled && !op.IsCompleted) await Task.Delay(100);
+                while (Status != OperationStatus.Canceled && !op.IsCompleted)
+                    await Task.Delay(100);
 
-                if (Status is OperationStatus.Canceled) result = OperationVeredict.Canceled;
-                else result = op.GetAwaiter().GetResult();
+                if (Status is OperationStatus.Canceled)
+                    result = OperationVeredict.Canceled;
+                else
+                    result = op.GetAwaiter().GetResult();
             }
             catch (Exception e)
             {
@@ -272,23 +325,35 @@ public abstract partial class AbstractOperation : IDisposable
             return result;
 
         // Process postoperations
-        i = 0; count = PostOperations.Count;
+        i = 0;
+        count = PostOperations.Count;
         foreach (var postReq in PostOperations)
         {
             i++;
             Line("--------------------------------", LineType.Information);
             Line("", LineType.VerboseDetails);
-            Line(CoreTools.Translate($"Running PostOperation ({i}/{count})..."), LineType.Information);
+            Line(
+                CoreTools.Translate($"Running PostOperation ({i}/{count})..."),
+                LineType.Information
+            );
             postReq.Operation.LogLineAdded += (_, line) => Line(line.Item1, line.Item2);
             await postReq.Operation.MainThread();
             if (postReq.Operation.Status is not OperationStatus.Succeeded && postReq.MustSucceed)
             {
                 Line(
-                    CoreTools.Translate($"PostOperation {i} out of {count} failed, and was tagged as necessary. Aborting..."),
-                    LineType.Error);
+                    CoreTools.Translate(
+                        $"PostOperation {i} out of {count} failed, and was tagged as necessary. Aborting..."
+                    ),
+                    LineType.Error
+                );
                 return OperationVeredict.Failure;
             }
-            Line(CoreTools.Translate($"PostOperation {i} out of {count} finished with result {postReq.Operation.Status}"), LineType.Information);
+            Line(
+                CoreTools.Translate(
+                    $"PostOperation {i} out of {count} finished with result {postReq.Operation.Status}"
+                ),
+                LineType.Information
+            );
         }
 
         return result;
@@ -298,29 +363,37 @@ public abstract partial class AbstractOperation : IDisposable
 
     public void SkipQueue()
     {
-        if (Status != OperationStatus.InQueue) return;
-        while(OperationQueue.Remove(this));
+        if (Status != OperationStatus.InQueue)
+            return;
+        while (OperationQueue.Remove(this))
+            ;
         SKIP_QUEUE = true;
     }
 
     public void RunNext()
     {
-        if (Status != OperationStatus.InQueue) return;
-        if (!OperationQueue.Contains(this)) return;
+        if (Status != OperationStatus.InQueue)
+            return;
+        if (!OperationQueue.Contains(this))
+            return;
 
         FORCE_HOLD_QUEUE = true;
-        while(OperationQueue.Remove(this));
+        while (OperationQueue.Remove(this))
+            ;
         OperationQueue.Insert(Math.Min(MAX_OPERATIONS, OperationQueue.Count), this);
         FORCE_HOLD_QUEUE = false;
     }
 
     public void BackOfTheQueue()
     {
-        if (Status != OperationStatus.InQueue) return;
-        if (!OperationQueue.Contains(this)) return;
+        if (Status != OperationStatus.InQueue)
+            return;
+        if (!OperationQueue.Contains(this))
+            return;
 
         FORCE_HOLD_QUEUE = true;
-        while(OperationQueue.Remove(this));
+        while (OperationQueue.Remove(this))
+            ;
         OperationQueue.Add(this);
         FORCE_HOLD_QUEUE = false;
     }
@@ -335,15 +408,18 @@ public abstract partial class AbstractOperation : IDisposable
         Line($"-----------------------", LineType.VerboseDetails);
         Line($"Retrying operation with RetryMode={retryMode}", LineType.VerboseDetails);
         Line($"", LineType.VerboseDetails);
-        if (Status is OperationStatus.Running or OperationStatus.InQueue) return;
+        if (Status is OperationStatus.Running or OperationStatus.InQueue)
+            return;
         _ = MainThread();
     }
 
     protected abstract void ApplyRetryAction(string retryMode);
     protected abstract Task<OperationVeredict> PerformOperation();
     public abstract Task<Uri> GetOperationIcon();
+
     public void Dispose()
     {
-        while(OperationQueue.Remove(this));
+        while (OperationQueue.Remove(this))
+            ;
     }
 }

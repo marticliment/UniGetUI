@@ -1,4 +1,4 @@
-﻿namespace ExternalLibraries.Pickers.Enums;
+namespace ExternalLibraries.Pickers.Enums;
 
 [Flags]
 // https://learn.microsoft.com/ru-ru/windows/win32/api/shobjidl_core/ne-shobjidl_core-_fileopendialogoptions
@@ -23,5 +23,5 @@ internal enum FOS : uint
     FOS_NODEREFERENCELINKS = 0x00100000,
     FOS_DONTADDTORECENT = 0x02000000,
     FOS_FORCESHOWHIDDEN = 0x10000000,
-    FOS_DEFAULTNOMINIMODE = 0x20000000
+    FOS_DEFAULTNOMINIMODE = 0x20000000,
 }

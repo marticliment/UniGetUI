@@ -1,8 +1,8 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using UniGetUI.Core.Tools;
-using UniGetUI.Pages.DialogPages;
 using UniGetUI.PackageOperations;
+using UniGetUI.Pages.DialogPages;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -32,10 +32,11 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             ParallelOperationCount.ShowAddedItems();
         }
 
-        public void ShowRestartBanner(object sender, EventArgs e)
-            => RestartRequired?.Invoke(this, e);
-        private void ManageDesktopShortcutsButton_Click(object sender, RoutedEventArgs e)
-            => _ = DialogHelper.ManageDesktopShortcuts();
+        public void ShowRestartBanner(object sender, EventArgs e) =>
+            RestartRequired?.Invoke(this, e);
+
+        private void ManageDesktopShortcutsButton_Click(object sender, RoutedEventArgs e) =>
+            _ = DialogHelper.ManageDesktopShortcuts();
 
         public bool CanGoBack => true;
         public string ShortTitle => CoreTools.Translate("Package operation preferences");

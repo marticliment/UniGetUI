@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml.Controls;
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace UniGetUI.Interface.Widgets;
+
 public sealed partial class DialogCloseButton : UserControl
 {
     public event EventHandler<RoutedEventArgs>? Click;

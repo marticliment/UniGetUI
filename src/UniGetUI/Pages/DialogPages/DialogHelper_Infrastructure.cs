@@ -1,7 +1,5 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using Windows.UI;
-using Windows.UI.Text;
 using Microsoft.UI;
 using Microsoft.UI.Text;
 using Microsoft.UI.Windowing;
@@ -20,6 +18,8 @@ using UniGetUI.Interface.Dialogs;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Classes.Packages.Classes;
+using Windows.UI;
+using Windows.UI.Text;
 
 namespace UniGetUI.Pages.DialogPages;
 
@@ -32,7 +32,7 @@ public static partial class DialogHelper
             var dialog = new ContentDialog()
             {
                 XamlRoot = Window.MainContentGrid.XamlRoot,
-                Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
+                Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
             };
             return dialog;
         }
@@ -46,18 +46,32 @@ public static partial class DialogHelper
             {
                 if (dialog.Content is FrameworkElement page)
                 {
-                    double maxW, maxH;
-                    int tresholdW = 1300, tresholdH = 1300;
-                    if (Window.NavigationPage.ActualWidth < tresholdW) maxW = 100;
-                    else if (Window.NavigationPage.ActualWidth >= tresholdW + 200) maxW = 300;
-                    else maxW = Window.NavigationPage.ActualWidth - (tresholdW - 100);
+                    double maxW,
+                        maxH;
+                    int tresholdW = 1300,
+                        tresholdH = 1300;
+                    if (Window.NavigationPage.ActualWidth < tresholdW)
+                        maxW = 100;
+                    else if (Window.NavigationPage.ActualWidth >= tresholdW + 200)
+                        maxW = 300;
+                    else
+                        maxW = Window.NavigationPage.ActualWidth - (tresholdW - 100);
 
-                    if (Window.NavigationPage.ActualHeight < tresholdH) maxH = (hasTitle? 104: 64) + (hasButtons? 80: 0);
-                    else if (Window.NavigationPage.ActualHeight >= tresholdH + 200) maxH = (hasTitle ? 320 : 280) + (hasButtons ? 80 : 0);
-                    else maxH = Window.NavigationPage.ActualHeight - (tresholdH - (hasTitle ? 120 : 80)) + (hasButtons ? 80 : 0);
+                    if (Window.NavigationPage.ActualHeight < tresholdH)
+                        maxH = (hasTitle ? 104 : 64) + (hasButtons ? 80 : 0);
+                    else if (Window.NavigationPage.ActualHeight >= tresholdH + 200)
+                        maxH = (hasTitle ? 320 : 280) + (hasButtons ? 80 : 0);
+                    else
+                        maxH =
+                            Window.NavigationPage.ActualHeight
+                            - (tresholdH - (hasTitle ? 120 : 80))
+                            + (hasButtons ? 80 : 0);
 
                     page.Width = Math.Min(Math.Abs(Window.NavigationPage.ActualWidth - maxW), 8192);
-                    page.Height = Math.Min(Math.Abs(Window.NavigationPage.ActualHeight - maxH), 4096);
+                    page.Height = Math.Min(
+                        Math.Abs(Window.NavigationPage.ActualHeight - maxH),
+                        4096
+                    );
                 }
             };
             return dialog;
@@ -91,7 +105,20 @@ public static partial class DialogHelper
             IntPtr GetForWindow([In] IntPtr appWindow, [In] ref Guid riid);
             void ShowShareUIForWindow(IntPtr appWindow);
         }
-        public static readonly Guid _dtm_iid = new(0xa5caee9b,0x8708,0x49d1,0x8d,0x36,0x67,0xd2,0x5a,0x8d,0xa0,0x0c);
+
+        public static readonly Guid _dtm_iid = new(
+            0xa5caee9b,
+            0x8708,
+            0x49d1,
+            0x8d,
+            0x36,
+            0x67,
+            0xd2,
+            0x5a,
+            0x8d,
+            0xa0,
+            0x0c
+        );
     }
 
     private static readonly List<LoadingDialog> _loadingDialogQueue = new();
@@ -100,6 +127,7 @@ public static partial class DialogHelper
     private static ContentDialog? _currentLoadingDialog;
 
     public static int ShowLoadingDialog(string text) => ShowLoadingDialog(text, "");
+
     public static int ShowLoadingDialog(string title, string description)
     {
         var dialogData = new LoadingDialog(title, description);
@@ -131,7 +159,8 @@ public static partial class DialogHelper
 
     public static void _showNextLoadingDialogIfPossible()
     {
-        if (!_loadingDialogQueue.Any()) return;
+        if (!_loadingDialogQueue.Any())
+            return;
         var data = _loadingDialogQueue.First();
 
         if (Window.LoadingDialogCount == 0 && _dialogQueue.Count == 0)
@@ -152,21 +181,24 @@ public static partial class DialogHelper
                     {
                         HorizontalAlignment = HorizontalAlignment.Stretch,
                         TextWrapping = TextWrapping.Wrap,
-                        Text = data.Text
+                        Text = data.Text,
                     },
                     new ProgressRing()
                     {
                         IsIndeterminate = true,
                         HorizontalAlignment = HorizontalAlignment.Center,
                         VerticalAlignment = VerticalAlignment.Center,
-                    }
-                }
+                    },
+                },
             };
             _ = ShowDialogAsync(_currentLoadingDialog, HighPriority: true);
         }
     }
 
-    public static async Task<ContentDialogResult> ShowDialogAsync(ContentDialog dialog, bool HighPriority = false)
+    public static async Task<ContentDialogResult> ShowDialogAsync(
+        ContentDialog dialog,
+        bool HighPriority = false
+    )
     {
         try
         {
@@ -189,7 +221,8 @@ public static partial class DialogHelper
             ContentDialogResult result = await dialog.ShowAsync();
             Window.AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
             _dialogQueue.Remove(dialog);
-            if (!_dialogQueue.Any()) DialogHelper._showNextLoadingDialogIfPossible();
+            if (!_dialogQueue.Any())
+                DialogHelper._showNextLoadingDialogIfPossible();
             return result;
         }
         catch (Exception e)
@@ -216,29 +249,48 @@ public static partial class DialogHelper
                 {
                     new TextBlock()
                     {
-                        Text = CoreTools.Translate("UniGetUI or some of its components are missing or corrupt.")
-                + " " + CoreTools.Translate("It is strongly recommended to reinstall UniGetUI to adress the situation."),
+                        Text =
+                            CoreTools.Translate(
+                                "UniGetUI or some of its components are missing or corrupt."
+                            )
+                            + " "
+                            + CoreTools.Translate(
+                                "It is strongly recommended to reinstall UniGetUI to adress the situation."
+                            ),
                         FontWeight = new FontWeight(600),
                         TextWrapping = TextWrapping.Wrap,
-                        Foreground = Application.Current.Resources["SystemControlErrorTextForegroundBrush"] as Brush,
+                        Foreground =
+                            Application.Current.Resources["SystemControlErrorTextForegroundBrush"]
+                            as Brush,
                     },
                     new TextBlock()
                     {
-                        Text = " ● " + CoreTools.Translate("Refer to the UniGetUI Logs to get more details regarding the affected file(s)"),
+                        Text =
+                            " ● "
+                            + CoreTools.Translate(
+                                "Refer to the UniGetUI Logs to get more details regarding the affected file(s)"
+                            ),
                         TextWrapping = TextWrapping.Wrap,
                     },
                     new TextBlock()
                     {
-                        Text = " ● " + CoreTools.Translate("Integrity checks can be disabled from the Experimental Settings"),
+                        Text =
+                            " ● "
+                            + CoreTools.Translate(
+                                "Integrity checks can be disabled from the Experimental Settings"
+                            ),
                         TextWrapping = TextWrapping.Wrap,
-                    }
-                }
+                    },
+                },
             },
             HorizontalAlignment = HorizontalAlignment.Stretch,
-            VerticalAlignment = VerticalAlignment.Stretch
+            VerticalAlignment = VerticalAlignment.Stretch,
         };
 
-        string installerPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "UniGetUI.Installer.exe");
+        string installerPath = Path.Join(
+            CoreData.UniGetUIExecutableDirectory,
+            "UniGetUI.Installer.exe"
+        );
         if (File.Exists(installerPath))
         {
             dialog.SecondaryButtonText = CoreTools.Translate("Repair UniGetUI");

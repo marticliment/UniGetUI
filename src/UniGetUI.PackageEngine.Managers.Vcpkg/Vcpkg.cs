@@ -25,7 +25,8 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
 
         public Vcpkg()
         {
-            Dependencies = [
+            Dependencies =
+            [
                 // GIT is required for vcpkg updates to work
                 new ManagerDependency(
                     "Git",
@@ -33,7 +34,8 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                     "-ExecutionPolicy Bypass -NoLogo -NoProfile -Command \"& {winget install --id Git.Git --exact "
                         + "--source winget --accept-source-agreements --accept-package-agreements --force; if($error.count -ne 0){pause}}\"",
                     "winget install --id Git.Git --exact --source winget",
-                    async () => (await CoreTools.WhichAsync("git.exe")).Item1)
+                    async () => (await CoreTools.WhichAsync("git.exe")).Item1
+                ),
             ];
 
             Capabilities = new ManagerCapabilities
@@ -57,16 +59,20 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 { "x64-linux", new ManagerSource(this, "x64-linux", URI_VCPKG_IO) },
                 { "x64-osx", new ManagerSource(this, "x64-osx", URI_VCPKG_IO) },
                 { "x64-uwp", new ManagerSource(this, "x64-uwp", URI_VCPKG_IO) },
-                { "x64-windows-static", new ManagerSource(this, "x64-windows-static", URI_VCPKG_IO) },
+                {
+                    "x64-windows-static",
+                    new ManagerSource(this, "x64-windows-static", URI_VCPKG_IO)
+                },
                 { "x64-windows", new ManagerSource(this, "x64-windows", URI_VCPKG_IO) },
-                { "x86-windows", new ManagerSource(this, "x86-windows", URI_VCPKG_IO) }
+                { "x86-windows", new ManagerSource(this, "x86-windows", URI_VCPKG_IO) },
             };
 
             Properties = new ManagerProperties
             {
                 Name = "vcpkg",
                 Description = CoreTools.Translate(
-                        "A popular C/C++ library manager. Full of C/C++ libraries and other C/C++-related utilities<br>Contains: <b>C/C++ libraries and related utilities</b>"),
+                    "A popular C/C++ library manager. Full of C/C++ libraries and other C/C++-related utilities<br>Contains: <b>C/C++ libraries and related utilities</b>"
+                ),
                 IconId = IconType.Vcpkg,
                 ColorIconId = "vcpkg_color",
                 ExecutableFriendlyName = "vcpkg",
@@ -91,15 +97,17 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
-                    Arguments = Status.ExecutableCallArgs + $" search \"{CoreTools.EnsureSafeQueryString(query)}\"",
+                    Arguments =
+                        Status.ExecutableCallArgs
+                        + $" search \"{CoreTools.EnsureSafeQueryString(query)}\"",
                     // vcpkg has an --x-json flag that would list installed packages in JSON, but it doesn't work for this call (as of 2024-09-30-ab8988503c7cffabfd440b243a383c0a352a023d)
                     // TODO: Perhaps use --x-json when it is fixed
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
                     CreateNoWindow = true,
-                    StandardOutputEncoding = Encoding.UTF8
-                }
+                    StandardOutputEncoding = Encoding.UTF8,
+                },
             };
 
             IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
@@ -126,14 +134,16 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 string[] PackageData = Regex.Replace(line, @"\s+", " ").Split(' ');
                 string PackageId = PackageData[0]; // the id with the suboption
                 string PackageName = PackageId; // the actual name (id - suboption)
-                string
-                    PackageDetailedName = PackageName; // the name with a reformatted suboption reapplied (display name)
+                string PackageDetailedName = PackageName; // the name with a reformatted suboption reapplied (display name)
                 string PackageVersion = PackageData[1];
 
-                if (PackageName.Contains('[') /* meaning its a suboption, and thus has no version */)
+                if (
+                    PackageName.Contains('[') /* meaning its a suboption, and thus has no version */
+                )
                 {
                     PackageName = PackageId.Split('[')[0]; //..PackageName.IndexOf("[", StringComparison.Ordinal)];
-                    PackageDetailedName = PackageName + $" ({optionString}: {PackageId.Split('[')[1][..^1]})";
+                    PackageDetailedName =
+                        PackageName + $" ({optionString}: {PackageId.Split('[')[1][..^1]})";
 
                     if (PackageVersions.TryGetValue(PackageName, out string? value))
                     {
@@ -155,8 +165,15 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                     TripletSourceMap.Add(Triplet, source);
                 }
 
-                Packages.Add(new Package(CoreTools.FormatAsName(PackageDetailedName), PackageId + ":" + Triplet,
-                    PackageVersion, source, this));
+                Packages.Add(
+                    new Package(
+                        CoreTools.FormatAsName(PackageDetailedName),
+                        PackageId + ":" + Triplet,
+                        PackageVersion,
+                        source,
+                        this
+                    )
+                );
             }
 
             logger.AddToStdErr(p.StandardError.ReadToEnd());
@@ -179,8 +196,8 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                     RedirectStandardError = true,
                     UseShellExecute = false,
                     CreateNoWindow = true,
-                    StandardOutputEncoding = Encoding.UTF8
-                }
+                    StandardOutputEncoding = Encoding.UTF8,
+                },
             };
             IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
 
@@ -210,8 +227,16 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                         TripletSourceMap[PackageTriplet] = value;
                     }
 
-                    Packages.Add(new Package(CoreTools.FormatAsName(PackageName), PackageId, PackageVersionCurrent,
-                        PackageVersionLatest, value, this));
+                    Packages.Add(
+                        new Package(
+                            CoreTools.FormatAsName(PackageName),
+                            PackageId,
+                            PackageVersionCurrent,
+                            PackageVersionLatest,
+                            value,
+                            this
+                        )
+                    );
                 }
             }
 
@@ -235,11 +260,14 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                     RedirectStandardError = true,
                     UseShellExecute = false,
                     CreateNoWindow = true,
-                    StandardOutputEncoding = Encoding.UTF8
-                }
+                    StandardOutputEncoding = Encoding.UTF8,
+                },
             };
 
-            IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
+            IProcessTaskLogger logger = TaskLogger.CreateNew(
+                LoggableTaskType.ListInstalledPackages,
+                p
+            );
             string? line;
             List<Package> Packages = [];
 
@@ -262,7 +290,9 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 string PackageName = PackageId.Split(':')[0],
                     PackageTriplet = PackageId.Split(':')[1],
                     PackageVersion = PackageData[1];
-                if (PackageId.Contains('[') /* meaning its a suboption, and thus has no version */)
+                if (
+                    PackageId.Contains('[') /* meaning its a suboption, and thus has no version */
+                )
                 {
                     PackageVersion = PackageVersions[PackageName.Split("[")[0]];
                 }
@@ -277,7 +307,15 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                     TripletSourceMap[PackageTriplet] = value;
                 }
 
-                Packages.Add(new Package(CoreTools.FormatAsName(PackageName), PackageId, PackageVersion, value, this));
+                Packages.Add(
+                    new Package(
+                        CoreTools.FormatAsName(PackageName),
+                        PackageId,
+                        PackageVersion,
+                        value,
+                        this
+                    )
+                );
             }
 
             logger.AddToStdErr(p.StandardError.ReadToEnd());
@@ -294,18 +332,26 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             if (rootFound)
             {
                 string VcpkgLocation = Path.Join(rootPath, "vcpkg.exe");
-                if (File.Exists(VcpkgLocation)) candidates.Add(VcpkgLocation);
+                if (File.Exists(VcpkgLocation))
+                    candidates.Add(VcpkgLocation);
             }
 
             return candidates;
         }
 
-        protected override void _loadManagerExecutableFile(out bool found, out string path, out string callArguments)
+        protected override void _loadManagerExecutableFile(
+            out bool found,
+            out string path,
+            out string callArguments
+        )
         {
             var (exeFound, exePath) = GetExecutableFile();
             var (rootFound, _) = GetVcpkgRoot();
 
-            if(!rootFound) Logger.Error("Vcpkg root was not found. Please define the %VCPKG_ROOT% environment variable or define it from UniGetUI Settings");
+            if (!rootFound)
+                Logger.Error(
+                    "Vcpkg root was not found. Please define the %VCPKG_ROOT% environment variable or define it from UniGetUI Settings"
+                );
             found = exeFound && rootFound;
             path = exePath;
 
@@ -328,8 +374,8 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                     RedirectStandardError = true,
                     CreateNoWindow = true,
                     StandardOutputEncoding = Encoding.UTF8,
-                    StandardErrorEncoding = Encoding.UTF8
-                }
+                    StandardErrorEncoding = Encoding.UTF8,
+                },
             };
             process.Start();
             version = process.StandardOutput.ReadLine()?.Trim() ?? "";
@@ -347,10 +393,13 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                     WorkingDirectory = rootPath,
                     Arguments = "/C .\\bootstrap-vcpkg.bat",
                     UseShellExecute = false,
-                    CreateNoWindow = true
-                }
+                    CreateNoWindow = true,
+                },
             };
-            IProcessTaskLogger processLogger2 = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes, p2);
+            IProcessTaskLogger processLogger2 = TaskLogger.CreateNew(
+                LoggableTaskType.RefreshIndexes,
+                p2
+            );
             p2.Start();
             p2.WaitForExit();
             processLogger2.Close(p2.ExitCode);
@@ -364,10 +413,16 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             if (!Status.Found || !gitFound || !vcpkgRootFound)
             {
                 INativeTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes);
-                if (Settings.Get(Settings.K.DisableUpdateVcpkgGitPorts)) logger.Error("User has disabled updating sources");
-                if (!Status.Found) logger.Error("Vcpkg was not found???");
-                if (!gitFound) logger.Error("Vcpkg sources won't be updated since git was not found");
-                if (!vcpkgRootFound) logger.Error("Cannot update vcpkg port files as requested: the VCPKG_ROOT environment variable or custom vcpkg root setting was not set");
+                if (Settings.Get(Settings.K.DisableUpdateVcpkgGitPorts))
+                    logger.Error("User has disabled updating sources");
+                if (!Status.Found)
+                    logger.Error("Vcpkg was not found???");
+                if (!gitFound)
+                    logger.Error("Vcpkg sources won't be updated since git was not found");
+                if (!vcpkgRootFound)
+                    logger.Error(
+                        "Cannot update vcpkg port files as requested: the VCPKG_ROOT environment variable or custom vcpkg root setting was not set"
+                    );
                 logger.Close(Settings.Get(Settings.K.DisableUpdateVcpkgGitPorts) ? 0 : 1);
                 return;
             }
@@ -382,10 +437,13 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
-                    CreateNoWindow = true
-                }
+                    CreateNoWindow = true,
+                },
             };
-            IProcessTaskLogger processLogger = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes, p);
+            IProcessTaskLogger processLogger = TaskLogger.CreateNew(
+                LoggableTaskType.RefreshIndexes,
+                p
+            );
             p.Start();
             p.WaitForExit();
             processLogger.AddToStdOut(p.StandardOutput.ReadToEnd());
@@ -436,13 +494,19 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
 
             if (DefaultTriplet == "")
             {
-                if (RuntimeInformation.OSArchitecture is Architecture.X64) DefaultTriplet = "x64-";
-                else if (RuntimeInformation.OSArchitecture is Architecture.X86) DefaultTriplet = "x86-";
-                else if (RuntimeInformation.OSArchitecture is Architecture.Arm64) DefaultTriplet = "arm64-";
+                if (RuntimeInformation.OSArchitecture is Architecture.X64)
+                    DefaultTriplet = "x64-";
+                else if (RuntimeInformation.OSArchitecture is Architecture.X86)
+                    DefaultTriplet = "x86-";
+                else if (RuntimeInformation.OSArchitecture is Architecture.Arm64)
+                    DefaultTriplet = "arm64-";
 
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) DefaultTriplet += "windows";
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) DefaultTriplet += "osx";
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) DefaultTriplet += "linux";
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    DefaultTriplet += "windows";
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                    DefaultTriplet += "osx";
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                    DefaultTriplet += "linux";
             }
 
             return DefaultTriplet;
@@ -465,16 +529,22 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 }
                 else
                 {
-                    Logger.Warn($"The built-in triplet directory {tripletLocation} does not exist; triplets will not be loaded.");
+                    Logger.Warn(
+                        $"The built-in triplet directory {tripletLocation} does not exist; triplets will not be loaded."
+                    );
                 }
 
                 if (Path.Exists(communityTripletLocation))
                 {
-                    tripletFiles = tripletFiles.Concat(Directory.EnumerateFiles(communityTripletLocation));
+                    tripletFiles = tripletFiles.Concat(
+                        Directory.EnumerateFiles(communityTripletLocation)
+                    );
                 }
                 else
                 {
-                    Logger.Warn($"The community triplet directory {communityTripletLocation} does not exist; community triplets will not be loaded.");
+                    Logger.Warn(
+                        $"The community triplet directory {communityTripletLocation} does not exist; community triplets will not be loaded."
+                    );
                 }
 
                 foreach (string tripletFile in tripletFiles)

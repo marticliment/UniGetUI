@@ -14,11 +14,22 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         ];
         private readonly Dictionary<string, int> _attemptedSourceTypes = new();
 
-        public WinGetSourceHelper(WinGet manager) : base(manager) { }
+        public WinGetSourceHelper(WinGet manager)
+            : base(manager) { }
 
         public override string[] GetAddSourceParameters(IManagerSource source)
         {
-            List<string> args = ["source", "add", "--name", source.Name, "--arg", source.Url.ToString(), "--accept-source-agreements", "--disable-interactivity"];
+            List<string> args =
+            [
+                "source",
+                "add",
+                "--name",
+                source.Name,
+                "--arg",
+                source.Url.ToString(),
+                "--accept-source-agreements",
+                "--disable-interactivity",
+            ];
 
             if (source.Name != "winget")
             {
@@ -34,8 +45,11 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             return ["source", "remove", "--name", source.Name, "--disable-interactivity"];
         }
 
-        protected override OperationVeredict _getAddSourceOperationVeredict(IManagerSource source, int ReturnCode,
-            string[] Output)
+        protected override OperationVeredict _getAddSourceOperationVeredict(
+            IManagerSource source,
+            int ReturnCode,
+            string[] Output
+        )
         {
             // If operation succeeded, or the source already exists
             if ((uint)ReturnCode is 0 or 0x8A15000C)
@@ -55,7 +69,11 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             return OperationVeredict.AutoRetry;
         }
 
-        protected override OperationVeredict _getRemoveSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
+        protected override OperationVeredict _getRemoveSourceOperationVeredict(
+            IManagerSource source,
+            int ReturnCode,
+            string[] Output
+        )
         {
             return ReturnCode == 0 ? OperationVeredict.Success : OperationVeredict.Failure;
         }

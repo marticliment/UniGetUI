@@ -4,7 +4,8 @@ using UniGetUI.Core.Data;
 
 namespace UniGetUI.PackageEngine.Serializable;
 
-public abstract class SerializableComponent<T> where T: class
+public abstract class SerializableComponent<T>
+    where T : class
 {
     /// <summary>
     /// Creates a deep copy of the object
@@ -36,9 +37,7 @@ public abstract class SerializableComponent<T> where T: class
     /// <summary>
     /// Creates an instance of this object with the default data
     /// </summary>
-    public SerializableComponent()
-    {
-    }
+    public SerializableComponent() { }
 
     /// <summary>
     /// Creates an instance of this object, and loads the data from the given JsonNode object

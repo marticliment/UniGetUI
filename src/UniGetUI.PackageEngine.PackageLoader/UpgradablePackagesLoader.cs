@@ -17,12 +17,14 @@ namespace UniGetUI.PackageEngine.PackageLoader
         public ConcurrentDictionary<string, IPackage> IgnoredPackages = new();
 
         public UpgradablePackagesLoader(IReadOnlyList<IPackageManager> managers)
-        : base(managers,
-            identifier: "UPGRADABLE_PACKAGES",
-            AllowMultiplePackageVersions: false,
-            DisableReload: false,
-            CheckedBydefault: !Settings.Get(Settings.K.DisableSelectingUpdatesByDefault),
-            RequiresInternet: true)
+            : base(
+                managers,
+                identifier: "UPGRADABLE_PACKAGES",
+                AllowMultiplePackageVersions: false,
+                DisableReload: false,
+                CheckedBydefault: !Settings.Get(Settings.K.DisableSelectingUpdatesByDefault),
+                RequiresInternet: true
+            )
         {
             Instance = this;
             FinishedLoading += (_, _) => StartAutoCheckTimeout();
@@ -38,7 +40,9 @@ namespace UniGetUI.PackageEngine.PackageLoader
 
             if (package.IsUpdateMinor() && (await package.GetInstallOptions()).SkipMinorUpdates)
             {
-                Logger.Info($"Ignoring package {package.Id} because it is a minor update ({package.VersionString} -> {package.NewVersionString}) and SkipMinorUpdates is set to true.");
+                Logger.Info(
+                    $"Ignoring package {package.Id} because it is a minor update ({package.VersionString} -> {package.NewVersionString}) and SkipMinorUpdates is set to true."
+                );
                 return false;
             }
 
@@ -60,7 +64,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
         {
             package.GetAvailablePackage()?.SetTag(PackageTag.IsUpgradable);
 
-            foreach(var p in package.GetInstalledPackages())
+            foreach (var p in package.GetInstalledPackages())
                 p.SetTag(PackageTag.IsUpgradable);
 
             return Task.CompletedTask;
@@ -74,11 +78,15 @@ namespace UniGetUI.PackageEngine.PackageLoader
                 try
                 {
                     waitTime = long.Parse(Settings.GetValue(Settings.K.UpdatesCheckInterval));
-                    Logger.Debug($"Starting check for updates wait interval with waitTime={waitTime}");
+                    Logger.Debug(
+                        $"Starting check for updates wait interval with waitTime={waitTime}"
+                    );
                 }
                 catch
                 {
-                    Logger.Debug("Invalid value for UpdatesCheckInterval, using default value of 3600 seconds");
+                    Logger.Debug(
+                        "Invalid value for UpdatesCheckInterval, using default value of 3600 seconds"
+                    );
                 }
 
                 if (UpdatesTimer is not null)
@@ -90,7 +98,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
                 UpdatesTimer = new System.Timers.Timer(waitTime * 1000)
                 {
                     Enabled = false,
-                    AutoReset = false
+                    AutoReset = false,
                 };
                 UpdatesTimer.Elapsed += (s, e) => _ = ReloadPackages();
                 UpdatesTimer.Start();

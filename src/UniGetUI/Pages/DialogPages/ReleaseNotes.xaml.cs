@@ -12,21 +12,29 @@ namespace UniGetUI.Interface.Dialogs
     /// </summary>
     public sealed partial class ReleaseNotes : Page, IDisposable
     {
-
         public event EventHandler<EventArgs>? Close;
+
         public ReleaseNotes()
         {
             InitializeComponent();
             _ = InitializeWebView();
 
-            WebView.NavigationStarting += (_, _) => { ProgressBar.Visibility = Visibility.Visible; };
-            WebView.NavigationCompleted += (_, _) => { ProgressBar.Visibility = Visibility.Collapsed; };
+            WebView.NavigationStarting += (_, _) =>
+            {
+                ProgressBar.Visibility = Visibility.Visible;
+            };
+            WebView.NavigationCompleted += (_, _) =>
+            {
+                ProgressBar.Visibility = Visibility.Collapsed;
+            };
         }
 
         private async Task InitializeWebView()
         {
             await WebView.EnsureCoreWebView2Async();
-            WebView.Source = new Uri("https://github.com/Devolutions/UniGetUI/releases/tag/" + CoreData.VersionName);
+            WebView.Source = new Uri(
+                "https://github.com/Devolutions/UniGetUI/releases/tag/" + CoreData.VersionName
+            );
         }
 
         public void Dispose()

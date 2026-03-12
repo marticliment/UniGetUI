@@ -74,19 +74,24 @@ namespace UniGetUI.Interface.Widgets
                 OffContent = new TextBlock() { Text = CoreTools.Translate("Disabled") },
             };
 
-            _loading = new ProgressRing() { IsIndeterminate = true, Visibility = Visibility.Collapsed};
+            _loading = new ProgressRing()
+            {
+                IsIndeterminate = true,
+                Visibility = Visibility.Collapsed,
+            };
             _textblock = new TextBlock()
             {
                 VerticalAlignment = VerticalAlignment.Center,
                 Margin = new Thickness(0, 0, 0, 0),
-                TextWrapping = TextWrapping.Wrap
+                TextWrapping = TextWrapping.Wrap,
             };
             _warningBlock = new TextBlock()
             {
                 VerticalAlignment = VerticalAlignment.Center,
                 Margin = new Thickness(0, 0, 0, 0),
                 TextWrapping = TextWrapping.Wrap,
-                Foreground = (SolidColorBrush)Application.Current.Resources["SystemControlErrorTextForegroundBrush"],
+                Foreground = (SolidColorBrush)
+                    Application.Current.Resources["SystemControlErrorTextForegroundBrush"],
                 FontSize = 12,
                 Visibility = Visibility.Collapsed,
             };
@@ -102,12 +107,13 @@ namespace UniGetUI.Interface.Widgets
             {
                 Spacing = 4,
                 Orientation = Orientation.Vertical,
-                Children = { _textblock, _warningBlock }
+                Children = { _textblock, _warningBlock },
             };
 
             _checkbox.HorizontalAlignment = HorizontalAlignment.Stretch;
             _checkbox.Toggled += (s, e) => _ = _checkbox_Toggled();
         }
+
         protected virtual async Task _checkbox_Toggled()
         {
             try
@@ -117,7 +123,10 @@ namespace UniGetUI.Interface.Widgets
 
                 _loading.Visibility = Visibility.Visible;
                 _checkbox.IsEnabled = false;
-                await SecureSettings.TrySet(setting_name, _checkbox.IsOn ^ IS_INVERTED ^ ForceInversion);
+                await SecureSettings.TrySet(
+                    setting_name,
+                    _checkbox.IsOn ^ IS_INVERTED ^ ForceInversion
+                );
                 StateChanged?.Invoke(this, EventArgs.Empty);
                 _textblock.Opacity = _checkbox.IsOn ? 1 : 0.7;
                 _checkbox.IsOn = SecureSettings.Get(setting_name) ^ IS_INVERTED ^ ForceInversion;

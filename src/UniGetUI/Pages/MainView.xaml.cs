@@ -1,8 +1,8 @@
-using Windows.System;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
+using UniGetUI.Controls;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
@@ -10,16 +10,16 @@ using UniGetUI.Interface.Dialogs;
 using UniGetUI.Interface.Pages;
 using UniGetUI.Interface.Pages.LogPage;
 using UniGetUI.Interface.SoftwarePages;
-using Windows.UI.Core;
-using UniGetUI.PackageEngine.Interfaces;
-using UniGetUI.Pages.DialogPages;
-using UniGetUI.PackageEngine.Enums;
-using UniGetUI.PackageOperations;
-using UniGetUI.Pages.SettingsPages;
-using UniGetUI.Controls;
 using UniGetUI.PackageEngine;
+using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.PackageLoader;
+using UniGetUI.PackageOperations;
+using UniGetUI.Pages.DialogPages;
 using UniGetUI.Pages.PageInterfaces;
+using UniGetUI.Pages.SettingsPages;
+using Windows.System;
+using Windows.UI.Core;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -38,7 +38,7 @@ namespace UniGetUI.Interface
         ManagerLog,
         OperationHistory,
         Help,
-        Null // Used for initializers
+        Null, // Used for initializers
     }
 
     public sealed partial class MainView : UserControl
@@ -81,13 +81,21 @@ namespace UniGetUI.Interface
                     return;
                 }
 
-                bool IS_CONTROL_PRESSED = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
-                bool IS_SHIFT_PRESSED = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
+                bool IS_CONTROL_PRESSED = InputKeyboardSource
+                    .GetKeyStateForCurrentThread(VirtualKey.Control)
+                    .HasFlag(CoreVirtualKeyStates.Down);
+                bool IS_SHIFT_PRESSED = InputKeyboardSource
+                    .GetKeyStateForCurrentThread(VirtualKey.Shift)
+                    .HasFlag(CoreVirtualKeyStates.Down);
 
                 Page currentPage = GetPageForType(CurrentPage_t);
                 if (e.Key is VirtualKey.Tab && IS_CONTROL_PRESSED)
                 {
-                    NavigateTo(IS_SHIFT_PRESSED ? GetPreviousPage(CurrentPage_t) : GetNextPage(CurrentPage_t));
+                    NavigateTo(
+                        IS_SHIFT_PRESSED
+                            ? GetPreviousPage(CurrentPage_t)
+                            : GetNextPage(CurrentPage_t)
+                    );
                 }
                 else if (!IS_CONTROL_PRESSED && !IS_SHIFT_PRESSED && e.Key == VirtualKey.F1)
                 {
@@ -114,31 +122,43 @@ namespace UniGetUI.Interface
             /*
              * Connect different loaders and UI Sections to bundles page
              */
-            foreach(var pair in new Dictionary<CustomNavViewItem, AbstractPackageLoader>
+            foreach (
+                var pair in new Dictionary<CustomNavViewItem, AbstractPackageLoader>
+                {
+                    { DiscoverNavBtn, DiscoverablePackagesLoader.Instance },
+                    { UpdatesNavBtn, UpgradablePackagesLoader.Instance },
+                    { InstalledNavBtn, InstalledPackagesLoader.Instance },
+                }
+            )
             {
-                {  DiscoverNavBtn,  DiscoverablePackagesLoader.Instance },
-                {  UpdatesNavBtn,  UpgradablePackagesLoader.Instance },
-                {  InstalledNavBtn,  InstalledPackagesLoader.Instance },
-            })
-            {
-                pair.Value.FinishedLoading += (_, _) => MainApp.Dispatcher.TryEnqueue(() => pair.Key.IsLoading = false);
-                pair.Value.StartedLoading += (_, _) => MainApp.Dispatcher.TryEnqueue(() => pair.Key.IsLoading = true);
+                pair.Value.FinishedLoading += (_, _) =>
+                    MainApp.Dispatcher.TryEnqueue(() => pair.Key.IsLoading = false);
+                pair.Value.StartedLoading += (_, _) =>
+                    MainApp.Dispatcher.TryEnqueue(() => pair.Key.IsLoading = true);
                 pair.Key.IsLoading = pair.Value.IsLoading;
             }
 
-            UpgradablePackagesLoader.Instance.PackagesChanged += (_, _) => MainApp.Dispatcher.TryEnqueue(() =>
-            {
-                UpdatesBadge.Value = UpgradablePackagesLoader.Instance.Count();
-                UpdatesBadge.Visibility = UpdatesBadge.Value > 0 ? Visibility.Visible : Visibility.Collapsed;
-            });
+            UpgradablePackagesLoader.Instance.PackagesChanged += (_, _) =>
+                MainApp.Dispatcher.TryEnqueue(() =>
+                {
+                    UpdatesBadge.Value = UpgradablePackagesLoader.Instance.Count();
+                    UpdatesBadge.Visibility =
+                        UpdatesBadge.Value > 0 ? Visibility.Visible : Visibility.Collapsed;
+                });
             UpdatesBadge.Value = UpgradablePackagesLoader.Instance.Count();
-            UpdatesBadge.Visibility = UpdatesBadge.Value > 0 ? Visibility.Visible : Visibility.Collapsed;
+            UpdatesBadge.Visibility =
+                UpdatesBadge.Value > 0 ? Visibility.Visible : Visibility.Collapsed;
 
-            BundlesPage.UnsavedChangesStateChanged += (_, _) => MainApp.Dispatcher.TryEnqueue(() =>
-            {
-                BundlesBadge.Visibility = BundlesPage.HasUnsavedChanges ? Visibility.Visible : Visibility.Collapsed;
-            });
-            BundlesBadge.Visibility = BundlesPage.HasUnsavedChanges ? Visibility.Visible : Visibility.Collapsed;
+            BundlesPage.UnsavedChangesStateChanged += (_, _) =>
+                MainApp.Dispatcher.TryEnqueue(() =>
+                {
+                    BundlesBadge.Visibility = BundlesPage.HasUnsavedChanges
+                        ? Visibility.Visible
+                        : Visibility.Collapsed;
+                });
+            BundlesBadge.Visibility = BundlesPage.HasUnsavedChanges
+                ? Visibility.Visible
+                : Visibility.Collapsed;
 
             /*
              * End connecting stuff together
@@ -149,11 +169,12 @@ namespace UniGetUI.Interface
             if (CoreTools.IsAdministrator() && !Settings.Get(Settings.K.AlreadyWarnedAboutAdmin))
             {
                 Settings.Set(Settings.K.AlreadyWarnedAboutAdmin, true);
-                _= DialogHelper.WarnAboutAdminRights();
+                _ = DialogHelper.WarnAboutAdminRights();
             }
 
             UpdateOperationsLayout();
-            MainApp.Operations._operationList.CollectionChanged += (_, _) => UpdateOperationsLayout();
+            MainApp.Operations._operationList.CollectionChanged += (_, _) =>
+                UpdateOperationsLayout();
 
             if (!Settings.Get(Settings.K.ShownTelemetryBanner))
             {
@@ -175,13 +196,13 @@ namespace UniGetUI.Interface
                 "installed" => PageType.Installed,
                 "bundles" => PageType.Bundles,
                 "settings" => PageType.Settings,
-                _ => MainApp.Tooltip.AvailableUpdates > 0 ? PageType.Updates : PageType.Discover
+                _ => MainApp.Tooltip.AvailableUpdates > 0 ? PageType.Updates : PageType.Discover,
             };
             NavigateTo(type);
         }
 
-        private Page GetPageForType(PageType type)
-            => type switch
+        private Page GetPageForType(PageType type) =>
+            type switch
             {
                 PageType.Discover => DiscoverPage,
                 PageType.Updates => UpdatesPage,
@@ -194,11 +215,11 @@ namespace UniGetUI.Interface
                 PageType.OperationHistory => OperationHistoryPage ??= new OperationHistoryPage(),
                 PageType.Help => HelpPage ??= new HelpPage(),
                 PageType.Null => throw new InvalidCastException("Page type is Null"),
-                _ => throw new InvalidDataException($"Unknown page type {type}")
+                _ => throw new InvalidDataException($"Unknown page type {type}"),
             };
 
-        private static PageType GetNextPage(PageType type)
-            => type switch
+        private static PageType GetNextPage(PageType type) =>
+            type switch
             {
                 // Default loop
                 PageType.Discover => PageType.Updates,
@@ -214,11 +235,11 @@ namespace UniGetUI.Interface
                 PageType.ManagerLog => PageType.Discover,
                 PageType.Help => PageType.Discover,
                 PageType.Null => PageType.Discover,
-                _ => throw new InvalidDataException($"Unknown page type {type}")
+                _ => throw new InvalidDataException($"Unknown page type {type}"),
             };
 
-        private static PageType GetPreviousPage(PageType type)
-            => type switch
+        private static PageType GetPreviousPage(PageType type) =>
+            type switch
             {
                 // Default loop
                 PageType.Discover => PageType.Settings,
@@ -234,16 +255,17 @@ namespace UniGetUI.Interface
                 PageType.ManagerLog => PageType.Discover,
                 PageType.Help => PageType.Discover,
                 PageType.Null => PageType.Discover,
-                _ => throw new InvalidDataException($"Unknown page type {type}")
+                _ => throw new InvalidDataException($"Unknown page type {type}"),
             };
 
-        private void SettingsNavButton_Click(object sender, EventArgs e)
-            => NavigateTo(PageType.Settings);
+        private void SettingsNavButton_Click(object sender, EventArgs e) =>
+            NavigateTo(PageType.Settings);
 
-        private void ManagersNavButton_Click(object sender, EventArgs e)
-            => NavigateTo(PageType.Managers);
+        private void ManagersNavButton_Click(object sender, EventArgs e) =>
+            NavigateTo(PageType.Managers);
 
         private bool _lastNavItemSelectionWasAuto;
+
         private void SelectNavButtonForPage(PageType page)
         {
             _lastNavItemSelectionWasAuto = true;
@@ -260,7 +282,9 @@ namespace UniGetUI.Interface
             _lastNavItemSelectionWasAuto = false;
         }
 
-        private void AboutNavButton_Click(object sender, RoutedEventArgs e) => _ = _aboutNavButton_Click();
+        private void AboutNavButton_Click(object sender, RoutedEventArgs e) =>
+            _ = _aboutNavButton_Click();
+
         private async Task _aboutNavButton_Click()
         {
             SelectNavButtonForPage(PageType.Null);
@@ -282,7 +306,7 @@ namespace UniGetUI.Interface
             CurrentPage_t = NewPage_t;
 
             (oldPage as IEnterLeaveListener)?.OnLeave();
-            if(oldPage is ISearchBoxPage oldSPage)
+            if (oldPage is ISearchBoxPage oldSPage)
             {
                 MainTextBlock.TextChanged -= oldSPage.SearchBox_TextChanged;
                 MainTextBlock.QuerySubmitted -= oldSPage.SearchBox_QuerySubmitted;
@@ -324,43 +348,47 @@ namespace UniGetUI.Interface
             else
             {
                 NavigateTo(NavigationHistory.Last(), toHistory: false);
-                NavigationHistory.RemoveAt(NavigationHistory.Count-1);
+                NavigationHistory.RemoveAt(NavigationHistory.Count - 1);
                 CanGoBackChanged?.Invoke(
                     this,
-                    NavigationHistory.Any() || ((ContentFrame.Content as IInnerNavigationPage)?.CanGoBack() ?? false));
+                    NavigationHistory.Any()
+                        || ((ContentFrame.Content as IInnerNavigationPage)?.CanGoBack() ?? false)
+                );
             }
         }
 
-        private void ReleaseNotesMenu_Click(object sender, RoutedEventArgs e)
-            => _ = DialogHelper.ShowReleaseNotes();
+        private void ReleaseNotesMenu_Click(object sender, RoutedEventArgs e) =>
+            _ = DialogHelper.ShowReleaseNotes();
 
-        private void OperationHistoryMenu_Click(object sender, RoutedEventArgs e)
-            => NavigateTo(PageType.OperationHistory);
+        private void OperationHistoryMenu_Click(object sender, RoutedEventArgs e) =>
+            NavigateTo(PageType.OperationHistory);
 
-        private void ManagerLogsMenu_Click(object sender, RoutedEventArgs e)
-            => OpenManagerLogs();
+        private void ManagerLogsMenu_Click(object sender, RoutedEventArgs e) => OpenManagerLogs();
 
         public void OpenManagerLogs(IPackageManager? manager = null)
         {
             NavigateTo(PageType.ManagerLog);
-            if (manager is not null) ManagerLogPage?.LoadForManager(manager);
+            if (manager is not null)
+                ManagerLogPage?.LoadForManager(manager);
         }
+
         public void OpenManagerSettings(IPackageManager? manager = null)
         {
             NavigateTo(PageType.Managers);
-            if (manager is not null) ManagersPage?.NavigateTo(manager);
+            if (manager is not null)
+                ManagersPage?.NavigateTo(manager);
         }
+
         public void OpenSettingsPage(Type page)
         {
             NavigateTo(PageType.Settings);
             SettingsPage?.NavigateTo(page);
         }
 
-        public void UniGetUILogs_Click(object sender, RoutedEventArgs e)
-            => NavigateTo(PageType.OwnLog);
+        public void UniGetUILogs_Click(object sender, RoutedEventArgs e) =>
+            NavigateTo(PageType.OwnLog);
 
-        private void HelpMenu_Click(object sender, RoutedEventArgs e)
-            => ShowHelp();
+        private void HelpMenu_Click(object sender, RoutedEventArgs e) => ShowHelp();
 
         public void ShowHelp(string uriAttachment = "")
         {
@@ -368,8 +396,8 @@ namespace UniGetUI.Interface
             HelpPage?.NavigateTo(uriAttachment);
         }
 
-        private void QuitUniGetUI_Click(object sender, RoutedEventArgs e)
-            => MainApp.Instance.DisposeAndQuit();
+        private void QuitUniGetUI_Click(object sender, RoutedEventArgs e) =>
+            MainApp.Instance.DisposeAndQuit();
 
         private bool ResizingOPLayout;
         private int OpListChanges;
@@ -428,7 +456,10 @@ namespace UniGetUI.Interface
 
         private void OperationSplitterMenuButton_Click(object sender, RoutedEventArgs e)
         {
-            OperationListMenu.ShowAt(OperationSplitterMenuButton, new FlyoutShowOptions { ShowMode = FlyoutShowMode.Standard });
+            OperationListMenu.ShowAt(
+                OperationSplitterMenuButton,
+                new FlyoutShowOptions { ShowMode = FlyoutShowMode.Standard }
+            );
         }
 
         private void ExpandCollapseOpList_Click(object sender, RoutedEventArgs e)
@@ -477,20 +508,29 @@ namespace UniGetUI.Interface
             }
         }
 
-        private void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
+        private void NavigationView_SelectionChanged(
+            NavigationView sender,
+            NavigationViewSelectionChangedEventArgs args
+        )
         {
             if (_lastNavItemSelectionWasAuto)
                 return;
 
-            if(args.SelectedItem is CustomNavViewItem item && item.Tag is not PageType.Null)
+            if (args.SelectedItem is CustomNavViewItem item && item.Tag is not PageType.Null)
             {
                 NavigateTo(item.Tag);
             }
         }
 
-        private void MoreNavBtn_Tapped(object sender, Microsoft.UI.Xaml.Input.TappedRoutedEventArgs e)
+        private void MoreNavBtn_Tapped(
+            object sender,
+            Microsoft.UI.Xaml.Input.TappedRoutedEventArgs e
+        )
         {
-            (VersionMenuItem as MenuFlyoutItem).Text = CoreTools.Translate("WingetUI Version {0}", CoreData.VersionName);
+            (VersionMenuItem as MenuFlyoutItem).Text = CoreTools.Translate(
+                "WingetUI Version {0}",
+                CoreData.VersionName
+            );
             MoreNavButtonMenu.ShowAt(sender as FrameworkElement);
         }
 
@@ -500,7 +540,12 @@ namespace UniGetUI.Interface
             BundlesPage?.OpenFromFile(param);
         }
 
-        internal void LoadBundleFromString(string payload, BundleFormatType format, string source, int loadingId)
+        internal void LoadBundleFromString(
+            string payload,
+            BundleFormatType format,
+            string source,
+            int loadingId
+        )
         {
             NavigateTo(PageType.Bundles);
             BundlesPage?.OpenFromString(payload, format, source, loadingId);
@@ -511,7 +556,12 @@ namespace UniGetUI.Interface
             foreach (var widget in MainApp.Operations._operationList.ToArray())
             {
                 var operation = widget.Operation;
-                if (operation.Status is OperationStatus.Succeeded or OperationStatus.Failed or OperationStatus.Canceled)
+                if (
+                    operation.Status
+                    is OperationStatus.Succeeded
+                        or OperationStatus.Failed
+                        or OperationStatus.Canceled
+                )
                     widget.Close();
             }
         }

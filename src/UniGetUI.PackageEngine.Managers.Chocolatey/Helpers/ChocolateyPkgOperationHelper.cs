@@ -5,20 +5,28 @@ using UniGetUI.PackageEngine.Serializable;
 using Architecture = UniGetUI.PackageEngine.Enums.Architecture;
 
 namespace UniGetUI.PackageEngine.Managers.ChocolateyManager;
+
 internal sealed class ChocolateyPkgOperationHelper : BasePkgOperationHelper
 {
-    public ChocolateyPkgOperationHelper(Chocolatey manager) : base(manager) { }
+    public ChocolateyPkgOperationHelper(Chocolatey manager)
+        : base(manager) { }
 
-    protected override IReadOnlyList<string> _getOperationParameters(IPackage package,
+    protected override IReadOnlyList<string> _getOperationParameters(
+        IPackage package,
         InstallOptions options,
-        OperationType operation)
+        OperationType operation
+    )
     {
-        List<string> parameters = [operation switch {
-            OperationType.Install => Manager.Properties.InstallVerb,
-            OperationType.Update => Manager.Properties.UpdateVerb,
-            OperationType.Uninstall => Manager.Properties.UninstallVerb,
-            _ => throw new InvalidDataException("Invalid package operation")
-        }];
+        List<string> parameters =
+        [
+            operation switch
+            {
+                OperationType.Install => Manager.Properties.InstallVerb,
+                OperationType.Update => Manager.Properties.UpdateVerb,
+                OperationType.Uninstall => Manager.Properties.UninstallVerb,
+                _ => throw new InvalidDataException("Invalid package operation"),
+            },
+        ];
         parameters.AddRange([package.Id, "-y"]);
 
         if (options.InteractiveInstallation)
@@ -43,12 +51,14 @@ internal sealed class ChocolateyPkgOperationHelper : BasePkgOperationHelper
 
         parameters.Add(Chocolatey.GetProxyArgument());
 
-        parameters.AddRange(operation switch
-        {
-            OperationType.Update => options.CustomParameters_Update,
-            OperationType.Uninstall => options.CustomParameters_Uninstall,
-            _ => options.CustomParameters_Install,
-        });
+        parameters.AddRange(
+            operation switch
+            {
+                OperationType.Update => options.CustomParameters_Update,
+                OperationType.Uninstall => options.CustomParameters_Uninstall,
+                _ => options.CustomParameters_Install,
+            }
+        );
 
         return parameters;
     }
@@ -57,7 +67,8 @@ internal sealed class ChocolateyPkgOperationHelper : BasePkgOperationHelper
         IPackage package,
         OperationType operation,
         IReadOnlyList<string> processOutput,
-        int returnCode)
+        int returnCode
+    )
     {
         if (returnCode is 3010)
         {
@@ -71,14 +82,20 @@ internal sealed class ChocolateyPkgOperationHelper : BasePkgOperationHelper
         }
 
         string output_string = string.Join("\n", processOutput);
-        if (package.OverridenOptions.RunAsAdministrator != true &&
-            (output_string.Contains("Run as administrator")
-            || output_string.Contains("The requested operation requires elevation")
-            || output_string.Contains("Access to the path")
-            || output_string.Contains("Access denied")
-            || output_string.Contains("is denied")
-            || output_string.Contains("WARNING: Unable to create shortcut. Error captured was Unable to save shortcut")
-            || output_string.Contains("access denied")))
+        if (
+            package.OverridenOptions.RunAsAdministrator != true
+            && (
+                output_string.Contains("Run as administrator")
+                || output_string.Contains("The requested operation requires elevation")
+                || output_string.Contains("Access to the path")
+                || output_string.Contains("Access denied")
+                || output_string.Contains("is denied")
+                || output_string.Contains(
+                    "WARNING: Unable to create shortcut. Error captured was Unable to save shortcut"
+                )
+                || output_string.Contains("access denied")
+            )
+        )
         {
             package.OverridenOptions.RunAsAdministrator = true;
             return OperationVeredict.AutoRetry;

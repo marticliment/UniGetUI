@@ -6,13 +6,13 @@ using UniGetUI.Interface.Enums;
 using UniGetUI.Interface.Widgets;
 
 namespace UniGetUI.Controls;
+
 internal sealed partial class CustomNavViewItem : NavigationViewItem
 {
     int _iconSize = 28;
     public IconType LocalIcon
     {
         set => base.Icon = new LocalIcon(value);
-
     }
     public string GlyphIcon
     {
@@ -27,8 +27,10 @@ internal sealed partial class CustomNavViewItem : NavigationViewItem
     {
         set
         {
-            if (value) _ = increaseMargins();
-            else _ = decreaseMargins();
+            if (value)
+                _ = increaseMargins();
+            else
+                _ = decreaseMargins();
             _progressRing.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
         }
     }
@@ -46,7 +48,6 @@ internal sealed partial class CustomNavViewItem : NavigationViewItem
             _textBlock.Text = text;
             ToolTipService.SetToolTip(this, text);
         }
-
     }
 
     private readonly TextBlock _textBlock;
@@ -76,10 +77,7 @@ internal sealed partial class CustomNavViewItem : NavigationViewItem
             Visibility = Visibility.Collapsed,
         };
 
-        _textBlock = new TextBlock
-        {
-            VerticalAlignment = VerticalAlignment.Center,
-        };
+        _textBlock = new TextBlock { VerticalAlignment = VerticalAlignment.Center };
 
         grid.Children.Add(_progressRing);
         grid.Children.Add(_textBlock);
@@ -88,7 +86,7 @@ internal sealed partial class CustomNavViewItem : NavigationViewItem
 
     public async Task increaseMargins()
     {
-        for(int i = (int)base.Icon.Margin.Left; i < 6; i += 2)
+        for (int i = (int)base.Icon.Margin.Left; i < 6; i += 2)
         {
             base.Icon.Margin = new Thickness(i);
             await Task.Delay(15);

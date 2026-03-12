@@ -15,7 +15,10 @@ namespace UniGetUI.Core.Data.Tests
                 }
             }
 
-            Assert.True(MissingUrls.Count == 0, "The list of missing licenses is not empty: " + MissingUrls.ToArray().ToString());
+            Assert.True(
+                MissingUrls.Count == 0,
+                "The list of missing licenses is not empty: " + MissingUrls.ToArray().ToString()
+            );
         }
 
         [Fact]
@@ -31,8 +34,10 @@ namespace UniGetUI.Core.Data.Tests
                 }
             }
 
-            Assert.True(MissingUrls.Count == 0, "The list of missing licenses is not empty: " + MissingUrls.ToArray().ToString());
+            Assert.True(
+                MissingUrls.Count == 0,
+                "The list of missing licenses is not empty: " + MissingUrls.ToArray().ToString()
+            );
         }
-
     }
 }

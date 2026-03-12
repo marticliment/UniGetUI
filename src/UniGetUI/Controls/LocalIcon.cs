@@ -19,7 +19,8 @@ namespace UniGetUI.Interface.Widgets
             FontFamily = font;
         }
 
-        public LocalIcon(IconType icon) : this()
+        public LocalIcon(IconType icon)
+            : this()
         {
             Glyph = $"{(char)icon}";
         }
@@ -71,7 +72,8 @@ namespace UniGetUI.Interface.Widgets
             FontFamily = font;
         }
 
-        public LocalIconSource(IconType icon) : this()
+        public LocalIconSource(IconType icon)
+            : this()
         {
             Glyph = $"{(char)icon}";
         }

@@ -14,6 +14,7 @@ namespace UniGetUI.Interface.Pages.AboutPages
     public sealed partial class Contributors : Page
     {
         public ObservableCollection<Person> ContributorList = [];
+
         public Contributors()
         {
             InitializeComponent();

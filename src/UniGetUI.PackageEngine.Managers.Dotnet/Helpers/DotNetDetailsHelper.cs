@@ -5,12 +5,16 @@ namespace UniGetUI.PackageEngine.Managers.Chocolatey
 {
     public class DotNetDetailsHelper : BaseNuGetDetailsHelper
     {
-        public DotNetDetailsHelper(BaseNuGet manager) : base(manager)
-        { }
+        public DotNetDetailsHelper(BaseNuGet manager)
+            : base(manager) { }
 
         protected override string? GetInstallLocation_UnSafe(IPackage package)
         {
-            return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".dotnet", "tools");
+            return Path.Join(
+                Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                ".dotnet",
+                "tools"
+            );
         }
     }
 }

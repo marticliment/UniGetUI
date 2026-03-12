@@ -5,13 +5,17 @@ using UniGetUI.PackageEngine.Serializable;
 using Architecture = UniGetUI.PackageEngine.Enums.Architecture;
 
 namespace UniGetUI.PackageEngine.Managers.DotNetManager;
+
 internal sealed class DotNetPkgOperationHelper : BasePkgOperationHelper
 {
-    public DotNetPkgOperationHelper(DotNet manager) : base(manager) { }
+    public DotNetPkgOperationHelper(DotNet manager)
+        : base(manager) { }
 
-    protected override IReadOnlyList<string> _getOperationParameters(IPackage package,
+    protected override IReadOnlyList<string> _getOperationParameters(
+        IPackage package,
         InstallOptions options,
-        OperationType operation)
+        OperationType operation
+    )
     {
         List<string> parameters =
         [
@@ -20,30 +24,35 @@ internal sealed class DotNetPkgOperationHelper : BasePkgOperationHelper
                 OperationType.Install => Manager.Properties.InstallVerb,
                 OperationType.Update => Manager.Properties.UpdateVerb,
                 OperationType.Uninstall => Manager.Properties.UninstallVerb,
-                _ => throw new InvalidDataException("Invalid package operation")
+                _ => throw new InvalidDataException("Invalid package operation"),
             },
-
             package.Id,
-
         ];
 
         if (options.CustomInstallLocation != "")
             parameters.AddRange(["--tool-path", "\"" + options.CustomInstallLocation + "\""]);
 
-        if (package.OverridenOptions.Scope is PackageScope.Global ||
-           (package.OverridenOptions.Scope is null && options.InstallationScope is PackageScope.Global))
+        if (
+            package.OverridenOptions.Scope is PackageScope.Global
+            || (
+                package.OverridenOptions.Scope is null
+                && options.InstallationScope is PackageScope.Global
+            )
+        )
             parameters.Add("--global");
 
         if (operation is OperationType.Install or OperationType.Update)
         {
-            parameters.AddRange(options.Architecture switch
-            {
-                Architecture.x86 => ["--arch", "x86"],
-                Architecture.x64 => ["--arch", "x64"],
-                Architecture.arm32 => ["--arch", "arm32"],
-                Architecture.arm64 => ["--arch", "arm64"],
-                _ => []
-            });
+            parameters.AddRange(
+                options.Architecture switch
+                {
+                    Architecture.x86 => ["--arch", "x86"],
+                    Architecture.x64 => ["--arch", "x64"],
+                    Architecture.arm32 => ["--arch", "arm32"],
+                    Architecture.arm64 => ["--arch", "arm64"],
+                    _ => [],
+                }
+            );
         }
 
         if (operation is OperationType.Install)
@@ -54,12 +63,14 @@ internal sealed class DotNetPkgOperationHelper : BasePkgOperationHelper
             }
         }
 
-        parameters.AddRange(operation switch
-        {
-            OperationType.Update => options.CustomParameters_Update,
-            OperationType.Uninstall => options.CustomParameters_Uninstall,
-            _ => options.CustomParameters_Install,
-        });
+        parameters.AddRange(
+            operation switch
+            {
+                OperationType.Update => options.CustomParameters_Update,
+                OperationType.Uninstall => options.CustomParameters_Uninstall,
+                _ => options.CustomParameters_Install,
+            }
+        );
 
         return parameters;
     }
@@ -68,7 +79,8 @@ internal sealed class DotNetPkgOperationHelper : BasePkgOperationHelper
         IPackage package,
         OperationType operation,
         IReadOnlyList<string> processOutput,
-        int returnCode)
+        int returnCode
+    )
     {
         if (returnCode is not 0 && package.OverridenOptions.Scope is not PackageScope.Global)
         {

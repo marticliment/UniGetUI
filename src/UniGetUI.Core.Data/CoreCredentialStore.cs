@@ -15,15 +15,11 @@ public static class CoreCredentialStore
         string? secret = GetSecret(resourceName, userName);
         return secret is null
             ? null
-            : new NetworkCredential
-            {
-                UserName = userName,
-                Password = secret,
-            };
+            : new NetworkCredential { UserName = userName, Password = secret };
     }
 
-    public static void SetCredential(string resourceName, string userName, string password)
-        => SetSecret(resourceName, userName, password);
+    public static void SetCredential(string resourceName, string userName, string password) =>
+        SetSecret(resourceName, userName, password);
 
     public static string? GetSecret(string resourceName, string userName)
     {
@@ -73,8 +69,13 @@ public static class CoreCredentialStore
         {
 #if WINDOWS
             var vault = new PasswordVault();
-            IReadOnlyList<PasswordCredential> credentials = vault.FindAllByResource(resourceName) ?? [];
-            foreach (PasswordCredential credential in credentials.Where(credential => credential.UserName == userName))
+            IReadOnlyList<PasswordCredential> credentials =
+                vault.FindAllByResource(resourceName) ?? [];
+            foreach (
+                PasswordCredential credential in credentials.Where(credential =>
+                    credential.UserName == userName
+                )
+            )
             {
                 vault.Remove(credential);
             }
@@ -94,11 +95,11 @@ public static class CoreCredentialStore
     }
 
 #if !WINDOWS
-    private static string GetStorageDirectory()
-        => Path.Join(CoreData.UniGetUIDataDirectory, "SecureStorage");
+    private static string GetStorageDirectory() =>
+        Path.Join(CoreData.UniGetUIDataDirectory, "SecureStorage");
 
-    private static string GetSecretPath(string resourceName, string userName)
-        => Path.Join(GetStorageDirectory(), GetStableFileName(resourceName, userName));
+    private static string GetSecretPath(string resourceName, string userName) =>
+        Path.Join(GetStorageDirectory(), GetStableFileName(resourceName, userName));
 
     private static string GetStableFileName(string resourceName, string userName)
     {

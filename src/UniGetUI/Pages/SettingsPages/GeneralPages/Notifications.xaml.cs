@@ -1,8 +1,8 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-using UniGetUI.Core.Tools;
 using UniGetUI.Core.SettingsEngine;
+using UniGetUI.Core.Tools;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -45,7 +45,15 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         public bool CanGoBack => true;
         public string ShortTitle => CoreTools.Translate("Notification preferences");
 
-        public event EventHandler? RestartRequired { add { } remove { } }
-        public event EventHandler<Type>? NavigationRequested { add { } remove { } }
+        public event EventHandler? RestartRequired
+        {
+            add { }
+            remove { }
+        }
+        public event EventHandler<Type>? NavigationRequested
+        {
+            add { }
+            remove { }
+        }
     }
 }
