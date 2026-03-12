@@ -44,8 +44,8 @@
       </Grid.ColumnDefinitions>
       <Button
         Name="BackButton"
-        Width="40"
-        Height="40"
+        Width="36"
+        Height="36"
         Padding="6"
         VerticalAlignment="Center"
         Background="Transparent"
@@ -65,7 +65,7 @@
         Grid.Column="1"
         HorizontalAlignment="Stretch"
         VerticalAlignment="Center"
-        FontSize="30"
+        FontSize="24"
         FontWeight="Bold"
         Text=""
         TextWrapping="Wrap"
