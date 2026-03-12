@@ -15,7 +15,7 @@ public class TestDuplicateUpdateDetection
     /// <summary>
     /// Test that verifies Package.GetHash() returns the same value for identical packages.
     /// This is the core mechanism used to detect duplicate operations in the queue.
-    /// 
+    ///
     /// Background: Issue #4131 - When unattended updates trigger repeatedly while UAC prompts
     /// are pending, UpdateAll() was creating dozens of duplicate operations for the same package.
     /// The fix uses GetHash() to check if an operation for a package already exists in the queue.
@@ -185,9 +185,8 @@ public class TestDuplicateUpdateDetection
         Assert.Equal(hash1, hash2);
         Assert.Equal(hash2, hash3);
         Assert.Equal(hash1, hash3);
-        
+
         // In the actual implementation, the second and third calls would find
         // an existing operation with matching hash and skip creating duplicates
     }
 }
-

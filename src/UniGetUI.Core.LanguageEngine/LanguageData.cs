@@ -54,10 +54,25 @@ namespace UniGetUI.Core.Language
 
         private static ReadOnlyDictionary<string, string> LoadTranslationPercentages()
         {
-            try {
-                if (JsonNode.Parse(File.ReadAllText(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Data", "TranslatedPercentages.json"))) is JsonObject val)
+            try
+            {
+                if (
+                    JsonNode.Parse(
+                        File.ReadAllText(
+                            Path.Join(
+                                CoreData.UniGetUIExecutableDirectory,
+                                "Assets",
+                                "Data",
+                                "TranslatedPercentages.json"
+                            )
+                        )
+                    )
+                    is JsonObject val
+                )
                 {
-                    return new(val.ToDictionary(x => x.Key, x => (x.Value ?? ("404%" + x.Key)).ToString()));
+                    return new(
+                        val.ToDictionary(x => x.Key, x => (x.Value ?? ("404%" + x.Key)).ToString())
+                    );
                 }
 
                 return new(new Dictionary<string, string>());
@@ -74,10 +89,26 @@ namespace UniGetUI.Core.Language
         {
             try
             {
-                if (JsonNode.Parse(File.ReadAllText(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Data",
-                        "LanguagesReference.json"))) is JsonObject val)
+                if (
+                    JsonNode.Parse(
+                        File.ReadAllText(
+                            Path.Join(
+                                CoreData.UniGetUIExecutableDirectory,
+                                "Assets",
+                                "Data",
+                                "LanguagesReference.json"
+                            )
+                        )
+                    )
+                    is JsonObject val
+                )
                 {
-                    return new(val.ToDictionary(x => x.Key, x => (x.Value ?? ("NoNameLang_" + x.Key)).ToString()));
+                    return new(
+                        val.ToDictionary(
+                            x => x.Key,
+                            x => (x.Value ?? ("NoNameLang_" + x.Key)).ToString()
+                        )
+                    );
                 }
 
                 return new(new Dictionary<string, string>());
@@ -94,8 +125,14 @@ namespace UniGetUI.Core.Language
         {
             try
             {
-                string JsonContents = File.ReadAllText(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Data",
-                    "Translators.json"));
+                string JsonContents = File.ReadAllText(
+                    Path.Join(
+                        CoreData.UniGetUIExecutableDirectory,
+                        "Assets",
+                        "Data",
+                        "Translators.json"
+                    )
+                );
 
                 if (JsonNode.Parse(JsonContents) is not JsonObject TranslatorsInfo)
                 {
@@ -107,7 +144,9 @@ namespace UniGetUI.Core.Language
                 {
                     if (!LanguageReference.ContainsKey(langKey.Key))
                     {
-                        Logger.Warn($"Language {langKey.Key} not in list, maybe has not been added yet?");
+                        Logger.Warn(
+                            $"Language {langKey.Key} not in list, maybe has not been added yet?"
+                        );
                         continue;
                     }
 
@@ -127,8 +166,11 @@ namespace UniGetUI.Core.Language
                         }
 
                         Person person = new(
-                            Name: (url is not null ? "@" : "") + (translator["name"] ?? "").ToString(),
-                            ProfilePicture: url is not null ? new Uri(url.ToString() + ".png") : null,
+                            Name: (url is not null ? "@" : "")
+                                + (translator["name"] ?? "").ToString(),
+                            ProfilePicture: url is not null
+                                ? new Uri(url.ToString() + ".png")
+                                : null,
                             GitHubUrl: url,
                             Language: !LangShown ? LanguageReference[langKey.Key] : ""
                         );
@@ -163,4 +205,3 @@ namespace UniGetUI.Core.Language
         };
     }
 }
-

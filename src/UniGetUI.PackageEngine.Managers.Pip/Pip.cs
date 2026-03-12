@@ -14,7 +14,14 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
 {
     public class Pip : PackageManager
     {
-        public static string[] FALSE_PACKAGE_IDS = ["", "WARNING:", "[notice]", "Package", "DEPRECATION:"];
+        public static string[] FALSE_PACKAGE_IDS =
+        [
+            "",
+            "WARNING:",
+            "[notice]",
+            "Package",
+            "DEPRECATION:",
+        ];
         public static string[] FALSE_PACKAGE_VERSIONS = ["", "Ignoring", "invalid"];
 
         public Pip()
@@ -52,15 +59,15 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 SupportsPreRelease = true,
                 CanListDependencies = true,
                 SupportsProxy = ProxySupport.Yes,
-                SupportsProxyAuth = true
+                SupportsProxyAuth = true,
             };
 
             Properties = new ManagerProperties
             {
                 Name = "Pip",
-                Description =
-                    CoreTools.Translate(
-                        "Python's library manager. Full of python libraries and other python-related utilities<br>Contains: <b>Python libraries and related utilities</b>"),
+                Description = CoreTools.Translate(
+                    "Python's library manager. Full of python libraries and other python-related utilities<br>Contains: <b>Python libraries and related utilities</b>"
+                ),
                 IconId = IconType.Python,
                 ColorIconId = "pip_color",
                 ExecutableFriendlyName = "pip",
@@ -69,7 +76,6 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 UpdateVerb = "install --upgrade",
                 DefaultSource = new ManagerSource(this, "pip", new Uri("https://pypi.org/")),
                 KnownSources = [new ManagerSource(this, "pip", new Uri("https://pypi.org/"))],
-
             };
 
             DetailsHelper = new PipPkgDetailsHelper(this);
@@ -78,9 +84,11 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
 
         public static string GetProxyArgument()
         {
-            if (!Settings.Get(Settings.K.EnableProxy)) return "";
+            if (!Settings.Get(Settings.K.EnableProxy))
+                return "";
             var proxyUri = Settings.GetProxyUrl();
-            if (proxyUri is null) return "";
+            if (proxyUri is null)
+                return "";
 
             if (Settings.Get(Settings.K.EnableProxyAuth) is false)
                 return $"--proxy {proxyUri.ToString()}";
@@ -89,9 +97,8 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             if (creds is null)
                 return $"--proxy {proxyUri.ToString()}";
 
-            return
-                $"--proxy {proxyUri.Scheme}://{Uri.EscapeDataString(creds.UserName)}:{Uri.EscapeDataString(creds.Password)}" +
-                $"@{proxyUri.AbsoluteUri.Replace($"{proxyUri.Scheme}://", "")}";
+            return $"--proxy {proxyUri.Scheme}://{Uri.EscapeDataString(creds.UserName)}:{Uri.EscapeDataString(creds.Password)}"
+                + $"@{proxyUri.AbsoluteUri.Replace($"{proxyUri.Scheme}://", "")}";
         }
 
         protected override IReadOnlyList<Package> FindPackages_UnSafe(string query)
@@ -106,14 +113,20 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                     StartInfo = new ProcessStartInfo
                     {
                         FileName = Status.ExecutablePath,
-                        Arguments = Status.ExecutableCallArgs + " install parse_pip_search " + GetProxyArgument(),
+                        Arguments =
+                            Status.ExecutableCallArgs
+                            + " install parse_pip_search "
+                            + GetProxyArgument(),
                         UseShellExecute = false,
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,
                         CreateNoWindow = true,
-                    }
+                    },
                 };
-                IProcessTaskLogger aux_logger = TaskLogger.CreateNew(LoggableTaskType.InstallManagerDependency, proc);
+                IProcessTaskLogger aux_logger = TaskLogger.CreateNew(
+                    LoggableTaskType.InstallManagerDependency,
+                    proc
+                );
                 proc.Start();
 
                 aux_logger.AddToStdOut(proc.StandardOutput.ReadToEnd());
@@ -134,8 +147,8 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                     RedirectStandardError = true,
                     UseShellExecute = false,
                     CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8
-                }
+                    StandardOutputEncoding = System.Text.Encoding.UTF8,
+                },
             };
 
             p.StartInfo = CoreTools.UpdateEnvironmentVariables(p.StartInfo);
@@ -167,13 +180,24 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                         elements[i] = elements[i].Trim();
                     }
 
-                    if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
+                    if (
+                        FALSE_PACKAGE_IDS.Contains(elements[0])
+                        || FALSE_PACKAGE_VERSIONS.Contains(elements[1])
+                    )
                     {
                         continue;
                     }
 
-                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1],
-                        DefaultSource, this, new(PackageScope.Global)));
+                    Packages.Add(
+                        new Package(
+                            CoreTools.FormatAsName(elements[0]),
+                            elements[0],
+                            elements[1],
+                            DefaultSource,
+                            this,
+                            new(PackageScope.Global)
+                        )
+                    );
                 }
             }
 
@@ -191,13 +215,14 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
-                    Arguments = Status.ExecutableCallArgs + " list --outdated " + GetProxyArgument(),
+                    Arguments =
+                        Status.ExecutableCallArgs + " list --outdated " + GetProxyArgument(),
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
                     CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8
-                }
+                    StandardOutputEncoding = System.Text.Encoding.UTF8,
+                },
             };
 
             IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
@@ -230,13 +255,25 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                         elements[i] = elements[i].Trim();
                     }
 
-                    if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
+                    if (
+                        FALSE_PACKAGE_IDS.Contains(elements[0])
+                        || FALSE_PACKAGE_VERSIONS.Contains(elements[1])
+                    )
                     {
                         continue;
                     }
 
-                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2],
-                        DefaultSource, this, new(PackageScope.Global)));
+                    Packages.Add(
+                        new Package(
+                            CoreTools.FormatAsName(elements[0]),
+                            elements[0],
+                            elements[1],
+                            elements[2],
+                            DefaultSource,
+                            this,
+                            new(PackageScope.Global)
+                        )
+                    );
                 }
             }
 
@@ -249,7 +286,6 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
 
         protected override IReadOnlyList<Package> GetInstalledPackages_UnSafe()
         {
-
             using Process p = new()
             {
                 StartInfo = new ProcessStartInfo
@@ -260,11 +296,14 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                     RedirectStandardError = true,
                     UseShellExecute = false,
                     CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8
-                }
+                    StandardOutputEncoding = System.Text.Encoding.UTF8,
+                },
             };
 
-            IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
+            IProcessTaskLogger logger = TaskLogger.CreateNew(
+                LoggableTaskType.ListInstalledPackages,
+                p
+            );
 
             p.Start();
 
@@ -294,13 +333,24 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                         elements[i] = elements[i].Trim();
                     }
 
-                    if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
+                    if (
+                        FALSE_PACKAGE_IDS.Contains(elements[0])
+                        || FALSE_PACKAGE_VERSIONS.Contains(elements[1])
+                    )
                     {
                         continue;
                     }
 
-                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1],
-                        DefaultSource, this, new(PackageScope.Global)));
+                    Packages.Add(
+                        new Package(
+                            CoreTools.FormatAsName(elements[0]),
+                            elements[0],
+                            elements[1],
+                            DefaultSource,
+                            this,
+                            new(PackageScope.Global)
+                        )
+                    );
                 }
             }
 
@@ -330,8 +380,10 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 if (AppData != null)
                     UserPythonInstallDir = Path.Combine(AppData, "Programs", "Python");
 
-                if (Directory.Exists(ProgramFiles)) DirsToSearch.Add(ProgramFiles);
-                if (Directory.Exists(UserPythonInstallDir)) DirsToSearch.Add(UserPythonInstallDir);
+                if (Directory.Exists(ProgramFiles))
+                    DirsToSearch.Add(ProgramFiles);
+                if (Directory.Exists(UserPythonInstallDir))
+                    DirsToSearch.Add(UserPythonInstallDir);
 
                 foreach (var Dir in DirsToSearch)
                 {
@@ -341,14 +393,16 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                         Paths.Add(PythonPath);
                 }
             }
-            catch (Exception)
-            {
-            }
+            catch (Exception) { }
 
             return Paths;
         }
 
-        protected override void _loadManagerExecutableFile(out bool found, out string path, out string callArguments)
+        protected override void _loadManagerExecutableFile(
+            out bool found,
+            out string path,
+            out string callArguments
+        )
         {
             var (_found, _path) = GetExecutableFile();
             found = _found;
@@ -368,22 +422,27 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8
-                }
+                    StandardOutputEncoding = System.Text.Encoding.UTF8,
+                },
             };
             process.Start();
             version = process.StandardOutput.ReadToEnd().Trim();
 
             if (process.ExitCode is 9009)
             {
-                throw new InvalidOperationException("Microsoft Store python alias is not a valid python install");
+                throw new InvalidOperationException(
+                    "Microsoft Store python alias is not a valid python install"
+                );
             }
         }
 
         protected override void _performExtraLoadingSteps()
         {
-            Environment.SetEnvironmentVariable("PIP_REQUIRE_VIRTUALENV", "false", EnvironmentVariableTarget.Process);
+            Environment.SetEnvironmentVariable(
+                "PIP_REQUIRE_VIRTUALENV",
+                "false",
+                EnvironmentVariableTarget.Process
+            );
         }
     }
 }
-

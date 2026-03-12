@@ -1,29 +1,33 @@
 <Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>$(SharedTargetFrameworks)</TargetFrameworks>
+    </PropertyGroup>
 
-	<PropertyGroup>
-		<SupportedOSPlatformVersion Condition="'$(TargetFramework)' == '$(WindowsTargetFramework)'">10.0.19041.0</SupportedOSPlatformVersion>
-		<FileVersion>3.1.0.0</FileVersion>
-		<InformationalVersion>3.1.0-beta0</InformationalVersion>
-		<Product>UniGetUI</Product>
-		<ApplicationVersion>3.1.0-beta0</ApplicationVersion>
-		<Copyright>Copyright 2021-2026 Devolutions Inc.</Copyright>
-	</PropertyGroup>
+    <PropertyGroup>
+        <SupportedOSPlatformVersion Condition="'$(TargetFramework)' == '$(WindowsTargetFramework)'"
+            >10.0.19041.0</SupportedOSPlatformVersion
+        >
+        <FileVersion>3.1.0.0</FileVersion>
+        <InformationalVersion>3.1.0-beta0</InformationalVersion>
+        <Product>UniGetUI</Product>
+        <ApplicationVersion>3.1.0-beta0</ApplicationVersion>
+        <Copyright>Copyright 2021-2026 Devolutions Inc.</Copyright>
+    </PropertyGroup>
 
-	<ItemGroup>
-	  <PackageReference Include="PhotoSauce.MagicScaler" Version="0.15.0" />
-	</ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="PhotoSauce.MagicScaler" Version="0.15.0" />
+    </ItemGroup>
 
-	<ItemGroup>
-	  <ProjectReference Include="..\UniGetUI.Core.Classes\UniGetUI.Core.Classes.csproj" />
-	  <ProjectReference Include="..\UniGetUI.Core.Data\UniGetUI.Core.Data.csproj" />
-	  <ProjectReference Include="..\UniGetUI.Core.IconStore\UniGetUI.Core.IconEngine.csproj" />
-	  <ProjectReference Include="..\UniGetUI.Core.LanguageEngine\UniGetUI.Core.LanguageEngine.csproj" />
-	  <ProjectReference Include="..\UniGetUI.Core.Logger\UniGetUI.Core.Logging.csproj" />
-	  <ProjectReference Include="..\UniGetUI.Core.Settings\UniGetUI.Core.Settings.csproj" />
-	  <ProjectReference Include="..\UniGetUI.Core.Tools\UniGetUI.Core.Tools.csproj" />
-	  <ProjectReference Include="..\UniGetUI.Interface.Enums\UniGetUI.Interface.Enums.csproj" />
-	  <ProjectReference Include="..\UniGetUI.PackageEngine.Enums\UniGetUI.PackageEngine.Structs.csproj" />
-	  <ProjectReference Include="..\UniGetUI.PackageEngine.Serializable\UniGetUI.PackageEngine.Serializable.csproj" />
-	</ItemGroup>
-
+    <ItemGroup>
+        <ProjectReference Include="..\UniGetUI.Core.Classes\UniGetUI.Core.Classes.csproj" />
+        <ProjectReference Include="..\UniGetUI.Core.Data\UniGetUI.Core.Data.csproj" />
+        <ProjectReference Include="..\UniGetUI.Core.IconStore\UniGetUI.Core.IconEngine.csproj" />
+        <ProjectReference Include="..\UniGetUI.Core.LanguageEngine\UniGetUI.Core.LanguageEngine.csproj" />
+        <ProjectReference Include="..\UniGetUI.Core.Logger\UniGetUI.Core.Logging.csproj" />
+        <ProjectReference Include="..\UniGetUI.Core.Settings\UniGetUI.Core.Settings.csproj" />
+        <ProjectReference Include="..\UniGetUI.Core.Tools\UniGetUI.Core.Tools.csproj" />
+        <ProjectReference Include="..\UniGetUI.Interface.Enums\UniGetUI.Interface.Enums.csproj" />
+        <ProjectReference Include="..\UniGetUI.PackageEngine.Enums\UniGetUI.PackageEngine.Structs.csproj" />
+        <ProjectReference Include="..\UniGetUI.PackageEngine.Serializable\UniGetUI.PackageEngine.Serializable.csproj" />
+    </ItemGroup>
 </Project>

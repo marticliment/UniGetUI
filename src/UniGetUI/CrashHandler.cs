@@ -16,45 +16,67 @@ public static class CrashHandler
     private const int IDYES = 6;
     private const int IDNO = 7;
 
-    [System.Runtime.InteropServices.DllImport("user32.dll", CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
+    [System.Runtime.InteropServices.DllImport(
+        "user32.dll",
+        CharSet = System.Runtime.InteropServices.CharSet.Unicode
+    )]
     private static extern int MessageBox(IntPtr hWnd, string lpText, string lpCaption, uint uType);
 
     private static void _reportMissingFiles(out bool showDetailedReport)
     {
         try
         {
-            string installerPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "UniGetUI.Installer.exe");
+            string installerPath = Path.Join(
+                CoreData.UniGetUIExecutableDirectory,
+                "UniGetUI.Installer.exe"
+            );
             bool canAutoRepair = File.Exists(installerPath);
 
             var title = "UniGetUI - Missing Files";
 
             if (canAutoRepair)
             {
-                var errorMessage = "UniGetUI has detected that some required files are missing."
-                                   + "\n\nThis might be caused by an incomplete installation or corrupted files. Please reinstall UniGetUI."
-                                   + "\n\nPress YES to reinstall UniGetUI right now."
-                                   + "\nPress NO to close this prompt."
-                                   + "\nPress CANCEL to get more details about the crash.";
+                var errorMessage =
+                    "UniGetUI has detected that some required files are missing."
+                    + "\n\nThis might be caused by an incomplete installation or corrupted files. Please reinstall UniGetUI."
+                    + "\n\nPress YES to reinstall UniGetUI right now."
+                    + "\nPress NO to close this prompt."
+                    + "\nPress CANCEL to get more details about the crash.";
 
-                var msgboxResult = MessageBox(IntPtr.Zero,  errorMessage, title, MB_ICONSTOP | MB_YESNOCANCEL);
+                var msgboxResult = MessageBox(
+                    IntPtr.Zero,
+                    errorMessage,
+                    title,
+                    MB_ICONSTOP | MB_YESNOCANCEL
+                );
                 if (msgboxResult is IDYES)
                 {
                     Process.Start(installerPath, "/silent /NoDeployInstaller");
                 }
 
-                if (msgboxResult is IDYES or IDNO) showDetailedReport = false;
-                else showDetailedReport = true; // msgboxResult is IDCANCEL
+                if (msgboxResult is IDYES or IDNO)
+                    showDetailedReport = false;
+                else
+                    showDetailedReport = true; // msgboxResult is IDCANCEL
             }
             else
             {
-                var errorMessage = "UniGetUI has detected that some required files are missing."
-                                   + "\n\nThis might be caused by an incomplete installation or corrupted files. Please reinstall UniGetUI."
-                                   + "\n\nPress OK to close this prompt."
-                                   + "\nPress CANCEL to get more details about the crash.";
+                var errorMessage =
+                    "UniGetUI has detected that some required files are missing."
+                    + "\n\nThis might be caused by an incomplete installation or corrupted files. Please reinstall UniGetUI."
+                    + "\n\nPress OK to close this prompt."
+                    + "\nPress CANCEL to get more details about the crash.";
 
-                var msgboxResult = MessageBox(IntPtr.Zero,  errorMessage, title, MB_ICONSTOP | MB_OKCANCEL);
-                if (msgboxResult is IDOK) showDetailedReport = false;
-                else showDetailedReport = true; // msgboxResult is IDCANCEL
+                var msgboxResult = MessageBox(
+                    IntPtr.Zero,
+                    errorMessage,
+                    title,
+                    MB_ICONSTOP | MB_OKCANCEL
+                );
+                if (msgboxResult is IDOK)
+                    showDetailedReport = false;
+                else
+                    showDetailedReport = true; // msgboxResult is IDCANCEL
             }
         }
         catch
@@ -105,7 +127,7 @@ public static class CrashHandler
                 }
 
                 string r = b.ToString();
-                return r.Any()? r: "No extra data was provided";
+                return r.Any() ? r : "No extra data was provided";
             }
             catch (Exception ex)
             {
@@ -122,7 +144,7 @@ public static class CrashHandler
         catch (Exception ex)
         {
             iReport = "Failed to compute integrity report: ";
-            iReport +=  ex.GetType() + ": " + ex.Message;
+            iReport += ex.GetType() + ": " + ex.Message;
         }
 
         string Error_String = $$"""
@@ -136,7 +158,7 @@ public static class CrashHandler
 
             Integrity report:
                 {{iReport.Replace("\n", "\n    ")}}
-            
+
             Exception type: {{e.GetType()?.Name}} ({{e.GetType()}})
                 Crash HResult: 0x{{(uint)e.HResult:X}} ({{(uint)e.HResult}}, {{e.HResult}})
                 Crash Message: {{e.Message}}
@@ -155,36 +177,41 @@ public static class CrashHandler
             {
                 i++;
                 e = e.InnerException;
-                Error_String += "\n\n\n\n" + $$"""
-                    ———————————————————————————————————————————————————————————
-                    Inner exception details (depth level: {{i}})
-                        Crash HResult: 0x{{(uint)e.HResult:X}} ({{(uint)e.HResult}}, {{e.HResult}})
-                        Crash Message: {{e.Message}}
+                Error_String +=
+                    "\n\n\n\n"
+                    + $$"""
+                        ———————————————————————————————————————————————————————————
+                        Inner exception details (depth level: {{i}})
+                            Crash HResult: 0x{{(uint)e.HResult:X}} ({{(uint)
+                            e.HResult}}, {{e.HResult}})
+                            Crash Message: {{e.Message}}
 
-                        Crash Data:
-                            {{GetExceptionData(e).Replace("\n", "\n        ")}}
+                            Crash Data:
+                                {{GetExceptionData(e).Replace("\n", "\n        ")}}
 
-                        Crash Traceback:
-                            {{e.StackTrace?.Replace("\n", "\n        ")}}
-                    """;
+                            Crash Traceback:
+                                {{e.StackTrace?.Replace("\n", "\n        ")}}
+                        """;
             }
 
             if (i == 0)
             {
                 Error_String += $"\n\n\nNo inner exceptions found";
             }
-        } catch
+        }
+        catch
         {
             // ignore
         }
 
-       Console.WriteLine(Error_String);
+        Console.WriteLine(Error_String);
 
-        string ErrorUrl = $"https://www.marticliment.com/error-report/" +
-              $"?appName=UniGetUI" +
-              $"&appVersion={Uri.EscapeDataString(CoreData.VersionName)}" +
-              $"&buildNumber={Uri.EscapeDataString(CoreData.BuildNumber.ToString())}" +
-              $"&errorBody={Uri.EscapeDataString(Error_String)}";
+        string ErrorUrl =
+            $"https://www.marticliment.com/error-report/"
+            + $"?appName=UniGetUI"
+            + $"&appVersion={Uri.EscapeDataString(CoreData.VersionName)}"
+            + $"&buildNumber={Uri.EscapeDataString(CoreData.BuildNumber.ToString())}"
+            + $"&errorBody={Uri.EscapeDataString(Error_String)}";
         Console.WriteLine(ErrorUrl);
 
         using Process p = new();

@@ -43,7 +43,9 @@ namespace UniGetUI.Core.Tools.Tests
         [Fact]
         public async Task TestWhichFunctionForNonExistingFile()
         {
-            Tuple<bool, string> result = await CoreTools.WhichAsync("nonexistentfile-does-not-exist");
+            Tuple<bool, string> result = await CoreTools.WhichAsync(
+                "nonexistentfile-does-not-exist"
+            );
             Assert.False(result.Item1);
             Assert.Equal("", result.Item2);
         }
@@ -106,7 +108,10 @@ namespace UniGetUI.Core.Tools.Tests
 
         [Theory]
         [InlineData("", 0)]
-        [InlineData("https://invalid.url.com/this/is/an/invalid.php?file=to_test&if=the&code_returns=zero", 0)]
+        [InlineData(
+            "https://invalid.url.com/this/is/an/invalid.php?file=to_test&if=the&code_returns=zero",
+            0
+        )]
         [InlineData("https://marticliment.com/resources/unigetui.png", 19788)]
         public async Task TestFileSizeLoader(string uri, long expectedSize)
         {
@@ -118,14 +123,14 @@ namespace UniGetUI.Core.Tools.Tests
         [InlineData("1000.0", 1000, 0, 0, 0)]
         [InlineData("2.4", 2, 4, 0, 0)]
         [InlineData("33a.12-beta5", 33, 12, 5, 0)]
-        [InlineData("0", 0,0,0,0)]
-        [InlineData("", 0,0,0,0)]
-        [InlineData("dfgfdsgdfg", 0,0,0,0)]
-        [InlineData("-12", 12,0,0,0)]
-        [InlineData("4.0.0.1.0", 4,0,0,10)]
-        [InlineData("4.0.0.1.05", 4,0,0,105)]
+        [InlineData("0", 0, 0, 0, 0)]
+        [InlineData("", 0, 0, 0, 0)]
+        [InlineData("dfgfdsgdfg", 0, 0, 0, 0)]
+        [InlineData("-12", 12, 0, 0, 0)]
+        [InlineData("4.0.0.1.0", 4, 0, 0, 10)]
+        [InlineData("4.0.0.1.05", 4, 0, 0, 105)]
         [InlineData("2024.30.04.1223", 2024, 30, 4, 1223)]
-        [InlineData("0.0", 0,0,0,0)]
+        [InlineData("0.0", 0, 0, 0, 0)]
         public void TestGetVersionStringAsFloat(string version, int i1, int i2, int i3, int i4)
         {
             CoreTools.Version v = CoreTools.VersionStringToStruct(version);
@@ -188,8 +193,10 @@ namespace UniGetUI.Core.Tools.Tests
         {
             const string ENV = "PATH";
 
-            var oldpath = Environment.GetEnvironmentVariable(ENV, EnvironmentVariableTarget.Machine) + ";" +
-                          Environment.GetEnvironmentVariable(ENV, EnvironmentVariableTarget.User);
+            var oldpath =
+                Environment.GetEnvironmentVariable(ENV, EnvironmentVariableTarget.Machine)
+                + ";"
+                + Environment.GetEnvironmentVariable(ENV, EnvironmentVariableTarget.User);
 
             ProcessStartInfo info = CoreTools.UpdateEnvironmentVariables();
             info.Environment.TryGetValue(ENV, out string? result);
@@ -201,7 +208,12 @@ namespace UniGetUI.Core.Tools.Tests
         [InlineData(20, 37, null, "[#######.............] 37%")]
         [InlineData(10, 0, "", "[..........] 0% ()")]
         [InlineData(10, 100, "3/3", "[##########] 100% (3/3)")]
-        public void TestTextProgressbarGenerator(int length, int progress, string? extra, string? expected)
+        public void TestTextProgressbarGenerator(
+            int length,
+            int progress,
+            string? extra,
+            string? expected
+        )
         {
             Assert.Equal(CoreTools.TextProgressGenerator(length, progress, extra), expected);
         }
@@ -209,7 +221,7 @@ namespace UniGetUI.Core.Tools.Tests
         [Theory]
         [InlineData(0, 1, "0 Bytes")]
         [InlineData(10, 1, "10 Bytes")]
-        [InlineData(1024*34, 0, "34 KB")]
+        [InlineData(1024 * 34, 0, "34 KB")]
         [InlineData(65322450, 3, "62.296 MB")]
         [InlineData(65322450000, 3, "60.836 GB")]
         [InlineData(65322450000000, 3, "59.410 TB")]

@@ -10,9 +10,12 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager;
 public static class NativePackageHandler
 {
     private static readonly ConcurrentDictionary<long, CatalogPackage> __nativePackages = new();
-    private static readonly ConcurrentDictionary<long, CatalogPackageMetadata> __nativeDetails = new();
-    private static ConcurrentDictionary<long, PackageInstallerInfo> __nativeInstallers_Install = new();
-    private static ConcurrentDictionary<long, PackageInstallerInfo> __nativeInstallers_Uninstall = new();
+    private static readonly ConcurrentDictionary<long, CatalogPackageMetadata> __nativeDetails =
+        new();
+    private static ConcurrentDictionary<long, PackageInstallerInfo> __nativeInstallers_Install =
+        new();
+    private static ConcurrentDictionary<long, PackageInstallerInfo> __nativeInstallers_Uninstall =
+        new();
 
     /// <summary>
     /// Get (cache or load) the native package for the given package, if any;
@@ -20,7 +23,10 @@ public static class NativePackageHandler
     /// <returns></returns>
     public static CatalogPackage? GetPackage(IPackage package)
     {
-        if (NativeWinGetHelper.ExternalFactory is null || NativeWinGetHelper.ExternalWinGetManager is null)
+        if (
+            NativeWinGetHelper.ExternalFactory is null
+            || NativeWinGetHelper.ExternalWinGetManager is null
+        )
             return null;
 
         __nativePackages.TryGetValue(package.GetHash(), out CatalogPackage? catalogPackage);
@@ -30,7 +36,8 @@ public static class NativePackageHandler
         // Rarely a package will not be available in cache (native WinGet helper should always call AddPackage)
         // so it makes no sense to add TaskRecycler.RunOrAttach() here. (Only imported packages may arrive at this point)
         catalogPackage = _findPackageOnCatalog(package);
-        if (catalogPackage is not null) AddPackage(package, catalogPackage);
+        if (catalogPackage is not null)
+            AddPackage(package, (CatalogPackage)catalogPackage);
 
         return catalogPackage;
     }
@@ -53,16 +60,21 @@ public static class NativePackageHandler
     {
         try
         {
-            if (__nativeDetails.TryGetValue(package.GetHash(), out CatalogPackageMetadata? metadata))
+            if (
+                __nativeDetails.TryGetValue(package.GetHash(), out CatalogPackageMetadata? metadata)
+            )
                 return metadata;
 
             CatalogPackage? catalogPackage = GetPackage(package);
-            if (catalogPackage is null) return null;
+            if (catalogPackage is null)
+                return null;
 
             var availableVersions = catalogPackage.AvailableVersions?.ToArray() ?? [];
             if (availableVersions.Length > 0)
             {
-                metadata = catalogPackage.GetPackageVersionInfo(availableVersions[0]).GetCatalogPackageMetadata();
+                metadata = catalogPackage
+                    .GetPackageVersionInfo(availableVersions[0])
+                    .GetCatalogPackageMetadata();
             }
 
             if (metadata is not null)
@@ -79,7 +91,11 @@ public static class NativePackageHandler
     /// <summary>
     /// Get (cached or load) the native installer for the given package, if any. The operation type determines wether
     /// </summary>
-    public static PackageInstallerInfo? GetInstallationOptions(IPackage package, InstallOptions unigetuiOptions, OperationType operation)
+    public static PackageInstallerInfo? GetInstallationOptions(
+        IPackage package,
+        InstallOptions unigetuiOptions,
+        OperationType operation
+    )
     //    =>  TaskRecycler<PackageInstallerInfo?>.RunOrAttach(_getInstallationOptions, package, operation);
     //
     //private static PackageInstallerInfo? _getInstallationOptions(IPackage package, OperationType operation)
@@ -89,9 +105,19 @@ public static class NativePackageHandler
 
         PackageInstallerInfo? installerInfo;
         if (operation is OperationType.Uninstall)
-            installerInfo = _getInstallationOptionsOnDict(package, ref __nativeInstallers_Uninstall, true, unigetuiOptions);
+            installerInfo = _getInstallationOptionsOnDict(
+                package,
+                ref __nativeInstallers_Uninstall,
+                true,
+                unigetuiOptions
+            );
         else
-            installerInfo = _getInstallationOptionsOnDict(package, ref __nativeInstallers_Install, false, unigetuiOptions);
+            installerInfo = _getInstallationOptionsOnDict(
+                package,
+                ref __nativeInstallers_Install,
+                false,
+                unigetuiOptions
+            );
 
         return installerInfo;
     }
@@ -104,18 +130,26 @@ public static class NativePackageHandler
         __nativeInstallers_Uninstall.Clear();
     }
 
-    private static PackageInstallerInfo? _getInstallationOptionsOnDict(IPackage package,
-        ref ConcurrentDictionary<long, PackageInstallerInfo> source, bool installed, InstallOptions unigetuiOptions)
+    private static PackageInstallerInfo? _getInstallationOptionsOnDict(
+        IPackage package,
+        ref ConcurrentDictionary<long, PackageInstallerInfo> source,
+        bool installed,
+        InstallOptions unigetuiOptions
+    )
     {
         if (source.TryGetValue(package.GetHash(), out PackageInstallerInfo? installerInfo))
             return installerInfo;
 
         PackageVersionInfo? catalogPackage;
-        if (installed) catalogPackage = GetPackage(package)?.InstalledVersion;
-        else catalogPackage = GetPackage(package)?.DefaultInstallVersion;
+        if (installed)
+            catalogPackage = GetPackage(package)?.InstalledVersion;
+        else
+            catalogPackage = GetPackage(package)?.DefaultInstallVersion;
 
-        Microsoft.Management.Deployment.InstallOptions? wingetOptions = NativeWinGetHelper.ExternalFactory?.CreateInstallOptions();
-        Microsoft.Management.Deployment.InstallOptions? wingetDefaultOptions = NativeWinGetHelper.ExternalFactory?.CreateInstallOptions();
+        Microsoft.Management.Deployment.InstallOptions? wingetOptions =
+            NativeWinGetHelper.ExternalFactory?.CreateInstallOptions();
+        Microsoft.Management.Deployment.InstallOptions? wingetDefaultOptions =
+            NativeWinGetHelper.ExternalFactory?.CreateInstallOptions();
 
         if (wingetOptions is null)
         {
@@ -143,13 +177,19 @@ public static class NativePackageHandler
 
     private static CatalogPackage? _findPackageOnCatalog(IPackage package)
     {
-        if (NativeWinGetHelper.ExternalWinGetManager is null || NativeWinGetHelper.ExternalFactory is null)
+        if (
+            NativeWinGetHelper.ExternalWinGetManager is null
+            || NativeWinGetHelper.ExternalFactory is null
+        )
             return null;
 
-        PackageCatalogReference Catalog = NativeWinGetHelper.ExternalWinGetManager.GetPackageCatalogByName(package.Source.Name);
+        PackageCatalogReference Catalog =
+            NativeWinGetHelper.ExternalWinGetManager.GetPackageCatalogByName(package.Source.Name);
         if (Catalog is null)
         {
-            Logger.Error("Failed to get catalog " + package.Source.Name + ". Is the package local?");
+            Logger.Error(
+                "Failed to get catalog " + package.Source.Name + ". Is the package local?"
+            );
             return null;
         }
 
@@ -163,19 +203,23 @@ public static class NativePackageHandler
         }
 
         // Match only the exact same Id
-        FindPackagesOptions packageMatchFilter = NativeWinGetHelper.ExternalFactory.CreateFindPackagesOptions();
+        FindPackagesOptions packageMatchFilter =
+            NativeWinGetHelper.ExternalFactory.CreateFindPackagesOptions();
         PackageMatchFilter filters = NativeWinGetHelper.ExternalFactory.CreatePackageMatchFilter();
         filters.Field = PackageMatchField.Id;
         filters.Value = package.Id;
         filters.Option = PackageFieldMatchOption.Equals;
         packageMatchFilter.Filters.Add(filters);
         packageMatchFilter.ResultLimit = 1;
-        var SearchResult = Task.Run(() => ConnectResult.PackageCatalog.FindPackages(packageMatchFilter));
+        var SearchResult = Task.Run(() =>
+            ConnectResult.PackageCatalog.FindPackages(packageMatchFilter)
+        );
 
-        if (SearchResult?.Result?.Matches is null ||
-            SearchResult.Result.Matches.Count == 0)
+        if (SearchResult?.Result?.Matches is null || SearchResult.Result.Matches.Count == 0)
         {
-            Logger.Error("Failed to find package " + package.Id + " in catalog " + package.Source.Name);
+            Logger.Error(
+                "Failed to find package " + package.Id + " in catalog " + package.Source.Name
+            );
             return null;
         }
 

@@ -26,7 +26,9 @@ namespace UniGetUI.Core.IconEngine.Tests
             string? icon = iconStore.GetIconUrlForId("__test_entry_DO_NOT_EDIT_PLEASE");
             Assert.Equal("https://this.is.a.test/url/used_for/automated_unit_testing.png", icon);
 
-            string[] screenshots = iconStore.GetScreenshotsUrlForId("__test_entry_DO_NOT_EDIT_PLEASE");
+            string[] screenshots = iconStore.GetScreenshotsUrlForId(
+                "__test_entry_DO_NOT_EDIT_PLEASE"
+            );
             Assert.Equal(3, screenshots.Length);
             Assert.Equal("https://image_number.com/1.png", screenshots[0]);
             Assert.Equal("https://image_number.com/2.png", screenshots[1]);
@@ -38,10 +40,14 @@ namespace UniGetUI.Core.IconEngine.Tests
         {
             await iconStore.LoadIconAndScreenshotsDatabaseAsync();
 
-            string? nonexistent_icon = iconStore.GetIconUrlForId("__test_entry_THIS_ICON_DOES_NOT_EXTST");
+            string? nonexistent_icon = iconStore.GetIconUrlForId(
+                "__test_entry_THIS_ICON_DOES_NOT_EXTST"
+            );
             Assert.Null(nonexistent_icon);
 
-            string[] nonexistent_screenshots = iconStore.GetScreenshotsUrlForId("__test_entry_THIS_ICON_DOES_NOT_EXTST");
+            string[] nonexistent_screenshots = iconStore.GetScreenshotsUrlForId(
+                "__test_entry_THIS_ICON_DOES_NOT_EXTST"
+            );
             Assert.Empty(nonexistent_screenshots);
         }
     }

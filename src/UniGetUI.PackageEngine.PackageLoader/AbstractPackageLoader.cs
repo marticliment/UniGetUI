@@ -7,7 +7,11 @@ namespace UniGetUI.PackageEngine.PackageLoader
 {
     public class PackagesChangedEvent
     {
-        public PackagesChangedEvent(bool proceduralChange, IReadOnlyList<IPackage> addedPackages, IReadOnlyList<IPackage> removedPackages)
+        public PackagesChangedEvent(
+            bool proceduralChange,
+            IReadOnlyList<IPackage> addedPackages,
+            IReadOnlyList<IPackage> removedPackages
+        )
         {
             ProceduralChange = proceduralChange;
             AddedPackages = addedPackages;
@@ -75,7 +79,8 @@ namespace UniGetUI.PackageEngine.PackageLoader
             bool AllowMultiplePackageVersions,
             bool DisableReload,
             bool CheckedBydefault,
-            bool RequiresInternet)
+            bool RequiresInternet
+        )
         {
             Managers = managers;
             PackageReference = new ConcurrentDictionary<long, IPackage>();
@@ -97,10 +102,15 @@ namespace UniGetUI.PackageEngine.PackageLoader
             LoadOperationIdentifier = -1;
             IsLoaded = false;
             IsLoading = false;
-            if (emitFinishSignal) InvokeFinishedLoadingEvent();
+            if (emitFinishSignal)
+                InvokeFinishedLoadingEvent();
         }
 
-        protected void InvokePackagesChangedEvent(bool proceduralChange, IReadOnlyList<IPackage> toAdd, IReadOnlyList<IPackage> toRemove)
+        protected void InvokePackagesChangedEvent(
+            bool proceduralChange,
+            IReadOnlyList<IPackage> toAdd,
+            IReadOnlyList<IPackage> toRemove
+        )
         {
             PackagesChanged?.Invoke(this, new(proceduralChange, toAdd, toRemove));
         }
@@ -151,7 +161,9 @@ namespace UniGetUI.PackageEngine.PackageLoader
                 {
                     if (manager.IsReady())
                     {
-                        Task<IReadOnlyList<IPackage>> task = Task.Run(() => LoadPackagesFromManager(manager));
+                        Task<IReadOnlyList<IPackage>> task = Task.Run(() =>
+                            LoadPackagesFromManager(manager)
+                        );
                         tasks.Add(task);
                     }
                 }
@@ -167,7 +179,10 @@ namespace UniGetUI.PackageEngine.PackageLoader
 
                         if (task.IsCompleted)
                         {
-                            if (LoadOperationIdentifier == current_identifier && task.IsCompletedSuccessfully)
+                            if (
+                                LoadOperationIdentifier == current_identifier
+                                && task.IsCompletedSuccessfully
+                            )
                             {
                                 var toAdd = new List<IPackage>();
                                 foreach (IPackage package in task.Result)

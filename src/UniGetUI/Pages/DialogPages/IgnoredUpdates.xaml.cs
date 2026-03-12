@@ -17,7 +17,6 @@ namespace UniGetUI.Interface
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-
     public sealed partial class IgnoredUpdatesManager : Page
     {
         public event EventHandler? Close;
@@ -43,7 +42,7 @@ namespace UniGetUI.Interface
 
             var rawIgnoredPackages = IgnoredUpdatesDatabase.GetDatabase();
 
-            foreach (var(ignoredId, version) in rawIgnoredPackages)
+            foreach (var (ignoredId, version) in rawIgnoredPackages)
             {
                 IPackageManager manager = PEInterface.WinGet; // Manager by default
                 if (ManagerNameReference.ContainsKey(ignoredId.Split("\\")[0]))
@@ -51,7 +50,14 @@ namespace UniGetUI.Interface
                     manager = ManagerNameReference[ignoredId.Split("\\")[0]];
                 }
 
-                ignoredPackages.Add(new IgnoredPackageEntry(ignoredId.Split("\\")[^1], version, manager, ignoredPackages));
+                ignoredPackages.Add(
+                    new IgnoredPackageEntry(
+                        ignoredId.Split("\\")[^1],
+                        version,
+                        manager,
+                        ignoredPackages
+                    )
+                );
             }
         }
 
@@ -68,7 +74,9 @@ namespace UniGetUI.Interface
             Close?.Invoke(this, EventArgs.Empty);
         }
 
-        private void YesResetButton_Click(object sender, RoutedEventArgs e) => _ = _yesResetButton_Click();
+        private void YesResetButton_Click(object sender, RoutedEventArgs e) =>
+            _ = _yesResetButton_Click();
+
         private async Task _yesResetButton_Click()
         {
             foreach (IgnoredPackageEntry package in ignoredPackages.ToArray())
@@ -92,12 +100,20 @@ namespace UniGetUI.Interface
         public string NewVersion { get; }
         public IPackageManager Manager { get; }
         private ObservableCollection<IgnoredPackageEntry> List { get; }
-        public IgnoredPackageEntry(string id, string version, IPackageManager manager, ObservableCollection<IgnoredPackageEntry> list)
+
+        public IgnoredPackageEntry(
+            string id,
+            string version,
+            IPackageManager manager,
+            ObservableCollection<IgnoredPackageEntry> list
+        )
         {
             Id = id;
 
-            if (manager is WinGet && id.Contains('.')) Name = String.Join(' ', id.Split('.')[1..]);
-            else Name = CoreTools.FormatAsName(id);
+            if (manager is WinGet && id.Contains('.'))
+                Name = String.Join(' ', id.Split('.')[1..]);
+            else
+                Name = CoreTools.FormatAsName(id);
 
             if (version == "*")
             {
@@ -108,16 +124,23 @@ namespace UniGetUI.Interface
                 Version = version;
             }
 
-            string CurrentVersion = InstalledPackagesLoader.Instance.GetPackageForId(id)?.VersionString ?? "Unknown";
+            string CurrentVersion =
+                InstalledPackagesLoader.Instance.GetPackageForId(id)?.VersionString ?? "Unknown";
 
-            if (UpgradablePackagesLoader.Instance.IgnoredPackages.TryGetValue(Id, out IPackage? package)
-                && package.NewVersionString != package.VersionString)
+            if (
+                UpgradablePackagesLoader.Instance.IgnoredPackages.TryGetValue(
+                    Id,
+                    out IPackage? package
+                )
+                && package.NewVersionString != package.VersionString
+            )
             {
                 NewVersion = CurrentVersion + " \u27a4 " + package.NewVersionString;
             }
             else if (CurrentVersion != "Unknown")
             {
-                NewVersion = CoreTools.Translate("Up to date") + $" ({CurrentVersion})";;
+                NewVersion = CoreTools.Translate("Up to date") + $" ({CurrentVersion})";
+                ;
             }
             else
             {
@@ -128,8 +151,7 @@ namespace UniGetUI.Interface
             List = list;
         }
 
-        public void RemoveFromIgnoredUpdates()
-            => _ = RemoveFromIgnoredUpdatesAsync();
+        public void RemoveFromIgnoredUpdates() => _ = RemoveFromIgnoredUpdatesAsync();
 
         public async Task RemoveFromIgnoredUpdatesAsync()
         {
@@ -137,8 +159,13 @@ namespace UniGetUI.Interface
             await Task.Run(() => IgnoredUpdatesDatabase.Remove(ignoredId));
 
             // If possible, add the package to the software updates tab again
-            if (UpgradablePackagesLoader.Instance.IgnoredPackages.TryRemove(Id, out IPackage? nativePackage)
-                && nativePackage.NewVersionString != nativePackage.VersionString)
+            if (
+                UpgradablePackagesLoader.Instance.IgnoredPackages.TryRemove(
+                    Id,
+                    out IPackage? nativePackage
+                )
+                && nativePackage.NewVersionString != nativePackage.VersionString
+            )
             {
                 await UpgradablePackagesLoader.Instance.AddForeign(nativePackage);
             }

@@ -13,9 +13,11 @@ namespace UniGetUI.PackageEngine.Interfaces.ManagerProviders
         /// that the requested operation is performed over the given package, with its corresponding
         /// installation options.
         /// </summary>
-        public IReadOnlyList<string> GetParameters(IPackage package,
+        public IReadOnlyList<string> GetParameters(
+            IPackage package,
             InstallOptions options,
-            OperationType operation);
+            OperationType operation
+        );
 
         /// <summary>
         /// Returns the veredict of the given package operation, given the package, the operation type,

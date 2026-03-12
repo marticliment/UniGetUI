@@ -11,7 +11,8 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 {
     internal sealed class ScoopPkgDetailsHelper : BasePkgDetailsHelper
     {
-        public ScoopPkgDetailsHelper(Scoop manager) : base(manager) { }
+        public ScoopPkgDetailsHelper(Scoop manager)
+            : base(manager) { }
 
         protected override void GetDetails_UnSafe(IPackageDetails details)
         {
@@ -22,9 +23,16 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     if (details.Package.Source.Name.StartsWith("http"))
                         details.ManifestUrl = new Uri(details.Package.Source.Name);
                     else if (details.Package.Source.Name.Contains(":\\"))
-                        details.ManifestUrl = new Uri("file:///" + details.Package.Source.Name.Replace("\\", "/"));
+                        details.ManifestUrl = new Uri(
+                            "file:///" + details.Package.Source.Name.Replace("\\", "/")
+                        );
                     else
-                        details.ManifestUrl = new Uri(details.Package.Source.Url + "/blob/master/bucket/" + details.Package.Id + ".json");
+                        details.ManifestUrl = new Uri(
+                            details.Package.Source.Url
+                                + "/blob/master/bucket/"
+                                + details.Package.Id
+                                + ".json"
+                        );
                 }
                 catch (Exception ex)
                 {
@@ -35,7 +43,10 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
             string packageId;
             // If source is ellpised or source is a local path, omit source argument
-            if (details.Package.Source.Name.Contains("...") || details.Package.Source.Name.Contains(":\\"))
+            if (
+                details.Package.Source.Name.Contains("...")
+                || details.Package.Source.Name.Contains(":\\")
+            )
                 packageId = $"{details.Package.Id}";
             else
                 packageId = $"{details.Package.Source.Name}/{details.Package.Id}";
@@ -51,10 +62,13 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     UseShellExecute = false,
                     CreateNoWindow = true,
                     StandardOutputEncoding = System.Text.Encoding.UTF8,
-                }
+                },
             };
 
-            IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(Enums.LoggableTaskType.LoadPackageDetails, p);
+            IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(
+                Enums.LoggableTaskType.LoadPackageDetails,
+                p
+            );
 
             p.Start();
             string JsonString = p.StandardOutput.ReadToEnd();
@@ -87,12 +101,21 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 details.InstallerType = CoreTools.Translate("Scoop package");
 
             // Load homepage and author
-            if (Uri.TryCreate(contents?["homepage"]?.ToString() ?? "", UriKind.RelativeOrAbsolute, out var homepageUrl))
+            if (
+                Uri.TryCreate(
+                    contents?["homepage"]?.ToString() ?? "",
+                    UriKind.RelativeOrAbsolute,
+                    out var homepageUrl
+                )
+            )
             {
                 details.HomepageUrl = homepageUrl;
 
                 if (homepageUrl.ToString().StartsWith("https://github.com/"))
-                    details.Author = homepageUrl.ToString().Replace("https://github.com/", "").Split("/")[0];
+                    details.Author = homepageUrl
+                        .ToString()
+                        .Replace("https://github.com/", "")
+                        .Split("/")[0];
                 else
                     details.Author = homepageUrl.Host.Split(".")[^2];
             }
@@ -114,7 +137,13 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             if (contents?["license"] is JsonObject licenseDetails)
             {
                 details.License = licenseDetails["identifier"]?.ToString();
-                if (Uri.TryCreate(licenseDetails["url"]?.ToString(), UriKind.RelativeOrAbsolute, out var licenseUrl))
+                if (
+                    Uri.TryCreate(
+                        licenseDetails["url"]?.ToString(),
+                        UriKind.RelativeOrAbsolute,
+                        out var licenseUrl
+                    )
+                )
                     details.LicenseUrl = licenseUrl;
             }
             else
@@ -126,7 +155,13 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             if (contents?["url"] is JsonArray urlList)
             {
                 // Only one installer
-                if (Uri.TryCreate(urlList[0]?.ToString(), UriKind.RelativeOrAbsolute, out var installerUrl))
+                if (
+                    Uri.TryCreate(
+                        urlList[0]?.ToString(),
+                        UriKind.RelativeOrAbsolute,
+                        out var installerUrl
+                    )
+                )
                     details.InstallerUrl = installerUrl;
 
                 details.InstallerHash = (contents?["hash"] as JsonArray)?[0]?.ToString();
@@ -134,7 +169,13 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             else if (contents?["url"] is JsonValue value)
             {
                 // Multiple installers
-                if (Uri.TryCreate(value.ToString(), UriKind.RelativeOrAbsolute, out var installerUrl))
+                if (
+                    Uri.TryCreate(
+                        value.ToString(),
+                        UriKind.RelativeOrAbsolute,
+                        out var installerUrl
+                    )
+                )
                     details.InstallerUrl = installerUrl;
 
                 details.InstallerHash = contents?["hash"]?.ToString();
@@ -144,7 +185,13 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 // Architecture-based installer
                 string arch = archNode.ContainsKey("64bit") ? "64bit" : archNode.First().Key;
 
-                if (Uri.TryCreate(archNode[arch]?["url"]?.ToString(), UriKind.RelativeOrAbsolute, out var installerUrl))
+                if (
+                    Uri.TryCreate(
+                        archNode[arch]?["url"]?.ToString(),
+                        UriKind.RelativeOrAbsolute,
+                        out var installerUrl
+                    )
+                )
                     details.InstallerUrl = installerUrl;
 
                 details.InstallerHash = archNode[arch]?["hash"]?.ToString();
@@ -154,8 +201,14 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 details.InstallerSize = CoreTools.GetFileSizeAsLong(details.InstallerUrl);
 
             // Load release notes URL
-            if (contents?["checkver"] is JsonObject checkver && Uri.TryCreate(checkver["url"]?.ToString(), UriKind.RelativeOrAbsolute,
-                    out var releaseNotesUrl))
+            if (
+                contents?["checkver"] is JsonObject checkver
+                && Uri.TryCreate(
+                    checkver["url"]?.ToString(),
+                    UriKind.RelativeOrAbsolute,
+                    out var releaseNotesUrl
+                )
+            )
                 details.ReleaseNotesUrl = releaseNotesUrl;
 
             details.Dependencies.Clear();
@@ -171,23 +224,27 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             {
                 List<string> innerDeps = [];
 
-                if(rawDep.Value is JsonValue value) innerDeps.Add(value.GetValue<string>());
+                if (rawDep.Value is JsonValue value)
+                    innerDeps.Add(value.GetValue<string>());
                 else
                 {
                     foreach (var iDep in rawDep.Value?.AsArray() ?? [])
                     {
                         string? val = iDep?.GetValue<string>();
-                        if(val is not null) innerDeps.Add(val);
+                        if (val is not null)
+                            innerDeps.Add(val);
                     }
                 }
 
-                foreach(var val in innerDeps)
-                    details.Dependencies.Add(new()
-                    {
-                        Name = val,
-                        Version = "",
-                        Mandatory = false,
-                    });
+                foreach (var val in innerDeps)
+                    details.Dependencies.Add(
+                        new()
+                        {
+                            Name = val,
+                            Version = "",
+                            Mandatory = false,
+                        }
+                    );
             }
         }
 
@@ -196,23 +253,27 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             var node = contents?["depends"];
             List<string> innerDeps = [];
 
-            if(node is JsonValue value) innerDeps.Add(value.GetValue<string>());
+            if (node is JsonValue value)
+                innerDeps.Add(value.GetValue<string>());
             else
             {
                 foreach (var iDep in node?.AsArray() ?? [])
                 {
                     string? val = iDep?.GetValue<string>();
-                    if(val is not null) innerDeps.Add(val);
+                    if (val is not null)
+                        innerDeps.Add(val);
                 }
             }
 
-            foreach(var val in innerDeps)
-                details.Dependencies.Add(new()
-                {
-                    Name = val,
-                    Version = "",
-                    Mandatory = true,
-                });
+            foreach (var val in innerDeps)
+                details.Dependencies.Add(
+                    new()
+                    {
+                        Name = val,
+                        Version = "",
+                        Mandatory = true,
+                    }
+                );
         }
 
         protected override CacheableIcon? GetIcon_UnSafe(IPackage package)
@@ -227,8 +288,13 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
         protected override string? GetInstallLocation_UnSafe(IPackage package)
         {
-            return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "scoop", "apps",
-                package.Id, "current");
+            return Path.Join(
+                Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                "scoop",
+                "apps",
+                package.Id,
+                "current"
+            );
         }
 
         protected override IReadOnlyList<string> GetInstallableVersions_UnSafe(IPackage package)

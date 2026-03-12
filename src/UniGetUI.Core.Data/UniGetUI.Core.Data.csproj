@@ -1,20 +1,23 @@
 <Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>$(SharedTargetFrameworks)</TargetFrameworks>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\UniGetUI.Core.Logger\UniGetUI.Core.Logging.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\UniGetUI.Core.Logger\UniGetUI.Core.Logging.csproj" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <None Update="Assets\Data\Contributors.list">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+    <ItemGroup>
+        <None Update="Assets\Data\Contributors.list">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
 
-  <ItemGroup>
-    <Compile Include="..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />
-  </ItemGroup>
+    <ItemGroup>
+        <Compile Include="..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="YamlDotNet" Version="16.3.0" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="YamlDotNet" Version="16.3.0" />
+    </ItemGroup>
 </Project>

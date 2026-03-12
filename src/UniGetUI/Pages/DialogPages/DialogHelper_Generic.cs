@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using Windows.UI;
 using Microsoft.UI;
 using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
@@ -18,27 +17,40 @@ using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Classes.Packages.Classes;
 using UniGetUI.PackageEngine.PackageLoader;
+using Windows.UI;
 
 namespace UniGetUI.Pages.DialogPages;
 
 public static partial class DialogHelper
 {
-    public static async Task ShowMissingDependency(string dep_name, string exe_name, string exe_args,
-        string fancy_command, int current, int total)
+    public static async Task ShowMissingDependency(
+        string dep_name,
+        string exe_name,
+        string exe_args,
+        string fancy_command,
+        int current,
+        int total
+    )
     {
-
-        if (Settings.GetDictionaryItem<string, string>(Settings.K.DependencyManagement, dep_name) == "skipped")
+        if (
+            Settings.GetDictionaryItem<string, string>(Settings.K.DependencyManagement, dep_name)
+            == "skipped"
+        )
         {
             Logger.Error(
-                $"Dependency {dep_name} was not found, and the user set it to not be reminded of the missing dependency");
+                $"Dependency {dep_name} was not found, and the user set it to not be reminded of the missing dependency"
+            );
             return;
         }
 
-        bool NotFirstTime = Settings.GetDictionaryItem<string, string>(Settings.K.DependencyManagement, dep_name) == "attempted";
+        bool NotFirstTime =
+            Settings.GetDictionaryItem<string, string>(Settings.K.DependencyManagement, dep_name)
+            == "attempted";
         Settings.SetDictionaryItem(Settings.K.DependencyManagement, dep_name, "attempted");
 
         var dialog = DialogFactory.Create();
-        dialog.Title = CoreTools.Translate("Missing dependency") + (total > 1 ? $" ({current}/{total})" : "");
+        dialog.Title =
+            CoreTools.Translate("Missing dependency") + (total > 1 ? $" ({current}/{total})" : "");
         dialog.SecondaryButtonText = CoreTools.Translate("Not right now");
         dialog.PrimaryButtonText = CoreTools.Translate("Install {0}", dep_name);
         dialog.DefaultButton = ContentDialogButton.Primary;
@@ -48,18 +60,23 @@ public static partial class DialogHelper
 
         StackPanel p = new();
 
-        p.Children.Add(new TextBlock
-        {
-            Text = CoreTools.Translate(
-                "UniGetUI requires {0} to operate, but it was not found on your system.", dep_name),
-            TextWrapping = TextWrapping.Wrap,
-            Margin = new Thickness(0, 0, 0, 5)
-        });
+        p.Children.Add(
+            new TextBlock
+            {
+                Text = CoreTools.Translate(
+                    "UniGetUI requires {0} to operate, but it was not found on your system.",
+                    dep_name
+                ),
+                TextWrapping = TextWrapping.Wrap,
+                Margin = new Thickness(0, 0, 0, 5),
+            }
+        );
 
         TextBlock infotext = new()
         {
             Text = CoreTools.Translate(
-                "Click on Install to begin the installation process. If you skip the installation, UniGetUI may not work as expected."),
+                "Click on Install to begin the installation process. If you skip the installation, UniGetUI may not work as expected."
+            ),
             TextWrapping = TextWrapping.Wrap,
             Margin = new Thickness(0, 0, 0, 10),
             Opacity = .7F,
@@ -71,7 +88,8 @@ public static partial class DialogHelper
         {
             Text = CoreTools.Translate(
                 "Alternatively, you can also install {0} by running the following command in a Windows PowerShell prompt:",
-                dep_name),
+                dep_name
+            ),
             TextWrapping = TextWrapping.Wrap,
             Margin = new Thickness(0, 0, 0, 4),
             Opacity = .7F,
@@ -94,8 +112,10 @@ public static partial class DialogHelper
         {
             c.Content = CoreTools.Translate("Do not show this dialog again for {0}", dep_name);
             c.IsChecked = false;
-            c.Checked += (_, _) => Settings.SetDictionaryItem(Settings.K.DependencyManagement, dep_name, "skipped");
-            c.Unchecked += (_, _) => Settings.SetDictionaryItem(Settings.K.DependencyManagement, dep_name, "attempted");
+            c.Checked += (_, _) =>
+                Settings.SetDictionaryItem(Settings.K.DependencyManagement, dep_name, "skipped");
+            c.Unchecked += (_, _) =>
+                Settings.SetDictionaryItem(Settings.K.DependencyManagement, dep_name, "attempted");
             p.Children.Add(c);
         }
 
@@ -117,13 +137,17 @@ public static partial class DialogHelper
                     dialog.IsSecondaryButtonEnabled = false;
                     dialog.SecondaryButtonText = "";
                     dialog.PrimaryButtonText = CoreTools.Translate("Please wait");
-                    infotext.Text =
-                        CoreTools.Translate(
-                            "Please wait while {0} is being installed. A black window may show up. Please wait until it closes.",
-                            dep_name);
+                    infotext.Text = CoreTools.Translate(
+                        "Please wait while {0} is being installed. A black window may show up. Please wait until it closes.",
+                        dep_name
+                    );
                     Process install_dep_p = new()
                     {
-                        StartInfo = new ProcessStartInfo { FileName = exe_name, Arguments = exe_args, },
+                        StartInfo = new ProcessStartInfo
+                        {
+                            FileName = exe_name,
+                            Arguments = exe_args,
+                        },
                     };
                     install_dep_p.Start();
                     await install_dep_p.WaitForExitAsync();
@@ -132,19 +156,23 @@ public static partial class DialogHelper
                     if (current < total)
                     {
                         // When finished, but more dependencies need to be installed
-                        infotext.Text = CoreTools.Translate("{0} has been installed successfully.", dep_name) +
-                                        " " + CoreTools.Translate("Please click on \"Continue\" to continue",
-                                            dep_name);
+                        infotext.Text =
+                            CoreTools.Translate("{0} has been installed successfully.", dep_name)
+                            + " "
+                            + CoreTools.Translate(
+                                "Please click on \"Continue\" to continue",
+                                dep_name
+                            );
                         dialog.SecondaryButtonText = "";
                         dialog.PrimaryButtonText = CoreTools.Translate("Continue");
                     }
                     else
                     {
                         // When finished, and no more dependencies need to be installed
-                        infotext.Text =
-                            CoreTools.Translate(
-                                "{0} has been installed successfully. It is recommended to restart UniGetUI to finish the installation",
-                                dep_name);
+                        infotext.Text = CoreTools.Translate(
+                            "{0} has been installed successfully. It is recommended to restart UniGetUI to finish the installation",
+                            dep_name
+                        );
                         dialog.SecondaryButtonText = CoreTools.Translate("Restart later");
                         dialog.PrimaryButtonText = CoreTools.Translate("Restart UniGetUI");
                     }
@@ -155,12 +183,17 @@ public static partial class DialogHelper
                     Logger.Error(ex);
                     dialog.IsPrimaryButtonEnabled = true;
                     dialog.IsSecondaryButtonEnabled = true;
-                    infotext.Text = CoreTools.Translate("An error occurred:") + " " + ex.Message + "\n" +
-                                    CoreTools.Translate("Please click on \"Continue\" to continue");
+                    infotext.Text =
+                        CoreTools.Translate("An error occurred:")
+                        + " "
+                        + ex.Message
+                        + "\n"
+                        + CoreTools.Translate("Please click on \"Continue\" to continue");
                     dialog.SecondaryButtonText = "";
-                    dialog.PrimaryButtonText = (current < total)
-                        ? CoreTools.Translate("Continue")
-                        : CoreTools.Translate("Close");
+                    dialog.PrimaryButtonText =
+                        (current < total)
+                            ? CoreTools.Translate("Continue")
+                            : CoreTools.Translate("Close");
                 }
 
                 has_installed = true;
@@ -199,12 +232,14 @@ public static partial class DialogHelper
         await ShowDialogAsync(dialog);
     }
 
-    public static async Task ManageDesktopShortcuts(IReadOnlyList<string>? NewShortucts  = null)
+    public static async Task ManageDesktopShortcuts(IReadOnlyList<string>? NewShortucts = null)
     {
         ContentDialog dialog = DialogFactory.Create_AsWindow(true);
 
         DesktopShortcutsManager DesktopShortcutsPage = new();
-        DesktopShortcutsPage.LoadShortcuts(NewShortucts ?? DesktopShortcutsDatabase.GetAllShortcuts());
+        DesktopShortcutsPage.LoadShortcuts(
+            NewShortucts ?? DesktopShortcutsDatabase.GetAllShortcuts()
+        );
         DesktopShortcutsPage.Close += (_, _) => dialog.Hide();
 
         dialog.Title = CoreTools.Translate("Automatic desktop shortcut remover");
@@ -219,7 +254,9 @@ public static partial class DialogHelper
 
         if (!Settings.AreNotificationsDisabled())
         {
-            await AppNotificationManager.Default.RemoveByTagAsync(CoreData.NewShortcutsNotificationTag.ToString());
+            await AppNotificationManager.Default.RemoveByTagAsync(
+                CoreData.NewShortcutsNotificationTag.ToString()
+            );
             AppNotification notification;
 
             if (unknownShortcuts.Count == 1)
@@ -228,10 +265,16 @@ public static partial class DialogHelper
                     .SetScenario(AppNotificationScenario.Default)
                     .SetTag(CoreData.NewShortcutsNotificationTag.ToString())
                     .AddText(CoreTools.Translate("Desktop shortcut created"))
-                    .AddText(CoreTools.Translate("UniGetUI has detected a new desktop shortcut that can be deleted automatically."))
+                    .AddText(
+                        CoreTools.Translate(
+                            "UniGetUI has detected a new desktop shortcut that can be deleted automatically."
+                        )
+                    )
                     .SetAttributionText(unknownShortcuts.First().Split("\\").Last())
-                    .AddButton(new AppNotificationButton(CoreTools.Translate("Open UniGetUI").Replace("'", "´"))
-                        .AddArgument("action", NotificationArguments.Show)
+                    .AddButton(
+                        new AppNotificationButton(
+                            CoreTools.Translate("Open UniGetUI").Replace("'", "´")
+                        ).AddArgument("action", NotificationArguments.Show)
                     )
                     .AddArgument("action", NotificationArguments.Show);
 
@@ -250,11 +293,20 @@ public static partial class DialogHelper
                 AppNotificationBuilder builder = new AppNotificationBuilder()
                     .SetScenario(AppNotificationScenario.Default)
                     .SetTag(CoreData.NewShortcutsNotificationTag.ToString())
-                    .AddText(CoreTools.Translate("{0} desktop shortcuts created", unknownShortcuts.Count))
-                    .AddText(CoreTools.Translate("UniGetUI has detected {0} new desktop shortcuts that can be deleted automatically.", unknownShortcuts.Count))
+                    .AddText(
+                        CoreTools.Translate("{0} desktop shortcuts created", unknownShortcuts.Count)
+                    )
+                    .AddText(
+                        CoreTools.Translate(
+                            "UniGetUI has detected {0} new desktop shortcuts that can be deleted automatically.",
+                            unknownShortcuts.Count
+                        )
+                    )
                     .SetAttributionText(attribution)
-                    .AddButton(new AppNotificationButton(CoreTools.Translate("Open UniGetUI").Replace("'", "´"))
-                        .AddArgument("action", NotificationArguments.ShowOnUpdatesTab)
+                    .AddButton(
+                        new AppNotificationButton(
+                            CoreTools.Translate("Open UniGetUI").Replace("'", "´")
+                        ).AddArgument("action", NotificationArguments.ShowOnUpdatesTab)
                     )
                     .AddArgument("action", NotificationArguments.ShowOnUpdatesTab);
 
@@ -272,7 +324,7 @@ public static partial class DialogHelper
     {
         ContentDialog AdminDialog = new()
         {
-            Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
+            Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
         };
 
         while (Window.XamlRoot is null)
@@ -285,7 +337,8 @@ public static partial class DialogHelper
         AdminDialog.DefaultButton = ContentDialogButton.Primary;
         AdminDialog.Title = CoreTools.Translate("Administrator privileges");
         AdminDialog.Content = CoreTools.Translate(
-            "WingetUI has been ran as administrator, which is not recommended. When running WingetUI as administrator, EVERY operation launched from WingetUI will have administrator privileges. You can still use the program, but we highly recommend not running WingetUI with administrator privileges.");
+            "WingetUI has been ran as administrator, which is not recommended. When running WingetUI as administrator, EVERY operation launched from WingetUI will have administrator privileges. You can still use the program, but we highly recommend not running WingetUI with administrator privileges."
+        );
 
         await ShowDialogAsync(AdminDialog);
     }
@@ -317,8 +370,10 @@ public static partial class DialogHelper
         bool bannerWasOpen = false;
         try
         {
-            int loadingId = ShowLoadingDialog("Attempting to repair WinGet...",
-                "WinGet is being repaired. Please wait until the process finishes.");
+            int loadingId = ShowLoadingDialog(
+                "Attempting to repair WinGet...",
+                "WinGet is being repaired. Please wait until the process finishes."
+            );
             bannerWasOpen = Window.WinGetWarningBanner.IsOpen;
             Window.WinGetWarningBanner.IsOpen = false;
             using Process p = new Process
@@ -327,20 +382,20 @@ public static partial class DialogHelper
                 {
                     FileName = CoreData.PowerShell5,
                     Arguments =
-                        "-ExecutionPolicy Bypass -NoLogo -NoProfile -Command \"& {" +
-                        "cmd.exe /C \"rmdir /Q /S `\"%temp%\\WinGet`\"\"; " +
-                        "cmd.exe /C \"`\"%localappdata%\\Microsoft\\WindowsApps\\winget.exe`\" source reset --force\"; " +
-                        "taskkill /im winget.exe /f; " +
-                        "taskkill /im WindowsPackageManagerServer.exe /f; " +
-                        "Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force; " +
-                        "Install-Module Microsoft.WinGet.Client -Force -AllowClobber; " +
-                        "Import-Module Microsoft.WinGet.Client; " +
-                        "Repair-WinGetPackageManager -Force -Latest; " +
-                        "Get-AppxPackage -Name 'Microsoft.DesktopAppInstaller' | Reset-AppxPackage; " +
-                        "}\"",
+                        "-ExecutionPolicy Bypass -NoLogo -NoProfile -Command \"& {"
+                        + "cmd.exe /C \"rmdir /Q /S `\"%temp%\\WinGet`\"\"; "
+                        + "cmd.exe /C \"`\"%localappdata%\\Microsoft\\WindowsApps\\winget.exe`\" source reset --force\"; "
+                        + "taskkill /im winget.exe /f; "
+                        + "taskkill /im WindowsPackageManagerServer.exe /f; "
+                        + "Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force; "
+                        + "Install-Module Microsoft.WinGet.Client -Force -AllowClobber; "
+                        + "Import-Module Microsoft.WinGet.Client; "
+                        + "Repair-WinGetPackageManager -Force -Latest; "
+                        + "Get-AppxPackage -Name 'Microsoft.DesktopAppInstaller' | Reset-AppxPackage; "
+                        + "}\"",
                     UseShellExecute = true,
-                    Verb = "runas"
-                }
+                    Verb = "runas",
+                },
             };
             p.Start();
             await p.WaitForExitAsync();
@@ -352,10 +407,14 @@ public static partial class DialogHelper
 
             var c = DialogFactory.Create();
             c.Title = CoreTools.Translate("WinGet was repaired successfully");
-            c.Content = CoreTools.Translate("It is recommended to restart UniGetUI after WinGet has been repaired") +
-                        "\n\n" +
-                        CoreTools.Translate(
-                            "NOTE: This troubleshooter can be disabled from UniGetUI Settings, on the WinGet section");
+            c.Content =
+                CoreTools.Translate(
+                    "It is recommended to restart UniGetUI after WinGet has been repaired"
+                )
+                + "\n\n"
+                + CoreTools.Translate(
+                    "NOTE: This troubleshooter can be disabled from UniGetUI Settings, on the WinGet section"
+                );
             c.PrimaryButtonText = CoreTools.Translate("Close");
             c.SecondaryButtonText = CoreTools.Translate("Restart");
             c.DefaultButton = ContentDialogButton.Secondary;
@@ -381,15 +440,20 @@ public static partial class DialogHelper
 
             var c = DialogFactory.Create();
             c.Title = CoreTools.Translate("WinGet could not be repaired");
-            c.Content = CoreTools.Translate(
-                            "An unexpected issue occurred while attempting to repair WinGet. Please try again later") +
-                        "\n\n" + ex.Message + "\n\n" + CoreTools.Translate(
-                            "NOTE: This troubleshooter can be disabled from UniGetUI Settings, on the WinGet section");
+            c.Content =
+                CoreTools.Translate(
+                    "An unexpected issue occurred while attempting to repair WinGet. Please try again later"
+                )
+                + "\n\n"
+                + ex.Message
+                + "\n\n"
+                + CoreTools.Translate(
+                    "NOTE: This troubleshooter can be disabled from UniGetUI Settings, on the WinGet section"
+                );
             c.PrimaryButtonText = CoreTools.Translate("Close");
             c.DefaultButton = ContentDialogButton.None;
             await ShowDialogAsync(c);
         }
-
     }
 
     public static async Task ShowTelemetryDialog()
@@ -403,38 +467,58 @@ public static partial class DialogHelper
         var p = new Paragraph();
         MessageBlock.Blocks.Add(p);
 
-        p.Inlines.Add(new Run
-        {
-            Text = CoreTools.Translate("UniGetUI collects anonymous usage data with the sole purpose of understanding and improving the user experience.")
-        });
+        p.Inlines.Add(
+            new Run
+            {
+                Text = CoreTools.Translate(
+                    "UniGetUI collects anonymous usage data with the sole purpose of understanding and improving the user experience."
+                ),
+            }
+        );
         p.Inlines.Add(new LineBreak());
-        p.Inlines.Add(new Run
-        {
-            Text = CoreTools.Translate("No personal information is collected nor sent, and the collected data is anonimized, so it can't be back-tracked to you.")
-        });
+        p.Inlines.Add(
+            new Run
+            {
+                Text = CoreTools.Translate(
+                    "No personal information is collected nor sent, and the collected data is anonimized, so it can't be back-tracked to you."
+                ),
+            }
+        );
         p.Inlines.Add(new LineBreak());
         p.Inlines.Add(new LineBreak());
-        var link = new Hyperlink { NavigateUri = new Uri("https://www.marticliment.com/unigetui/privacy/"), };
-        link.Inlines.Add(new Run
+        var link = new Hyperlink
         {
-            Text = CoreTools.Translate("More details about the shared data and how it will be processed"),
-        });
+            NavigateUri = new Uri("https://www.marticliment.com/unigetui/privacy/"),
+        };
+        link.Inlines.Add(
+            new Run
+            {
+                Text = CoreTools.Translate(
+                    "More details about the shared data and how it will be processed"
+                ),
+            }
+        );
 
         p.Inlines.Add(link);
         p.Inlines.Add(new LineBreak());
         p.Inlines.Add(new LineBreak());
-        p.Inlines.Add(new Run
-        {
-            Text = CoreTools.Translate("Do you accept that UniGetUI collects and sends anonymous usage statistics, with the sole purpose of understanding and improving the user experience?"),
-            FontWeight = FontWeights.SemiBold
-        });
+        p.Inlines.Add(
+            new Run
+            {
+                Text = CoreTools.Translate(
+                    "Do you accept that UniGetUI collects and sends anonymous usage statistics, with the sole purpose of understanding and improving the user experience?"
+                ),
+                FontWeight = FontWeights.SemiBold,
+            }
+        );
 
         dialog.SecondaryButtonText = CoreTools.Translate("Decline");
         dialog.PrimaryButtonText = CoreTools.Translate("Accept");
         dialog.DefaultButton = ContentDialogButton.Primary;
         dialog.Closing += (_, e) =>
         {
-            if (e.Result == ContentDialogResult.None) e.Cancel = true;
+            if (e.Result == ContentDialogResult.None)
+                e.Cancel = true;
         };
 
         var res = await ShowDialogAsync(dialog);
@@ -452,7 +536,9 @@ public static partial class DialogHelper
     public static void ShowTelemetryBanner()
     {
         Window.TelemetryWarner.Title = CoreTools.Translate("Share anonymous usage data");
-        Window.TelemetryWarner.Message = CoreTools.Translate("UniGetUI collects anonymous usage data in order to improve the user experience.");
+        Window.TelemetryWarner.Message = CoreTools.Translate(
+            "UniGetUI collects anonymous usage data in order to improve the user experience."
+        );
         Window.TelemetryWarner.IsOpen = true;
 
         Window.TelemetryWarner.IsClosable = true;
@@ -461,7 +547,7 @@ public static partial class DialogHelper
         var AcceptBtn = new Button()
         {
             Content = CoreTools.Translate("Accept"),
-            Style = Application.Current.Resources["AccentButtonStyle"] as Style
+            Style = Application.Current.Resources["AccentButtonStyle"] as Style,
         };
         AcceptBtn.Click += (_, _) =>
         {
@@ -470,10 +556,7 @@ public static partial class DialogHelper
             Settings.Set(Settings.K.ShownTelemetryBanner, true);
         };
 
-        var SettingsBtn = new Button()
-        {
-            Content = CoreTools.Translate("Settings"),
-        };
+        var SettingsBtn = new Button() { Content = CoreTools.Translate("Settings") };
         SettingsBtn.Click += (_, _) =>
         {
             Window.TelemetryWarner.Visibility = Visibility.Collapsed;
@@ -482,7 +565,12 @@ public static partial class DialogHelper
             Settings.Set(Settings.K.ShownTelemetryBanner, true);
         };
 
-        StackPanel btns = new() { Margin = new Thickness(4,0,4,0), Spacing = 4, Orientation = Orientation.Horizontal };
+        StackPanel btns = new()
+        {
+            Margin = new Thickness(4, 0, 4, 0),
+            Spacing = 4,
+            Orientation = Orientation.Horizontal,
+        };
         btns.Children.Add(AcceptBtn);
         btns.Children.Add(SettingsBtn);
 
@@ -493,19 +581,29 @@ public static partial class DialogHelper
             Background = new SolidColorBrush(Colors.Transparent),
             BorderBrush = new SolidColorBrush(Colors.Transparent),
         };
-        mainButton.Resources["HyperlinkButtonBackgroundPointerOver"] = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
+        mainButton.Resources["HyperlinkButtonBackgroundPointerOver"] = new SolidColorBrush(
+            Color.FromArgb(0, 0, 0, 0)
+        );
 
-        Window.TelemetryWarner.CloseButtonClick += (_, _) => Settings.Set(Settings.K.ShownTelemetryBanner, true);
-
+        Window.TelemetryWarner.CloseButtonClick += (_, _) =>
+            Settings.Set(Settings.K.ShownTelemetryBanner, true);
     }
 
     public static async Task ConfirmSetDeleteAllShortcutsSetting()
     {
         var dialog = DialogFactory.Create();
         dialog.Title = CoreTools.Translate("Are you sure you want to delete all shortcuts?");
-        dialog.Content = CoreTools.Translate("Any new shorcuts created during an install or an update operation will be deleted automatically, instead of showing a confirmation prompt the first time they are detected.")
-                            + " " + CoreTools.Translate("Any shorcuts created or modified outside of UniGetUI will be ignored. You will be able to add them via the {0} button.", $"\"{CoreTools.Translate("Manual scan")}\"")
-                        + " " + CoreTools.Translate("Are you really sure you want to enable this feature?");
+        dialog.Content =
+            CoreTools.Translate(
+                "Any new shorcuts created during an install or an update operation will be deleted automatically, instead of showing a confirmation prompt the first time they are detected."
+            )
+            + " "
+            + CoreTools.Translate(
+                "Any shorcuts created or modified outside of UniGetUI will be ignored. You will be able to add them via the {0} button.",
+                $"\"{CoreTools.Translate("Manual scan")}\""
+            )
+            + " "
+            + CoreTools.Translate("Are you really sure you want to enable this feature?");
         dialog.PrimaryButtonText = CoreTools.Translate("Yes");
         dialog.CloseButtonText = CoreTools.Translate("No");
         dialog.DefaultButton = ContentDialogButton.Close;
@@ -530,24 +628,46 @@ public static partial class DialogHelper
     {
         var dialog = DialogFactory.Create();
         dialog.Title = CoreTools.Translate("How to add packages to a bundle");
-        dialog.Content = CoreTools.Translate("In order to add packages to a bundle, you will need to: ")
-                         + "\n   " + CoreTools.Translate("1. Navigate to the \"{0}\" or \"{1}\" page.", CoreTools.Translate("Discover packages"), CoreTools.Translate("Installed packages"))
-                         + "\n   " + CoreTools.Translate("2. Locate the package(s) you want to add to the bundle, and select their leftmost checkbox.")
-                         + "\n   " + CoreTools.Translate("3. When the packages you want to add to the bundle are selected, find and click the option \"{0}\" on the toolbar.", CoreTools.Translate("Add selection to bundle"))
-                         + "\n   " + CoreTools.Translate("4. Your packages will have been added to the bundle. You can continue adding packages, or export the bundle.");
+        dialog.Content =
+            CoreTools.Translate("In order to add packages to a bundle, you will need to: ")
+            + "\n   "
+            + CoreTools.Translate(
+                "1. Navigate to the \"{0}\" or \"{1}\" page.",
+                CoreTools.Translate("Discover packages"),
+                CoreTools.Translate("Installed packages")
+            )
+            + "\n   "
+            + CoreTools.Translate(
+                "2. Locate the package(s) you want to add to the bundle, and select their leftmost checkbox."
+            )
+            + "\n   "
+            + CoreTools.Translate(
+                "3. When the packages you want to add to the bundle are selected, find and click the option \"{0}\" on the toolbar.",
+                CoreTools.Translate("Add selection to bundle")
+            )
+            + "\n   "
+            + CoreTools.Translate(
+                "4. Your packages will have been added to the bundle. You can continue adding packages, or export the bundle."
+            );
         dialog.PrimaryButtonText = CoreTools.Translate("Discover packages");
         dialog.SecondaryButtonText = CoreTools.Translate("Installed packages");
         dialog.CloseButtonText = CoreTools.Translate("Close");
         dialog.DefaultButton = ContentDialogButton.None;
         var result = await ShowDialogAsync(dialog);
-        if(result is ContentDialogResult.Primary) Window.NavigationPage.NavigateTo(PageType.Discover);
-        else if(result is ContentDialogResult.Secondary) Window.NavigationPage.NavigateTo(PageType.Installed);
+        if (result is ContentDialogResult.Primary)
+            Window.NavigationPage.NavigateTo(PageType.Discover);
+        else if (result is ContentDialogResult.Secondary)
+            Window.NavigationPage.NavigateTo(PageType.Installed);
     }
 
     public static void ShowDismissableBalloon(string title, string message)
     {
         Window.DismissableNotification.Title = title;
-        Window.DismissableNotification.Content = new TextBlock() { Text = message, TextWrapping = TextWrapping.Wrap };
+        Window.DismissableNotification.Content = new TextBlock()
+        {
+            Text = message,
+            TextWrapping = TextWrapping.Wrap,
+        };
         Window.DismissableNotification.IsOpen = true;
     }
 
@@ -561,7 +681,8 @@ public static partial class DialogHelper
         dialog.IsPrimaryButtonEnabled = false;
 
         RadioButtons buttons = new RadioButtons();
-        foreach(var name in availableBackups) buttons.Items.Add(name);
+        foreach (var name in availableBackups)
+            buttons.Items.Add(name);
         buttons.SelectionChanged += (_, _) => dialog.IsPrimaryButtonEnabled = true;
 
         dialog.Content = new StackPanel()
@@ -570,20 +691,22 @@ public static partial class DialogHelper
             Spacing = 4,
             Children =
             {
-                new TextBlock() {
+                new TextBlock()
+                {
                     Text = CoreTools.Translate(
-                        "Select the backup you want to open. Later, you will be able to review which packages you want to install."),
-                    TextWrapping = TextWrapping.Wrap
+                        "Select the backup you want to open. Later, you will be able to review which packages you want to install."
+                    ),
+                    TextWrapping = TextWrapping.Wrap,
                 },
                 new ScrollViewer()
                 {
                     Content = buttons,
-                    HorizontalScrollMode = ScrollMode.Disabled
-                }
-            }
+                    HorizontalScrollMode = ScrollMode.Disabled,
+                },
+            },
         };
 
-        if(await ShowDialogAsync(dialog) is ContentDialogResult.Primary)
+        if (await ShowDialogAsync(dialog) is ContentDialogResult.Primary)
             return buttons.SelectedItem.ToString() ?? null;
 
         return null;
@@ -597,7 +720,9 @@ public static partial class DialogHelper
     {
         var d = DialogFactory.Create();
         d.Title = CoreTools.Translate("Operation in progress");
-        d.Content = CoreTools.Translate("There are ongoing operations. Quitting WingetUI may cause them to fail. Do you want to continue?");
+        d.Content = CoreTools.Translate(
+            "There are ongoing operations. Quitting WingetUI may cause them to fail. Do you want to continue?"
+        );
         d.PrimaryButtonText = CoreTools.Translate("Quit");
         d.SecondaryButtonText = CoreTools.Translate("Cancel");
         d.DefaultButton = ContentDialogButton.Secondary;

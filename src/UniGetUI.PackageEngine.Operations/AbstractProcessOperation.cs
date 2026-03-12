@@ -15,7 +15,9 @@ public abstract class AbstractProcessOperation : AbstractOperation
     protected AbstractProcessOperation(
         bool queue_enabled,
         IReadOnlyList<InnerOperation>? preOps = null,
-        IReadOnlyList<InnerOperation>? postOps = null) : base(queue_enabled, preOps, postOps)
+        IReadOnlyList<InnerOperation>? postOps = null
+    )
+        : base(queue_enabled, preOps, postOps)
     {
         process = new();
         CancelRequested += (_, _) =>
@@ -27,7 +29,10 @@ public abstract class AbstractProcessOperation : AbstractOperation
             }
             catch (InvalidOperationException e)
             {
-                Line("Attempted to cancel a process that hasn't ben created yet: " + e.Message, LineType.Error);
+                Line(
+                    "Attempted to cancel a process that hasn't ben created yet: " + e.Message,
+                    LineType.Error
+                );
             }
         };
         OperationStarting += (_, _) =>
@@ -42,12 +47,15 @@ public abstract class AbstractProcessOperation : AbstractOperation
             process.StartInfo.StandardOutputEncoding = Encoding.UTF8;
             process.StartInfo.StandardErrorEncoding = Encoding.UTF8;
             process.StartInfo.StandardInputEncoding = Encoding.UTF8;
-            process.StartInfo.WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            process.StartInfo.WorkingDirectory = Environment.GetFolderPath(
+                Environment.SpecialFolder.UserProfile
+            );
             process.StartInfo.FileName = "lol";
             process.StartInfo.Arguments = "lol";
             process.ErrorDataReceived += (_, e) =>
             {
-                if (e.Data is null) return;
+                if (e.Data is null)
+                    return;
                 string line = e.Data.ToString().Trim();
                 var lineType = LineType.Error;
                 if (line.Length < 6 || line.Contains("Waiting for another install..."))
@@ -62,6 +70,7 @@ public abstract class AbstractProcessOperation : AbstractOperation
     }
 
     private bool _requiresUACCache;
+
     protected void RequestCachingOfUACPrompt()
     {
         _requiresUACCache = true;
@@ -76,12 +85,18 @@ public abstract class AbstractProcessOperation : AbstractOperation
 
     protected override async Task<OperationVeredict> PerformOperation()
     {
-        if (process.StartInfo.UseShellExecute) throw new InvalidOperationException("UseShellExecute must be set to false");
-        if (!process.StartInfo.RedirectStandardOutput) throw new InvalidOperationException("RedirectStandardOutput must be set to true");
-        if (!process.StartInfo.RedirectStandardInput) throw new InvalidOperationException("RedirectStandardInput must be set to true");
-        if (!process.StartInfo.RedirectStandardError) throw new InvalidOperationException("RedirectStandardError must be set to true");
-        if (process.StartInfo.FileName == "lol") throw new InvalidOperationException("StartInfo.FileName has not been set");
-        if (process.StartInfo.Arguments == "lol") throw new InvalidOperationException("StartInfo.Arguments has not been set");
+        if (process.StartInfo.UseShellExecute)
+            throw new InvalidOperationException("UseShellExecute must be set to false");
+        if (!process.StartInfo.RedirectStandardOutput)
+            throw new InvalidOperationException("RedirectStandardOutput must be set to true");
+        if (!process.StartInfo.RedirectStandardInput)
+            throw new InvalidOperationException("RedirectStandardInput must be set to true");
+        if (!process.StartInfo.RedirectStandardError)
+            throw new InvalidOperationException("RedirectStandardError must be set to true");
+        if (process.StartInfo.FileName == "lol")
+            throw new InvalidOperationException("StartInfo.FileName has not been set");
+        if (process.StartInfo.Arguments == "lol")
+            throw new InvalidOperationException("StartInfo.Arguments has not been set");
 
         Line($"Executing process with StartInfo:", LineType.VerboseDetails);
         Line($" - FileName: \"{process.StartInfo.FileName.Trim()}\"", LineType.VerboseDetails);
@@ -101,10 +116,16 @@ public abstract class AbstractProcessOperation : AbstractOperation
             process.StandardInput.Close();
         }
         // process.BeginOutputReadLine();
-        try { process.BeginErrorReadLine(); }
-        catch (Exception ex) { Logger.Error(ex); }
+        try
+        {
+            process.BeginErrorReadLine();
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+        }
 
-        StringBuilder currentLine= new();
+        StringBuilder currentLine = new();
         char[] buffer = new char[1];
         string? lastStringBeforeLF = null;
 
@@ -129,7 +150,8 @@ public abstract class AbstractProcessOperation : AbstractOperation
             }
             else if (c == '\r')
             {
-                if (currentLine.Length == 0) continue;
+                if (currentLine.Length == 0)
+                    continue;
                 lastStringBeforeLF = currentLine.ToString();
                 Line(lastStringBeforeLF, LineType.ProgressIndicator);
                 currentLine.Clear();
@@ -143,7 +165,10 @@ public abstract class AbstractProcessOperation : AbstractOperation
         await process.WaitForExitAsync();
 
         Line($"End Time: \"{DateTime.Now}\"", LineType.VerboseDetails);
-        Line($"Process return value: \"{process.ExitCode}\" (0x{process.ExitCode:X})", LineType.VerboseDetails);
+        Line(
+            $"Process return value: \"{process.ExitCode}\" (0x{process.ExitCode:X})",
+            LineType.VerboseDetails
+        );
 
         if (ProcessKilled)
             return OperationVeredict.Canceled;
@@ -151,13 +176,18 @@ public abstract class AbstractProcessOperation : AbstractOperation
         List<string> output = new();
         foreach (var line in GetOutput())
         {
-            if (line.Item2 is LineType.VerboseDetails && line.Item1 == "-----------------------") output.Clear();
-            if (line.Item2 is LineType.Error or LineType.Information) output.Add(line.Item1);
+            if (line.Item2 is LineType.VerboseDetails && line.Item1 == "-----------------------")
+                output.Clear();
+            if (line.Item2 is LineType.Error or LineType.Information)
+                output.Add(line.Item1);
         }
 
         return await GetProcessVeredict(process.ExitCode, output);
     }
 
-    protected abstract Task<OperationVeredict> GetProcessVeredict(int ReturnCode, List<string> Output);
+    protected abstract Task<OperationVeredict> GetProcessVeredict(
+        int ReturnCode,
+        List<string> Output
+    );
     protected abstract void PrepareProcessStartInfo();
 }

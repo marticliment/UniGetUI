@@ -36,7 +36,9 @@ namespace UniGetUI.Interface.Dialogs
         private readonly ObservableCollection<IOP_Proc> _runningProcesses = new();
         public ObservableCollection<IOP_Proc> SuggestedProcesses { get; set; } = new();
 
-        public InstallOptionsPage(IPackage package, InstallOptions options) : this(package, OperationType.None, options) { }
+        public InstallOptionsPage(IPackage package, InstallOptions options)
+            : this(package, OperationType.None, options) { }
+
         public InstallOptionsPage(IPackage package, OperationType operation, InstallOptions options)
         {
             Package = package;
@@ -44,31 +46,42 @@ namespace UniGetUI.Interface.Dialogs
             Operation = operation;
             Options = options;
 
-            KillProcessesThatWontDie.IsChecked = Settings.Get(Settings.K.KillProcessesThatRefuseToDie);
+            KillProcessesThatWontDie.IsChecked = Settings.Get(
+                Settings.K.KillProcessesThatRefuseToDie
+            );
 
             ProfileComboBox.Items.Add(CoreTools.Translate("Install"));
             ProfileComboBox.Items.Add(CoreTools.Translate("Update"));
             ProfileComboBox.Items.Add(CoreTools.Translate("Uninstall"));
-            ProfileComboBox.SelectedIndex = operation switch { OperationType.Update => 1, OperationType.Uninstall => 2, _ => 0 };
+            ProfileComboBox.SelectedIndex = operation switch
+            {
+                OperationType.Update => 1,
+                OperationType.Uninstall => 2,
+                _ => 0,
+            };
             ProfileComboBox.SelectionChanged += (_, _) =>
             {
-                EnableDisableControls(ProfileComboBox.SelectedIndex switch
-                {
-                    1 => OperationType.Update,
-                    2 => OperationType.Uninstall,
-                    _ => OperationType.Install,
-                });
+                EnableDisableControls(
+                    ProfileComboBox.SelectedIndex switch
+                    {
+                        1 => OperationType.Update,
+                        2 => OperationType.Uninstall,
+                        _ => OperationType.Install,
+                    }
+                );
             };
 
             FollowGlobalOptionsSwitch.IsOn = !options.OverridesNextLevelOpts;
             FollowGlobalOptionsSwitch.Toggled += (_, _) =>
             {
-                EnableDisableControls(ProfileComboBox.SelectedIndex switch
-                {
-                    1 => OperationType.Update,
-                    2 => OperationType.Uninstall,
-                    _ => OperationType.Install,
-                });
+                EnableDisableControls(
+                    ProfileComboBox.SelectedIndex switch
+                    {
+                        1 => OperationType.Update,
+                        2 => OperationType.Uninstall,
+                        _ => OperationType.Install,
+                    }
+                );
             };
 
             var iconSource = new BitmapImage()
@@ -76,8 +89,7 @@ namespace UniGetUI.Interface.Dialogs
                 UriSource = package.GetIconUrl(),
                 DecodePixelHeight = 32,
                 DecodePixelWidth = 32,
-                DecodePixelType =
-                DecodePixelType.Logical
+                DecodePixelType = DecodePixelType.Logical,
             };
 
             PackageIcon.Source = iconSource;
@@ -87,12 +99,21 @@ namespace UniGetUI.Interface.Dialogs
             }
             _ = LoadImage();
             DialogTitle.Text = CoreTools.Translate("{0} installation options", package.Name);
-            PlaceholderText.Text = CoreTools.Translate("{0} Install options are currently locked because {0} follows the default install options.", package.Name);
+            PlaceholderText.Text = CoreTools.Translate(
+                "{0} Install options are currently locked because {0} follows the default install options.",
+                package.Name
+            );
 
-            KillProcessesLabel.Text = CoreTools.Translate("Select the processes that should be closed before this package is installed, updated or uninstalled.");
-            KillProcessesBox.PlaceholderText = CoreTools.Translate("Write here the process names here, separated by commas (,)");
+            KillProcessesLabel.Text = CoreTools.Translate(
+                "Select the processes that should be closed before this package is installed, updated or uninstalled."
+            );
+            KillProcessesBox.PlaceholderText = CoreTools.Translate(
+                "Write here the process names here, separated by commas (,)"
+            );
 
-            packageInstallLocation = Package.Manager.DetailsHelper.GetInstallLocation(package) ?? CoreTools.Translate("Unset or unknown");
+            packageInstallLocation =
+                Package.Manager.DetailsHelper.GetInstallLocation(package)
+                ?? CoreTools.Translate("Unset or unknown");
 
             AdminCheckBox.IsChecked = Options.RunAsAdministrator;
             InteractiveCheckBox.IsChecked = Options.InteractiveInstallation;
@@ -116,13 +137,14 @@ namespace UniGetUI.Interface.Dialogs
 
             VersionComboBox.SelectionChanged += (_, _) =>
             {
-                IgnoreUpdatesCheckbox.IsChecked =
-                    !(new []
+                IgnoreUpdatesCheckbox.IsChecked = !(
+                    new[]
                     {
                         CoreTools.Translate("Latest"),
                         CoreTools.Translate("PreRelease"),
-                        ""
-                    }.Contains(VersionComboBox.SelectedValue.ToString()));
+                        "",
+                    }.Contains(VersionComboBox.SelectedValue.ToString())
+                );
             };
             AutoUpdatePackageCheckbox.IsChecked = Options.AutoUpdatePackage;
 
@@ -152,26 +174,32 @@ namespace UniGetUI.Interface.Dialogs
             ScopeCombo.SelectedIndex = 0;
             if (package.Manager.Capabilities.SupportsCustomScopes)
             {
-                ScopeCombo.Items.Add(CoreTools.Translate(CommonTranslations.ScopeNames[PackageScope.Local]));
+                ScopeCombo.Items.Add(
+                    CoreTools.Translate(CommonTranslations.ScopeNames[PackageScope.Local])
+                );
                 if (Options.InstallationScope == PackageScope.Local)
                 {
                     ScopeCombo.SelectedValue = CommonTranslations.ScopeNames[PackageScope.Local];
                 }
 
-                ScopeCombo.Items.Add(CoreTools.Translate(CommonTranslations.ScopeNames[PackageScope.Global]));
+                ScopeCombo.Items.Add(
+                    CoreTools.Translate(CommonTranslations.ScopeNames[PackageScope.Global])
+                );
                 if (Options.InstallationScope == PackageScope.Global)
                 {
                     ScopeCombo.SelectedValue = CommonTranslations.ScopeNames[PackageScope.Global];
                 }
             }
 
-            foreach(var p in Options.KillBeforeOperation)
+            foreach (var p in Options.KillBeforeOperation)
             {
                 ProcessesToKill.Add(new(p));
             }
 
-            if (Options.CustomInstallLocation == "") CustomInstallLocation.Text = packageInstallLocation;
-            else CustomInstallLocation.Text = Options.CustomInstallLocation;
+            if (Options.CustomInstallLocation == "")
+                CustomInstallLocation.Text = packageInstallLocation;
+            else
+                CustomInstallLocation.Text = Options.CustomInstallLocation;
 
             CustomParameters1.Text = string.Join(' ', Options.CustomParameters_Install);
             CustomParameters2.Text = string.Join(' ', Options.CustomParameters_Update);
@@ -196,17 +224,20 @@ namespace UniGetUI.Interface.Dialogs
         private async Task _loadProcesses()
         {
             var processNames = await Task.Run(() =>
-                Process.GetProcesses().Select(p => p.ProcessName).Distinct().ToList());
+                Process.GetProcesses().Select(p => p.ProcessName).Distinct().ToList()
+            );
 
             _runningProcesses.Clear();
             foreach (var name in processNames)
             {
-                if(name.Any()) _runningProcesses.Add(new(name + ".exe"));
+                if (name.Any())
+                    _runningProcesses.Add(new(name + ".exe"));
             }
         }
+
         private void EnableDisableControls(OperationType operation)
         {
-            if(FollowGlobalOptionsSwitch.IsOn)
+            if (FollowGlobalOptionsSwitch.IsOn)
             {
                 OptionsPanel0.Opacity = 0.3;
                 SettingsSwitchPresenter.Opacity = 0.3;
@@ -228,8 +259,16 @@ namespace UniGetUI.Interface.Dialogs
                     operation is not OperationType.Uninstall
                     && Package.Manager.Capabilities.CanSkipIntegrityChecks;
 
-                UninstallPreviousOnUpdate.IsEnabled = Package.Manager.Capabilities.CanUninstallPreviousVersionsAfterUpdate;
-                UninstallPreviousOnUpdate.Visibility = Package.Manager.Capabilities.CanUninstallPreviousVersionsAfterUpdate? Visibility.Visible: Visibility.Collapsed;
+                UninstallPreviousOnUpdate.IsEnabled = Package
+                    .Manager
+                    .Capabilities
+                    .CanUninstallPreviousVersionsAfterUpdate;
+                UninstallPreviousOnUpdate.Visibility = Package
+                    .Manager
+                    .Capabilities
+                    .CanUninstallPreviousVersionsAfterUpdate
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
 
                 ArchitectureComboBox.IsEnabled =
                     operation is not OperationType.Uninstall
@@ -237,7 +276,10 @@ namespace UniGetUI.Interface.Dialogs
 
                 VersionComboBox.IsEnabled =
                     operation is OperationType.Install or OperationType.None
-                    && (Package.Manager.Capabilities.SupportsCustomVersions || Package.Manager.Capabilities.SupportsPreRelease);
+                    && (
+                        Package.Manager.Capabilities.SupportsCustomVersions
+                        || Package.Manager.Capabilities.SupportsPreRelease
+                    );
                 ScopeCombo.IsEnabled = Package.Manager.Capabilities.SupportsCustomScopes;
                 ResetDir.IsEnabled = Package.Manager.Capabilities.SupportsCustomLocations;
                 SelectDir.IsEnabled = Package.Manager.Capabilities.SupportsCustomLocations;
@@ -270,8 +312,12 @@ namespace UniGetUI.Interface.Dialogs
             PeUniLabel.Opacity = IsPrePostOpEnabled ? 1 : 0.5;
             PoUniLabel.Opacity = IsPrePostOpEnabled ? 1 : 0.5;
             CustomCommandsHeaderExplainer.Opacity = IsPrePostOpEnabled ? 1 : 0.5;
-            GoToPrePostSettings.Visibility = IsPrePostOpEnabled ? Visibility.Collapsed : Visibility.Visible;
-            PrePostDisabled.Visibility = IsPrePostOpEnabled ? Visibility.Collapsed : Visibility.Visible;
+            GoToPrePostSettings.Visibility = IsPrePostOpEnabled
+                ? Visibility.Collapsed
+                : Visibility.Visible;
+            PrePostDisabled.Visibility = IsPrePostOpEnabled
+                ? Visibility.Collapsed
+                : Visibility.Visible;
 
             _ = GenerateCommand();
         }
@@ -285,7 +331,9 @@ namespace UniGetUI.Interface.Dialogs
         {
             VersionComboBox.IsEnabled = false;
 
-            IReadOnlyList<string> versions = await Task.Run(() => Package.Manager.DetailsHelper.GetVersions(Package));
+            IReadOnlyList<string> versions = await Task.Run(() =>
+                Package.Manager.DetailsHelper.GetVersions(Package)
+            );
             foreach (string ver in versions)
             {
                 VersionComboBox.Items.Add(ver);
@@ -296,8 +344,12 @@ namespace UniGetUI.Interface.Dialogs
             }
             IgnoreUpdatesCheckbox.IsChecked = await Package.HasUpdatesIgnoredAsync();
 
-            VersionComboBox.IsEnabled = Operation is OperationType.Install or OperationType.None
-                                        && (Package.Manager.Capabilities.SupportsCustomVersions || Package.Manager.Capabilities.SupportsPreRelease);
+            VersionComboBox.IsEnabled =
+                Operation is OperationType.Install or OperationType.None
+                && (
+                    Package.Manager.Capabilities.SupportsCustomVersions
+                    || Package.Manager.Capabilities.SupportsPreRelease
+                );
             VersionProgress.Visibility = Visibility.Collapsed;
         }
 
@@ -307,7 +359,8 @@ namespace UniGetUI.Interface.Dialogs
             options.RunAsAdministrator = AdminCheckBox?.IsChecked ?? false;
             options.InteractiveInstallation = InteractiveCheckBox?.IsChecked ?? false;
             options.SkipHashCheck = HashCheckbox?.IsChecked ?? false;
-            options.UninstallPreviousVersionsOnUpdate = UninstallPreviousOnUpdate?.IsChecked ?? false;
+            options.UninstallPreviousVersionsOnUpdate =
+                UninstallPreviousOnUpdate?.IsChecked ?? false;
             options.OverridesNextLevelOpts = !FollowGlobalOptionsSwitch.IsOn;
             options.AutoUpdatePackage = AutoUpdatePackageCheckbox.IsChecked ?? false;
 
@@ -325,13 +378,16 @@ namespace UniGetUI.Interface.Dialogs
                 options.InstallationScope = value;
             }
 
-            if (CustomInstallLocation.Text == packageInstallLocation) options.CustomInstallLocation = "";
-            else options.CustomInstallLocation = CustomInstallLocation.Text;
+            if (CustomInstallLocation.Text == packageInstallLocation)
+                options.CustomInstallLocation = "";
+            else
+                options.CustomInstallLocation = CustomInstallLocation.Text;
 
             options.CustomParameters_Install = CustomParameters1.Text.Split(' ').ToList();
             options.CustomParameters_Update = CustomParameters2.Text.Split(' ').ToList();
             options.CustomParameters_Uninstall = CustomParameters3.Text.Split(' ').ToList();
-            options.PreRelease = VersionComboBox.SelectedValue.ToString() == CoreTools.Translate("PreRelease");
+            options.PreRelease =
+                VersionComboBox.SelectedValue.ToString() == CoreTools.Translate("PreRelease");
 
             options.PreInstallCommand = PreInstallCommandBox.Text;
             options.PostInstallCommand = PostInstallCommandBox.Text;
@@ -344,9 +400,13 @@ namespace UniGetUI.Interface.Dialogs
             options.AbortOnPreUninstallFail = AbortUniFailedCheck.IsChecked ?? true;
 
             options.KillBeforeOperation.Clear();
-            foreach(var p in ProcessesToKill) options.KillBeforeOperation.Add(p.Name);
+            foreach (var p in ProcessesToKill)
+                options.KillBeforeOperation.Add(p.Name);
 
-            if (VersionComboBox.SelectedValue.ToString() != CoreTools.Translate("PreRelease") && VersionComboBox.SelectedValue.ToString() != CoreTools.Translate("Latest"))
+            if (
+                VersionComboBox.SelectedValue.ToString() != CoreTools.Translate("PreRelease")
+                && VersionComboBox.SelectedValue.ToString() != CoreTools.Translate("Latest")
+            )
             {
                 options.Version = VersionComboBox.SelectedValue.ToString() ?? "";
             }
@@ -358,7 +418,10 @@ namespace UniGetUI.Interface.Dialogs
 
             if (updateDetachedOptions)
             {
-                Settings.Set(Settings.K.KillProcessesThatRefuseToDie, KillProcessesThatWontDie.IsChecked ?? false);
+                Settings.Set(
+                    Settings.K.KillProcessesThatRefuseToDie,
+                    KillProcessesThatWontDie.IsChecked ?? false
+                );
 
                 if (IgnoreUpdatesCheckbox?.IsChecked ?? false)
                 {
@@ -377,7 +440,9 @@ namespace UniGetUI.Interface.Dialogs
 
         private void SelectDir_Click(object sender, RoutedEventArgs e)
         {
-            ExternalLibraries.Pickers.FolderPicker openPicker = new(MainApp.Instance.MainWindow.GetWindowHandle());
+            ExternalLibraries.Pickers.FolderPicker openPicker = new(
+                MainApp.Instance.MainWindow.GetWindowHandle()
+            );
             string folder = openPicker.Show();
             if (folder != string.Empty)
             {
@@ -397,19 +462,36 @@ namespace UniGetUI.Interface.Dialogs
             Close?.Invoke(this, EventArgs.Empty);
         }
 
-        private void CustomParameters_TextChanged(object sender, TextChangedEventArgs e) => _ = GenerateCommand();
-        private void ScopeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e) => _ = GenerateCommand();
-        private void VersionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e) => _ = GenerateCommand();
+        private void CustomParameters_TextChanged(object sender, TextChangedEventArgs e) =>
+            _ = GenerateCommand();
+
+        private void ScopeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e) =>
+            _ = GenerateCommand();
+
+        private void VersionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e) =>
+            _ = GenerateCommand();
+
         private void AdminCheckBox_Click(object sender, RoutedEventArgs e) => _ = GenerateCommand();
-        private void InteractiveCheckBox_Click(object sender, RoutedEventArgs e) => _ = GenerateCommand();
+
+        private void InteractiveCheckBox_Click(object sender, RoutedEventArgs e) =>
+            _ = GenerateCommand();
+
         private void HashCheckbox_Click(object sender, RoutedEventArgs e) => _ = GenerateCommand();
-        private void ArchitectureComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e) => _ = GenerateCommand();
+
+        private void ArchitectureComboBox_SelectionChanged(
+            object sender,
+            SelectionChangedEventArgs e
+        ) => _ = GenerateCommand();
 
         private async Task GenerateCommand()
         {
-            if (!UiLoaded) return;
+            if (!UiLoaded)
+                return;
             InstallOptions options = await GetUpdatedOptions(updateDetachedOptions: false);
-            options = await InstallOptionsFactory.LoadApplicableAsync(this.Package, overridePackageOptions: options);
+            options = await InstallOptionsFactory.LoadApplicableAsync(
+                this.Package,
+                overridePackageOptions: options
+            );
 
             var op = ProfileComboBox.SelectedIndex switch
             {
@@ -417,13 +499,19 @@ namespace UniGetUI.Interface.Dialogs
                 2 => OperationType.Uninstall,
                 _ => OperationType.Install,
             };
-            var commandline = await Task.Run(() => Package.Manager.OperationHelper.GetParameters(Package, options, op));
-            CommandBox.Text = Package.Manager.Properties.ExecutableFriendlyName + " " + string.Join(" ", commandline);
+            var commandline = await Task.Run(() =>
+                Package.Manager.OperationHelper.GetParameters(Package, options, op)
+            );
+            CommandBox.Text =
+                Package.Manager.Properties.ExecutableFriendlyName
+                + " "
+                + string.Join(" ", commandline);
         }
 
         private void LayoutGrid_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if(LayoutGrid.ActualSize.Y > 1 && LayoutGrid.ActualSize.Y < double.PositiveInfinity) MaxHeight = LayoutGrid.ActualSize.Y;
+            if (LayoutGrid.ActualSize.Y > 1 && LayoutGrid.ActualSize.Y < double.PositiveInfinity)
+                MaxHeight = LayoutGrid.ActualSize.Y;
         }
 
         private void UnlockSettingsButton_Click(object sender, RoutedEventArgs e)
@@ -443,18 +531,28 @@ namespace UniGetUI.Interface.Dialogs
             MainApp.Instance.MainWindow.NavigationPage.OpenSettingsPage(typeof(Administrator));
         }
 
-        private void KillProcessesBox_TokenItemAdding(TokenizingTextBox sender, TokenItemAddingEventArgs args)
+        private void KillProcessesBox_TokenItemAdding(
+            TokenizingTextBox sender,
+            TokenItemAddingEventArgs args
+        )
         {
-            args.Item = _runningProcesses.FirstOrDefault((item) => item.Name.Contains(args.TokenText));
-            if(args.Item is null)
+            args.Item = _runningProcesses.FirstOrDefault(
+                (item) => item.Name.Contains(args.TokenText)
+            );
+            if (args.Item is null)
             {
                 string text = args.TokenText;
-                if (!text.EndsWith(".exe")) text += ".exe";
+                if (!text.EndsWith(".exe"))
+                    text += ".exe";
                 args.Item = new IOP_Proc(text);
             }
         }
 
-        private void KillProcessesBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args) => _ = _killProcessesBox_TextChanged();
+        private void KillProcessesBox_TextChanged(
+            AutoSuggestBox sender,
+            AutoSuggestBoxTextChangedEventArgs args
+        ) => _ = _killProcessesBox_TextChanged();
+
         private async Task _killProcessesBox_TextChanged()
         {
             var text = KillProcessesBox.Text;
@@ -468,7 +566,9 @@ namespace UniGetUI.Interface.Dialogs
                 if (!text.EndsWith(".exe"))
                     text = text.Trim() + ".exe";
                 SuggestedProcesses.Add(new(text));
-                foreach (var item in _runningProcesses.Where(x => x.Name.Contains(KillProcessesBox.Text)))
+                foreach (
+                    var item in _runningProcesses.Where(x => x.Name.Contains(KillProcessesBox.Text))
+                )
                 {
                     SuggestedProcesses.Add(item);
                 }
@@ -477,7 +577,8 @@ namespace UniGetUI.Interface.Dialogs
 
         private void SettingsTabBar_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            CommandLineViewBox.Visibility = SettingsTabBar.SelectedIndex < 3 ? Visibility.Visible : Visibility.Collapsed;
+            CommandLineViewBox.Visibility =
+                SettingsTabBar.SelectedIndex < 3 ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public void HideCloseButton()
@@ -495,6 +596,7 @@ namespace UniGetUI.Interface.Dialogs
     public class IOP_Proc
     {
         public readonly string Name;
+
         public IOP_Proc(string name)
         {
             Name = name;

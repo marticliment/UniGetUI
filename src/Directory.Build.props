@@ -17,9 +17,16 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <BuildSharedWindowsTargetFrameworks Condition="$([MSBuild]::IsOSPlatform('Windows')) == 'true' or '$(EnableWindowsTargeting)' == 'true'">true</BuildSharedWindowsTargetFrameworks>
-        <SharedTargetFrameworks Condition="'$(BuildSharedWindowsTargetFrameworks)' == 'true'">$(PortableTargetFramework);$(WindowsTargetFramework)</SharedTargetFrameworks>
-        <SharedTargetFrameworks Condition="'$(SharedTargetFrameworks)' == ''">$(PortableTargetFramework)</SharedTargetFrameworks>
+        <BuildSharedWindowsTargetFrameworks
+            Condition="$([MSBuild]::IsOSPlatform('Windows')) == 'true' or '$(EnableWindowsTargeting)' == 'true'"
+            >true</BuildSharedWindowsTargetFrameworks
+        >
+        <SharedTargetFrameworks Condition="'$(BuildSharedWindowsTargetFrameworks)' == 'true'"
+            >$(PortableTargetFramework);$(WindowsTargetFramework)</SharedTargetFrameworks
+        >
+        <SharedTargetFrameworks Condition="'$(SharedTargetFrameworks)' == ''"
+            >$(PortableTargetFramework)</SharedTargetFrameworks
+        >
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(TargetFramework)' == '' and '$(TargetFrameworks)' == ''">
@@ -31,7 +38,10 @@
         <WindowsSdkPackageVersion>10.0.26100.56</WindowsSdkPackageVersion>
         <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
         <RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
-        <RuntimeIdentifier Condition="'$(Platform)' != '' and '$(Platform)' != 'AnyCPU' and '$(Platform)' != 'Any CPU'">win-$(Platform)</RuntimeIdentifier>
+        <RuntimeIdentifier
+            Condition="'$(Platform)' != '' and '$(Platform)' != 'AnyCPU' and '$(Platform)' != 'Any CPU'"
+            >win-$(Platform)</RuntimeIdentifier
+        >
     </PropertyGroup>
 
     <PropertyGroup>

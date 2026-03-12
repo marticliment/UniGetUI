@@ -1,6 +1,7 @@
 using UniGetUI.Interface.Enums;
 
 namespace UniGetUI.Controls.OperationWidgets;
+
 public class OperationBadge
 {
     public string Tooltip;
@@ -9,7 +10,12 @@ public class OperationBadge
     public bool SecondaryBannerVisible;
     public IconType Icon;
 
-    public OperationBadge(string tooltip, IconType icon, string primaryBanner, string? secondaryBanner = null)
+    public OperationBadge(
+        string tooltip,
+        IconType icon,
+        string primaryBanner,
+        string? secondaryBanner = null
+    )
     {
         Tooltip = tooltip;
         Icon = icon;

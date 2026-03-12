@@ -9,7 +9,10 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
         private readonly IPackageManager Manager;
 
         private readonly List<TaskLogger> operations = [];
-        public IReadOnlyList<ITaskLogger> Operations { get => (IReadOnlyList<ITaskLogger>)operations; }
+        public IReadOnlyList<ITaskLogger> Operations
+        {
+            get => (IReadOnlyList<ITaskLogger>)operations;
+        }
 
         public ManagerLogger(IPackageManager manager)
         {
@@ -20,10 +23,17 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
         {
             if (process.StartInfo is null)
             {
-                throw new InvalidOperationException("Given process instance did not have a valid StartInfo value");
+                throw new InvalidOperationException(
+                    "Given process instance did not have a valid StartInfo value"
+                );
             }
 
-            ProcessTaskLogger operation = new(Manager, type, process.StartInfo.FileName, process.StartInfo.Arguments);
+            ProcessTaskLogger operation = new(
+                Manager,
+                type,
+                process.StartInfo.FileName,
+                process.StartInfo.Arguments
+            );
             operations.Add(operation);
             return operation;
         }
@@ -96,7 +106,12 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
         private readonly List<string> StdOut = [];
         private readonly List<string> StdErr = [];
 
-        public ProcessTaskLogger(IPackageManager manager, LoggableTaskType type, string executable, string arguments)
+        public ProcessTaskLogger(
+            IPackageManager manager,
+            LoggableTaskType type,
+            string executable,
+            string arguments
+        )
         {
             Type = type;
             Manager = manager;
@@ -116,7 +131,9 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
         {
             if (!isOpen)
             {
-                throw new InvalidOperationException("Attempted to write log into an already-closed ProcessTaskLogger");
+                throw new InvalidOperationException(
+                    "Attempted to write log into an already-closed ProcessTaskLogger"
+                );
             }
 
             foreach (string line in lines)
@@ -140,7 +157,9 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
         {
             if (!isOpen)
             {
-                throw new InvalidOperationException("Attempted to write log into an already-closed ProcessTaskLogger");
+                throw new InvalidOperationException(
+                    "Attempted to write log into an already-closed ProcessTaskLogger"
+                );
             }
 
             foreach (string line in lines)
@@ -164,7 +183,9 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
         {
             if (!isOpen)
             {
-                throw new InvalidOperationException("Attempted to write log into an already-closed ProcessTaskLogger");
+                throw new InvalidOperationException(
+                    "Attempted to write log into an already-closed ProcessTaskLogger"
+                );
             }
 
             foreach (string line in lines)
@@ -194,7 +215,9 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
                 $"0Subprocess executable: \"{Executable}\"",
                 $"0Command-line arguments: \"{Arguments}\"",
                 $"0Process start time: {StartTime}",
-                EndTime is null ? "2Process end time:   UNFINISHED" : $"0Process end time:   {EndTime}",
+                EndTime is null
+                    ? "2Process end time:   UNFINISHED"
+                    : $"0Process end time:   {EndTime}",
             ];
 
             if (StdIn.Count > 0)
@@ -253,7 +276,9 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
             }
             else
             {
-                result.Add($"2Return code: FAILED (0x{(uint)ReturnCode:X}, {(uint)ReturnCode}, {ReturnCode})");
+                result.Add(
+                    $"2Return code: FAILED (0x{(uint)ReturnCode:X}, {(uint)ReturnCode}, {ReturnCode})"
+                );
             }
 
             result.Add("0");
@@ -287,7 +312,9 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
         {
             if (!isOpen)
             {
-                throw new InvalidOperationException("Attempted to write log into an already-closed NativeTaskLogger");
+                throw new InvalidOperationException(
+                    "Attempted to write log into an already-closed NativeTaskLogger"
+                );
             }
 
             foreach (string line in lines)
@@ -311,7 +338,9 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
         {
             if (!isOpen)
             {
-                throw new InvalidOperationException("Attempted to write log into an already-closed NativeTaskLogger");
+                throw new InvalidOperationException(
+                    "Attempted to write log into an already-closed NativeTaskLogger"
+                );
             }
 
             foreach (string line in lines)
@@ -355,7 +384,9 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
             [
                 $"0Logged native task on manager {Manager.Name}. Task type is {Type}",
                 $"0Process start time: {StartTime}",
-                EndTime is null ? "2Process end time:   UNFINISHED" : $"0Process end time:   {EndTime}",
+                EndTime is null
+                    ? "2Process end time:   UNFINISHED"
+                    : $"0Process end time:   {EndTime}",
             ];
 
             if (Info.Count > 0)
@@ -398,7 +429,9 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
             }
             else
             {
-                result.Add($"2The task reported a failure (0x{(uint)ReturnCode:X}, {(uint)ReturnCode}, {ReturnCode})");
+                result.Add(
+                    $"2The task reported a failure (0x{(uint)ReturnCode:X}, {(uint)ReturnCode}, {ReturnCode})"
+                );
             }
 
             result.Add("0");

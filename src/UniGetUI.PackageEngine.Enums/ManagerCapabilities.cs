@@ -12,8 +12,8 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         public bool KnowsUpdateDate { get; set; } = false;
         public bool KnowsPackageCount { get; set; } = false;
         public bool MustBeInstalledAsAdmin { get; set; } = false;
-        public SourceCapabilities()
-        { }
+
+        public SourceCapabilities() { }
     }
 
     public struct ManagerCapabilities
@@ -38,6 +38,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         public ProxySupport SupportsProxy = ProxySupport.No;
         public bool SupportsProxyAuth = false;
         public SourceCapabilities Sources { get; set; }
+
         public ManagerCapabilities()
         {
             Sources = new SourceCapabilities();

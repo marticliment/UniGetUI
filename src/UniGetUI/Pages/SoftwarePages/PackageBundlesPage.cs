@@ -2,7 +2,6 @@ using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Xml.Serialization;
-using Windows.UI.Text;
 using ExternalLibraries.Pickers;
 using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
@@ -24,6 +23,7 @@ using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.PackageLoader;
 using UniGetUI.Pages.DialogPages;
+using Windows.UI.Text;
 
 namespace UniGetUI.Interface.SoftwarePages
 {
@@ -52,29 +52,37 @@ namespace UniGetUI.Interface.SoftwarePages
         }
 
         public PackageBundlesPage()
-        : base(new PackagesPageData
-        {
-            DisableAutomaticPackageLoadOnStart = true,
-            DisableFilterOnQueryChange = false,
-            MegaQueryBlockEnabled = false,
-            ShowLastLoadTime = false,
-            DisableReload = true,
-            PackagesAreCheckedByDefault = false,
-            DisableSuggestedResultsRadio = true,
-            PageName = "Bundles",
+            : base(
+                new PackagesPageData
+                {
+                    DisableAutomaticPackageLoadOnStart = true,
+                    DisableFilterOnQueryChange = false,
+                    MegaQueryBlockEnabled = false,
+                    ShowLastLoadTime = false,
+                    DisableReload = true,
+                    PackagesAreCheckedByDefault = false,
+                    DisableSuggestedResultsRadio = true,
+                    PageName = "Bundles",
 
-            Loader = PackageBundlesLoader.Instance,
-            PageRole = OperationType.Install,
+                    Loader = PackageBundlesLoader.Instance,
+                    PageRole = OperationType.Install,
 
-            NoPackages_BackgroundText = CoreTools.Translate("Add packages or open an existing package bundle"),
-            NoPackages_SourcesText = CoreTools.Translate("Add packages to start"),
-            NoPackages_SubtitleText_Base = CoreTools.Translate("The current bundle has no packages. Add some packages to get started"),
-            MainSubtitle_StillLoading = CoreTools.Translate("Loading packages"),
-            NoMatches_BackgroundText = CoreTools.Translate("No results were found matching the input criteria"),
+                    NoPackages_BackgroundText = CoreTools.Translate(
+                        "Add packages or open an existing package bundle"
+                    ),
+                    NoPackages_SourcesText = CoreTools.Translate("Add packages to start"),
+                    NoPackages_SubtitleText_Base = CoreTools.Translate(
+                        "The current bundle has no packages. Add some packages to get started"
+                    ),
+                    MainSubtitle_StillLoading = CoreTools.Translate("Loading packages"),
+                    NoMatches_BackgroundText = CoreTools.Translate(
+                        "No results were found matching the input criteria"
+                    ),
 
-            PageTitle = CoreTools.Translate("Package Bundles"),
-            Glyph = "\uF133"
-        })
+                    PageTitle = CoreTools.Translate("Package Bundles"),
+                    Glyph = "\uF133",
+                }
+            )
         {
             Loader.PackagesChanged += (_, _) =>
             {
@@ -89,7 +97,7 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 Text = CoreTools.AutoTranslated("Install"),
                 IconName = IconType.Download,
-                KeyboardAcceleratorTextOverride = "Ctrl+Enter"
+                KeyboardAcceleratorTextOverride = "Ctrl+Enter",
             };
             MenuInstall.Click += MenuInstall_Invoked;
             menu.Items.Add(MenuInstall);
@@ -100,7 +108,7 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 Text = CoreTools.AutoTranslated("Install options"),
                 IconName = IconType.Options,
-                KeyboardAcceleratorTextOverride = "Alt+Enter"
+                KeyboardAcceleratorTextOverride = "Alt+Enter",
             };
             MenuInstallOptions.Click += MenuInstallSettings_Invoked;
             menu.Items.Add(MenuInstallOptions);
@@ -110,7 +118,7 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuAsAdmin = new BetterMenuItem
             {
                 Text = CoreTools.AutoTranslated("Install as administrator"),
-                IconName = IconType.UAC
+                IconName = IconType.UAC,
             };
             MenuAsAdmin.Click += MenuAsAdmin_Invoked;
             menu.Items.Add(MenuAsAdmin);
@@ -118,7 +126,7 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuInteractive = new BetterMenuItem
             {
                 Text = CoreTools.AutoTranslated("Interactive installation"),
-                IconName = IconType.Interactive
+                IconName = IconType.Interactive,
             };
             MenuInteractive.Click += MenuInteractive_Invoked;
             menu.Items.Add(MenuInteractive);
@@ -126,7 +134,7 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuSkipHash = new BetterMenuItem
             {
                 Text = CoreTools.AutoTranslated("Skip hash checks"),
-                IconName = IconType.Checksum
+                IconName = IconType.Checksum,
             };
             MenuSkipHash.Click += MenuSkipHash_Invoked;
             menu.Items.Add(MenuSkipHash);
@@ -134,9 +142,13 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuDownloadInstaller = new BetterMenuItem
             {
                 Text = CoreTools.AutoTranslated("Download installer"),
-                IconName = IconType.Download
+                IconName = IconType.Download,
             };
-            MenuDownloadInstaller.Click += (_, _) => _ = MainApp.Operations.AskLocationAndDownload(SelectedItem, TEL_InstallReferral.FROM_BUNDLE);
+            MenuDownloadInstaller.Click += (_, _) =>
+                _ = MainApp.Operations.AskLocationAndDownload(
+                    SelectedItem,
+                    TEL_InstallReferral.FROM_BUNDLE
+                );
             menu.Items.Add(MenuDownloadInstaller);
 
             menu.Items.Add(new MenuFlyoutSeparator());
@@ -144,7 +156,7 @@ namespace UniGetUI.Interface.SoftwarePages
             BetterMenuItem menuRemoveFromList = new()
             {
                 Text = CoreTools.AutoTranslated("Remove from list"),
-                IconName = IconType.Delete
+                IconName = IconType.Delete,
             };
             menuRemoveFromList.Click += MenuRemoveFromList_Invoked;
             menu.Items.Add(menuRemoveFromList);
@@ -153,7 +165,7 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuShare = new()
             {
                 Text = CoreTools.AutoTranslated("Share this package"),
-                IconName = IconType.Share
+                IconName = IconType.Share,
             };
             MenuShare.Click += MenuShare_Invoked;
             menu.Items.Add(MenuShare);
@@ -162,7 +174,7 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 Text = CoreTools.AutoTranslated("Package details"),
                 IconName = IconType.Info_Round,
-                KeyboardAcceleratorTextOverride = "Enter"
+                KeyboardAcceleratorTextOverride = "Enter",
             };
             MenuDetails.Click += MenuDetails_Invoked;
             menu.Items.Add(MenuDetails);
@@ -190,7 +202,7 @@ namespace UniGetUI.Interface.SoftwarePages
                     new MenuFlyoutSeparator(),
                     DownloadInstallers,
                 },
-                Placement = FlyoutPlacementMode.Bottom
+                Placement = FlyoutPlacementMode.Bottom,
             };
             MainToolbarButtonIcon.Icon = IconType.Download;
             MainToolbarButtonText.Text = CoreTools.Translate("Install selection");
@@ -220,37 +232,37 @@ namespace UniGetUI.Interface.SoftwarePages
 
             Dictionary<DependencyObject, string> Labels = new()
             { // Entries with a trailing space are collapsed
-              // Their texts will be used as the tooltip
-                { NewBundle,           CoreTools.Translate("New") },
-                { InstallAsAdmin,      CoreTools.Translate("Install as administrator") },
-                { InstallInteractive,  CoreTools.Translate("Interactive installation") },
-                { InstallSkipHash,     CoreTools.Translate("Skip integrity checks") },
-                { DownloadInstallers,  CoreTools.Translate("Download selected installers") },
-                { OpenBundle,          CoreTools.Translate("Open") },
-                { ToBatchScript,       CoreTools.Translate("Create .ps1 script")},
-                { RemoveSelected,      CoreTools.Translate("Remove selection from bundle") },
-                { SaveBundle,          CoreTools.Translate("Save as") },
+                // Their texts will be used as the tooltip
+                { NewBundle, CoreTools.Translate("New") },
+                { InstallAsAdmin, CoreTools.Translate("Install as administrator") },
+                { InstallInteractive, CoreTools.Translate("Interactive installation") },
+                { InstallSkipHash, CoreTools.Translate("Skip integrity checks") },
+                { DownloadInstallers, CoreTools.Translate("Download selected installers") },
+                { OpenBundle, CoreTools.Translate("Open") },
+                { ToBatchScript, CoreTools.Translate("Create .ps1 script") },
+                { RemoveSelected, CoreTools.Translate("Remove selection from bundle") },
+                { SaveBundle, CoreTools.Translate("Save as") },
                 { AddPackagesToBundle, CoreTools.Translate("Add packages to bundle") },
-                { PackageDetails,      " " + CoreTools.Translate("Package details") },
-                { SharePackage,        " " + CoreTools.Translate("Share") },
-                { HelpButton,          CoreTools.Translate("Help") }
+                { PackageDetails, " " + CoreTools.Translate("Package details") },
+                { SharePackage, " " + CoreTools.Translate("Share") },
+                { HelpButton, CoreTools.Translate("Help") },
             };
 
             Dictionary<DependencyObject, IconType> Icons = new()
             {
-                { NewBundle,           IconType.AddTo },
-                { InstallAsAdmin,      IconType.UAC },
-                { InstallInteractive,  IconType.Interactive },
-                { InstallSkipHash,     IconType.Checksum },
-                { DownloadInstallers,  IconType.Download },
-                { OpenBundle,          IconType.OpenFolder },
-                { ToBatchScript,       IconType.Console},
-                { RemoveSelected,      IconType.Delete},
-                { SaveBundle,          IconType.SaveAs },
+                { NewBundle, IconType.AddTo },
+                { InstallAsAdmin, IconType.UAC },
+                { InstallInteractive, IconType.Interactive },
+                { InstallSkipHash, IconType.Checksum },
+                { DownloadInstallers, IconType.Download },
+                { OpenBundle, IconType.OpenFolder },
+                { ToBatchScript, IconType.Console },
+                { RemoveSelected, IconType.Delete },
+                { SaveBundle, IconType.SaveAs },
                 { AddPackagesToBundle, IconType.AddTo },
-                { PackageDetails,      IconType.Info_Round },
-                { SharePackage,        IconType.Share },
-                { HelpButton,          IconType.Help }
+                { PackageDetails, IconType.Info_Round },
+                { SharePackage, IconType.Share },
+                { HelpButton, IconType.Help },
             };
 
             ApplyTextAndIconsToToolbar(Labels, Icons);
@@ -264,15 +276,25 @@ namespace UniGetUI.Interface.SoftwarePages
                 {
                     DialogHelper.ShowDismissableBalloon(
                         CoreTools.Translate("Something went wrong"),
-                        CoreTools.Translate("\"{0}\" is a local package and can't be shared", SelectedItem.Name)
+                        CoreTools.Translate(
+                            "\"{0}\" is a local package and can't be shared",
+                            SelectedItem.Name
+                        )
                     );
                     return;
                 }
 
-                _ = DialogHelper.ShowPackageDetails(SelectedItem, OperationType.None, TEL_InstallReferral.FROM_BUNDLE);
+                _ = DialogHelper.ShowPackageDetails(
+                    SelectedItem,
+                    OperationType.None,
+                    TEL_InstallReferral.FROM_BUNDLE
+                );
             };
 
-            HelpButton.Click += (_, _) => { MainApp.Instance.MainWindow.NavigationPage.ShowHelp(); };
+            HelpButton.Click += (_, _) =>
+            {
+                MainApp.Instance.MainWindow.NavigationPage.ShowHelp();
+            };
             NewBundle.Click += async (s, e) => await AskForNewBundle();
 
             RemoveSelected.Click += (_, _) =>
@@ -283,17 +305,28 @@ namespace UniGetUI.Interface.SoftwarePages
 
             IReadOnlyList<IPackage> GetCheckedNonInstalledPackages()
             {
-                if(Settings.Get(Settings.K.InstallInstalledPackagesBundlesPage))
+                if (Settings.Get(Settings.K.InstallInstalledPackagesBundlesPage))
                     return FilteredPackages.GetCheckedPackages().ToList();
                 else
-                    return FilteredPackages.GetCheckedPackages().Where(p => p.Tag is not PackageTag.AlreadyInstalled).ToList();
+                    return FilteredPackages
+                        .GetCheckedPackages()
+                        .Where(p => p.Tag is not PackageTag.AlreadyInstalled)
+                        .ToList();
             }
 
-            MainToolbarButton.Click += async (_, _) => await ImportAndInstallPackage(GetCheckedNonInstalledPackages());
-            InstallSkipHash.Click += async (_, _) => await ImportAndInstallPackage(GetCheckedNonInstalledPackages(), skiphash: true);
-            InstallInteractive.Click += async (_, _) => await ImportAndInstallPackage(GetCheckedNonInstalledPackages(), interactive: true);
-            InstallAsAdmin.Click += async (_, _) => await ImportAndInstallPackage(GetCheckedNonInstalledPackages(), elevated: true);
-            DownloadInstallers.Click += (_, _) => _ = MainApp.Operations.Download(FilteredPackages.GetCheckedPackages(), TEL_InstallReferral.FROM_BUNDLE);
+            MainToolbarButton.Click += async (_, _) =>
+                await ImportAndInstallPackage(GetCheckedNonInstalledPackages());
+            InstallSkipHash.Click += async (_, _) =>
+                await ImportAndInstallPackage(GetCheckedNonInstalledPackages(), skiphash: true);
+            InstallInteractive.Click += async (_, _) =>
+                await ImportAndInstallPackage(GetCheckedNonInstalledPackages(), interactive: true);
+            InstallAsAdmin.Click += async (_, _) =>
+                await ImportAndInstallPackage(GetCheckedNonInstalledPackages(), elevated: true);
+            DownloadInstallers.Click += (_, _) =>
+                _ = MainApp.Operations.Download(
+                    FilteredPackages.GetCheckedPackages(),
+                    TEL_InstallReferral.FROM_BUNDLE
+                );
             OpenBundle.Click += async (_, _) => await AskOpenFromFile();
             SaveBundle.Click += async (_, _) => await SaveFile();
             ToBatchScript.Click += (_, _) => _ = CreateBatchScript();
@@ -301,7 +334,8 @@ namespace UniGetUI.Interface.SoftwarePages
             SharePackage.Click += (_, _) =>
             {
                 IPackage? package = SelectedItem;
-                if (package is not null) DialogHelper.SharePackage(package);
+                if (package is not null)
+                    DialogHelper.SharePackage(package);
             };
 
             AddPackagesToBundle.Click += (_, _) => _ = DialogHelper.HowToAddPackagesToBundle();
@@ -309,7 +343,11 @@ namespace UniGetUI.Interface.SoftwarePages
 
         public async Task<bool> AskForNewBundle()
         {
-            if (!Loader.Any() || !HasUnsavedChanges || await DialogHelper.AskLoseChangesAndCreateBundle())
+            if (
+                !Loader.Any()
+                || !HasUnsavedChanges
+                || await DialogHelper.AskLoseChangesAndCreateBundle()
+            )
             {
                 // Need to call ClearPackages, this method also clears internal caches
                 Loader.ClearPackages();
@@ -320,43 +358,60 @@ namespace UniGetUI.Interface.SoftwarePages
             return false;
         }
 
-        public async Task ImportAndInstallPackage(IReadOnlyList<IPackage> packages, bool? elevated = null, bool? interactive = null, bool? skiphash = null)
+        public async Task ImportAndInstallPackage(
+            IReadOnlyList<IPackage> packages,
+            bool? elevated = null,
+            bool? interactive = null,
+            bool? skiphash = null
+        )
         {
-            int loadingId = DialogHelper.ShowLoadingDialog(CoreTools.Translate("Preparing packages, please wait..."));
+            int loadingId = DialogHelper.ShowLoadingDialog(
+                CoreTools.Translate("Preparing packages, please wait...")
+            );
             List<Package> packages_to_install = [];
             foreach (IPackage package in packages)
             {
                 if (package is ImportedPackage imported)
                 {
-                    Logger.ImportantInfo($"Registering package {imported.Id} from manager {imported.Source.AsString}");
+                    Logger.ImportantInfo(
+                        $"Registering package {imported.Id} from manager {imported.Source.AsString}"
+                    );
                     packages_to_install.Add(await imported.RegisterAndGetPackageAsync());
                 }
                 else
                 {
-                    Logger.Warn($"Attempted to install an invalid/incompatible package with Id={package.Id}");
+                    Logger.Warn(
+                        $"Attempted to install an invalid/incompatible package with Id={package.Id}"
+                    );
                 }
             }
 
             DialogHelper.HideLoadingDialog(loadingId);
-            MainApp.Operations.Install(packages_to_install, TEL_InstallReferral.FROM_BUNDLE, elevated, interactive, skiphash);
+            MainApp.Operations.Install(
+                packages_to_install,
+                TEL_InstallReferral.FROM_BUNDLE,
+                elevated,
+                interactive,
+                skiphash
+            );
         }
 
-        protected override void WhenPackageCountUpdated()
-        { }
+        protected override void WhenPackageCountUpdated() { }
 
-        protected override void WhenPackagesLoaded(ReloadReason reason)
-        { }
+        protected override void WhenPackagesLoaded(ReloadReason reason) { }
 
         protected override void WhenShowingContextMenu(IPackage package)
         {
-            if (MenuAsAdmin is null
+            if (
+                MenuAsAdmin is null
                 || MenuInteractive is null
                 || MenuSkipHash is null
                 || MenuDetails is null
                 || MenuShare is null
                 || MenuInstall is null
                 || MenuInstallOptions is null
-                || MenuDownloadInstaller is null)
+                || MenuDownloadInstaller is null
+            )
             {
                 Logger.Error("Menu items are null on InstalledPackagesTab");
                 return;
@@ -365,42 +420,50 @@ namespace UniGetUI.Interface.SoftwarePages
             bool IS_VALID = package as InvalidImportedPackage is null;
 
             MenuAsAdmin.IsEnabled = IS_VALID && package.Manager.Capabilities.CanRunAsAdmin;
-            MenuInteractive.IsEnabled = IS_VALID && package.Manager.Capabilities.CanRunInteractively;
-            MenuSkipHash.IsEnabled = IS_VALID && package.Manager.Capabilities.CanSkipIntegrityChecks;
+            MenuInteractive.IsEnabled =
+                IS_VALID && package.Manager.Capabilities.CanRunInteractively;
+            MenuSkipHash.IsEnabled =
+                IS_VALID && package.Manager.Capabilities.CanSkipIntegrityChecks;
             MenuDetails.IsEnabled = IS_VALID;
             MenuShare.IsEnabled = IS_VALID;
             MenuInstall.IsEnabled = IS_VALID;
             MenuInstallOptions.IsEnabled = IS_VALID;
-            MenuDownloadInstaller.IsEnabled = IS_VALID && package.Manager.Capabilities.CanDownloadInstaller;
+            MenuDownloadInstaller.IsEnabled =
+                IS_VALID && package.Manager.Capabilities.CanDownloadInstaller;
         }
 
         private void MenuInstall_Invoked(object sender, RoutedEventArgs args)
         {
-            if (SelectedItem is null) return;
+            if (SelectedItem is null)
+                return;
             _ = ImportAndInstallPackage([SelectedItem]);
         }
 
         private void MenuAsAdmin_Invoked(object sender, RoutedEventArgs args)
         {
-            if (SelectedItem is null) return;
+            if (SelectedItem is null)
+                return;
             _ = ImportAndInstallPackage([SelectedItem], elevated: true);
         }
 
         private void MenuInteractive_Invoked(object sender, RoutedEventArgs args)
         {
-            if (SelectedItem is null) return;
+            if (SelectedItem is null)
+                return;
             _ = ImportAndInstallPackage([SelectedItem], interactive: true);
         }
 
         private void MenuSkipHash_Invoked(object sender, RoutedEventArgs args)
         {
-            if (SelectedItem is null) return;
+            if (SelectedItem is null)
+                return;
             _ = ImportAndInstallPackage([SelectedItem], skiphash: true);
         }
 
         private void MenuShare_Invoked(object sender, RoutedEventArgs args)
         {
-            if (SelectedItem is null) return;
+            if (SelectedItem is null)
+                return;
             DialogHelper.SharePackage(SelectedItem);
         }
 
@@ -422,28 +485,38 @@ namespace UniGetUI.Interface.SoftwarePages
         private void MenuRemoveFromList_Invoked(object sender, RoutedEventArgs args)
         {
             IPackage? package = SelectedItem;
-            if (package is null) return;
+            if (package is null)
+                return;
 
             HasUnsavedChanges = true;
             Loader.Remove(package);
         }
 
-        public async Task OpenFromString(string payload, BundleFormatType format, string source, int? loadingId)
+        public async Task OpenFromString(
+            string payload,
+            BundleFormatType format,
+            string source,
+            int? loadingId
+        )
         {
             if (await AskForNewBundle() is false)
                 return;
 
-            loadingId ??= DialogHelper.ShowLoadingDialog(CoreTools.Translate("Loading packages, please wait..."));
+            loadingId ??= DialogHelper.ShowLoadingDialog(
+                CoreTools.Translate("Loading packages, please wait...")
+            );
 
             var (open_version, report) = await AddFromBundle(payload, format);
             TelemetryHandler.ImportBundle(format);
             HasUnsavedChanges = false;
 
-            if ((int)(open_version*10) != (int)(SerializableBundle.ExpectedVersion*10))
-            {   // Check only up to first decimal digit, prevent floating point precision error.
-                Logger.Warn($"The loaded bundle \"{source}\" is based on schema version {open_version}, " +
-                            $"while this UniGetUI build expects version {SerializableBundle.ExpectedVersion}." +
-                            $"\nThis should not be a problem if packages show up, but be careful");
+            if ((int)(open_version * 10) != (int)(SerializableBundle.ExpectedVersion * 10))
+            { // Check only up to first decimal digit, prevent floating point precision error.
+                Logger.Warn(
+                    $"The loaded bundle \"{source}\" is based on schema version {open_version}, "
+                        + $"while this UniGetUI build expects version {SerializableBundle.ExpectedVersion}."
+                        + $"\nThis should not be a problem if packages show up, but be careful"
+                );
             }
 
             DialogHelper.HideLoadingDialog(loadingId.Value);
@@ -455,7 +528,9 @@ namespace UniGetUI.Interface.SoftwarePages
 
         public async Task OpenFromFile(string file)
         {
-            int loadingId = DialogHelper.ShowLoadingDialog(CoreTools.Translate("Loading packages, please wait..."));
+            int loadingId = DialogHelper.ShowLoadingDialog(
+                CoreTools.Translate("Loading packages, please wait...")
+            );
             try
             {
                 BundleFormatType formatType;
@@ -476,16 +551,20 @@ namespace UniGetUI.Interface.SoftwarePages
             }
             catch (Exception ex)
             {
-
                 Logger.Error("An error occurred while attempting to open a bundle");
                 Logger.Error(ex);
                 var warningDialog = new ContentDialog
                 {
                     Title = CoreTools.Translate("The package bundle is not valid"),
-                    Content = CoreTools.Translate("The bundle you are trying to load appears to be invalid. Please check the file and try again.") + "\n\n" + ex.Message,
+                    Content =
+                        CoreTools.Translate(
+                            "The bundle you are trying to load appears to be invalid. Please check the file and try again."
+                        )
+                        + "\n\n"
+                        + ex.Message,
                     CloseButtonText = CoreTools.Translate("Ok"),
                     DefaultButton = ContentDialogButton.Close,
-                    XamlRoot = MainApp.Instance.MainWindow.Content.XamlRoot // Ensure the dialog is shown in the correct context
+                    XamlRoot = MainApp.Instance.MainWindow.Content.XamlRoot, // Ensure the dialog is shown in the correct context
                 };
 
                 DialogHelper.HideLoadingDialog(loadingId);
@@ -512,11 +591,15 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 // Get file
                 string defaultName = CoreTools.Translate("Package bundle") + ".ubundle";
-                string file = (new FileSavePicker(MainApp.Instance.MainWindow.GetWindowHandle())).Show(["*.ubundle", "*.json"], defaultName);
+                string file = (
+                    new FileSavePicker(MainApp.Instance.MainWindow.GetWindowHandle())
+                ).Show(["*.ubundle", "*.json"], defaultName);
                 if (file != String.Empty)
                 {
                     // Loading dialog
-                    int loadingId = DialogHelper.ShowLoadingDialog(CoreTools.Translate("Saving packages, please wait..."));
+                    int loadingId = DialogHelper.ShowLoadingDialog(
+                        CoreTools.Translate("Saving packages, please wait...")
+                    );
 
                     // Select appropriate format
                     BundleFormatType formatType;
@@ -534,13 +617,13 @@ namespace UniGetUI.Interface.SoftwarePages
 
                     DialogHelper.HideLoadingDialog(loadingId);
 
-                       DialogHelper.ShowDismissableBalloon(
+                    DialogHelper.ShowDismissableBalloon(
                         CoreTools.Translate("Success!"),
-                        CoreTools.Translate("The bundle was created successfully on {0}", file));
+                        CoreTools.Translate("The bundle was created successfully on {0}", file)
+                    );
 
                     await CoreTools.ShowFileOnExplorer(file);
                     HasUnsavedChanges = false;
-
                 }
             }
             catch (Exception ex)
@@ -551,10 +634,15 @@ namespace UniGetUI.Interface.SoftwarePages
                 var warningDialog = new ContentDialog
                 {
                     Title = CoreTools.Translate("Could not create bundle"),
-                    Content = CoreTools.Translate("The package bundle could not be created due to an error.") + "\n\n" + ex.Message,
+                    Content =
+                        CoreTools.Translate(
+                            "The package bundle could not be created due to an error."
+                        )
+                        + "\n\n"
+                        + ex.Message,
                     CloseButtonText = CoreTools.Translate("Ok"),
                     DefaultButton = ContentDialogButton.Close,
-                    XamlRoot = MainApp.Instance.MainWindow.Content.XamlRoot // Ensure the dialog is shown in the correct context
+                    XamlRoot = MainApp.Instance.MainWindow.Content.XamlRoot, // Ensure the dialog is shown in the correct context
                 };
 
                 DialogHelper.HideAllLoadingDialogs();
@@ -571,8 +659,10 @@ namespace UniGetUI.Interface.SoftwarePages
 
             static int Comparison(IPackage x, IPackage y)
             {
-                if (x.Id != y.Id) return String.Compare(x.Id, y.Id, StringComparison.Ordinal);
-                if (x.Name != y.Name) return String.Compare(x.Name, y.Name, StringComparison.Ordinal);
+                if (x.Id != y.Id)
+                    return String.Compare(x.Id, y.Id, StringComparison.Ordinal);
+                if (x.Name != y.Name)
+                    return String.Compare(x.Name, y.Name, StringComparison.Ordinal);
                 return (x.NormalizedVersion > y.NormalizedVersion) ? -1 : 1;
             }
 
@@ -590,7 +680,10 @@ namespace UniGetUI.Interface.SoftwarePages
             return exportablePayload;
         }
 
-        public async Task<(double, BundleReport)> AddFromBundle(string content, BundleFormatType format)
+        public async Task<(double, BundleReport)> AddFromBundle(
+            string content,
+            BundleFormatType format
+        )
         {
             // Deserialize data
             SerializableBundle? DeserializedData;
@@ -606,12 +699,17 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 // Dynamic convert to JSON
                 content = await SerializationHelpers.XML_to_JSON(content);
-                Logger.ImportantInfo("XML payload was converted to JSON dynamically before deserialization");
+                Logger.ImportantInfo(
+                    "XML payload was converted to JSON dynamically before deserialization"
+                );
             }
 
             DeserializedData = await Task.Run(() =>
             {
-                return new SerializableBundle(JsonNode.Parse(content) ?? throw new JsonException("Could not parse JSON object"));
+                return new SerializableBundle(
+                    JsonNode.Parse(content)
+                        ?? throw new JsonException("Could not parse JSON object")
+                );
             });
 
             List<IPackage> packages = [];
@@ -620,12 +718,12 @@ namespace UniGetUI.Interface.SoftwarePages
             report.IsEmpty = true;
 
             bool AllowCLIParameters =
-                SecureSettings.Get(SecureSettings.K.AllowCLIArguments) &&
-                SecureSettings.Get(SecureSettings.K.AllowImportingCLIArguments);
+                SecureSettings.Get(SecureSettings.K.AllowCLIArguments)
+                && SecureSettings.Get(SecureSettings.K.AllowImportingCLIArguments);
 
             bool AllowPrePostOps =
-                SecureSettings.Get(SecureSettings.K.AllowPrePostOpCommand) &&
-                SecureSettings.Get(SecureSettings.K.AllowImportPrePostOpCommands);
+                SecureSettings.Get(SecureSettings.K.AllowPrePostOpCommand)
+                && SecureSettings.Get(SecureSettings.K.AllowImportPrePostOpCommands);
 
             foreach (var pkg in DeserializedData.packages)
             {
@@ -634,66 +732,133 @@ namespace UniGetUI.Interface.SoftwarePages
                 if (opts.CustomParameters_Install.Where(x => x.Any()).Any())
                 {
                     report.IsEmpty = false;
-                    if (!report.Contents.ContainsKey(pkg.Id)) report.Contents[pkg.Id] = new();
-                    report.Contents[pkg.Id].Add(new($"Custom install arguments: [{string.Join(", ", opts.CustomParameters_Install)}]", AllowCLIParameters));
-                    if(!AllowCLIParameters) opts.CustomParameters_Install.Clear();
+                    if (!report.Contents.ContainsKey(pkg.Id))
+                        report.Contents[pkg.Id] = new();
+                    report
+                        .Contents[pkg.Id]
+                        .Add(
+                            new(
+                                $"Custom install arguments: [{string.Join(", ", opts.CustomParameters_Install)}]",
+                                AllowCLIParameters
+                            )
+                        );
+                    if (!AllowCLIParameters)
+                        opts.CustomParameters_Install.Clear();
                 }
                 if (opts.CustomParameters_Update.Where(x => x.Any()).Any())
                 {
                     report.IsEmpty = false;
-                    if (!report.Contents.ContainsKey(pkg.Id)) report.Contents[pkg.Id] = new();
-                    report.Contents[pkg.Id].Add(new($"Custom update arguments: [{string.Join(", ", opts.CustomParameters_Update)}]", AllowCLIParameters));
-                    if(!AllowCLIParameters) opts.CustomParameters_Update.Clear();
+                    if (!report.Contents.ContainsKey(pkg.Id))
+                        report.Contents[pkg.Id] = new();
+                    report
+                        .Contents[pkg.Id]
+                        .Add(
+                            new(
+                                $"Custom update arguments: [{string.Join(", ", opts.CustomParameters_Update)}]",
+                                AllowCLIParameters
+                            )
+                        );
+                    if (!AllowCLIParameters)
+                        opts.CustomParameters_Update.Clear();
                 }
                 if (opts.CustomParameters_Uninstall.Where(x => x.Any()).Any())
                 {
                     report.IsEmpty = false;
-                    if (!report.Contents.ContainsKey(pkg.Id)) report.Contents[pkg.Id] = new();
-                    report.Contents[pkg.Id].Add(new($"Custom uninstall arguments: [{string.Join(", ", opts.CustomParameters_Uninstall)}]", AllowCLIParameters));
-                    if(!AllowCLIParameters) opts.CustomParameters_Uninstall.Clear();
+                    if (!report.Contents.ContainsKey(pkg.Id))
+                        report.Contents[pkg.Id] = new();
+                    report
+                        .Contents[pkg.Id]
+                        .Add(
+                            new(
+                                $"Custom uninstall arguments: [{string.Join(", ", opts.CustomParameters_Uninstall)}]",
+                                AllowCLIParameters
+                            )
+                        );
+                    if (!AllowCLIParameters)
+                        opts.CustomParameters_Uninstall.Clear();
                 }
 
                 if (opts.PreInstallCommand.Any())
                 {
                     report.IsEmpty = false;
-                    if (!report.Contents.ContainsKey(pkg.Id)) report.Contents[pkg.Id] = new();
-                    report.Contents[pkg.Id].Add(new($"Pre-install command: {opts.PreInstallCommand}", AllowPrePostOps));
-                    if (!AllowPrePostOps) opts.PreInstallCommand = "";
+                    if (!report.Contents.ContainsKey(pkg.Id))
+                        report.Contents[pkg.Id] = new();
+                    report
+                        .Contents[pkg.Id]
+                        .Add(
+                            new($"Pre-install command: {opts.PreInstallCommand}", AllowPrePostOps)
+                        );
+                    if (!AllowPrePostOps)
+                        opts.PreInstallCommand = "";
                 }
                 if (opts.PostInstallCommand.Any())
                 {
                     report.IsEmpty = false;
-                    if (!report.Contents.ContainsKey(pkg.Id)) report.Contents[pkg.Id] = new();
-                    report.Contents[pkg.Id].Add(new($"Post-install command: {opts.PostInstallCommand}", AllowPrePostOps));
-                    if (!AllowPrePostOps) opts.PostInstallCommand = "";
+                    if (!report.Contents.ContainsKey(pkg.Id))
+                        report.Contents[pkg.Id] = new();
+                    report
+                        .Contents[pkg.Id]
+                        .Add(
+                            new($"Post-install command: {opts.PostInstallCommand}", AllowPrePostOps)
+                        );
+                    if (!AllowPrePostOps)
+                        opts.PostInstallCommand = "";
                 }
                 if (opts.PreUpdateCommand.Any())
                 {
                     report.IsEmpty = false;
-                    if (!report.Contents.ContainsKey(pkg.Id)) report.Contents[pkg.Id] = new();
-                    report.Contents[pkg.Id].Add(new($"Pre-update command: {opts.PreUpdateCommand}", AllowPrePostOps));
-                    if (!AllowPrePostOps) opts.PreUpdateCommand = "";
+                    if (!report.Contents.ContainsKey(pkg.Id))
+                        report.Contents[pkg.Id] = new();
+                    report
+                        .Contents[pkg.Id]
+                        .Add(new($"Pre-update command: {opts.PreUpdateCommand}", AllowPrePostOps));
+                    if (!AllowPrePostOps)
+                        opts.PreUpdateCommand = "";
                 }
                 if (opts.PostUpdateCommand.Any())
                 {
                     report.IsEmpty = false;
-                    if (!report.Contents.ContainsKey(pkg.Id)) report.Contents[pkg.Id] = new();
-                    report.Contents[pkg.Id].Add(new($"Post-update command: {opts.PostUpdateCommand}", AllowPrePostOps));
-                    if (!AllowPrePostOps) opts.PostUpdateCommand = "";
+                    if (!report.Contents.ContainsKey(pkg.Id))
+                        report.Contents[pkg.Id] = new();
+                    report
+                        .Contents[pkg.Id]
+                        .Add(
+                            new($"Post-update command: {opts.PostUpdateCommand}", AllowPrePostOps)
+                        );
+                    if (!AllowPrePostOps)
+                        opts.PostUpdateCommand = "";
                 }
                 if (opts.PreUninstallCommand.Any())
                 {
                     report.IsEmpty = false;
-                    if (!report.Contents.ContainsKey(pkg.Id)) report.Contents[pkg.Id] = new();
-                    report.Contents[pkg.Id].Add(new($"Pre-uninstall command: {opts.PreUninstallCommand}", AllowPrePostOps));
-                    if (!AllowPrePostOps) opts.PreUninstallCommand = "";
+                    if (!report.Contents.ContainsKey(pkg.Id))
+                        report.Contents[pkg.Id] = new();
+                    report
+                        .Contents[pkg.Id]
+                        .Add(
+                            new(
+                                $"Pre-uninstall command: {opts.PreUninstallCommand}",
+                                AllowPrePostOps
+                            )
+                        );
+                    if (!AllowPrePostOps)
+                        opts.PreUninstallCommand = "";
                 }
                 if (opts.PostUninstallCommand.Any())
                 {
                     report.IsEmpty = false;
-                    if (!report.Contents.ContainsKey(pkg.Id)) report.Contents[pkg.Id] = new();
-                    report.Contents[pkg.Id].Add(new($"Post-uninstall command: {opts.PostUninstallCommand}", AllowPrePostOps));
-                    if (!AllowPrePostOps) opts.PostUninstallCommand = "";
+                    if (!report.Contents.ContainsKey(pkg.Id))
+                        report.Contents[pkg.Id] = new();
+                    report
+                        .Contents[pkg.Id]
+                        .Add(
+                            new(
+                                $"Post-uninstall command: {opts.PostUninstallCommand}",
+                                AllowPrePostOps
+                            )
+                        );
+                    if (!AllowPrePostOps)
+                        opts.PostUninstallCommand = "";
                 }
 
                 pkg.InstallationOptions = opts;
@@ -715,7 +880,10 @@ namespace UniGetUI.Interface.SoftwarePages
 
             foreach (var possible_manager in PEInterface.Managers)
             {
-                if (possible_manager.Name == raw_package.ManagerName || possible_manager.DisplayName == raw_package.ManagerName)
+                if (
+                    possible_manager.Name == raw_package.ManagerName
+                    || possible_manager.DisplayName == raw_package.ManagerName
+                )
                 {
                     manager = possible_manager;
                     break;
@@ -735,13 +903,19 @@ namespace UniGetUI.Interface.SoftwarePages
 
             if (manager is null || source is null)
             {
-                return DeserializeIncompatiblePackage(raw_package.GetInvalidEquivalent(), NullSource.Instance);
+                return DeserializeIncompatiblePackage(
+                    raw_package.GetInvalidEquivalent(),
+                    NullSource.Instance
+                );
             }
 
             return new ImportedPackage(raw_package, manager, source);
         }
 
-        public static IPackage DeserializeIncompatiblePackage(SerializableIncompatiblePackage raw_package, IManagerSource source)
+        public static IPackage DeserializeIncompatiblePackage(
+            SerializableIncompatiblePackage raw_package,
+            IManagerSource source
+        )
         {
             return new InvalidImportedPackage(raw_package, source);
         }
@@ -751,10 +925,17 @@ namespace UniGetUI.Interface.SoftwarePages
             try
             {
                 string defaultName = CoreTools.Translate("Install script") + ".ps1";
-                string file = await Task.Run(() => (new FileSavePicker(MainApp.Instance.MainWindow.GetWindowHandle())).Show(["*.ps1"], defaultName));
+                string file = await Task.Run(() =>
+                    (new FileSavePicker(MainApp.Instance.MainWindow.GetWindowHandle())).Show(
+                        ["*.ps1"],
+                        defaultName
+                    )
+                );
                 if (file != String.Empty)
                 {
-                    int loadingId = DialogHelper.ShowLoadingDialog(CoreTools.Translate("Saving packages, please wait..."));
+                    int loadingId = DialogHelper.ShowLoadingDialog(
+                        CoreTools.Translate("Saving packages, please wait...")
+                    );
 
                     var packages = new List<string>();
                     var commands = new List<string>();
@@ -766,24 +947,29 @@ namespace UniGetUI.Interface.SoftwarePages
                         {
                             packages.Add(package.Name + " from " + package.Manager.DisplayName);
 
-                            foreach (var process in package.installation_options.KillBeforeOperation)
-                            {   // Kill required processes, if any. Forcekill if the user has enable said option
+                            foreach (
+                                var process in package.installation_options.KillBeforeOperation
+                            )
+                            { // Kill required processes, if any. Forcekill if the user has enable said option
                                 commands.Add($"taskkill /im \"{process}\"" + (forceKill ? " /f" : ""));
                             }
 
                             if (package.installation_options.PreInstallCommand != "")
-                            {   // Add pre-operation
+                            { // Add pre-operation
                                 commands.Add(package.installation_options.PreInstallCommand);
                             }
 
                             // Add install command
                             var exeName = package.Manager.Properties.ExecutableFriendlyName;
-                            var param = package.Manager.OperationHelper.GetParameters(package,
-                                package.installation_options, OperationType.Install);
-                            commands.Add($"{exeName} {string.Join(' ',param)}");
+                            var param = package.Manager.OperationHelper.GetParameters(
+                                package,
+                                package.installation_options,
+                                OperationType.Install
+                            );
+                            commands.Add($"{exeName} {string.Join(' ', param)}");
 
                             if (package.installation_options.PostInstallCommand != "")
-                            {   // Add post-operation
+                            { // Add post-operation
                                 commands.Add(package.installation_options.PostInstallCommand);
                             }
                         }
@@ -794,7 +980,8 @@ namespace UniGetUI.Interface.SoftwarePages
                     DialogHelper.HideLoadingDialog(loadingId);
                     DialogHelper.ShowDismissableBalloon(
                         CoreTools.Translate("Success!"),
-                        CoreTools.Translate("The installation script saved to {0}", file));
+                        CoreTools.Translate("The installation script saved to {0}", file)
+                    );
 
                     TelemetryHandler.ExportBatch();
 
@@ -808,90 +995,101 @@ namespace UniGetUI.Interface.SoftwarePages
                 Logger.Error(ex);
                 DialogHelper.ShowDismissableBalloon(
                     CoreTools.Translate("An error occurred"),
-                    CoreTools.Translate("An error occurred while attempting to create an installation script:") + " " + ex.Message);
+                    CoreTools.Translate(
+                        "An error occurred while attempting to create an installation script:"
+                    )
+                        + " "
+                        + ex.Message
+                );
             }
         }
 
-        private static string GenerateCommandString(IReadOnlyList<string> names, IReadOnlyList<string> commands)
+        private static string GenerateCommandString(
+            IReadOnlyList<string> names,
+            IReadOnlyList<string> commands
+        )
         {
             return $$"""
-            Clear-Host
-            Write-Host ""
-            Write-Host "========================================================"
-            Write-Host ""
-            Write-Host "        __  __      _ ______     __  __  ______" -ForegroundColor Cyan
-            Write-Host "       / / / /___  (_) ____/__  / /_/ / / /  _/" -ForegroundColor Cyan
-            Write-Host "      / / / / __ \/ / / __/ _ \/ __/ / / // /" -ForegroundColor Cyan
-            Write-Host "     / /_/ / / / / / /_/ /  __/ /_/ /_/ // /" -ForegroundColor Cyan
-            Write-Host "     \____/_/ /_/_/\____/\___/\__/\____/___/" -ForegroundColor Cyan
-            Write-Host "          UniGetUI Package Installer Script" 
-            Write-Host "        Created with UniGetUI Version {{CoreData.VersionName}}"
-            Write-Host ""
-            Write-Host "========================================================"
-            Write-Host ""
-            Write-Host "NOTES:" -ForegroundColor Yellow
-            Write-Host "  - The install process will not be as reliable as importing a bundle with UniGetUI. Expect issues and errors." -ForegroundColor Yellow
-            Write-Host "  - Packages will be installed with the install options specified at the time of creation of this script." -ForegroundColor Yellow
-            Write-Host "  - Error/Sucess detection may not be 100% accurate." -ForegroundColor Yellow
-            Write-Host "  - Some of the packages may require elevation. Some of them may ask for permission, but others may fail. Consider running this script elevated." -ForegroundColor Yellow
-            Write-Host "  - You can skip confirmation prompts by running this script with the parameter `/DisablePausePrompts` " -ForegroundColor Yellow
-            Write-Host ""
-            Write-Host ""
-            if ($args[0] -ne "/DisablePausePrompts") { pause }
-            Write-Host ""
-            Write-Host "This script will attempt to install the following packages:"
-            {{string.Join('\n', names.Select(x => $"Write-Host \"  - {x}\""))}}
-            Write-Host ""
-            if ($args[0] -ne "/DisablePausePrompts") { pause }
-            Clear-Host
+                Clear-Host
+                Write-Host ""
+                Write-Host "========================================================"
+                Write-Host ""
+                Write-Host "        __  __      _ ______     __  __  ______" -ForegroundColor Cyan
+                Write-Host "       / / / /___  (_) ____/__  / /_/ / / /  _/" -ForegroundColor Cyan
+                Write-Host "      / / / / __ \/ / / __/ _ \/ __/ / / // /" -ForegroundColor Cyan
+                Write-Host "     / /_/ / / / / / /_/ /  __/ /_/ /_/ // /" -ForegroundColor Cyan
+                Write-Host "     \____/_/ /_/_/\____/\___/\__/\____/___/" -ForegroundColor Cyan
+                Write-Host "          UniGetUI Package Installer Script" 
+                Write-Host "        Created with UniGetUI Version {{CoreData.VersionName}}"
+                Write-Host ""
+                Write-Host "========================================================"
+                Write-Host ""
+                Write-Host "NOTES:" -ForegroundColor Yellow
+                Write-Host "  - The install process will not be as reliable as importing a bundle with UniGetUI. Expect issues and errors." -ForegroundColor Yellow
+                Write-Host "  - Packages will be installed with the install options specified at the time of creation of this script." -ForegroundColor Yellow
+                Write-Host "  - Error/Sucess detection may not be 100% accurate." -ForegroundColor Yellow
+                Write-Host "  - Some of the packages may require elevation. Some of them may ask for permission, but others may fail. Consider running this script elevated." -ForegroundColor Yellow
+                Write-Host "  - You can skip confirmation prompts by running this script with the parameter `/DisablePausePrompts` " -ForegroundColor Yellow
+                Write-Host ""
+                Write-Host ""
+                if ($args[0] -ne "/DisablePausePrompts") { pause }
+                Write-Host ""
+                Write-Host "This script will attempt to install the following packages:"
+                {{string.Join('\n', names.Select(x => $"Write-Host \"  - {x}\""))}}
+                Write-Host ""
+                if ($args[0] -ne "/DisablePausePrompts") { pause }
+                Clear-Host
 
-            $success_count=0
-            $failure_count=0
-            $commands_run=0
-            $results=""
+                $success_count=0
+                $failure_count=0
+                $commands_run=0
+                $results=""
 
-            $commands= @(
-                {{string.Join(",\n    ", commands.Select(x => $"'cmd.exe /C {x.Replace("'", "''")}'"))}}
-            )
+                $commands= @(
+                    {{string.Join(
+                    ",\n    ",
+                    commands.Select(x => $"'cmd.exe /C {x.Replace("'", "''")}'")
+                )}}
+                )
 
-            foreach ($command in $commands) {
-                Write-Host "Running: $command" -ForegroundColor Yellow
-                cmd.exe /C $command
-                if ($LASTEXITCODE -eq 0) {
-                    Write-Host "[  OK  ] $command" -ForegroundColor Green
-                    $success_count++
-                    $results += "$([char]0x1b)[32m[  OK  ] $command`n"
+                foreach ($command in $commands) {
+                    Write-Host "Running: $command" -ForegroundColor Yellow
+                    cmd.exe /C $command
+                    if ($LASTEXITCODE -eq 0) {
+                        Write-Host "[  OK  ] $command" -ForegroundColor Green
+                        $success_count++
+                        $results += "$([char]0x1b)[32m[  OK  ] $command`n"
+                    }
+                    else {
+                        Write-Host "[ FAIL ] $command" -ForegroundColor Red
+                        $failure_count++
+                        $results += "$([char]0x1b)[31m[ FAIL ] $command`n"
+                    }
+                    $commands_run++
+                    Write-Host ""
+                }
+
+                Write-Host "========================================================"
+                Write-Host "                  OPERATION SUMMARY"
+                Write-Host "========================================================"
+                Write-Host "Total commands run: $commands_run"
+                Write-Host "Successful: $success_count"
+                Write-Host "Failed: $failure_count"
+                Write-Host ""
+                Write-Host "Details:"
+                Write-Host "$results$([char]0x1b)[37m"
+                Write-Host "========================================================"
+
+                if ($failure_count -gt 0) {
+                    Write-Host "Some commands failed. Please check the log above." -ForegroundColor Yellow
                 }
                 else {
-                    Write-Host "[ FAIL ] $command" -ForegroundColor Red
-                    $failure_count++
-                    $results += "$([char]0x1b)[31m[ FAIL ] $command`n"
+                    Write-Host "All commands executed successfully!" -ForegroundColor Green
                 }
-                $commands_run++
                 Write-Host ""
-            }
-
-            Write-Host "========================================================"
-            Write-Host "                  OPERATION SUMMARY"
-            Write-Host "========================================================"
-            Write-Host "Total commands run: $commands_run"
-            Write-Host "Successful: $success_count"
-            Write-Host "Failed: $failure_count"
-            Write-Host ""
-            Write-Host "Details:"
-            Write-Host "$results$([char]0x1b)[37m"
-            Write-Host "========================================================"
-            
-            if ($failure_count -gt 0) {
-                Write-Host "Some commands failed. Please check the log above." -ForegroundColor Yellow
-            }
-            else {
-                Write-Host "All commands executed successfully!" -ForegroundColor Green
-            }
-            Write-Host ""
-            if ($args[0] -ne "/DisablePausePrompts") { pause }
-            exit $failure_count
-            """;
+                if ($args[0] -ne "/DisablePausePrompts") { pause }
+                exit $failure_count
+                """;
         }
     }
 }

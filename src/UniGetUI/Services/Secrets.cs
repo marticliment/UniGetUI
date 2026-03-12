@@ -8,6 +8,7 @@ namespace UniGetUI.Services
          *          Seeing errors? Build the project (maybe twice)
          */
         public static partial string GetGitHubClientId();
+
         public static partial string GetGitHubClientSecret();
         /* ------------------------------------------------------------------------ */
     }

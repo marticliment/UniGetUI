@@ -13,28 +13,30 @@ public partial class Settings
      *
      */
 
-    public static bool AreNotificationsDisabled()
-        => Get(K.DisableSystemTray) || Get(K.DisableNotifications);
+    public static bool AreNotificationsDisabled() =>
+        Get(K.DisableSystemTray) || Get(K.DisableNotifications);
 
-    public static bool AreUpdatesNotificationsDisabled()
-        => AreNotificationsDisabled() || Get(K.DisableUpdatesNotifications);
+    public static bool AreUpdatesNotificationsDisabled() =>
+        AreNotificationsDisabled() || Get(K.DisableUpdatesNotifications);
 
-    public static bool AreErrorNotificationsDisabled()
-        => AreNotificationsDisabled() || Get(K.DisableErrorNotifications);
+    public static bool AreErrorNotificationsDisabled() =>
+        AreNotificationsDisabled() || Get(K.DisableErrorNotifications);
 
-    public static bool AreSuccessNotificationsDisabled()
-        => AreNotificationsDisabled() || Get(K.DisableSuccessNotifications);
+    public static bool AreSuccessNotificationsDisabled() =>
+        AreNotificationsDisabled() || Get(K.DisableSuccessNotifications);
 
-    public static bool AreProgressNotificationsDisabled()
-        => AreNotificationsDisabled() || Get(K.DisableProgressNotifications);
+    public static bool AreProgressNotificationsDisabled() =>
+        AreNotificationsDisabled() || Get(K.DisableProgressNotifications);
 
     public static Uri? GetProxyUrl()
     {
-        if (!Get(K.EnableProxy)) return null;
+        if (!Get(K.EnableProxy))
+            return null;
 
         string plainUrl = GetValue(K.ProxyURL);
         Uri.TryCreate(plainUrl, UriKind.RelativeOrAbsolute, out Uri? var);
-        if(Get(K.EnableProxy) && var is null) Logger.Warn($"Proxy setting {plainUrl} is not valid");
+        if (Get(K.EnableProxy) && var is null)
+            Logger.Warn($"Proxy setting {plainUrl} is not valid");
         return var;
     }
 
@@ -45,7 +47,9 @@ public partial class Settings
         try
         {
             string username = GetValue(K.ProxyUsername);
-            return username.Length is 0 ? null : CoreCredentialStore.GetCredential(PROXY_RES_ID, username);
+            return username.Length is 0
+                ? null
+                : CoreCredentialStore.GetCredential(PROXY_RES_ID, username);
         }
         catch (Exception ex)
         {

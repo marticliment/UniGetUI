@@ -12,7 +12,7 @@ namespace UniGetUI.Interface.Enums
         OnQueue,
         BeingProcessed,
         Failed,
-        Unavailable
+        Unavailable,
     }
 
     public enum IconType
@@ -83,7 +83,7 @@ namespace UniGetUI.Interface.Enums
         Warning_Round = '\uE93F',
         WinGet = '\uE940',
         Rust = '\uE941',
-        Vcpkg = '\uE942'
+        Vcpkg = '\uE942',
     }
 
     public class NotificationArguments
@@ -110,7 +110,7 @@ namespace UniGetUI.Interface.Enums
     {
         public bool IsEmpty = false;
         public Dictionary<string, List<BundleReportEntry>> Contents = new();
-        public BundleReport()
-        {}
+
+        public BundleReport() { }
     }
 }

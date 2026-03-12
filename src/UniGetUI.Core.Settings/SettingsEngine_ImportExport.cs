@@ -15,7 +15,7 @@ public partial class Settings
     {
         if (Path.GetDirectoryName(path) == CoreData.UniGetUIUserConfigurationDirectory)
         {
-            var tempLocation  = Directory.CreateTempSubdirectory();
+            var tempLocation = Directory.CreateTempSubdirectory();
             var newPath = Path.Join(tempLocation.FullName, Path.GetFileName(path));
             File.Copy(path, newPath);
             path = newPath;
@@ -26,9 +26,19 @@ public partial class Settings
     public static string ExportToString_JSON()
     {
         Dictionary<string, string> settings = [];
-        foreach (string entry in Directory.EnumerateFiles(CoreData.UniGetUIUserConfigurationDirectory))
+        foreach (
+            string entry in Directory.EnumerateFiles(CoreData.UniGetUIUserConfigurationDirectory)
+        )
         {
-            if (new[] { "OperationHistory", "WinGetAlreadyUpgradedPackages.json", "TelemetryClientToken", "CurrentSessionToken" }.Contains(Path.GetFileName(entry)))
+            if (
+                new[]
+                {
+                    "OperationHistory",
+                    "WinGetAlreadyUpgradedPackages.json",
+                    "TelemetryClientToken",
+                    "CurrentSessionToken",
+                }.Contains(Path.GetFileName(entry))
+            )
                 continue;
 
             settings.Add(Path.GetFileName(entry), File.ReadAllText(entry));
@@ -39,24 +49,41 @@ public partial class Settings
     public static void ImportFromString_JSON(string jsonContent)
     {
         ResetSettings();
-        Dictionary<string, string> settings = JsonSerializer.Deserialize<Dictionary<string, string>>(jsonContent, SerializationOptions) ?? [];
+        Dictionary<string, string> settings =
+            JsonSerializer.Deserialize<Dictionary<string, string>>(
+                jsonContent,
+                SerializationOptions
+            ) ?? [];
         foreach (KeyValuePair<string, string> entry in settings)
         {
-            if (new[] { "OperationHistory", "WinGetAlreadyUpgradedPackages.json", "TelemetryClientToken", "CurrentSessionToken" }.Contains(entry.Key))
+            if (
+                new[]
+                {
+                    "OperationHistory",
+                    "WinGetAlreadyUpgradedPackages.json",
+                    "TelemetryClientToken",
+                    "CurrentSessionToken",
+                }.Contains(entry.Key)
+            )
                 continue;
 
-            File.WriteAllText(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, entry.Key), entry.Value);
+            File.WriteAllText(
+                Path.Join(CoreData.UniGetUIUserConfigurationDirectory, entry.Key),
+                entry.Value
+            );
         }
         Logger.Info("Settings successfully imported from string content.");
     }
 
     public static void ResetSettings()
     {
-        foreach (string entry in Directory.EnumerateFiles(CoreData.UniGetUIUserConfigurationDirectory))
+        foreach (
+            string entry in Directory.EnumerateFiles(CoreData.UniGetUIUserConfigurationDirectory)
+        )
         {
             try
             {
-                if(new[] {"TelemetryClientToken"}.Contains(entry.Split("\\")[^1]))
+                if (new[] { "TelemetryClientToken" }.Contains(entry.Split("\\")[^1]))
                     continue;
 
                 File.Delete(entry);

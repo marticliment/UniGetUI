@@ -1,10 +1,10 @@
+using System.Diagnostics;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-using UniGetUI.Core.Tools;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
-using System.Diagnostics;
+using UniGetUI.Core.Tools;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -33,11 +33,13 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             StartupPageSelector.AddItem(CoreTools.AutoTranslated("Default"), "default");
             StartupPageSelector.AddItem(CoreTools.AutoTranslated("Discover Packages"), "discover");
             StartupPageSelector.AddItem(CoreTools.AutoTranslated("Software Updates"), "updates");
-            StartupPageSelector.AddItem(CoreTools.AutoTranslated("Installed Packages"), "installed");
+            StartupPageSelector.AddItem(
+                CoreTools.AutoTranslated("Installed Packages"),
+                "installed"
+            );
             StartupPageSelector.AddItem(CoreTools.AutoTranslated("Package Bundles"), "bundles");
             StartupPageSelector.AddItem(CoreTools.AutoTranslated("Settings"), "settings");
             StartupPageSelector.ShowAddedItems();
-
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -51,10 +53,14 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         public string ShortTitle => CoreTools.Translate("User interface preferences");
 
         public event EventHandler? RestartRequired;
-        public event EventHandler<Type>? NavigationRequested { add { } remove { } }
+        public event EventHandler<Type>? NavigationRequested
+        {
+            add { }
+            remove { }
+        }
 
-        public void ShowRestartBanner(object sender, EventArgs e)
-            => RestartRequired?.Invoke(this, e);
+        public void ShowRestartBanner(object sender, EventArgs e) =>
+            RestartRequired?.Invoke(this, e);
 
         private void ResetIconCache_OnClick(object sender, EventArgs e)
         {
@@ -75,22 +81,33 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
 
         private async Task LoadIconCacheSize()
         {
-            double realSize = (await Task.Run(() =>
-            {
-                return Directory.GetFiles(CoreData.UniGetUICacheDirectory_Icons, "*", SearchOption.AllDirectories)
-                    .Sum(file => new FileInfo(file).Length);
-            })) / 1048576d;
+            double realSize =
+                (
+                    await Task.Run(() =>
+                    {
+                        return Directory
+                            .GetFiles(
+                                CoreData.UniGetUICacheDirectory_Icons,
+                                "*",
+                                SearchOption.AllDirectories
+                            )
+                            .Sum(file => new FileInfo(file).Length);
+                    })
+                ) / 1048576d;
             double roundedSize = ((int)(realSize * 100)) / 100d;
-            ResetIconCache.Header = CoreTools.Translate("The local icon cache currently takes {0} MB", roundedSize);
+            ResetIconCache.Header = CoreTools.Translate(
+                "The local icon cache currently takes {0} MB",
+                roundedSize
+            );
         }
 
-        private void DisableSystemTray_StateChanged(object sender, EventArgs e)
-            => MainApp.Instance.MainWindow.UpdateSystemTrayStatus();
+        private void DisableSystemTray_StateChanged(object sender, EventArgs e) =>
+            MainApp.Instance.MainWindow.UpdateSystemTrayStatus();
 
-        private void ThemeSelector_ValueChanged(object sender, EventArgs e)
-            => MainApp.Instance.MainWindow.ApplyTheme();
+        private void ThemeSelector_ValueChanged(object sender, EventArgs e) =>
+            MainApp.Instance.MainWindow.ApplyTheme();
 
-        private void EditAutostartSettings_Click(object sender, EventArgs e)
-            => CoreTools.Launch("ms-settings:startupapps");
+        private void EditAutostartSettings_Click(object sender, EventArgs e) =>
+            CoreTools.Launch("ms-settings:startupapps");
     }
 }

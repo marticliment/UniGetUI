@@ -26,7 +26,8 @@ namespace UniGetUI.Interface.Pages
         {
             InitializeComponent();
             LogLevelPane.Visibility = log_level_enabled ? Visibility.Visible : Visibility.Collapsed;
-            if (log_level_enabled) LoadLogLevels();
+            if (log_level_enabled)
+                LoadLogLevels();
 
             ActualThemeChanged += (_, _) => LoadLog();
         }
@@ -36,14 +37,11 @@ namespace UniGetUI.Interface.Pages
             LogLevelCombo.SelectedValue = name;
         }
 
-        public void ReloadTriggered()
-            => LoadLog(isReload: true);
+        public void ReloadTriggered() => LoadLog(isReload: true);
 
-        public void SelectAllTriggered()
-            => LogTextBox.SelectAll();
+        public void SelectAllTriggered() => LogTextBox.SelectAll();
 
-        public void SearchTriggered()
-        { }
+        public void SearchTriggered() { }
 
         // Dark theme colors
         protected Color DARK_GREY = Color.FromArgb(255, 130, 130, 130);
@@ -70,14 +68,19 @@ namespace UniGetUI.Interface.Pages
             LogTextBox.Select(LogTextBox.SelectionStart, LogTextBox.SelectionStart);
         }
 
-        public void ExportButton_Click(object sender, RoutedEventArgs e) => _ = _exportButton_Click();
+        public void ExportButton_Click(object sender, RoutedEventArgs e) =>
+            _ = _exportButton_Click();
+
         public async Task _exportButton_Click()
         {
             FileSavePicker savePicker = new()
             {
-                SuggestedStartLocation = PickerLocationId.DocumentsLibrary
+                SuggestedStartLocation = PickerLocationId.DocumentsLibrary,
             };
-            WinRT.Interop.InitializeWithWindow.Initialize(savePicker, WinRT.Interop.WindowNative.GetWindowHandle(MainApp.Instance.MainWindow));
+            WinRT.Interop.InitializeWithWindow.Initialize(
+                savePicker,
+                WinRT.Interop.WindowNative.GetWindowHandle(MainApp.Instance.MainWindow)
+            );
             savePicker.FileTypeChoices.Add(CoreTools.Translate("Text"), [".txt"]);
             savePicker.SuggestedFileName = CoreTools.Translate("WingetUI Log");
 
@@ -91,8 +94,7 @@ namespace UniGetUI.Interface.Pages
             }
         }
 
-        public void ReloadButton_Click(object sender, RoutedEventArgs e)
-            => LoadLog();
+        public void ReloadButton_Click(object sender, RoutedEventArgs e) => LoadLog();
 
         private void LogLevelCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -100,10 +102,8 @@ namespace UniGetUI.Interface.Pages
             LoadLog();
         }
 
-        public void OnEnter()
-            => LoadLog();
+        public void OnEnter() => LoadLog();
 
-        public void OnLeave()
-            => LogTextBox.Blocks.Clear();
+        public void OnLeave() => LogTextBox.Blocks.Clear();
     }
 }

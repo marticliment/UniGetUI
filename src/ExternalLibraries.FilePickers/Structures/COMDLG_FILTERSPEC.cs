@@ -1,4 +1,4 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 
 namespace ExternalLibraries.Pickers.Structures;
 
@@ -19,6 +19,7 @@ internal struct COMDLG_FILTERSPEC
 
     [MarshalAs(UnmanagedType.LPWStr)]
     public string pszName;
+
     [MarshalAs(UnmanagedType.LPWStr)]
     public string pszSpec;
 }

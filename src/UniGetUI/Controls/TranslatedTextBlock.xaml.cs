@@ -19,12 +19,20 @@ namespace UniGetUI.Interface.Widgets
         public string __suffix = "";
         public string Suffix
         {
-            set { __suffix = value; ApplyText(null); }
+            set
+            {
+                __suffix = value;
+                ApplyText(null);
+            }
         }
         public string __prefix = "";
         public string Prefix
         {
-            set { __prefix = value; ApplyText(null); }
+            set
+            {
+                __prefix = value;
+                ApplyText(null);
+            }
         }
 
         public TextWrapping WrappingMode
@@ -41,7 +49,8 @@ namespace UniGetUI.Interface.Widgets
         {
             try
             {
-                if (text is not null) __text = CoreTools.Translate(text);
+                if (text is not null)
+                    __text = CoreTools.Translate(text);
                 _textBlock?.Text = __prefix + __text + __suffix;
             }
             catch (Exception ex)

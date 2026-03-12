@@ -190,7 +190,9 @@ public static partial class Settings
             K.Test6 => "VeryVeryLongTestSettingEntrySoTheClassCanReallyBeStressedOut",
             K.Test7_Legacy => "LegacyBoolSetting",
             K.Unset => throw new InvalidDataException("Setting key was unset!"),
-            _ => throw new KeyNotFoundException($"The settings key {key} was not found on the ResolveKey map")
+            _ => throw new KeyNotFoundException(
+                $"The settings key {key} was not found on the ResolveKey map"
+            ),
         };
     }
 }

@@ -13,7 +13,7 @@ namespace UniGetUI.Core.SettingsEngine
         {
             string setting = ResolveKey(key);
             if (booleanSettings.TryGetValue(key, out bool result))
-            {   // If the setting was cached
+            { // If the setting was cached
                 return result ^ invert;
             }
 
@@ -32,20 +32,29 @@ namespace UniGetUI.Core.SettingsEngine
                 booleanSettings[key] = value;
 
                 // Update changes on disk if applicable
-                if (value && !File.Exists(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, setting)))
+                if (
+                    value
+                    && !File.Exists(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, setting))
+                )
                 {
-                    File.WriteAllText(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, setting), "");
+                    File.WriteAllText(
+                        Path.Join(CoreData.UniGetUIUserConfigurationDirectory, setting),
+                        ""
+                    );
                 }
                 else if (!value)
                 {
                     valueSettings[key] = "";
 
-                    if (File.Exists(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, setting)))
+                    if (
+                        File.Exists(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, setting))
+                    )
                     {
-                        File.Delete(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, setting));
+                        File.Delete(
+                            Path.Join(CoreData.UniGetUIUserConfigurationDirectory, setting)
+                        );
                     }
                 }
-
             }
             catch (Exception e)
             {
@@ -58,7 +67,7 @@ namespace UniGetUI.Core.SettingsEngine
         {
             string setting = ResolveKey(key);
             if (valueSettings.TryGetValue(key, out string? value))
-            {   // If the setting was cached
+            { // If the setting was cached
                 return value;
             }
 
@@ -66,12 +75,13 @@ namespace UniGetUI.Core.SettingsEngine
             value = "";
             if (File.Exists(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, setting)))
             {
-                value = File.ReadAllText(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, setting));
+                value = File.ReadAllText(
+                    Path.Join(CoreData.UniGetUIUserConfigurationDirectory, setting)
+                );
             }
 
             valueSettings[key] = value;
             return value;
-
         }
 
         public static void SetValue(K key, string value)
@@ -87,7 +97,10 @@ namespace UniGetUI.Core.SettingsEngine
                 }
                 else
                 {
-                    File.WriteAllText(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, setting), value);
+                    File.WriteAllText(
+                        Path.Join(CoreData.UniGetUIUserConfigurationDirectory, setting),
+                        value
+                    );
                     booleanSettings[key] = true;
                     valueSettings[key] = value;
                 }

@@ -6,10 +6,11 @@ using UniGetUI.Core.Logging;
 
 namespace UniGetUI.Services;
 
-public class GHAuthApiRunner: IDisposable
+public class GHAuthApiRunner : IDisposable
 {
     public event EventHandler<string>? OnLogin;
     private IHost? _host;
+
     public GHAuthApiRunner() { }
 
     public async Task Start()
@@ -62,7 +63,8 @@ public class GHAuthApiRunner: IDisposable
                 <h1>Authentication successful</h1>
                 <p>You can now close this window and return to UniGetUI</p>
             </div></html>
-            """);
+            """
+        );
 
         Logger.ImportantInfo($"[AUTH API] Received authentication token {code} from GitHub");
         OnLogin?.Invoke(this, code.ToString());

@@ -15,7 +15,10 @@ public abstract class WindowsPackageManagerFactory
     private readonly ClsidContext _clsidContext;
     protected readonly bool _allowLowerTrustRegistration;
 
-    public WindowsPackageManagerFactory(ClsidContext clsidContext, bool allowLowerTrustRegistration = false)
+    public WindowsPackageManagerFactory(
+        ClsidContext clsidContext,
+        bool allowLowerTrustRegistration = false
+    )
     {
         _clsidContext = clsidContext;
         _allowLowerTrustRegistration = allowLowerTrustRegistration;
@@ -35,7 +38,8 @@ public abstract class WindowsPackageManagerFactory
 
     public FindPackagesOptions CreateFindPackagesOptions() => CreateInstance<FindPackagesOptions>();
 
-    public CreateCompositePackageCatalogOptions CreateCreateCompositePackageCatalogOptions() => CreateInstance<CreateCompositePackageCatalogOptions>();
+    public CreateCompositePackageCatalogOptions CreateCreateCompositePackageCatalogOptions() =>
+        CreateInstance<CreateCompositePackageCatalogOptions>();
 
     public InstallOptions CreateInstallOptions() => CreateInstance<InstallOptions>();
 

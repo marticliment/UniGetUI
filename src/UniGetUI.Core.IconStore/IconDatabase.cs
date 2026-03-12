@@ -16,6 +16,7 @@ namespace UniGetUI.Core.IconEngine
             public int PackagesWithIconCount = 0;
             public int TotalScreenshotCount = 0;
             public int PackagesWithScreenshotCount = 0;
+
             public IconCount() { }
         }
 
@@ -28,7 +29,10 @@ namespace UniGetUI.Core.IconEngine
         /// <summary>
         /// The icon and screenshot database
         /// </summary>
-        private Dictionary<string, IconScreenshotDatabase_v2.PackageIconAndScreenshots> IconDatabaseData = [];
+        private Dictionary<
+            string,
+            IconScreenshotDatabase_v2.PackageIconAndScreenshots
+        > IconDatabaseData = [];
         private IconCount __icon_count = new();
 
         /// <summary>
@@ -38,10 +42,13 @@ namespace UniGetUI.Core.IconEngine
         {
             try
             {
-                string IconsAndScreenshotsFile = Path.Join(CoreData.UniGetUICacheDirectory_Data, "Icon Database.json");
-                Uri DownloadUrl =
-                    new(
-                        "https://github.com/Devolutions/UniGetUI/raw/refs/heads/main/WebBasedData/screenshot-database-v2.json");
+                string IconsAndScreenshotsFile = Path.Join(
+                    CoreData.UniGetUICacheDirectory_Data,
+                    "Icon Database.json"
+                );
+                Uri DownloadUrl = new(
+                    "https://github.com/Devolutions/UniGetUI/raw/refs/heads/main/WebBasedData/screenshot-database-v2.json"
+                );
                 if (Settings.Get(Settings.K.IconDataBaseURL))
                 {
                     DownloadUrl = new Uri(Settings.GetValue(Settings.K.IconDataBaseURL));
@@ -76,11 +83,15 @@ namespace UniGetUI.Core.IconEngine
         {
             try
             {
-                string IconsAndScreenshotsFile = Path.Join(CoreData.UniGetUICacheDirectory_Data, "Icon Database.json");
-                IconScreenshotDatabase_v2 JsonData = JsonSerializer.Deserialize<IconScreenshotDatabase_v2>(
-                    await File.ReadAllTextAsync(IconsAndScreenshotsFile),
-                    SerializationHelpers.DefaultOptions
+                string IconsAndScreenshotsFile = Path.Join(
+                    CoreData.UniGetUICacheDirectory_Data,
+                    "Icon Database.json"
                 );
+                IconScreenshotDatabase_v2 JsonData =
+                    JsonSerializer.Deserialize<IconScreenshotDatabase_v2>(
+                        await File.ReadAllTextAsync(IconsAndScreenshotsFile),
+                        SerializationHelpers.DefaultOptions
+                    );
                 if (JsonData.icons_and_screenshots is not null)
                 {
                     IconDatabaseData = JsonData.icons_and_screenshots;
@@ -119,6 +130,5 @@ namespace UniGetUI.Core.IconEngine
         {
             return __icon_count;
         }
-
     }
 }

@@ -4,13 +4,16 @@ using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
 
 namespace UniGetUI.PackageEngine.Managers.CargoManager;
+
 internal sealed class CargoPkgDetailsHelper(Cargo manager) : BasePkgDetailsHelper(manager)
 {
     protected override void GetDetails_UnSafe(IPackageDetails details)
     {
         details.InstallerType = "Source";
 
-        INativeTaskLogger logger = Manager.TaskLogger.CreateNew(Enums.LoggableTaskType.LoadPackageDetails);
+        INativeTaskLogger logger = Manager.TaskLogger.CreateNew(
+            Enums.LoggableTaskType.LoadPackageDetails
+        );
 
         Uri manifestUrl;
         CargoManifest manifest;
@@ -28,21 +31,28 @@ internal sealed class CargoPkgDetailsHelper(Cargo manager) : BasePkgDetailsHelpe
         details.Description = manifest.crate.description;
         details.ManifestUrl = manifestUrl;
 
-        var homepage = manifest.crate.homepage ?? manifest.crate.repository ?? manifest.crate.documentation;
+        var homepage =
+            manifest.crate.homepage ?? manifest.crate.repository ?? manifest.crate.documentation;
         if (!string.IsNullOrEmpty(homepage))
         {
             details.HomepageUrl = new Uri(homepage);
         }
 
-        var keywords = manifest.crate.keywords is null ? [] : (string[]) manifest.crate.keywords.Clone();
-    var categories = manifest.categories?.Select(c => c.category) ?? [];
+        var keywords = manifest.crate.keywords is null
+            ? []
+            : (string[])manifest.crate.keywords.Clone();
+        var categories = manifest.categories?.Select(c => c.category) ?? [];
         details.Tags = [.. keywords, .. categories];
 
-        var versionData = manifest.versions.Where((v) => v.num == details.Package.VersionString).First();
+        var versionData = manifest
+            .versions.Where((v) => v.num == details.Package.VersionString)
+            .First();
 
         details.Author = versionData.published_by?.name;
         details.License = versionData.license;
-        details.InstallerUrl = new Uri((CratesIOClient.ApiUrl + versionData.dl_path).Replace("/api/v1/api/v1", "/api/v1"));
+        details.InstallerUrl = new Uri(
+            (CratesIOClient.ApiUrl + versionData.dl_path).Replace("/api/v1/api/v1", "/api/v1")
+        );
         details.InstallerSize = versionData.crate_size ?? 0;
         details.InstallerHash = versionData.checksum;
         details.Publisher = versionData.published_by?.name;
@@ -67,12 +77,18 @@ internal sealed class CargoPkgDetailsHelper(Cargo manager) : BasePkgDetailsHelpe
 
     protected override string? GetInstallLocation_UnSafe(IPackage package)
     {
-        return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".cargo", "bin");
+        return Path.Join(
+            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+            ".cargo",
+            "bin"
+        );
     }
 
     protected override IReadOnlyList<string> GetInstallableVersions_UnSafe(IPackage package)
     {
-        INativeTaskLogger logger = Manager.TaskLogger.CreateNew(Enums.LoggableTaskType.LoadPackageVersions);
+        INativeTaskLogger logger = Manager.TaskLogger.CreateNew(
+            Enums.LoggableTaskType.LoadPackageVersions
+        );
         try
         {
             var (_, manifest) = CratesIOClient.GetManifest(package.Id);

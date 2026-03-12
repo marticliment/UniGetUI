@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 #if WINDOWS
 using System.Runtime.Versioning;
 #endif

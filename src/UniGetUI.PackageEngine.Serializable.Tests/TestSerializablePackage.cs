@@ -13,7 +13,7 @@ public class TestSerializablePackage
         CustomParameters_Uninstall = ["c", "b", "a"],
         Architecture = "ia64",
         Version = "-1",
-        RunAsAdministrator = true
+        RunAsAdministrator = true,
     };
 
     public static SerializableUpdatesOptions TestUpdatesOpts = new()
@@ -33,7 +33,7 @@ public class TestSerializablePackage
             Id = id,
             Name = name,
             Source = manager,
-            Version = version
+            Version = version,
         };
 
         var object2 = new SerializablePackage();
@@ -53,33 +53,58 @@ public class TestSerializablePackage
 
     [Theory]
     [InlineData("{}", "", "", "", "", "", false, "")]
-    [InlineData("""
-                {
-                  "Name": "name",
-                  "Id": "true",
-                  "Updates" : {
-                    "IgnoredVersion": "Hey"
-                  }
+    [InlineData(
+        """
+            {
+              "Name": "name",
+              "Id": "true",
+              "Updates" : {
+                "IgnoredVersion": "Hey"
+              }
+            }
+            """,
+        "true",
+        "name",
+        "",
+        "",
+        "",
+        false,
+        "Hey"
+    )]
+    [InlineData(
+        """
+             {
+                "Version": "false",
+                "Source": "lol",
+                "ManagerName": "Rodolfo Chikilicuatre",
+                "UNKNOWN_VAL1": true,
+                "UNKNOWN_VAL2": null,
+                "UNKNOWN_VAL3": 22,
+                "UNKNOWN_VAL4": "hehe",
+                "InstallationOptions" : {
+                    "SkipHashCheck": true,
+                    "OverridesNextLevelOpts": false
                 }
-                """, "true", "name", "", "", "", false, "Hey")]
-
-    [InlineData("""
-                 {
-                    "Version": "false",
-                    "Source": "lol",
-                    "ManagerName": "Rodolfo Chikilicuatre",
-                    "UNKNOWN_VAL1": true,
-                    "UNKNOWN_VAL2": null,
-                    "UNKNOWN_VAL3": 22,
-                    "UNKNOWN_VAL4": "hehe",
-                    "InstallationOptions" : {
-                        "SkipHashCheck": true,
-                        "OverridesNextLevelOpts": false
-                    }
-                }
-                """, "", "", "false", "Rodolfo Chikilicuatre", "lol", true, "")]
-
-    public void FromJson(string JSON, string id, string name, string version, string manager, string source, bool skipHash, string ignoredVer)
+            }
+            """,
+        "",
+        "",
+        "false",
+        "Rodolfo Chikilicuatre",
+        "lol",
+        true,
+        ""
+    )]
+    public void FromJson(
+        string JSON,
+        string id,
+        string name,
+        string version,
+        string manager,
+        string source,
+        bool skipHash,
+        string ignoredVer
+    )
     {
         Assert.NotEmpty(JSON);
         var jsonContent = JsonNode.Parse(JSON);
@@ -91,8 +116,11 @@ public class TestSerializablePackage
         Assert.Equal(manager, o2.ManagerName);
         Assert.Equal(source, o2.Source);
         Assert.Equal(version, o2.Version);
-        TestInstallOptions.AssertAreEqual(new() { SkipHashCheck = skipHash }, o2.InstallationOptions);
-        TestSerializableUpdatesOptions.AreEqual(new(){IgnoredVersion = ignoredVer}, o2.Updates);
+        TestInstallOptions.AssertAreEqual(
+            new() { SkipHashCheck = skipHash },
+            o2.InstallationOptions
+        );
+        TestSerializableUpdatesOptions.AreEqual(new() { IgnoredVersion = ignoredVer }, o2.Updates);
     }
 
     internal static void AreEqual(SerializablePackage o1, SerializablePackage o2)

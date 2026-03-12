@@ -18,13 +18,9 @@ public class TestSerializableBundle
             Architecture = "4+1€",
             CustomParameters_Install = ["--hello-world", "--another-param", "-help"],
             CustomParameters_Update = ["--update", "--another-param", "-help"],
-            CustomParameters_Uninstall = ["--uninstall", "--another-param", "-help"]
+            CustomParameters_Uninstall = ["--uninstall", "--another-param", "-help"],
         },
-        Updates = new()
-        {
-            IgnoredVersion = "12",
-            UpdatesIgnored = false
-        }
+        Updates = new() { IgnoredVersion = "12", UpdatesIgnored = false },
     };
 
     public static SerializablePackage TestPackage2 = new()
@@ -51,8 +47,9 @@ public class TestSerializableBundle
         {
             export_version = 5,
             packages = [TestPackage1, TestPackage2],
-            incompatible_packages_info = "I'm trying to reach you regarding your car's extended warranty",
-            incompatible_packages = [TestIncompatiblePackage]
+            incompatible_packages_info =
+                "I'm trying to reach you regarding your car's extended warranty",
+            incompatible_packages = [TestIncompatiblePackage],
         };
 
         var object2 = new SerializableBundle();
@@ -72,25 +69,30 @@ public class TestSerializableBundle
 
     [Theory]
     [InlineData("{}", "", "", "")]
-    [InlineData("""
+    [InlineData(
+        """
+            {
+              "export_version": 2.1,
+              "packages": [
                 {
-                  "export_version": 2.1,
-                  "packages": [
-                    {
-                      "Id": "Hello"
-                    },
-                    {
-                      "Id": "World"
-                    }
-                  ],
-                  "incompatible_packages_info": "hey",
-                  "incompatible_packages": [
-                    {
-                      "Id": "3"
-                    }
-                  ]
+                  "Id": "Hello"
+                },
+                {
+                  "Id": "World"
                 }
-                """, "Hello", "World", "3")]
+              ],
+              "incompatible_packages_info": "hey",
+              "incompatible_packages": [
+                {
+                  "Id": "3"
+                }
+              ]
+            }
+            """,
+        "Hello",
+        "World",
+        "3"
+    )]
     public void FromJson(string JSON, string id1, string id2, string id3)
     {
         Assert.NotEmpty(JSON);
@@ -126,6 +128,9 @@ public class TestSerializableBundle
 
         Assert.Equal(o1.incompatible_packages.Count, o2.incompatible_packages.Count);
         for (int i = 0; i < o1.incompatible_packages.Count; i++)
-            TestSerializableIncompatiblePackage.AreEqual(o1.incompatible_packages[i], o2.incompatible_packages[i]);
+            TestSerializableIncompatiblePackage.AreEqual(
+                o1.incompatible_packages[i],
+                o2.incompatible_packages[i]
+            );
     }
 }

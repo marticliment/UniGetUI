@@ -7,7 +7,10 @@ namespace UniGetUI.Pages.DialogPages;
 
 public static partial class DialogHelper
 {
-    public static async Task ShowOperationFailedDialog(AbstractOperation operation, OperationControl opControl)
+    public static async Task ShowOperationFailedDialog(
+        AbstractOperation operation,
+        OperationControl opControl
+    )
     {
         ContentDialog dialog = DialogFactory.Create_AsWindow(true, true);
         dialog.Title = operation.Metadata.FailureTitle;

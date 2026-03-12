@@ -7,44 +7,57 @@ namespace UniGetUI.Core.SettingsEngine
 {
     public static partial class Settings
     {
-        private static readonly ConcurrentDictionary<K, Dictionary<object, object?>> _dictionarySettings = new();
+        private static readonly ConcurrentDictionary<
+            K,
+            Dictionary<object, object?>
+        > _dictionarySettings = new();
 
         // Returns an empty dictionary if the setting doesn't exist and null if the types are invalid
         private static Dictionary<KeyT, ValueT?>? _getDictionary<KeyT, ValueT>(K key)
             where KeyT : notnull
-         {
+        {
             string setting = ResolveKey(key);
             try
             {
                 try
                 {
-                    if (_dictionarySettings.TryGetValue(key, out Dictionary<object, object?>? result))
+                    if (
+                        _dictionarySettings.TryGetValue(
+                            key,
+                            out Dictionary<object, object?>? result
+                        )
+                    )
                     {
                         // If the setting was cached
-                        return result.ToDictionary(
-                            kvp => (KeyT)kvp.Key,
-                            kvp => (ValueT?)kvp.Value
-                        );
+                        return result.ToDictionary(kvp => (KeyT)kvp.Key, kvp => (ValueT?)kvp.Value);
                     }
                 }
                 catch (InvalidCastException)
                 {
                     Logger.Error(
-                        $"Tried to get a dictionary setting with a key of type {typeof(KeyT)} and a value of type {typeof(ValueT)}, which is not the type of the dictionary");
+                        $"Tried to get a dictionary setting with a key of type {typeof(KeyT)} and a value of type {typeof(ValueT)}, which is not the type of the dictionary"
+                    );
                     return null;
                 }
 
                 // Otherwise, load the setting from disk and cache that setting
                 Dictionary<KeyT, ValueT?> value = [];
-                if (File.Exists(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, $"{setting}.json")))
+                if (
+                    File.Exists(
+                        Path.Join(CoreData.UniGetUIUserConfigurationDirectory, $"{setting}.json")
+                    )
+                )
                 {
-                    string result = File.ReadAllText(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, $"{setting}.json"));
+                    string result = File.ReadAllText(
+                        Path.Join(CoreData.UniGetUIUserConfigurationDirectory, $"{setting}.json")
+                    );
                     try
                     {
                         if (result != "")
                         {
-
-                            Dictionary<KeyT, ValueT?>? item = JsonSerializer.Deserialize<Dictionary<KeyT, ValueT?>>(result, SerializationOptions);
+                            Dictionary<KeyT, ValueT?>? item = JsonSerializer.Deserialize<
+                                Dictionary<KeyT, ValueT?>
+                            >(result, SerializationOptions);
                             if (item is not null)
                             {
                                 value = item;
@@ -54,7 +67,8 @@ namespace UniGetUI.Core.SettingsEngine
                     catch (InvalidCastException)
                     {
                         Logger.Error(
-                            $"Tried to get a dictionary setting with a key of type {typeof(KeyT)} and a value of type {typeof(ValueT)}, but the setting on disk ({result}) cannot be deserialized to that");
+                            $"Tried to get a dictionary setting with a key of type {typeof(KeyT)} and a value of type {typeof(ValueT)}, but the setting on disk ({result}) cannot be deserialized to that"
+                        );
                     }
                 }
 
@@ -79,7 +93,10 @@ namespace UniGetUI.Core.SettingsEngine
             return _getDictionary<KeyT, ValueT?>(settingsKey);
         }
 
-        public static void SetDictionary<KeyT, ValueT>(K settingsKey, Dictionary<KeyT, ValueT> value)
+        public static void SetDictionary<KeyT, ValueT>(
+            K settingsKey,
+            Dictionary<KeyT, ValueT> value
+        )
             where KeyT : notnull
         {
             string setting = ResolveKey(settingsKey);
@@ -91,13 +108,16 @@ namespace UniGetUI.Core.SettingsEngine
             var file = Path.Join(CoreData.UniGetUIUserConfigurationDirectory, $"{setting}.json");
             try
             {
-
-                if (value.Count != 0) File.WriteAllText(file, JsonSerializer.Serialize(value, SerializationOptions));
-                else if (File.Exists(file)) File.Delete(file);
+                if (value.Count != 0)
+                    File.WriteAllText(file, JsonSerializer.Serialize(value, SerializationOptions));
+                else if (File.Exists(file))
+                    File.Delete(file);
             }
             catch (Exception e)
             {
-                Logger.Error($"CANNOT SET SETTING DICTIONARY FOR setting={setting} [{string.Join(", ", value)}]");
+                Logger.Error(
+                    $"CANNOT SET SETTING DICTIONARY FOR setting={setting} [{string.Join(", ", value)}]"
+                );
                 Logger.Error(e);
             }
         }
@@ -106,7 +126,8 @@ namespace UniGetUI.Core.SettingsEngine
             where KeyT : notnull
         {
             Dictionary<KeyT, ValueT?>? dictionary = _getDictionary<KeyT, ValueT>(settingsKey);
-            if (dictionary == null || !dictionary.TryGetValue(key, out ValueT? value)) return default;
+            if (dictionary == null || !dictionary.TryGetValue(key, out ValueT? value))
+                return default;
 
             return value;
         }
@@ -118,10 +139,7 @@ namespace UniGetUI.Core.SettingsEngine
             Dictionary<KeyT, ValueT?>? dictionary = _getDictionary<KeyT, ValueT>(settingsKey);
             if (dictionary == null)
             {
-                dictionary = new()
-                {
-                    { key, value }
-                };
+                dictionary = new() { { key, value } };
                 SetDictionary(settingsKey, dictionary);
                 return default;
             }
@@ -142,7 +160,8 @@ namespace UniGetUI.Core.SettingsEngine
             where KeyT : notnull
         {
             Dictionary<KeyT, ValueT?>? dictionary = _getDictionary<KeyT, ValueT>(settingsKey);
-            if (dictionary == null) return default;
+            if (dictionary == null)
+                return default;
 
             bool success = false;
             if (dictionary.TryGetValue(key, out ValueT? value))
@@ -151,7 +170,8 @@ namespace UniGetUI.Core.SettingsEngine
                 SetDictionary(settingsKey, dictionary);
             }
 
-            if (!success) return default;
+            if (!success)
+                return default;
             return value;
         }
 
@@ -159,7 +179,8 @@ namespace UniGetUI.Core.SettingsEngine
             where KeyT : notnull
         {
             Dictionary<KeyT, ValueT?>? dictionary = _getDictionary<KeyT, ValueT>(settingsKey);
-            if (dictionary == null) return false;
+            if (dictionary == null)
+                return false;
 
             return dictionary.ContainsKey(key);
         }
@@ -168,7 +189,8 @@ namespace UniGetUI.Core.SettingsEngine
             where KeyT : notnull
         {
             Dictionary<KeyT, ValueT?>? dictionary = _getDictionary<KeyT, ValueT>(settingsKey);
-            if (dictionary == null) return false;
+            if (dictionary == null)
+                return false;
 
             return dictionary.ContainsValue(value);
         }

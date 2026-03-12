@@ -26,13 +26,15 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 CanListDependencies = true,
                 SupportsPreRelease = true,
                 SupportsProxy = ProxySupport.No,
-                SupportsProxyAuth = false
+                SupportsProxyAuth = false,
             };
 
             Properties = new ManagerProperties
             {
                 Name = "Npm",
-                Description = CoreTools.Translate("Node JS's package manager. Full of libraries and other utilities that orbit the javascript world<br>Contains: <b>Node javascript libraries and other related utilities</b>"),
+                Description = CoreTools.Translate(
+                    "Node JS's package manager. Full of libraries and other utilities that orbit the javascript world<br>Contains: <b>Node javascript libraries and other related utilities</b>"
+                ),
                 IconId = IconType.Node,
                 ColorIconId = "node_color",
                 ExecutableFriendlyName = "npm",
@@ -41,7 +43,6 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 UpdateVerb = "install",
                 DefaultSource = new ManagerSource(this, "npm", new Uri("https://www.npmjs.com/")),
                 KnownSources = [new ManagerSource(this, "npm", new Uri("https://www.npmjs.com/"))],
-
             };
 
             DetailsHelper = new NpmPkgDetailsHelper(this);
@@ -61,9 +62,11 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                     RedirectStandardInput = true,
                     UseShellExecute = false,
                     CreateNoWindow = true,
-                    WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-                    StandardOutputEncoding = System.Text.Encoding.UTF8
-                }
+                    WorkingDirectory = Environment.GetFolderPath(
+                        Environment.SpecialFolder.UserProfile
+                    ),
+                    StandardOutputEncoding = System.Text.Encoding.UTF8,
+                },
             };
 
             IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
@@ -81,7 +84,15 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                     string? version = node?["version"]?.ToString();
                     if (id is not null && version is not null)
                     {
-                        Packages.Add(new Package(CoreTools.FormatAsName(id), id, version, DefaultSource, this));
+                        Packages.Add(
+                            new Package(
+                                CoreTools.FormatAsName(id),
+                                id,
+                                version,
+                                DefaultSource,
+                                this
+                            )
+                        );
                     }
                     else
                     {
@@ -100,22 +111,33 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
         protected override IReadOnlyList<Package> GetAvailableUpdates_UnSafe()
         {
             List<Package> Packages = [];
-            foreach (var options in new OverridenInstallationOptions[] { new(PackageScope.Local), new(PackageScope.Global) })
+            foreach (
+                var options in new OverridenInstallationOptions[]
+                {
+                    new(PackageScope.Local),
+                    new(PackageScope.Global),
+                }
+            )
             {
                 using Process p = new()
                 {
                     StartInfo = new ProcessStartInfo
                     {
                         FileName = Status.ExecutablePath,
-                        Arguments = Status.ExecutableCallArgs + " outdated --json" + (options.Scope == PackageScope.Global ? " --global" : ""),
+                        Arguments =
+                            Status.ExecutableCallArgs
+                            + " outdated --json"
+                            + (options.Scope == PackageScope.Global ? " --global" : ""),
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,
                         RedirectStandardInput = true,
                         UseShellExecute = false,
                         CreateNoWindow = true,
-                        WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-                        StandardOutputEncoding = System.Text.Encoding.UTF8
-                    }
+                        WorkingDirectory = Environment.GetFolderPath(
+                            Environment.SpecialFolder.UserProfile
+                        ),
+                        StandardOutputEncoding = System.Text.Encoding.UTF8,
+                    },
                 };
 
                 IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
@@ -124,15 +146,25 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 string strContents = p.StandardOutput.ReadToEnd();
                 logger.AddToStdOut(strContents);
                 JsonObject? contents = null;
-                if (strContents.Any()) contents = JsonNode.Parse(strContents) as JsonObject;
+                if (strContents.Any())
+                    contents = JsonNode.Parse(strContents) as JsonObject;
                 foreach (var (packageId, packageData) in contents?.ToDictionary() ?? [])
                 {
                     string? version = packageData?["current"]?.ToString();
                     string? newVersion = packageData?["latest"]?.ToString();
                     if (version is not null && newVersion is not null)
                     {
-                        Packages.Add(new Package(CoreTools.FormatAsName(packageId), packageId, version, newVersion,
-                            DefaultSource, this, options));
+                        Packages.Add(
+                            new Package(
+                                CoreTools.FormatAsName(packageId),
+                                packageId,
+                                version,
+                                newVersion,
+                                DefaultSource,
+                                this,
+                                options
+                            )
+                        );
                     }
                 }
 
@@ -146,37 +178,62 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
         protected override IReadOnlyList<Package> GetInstalledPackages_UnSafe()
         {
             List<Package> Packages = [];
-            foreach (var options in new OverridenInstallationOptions[] { new(PackageScope.Local), new(PackageScope.Global) })
+            foreach (
+                var options in new OverridenInstallationOptions[]
+                {
+                    new(PackageScope.Local),
+                    new(PackageScope.Global),
+                }
+            )
             {
                 using Process p = new()
                 {
                     StartInfo = new ProcessStartInfo
                     {
                         FileName = Status.ExecutablePath,
-                        Arguments = Status.ExecutableCallArgs + " list --json" + (options.Scope == PackageScope.Global ? " --global" : ""),
+                        Arguments =
+                            Status.ExecutableCallArgs
+                            + " list --json"
+                            + (options.Scope == PackageScope.Global ? " --global" : ""),
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,
                         RedirectStandardInput = true,
                         UseShellExecute = false,
                         CreateNoWindow = true,
-                        WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-                        StandardOutputEncoding = System.Text.Encoding.UTF8
-                    }
+                        WorkingDirectory = Environment.GetFolderPath(
+                            Environment.SpecialFolder.UserProfile
+                        ),
+                        StandardOutputEncoding = System.Text.Encoding.UTF8,
+                    },
                 };
 
-                IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
+                IProcessTaskLogger logger = TaskLogger.CreateNew(
+                    LoggableTaskType.ListInstalledPackages,
+                    p
+                );
                 p.Start();
 
                 string strContents = p.StandardOutput.ReadToEnd();
                 logger.AddToStdOut(strContents);
                 JsonObject? contents = null;
-                if (strContents.Any()) contents = (JsonNode.Parse(strContents) as JsonObject)?["dependencies"] as JsonObject;
+                if (strContents.Any())
+                    contents =
+                        (JsonNode.Parse(strContents) as JsonObject)?["dependencies"] as JsonObject;
                 foreach (var (packageId, packageData) in contents?.ToDictionary() ?? [])
                 {
                     string? version = packageData?["version"]?.ToString();
                     if (version is not null)
                     {
-                        Packages.Add(new Package(CoreTools.FormatAsName(packageId), packageId, version, DefaultSource, this, options));
+                        Packages.Add(
+                            new Package(
+                                CoreTools.FormatAsName(packageId),
+                                packageId,
+                                version,
+                                DefaultSource,
+                                this,
+                                options
+                            )
+                        );
                     }
                 }
 
@@ -188,16 +245,21 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             return Packages;
         }
 
-        public override IReadOnlyList<string> FindCandidateExecutableFiles()
-            => CoreTools.WhichMultiple("npm.cmd");
+        public override IReadOnlyList<string> FindCandidateExecutableFiles() =>
+            CoreTools.WhichMultiple("npm.cmd");
 
-        protected override void _loadManagerExecutableFile(out bool found, out string path, out string callArguments)
+        protected override void _loadManagerExecutableFile(
+            out bool found,
+            out string path,
+            out string callArguments
+        )
         {
             var (_found, _executable) = GetExecutableFile();
 
             found = _found;
             path = CoreData.PowerShell5;
-            callArguments = $"-NoProfile -ExecutionPolicy Bypass -Command \"{_executable.Replace(" ", "` ")}\" ";
+            callArguments =
+                $"-NoProfile -ExecutionPolicy Bypass -Command \"{_executable.Replace(" ", "` ")}\" ";
         }
 
         protected override void _loadManagerVersion(out string version)
@@ -213,9 +275,11 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                     RedirectStandardError = true,
                     RedirectStandardInput = true,
                     CreateNoWindow = true,
-                    WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-                    StandardOutputEncoding = System.Text.Encoding.UTF8
-                }
+                    WorkingDirectory = Environment.GetFolderPath(
+                        Environment.SpecialFolder.UserProfile
+                    ),
+                    StandardOutputEncoding = System.Text.Encoding.UTF8,
+                },
             };
             process.Start();
             version = process.StandardOutput.ReadToEnd().Trim();

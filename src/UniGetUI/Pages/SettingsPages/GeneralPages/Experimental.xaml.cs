@@ -18,12 +18,17 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
 
         public bool CanGoBack => true;
 
-        public string ShortTitle => CoreTools.Translate("Experimental settings and developer options");
+        public string ShortTitle =>
+            CoreTools.Translate("Experimental settings and developer options");
 
         public event EventHandler? RestartRequired;
-        public event EventHandler<Type>? NavigationRequested { add { } remove { } }
+        public event EventHandler<Type>? NavigationRequested
+        {
+            add { }
+            remove { }
+        }
 
-        public void ShowRestartBanner(object sender, EventArgs e)
-            => RestartRequired?.Invoke(this, e);
+        public void ShowRestartBanner(object sender, EventArgs e) =>
+            RestartRequired?.Invoke(this, e);
     }
 }

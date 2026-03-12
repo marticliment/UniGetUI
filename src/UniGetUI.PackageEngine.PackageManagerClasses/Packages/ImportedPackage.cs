@@ -26,7 +26,11 @@ namespace UniGetUI.PackageEngine.PackageClasses
             }
         }
 
-        public ImportedPackage(SerializablePackage raw_data, IPackageManager manager, IManagerSource source)
+        public ImportedPackage(
+            SerializablePackage raw_data,
+            IPackageManager manager,
+            IManagerSource source
+        )
             : base(raw_data.Name, raw_data.Id, raw_data.Version, source, manager)
         {
             _version = raw_data.Version;
@@ -45,27 +49,28 @@ namespace UniGetUI.PackageEngine.PackageClasses
             return package;
         }
 
-        public override Task<InstallOptions> GetInstallOptions()
-            => Task.FromResult(installation_options.Copy());
+        public override Task<InstallOptions> GetInstallOptions() =>
+            Task.FromResult(installation_options.Copy());
 
         public override Task<SerializablePackage> AsSerializableAsync()
         {
-            return Task.FromResult(new SerializablePackage
-            {
-                Id = Id,
-                Name = Name,
-                Version = _version,
-                Source = Source.Name,
-                ManagerName = Manager.Name,
-                InstallationOptions = installation_options.Copy(),
-                Updates = updates_options.Copy()
-            });
+            return Task.FromResult(
+                new SerializablePackage
+                {
+                    Id = Id,
+                    Name = Name,
+                    Version = _version,
+                    Source = Source.Name,
+                    ManagerName = Manager.Name,
+                    InstallationOptions = installation_options.Copy(),
+                    Updates = updates_options.Copy(),
+                }
+            );
         }
 
         public void FirePackageVersionChangedEvent()
         {
             OnPropertyChanged(nameof(VersionString));
         }
-
     }
 }

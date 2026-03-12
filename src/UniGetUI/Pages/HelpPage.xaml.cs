@@ -32,7 +32,10 @@ namespace UniGetUI.Interface.Dialogs
             {
                 ProgressBar.Visibility = Visibility.Visible;
                 lastUri = new Uri(e.Uri);
-                if (e.Uri.ToString().Contains("marticliment.com") && !e.Uri.ToString().Contains("isWingetUIIframe"))
+                if (
+                    e.Uri.ToString().Contains("marticliment.com")
+                    && !e.Uri.ToString().Contains("isWingetUIIframe")
+                )
                 {
                     e.Cancel = true;
                     if (e.Uri.ToString().Contains('?'))
@@ -55,12 +58,13 @@ namespace UniGetUI.Interface.Dialogs
             Initialized = true;
         }
 
-        public void NavigateTo(string piece, bool skipWait = false)
-            => _ = _navigateTo(piece, skipWait);
+        public void NavigateTo(string piece, bool skipWait = false) =>
+            _ = _navigateTo(piece, skipWait);
 
         private async Task _navigateTo(string piece, bool skipWait)
         {
-            while (!Initialized && !skipWait) await Task.Delay(50);
+            while (!Initialized && !skipWait)
+                await Task.Delay(50);
             ArgumentNullException.ThrowIfNull(webView);
             webView.Source = new Uri("https://marticliment.com/unigetui/help/" + piece);
         }
@@ -75,8 +79,7 @@ namespace UniGetUI.Interface.Dialogs
 
         private void RightButton_Click(object sender, RoutedEventArgs e)
         {
-
-            if (Initialized && webView is not null &&  webView.CanGoForward)
+            if (Initialized && webView is not null && webView.CanGoForward)
             {
                 webView.GoForward();
             }
@@ -103,7 +106,10 @@ namespace UniGetUI.Interface.Dialogs
             if (!Initialized || webView is null)
                 return;
 
-            string uri = webView.Source.ToString().Replace("?isWingetUIIframe", "").Replace("&isWingetUIIframe", "");
+            string uri = webView
+                .Source.ToString()
+                .Replace("?isWingetUIIframe", "")
+                .Replace("&isWingetUIIframe", "");
             CoreTools.Launch(uri);
         }
 
@@ -117,7 +123,8 @@ namespace UniGetUI.Interface.Dialogs
 
         public void OnEnter()
         {
-            if (webView is null) _ = InitializeWebView();
+            if (webView is null)
+                _ = InitializeWebView();
         }
 
         public void OnLeave()

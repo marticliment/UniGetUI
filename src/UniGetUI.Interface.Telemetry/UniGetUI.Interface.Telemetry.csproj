@@ -1,4 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>$(SharedTargetFrameworks)</TargetFrameworks>
+    </PropertyGroup>
 
     <PropertyGroup>
         <IsPackable>false</IsPackable>
@@ -18,5 +21,4 @@
         <ProjectReference Include="..\UniGetUI.PAckageEngine.Interfaces\UniGetUI.PackageEngine.Interfaces.csproj" />
         <ProjectReference Include="..\UniGetUI.PackageEngine.PackageEngine\UniGetUI.PackageEngine.PEInterface.csproj" />
     </ItemGroup>
-
 </Project>

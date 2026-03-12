@@ -11,6 +11,7 @@ using UniGetUI.PackageOperations;
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace UniGetUI.Pages.DialogPages;
+
 /// <summary>
 /// An empty page that can be used on its own or navigated to within a Frame.
 /// </summary>
@@ -26,11 +27,16 @@ public sealed partial class OperationFailedDialog : Page
     {
         this.InitializeComponent();
 
-        errorColor ??= (SolidColorBrush)Application.Current.Resources["SystemFillColorCriticalBrush"];
-        debugColor ??= (SolidColorBrush)Application.Current.Resources["SystemFillColorNeutralBrush"];
+        errorColor ??= (SolidColorBrush)
+            Application.Current.Resources["SystemFillColorCriticalBrush"];
+        debugColor ??= (SolidColorBrush)
+            Application.Current.Resources["SystemFillColorNeutralBrush"];
 
-        headerContent.Text = $"{operation.Metadata.FailureMessage}.\n"
-           + CoreTools.Translate("Please see the Command-line Output or refer to the Operation History for further information about the issue.");
+        headerContent.Text =
+            $"{operation.Metadata.FailureMessage}.\n"
+            + CoreTools.Translate(
+                "Please see the Command-line Output or refer to the Operation History for further information about the issue."
+            );
 
         par = new Paragraph();
         foreach (var line in operation.GetOutput())

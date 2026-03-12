@@ -1,0 +1,38 @@
+#!/usr/bin/env sh
+
+set -eu
+
+repo_root=$(git rev-parse --show-toplevel)
+cd "$repo_root"
+
+staged_files=$(git diff --cached --name-only --diff-filter=ACMR -- src | grep -E '\.(cs|csproj|props|targets|editorconfig|json|sln|slnx)$' || true)
+
+if [ -z "$staged_files" ]; then
+    exit 0
+fi
+
+unstaged_files=$(git diff --name-only -- $staged_files || true)
+if [ -n "$unstaged_files" ]; then
+    echo "pre-commit: relevant files have unstaged changes."
+    echo "Stage or stash them before committing so dotnet format does not rewrite mixed content."
+    printf '%s\n' "$unstaged_files"
+    exit 1
+fi
+
+if ! command -v dotnet >/dev/null 2>&1; then
+    echo "pre-commit: dotnet CLI not found; skipping whitespace formatting."
+    exit 0
+fi
+
+echo "pre-commit: running dotnet format whitespace on staged src files"
+
+# shellcheck disable=SC2086
+dotnet format whitespace src --folder --verbosity minimal --include $staged_files
+
+if ! git diff --quiet -- $staged_files; then
+    git add -- $staged_files
+    echo "pre-commit: formatting updates were staged. Review them and run git commit again."
+    exit 1
+fi
+
+exit 0

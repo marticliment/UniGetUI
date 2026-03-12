@@ -10,9 +10,21 @@ public static class IgnoredUpdatesDatabase
     public class PauseTime
     {
         private int _daysTill;
-        public int Months { get { return Weeks / 4; } set { Weeks = value * 4; } }
-        public int Weeks { get { return Days / 7; } set { Days = value * 7; } }
-        public int Days { get { return _daysTill; } set { _daysTill = value; } }
+        public int Months
+        {
+            get { return Weeks / 4; }
+            set { Weeks = value * 4; }
+        }
+        public int Weeks
+        {
+            get { return Days / 7; }
+            set { Days = value * 7; }
+        }
+        public int Days
+        {
+            get { return _daysTill; }
+            set { _daysTill = value; }
+        }
 
         public string GetDateFromNow()
         {
@@ -24,7 +36,11 @@ public static class IgnoredUpdatesDatabase
         {
             try
             {
-                DateTime ParsedDate = DateTime.ParseExact(Date, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+                DateTime ParsedDate = DateTime.ParseExact(
+                    Date,
+                    "yyyy-MM-dd",
+                    System.Globalization.CultureInfo.InvariantCulture
+                );
                 DateTime Now = DateTime.Now;
                 if (ParsedDate > Now)
                 {
@@ -47,32 +63,38 @@ public static class IgnoredUpdatesDatabase
             if (Months >= 12 && Months % 12 == 0)
             {
                 int Years = Months / 12;
-                if (Years > 1) return CoreTools.Translate("{0} years", Years);
+                if (Years > 1)
+                    return CoreTools.Translate("{0} years", Years);
                 return CoreTools.Translate("1 year");
             }
 
             if (Months >= 1)
             {
-                if (Months > 1) return CoreTools.Translate("{0} months", Months);
+                if (Months > 1)
+                    return CoreTools.Translate("{0} months", Months);
                 return CoreTools.Translate("1 month");
             }
 
             if (Weeks >= 1)
             {
-                if (Weeks > 1) return CoreTools.Translate("{0} weeks", Weeks);
+                if (Weeks > 1)
+                    return CoreTools.Translate("{0} weeks", Weeks);
                 return CoreTools.Translate("1 week");
             }
 
-            if (Days != 1) return CoreTools.Translate("{0} days", Days);
+            if (Days != 1)
+                return CoreTools.Translate("{0} days", Days);
             return CoreTools.Translate("1 day");
         }
     }
 
     public static IReadOnlyDictionary<string, string> GetDatabase()
     {
-        return Settings.GetDictionary<string, string>(Settings.K.IgnoredPackageUpdates)?
-            .Where(kvp => kvp.Value is not null)
-            .ToDictionary(kvp => kvp.Key, kvp => kvp.Value!) ?? new Dictionary<string, string>();
+        return Settings
+                .GetDictionary<string, string>(Settings.K.IgnoredPackageUpdates)
+                ?.Where(kvp => kvp.Value is not null)
+                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value!)
+            ?? new Dictionary<string, string>();
     }
 
     public static string GetIgnoredIdForPackage(IPackage package)
@@ -98,14 +120,24 @@ public static class IgnoredUpdatesDatabase
     public static bool Remove(string ignoredId)
     {
         // Remove the entry if present
-        if (Settings.DictionaryContainsKey<string, string>(Settings.K.IgnoredPackageUpdates, ignoredId))
+        if (
+            Settings.DictionaryContainsKey<string, string>(
+                Settings.K.IgnoredPackageUpdates,
+                ignoredId
+            )
+        )
         {
             // Remove the entry and propagate changes to disk
-            return Settings.RemoveDictionaryKey<string, string>(Settings.K.IgnoredPackageUpdates, ignoredId) != null;
+            return Settings.RemoveDictionaryKey<string, string>(
+                    Settings.K.IgnoredPackageUpdates,
+                    ignoredId
+                ) != null;
         }
 
         // Do nothing if the entry was not there
-        Logger.Warn($"Attempted to remove from ignored updates a package {{ignoredId={ignoredId}}} that was not found there");
+        Logger.Warn(
+            $"Attempted to remove from ignored updates a package {{ignoredId={ignoredId}}} that was not found there"
+        );
         return false;
     }
 
@@ -123,14 +155,22 @@ public static class IgnoredUpdatesDatabase
     /// <returns>True if the package is ignored, false otherwise</returns>
     public static bool HasUpdatesIgnored(string ignoredId, string version = "*")
     {
-        string? ignoredVersion = Settings.GetDictionaryItem<string, string>(Settings.K.IgnoredPackageUpdates, ignoredId);
+        string? ignoredVersion = Settings.GetDictionaryItem<string, string>(
+            Settings.K.IgnoredPackageUpdates,
+            ignoredId
+        );
 
         if (ignoredVersion != null && ignoredVersion.StartsWith("<"))
         {
             try
             {
-                var ignoreDate = DateTime.ParseExact(ignoredVersion[1..], "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
-                if (ignoreDate > DateTime.Now) return true;
+                var ignoreDate = DateTime.ParseExact(
+                    ignoredVersion[1..],
+                    "yyyy-MM-dd",
+                    System.Globalization.CultureInfo.InvariantCulture
+                );
+                if (ignoreDate > DateTime.Now)
+                    return true;
                 Remove(ignoredId);
             }
             catch (FormatException ex)
@@ -153,6 +193,9 @@ public static class IgnoredUpdatesDatabase
     /// If **no** versions are ignored, null will be returned.</returns>
     public static string? GetIgnoredVersion(string ignoredId)
     {
-        return Settings.GetDictionaryItem<string, string>(Settings.K.IgnoredPackageUpdates, ignoredId);
+        return Settings.GetDictionaryItem<string, string>(
+            Settings.K.IgnoredPackageUpdates,
+            ignoredId
+        );
     }
 }

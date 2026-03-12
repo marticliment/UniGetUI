@@ -15,7 +15,7 @@ public static class SecureSettings
         AllowImportPrePostOpCommands,
         ForceUserGSudo,
         AllowCustomManagerPaths,
-        Unset
+        Unset,
     };
 
     public static string ResolveKey(K key)
@@ -30,7 +30,9 @@ public static class SecureSettings
             K.AllowCustomManagerPaths => "AllowCustomManagerPaths",
 
             K.Unset => throw new InvalidDataException("SecureSettings key was unset!"),
-            _ => throw new KeyNotFoundException($"The SecureSettings key {key} was not found on the ResolveKey map")
+            _ => throw new KeyNotFoundException(
+                $"The SecureSettings key {key} was not found on the ResolveKey map"
+            ),
         };
     }
 
@@ -87,10 +89,10 @@ public static class SecureSettings
             Verb = "runas",
             ArgumentList =
             {
-                enabled? Args.ENABLE_FOR_USER: Args.DISABLE_FOR_USER,
+                enabled ? Args.ENABLE_FOR_USER : Args.DISABLE_FOR_USER,
                 purifiedUser,
-                purifiedSetting
-            }
+                purifiedSetting,
+            },
         };
 
         p.Start();
@@ -140,7 +142,11 @@ public static class SecureSettings
     {
         if (OperatingSystem.IsWindows())
         {
-            return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "UniGetUI", "SecureSettings");
+            return Path.Join(
+                Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
+                "UniGetUI",
+                "SecureSettings"
+            );
         }
 
         return Path.Join(CoreData.UniGetUIDataDirectory, "SecureSettings");

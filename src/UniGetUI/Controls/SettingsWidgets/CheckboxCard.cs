@@ -73,7 +73,7 @@ namespace UniGetUI.Interface.Widgets
             {
                 VerticalAlignment = VerticalAlignment.Center,
                 Margin = new Thickness(0, 0, 0, 0),
-                TextWrapping = TextWrapping.Wrap
+                TextWrapping = TextWrapping.Wrap,
             };
             _warningBlock = new TextBlock()
             {
@@ -90,12 +90,13 @@ namespace UniGetUI.Interface.Widgets
             {
                 Spacing = 4,
                 Orientation = Orientation.Vertical,
-                Children = { _textblock, _warningBlock }
+                Children = { _textblock, _warningBlock },
             };
 
             _checkbox.HorizontalAlignment = HorizontalAlignment.Stretch;
             _checkbox.Toggled += _checkbox_Toggled;
         }
+
         protected virtual void _checkbox_Toggled(object sender, RoutedEventArgs e)
         {
             Settings.Set(setting_name, _checkbox.IsOn ^ IS_INVERTED ^ ForceInversion);
@@ -112,17 +113,23 @@ namespace UniGetUI.Interface.Widgets
         private bool _disableStateChangedEvent;
 
         private string _keyName = "";
-        public string KeyName { set
+        public string KeyName
         {
-            _keyName = value;
-            if (_dictName != Settings.K.Unset && _keyName.Any())
+            set
             {
-                _disableStateChangedEvent = true;
-                _checkbox.IsOn = Settings.GetDictionaryItem<string, bool>(_dictName, _keyName) ^ IS_INVERTED ^ ForceInversion;
-                _textblock.Opacity = _checkbox.IsOn ? 1 : 0.7;
-                _disableStateChangedEvent = false;
+                _keyName = value;
+                if (_dictName != Settings.K.Unset && _keyName.Any())
+                {
+                    _disableStateChangedEvent = true;
+                    _checkbox.IsOn =
+                        Settings.GetDictionaryItem<string, bool>(_dictName, _keyName)
+                        ^ IS_INVERTED
+                        ^ ForceInversion;
+                    _textblock.Opacity = _checkbox.IsOn ? 1 : 0.7;
+                    _disableStateChangedEvent = false;
+                }
             }
-        } }
+        }
 
         public Settings.K DictionaryName
         {
@@ -132,20 +139,27 @@ namespace UniGetUI.Interface.Widgets
                 IS_INVERTED = Settings.ResolveKey(value).StartsWith("Disable");
                 if (_dictName != Settings.K.Unset && _keyName.Any())
                 {
-                    _checkbox.IsOn = Settings.GetDictionaryItem<string, bool>(_dictName, _keyName) ^ IS_INVERTED ^ ForceInversion;
+                    _checkbox.IsOn =
+                        Settings.GetDictionaryItem<string, bool>(_dictName, _keyName)
+                        ^ IS_INVERTED
+                        ^ ForceInversion;
                     _textblock.Opacity = _checkbox.IsOn ? 1 : 0.7;
                 }
             }
         }
 
-        public CheckboxCard_Dict() : base()
-        {
-        }
+        public CheckboxCard_Dict()
+            : base() { }
 
         protected override void _checkbox_Toggled(object sender, RoutedEventArgs e)
         {
-            if (_disableStateChangedEvent) return;
-            Settings.SetDictionaryItem(_dictName, _keyName, _checkbox.IsOn ^ IS_INVERTED ^ ForceInversion);
+            if (_disableStateChangedEvent)
+                return;
+            Settings.SetDictionaryItem(
+                _dictName,
+                _keyName,
+                _checkbox.IsOn ^ IS_INVERTED ^ ForceInversion
+            );
             StateChanged?.Invoke(this, EventArgs.Empty);
             _textblock.Opacity = _checkbox.IsOn ? 1 : 0.7;
         }

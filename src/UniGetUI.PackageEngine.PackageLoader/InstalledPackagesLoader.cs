@@ -9,13 +9,14 @@ namespace UniGetUI.PackageEngine.PackageLoader
         public static InstalledPackagesLoader Instance = null!;
 
         public InstalledPackagesLoader(IReadOnlyList<IPackageManager> managers)
-        : base(
-            managers,
-            identifier: "INSTALLED_PACKAGES",
-            AllowMultiplePackageVersions: true,
-            DisableReload: false,
-            CheckedBydefault: false,
-            RequiresInternet: true)
+            : base(
+                managers,
+                identifier: "INSTALLED_PACKAGES",
+                AllowMultiplePackageVersions: true,
+                DisableReload: false,
+                CheckedBydefault: false,
+                RequiresInternet: true
+            )
         {
             Instance = this;
         }
@@ -63,7 +64,9 @@ namespace UniGetUI.PackageEngine.PackageLoader
                 {
                     if (manager.IsEnabled() && manager.Status.Found)
                     {
-                        Task<IReadOnlyList<IPackage>> task = Task.Run(() => LoadPackagesFromManager(manager));
+                        Task<IReadOnlyList<IPackage>> task = Task.Run(() =>
+                            LoadPackagesFromManager(manager)
+                        );
                         tasks.Add(task);
                     }
                 }
@@ -89,7 +92,9 @@ namespace UniGetUI.PackageEngine.PackageLoader
                                         continue;
                                     }
 
-                                    Logger.ImportantInfo($"Adding missing package {package.Id} to installed packages list");
+                                    Logger.ImportantInfo(
+                                        $"Adding missing package {package.Id} to installed packages list"
+                                    );
                                     toAdd.Add(package);
                                     await AddPackage(package);
                                 }

@@ -5,14 +5,14 @@ using UniGetUI.Core.Classes;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
-using UniGetUI.PackageEngine.Classes.Manager;
 using UniGetUI.Interface.Enums;
+using UniGetUI.PackageEngine.Classes.Manager;
 using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
-using UniGetUI.PackageEngine.ManagerClasses.Classes;
 
 namespace UniGetUI.PackageEngine.Managers.CargoManager;
 
@@ -26,21 +26,24 @@ public partial class Cargo : PackageManager
 
     public Cargo()
     {
-        Dependencies = [
+        Dependencies =
+        [
             // cargo-update is required to check for installed and upgradable packages
             new ManagerDependency(
                 "cargo-update",
                 CoreData.PowerShell5,
                 "-ExecutionPolicy Bypass -NoLogo -NoProfile -Command \"& {cargo install cargo-update; if ($error.count -ne 0){pause}}\"",
                 "cargo install cargo-update",
-                async () => (await CoreTools.WhichAsync("cargo-install-update.exe")).Item1),
+                async () => (await CoreTools.WhichAsync("cargo-install-update.exe")).Item1
+            ),
             // Cargo-binstall is required to install and update cargo binaries
             new ManagerDependency(
                 "cargo-binstall",
                 CoreData.PowerShell5,
                 "-ExecutionPolicy Bypass -NoLogo -NoProfile -Command \"& {Set-ExecutionPolicy Unrestricted -Scope Process; iex (iwr \\\"https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.ps1\\\").Content; if ($error.count -ne 0){pause}}\"",
                 "Set-ExecutionPolicy Unrestricted -Scope Process; iex (iwr \"https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.ps1\").Content",
-                async () => (await CoreTools.WhichAsync("cargo-binstall.exe")).Item1)
+                async () => (await CoreTools.WhichAsync("cargo-binstall.exe")).Item1
+            ),
         ];
 
         Capabilities = new ManagerCapabilities
@@ -51,7 +54,7 @@ public partial class Cargo : PackageManager
             SupportsCustomLocations = true,
             CanDownloadInstaller = true,
             SupportsProxy = ProxySupport.Partially,
-            SupportsProxyAuth = true
+            SupportsProxyAuth = true,
         };
 
         var cratesIo = new ManagerSource(this, "crates.io", new Uri("https://index.crates.io/"));
@@ -59,7 +62,9 @@ public partial class Cargo : PackageManager
         Properties = new ManagerProperties
         {
             Name = "Cargo",
-            Description = CoreTools.Translate("The Rust package manager.<br>Contains: <b>Rust libraries and programs written in Rust</b>"),
+            Description = CoreTools.Translate(
+                "The Rust package manager.<br>Contains: <b>Rust libraries and programs written in Rust</b>"
+            ),
             IconId = IconType.Rust,
             ColorIconId = "cargo_color",
             ExecutableFriendlyName = "cargo.exe",
@@ -67,7 +72,7 @@ public partial class Cargo : PackageManager
             UninstallVerb = "uninstall",
             UpdateVerb = "binstall",
             DefaultSource = cratesIo,
-            KnownSources = [cratesIo]
+            KnownSources = [cratesIo],
         };
 
         DetailsHelper = new CargoPkgDetailsHelper(this);
@@ -90,7 +95,9 @@ public partial class Cargo : PackageManager
             {
                 var id = match.Groups[1].Value;
                 var version = match.Groups[2].Value;
-                Packages.Add(new Package(CoreTools.FormatAsName(id), id, version, DefaultSource, this));
+                Packages.Add(
+                    new Package(CoreTools.FormatAsName(id), id, version, DefaultSource, this)
+                );
             }
         }
 
@@ -106,7 +113,10 @@ public partial class Cargo : PackageManager
             var package = Packages[i];
             try
             {
-                var versionInfo = CratesIOClient.GetManifestVersion(package.Id, package.VersionString);
+                var versionInfo = CratesIOClient.GetManifestVersion(
+                    package.Id,
+                    package.VersionString
+                );
                 if (versionInfo.bin_names?.Length > 0)
                 {
                     BinPackages.Add(package);
@@ -117,9 +127,12 @@ public partial class Cargo : PackageManager
                 logger.AddToStdErr($"{ex.Message}");
             }
 
-            if (i + 1 == Packages.Count) break;
+            if (i + 1 == Packages.Count)
+                break;
             // Crates.io api requests that we send no more than one request per second
-            Task.Delay(Math.Max(0, 1000 - (int)((DateTime.Now - startTime).TotalMilliseconds))).GetAwaiter().GetResult();
+            Task.Delay(Math.Max(0, 1000 - (int)((DateTime.Now - startTime).TotalMilliseconds)))
+                .GetAwaiter()
+                .GetResult();
         }
 
         logger.Close(p.ExitCode);
@@ -137,10 +150,14 @@ public partial class Cargo : PackageManager
         return GetPackages(LoggableTaskType.ListInstalledPackages);
     }
 
-    public override IReadOnlyList<string> FindCandidateExecutableFiles()
-        => CoreTools.WhichMultiple("cargo.exe");
+    public override IReadOnlyList<string> FindCandidateExecutableFiles() =>
+        CoreTools.WhichMultiple("cargo.exe");
 
-    protected override void _loadManagerExecutableFile(out bool found, out string path, out string callArguments)
+    protected override void _loadManagerExecutableFile(
+        out bool found,
+        out string path,
+        out string callArguments
+    )
     {
         var (_found, _executablePath) = GetExecutableFile();
         found = _found;
@@ -154,13 +171,14 @@ public partial class Cargo : PackageManager
         p.Start();
         version = p.StandardOutput.ReadToEnd().Trim();
         string error = p.StandardError.ReadToEnd();
-        if (!string.IsNullOrEmpty(error)) Logger.Error("cargo version error: " + error);
+        if (!string.IsNullOrEmpty(error))
+            Logger.Error("cargo version error: " + error);
     }
 
     private IReadOnlyList<Package> GetPackages(LoggableTaskType taskType)
     {
         List<Package> Packages = [];
-        foreach(var match in TaskRecycler<List<Match>>.RunOrAttach(GetInstalledCommandOutput, 15))
+        foreach (var match in TaskRecycler<List<Match>>.RunOrAttach(GetInstalledCommandOutput, 15))
         {
             var id = match.Groups[1]?.Value?.Trim() ?? "";
             var name = CoreTools.FormatAsName(id);
@@ -212,7 +230,7 @@ public partial class Cargo : PackageManager
                 CreateNoWindow = true,
                 StandardOutputEncoding = Encoding.UTF8,
                 StandardErrorEncoding = Encoding.UTF8,
-            }
+            },
         };
     }
 }

@@ -21,6 +21,5 @@ namespace UniGetUI.Core.Logging
             Content = content;
             Severity = severity;
         }
-
     }
 }

@@ -28,14 +28,16 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
             StartInfo = new()
             {
                 FileName = WinGet.BundledWinGetPath,
-                Arguments = Manager.Status.ExecutableCallArgs +
-                            " update --include-unknown  --accept-source-agreements " + WinGet.GetProxyArgument(),
+                Arguments =
+                    Manager.Status.ExecutableCallArgs
+                    + " update --include-unknown  --accept-source-agreements "
+                    + WinGet.GetProxyArgument(),
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,
                 CreateNoWindow = true,
-                StandardOutputEncoding = Encoding.UTF8
-            }
+                StandardOutputEncoding = Encoding.UTF8,
+            },
         };
 
         IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
@@ -43,7 +45,9 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         if (CoreTools.IsAdministrator())
         {
             string WinGetTemp = Path.Join(Path.GetTempPath(), "UniGetUI", "ElevatedWinGetTemp");
-            logger.AddToStdErr($"[WARN] Redirecting %TEMP% folder to {WinGetTemp}, since UniGetUI was run as admin");
+            logger.AddToStdErr(
+                $"[WARN] Redirecting %TEMP% folder to {WinGetTemp}, since UniGetUI was run as admin"
+            );
             p.StartInfo.Environment["TEMP"] = WinGetTemp;
             p.StartInfo.Environment["TMP"] = WinGetTemp;
         }
@@ -71,16 +75,33 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
                 string HeaderPrefix = OldLine.Contains("SearchId") ? "Search" : "";
                 string HeaderSuffix = OldLine.Contains("SearchId") ? "Header" : "";
                 IdIndex = OldLine.IndexOf(HeaderPrefix + "Id", StringComparison.InvariantCulture);
-                VersionIndex = OldLine.IndexOf(HeaderPrefix + "Version", StringComparison.InvariantCulture);
-                NewVersionIndex = OldLine.IndexOf("Available" + HeaderSuffix, StringComparison.InvariantCulture);
-                SourceIndex = OldLine.IndexOf(HeaderPrefix + "Source", StringComparison.InvariantCulture);
+                VersionIndex = OldLine.IndexOf(
+                    HeaderPrefix + "Version",
+                    StringComparison.InvariantCulture
+                );
+                NewVersionIndex = OldLine.IndexOf(
+                    "Available" + HeaderSuffix,
+                    StringComparison.InvariantCulture
+                );
+                SourceIndex = OldLine.IndexOf(
+                    HeaderPrefix + "Source",
+                    StringComparison.InvariantCulture
+                );
                 DashesPassed = true;
             }
             else if (line.Trim() == "")
             {
                 DashesPassed = false;
             }
-            else if (DashesPassed && IdIndex > 0 && VersionIndex > 0 && NewVersionIndex > 0 && IdIndex < VersionIndex && VersionIndex < NewVersionIndex && NewVersionIndex < line.Length)
+            else if (
+                DashesPassed
+                && IdIndex > 0
+                && VersionIndex > 0
+                && NewVersionIndex > 0
+                && IdIndex < VersionIndex
+                && VersionIndex < NewVersionIndex
+                && NewVersionIndex < line.Length
+            )
             {
                 int offset = 0; // Account for non-unicode character length
                 while (line[IdIndex - offset - 1] != ' ' || offset > (IdIndex - 5))
@@ -119,7 +140,9 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
                 }
                 else
                 {
-                    Logger.Warn($"WinGet package {package.Id} not being shown as an updated as this version has already been marked as installed");
+                    Logger.Warn(
+                        $"WinGet package {package.Id} not being shown as an updated as this version has already been marked as installed"
+                    );
                 }
             }
             OldLine = line;
@@ -140,21 +163,29 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
             StartInfo = new()
             {
                 FileName = WinGet.BundledWinGetPath,
-                Arguments = Manager.Status.ExecutableCallArgs + " list  --accept-source-agreements " + WinGet.GetProxyArgument(),
+                Arguments =
+                    Manager.Status.ExecutableCallArgs
+                    + " list  --accept-source-agreements "
+                    + WinGet.GetProxyArgument(),
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,
                 CreateNoWindow = true,
-                StandardOutputEncoding = Encoding.UTF8
-            }
+                StandardOutputEncoding = Encoding.UTF8,
+            },
         };
 
-        IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
+        IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(
+            LoggableTaskType.ListInstalledPackages,
+            p
+        );
 
         if (CoreTools.IsAdministrator())
         {
             string WinGetTemp = Path.Join(Path.GetTempPath(), "UniGetUI", "ElevatedWinGetTemp");
-            logger.AddToStdErr($"[WARN] Redirecting %TEMP% folder to {WinGetTemp}, since UniGetUI was run as admin");
+            logger.AddToStdErr(
+                $"[WARN] Redirecting %TEMP% folder to {WinGetTemp}, since UniGetUI was run as admin"
+            );
             p.StartInfo.Environment["TEMP"] = WinGetTemp;
             p.StartInfo.Environment["TMP"] = WinGetTemp;
         }
@@ -177,16 +208,37 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
                 {
                     string HeaderPrefix = OldLine.Contains("SearchId") ? "Search" : "";
                     string HeaderSuffix = OldLine.Contains("SearchId") ? "Header" : "";
-                    IdIndex = OldLine.IndexOf(HeaderPrefix + "Id", StringComparison.InvariantCulture);
-                    VersionIndex = OldLine.IndexOf(HeaderPrefix + "Version", StringComparison.InvariantCulture);
-                    NewVersionIndex = OldLine.IndexOf("Available" + HeaderSuffix, StringComparison.InvariantCulture);
-                    SourceIndex = OldLine.IndexOf(HeaderPrefix + "Source", StringComparison.InvariantCulture);
+                    IdIndex = OldLine.IndexOf(
+                        HeaderPrefix + "Id",
+                        StringComparison.InvariantCulture
+                    );
+                    VersionIndex = OldLine.IndexOf(
+                        HeaderPrefix + "Version",
+                        StringComparison.InvariantCulture
+                    );
+                    NewVersionIndex = OldLine.IndexOf(
+                        "Available" + HeaderSuffix,
+                        StringComparison.InvariantCulture
+                    );
+                    SourceIndex = OldLine.IndexOf(
+                        HeaderPrefix + "Source",
+                        StringComparison.InvariantCulture
+                    );
                     DashesPassed = true;
                 }
-                else if (DashesPassed && IdIndex > 0 && VersionIndex > 0 && IdIndex < VersionIndex && VersionIndex < line.Length)
+                else if (
+                    DashesPassed
+                    && IdIndex > 0
+                    && VersionIndex > 0
+                    && IdIndex < VersionIndex
+                    && VersionIndex < line.Length
+                )
                 {
                     int offset = 0; // Account for non-unicode character length
-                    while (((IdIndex - offset) <= line.Length && line[IdIndex - offset - 1] != ' ') || offset > (IdIndex - 5))
+                    while (
+                        ((IdIndex - offset) <= line.Length && line[IdIndex - offset - 1] != ' ')
+                        || offset > (IdIndex - 5)
+                    )
                     {
                         offset++;
                     }
@@ -202,7 +254,8 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
                         NewVersionIndex = line.Length - 1;
                     }
 
-                    string version = line[(VersionIndex - offset)..(NewVersionIndex - offset)].Trim();
+                    string version = line[(VersionIndex - offset)..(NewVersionIndex - offset)]
+                        .Trim();
 
                     IManagerSource source;
                     if (SourceIndex == -1 || (SourceIndex - offset) >= line.Length)
@@ -211,7 +264,10 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
                     }
                     else
                     {
-                        string sourceName = line[(SourceIndex - offset)..].Trim().Split(' ')[0].Trim();
+                        string sourceName = line[(SourceIndex - offset)..]
+                            .Trim()
+                            .Split(' ')[0]
+                            .Trim();
                         source = Manager.SourcesHelper.Factory.GetSourceOrDefault(sourceName);
                     }
                     Packages.Add(new Package(name, id, version, source, Manager));
@@ -239,14 +295,18 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
             StartInfo = new()
             {
                 FileName = WinGet.BundledWinGetPath,
-                Arguments = Manager.Status.ExecutableCallArgs + " search \"" + query +
-                            "\"  --accept-source-agreements " + WinGet.GetProxyArgument(),
+                Arguments =
+                    Manager.Status.ExecutableCallArgs
+                    + " search \""
+                    + query
+                    + "\"  --accept-source-agreements "
+                    + WinGet.GetProxyArgument(),
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,
                 CreateNoWindow = true,
-                StandardOutputEncoding = Encoding.UTF8
-            }
+                StandardOutputEncoding = Encoding.UTF8,
+            },
         };
 
         IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
@@ -254,7 +314,9 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         if (CoreTools.IsAdministrator())
         {
             string WinGetTemp = Path.Join(Path.GetTempPath(), "UniGetUI", "ElevatedWinGetTemp");
-            logger.AddToStdErr($"[WARN] Redirecting %TEMP% folder to {WinGetTemp}, since UniGetUI was run as admin");
+            logger.AddToStdErr(
+                $"[WARN] Redirecting %TEMP% folder to {WinGetTemp}, since UniGetUI was run as admin"
+            );
             p.StartInfo.Environment["TEMP"] = WinGetTemp;
             p.StartInfo.Environment["TMP"] = WinGetTemp;
         }
@@ -274,11 +336,23 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
             {
                 string HeaderPrefix = OldLine.Contains("SearchId") ? "Search" : "";
                 IdIndex = OldLine.IndexOf(HeaderPrefix + "Id", StringComparison.InvariantCulture);
-                VersionIndex = OldLine.IndexOf(HeaderPrefix + "Version", StringComparison.InvariantCulture);
-                SourceIndex = OldLine.IndexOf(HeaderPrefix + "Source", StringComparison.InvariantCulture);
+                VersionIndex = OldLine.IndexOf(
+                    HeaderPrefix + "Version",
+                    StringComparison.InvariantCulture
+                );
+                SourceIndex = OldLine.IndexOf(
+                    HeaderPrefix + "Source",
+                    StringComparison.InvariantCulture
+                );
                 DashesPassed = true;
             }
-            else if (DashesPassed && IdIndex > 0 && VersionIndex > 0 && IdIndex < VersionIndex && VersionIndex < line.Length)
+            else if (
+                DashesPassed
+                && IdIndex > 0
+                && VersionIndex > 0
+                && IdIndex < VersionIndex
+                && VersionIndex < line.Length
+            )
             {
                 int offset = 0; // Account for non-unicode character length
                 while (line[IdIndex - offset - 1] != ' ' || offset > (IdIndex - 5))
@@ -315,18 +389,25 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
     {
         if (details.Package.Source.Name == "winget")
         {
-            details.ManifestUrl = new Uri("https://github.com/microsoft/winget-pkgs/tree/master/manifests/"
-                                          + details.Package.Id[0].ToString().ToLower() + "/"
-                                          + details.Package.Id.Split('.')[0] + "/"
-                                          + string.Join("/",
-                                              details.Package.Id.Contains('.')
-                                                  ? details.Package.Id.Split('.')[1..]
-                                                  : details.Package.Id.Split('.'))
+            details.ManifestUrl = new Uri(
+                "https://github.com/microsoft/winget-pkgs/tree/master/manifests/"
+                    + details.Package.Id[0].ToString().ToLower()
+                    + "/"
+                    + details.Package.Id.Split('.')[0]
+                    + "/"
+                    + string.Join(
+                        "/",
+                        details.Package.Id.Contains('.')
+                            ? details.Package.Id.Split('.')[1..]
+                            : details.Package.Id.Split('.')
+                    )
             );
         }
         else if (details.Package.Source.Name == "msstore")
         {
-            details.ManifestUrl = new Uri("https://apps.microsoft.com/detail/" + details.Package.Id);
+            details.ManifestUrl = new Uri(
+                "https://apps.microsoft.com/detail/" + details.Package.Id
+            );
         }
 
         // Get the output for the best matching locale
@@ -337,22 +418,29 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         ProcessStartInfo startInfo = new()
         {
             FileName = WinGet.BundledWinGetPath,
-            Arguments = Manager.Status.ExecutableCallArgs + " show " + WinGetPkgOperationHelper.GetIdNamePiece(details.Package) +
-                        " --disable-interactivity --accept-source-agreements --locale " +
-                        System.Globalization.CultureInfo.CurrentCulture + " " + WinGet.GetProxyArgument(),
+            Arguments =
+                Manager.Status.ExecutableCallArgs
+                + " show "
+                + WinGetPkgOperationHelper.GetIdNamePiece(details.Package)
+                + " --disable-interactivity --accept-source-agreements --locale "
+                + System.Globalization.CultureInfo.CurrentCulture
+                + " "
+                + WinGet.GetProxyArgument(),
             RedirectStandardOutput = true,
             RedirectStandardError = true,
             RedirectStandardInput = true,
             UseShellExecute = false,
             CreateNoWindow = true,
-            StandardOutputEncoding = Encoding.UTF8
+            StandardOutputEncoding = Encoding.UTF8,
         };
         process.StartInfo = startInfo;
 
         if (CoreTools.IsAdministrator())
         {
             string WinGetTemp = Path.Join(Path.GetTempPath(), "UniGetUI", "ElevatedWinGetTemp");
-            Logger.Warn($"[WARN] Redirecting %TEMP% folder to {WinGetTemp}, since UniGetUI was run as admin");
+            Logger.Warn(
+                $"[WARN] Redirecting %TEMP% folder to {WinGetTemp}, since UniGetUI was run as admin"
+            );
             process.StartInfo.Environment["TEMP"] = WinGetTemp;
             process.StartInfo.Environment["TMP"] = WinGetTemp;
         }
@@ -365,8 +453,12 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
             if (_line.Trim() != "")
             {
                 output.Add(_line);
-                if (_line.Contains("The value provided for the `locale` argument is invalid") ||
-                    _line.Contains("No applicable installer found; see Logger.Logs for more details."))
+                if (
+                    _line.Contains("The value provided for the `locale` argument is invalid")
+                    || _line.Contains(
+                        "No applicable installer found; see Logger.Logs for more details."
+                    )
+                )
                 {
                     LocaleFound = false;
                     break;
@@ -378,27 +470,39 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         if (!LocaleFound)
         {
             output.Clear();
-            Logger.Info("Winget could not found culture data for package Id=" + details.Package.Id + " and Culture=" +
-                        System.Globalization.CultureInfo.CurrentCulture + ". Trying to get data for en-US");
+            Logger.Info(
+                "Winget could not found culture data for package Id="
+                    + details.Package.Id
+                    + " and Culture="
+                    + System.Globalization.CultureInfo.CurrentCulture
+                    + ". Trying to get data for en-US"
+            );
             process = new Process();
             LocaleFound = true;
             startInfo = new()
             {
                 FileName = WinGet.BundledWinGetPath,
-                Arguments = Manager.Status.ExecutableCallArgs + " show " + WinGetPkgOperationHelper.GetIdNamePiece(details.Package) +
-                            " --disable-interactivity --accept-source-agreements --locale en-US " + " " + WinGet.GetProxyArgument(),
+                Arguments =
+                    Manager.Status.ExecutableCallArgs
+                    + " show "
+                    + WinGetPkgOperationHelper.GetIdNamePiece(details.Package)
+                    + " --disable-interactivity --accept-source-agreements --locale en-US "
+                    + " "
+                    + WinGet.GetProxyArgument(),
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 RedirectStandardInput = true,
                 UseShellExecute = false,
                 CreateNoWindow = true,
-                StandardOutputEncoding = Encoding.UTF8
+                StandardOutputEncoding = Encoding.UTF8,
             };
             process.StartInfo = startInfo;
             if (CoreTools.IsAdministrator())
             {
                 string WinGetTemp = Path.Join(Path.GetTempPath(), "UniGetUI", "ElevatedWinGetTemp");
-                Logger.Warn($"[WARN] Redirecting %TEMP% folder to {WinGetTemp}, since UniGetUI was run as admin");
+                Logger.Warn(
+                    $"[WARN] Redirecting %TEMP% folder to {WinGetTemp}, since UniGetUI was run as admin"
+                );
                 process.StartInfo.Environment["TEMP"] = WinGetTemp;
                 process.StartInfo.Environment["TMP"] = WinGetTemp;
             }
@@ -409,8 +513,12 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
                 if (_line.Trim() != "")
                 {
                     output.Add(_line);
-                    if (_line.Contains("The value provided for the `locale` argument is invalid") ||
-                        _line.Contains("No applicable installer found; see Logger.Logs for more details."))
+                    if (
+                        _line.Contains("The value provided for the `locale` argument is invalid")
+                        || _line.Contains(
+                            "No applicable installer found; see Logger.Logs for more details."
+                        )
+                    )
                     {
                         LocaleFound = false;
                         break;
@@ -423,26 +531,36 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         if (!LocaleFound)
         {
             output.Clear();
-            Logger.Info("Winget could not found culture data for package Id=" + details.Package.Id +
-                        " and Culture=en-US. Loading default");
+            Logger.Info(
+                "Winget could not found culture data for package Id="
+                    + details.Package.Id
+                    + " and Culture=en-US. Loading default"
+            );
             process = new Process();
             startInfo = new()
             {
                 FileName = WinGet.BundledWinGetPath,
-                Arguments = Manager.Status.ExecutableCallArgs + " show " + WinGetPkgOperationHelper.GetIdNamePiece(details.Package) +
-                            " --disable-interactivity --accept-source-agreements " + " " + WinGet.GetProxyArgument(),
+                Arguments =
+                    Manager.Status.ExecutableCallArgs
+                    + " show "
+                    + WinGetPkgOperationHelper.GetIdNamePiece(details.Package)
+                    + " --disable-interactivity --accept-source-agreements "
+                    + " "
+                    + WinGet.GetProxyArgument(),
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 RedirectStandardInput = true,
                 UseShellExecute = false,
                 CreateNoWindow = true,
-                StandardOutputEncoding = Encoding.UTF8
+                StandardOutputEncoding = Encoding.UTF8,
             };
             process.StartInfo = startInfo;
             if (CoreTools.IsAdministrator())
             {
                 string WinGetTemp = Path.Join(Path.GetTempPath(), "UniGetUI", "ElevatedWinGetTemp");
-                Logger.Warn($"[WARN] Redirecting %TEMP% folder to {WinGetTemp}, since UniGetUI was run as admin");
+                Logger.Warn(
+                    $"[WARN] Redirecting %TEMP% folder to {WinGetTemp}, since UniGetUI was run as admin"
+                );
                 process.StartInfo.Environment["TEMP"] = WinGetTemp;
                 process.StartInfo.Environment["TMP"] = WinGetTemp;
             }
@@ -489,14 +607,15 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
                 else if (line.StartsWith(" ") && IsCapturingDependencies)
                 {
                     line = line.Trim();
-                    details.Dependencies.Add(new()
-                    {
-                        Name = line.Split(' ')[0],
-                        Version = line.Contains('[') ? line.Split('[')[1].TrimEnd(']'): "",
-                        Mandatory = true
-                    });
+                    details.Dependencies.Add(
+                        new()
+                        {
+                            Name = line.Split(' ')[0],
+                            Version = line.Contains('[') ? line.Split('[')[1].TrimEnd(']') : "",
+                            Mandatory = true,
+                        }
+                    );
                 }
-
                 // Stop loading multiline fields
                 else if (IsLoadingDescription)
                 {
@@ -551,7 +670,9 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
                 }
                 else if (line.Contains("Release Notes Url:"))
                 {
-                    details.ReleaseNotesUrl = new Uri(line.Replace("Release Notes Url:", "").Trim());
+                    details.ReleaseNotesUrl = new Uri(
+                        line.Replace("Release Notes Url:", "").Trim()
+                    );
                 }
                 else if (line.Contains("Installer Type:"))
                 {
@@ -594,22 +715,32 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
             StartInfo = new ProcessStartInfo
             {
                 FileName = WinGet.BundledWinGetPath,
-                Arguments = Manager.Status.ExecutableCallArgs + " show " + WinGetPkgOperationHelper.GetIdNamePiece(package) +
-                            $" --versions --accept-source-agreements " + " " + WinGet.GetProxyArgument(),
+                Arguments =
+                    Manager.Status.ExecutableCallArgs
+                    + " show "
+                    + WinGetPkgOperationHelper.GetIdNamePiece(package)
+                    + $" --versions --accept-source-agreements "
+                    + " "
+                    + WinGet.GetProxyArgument(),
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 RedirectStandardInput = true,
                 CreateNoWindow = true,
-                StandardOutputEncoding = Encoding.UTF8
-            }
+                StandardOutputEncoding = Encoding.UTF8,
+            },
         };
 
-        IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.LoadPackageVersions, p);
+        IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(
+            LoggableTaskType.LoadPackageVersions,
+            p
+        );
         if (CoreTools.IsAdministrator())
         {
             string WinGetTemp = Path.Join(Path.GetTempPath(), "UniGetUI", "ElevatedWinGetTemp");
-            Logger.Warn($"[WARN] Redirecting %TEMP% folder to {WinGetTemp}, since UniGetUI was run as admin");
+            Logger.Warn(
+                $"[WARN] Redirecting %TEMP% folder to {WinGetTemp}, since UniGetUI was run as admin"
+            );
             p.StartInfo.Environment["TEMP"] = WinGetTemp;
             p.StartInfo.Environment["TMP"] = WinGetTemp;
         }
@@ -649,21 +780,24 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
             StartInfo = new()
             {
                 FileName = Manager.Status.ExecutablePath,
-                Arguments = Manager.Status.ExecutableCallArgs + " source list " + WinGet.GetProxyArgument(),
+                Arguments =
+                    Manager.Status.ExecutableCallArgs + " source list " + WinGet.GetProxyArgument(),
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 RedirectStandardInput = true,
                 UseShellExecute = false,
                 CreateNoWindow = true,
-                StandardOutputEncoding = Encoding.UTF8
-            }
+                StandardOutputEncoding = Encoding.UTF8,
+            },
         };
 
         IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
         if (CoreTools.IsAdministrator())
         {
             string WinGetTemp = Path.Join(Path.GetTempPath(), "UniGetUI", "ElevatedWinGetTemp");
-            Logger.Warn($"[WARN] Redirecting %TEMP% folder to {WinGetTemp}, since UniGetUI was run as admin");
+            Logger.Warn(
+                $"[WARN] Redirecting %TEMP% folder to {WinGetTemp}, since UniGetUI was run as admin"
+            );
             p.StartInfo.Environment["TEMP"] = WinGetTemp;
             p.StartInfo.Environment["TMP"] = WinGetTemp;
         }
@@ -693,7 +827,9 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
                     string[] parts = Regex.Replace(line.Trim(), " {2,}", " ").Split(' ');
                     if (parts.Length > 1)
                     {
-                        sources.Add(new ManagerSource(Manager, parts[0].Trim(), new Uri(parts[1].Trim())));
+                        sources.Add(
+                            new ManagerSource(Manager, parts[0].Trim(), new Uri(parts[1].Trim()))
+                        );
                     }
                 }
             }
@@ -707,6 +843,5 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         p.WaitForExit();
         logger.Close(p.ExitCode);
         return sources;
-
     }
 }

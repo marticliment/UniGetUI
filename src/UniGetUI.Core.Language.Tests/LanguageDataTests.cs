@@ -11,13 +11,11 @@ namespace UniGetUI.Core.Language.Tests
             LanguageData.LanguageReference.Select(x => new object[] { x.Key, x.Value }).ToArray();
 
         [Fact]
-        public void TranslatorsListNotEmptyTest()
-            => Assert.NotEmpty(LanguageData.TranslatorsList);
+        public void TranslatorsListNotEmptyTest() => Assert.NotEmpty(LanguageData.TranslatorsList);
 
         [Theory]
         [MemberData(nameof(Translators))]
-        public void TranslatorsListTest(Person translator)
-            => Assert.NotEmpty(translator.Name);
+        public void TranslatorsListTest(Person translator) => Assert.NotEmpty(translator.Name);
 
         [Fact]
         public void LanguageReferenceNotEmptyTest()
@@ -29,17 +27,27 @@ namespace UniGetUI.Core.Language.Tests
         [MemberData(nameof(LanguageReferences))]
         public void LanguageReferenceTest(string key, string value)
         {
-            Assert.False(value.Contains("NoNameLang_"), $"The language with key {key} has no assigned name");
+            Assert.False(
+                value.Contains("NoNameLang_"),
+                $"The language with key {key} has no assigned name"
+            );
         }
 
         [Fact]
         public void TranslatedPercentageNotEmptyTests()
         {
-            System.Collections.ObjectModel.ReadOnlyDictionary<string, string> TranslatedPercent = LanguageData.TranslationPercentages;
+            System.Collections.ObjectModel.ReadOnlyDictionary<string, string> TranslatedPercent =
+                LanguageData.TranslationPercentages;
             foreach (string key in TranslatedPercent.Keys)
             {
-                Assert.True(LanguageData.LanguageReference.ContainsKey(key), $"The language key {key} was not found on LanguageReference");
-                Assert.False(LanguageData.TranslationPercentages[key].Contains("404%"), $"Somehow the key {key} has no value");
+                Assert.True(
+                    LanguageData.LanguageReference.ContainsKey(key),
+                    $"The language key {key} was not found on LanguageReference"
+                );
+                Assert.False(
+                    LanguageData.TranslationPercentages[key].Contains("404%"),
+                    $"Somehow the key {key} has no value"
+                );
             }
         }
     }

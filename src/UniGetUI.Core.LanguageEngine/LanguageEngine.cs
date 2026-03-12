@@ -65,33 +65,52 @@ namespace UniGetUI.Core.Language
         {
             try
             {
-
-                string BundledLangFileToLoad = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Languages", "lang_" + LangKey + ".json");
+                string BundledLangFileToLoad = Path.Join(
+                    CoreData.UniGetUIExecutableDirectory,
+                    "Assets",
+                    "Languages",
+                    "lang_" + LangKey + ".json"
+                );
                 JsonObject BundledContents = [];
 
                 if (!File.Exists(BundledLangFileToLoad))
                 {
-                    Logger.Error($"Tried to access a non-existing bundled language file! file={BundledLangFileToLoad}");
+                    Logger.Error(
+                        $"Tried to access a non-existing bundled language file! file={BundledLangFileToLoad}"
+                    );
                 }
                 else
                 {
                     try
                     {
-                        if (JsonNode.Parse(File.ReadAllText(BundledLangFileToLoad)) is JsonObject parsedObject)
+                        if (
+                            JsonNode.Parse(File.ReadAllText(BundledLangFileToLoad))
+                            is JsonObject parsedObject
+                        )
                             BundledContents = parsedObject;
                         else
-                            throw new ArgumentException($"parsedObject was null for lang file {BundledLangFileToLoad}");
+                            throw new ArgumentException(
+                                $"parsedObject was null for lang file {BundledLangFileToLoad}"
+                            );
                     }
                     catch (Exception ex)
                     {
-                        Logger.Warn($"Something went wrong when parsing language file {BundledLangFileToLoad}");
+                        Logger.Warn(
+                            $"Something went wrong when parsing language file {BundledLangFileToLoad}"
+                        );
                         Logger.Warn(ex);
                     }
                 }
 
-                Dictionary<string, string> LangDict = BundledContents.ToDictionary(x => x.Key, x => x.Value?.ToString() ?? "");
+                Dictionary<string, string> LangDict = BundledContents.ToDictionary(
+                    x => x.Key,
+                    x => x.Value?.ToString() ?? ""
+                );
 
-                string CachedLangFileToLoad = Path.Join(CoreData.UniGetUICacheDirectory_Lang, "lang_" + LangKey + ".json");
+                string CachedLangFileToLoad = Path.Join(
+                    CoreData.UniGetUICacheDirectory_Lang,
+                    "lang_" + LangKey + ".json"
+                );
 
                 if (Settings.Get(Settings.K.DisableLangAutoUpdater))
                 {
@@ -99,23 +118,34 @@ namespace UniGetUI.Core.Language
                 }
                 else if (!File.Exists(CachedLangFileToLoad))
                 {
-                    Logger.Warn($"Tried to access a non-existing cached language file! file={CachedLangFileToLoad}");
+                    Logger.Warn(
+                        $"Tried to access a non-existing cached language file! file={CachedLangFileToLoad}"
+                    );
                 }
                 else
                 {
                     try
                     {
-                        if (JsonNode.Parse(File.ReadAllText(CachedLangFileToLoad)) is JsonObject parsedObject)
-                            foreach (var keyval in parsedObject.ToDictionary(x => x.Key, x => x.Value))
+                        if (
+                            JsonNode.Parse(File.ReadAllText(CachedLangFileToLoad))
+                            is JsonObject parsedObject
+                        )
+                            foreach (
+                                var keyval in parsedObject.ToDictionary(x => x.Key, x => x.Value)
+                            )
                             {
                                 LangDict[keyval.Key] = keyval.Value?.ToString() ?? "";
                             }
                         else
-                            throw new ArgumentException($"parsedObject was null for lang file {CachedLangFileToLoad}");
+                            throw new ArgumentException(
+                                $"parsedObject was null for lang file {CachedLangFileToLoad}"
+                            );
                     }
                     catch (Exception ex)
                     {
-                        Logger.Warn($"Something went wrong when parsing language file {BundledLangFileToLoad}");
+                        Logger.Warn(
+                            $"Something went wrong when parsing language file {BundledLangFileToLoad}"
+                        );
                         Logger.Warn(ex);
                     }
                 }
@@ -141,7 +171,11 @@ namespace UniGetUI.Core.Language
         {
             try
             {
-                Uri NewFile = new("https://raw.githubusercontent.com/Devolutions/UniGetUI/main/src/UniGetUI.Core.LanguageEngine/Assets/Languages/lang_" + LangKey + ".json");
+                Uri NewFile = new(
+                    "https://raw.githubusercontent.com/Devolutions/UniGetUI/main/src/UniGetUI.Core.LanguageEngine/Assets/Languages/lang_"
+                        + LangKey
+                        + ".json"
+                );
 
                 HttpClient client = new();
                 client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
@@ -152,7 +186,10 @@ namespace UniGetUI.Core.Language
                     Directory.CreateDirectory(CoreData.UniGetUICacheDirectory_Lang);
                 }
 
-                File.WriteAllText(Path.Join(CoreData.UniGetUICacheDirectory_Lang, "lang_" + LangKey + ".json"), fileContents);
+                File.WriteAllText(
+                    Path.Join(CoreData.UniGetUICacheDirectory_Lang, "lang_" + LangKey + ".json"),
+                    fileContents
+                );
 
                 Logger.ImportantInfo("Lang files were updated successfully from GitHub");
             }
@@ -169,15 +206,24 @@ namespace UniGetUI.Core.Language
             CommonTranslations.ScopeNames[PackageScope.Global] = Translate("Machine | Global");
 
             CommonTranslations.InvertedScopeNames.Clear();
-            CommonTranslations.InvertedScopeNames.Add(Translate("Machine | Global"), PackageScope.Global);
-            CommonTranslations.InvertedScopeNames.Add(Translate("User | Local"), PackageScope.Local);
+            CommonTranslations.InvertedScopeNames.Add(
+                Translate("Machine | Global"),
+                PackageScope.Global
+            );
+            CommonTranslations.InvertedScopeNames.Add(
+                Translate("User | Local"),
+                PackageScope.Local
+            );
         }
 
         public string Translate(string key)
         {
             if (key == "WingetUI")
             {
-                if (MainLangDict.TryGetValue("formerly WingetUI", out var formerly) && formerly != "")
+                if (
+                    MainLangDict.TryGetValue("formerly WingetUI", out var formerly)
+                    && formerly != ""
+                )
                 {
                     return "UniGetUI (" + formerly + ")";
                 }

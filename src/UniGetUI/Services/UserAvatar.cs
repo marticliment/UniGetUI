@@ -1,4 +1,3 @@
-using Windows.UI;
 using Microsoft.UI;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
@@ -12,10 +11,11 @@ using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.Pages.DialogPages;
 using UniGetUI.Pages.SettingsPages.GeneralPages;
+using Windows.UI;
 
 namespace UniGetUI.Services
 {
-    public partial class PointButton: Button
+    public partial class PointButton : Button
     {
         public PointButton()
         {
@@ -23,7 +23,7 @@ namespace UniGetUI.Services
         }
     }
 
-    public partial class UserAvatar: UserControl
+    public partial class UserAvatar : UserControl
     {
         public UserAvatar()
         {
@@ -53,7 +53,9 @@ namespace UniGetUI.Services
             }
         }
 
-        private void LoginButton_Click(object sender, RoutedEventArgs e) => _ = _loginButton_Click();
+        private void LoginButton_Click(object sender, RoutedEventArgs e) =>
+            _ = _loginButton_Click();
+
         private async Task _loginButton_Click()
         {
             SetLoading();
@@ -99,22 +101,23 @@ namespace UniGetUI.Services
 
         private void SetLoading()
         {
-            this.Content = new ProgressRing() { IsIndeterminate = true, Width = 24, Height = 24 };
+            this.Content = new ProgressRing()
+            {
+                IsIndeterminate = true,
+                Width = 24,
+                Height = 24,
+            };
         }
 
         private PointButton GenerateLoginControl()
         {
-            var personPicture = new PersonPicture
-            {
-                Width = 36,
-                Height = 36,
-            };
+            var personPicture = new PersonPicture { Width = 36, Height = 36 };
 
             var translatedTextBlock = new TextBlock
             {
                 Margin = new Thickness(4),
                 TextWrapping = TextWrapping.Wrap,
-                Text = CoreTools.Translate("Log in with GitHub to enable cloud package backup.")
+                Text = CoreTools.Translate("Log in with GitHub to enable cloud package backup."),
             };
 
             var hyperlinkButton = new HyperlinkButton
@@ -126,14 +129,15 @@ namespace UniGetUI.Services
                     Text = CoreTools.Translate("More details"),
                     TextWrapping = TextWrapping.Wrap,
                 },
-                FontSize = 12
+                FontSize = 12,
             };
-            hyperlinkButton.Click += (_, _) => MainApp.Instance.MainWindow.NavigationPage.ShowHelp("cloud-backup-overview/");
+            hyperlinkButton.Click += (_, _) =>
+                MainApp.Instance.MainWindow.NavigationPage.ShowHelp("cloud-backup-overview/");
 
             var loginButton = new PointButton
             {
                 HorizontalAlignment = HorizontalAlignment.Stretch,
-                Content = CoreTools.Translate("Log in")
+                Content = CoreTools.Translate("Log in"),
             };
             loginButton.Click += LoginButton_Click;
 
@@ -142,7 +146,7 @@ namespace UniGetUI.Services
                 MaxWidth = 200,
                 Margin = new Thickness(-8),
                 Orientation = Orientation.Vertical,
-                Spacing = 8
+                Spacing = 8,
             };
             stackPanel.Children.Add(translatedTextBlock);
             stackPanel.Children.Add(hyperlinkButton);
@@ -152,7 +156,7 @@ namespace UniGetUI.Services
             {
                 LightDismissOverlayMode = LightDismissOverlayMode.Off,
                 Placement = FlyoutPlacementMode.Bottom,
-                Content = stackPanel
+                Content = stackPanel,
             };
 
             return new PointButton
@@ -163,7 +167,7 @@ namespace UniGetUI.Services
                 BorderThickness = new Thickness(0),
                 CornerRadius = new CornerRadius(100),
                 Content = personPicture,
-                Flyout = flyout
+                Flyout = flyout,
             };
         }
 
@@ -194,14 +198,18 @@ namespace UniGetUI.Services
             {
                 Width = 36,
                 Height = 36,
-                ProfilePicture = new BitmapImage(new Uri(user.AvatarUrl))
+                ProfilePicture = new BitmapImage(new Uri(user.AvatarUrl)),
             };
 
             var text1 = new TextBlock
             {
                 Margin = new Thickness(4),
                 TextWrapping = TextWrapping.Wrap,
-                Text = CoreTools.Translate("You are logged in as {0} (@{1})", user.Name, user.Login)
+                Text = CoreTools.Translate(
+                    "You are logged in as {0} (@{1})",
+                    user.Name,
+                    user.Login
+                ),
             };
 
             var text2 = new TextBlock
@@ -210,7 +218,9 @@ namespace UniGetUI.Services
                 TextWrapping = TextWrapping.Wrap,
                 FontSize = 12,
                 FontWeight = new(500),
-                Text = CoreTools.Translate("If you have cloud backup enabled, it will be saved as a GitHub Gist on this account")
+                Text = CoreTools.Translate(
+                    "If you have cloud backup enabled, it will be saved as a GitHub Gist on this account"
+                ),
             };
 
             var hyperlinkButton = new HyperlinkButton
@@ -222,9 +232,10 @@ namespace UniGetUI.Services
                     Text = CoreTools.Translate("More details"),
                     TextWrapping = TextWrapping.Wrap,
                 },
-                FontSize = 12
+                FontSize = 12,
             };
-            hyperlinkButton.Click += (_, _) => MainApp.Instance.MainWindow.NavigationPage.ShowHelp("cloud-backup-overview/");
+            hyperlinkButton.Click += (_, _) =>
+                MainApp.Instance.MainWindow.NavigationPage.ShowHelp("cloud-backup-overview/");
 
             var hyperlinkButton2 = new HyperlinkButton
             {
@@ -235,16 +246,19 @@ namespace UniGetUI.Services
                     Text = CoreTools.Translate("Package backup settings"),
                     TextWrapping = TextWrapping.Wrap,
                 },
-                FontSize = 12
+                FontSize = 12,
             };
-            hyperlinkButton2.Click += (_, _) => MainApp.Instance.MainWindow.NavigationPage.OpenSettingsPage(typeof(Backup));
+            hyperlinkButton2.Click += (_, _) =>
+                MainApp.Instance.MainWindow.NavigationPage.OpenSettingsPage(typeof(Backup));
 
             var loginButton = new PointButton
             {
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 Content = CoreTools.Translate("Log out"),
-                Background = new SolidColorBrush(ActualTheme is ElementTheme.Dark? Colors.DarkRed: Colors.PaleVioletRed),
-                BorderThickness = new(0)
+                Background = new SolidColorBrush(
+                    ActualTheme is ElementTheme.Dark ? Colors.DarkRed : Colors.PaleVioletRed
+                ),
+                BorderThickness = new(0),
             };
             loginButton.Click += LogoutButton_Click;
 
@@ -253,7 +267,7 @@ namespace UniGetUI.Services
                 MaxWidth = 200,
                 Margin = new Thickness(-8),
                 Orientation = Orientation.Vertical,
-                Spacing = 8
+                Spacing = 8,
             };
             stackPanel.Children.Add(text1);
             stackPanel.Children.Add(text2);
@@ -265,7 +279,7 @@ namespace UniGetUI.Services
             {
                 LightDismissOverlayMode = LightDismissOverlayMode.Off,
                 Placement = FlyoutPlacementMode.Bottom,
-                Content = stackPanel
+                Content = stackPanel,
             };
 
             return new PointButton
@@ -276,7 +290,7 @@ namespace UniGetUI.Services
                 BorderThickness = new Thickness(0),
                 CornerRadius = new CornerRadius(100),
                 Content = personPicture,
-                Flyout = flyout
+                Flyout = flyout,
             };
         }
     }

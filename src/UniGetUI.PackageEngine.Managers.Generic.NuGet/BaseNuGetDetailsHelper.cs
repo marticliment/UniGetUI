@@ -12,7 +12,8 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 {
     public abstract class BaseNuGetDetailsHelper : BasePkgDetailsHelper
     {
-        public BaseNuGetDetailsHelper(BaseNuGet manager) : base(manager) { }
+        public BaseNuGetDetailsHelper(BaseNuGet manager)
+            : base(manager) { }
 
         protected override void GetDetails_UnSafe(IPackageDetails details)
         {
@@ -20,19 +21,28 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             try
             {
                 details.ManifestUrl = NuGetManifestLoader.GetManifestUrl(details.Package);
-                string? PackageManifestContents = NuGetManifestLoader.GetManifestContent(details.Package);
+                string? PackageManifestContents = NuGetManifestLoader.GetManifestContent(
+                    details.Package
+                );
                 logger.Log(PackageManifestContents);
 
                 if (PackageManifestContents is null)
                 {
-                    logger.Error($"No manifest content could be loaded for package {details.Package.Id} on manager {details.Package.Manager.Name}, returning empty PackageDetails");
+                    logger.Error(
+                        $"No manifest content could be loaded for package {details.Package.Id} on manager {details.Package.Manager.Name}, returning empty PackageDetails"
+                    );
                     logger.Close(1);
                     return;
                 }
 
                 details.InstallerType = CoreTools.Translate("NuPkg (zipped manifest)");
 
-                foreach (Match match in Regex.Matches(PackageManifestContents, @"<content type=[""']\w+\/\w+[""'] src=""([^""]+)"" ?\/>"))
+                foreach (
+                    Match match in Regex.Matches(
+                        PackageManifestContents,
+                        @"<content type=[""']\w+\/\w+[""'] src=""([^""]+)"" ?\/>"
+                    )
+                )
                 {
                     try
                     {
@@ -41,11 +51,19 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                     }
                     catch (Exception ex)
                     {
-                        Logger.Warn($"Failed to parse NuGet Installer URL on package Id={details.Package.Id} for value={match.Groups[1].Value}: " + ex.Message);
+                        Logger.Warn(
+                            $"Failed to parse NuGet Installer URL on package Id={details.Package.Id} for value={match.Groups[1].Value}: "
+                                + ex.Message
+                        );
                     }
                 }
 
-                foreach (Match match in Regex.Matches(PackageManifestContents, @"<(d\:)?PackageSize (m\:type=""[^""]+"")?>([0-9]+)<\/"))
+                foreach (
+                    Match match in Regex.Matches(
+                        PackageManifestContents,
+                        @"<(d\:)?PackageSize (m\:type=""[^""]+"")?>([0-9]+)<\/"
+                    )
+                )
                 {
                     try
                     {
@@ -54,74 +72,143 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                     }
                     catch (Exception ex)
                     {
-                        Logger.Warn($"Failed to parse NuGet Installer Size on package Id={details.Package.Id} for value={match.Groups[1].Value}: " + ex.Message);
+                        Logger.Warn(
+                            $"Failed to parse NuGet Installer Size on package Id={details.Package.Id} for value={match.Groups[1].Value}: "
+                                + ex.Message
+                        );
                     }
                 }
 
-                foreach (Match match in Regex.Matches(PackageManifestContents, @"<name>[^<>]+<\/name>"))
+                foreach (
+                    Match match in Regex.Matches(PackageManifestContents, @"<name>[^<>]+<\/name>")
+                )
                 {
                     details.Author = match.Value.Replace("<name>", "").Replace("</name>", "");
                     details.Publisher = match.Value.Replace("<name>", "").Replace("</name>", "");
                     break;
                 }
 
-                foreach (Match match in Regex.Matches(PackageManifestContents, @"<d:Description>[^<>]+<\/d:Description>"))
+                foreach (
+                    Match match in Regex.Matches(
+                        PackageManifestContents,
+                        @"<d:Description>[^<>]+<\/d:Description>"
+                    )
+                )
                 {
-                    details.Description = match.Value.Replace("<d:Description>", "").Replace("</d:Description>", "");
+                    details.Description = match
+                        .Value.Replace("<d:Description>", "")
+                        .Replace("</d:Description>", "");
                     break;
                 }
 
-                foreach (Match match in Regex.Matches(PackageManifestContents, @"<updated>[^<>]+<\/updated>"))
+                foreach (
+                    Match match in Regex.Matches(
+                        PackageManifestContents,
+                        @"<updated>[^<>]+<\/updated>"
+                    )
+                )
                 {
-                    details.UpdateDate = match.Value.Replace("<updated>", "").Replace("</updated>", "");
+                    details.UpdateDate = match
+                        .Value.Replace("<updated>", "")
+                        .Replace("</updated>", "");
                     break;
                 }
 
-                foreach (Match match in Regex.Matches(PackageManifestContents, @"<d:ProjectUrl>[^<>]+<\/d:ProjectUrl>"))
+                foreach (
+                    Match match in Regex.Matches(
+                        PackageManifestContents,
+                        @"<d:ProjectUrl>[^<>]+<\/d:ProjectUrl>"
+                    )
+                )
                 {
-                    details.HomepageUrl = new Uri(match.Value.Replace("<d:ProjectUrl>", "").Replace("</d:ProjectUrl>", ""));
+                    details.HomepageUrl = new Uri(
+                        match.Value.Replace("<d:ProjectUrl>", "").Replace("</d:ProjectUrl>", "")
+                    );
                     break;
                 }
 
-                foreach (Match match in Regex.Matches(PackageManifestContents, @"<d:LicenseUrl>[^<>]+<\/d:LicenseUrl>"))
+                foreach (
+                    Match match in Regex.Matches(
+                        PackageManifestContents,
+                        @"<d:LicenseUrl>[^<>]+<\/d:LicenseUrl>"
+                    )
+                )
                 {
-                    details.LicenseUrl = new Uri(match.Value.Replace("<d:LicenseUrl>", "").Replace("</d:LicenseUrl>", ""));
+                    details.LicenseUrl = new Uri(
+                        match.Value.Replace("<d:LicenseUrl>", "").Replace("</d:LicenseUrl>", "")
+                    );
                     break;
                 }
 
-                foreach (Match match in Regex.Matches(PackageManifestContents, @"<d:PackageHash>[^<>]+<\/d:PackageHash>"))
+                foreach (
+                    Match match in Regex.Matches(
+                        PackageManifestContents,
+                        @"<d:PackageHash>[^<>]+<\/d:PackageHash>"
+                    )
+                )
                 {
-                    details.InstallerHash = match.Value.Replace("<d:PackageHash>", "").Replace("</d:PackageHash>", "");
+                    details.InstallerHash = match
+                        .Value.Replace("<d:PackageHash>", "")
+                        .Replace("</d:PackageHash>", "");
                     break;
                 }
 
-                foreach (Match match in Regex.Matches(PackageManifestContents, @"<d:ReleaseNotes>[^<>]+<\/d:ReleaseNotes>"))
+                foreach (
+                    Match match in Regex.Matches(
+                        PackageManifestContents,
+                        @"<d:ReleaseNotes>[^<>]+<\/d:ReleaseNotes>"
+                    )
+                )
                 {
-                    details.ReleaseNotes = match.Value.Replace("<d:ReleaseNotes>", "").Replace("</d:ReleaseNotes>", "");
+                    details.ReleaseNotes = match
+                        .Value.Replace("<d:ReleaseNotes>", "")
+                        .Replace("</d:ReleaseNotes>", "");
                     break;
                 }
 
-                foreach (Match match in Regex.Matches(PackageManifestContents, @"<d:LicenseNames>[^<>]+<\/d:LicenseNames>"))
+                foreach (
+                    Match match in Regex.Matches(
+                        PackageManifestContents,
+                        @"<d:LicenseNames>[^<>]+<\/d:LicenseNames>"
+                    )
+                )
                 {
-                    details.License = match.Value.Replace("<d:LicenseNames>", "").Replace("</d:LicenseNames>", "");
+                    details.License = match
+                        .Value.Replace("<d:LicenseNames>", "")
+                        .Replace("</d:LicenseNames>", "");
                     break;
                 }
 
                 details.Dependencies.Clear();
-                foreach (Match match in Regex.Matches(PackageManifestContents,
-                             @"<d\:Dependencies>([^<]+)</d\:Dependencies>"))
+                foreach (
+                    Match match in Regex.Matches(
+                        PackageManifestContents,
+                        @"<d\:Dependencies>([^<]+)</d\:Dependencies>"
+                    )
+                )
                 {
                     foreach (var dep in match.Groups[1].ToString().Split('|'))
                     {
-                        if(string.IsNullOrEmpty(dep))
+                        if (string.IsNullOrEmpty(dep))
                             continue;
                         else if (dep.StartsWith("::"))
-                            details.Dependencies.Add(new() { Name = dep.TrimStart(':'), Version = "", Mandatory = true });
+                            details.Dependencies.Add(
+                                new()
+                                {
+                                    Name = dep.TrimStart(':'),
+                                    Version = "",
+                                    Mandatory = true,
+                                }
+                            );
                         else
-                            details.Dependencies.Add(new()
-                        {
-                            Name = dep.Split(':')[0], Version = dep.Split(':')[1].TrimEnd(':'), Mandatory = true
-                        });
+                            details.Dependencies.Add(
+                                new()
+                                {
+                                    Name = dep.Split(':')[0],
+                                    Version = dep.Split(':')[1].TrimEnd(':'),
+                                    Mandatory = true,
+                                }
+                            );
                     }
                 }
 
@@ -141,11 +228,16 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             string? ManifestContent = NuGetManifestLoader.GetManifestContent(package);
             if (ManifestContent is null)
             {
-                Logger.Warn($"No manifest content could be loaded for package {package.Id} on manager {package.Manager.Name}");
+                Logger.Warn(
+                    $"No manifest content could be loaded for package {package.Id} on manager {package.Manager.Name}"
+                );
                 return null;
             }
 
-            Match possibleIconUrl = Regex.Match(ManifestContent, "<(?:d\\:)?IconUrl>(.*)<(?:\\/d:)?IconUrl>");
+            Match possibleIconUrl = Regex.Match(
+                ManifestContent,
+                "<(?:d\\:)?IconUrl>(.*)<(?:\\/d:)?IconUrl>"
+            );
 
             if (!possibleIconUrl.Success || possibleIconUrl.Groups[1].Value == "")
             {
@@ -154,7 +246,10 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             }
 
             // Logger.Debug($"A native icon with Url={possibleIconUrl.Groups[1].Value} was found");
-            return new CacheableIcon(new Uri(possibleIconUrl.Groups[1].Value), package.VersionString);
+            return new CacheableIcon(
+                new Uri(possibleIconUrl.Groups[1].Value),
+                package.VersionString
+            );
         }
 
         protected override IReadOnlyList<Uri> GetScreenshots_UnSafe(IPackage package)
@@ -165,7 +260,9 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
         protected override IReadOnlyList<string> GetInstallableVersions_UnSafe(IPackage package)
         {
             Uri SearchUrl = new($"{package.Source.Url}/FindPackagesById()?id='{package.Id}'");
-            Logger.Debug($"Begin package version search with url={SearchUrl} on manager {Manager.Name}");
+            Logger.Debug(
+                $"Begin package version search with url={SearchUrl} on manager {Manager.Name}"
+            );
 
             List<string> results = [];
 
@@ -175,7 +272,9 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             HttpResponseMessage response = client.GetAsync(SearchUrl).GetAwaiter().GetResult();
             if (!response.IsSuccessStatusCode)
             {
-                Logger.Warn($"Failed to fetch api at Url={SearchUrl} with status code {response.StatusCode} to load versions");
+                Logger.Warn(
+                    $"Failed to fetch api at Url={SearchUrl} with status code {response.StatusCode} to load versions"
+                );
                 return [];
             }
 

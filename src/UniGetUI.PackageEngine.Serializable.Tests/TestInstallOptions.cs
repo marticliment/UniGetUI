@@ -7,12 +7,48 @@ public class TestInstallOptions
 {
     [Theory]
     [InlineData(false, false, "", "", "", "", "", "", false, false, false, "")]
-    [InlineData(true, true, "testval", "testval", "testval", "testval", "testval", "testval", true, true, true,
-        "testval")]
-    [InlineData(true, false, "true", "helloWorld", "testval", "heheheheeheh", "--parse\n-int", "12", false, true, false,
-        "4.4.0-beta2")]
-    public void ToAndFromJsonNode(bool a, bool b, string c, string d, string e, string f, string g, string h, bool i,
-        bool j, bool k, string l)
+    [InlineData(
+        true,
+        true,
+        "testval",
+        "testval",
+        "testval",
+        "testval",
+        "testval",
+        "testval",
+        true,
+        true,
+        true,
+        "testval"
+    )]
+    [InlineData(
+        true,
+        false,
+        "true",
+        "helloWorld",
+        "testval",
+        "heheheheeheh",
+        "--parse\n-int",
+        "12",
+        false,
+        true,
+        false,
+        "4.4.0-beta2"
+    )]
+    public void ToAndFromJsonNode(
+        bool a,
+        bool b,
+        string c,
+        string d,
+        string e,
+        string f,
+        string g,
+        string h,
+        bool i,
+        bool j,
+        bool k,
+        string l
+    )
     {
         var originalObject1 = new InstallOptions()
         {
@@ -27,7 +63,7 @@ public class TestInstallOptions
             PreRelease = i,
             RunAsAdministrator = j,
             SkipMinorUpdates = k,
-            Version = l
+            Version = l,
         };
 
         Assert.Equal(a, originalObject1.DiffersFromDefault());
@@ -49,33 +85,76 @@ public class TestInstallOptions
 
     [Theory]
     [InlineData("{}", false, false, "", "", "", "", "", "", false, false, false, "", false)]
-    [InlineData("""
-                {
-                  "SkipHashCheck": true,
-                  "InteractiveInstallation": true,
-                  "RunAsAdministrator": false,
-                  "Architecture": "lol",
-                  "InstallationScope": "",
-                  "CustomParameters": [
-                    "a"
-                  ]
-                }
-                """, true, true, "", "a", "", "", "", "lol", false, false, false, "", true)]
-
-    [InlineData("""
-                {
-                  "PreRelease": false,
-                  "CustomInstallLocation": "",
-                  "Version": "heyheyhey",
-                  "SkipMinorUpdates": true,
-                  "UNKNOWN_VAL1": true,
-                  "UNKNOWN_VAL2": null,
-                  "UNKNOWN_VAL3": 22,
-                  "UNKNOWN_VAL4": "hehe"
-                }
-                """, false, false, "", "", "", "",
-        "", "", false, false, true, "heyheyhey", true)]
-    public void FromJson(string JSON, bool hash, bool inter, string installLoc, string arg1, string arg2, string arg3, string scope, string arch, bool pre, bool admin, bool skipMin, string ver, bool mod)
+    [InlineData(
+        """
+            {
+              "SkipHashCheck": true,
+              "InteractiveInstallation": true,
+              "RunAsAdministrator": false,
+              "Architecture": "lol",
+              "InstallationScope": "",
+              "CustomParameters": [
+                "a"
+              ]
+            }
+            """,
+        true,
+        true,
+        "",
+        "a",
+        "",
+        "",
+        "",
+        "lol",
+        false,
+        false,
+        false,
+        "",
+        true
+    )]
+    [InlineData(
+        """
+            {
+              "PreRelease": false,
+              "CustomInstallLocation": "",
+              "Version": "heyheyhey",
+              "SkipMinorUpdates": true,
+              "UNKNOWN_VAL1": true,
+              "UNKNOWN_VAL2": null,
+              "UNKNOWN_VAL3": 22,
+              "UNKNOWN_VAL4": "hehe"
+            }
+            """,
+        false,
+        false,
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        false,
+        false,
+        true,
+        "heyheyhey",
+        true
+    )]
+    public void FromJson(
+        string JSON,
+        bool hash,
+        bool inter,
+        string installLoc,
+        string arg1,
+        string arg2,
+        string arg3,
+        string scope,
+        string arch,
+        bool pre,
+        bool admin,
+        bool skipMin,
+        string ver,
+        bool mod
+    )
     {
         Assert.NotEmpty(JSON);
         var jsonContent = JsonNode.Parse(JSON);
@@ -89,9 +168,18 @@ public class TestInstallOptions
         Assert.Equal(hash, o2.SkipHashCheck);
         Assert.Equal(arch, o2.Architecture);
         Assert.Equal(installLoc, o2.CustomInstallLocation);
-        Assert.Equal(list.Where(x => x.Any()).ToList(), o2.CustomParameters_Install.Where(x => x.Any()).ToList());
-        Assert.Equal(list.Where(x => x.Any()).ToList(), o2.CustomParameters_Update.Where(x => x.Any()).ToList());
-        Assert.Equal(list.Where(x => x.Any()).ToList(), o2.CustomParameters_Uninstall.Where(x => x.Any()).ToList());
+        Assert.Equal(
+            list.Where(x => x.Any()).ToList(),
+            o2.CustomParameters_Install.Where(x => x.Any()).ToList()
+        );
+        Assert.Equal(
+            list.Where(x => x.Any()).ToList(),
+            o2.CustomParameters_Update.Where(x => x.Any()).ToList()
+        );
+        Assert.Equal(
+            list.Where(x => x.Any()).ToList(),
+            o2.CustomParameters_Uninstall.Where(x => x.Any()).ToList()
+        );
         Assert.Equal(scope, o2.InstallationScope);
         Assert.Equal(inter, o2.InteractiveInstallation);
         Assert.Equal(pre, o2.PreRelease);
@@ -142,7 +230,8 @@ public class TestInstallOptions
 
         foreach (var key in o1._listKeys)
         {
-            var randomList = Enumerable.Range(0, r.Next(0, 11))
+            var randomList = Enumerable
+                .Range(0, r.Next(0, 11))
                 .Select(_ => r.Next().ToString())
                 .ToList();
             o1._listVal[key] = randomList;
@@ -157,23 +246,20 @@ public class TestInstallOptions
 
         foreach (var (key, _) in o1._defaultBoolValues)
         {
-            Assert.Equal(
-                o1._boolVal[key],
-                o2._boolVal[key]);
+            Assert.Equal(o1._boolVal[key], o2._boolVal[key]);
         }
 
         foreach (var key in o1._stringKeys)
         {
-            Assert.Equal(
-                o1._strVal[key],
-                o2._strVal[key]);
+            Assert.Equal(o1._strVal[key], o2._strVal[key]);
         }
 
         foreach (var key in o1._listKeys)
         {
             Assert.Equal(
                 o1._listVal[key].Where(x => x.Any()),
-                o2._listVal[key].Where(x => x.Any()));
+                o2._listVal[key].Where(x => x.Any())
+            );
         }
     }
 }

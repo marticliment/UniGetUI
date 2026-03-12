@@ -8,15 +8,88 @@ namespace UniGetUI.Core.IconEngine.Tests
         public static void TestCacheEngineForSha256()
         {
             Uri ICON_1 = new Uri("https://marticliment.com/resources/unigetui.png");
-            byte[] HASH_1 = [0xB7, 0x41, 0xC3, 0x18, 0xBF, 0x2B, 0x07, 0xAA, 0x92, 0xB2, 0x7A, 0x1B, 0x4D, 0xC5, 0xEE, 0xC4, 0xD1, 0x9B, 0x22, 0xD4, 0x0A, 0x13, 0x26, 0xA7, 0x45, 0xA4, 0xA7, 0xF5, 0x81, 0x8E, 0xAF, 0xFF];
+            byte[] HASH_1 =
+            [
+                0xB7,
+                0x41,
+                0xC3,
+                0x18,
+                0xBF,
+                0x2B,
+                0x07,
+                0xAA,
+                0x92,
+                0xB2,
+                0x7A,
+                0x1B,
+                0x4D,
+                0xC5,
+                0xEE,
+                0xC4,
+                0xD1,
+                0x9B,
+                0x22,
+                0xD4,
+                0x0A,
+                0x13,
+                0x26,
+                0xA7,
+                0x45,
+                0xA4,
+                0xA7,
+                0xF5,
+                0x81,
+                0x8E,
+                0xAF,
+                0xFF,
+            ];
             Uri ICON_2 = new Uri("https://marticliment.com/resources/elevenclock.png");
-            byte[] HASH_2 = [0x9E, 0xB8, 0x7A, 0x5A, 0x64, 0xCA, 0x6D, 0x8D, 0x0A, 0x7B, 0x98, 0xC5, 0x4F, 0x6A, 0x58, 0x72, 0xFD, 0x94, 0xC9, 0xA6, 0x82, 0xB3, 0x2B, 0x90, 0x70, 0x66, 0x66, 0x1C, 0xBF, 0x81, 0x97, 0x97];
+            byte[] HASH_2 =
+            [
+                0x9E,
+                0xB8,
+                0x7A,
+                0x5A,
+                0x64,
+                0xCA,
+                0x6D,
+                0x8D,
+                0x0A,
+                0x7B,
+                0x98,
+                0xC5,
+                0x4F,
+                0x6A,
+                0x58,
+                0x72,
+                0xFD,
+                0x94,
+                0xC9,
+                0xA6,
+                0x82,
+                0xB3,
+                0x2B,
+                0x90,
+                0x70,
+                0x66,
+                0x66,
+                0x1C,
+                0xBF,
+                0x81,
+                0x97,
+                0x97,
+            ];
 
             string managerName = "TestManager";
             string packageId = "Package55";
 
             string extension = ICON_1.ToString().Split(".")[^1];
-            string expectedFile = Path.Join(CoreData.UniGetUICacheDirectory_Icons, managerName, packageId, $"icon.{extension}");
+            string expectedFile = Path.Join(
+                CoreData.UniGetUICacheDirectory_Icons,
+                managerName,
+                packageId,
+                $"icon.{extension}"
+            );
             if (File.Exists(expectedFile))
             {
                 File.Delete(expectedFile);
@@ -67,7 +140,12 @@ namespace UniGetUI.Core.IconEngine.Tests
             string PACKAGE_ID = "Package2";
 
             string extension = URI.ToString().Split(".")[^1];
-            string expectedFile = Path.Join(CoreData.UniGetUICacheDirectory_Icons, MANAGER_NAME, PACKAGE_ID, $"icon.{extension}");
+            string expectedFile = Path.Join(
+                CoreData.UniGetUICacheDirectory_Icons,
+                MANAGER_NAME,
+                PACKAGE_ID,
+                $"icon.{extension}"
+            );
             if (File.Exists(expectedFile))
             {
                 File.Delete(expectedFile);
@@ -75,7 +153,12 @@ namespace UniGetUI.Core.IconEngine.Tests
 
             // Download an icon through version verification
             CacheableIcon icon = new(URI, VERSION);
-            string? path = IconCacheEngine.GetCacheOrDownloadIcon(icon, MANAGER_NAME, PACKAGE_ID, 0);
+            string? path = IconCacheEngine.GetCacheOrDownloadIcon(
+                icon,
+                MANAGER_NAME,
+                PACKAGE_ID,
+                0
+            );
             Assert.NotNull(path);
             Assert.Equal(expectedFile, path);
             Assert.True(File.Exists(path));
@@ -112,7 +195,12 @@ namespace UniGetUI.Core.IconEngine.Tests
             string packageId = "Package12";
 
             string extension = URI_1.ToString().Split(".")[^1];
-            string expectedFile = Path.Join(CoreData.UniGetUICacheDirectory_Icons, managerName, packageId, $"icon.{extension}");
+            string expectedFile = Path.Join(
+                CoreData.UniGetUICacheDirectory_Icons,
+                managerName,
+                packageId,
+                $"icon.{extension}"
+            );
             if (File.Exists(expectedFile))
             {
                 File.Delete(expectedFile);
@@ -160,7 +248,12 @@ namespace UniGetUI.Core.IconEngine.Tests
 
             // Clear any cache for reproducible data
             string extension = ICON_1.ToString().Split(".")[^1];
-            string expectedFile = Path.Join(CoreData.UniGetUICacheDirectory_Icons, managerName, packageId, $"icon.{extension}");
+            string expectedFile = Path.Join(
+                CoreData.UniGetUICacheDirectory_Icons,
+                managerName,
+                packageId,
+                $"icon.{extension}"
+            );
             if (File.Exists(expectedFile))
             {
                 File.Delete(expectedFile);
