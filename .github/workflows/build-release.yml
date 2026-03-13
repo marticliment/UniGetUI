@@ -50,13 +50,6 @@ jobs:
 
           $PackageEnv =  "publish-prod"
 
-          if (-Not $IsProductionBranch) {
-            $DryRun = $true # force dry run when not on main/master branch
-          }
-
-          if (-Not $SkipPublish -And $PackageEnv -ne 'publish-prod') {
-            $DryRun = $true # force dry run when publishing outside production environment
-          }
 
           $PackageVersion = '${{ inputs.version }}'
           if ([string]::IsNullOrEmpty($PackageVersion) -or $PackageVersion -eq 'latest') {
