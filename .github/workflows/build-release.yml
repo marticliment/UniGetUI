@@ -30,6 +30,7 @@ jobs:
     outputs:
       package-env: ${{ steps.info.outputs.package-env }}
       package-version: ${{ steps.info.outputs.package-version }}
+      onedrive-version: ${{ steps.info.outputs.onedrive-version }}
       draft-release: ${{ steps.info.outputs.draft-release }}
       skip-publish: ${{ steps.info.outputs.skip-publish }}
       dry-run: ${{ steps.info.outputs.dry-run }}
@@ -63,7 +64,10 @@ jobs:
           }
 
           echo "package-env=$PackageEnv" >> $Env:GITHUB_OUTPUT
+          $OneDriveVersion = "$PackageVersion.0"
+
           echo "package-version=$PackageVersion" >> $Env:GITHUB_OUTPUT
+          echo "onedrive-version=$OneDriveVersion" >> $Env:GITHUB_OUTPUT
           echo "draft-release=$($DraftRelease.ToString().ToLower())" >> $Env:GITHUB_OUTPUT
           echo "skip-publish=$($SkipPublish.ToString().ToLower())" >> $Env:GITHUB_OUTPUT
           echo "dry-run=$($DryRun.ToString().ToLower())" >> $Env:GITHUB_OUTPUT
@@ -346,11 +350,13 @@ jobs:
           $PackageVersion = '${{ needs.preflight.outputs.package-version }}'
           New-Item -Path "onedrive-staging" -ItemType Directory -Force | Out-Null
 
+          $OneDriveVersion = '${{ needs.preflight.outputs.onedrive-version }}'
+
           $Mappings = @{
-            "output/UniGetUI-release-x64/UniGetUI.Installer.x64.exe" = "Devolutions.UniGetUI.win-x64.$PackageVersion.exe"
-            "output/UniGetUI-release-arm64/UniGetUI.Installer.arm64.exe" = "Devolutions.UniGetUI.win-arm64.$PackageVersion.exe"
-            "output/UniGetUI-release-x64/UniGetUI.x64.zip" = "Devolutions.UniGetUI.win-x64.$PackageVersion.zip"
-            "output/UniGetUI-release-arm64/UniGetUI.arm64.zip" = "Devolutions.UniGetUI.win-arm64.$PackageVersion.zip"
+            "output/UniGetUI-release-x64/UniGetUI.Installer.x64.exe" = "Devolutions.UniGetUI.win-x64.$OneDriveVersion.exe"
+            "output/UniGetUI-release-arm64/UniGetUI.Installer.arm64.exe" = "Devolutions.UniGetUI.win-arm64.$OneDriveVersion.exe"
+            "output/UniGetUI-release-x64/UniGetUI.x64.zip" = "Devolutions.UniGetUI.win-x64.$OneDriveVersion.zip"
+            "output/UniGetUI-release-arm64/UniGetUI.arm64.zip" = "Devolutions.UniGetUI.win-arm64.$OneDriveVersion.zip"
           }
 
           foreach ($entry in $Mappings.GetEnumerator()) {
@@ -368,7 +374,7 @@ jobs:
           azure_client_id: ${{ secrets.ONEDRIVE_AUTOMATION_CLIENT_ID }}
           azure_client_secret: ${{ secrets.ONEDRIVE_AUTOMATION_CLIENT_SECRET }}
           conflict_behavior: replace
-          destination_path: /UniGetUI/${{ needs.preflight.outputs.package-version }}
+          destination_path: /UniGetUI/${{ needs.preflight.outputs.onedrive-version }}
           remote: releases
           source_path: Devolutions.UniGetUI.*
           working_directory: onedrive-staging
