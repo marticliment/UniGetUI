@@ -1,0 +1,249 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+                                                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                                                 x:Class="UniGetUI.Avalonia.Views.Pages.PackagePageView">
+        <Grid RowDefinitions="Auto,Auto,*"
+                                RowSpacing="12">
+                <Border Padding="18"
+                                                Classes="surface-card">
+                        <Grid ColumnDefinitions="Auto,*,Auto"
+                                                ColumnSpacing="14">
+                                <Border Width="48"
+                                                                Height="48"
+                                                                Classes="surface-card subtle-panel"
+                                                                CornerRadius="14">
+                                        <TextBlock x:Name="GlyphBlock"
+                                                                                 HorizontalAlignment="Center"
+                                                                                 VerticalAlignment="Center"
+                                                                                 FontSize="20"
+                                                                                 FontWeight="SemiBold"
+                                                                                 Text="◎" />
+                                </Border>
+
+                                <StackPanel Grid.Column="1"
+                                                                                Spacing="2">
+                                        <TextBlock x:Name="PageTitleBlock"
+                                                                                 FontSize="28"
+                                                                                 FontWeight="Black"
+                                                                                 Classes="hero-title" />
+                                        <TextBlock x:Name="PageSubtitleBlock"
+                                                                                 Opacity="0.72" />
+                                </StackPanel>
+
+                                <Border Grid.Column="2"
+                                                                Padding="10,4"
+                                                                HorizontalAlignment="Right"
+                                                                VerticalAlignment="Top"
+                                                                Classes="surface-card badge-panel">
+                                        <TextBlock x:Name="SearchStateBlock"
+                                                                                 Opacity="0.8"
+                                                                                 Text="Waiting for package engine" />
+                                </Border>
+                        </Grid>
+                </Border>
+
+                <Border Grid.Row="1"
+                                                Padding="12"
+                                                Classes="surface-card">
+                        <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,*,Auto,Auto,Auto"
+                                                ColumnSpacing="6">
+                                <Button x:Name="PrimaryActionButton"
+                                                                Classes="toolbar-primary accent"
+                                                                IsEnabled="False" />
+                                <Button x:Name="InstallOptionsButton"
+                                                                Grid.Column="1"
+                                                                Classes="toolbar-secondary"
+                                                                IsEnabled="False"
+                                                                Content="Install options" />
+                                <Button x:Name="DetailsButton"
+                                                                Grid.Column="2"
+                                                                Classes="toolbar-secondary"
+                                                                IsEnabled="False"
+                                                                Content="Details" />
+                                <Button x:Name="ShareButton"
+                                                                Grid.Column="3"
+                                                                Classes="toolbar-secondary"
+                                                                IsEnabled="False"
+                                                                Content="Share" />
+
+                                <TextBlock x:Name="OperationStateBlock"
+                                                               Grid.Column="4"
+                                                               VerticalAlignment="Center"
+                                                               Opacity="0.76"
+                                                               TextTrimming="CharacterEllipsis" />
+
+                                <StackPanel Grid.Column="5"
+                                                                                Orientation="Horizontal"
+                                                                                Spacing="4">
+                                        <Button Width="36"
+                                                                        Height="36"
+                                                                        Padding="0"
+                                                                        Classes="icon-shell"
+                                                                        IsEnabled="False"
+                                                                        Content="☰" />
+                                        <Button Width="36"
+                                                                        Height="36"
+                                                                        Padding="0"
+                                                                        Classes="icon-shell"
+                                                                        IsEnabled="False"
+                                                                        Content="▦" />
+                                        <Button Width="36"
+                                                                        Height="36"
+                                                                        Padding="0"
+                                                                        Classes="icon-shell"
+                                                                        IsEnabled="False"
+                                                                        Content="⌗" />
+                                </StackPanel>
+                        </Grid>
+                </Border>
+
+                <Grid Grid.Row="2"
+                                        ColumnDefinitions="264,*"
+                                        ColumnSpacing="12">
+                        <StackPanel Spacing="12">
+                                <Border Padding="16"
+                                                                Classes="surface-card">
+                                        <StackPanel Spacing="12">
+                                                <TextBlock x:Name="SourcesTitleBlock"
+                                                                                         FontSize="18"
+                                                                                         FontWeight="SemiBold"
+                                                                                         Text="Sources" />
+                                                <TextBlock x:Name="SourcesDescriptionBlock"
+                                                                                         Opacity="0.72"
+                                                                                         TextWrapping="Wrap"
+                                                                                         Text="Cross-platform source selection is not wired yet." />
+                                                <Border Padding="12"
+                                                                                Classes="surface-card subtle-panel">
+                                                        <TextBlock x:Name="SourcesEmptyStateBlock"
+                                                                                                 TextWrapping="Wrap"
+                                                                                                 Text="No packages were found" />
+                                                </Border>
+                                        </StackPanel>
+                                </Border>
+
+                                <Border Padding="16"
+                                                                Classes="surface-card">
+                                        <StackPanel Spacing="12">
+                                                <TextBlock x:Name="FiltersSectionTitleBlock"
+                                                                                         FontSize="18"
+                                                                                         FontWeight="SemiBold"
+                                                                                         Text="Filters" />
+                                                <TextBlock x:Name="FiltersSectionDescriptionBlock"
+                                                                                         Opacity="0.72"
+                                                                                         TextWrapping="Wrap"
+                                                                                         Text="The left pane structure is now in place for sources, search modes, and future package filters." />
+                                        </StackPanel>
+                                </Border>
+
+                                <Border Padding="16"
+                                                                Classes="surface-card">
+                                        <StackPanel Spacing="10">
+                                                <TextBlock x:Name="FiltersTitleBlock"
+                                                                                         FontSize="18"
+                                                                                         FontWeight="SemiBold" />
+                                                <RadioButton x:Name="PackageNameFilterRadio"
+                                                                                                 Content="Package Name" />
+                                                <RadioButton x:Name="PackageIdFilterRadio"
+                                                                                                 Content="Package ID" />
+                                                <RadioButton x:Name="BothFilterRadio"
+                                                                                                 IsChecked="True"
+                                                                                                 Content="Both" />
+                                                <RadioButton x:Name="ExactMatchFilterRadio"
+                                                                                                 Content="Exact match" />
+                                        </StackPanel>
+                                </Border>
+                        </StackPanel>
+
+                        <Border Grid.Column="1"
+                                                        Padding="0"
+                                                        Classes="surface-card">
+                                <Grid RowDefinitions="Auto,*">
+                                        <Grid Margin="16,16,16,8"
+                                                                ColumnDefinitions="2.5*,2.2*,1.1*,1.2*,1.4*,Auto"
+                                                                ColumnSpacing="14">
+                                                <TextBlock x:Name="PackageNameHeaderBlock"
+                                                                                         Classes="data-header"
+                                                                                         Text="Package Name" />
+                                                <TextBlock x:Name="PackageIdHeaderBlock"
+                                                                                         Grid.Column="1"
+                                                                                         Classes="data-header"
+                                                                                         Text="Package ID" />
+                                                <TextBlock x:Name="VersionHeaderBlock"
+                                                                                         Grid.Column="2"
+                                                                                         Classes="data-header"
+                                                                                         Text="Version" />
+                                                <TextBlock x:Name="UpgradeColumnBlock"
+                                                                                         Grid.Column="3"
+                                                                                         Classes="data-header"
+                                                                                         Text="New version" />
+                                                <TextBlock x:Name="SourceHeaderBlock"
+                                                                                         Grid.Column="4"
+                                                                                         Classes="data-header"
+                                                                                         Text="Source" />
+                                                <TextBlock x:Name="ActionHeaderBlock"
+                                                                                         Grid.Column="5"
+                                                                                         Classes="data-header"
+                                                                                         Text="Action" />
+                                        </Grid>
+
+                                        <Grid Grid.Row="1"
+                                                                Margin="16,0,16,16">
+                                                <ScrollViewer x:Name="PackageRowsScrollViewer"
+                                                                                                        IsVisible="False">
+                                                        <ItemsControl x:Name="PackageRowsItemsControl">
+                                                                <ItemsControl.ItemTemplate>
+                                                                        <DataTemplate>
+                                                                                <Border Classes="data-row">
+                                                                                                <Grid ColumnDefinitions="2.5*,2.2*,1.1*,1.2*,1.4*,Auto"
+                                                                                                                ColumnSpacing="14">
+                                                                                                <TextBlock Text="{Binding Name}"
+                                                                                                                                         Classes="data-primary" />
+                                                                                                <TextBlock Grid.Column="1"
+                                                                                                                                         Text="{Binding Id}"
+                                                                                                                                         Classes="data-secondary" />
+                                                                                                <TextBlock Grid.Column="2"
+                                                                                                                                         Text="{Binding Version}"
+                                                                                                                                         Classes="data-secondary" />
+                                                                                                <TextBlock Grid.Column="3"
+                                                                                                                                         Text="{Binding Status}"
+                                                                                                                                         Classes="data-secondary" />
+                                                                                                <TextBlock Grid.Column="4"
+                                                                                                                                         Text="{Binding Source}"
+                                                                                                                                         Classes="data-secondary" />
+                                                                                                        <Button Grid.Column="5"
+                                                                                                                                Classes="toolbar-secondary inline-row-action"
+                                                                                                                                Content="{Binding PrimaryActionLabel}"
+                                                                                                                                Command="{Binding PrimaryActionCommand}"
+                                                                                                                                IsEnabled="{Binding CanExecutePrimaryAction}" />
+                                                                                        </Grid>
+                                                                                </Border>
+                                                                        </DataTemplate>
+                                                                </ItemsControl.ItemTemplate>
+                                                        </ItemsControl>
+                                                </ScrollViewer>
+
+                                                <Border x:Name="EmptyStateCard"
+                                                                                Padding="24"
+                                                                                Classes="surface-card subtle-panel"
+                                                                                CornerRadius="18">
+                                                        <StackPanel HorizontalAlignment="Center"
+                                                                                                        VerticalAlignment="Center"
+                                                                                                        Spacing="10">
+                                                                <TextBlock x:Name="EmptyStateTitleBlock"
+                                                                                                         HorizontalAlignment="Center"
+                                                                                                         FontSize="22"
+                                                                                                         FontWeight="Bold"
+                                                                                                         TextAlignment="Center" />
+                                                                <TextBlock x:Name="EmptyStateDescriptionBlock"
+                                                                                                         MaxWidth="520"
+                                                                                                         HorizontalAlignment="Center"
+                                                                                                         Opacity="0.74"
+                                                                                                         TextAlignment="Center"
+                                                                                                         TextWrapping="Wrap" />
+                                                        </StackPanel>
+                                                </Border>
+                                        </Grid>
+                                </Grid>
+                        </Border>
+                </Grid>
+        </Grid>
+</UserControl>

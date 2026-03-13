@@ -1,0 +1,116 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Style Selector="TextBlock.hero-title">
+    <Setter Property="FontWeight" Value="Black" />
+  </Style>
+
+  <Style Selector="Border.surface-card">
+    <Setter Property="Background" Value="#0A000000" />
+    <Setter Property="BorderBrush" Value="#14000000" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="18" />
+  </Style>
+
+  <Style Selector="Border.surface-card.flat-shell-panel">
+    <Setter Property="CornerRadius" Value="0" />
+  </Style>
+
+  <Style Selector="Border.surface-card.subtle-panel">
+    <Setter Property="Background" Value="#06000000" />
+    <Setter Property="BorderBrush" Value="#12000000" />
+    <Setter Property="CornerRadius" Value="14" />
+  </Style>
+
+  <Style Selector="Border.surface-card.badge-panel">
+    <Setter Property="Background" Value="#0F000000" />
+    <Setter Property="BorderBrush" Value="#16000000" />
+    <Setter Property="CornerRadius" Value="999" />
+  </Style>
+
+  <Style Selector="Button.nav">
+    <Setter Property="BorderBrush" Value="#00000000" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="Padding" Value="10,9" />
+    <Setter Property="CornerRadius" Value="12" />
+    <Setter Property="MinHeight" Value="40" />
+    <Setter Property="Opacity" Value="0.9" />
+  </Style>
+
+  <Style Selector="Button.nav:pointerover">
+    <Setter Property="Opacity" Value="1" />
+  </Style>
+
+  <Style Selector="Button.nav.selected">
+    <Setter Property="Background" Value="#12000000" />
+    <Setter Property="BorderBrush" Value="#22000000" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="Opacity" Value="1" />
+  </Style>
+
+  <Style Selector="Button.icon-shell">
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="10" />
+    <Setter Property="MinWidth" Value="34" />
+    <Setter Property="MinHeight" Value="34" />
+  </Style>
+
+  <Style Selector="Button.caption-button">
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="8" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="MinWidth" Value="38" />
+    <Setter Property="MinHeight" Value="30" />
+  </Style>
+
+  <Style Selector="Button.caption-close:pointerover">
+    <Setter Property="Background" Value="#8D2E3E" />
+    <Setter Property="BorderBrush" Value="#A94152" />
+  </Style>
+
+  <Style Selector="Button.toolbar-primary">
+    <Setter Property="Padding" Value="14,8" />
+    <Setter Property="CornerRadius" Value="12" />
+    <Setter Property="MinHeight" Value="36" />
+  </Style>
+
+  <Style Selector="Button.toolbar-secondary">
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="Padding" Value="12,8" />
+    <Setter Property="CornerRadius" Value="12" />
+    <Setter Property="MinHeight" Value="36" />
+  </Style>
+
+  <Style Selector="Button.inline-row-action">
+    <Setter Property="Padding" Value="10,6" />
+    <Setter Property="MinWidth" Value="92" />
+    <Setter Property="MinHeight" Value="32" />
+    <Setter Property="HorizontalAlignment" Value="Right" />
+  </Style>
+
+  <Style Selector="TextBlock.data-header">
+    <Setter Property="FontSize" Value="12" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="Opacity" Value="0.7" />
+    <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+  </Style>
+
+  <Style Selector="TextBlock.data-primary">
+    <Setter Property="FontSize" Value="13" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+  </Style>
+
+  <Style Selector="TextBlock.data-secondary">
+    <Setter Property="FontSize" Value="12" />
+    <Setter Property="Opacity" Value="0.84" />
+    <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+  </Style>
+
+  <Style Selector="Border.data-row">
+    <Setter Property="Padding" Value="0,10" />
+    <Setter Property="BorderBrush" Value="#12000000" />
+    <Setter Property="BorderThickness" Value="0,0,0,1" />
+  </Style>
+</Styles>

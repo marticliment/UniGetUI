@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <TargetFrameworks />
+        <OutputType>WinExe</OutputType>
+        <RootNamespace>UniGetUI.Avalonia</RootNamespace>
+        <AssemblyName>UniGetUI.Avalonia</AssemblyName>
+        <ApplicationIcon>..\UniGetUI\icon.ico</ApplicationIcon>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Avalonia" Version="11.3.7" />
+        <PackageReference Include="Avalonia.Desktop" Version="11.3.7" />
+        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.7" />
+        <PackageReference Include="Devolutions.AvaloniaTheme.DevExpress" Version="2026.3.13" />
+        <PackageReference Include="Devolutions.AvaloniaTheme.MacOS" Version="2026.3.13" />
+        <PackageReference Include="Devolutions.AvaloniaTheme.Linux" Version="2026.3.11" />
+        <PackageReference Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.0-beta3" Condition="'$(Configuration)' == 'Debug'" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\UniGetUI.Core.Data\UniGetUI.Core.Data.csproj" />
+        <ProjectReference Include="..\UniGetUI.Core.LanguageEngine\UniGetUI.Core.LanguageEngine.csproj" />
+        <ProjectReference Include="..\UniGetUI.Core.Logger\UniGetUI.Core.Logging.csproj" />
+        <ProjectReference Include="..\UniGetUI.Core.Settings\UniGetUI.Core.Settings.csproj" />
+        <ProjectReference Include="..\UniGetUI.Core.Tools\UniGetUI.Core.Tools.csproj" />
+        <ProjectReference Include="..\UniGetUI.Interface.Enums\UniGetUI.Interface.Enums.csproj" />
+        <ProjectReference Include="..\UniGetUI.PackageEngine.PackageEngine\UniGetUI.PackageEngine.PEInterface.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <AvaloniaResource Include="..\UniGetUI\icon.ico" Link="Assets\icon.ico" />
+        <AvaloniaResource Include="..\UniGetUI\Assets\Images\icon_unsquare.png" Link="Assets\icon_unsquare.png" />
+    </ItemGroup>
+ </Project>
