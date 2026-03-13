@@ -330,7 +330,7 @@
   "How to add packages to a bundle": "So fügen Sie Pakete zu einem Bündel hinzu",
   "I understand": "Ich verstehe",
   "Icons": "Symbole",
-  "Id": "Id",
+  "Id": "ID",
   "If you have cloud backup enabled, it will be saved as a GitHub Gist on this account": "Wenn Sie die Cloud-Sicherung aktiviert haben, wird sie als GitHub Gist auf diesem Konto gespeichert",
   "Ignore custom pre-install and post-install commands when importing packages from a bundle": "Benutzerdefinierte Vor- und Nachinstallationsbefehle beim Importieren von Paketen aus einem Bündel ignorieren",
   "Ignore future updates for this package": "Zukünftige Updates für dieses Paket ignorieren",

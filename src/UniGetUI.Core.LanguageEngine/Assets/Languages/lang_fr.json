@@ -330,7 +330,7 @@
   "How to add packages to a bundle": "Comment ajouter des paquets à un lot",
   "I understand": "Je comprends",
   "Icons": "Icônes",
-  "Id": "Id",
+  "Id": "ID",
   "If you have cloud backup enabled, it will be saved as a GitHub Gist on this account": "Si vous avez activé la sauvegarde dans le cloud, il sera sauvegardé en tant que Gist GitHub sur ce compte.",
   "Ignore custom pre-install and post-install commands when importing packages from a bundle": "Autoriser l'exécution de commandes personnalisées avant et après l'installation",
   "Ignore future updates for this package": "Ignorer les futures mises à jour pour ce paquet",
