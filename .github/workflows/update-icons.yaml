@@ -19,8 +19,9 @@ jobs:
           python -m pip install xlrd==1.2.0
           git config user.email "excelbot@github.com"
           git config user.name "Excel Bot"
-          python scripts/generate_json_from_excel.py 
-          git commit WebBasedData/screenshot-database.json -m "Update icons and screenshots"
+          python scripts/generate_json_from_excel.py --download-workbook
+          git add WebBasedData/screenshot-database-v2.json WebBasedData/new_urls.txt
+          git diff --cached --quiet || git commit -m "Update icons and screenshots"
           exit 0
 
       - name: Prepare PR Body with Images
