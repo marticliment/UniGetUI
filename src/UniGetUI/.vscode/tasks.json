@@ -1,15 +1,22 @@
 {
+	"version": "2.0.0",
 	"tasks": [
 		{
-			"type": "dotnet",
-			"task": "build y:\\WingetUI-Store\\src\\wingetui-interface\\wingetui-interface.csproj --debug",
-			"file": "y:\\WingetUI-Store\\src\\wingetui-interface\\wingetui-interface.csproj",
+			"label": "build UniGetUI (Debug x64)",
+			"type": "process",
+			"command": "dotnet",
+			"args": [
+				"build",
+				"${workspaceFolder}/UniGetUI.csproj",
+				"--configuration",
+				"Debug",
+				"/p:Platform=x64"
+			],
 			"group": {
 				"kind": "build",
 				"isDefault": true
 			},
-			"problemMatcher": [],
-			"label": "dotnet: build y:\\WingetUI-Store\\src\\wingetui-interface\\wingetui-interface.csproj"
+			"problemMatcher": "$msCompile"
 		}
 	]
 }

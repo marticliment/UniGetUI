@@ -63,10 +63,10 @@ resources:
     id: Microsoft.VisualStudio.2022.Community
     source: winget
 
-- name: Install .NET 8 SDK
+- name: Install .NET 10 SDK
   type: Microsoft.WinGet/Package
   properties:
-    id: Microsoft.DotNet.SDK.8
+    id: Microsoft.DotNet.SDK.10
     source: winget
 
 - name: Install Windows App SDK

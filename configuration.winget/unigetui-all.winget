@@ -56,10 +56,10 @@ resources:
     id: Rustlang.Rustup
     source: winget
 
-- name: Install .NET 8 SDK
+- name: Install .NET 10 SDK
   type: Microsoft.WinGet/Package
   properties:
-    id: Microsoft.DotNet.SDK.8
+    id: Microsoft.DotNet.SDK.10
     source: winget
 
 # vcpkg bootstrap is optional; run scripts\dev-setup-optional.ps1 if needed.

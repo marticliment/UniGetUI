@@ -102,13 +102,13 @@ jobs:
       - name: Install .NET
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: 8.0.x
+          global-json-file: global.json
 
       - name: Cache NuGet packages
         uses: actions/cache@v5
         with:
           path: ${{ env.NUGET_PACKAGES }}
-          key: ${{ runner.os }}-nuget-${{ hashFiles('src/**/*.csproj', 'src/**/*.props', 'src/**/*.targets', 'src/**/*.sln') }}
+          key: ${{ runner.os }}-nuget-${{ hashFiles('global.json', 'src/**/*.csproj', 'src/**/*.props', 'src/**/*.targets', 'src/**/*.sln') }}
           restore-keys: |
             ${{ runner.os }}-nuget-
 
@@ -184,11 +184,20 @@ jobs:
         shell: pwsh
         run: |
           $Platform = '${{ matrix.platform }}'
+          [xml]$BuildProps = Get-Content "src/Directory.Build.props"
+          $PortableTargetFramework = @($BuildProps.Project.PropertyGroup | Where-Object { $_.PortableTargetFramework } | Select-Object -First 1).PortableTargetFramework
+          $WindowsTargetPlatformVersion = @($BuildProps.Project.PropertyGroup | Where-Object { $_.WindowsTargetPlatformVersion } | Select-Object -First 1).WindowsTargetPlatformVersion
+
+          if ([string]::IsNullOrWhiteSpace($PortableTargetFramework) -or [string]::IsNullOrWhiteSpace($WindowsTargetPlatformVersion)) {
+            throw "Could not resolve the target framework from src/Directory.Build.props"
+          }
+
+          $TargetFramework = "$PortableTargetFramework-windows$WindowsTargetPlatformVersion"
           dotnet publish src/UniGetUI/UniGetUI.csproj /noLogo /p:Configuration=Release /p:Platform=$Platform -p:RuntimeIdentifier=win-$Platform -v m
           if ($LASTEXITCODE -ne 0) { throw "dotnet publish failed" }
 
           # Stage binaries
-          $PublishDir = "src/UniGetUI/bin/$Platform/Release/net8.0-windows10.0.26100.0/win-$Platform/publish"
+          $PublishDir = "src/UniGetUI/bin/$Platform/Release/$TargetFramework/win-$Platform/publish"
           if (Test-Path "unigetui_bin") { Remove-Item "unigetui_bin" -Recurse -Force }
           New-Item "unigetui_bin" -ItemType Directory | Out-Null
           Get-ChildItem $PublishDir | Move-Item -Destination "unigetui_bin" -Force
@@ -233,16 +242,19 @@ jobs:
           # Build the installer (signing of the installer itself happens in the next step)
           # Temporarily remove SignTool line so ISCC doesn't try to sign during build
           $issContent = Get-Content $IssPath -Raw
-          $issContentNoSign = $issContent -Replace '(?m)^SignTool=.*$', '; SignTool=azsign (disabled for CI, signed separately)'
-          $issContentNoSign = $issContentNoSign -Replace '(?m)^SignedUninstaller=yes', 'SignedUninstaller=no'
-          Set-Content $IssPath $issContentNoSign -NoNewline
 
-          $InstallerBaseName = "UniGetUI.Installer.$Platform"
-          & ISCC.exe $IssPath /F"$InstallerBaseName" /O"$OutputDir"
-          if ($LASTEXITCODE -ne 0) { throw "Inno Setup failed with exit code $LASTEXITCODE" }
+          try {
+            $issContentNoSign = $issContent -Replace '(?m)^SignTool=.*$', '; SignTool=azsign (disabled for CI, signed separately)'
+            $issContentNoSign = $issContentNoSign -Replace '(?m)^SignedUninstaller=yes', 'SignedUninstaller=no'
+            Set-Content $IssPath $issContentNoSign -NoNewline
 
-          # Restore original ISS content
-          Set-Content $IssPath $issContent -NoNewline
+            $InstallerBaseName = "UniGetUI.Installer.$Platform"
+            & ISCC.exe $IssPath /F"$InstallerBaseName" /O"$OutputDir"
+            if ($LASTEXITCODE -ne 0) { throw "Inno Setup failed with exit code $LASTEXITCODE" }
+          }
+          finally {
+            Set-Content $IssPath $issContent -NoNewline
+          }
 
       - name: Stage output
         shell: pwsh

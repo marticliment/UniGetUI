@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-UniGetUI is a WinUI 3 desktop app (C#/.NET 8, Windows App SDK) providing a GUI for CLI package managers (WinGet, Scoop, Chocolatey, Pip, Npm, .NET Tool, PowerShell Gallery, Cargo, Vcpkg). Solution lives in `src/UniGetUI.sln`.
+UniGetUI is a WinUI 3 desktop app (C#/.NET 10, Windows App SDK) providing a GUI for CLI package managers (WinGet, Scoop, Chocolatey, Pip, Npm, .NET Tool, PowerShell Gallery, Cargo, Vcpkg). Solution lives in `src/UniGetUI.sln`.
 
 ## Architecture
 
@@ -44,7 +44,7 @@ dotnet test --verbosity q --nologo
 dotnet publish src/UniGetUI/UniGetUI.csproj /p:Configuration=Release /p:Platform=x64
 ```
 
-- Target framework: `net8.0-windows10.0.26100.0` (min `10.0.19041`)
+- Target framework: `net10.0-windows10.0.26100.0` (min `10.0.19041`)
 - Build generates secrets via `src/UniGetUI/Services/generate-secrets.ps1` and integrity tree via `scripts/generate-integrity-tree.ps1`
 - Self-contained, publish-trimmed (partial), Windows App SDK self-contained
 - Tests use **xUnit** (`[Fact]`, `Assert.*`)

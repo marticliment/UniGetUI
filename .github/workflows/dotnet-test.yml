@@ -3,6 +3,7 @@ on:
   push:
     branches: [ "main" ]
     paths:
+      - 'global.json'
       - '**.cs'
       - '**.csproj'
       - '**.props'
@@ -14,6 +15,7 @@ on:
   pull_request:
     branches: [ "main" ]
     paths:
+      - 'global.json'
       - '**.cs'
       - '**.csproj'
       - '**.props'
@@ -36,16 +38,16 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Install .NET Core
+    - name: Install .NET SDK
       uses: actions/setup-dotnet@v5
       with:
-        dotnet-version: 8.0.x
+        global-json-file: global.json
 
     - name: Cache NuGet packages
       uses: actions/cache@v5
       with:
         path: ${{ env.NUGET_PACKAGES }}
-        key: ${{ runner.os }}-nuget-${{ hashFiles('src/**/*.csproj', 'src/**/*.props', 'src/**/*.targets', 'src/**/*.sln') }}
+        key: ${{ runner.os }}-nuget-${{ hashFiles('global.json', 'src/**/*.csproj', 'src/**/*.props', 'src/**/*.targets', 'src/**/*.sln') }}
         restore-keys: |
           ${{ runner.os }}-nuget-
 

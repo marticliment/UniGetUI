@@ -432,9 +432,11 @@ public partial class AutoUpdater
 
         try
         {
+#pragma warning disable SYSLIB0057
             X509Certificate signerCertificate = X509Certificate.CreateFromSignedFile(
                 installerLocation
             );
+#pragma warning restore SYSLIB0057
             using X509Certificate2 cert = new(signerCertificate);
 
             string signerThumbprint = NormalizeThumbprint(cert.Thumbprint ?? string.Empty);
