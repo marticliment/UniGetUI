@@ -1,0 +1,220 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:fa="using:FluentAvalonia.UI.Controls"
+             xmlns:models="using:UniGetUI.Avalonia.Models"
+             x:Class="UniGetUI.Avalonia.Views.PackagesPage">
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto" MaxWidth="2000" HorizontalAlignment="Stretch">
+
+        <!-- Row 0: Page header (matches WinUI AbstractPackagesPage header) -->
+        <Border Grid.Row="0" Padding="24,16,24,8">
+            <Grid ColumnDefinitions="Auto,*,Auto">
+                <!-- Title with icon -->
+                <StackPanel Orientation="Horizontal" Spacing="14" VerticalAlignment="Center">
+                    <fa:SymbolIcon x:Name="PageIcon" Symbol="Find" FontSize="28" />
+                    <StackPanel Spacing="2">
+                        <TextBlock x:Name="PageTitle" Text="Discover Packages"
+                                   FontSize="24" FontWeight="Bold" />
+                        <TextBlock x:Name="PageSubtitle" FontSize="12" Opacity="0.5" />
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Right side: Search + controls -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                    <!-- Search box -->
+                    <TextBox x:Name="SearchBox" Watermark="Search packages..."
+                             MinWidth="250" KeyUp="SearchBox_KeyUp" />
+
+                    <!-- Manager filter -->
+                    <ComboBox x:Name="ManagerFilter" MinWidth="140"
+                              SelectionChanged="ManagerFilter_SelectionChanged" />
+
+                    <Border Width="1" Height="22" Background="{DynamicResource DividerStrokeColorDefaultBrush}"
+                            VerticalAlignment="Center" />
+
+                    <!-- Sort dropdown -->
+                    <ComboBox x:Name="SortCombo" MinWidth="100" SelectionChanged="SortCombo_Changed">
+                        <ComboBoxItem Content="Name" Tag="Name" IsSelected="True" />
+                        <ComboBoxItem Content="ID" Tag="Id" />
+                        <ComboBoxItem Content="Version" Tag="Version" />
+                        <ComboBoxItem Content="Source" Tag="Source" />
+                    </ComboBox>
+
+                    <Button x:Name="SortDirectionBtn" Click="SortDirection_Click"
+                            ToolTip.Tip="Toggle sort direction" Padding="7,5" Classes="theme-borderless">
+                        <fa:SymbolIcon x:Name="SortDirectionIcon" Symbol="Up" FontSize="14" />
+                    </Button>
+
+                    <Border Width="1" Height="22" Background="{DynamicResource DividerStrokeColorDefaultBrush}"
+                            VerticalAlignment="Center" />
+
+                    <!-- View mode buttons -->
+                    <StackPanel Orientation="Horizontal" Spacing="2">
+                        <Button x:Name="ViewListBtn" Click="ViewMode_Click" Tag="List"
+                                ToolTip.Tip="List view" Padding="7,5" Classes="theme-borderless">
+                            <fa:SymbolIcon Symbol="List" FontSize="14" />
+                        </Button>
+                        <Button x:Name="ViewGridBtn" Click="ViewMode_Click" Tag="Grid"
+                                ToolTip.Tip="Grid view" Padding="7,5" Classes="theme-borderless">
+                            <fa:SymbolIcon Symbol="ViewAll" FontSize="14" />
+                        </Button>
+                    </StackPanel>
+
+                    <Border Width="1" Height="22" Background="{DynamicResource DividerStrokeColorDefaultBrush}"
+                            VerticalAlignment="Center" />
+
+                    <!-- Action button (Install selected / Update all / Uninstall selected) -->
+                    <Button x:Name="BatchActionButton" Padding="12,7" Classes="accent"
+                            Click="BatchAction_Click">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <fa:SymbolIcon x:Name="BatchActionIcon" Symbol="Download" FontSize="14" />
+                            <TextBlock x:Name="BatchActionLabel" Text="Install" FontSize="13" />
+                        </StackPanel>
+                    </Button>
+
+                    <!-- Reload -->
+                    <Button x:Name="ReloadButton" ToolTip.Tip="Reload packages"
+                            Click="ReloadButton_Click" Padding="7,5" Classes="theme-borderless">
+                        <fa:SymbolIcon Symbol="Sync" FontSize="14" />
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Row 1: Loading bar -->
+        <ProgressBar x:Name="LoadingBar" Grid.Row="1" IsIndeterminate="True" IsVisible="False" Height="2" />
+
+        <!-- Row 2: Content area -->
+        <Grid Grid.Row="2">
+            <!-- DATA GRID VIEW -->
+            <DataGrid x:Name="PackageGrid"
+                      AutoGenerateColumns="False"
+                      CanUserReorderColumns="False"
+                      CanUserResizeColumns="True"
+                      CanUserSortColumns="True"
+                      IsReadOnly="False"
+                      SelectionMode="Single"
+                      GridLinesVisibility="None"
+                      HeadersVisibility="Column"
+                      RowHeight="32"
+                      DoubleTapped="PackageList_DoubleTapped">
+                <DataGrid.ContextMenu>
+                    <ContextMenu x:Name="PackageContextMenu" Opening="ContextMenu_Opening">
+                        <MenuItem x:Name="CtxInstall" Header="Install" Click="CtxInstall_Click">
+                            <MenuItem.Icon>
+                                <fa:SymbolIcon Symbol="Download" FontSize="14" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem x:Name="CtxUpdate" Header="Update" Click="CtxUpdate_Click">
+                            <MenuItem.Icon>
+                                <fa:SymbolIcon Symbol="Up" FontSize="14" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem x:Name="CtxUninstall" Header="Uninstall" Click="CtxUninstall_Click">
+                            <MenuItem.Icon>
+                                <fa:SymbolIcon Symbol="Delete" FontSize="14" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <Separator x:Name="CtxSudoSeparator" />
+                        <MenuItem x:Name="CtxInstallSudo" Header="Install as Administrator" Click="CtxInstallSudo_Click">
+                            <MenuItem.Icon>
+                                <fa:SymbolIcon Symbol="Admin" FontSize="14" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem x:Name="CtxUpdateSudo" Header="Update as Administrator" Click="CtxUpdateSudo_Click">
+                            <MenuItem.Icon>
+                                <fa:SymbolIcon Symbol="Admin" FontSize="14" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem x:Name="CtxUninstallSudo" Header="Uninstall as Administrator" Click="CtxUninstallSudo_Click">
+                            <MenuItem.Icon>
+                                <fa:SymbolIcon Symbol="Admin" FontSize="14" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <Separator />
+                        <MenuItem Header="Package Details" Click="CtxDetails_Click">
+                            <MenuItem.Icon>
+                                <fa:SymbolIcon Symbol="Open" FontSize="14" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="Installation Options..." Click="CtxInstallOptions_Click">
+                            <MenuItem.Icon>
+                                <fa:SymbolIcon Symbol="Setting" FontSize="14" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <Separator />
+                        <MenuItem Header="Copy Package ID" Click="CtxCopyId_Click">
+                            <MenuItem.Icon>
+                                <fa:SymbolIcon Symbol="Copy" FontSize="14" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                    </ContextMenu>
+                </DataGrid.ContextMenu>
+                <!-- Columns configured in code-behind to avoid compiled binding issues -->
+            </DataGrid>
+
+            <!-- GRID VIEW (cards) -->
+            <ScrollViewer x:Name="GridView" IsVisible="False">
+                <ItemsControl x:Name="GridItems" Margin="16,12">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate><WrapPanel Orientation="Horizontal" /></ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="models:PackageWrapper">
+                            <Border Background="{DynamicResource ControlFillColorDefaultBrush}"
+                                    BorderBrush="{DynamicResource DividerStrokeColorDefaultBrush}"
+                                    BorderThickness="1" CornerRadius="8" Padding="16,12" Margin="4"
+                                    Width="275" MinHeight="56"
+                                    Opacity="{Binding ListedOpacity}" ToolTip.Tip="{Binding ExtendedTooltip}">
+                                <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="Auto,*,Auto">
+                                    <!-- Icon -->
+                                    <Image Grid.Row="0" Grid.RowSpan="2" Width="36" Height="36"
+                                           Stretch="Uniform" Source="{Binding IconBitmap}"
+                                           Margin="0,0,12,0" VerticalAlignment="Top" />
+                                    <!-- Name + status -->
+                                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Package.Name}" FontSize="14"
+                                               FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                                    <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding StatusIcon}"
+                                               FontSize="13" Margin="8,0,0,0" VerticalAlignment="Center" />
+                                    <!-- ID -->
+                                    <TextBlock Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding Package.Id}"
+                                               FontSize="11" Opacity="0.45" TextTrimming="CharacterEllipsis" Margin="0,3,0,0" />
+                                    <!-- Version -->
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Text="{Binding VersionComboString}"
+                                               FontSize="12" Opacity="0.65" Margin="0,6,0,0" />
+                                    <!-- Source + checkbox -->
+                                    <TextBlock Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Package.Source.Name}"
+                                               FontSize="11" Opacity="0.35" VerticalAlignment="Center" Margin="0,6,0,0" />
+                                    <CheckBox Grid.Row="3" Grid.Column="2" IsChecked="{Binding IsChecked, Mode=TwoWay}"
+                                              MinWidth="0" Margin="0,4,0,0" VerticalAlignment="Center" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+
+            <!-- Empty state -->
+            <StackPanel x:Name="EmptyPlaceholder" IsVisible="False" HorizontalAlignment="Center"
+                        VerticalAlignment="Center" Spacing="12" Opacity="0.35">
+                <fa:SymbolIcon Symbol="Find" FontSize="48" HorizontalAlignment="Center" />
+                <TextBlock x:Name="EmptyText" Text="No packages found" FontSize="20"
+                           FontWeight="SemiBold" HorizontalAlignment="Center" />
+                <TextBlock Text="Try changing your search or filters" FontSize="13"
+                           HorizontalAlignment="Center" />
+            </StackPanel>
+        </Grid>
+
+        <!-- Row 3: Status bar -->
+        <Border Grid.Row="3" BorderThickness="0,1,0,0"
+                BorderBrush="{DynamicResource DividerStrokeColorDefaultBrush}" Padding="24,5">
+            <Grid ColumnDefinitions="*,Auto,Auto">
+                <TextBlock x:Name="StatusText" FontSize="12" Opacity="0.5" VerticalAlignment="Center" />
+                <TextBlock x:Name="LastLoadTimeText" Grid.Column="1" FontSize="11" Opacity="0.3"
+                           VerticalAlignment="Center" Margin="0,0,16,0" />
+                <TextBlock x:Name="ManagersStatusText" Grid.Column="2" FontSize="11" Opacity="0.35"
+                           VerticalAlignment="Center" />
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

@@ -121,9 +121,33 @@ namespace UniGetUI.PackageEngine.Operations
                     RequestCachingOfUACPrompt();
                 }
 
-                FileName = CoreData.ElevatorPath;
-                Arguments =
-                    $"\"{Package.Manager.Status.ExecutablePath}\" {Package.Manager.Status.ExecutableCallArgs} {operation_args}";
+                if (OperatingSystem.IsWindows())
+                {
+                    FileName = CoreData.ElevatorPath;
+                    Arguments =
+                        $"\"{Package.Manager.Status.ExecutablePath}\" {Package.Manager.Status.ExecutableCallArgs} {operation_args}";
+                }
+                else
+                {
+                    // macOS/Linux: use osascript with a temp script file for native password dialog
+                    string shellCmd = $"{Package.Manager.Status.ExecutablePath} {Package.Manager.Status.ExecutableCallArgs} {operation_args}";
+                    shellCmd = shellCmd.Replace("\\", "\\\\").Replace("\"", "\\\"");
+
+                    string scriptPath = Path.Combine(Path.GetTempPath(), $"unigetui_sudo_{Guid.NewGuid():N}.scpt");
+                    string action = Role switch
+                    {
+                        OperationType.Install => "install",
+                        OperationType.Update => "update",
+                        OperationType.Uninstall => "uninstall",
+                        _ => "manage"
+                    };
+                    string safeName = Package.Name.Replace("\\", "\\\\").Replace("\"", "'");
+                    string prompt = $"UniGetUI requires administrator privileges to {action} the package '{safeName}' via {Package.Manager.DisplayName}.";
+                    File.WriteAllText(scriptPath, $"do shell script \"{shellCmd}\" with administrator privileges with prompt \"{prompt}\"");
+
+                    FileName = CoreData.ElevatorPath; // /usr/bin/osascript
+                    Arguments = scriptPath;
+                }
             }
             else
             {

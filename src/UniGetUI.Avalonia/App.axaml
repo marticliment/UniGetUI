@@ -1,0 +1,12 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:sty="using:FluentAvalonia.Styling"
+             xmlns:devo="using:Devolutions.AvaloniaTheme.MacOS"
+             x:Class="UniGetUI.Avalonia.App"
+             RequestedThemeVariant="Default">
+    <Application.Styles>
+        <sty:FluentAvaloniaTheme />
+        <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml" />
+        <devo:DevolutionsMacOsTheme />
+    </Application.Styles>
+</Application>

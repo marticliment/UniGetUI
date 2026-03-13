@@ -1,0 +1,276 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:fa="using:FluentAvalonia.UI.Controls"
+             x:Class="UniGetUI.Avalonia.Views.PackageDetailsPage">
+
+    <Grid RowDefinitions="*">
+        <ScrollViewer x:Name="MainScroller" VerticalScrollBarVisibility="Auto">
+            <Grid x:Name="LayoutRoot" Margin="24,20">
+                <!-- Default: single-column. Code-behind switches to two-column at >=950px -->
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="0" />
+                </Grid.ColumnDefinitions>
+
+                <!-- ═══ LEFT PANEL ═══ -->
+                <StackPanel x:Name="LeftPanel" Grid.Column="0" Spacing="20">
+
+                    <!-- ── Title row ── -->
+                    <Grid ColumnDefinitions="Auto,*">
+                        <Border Width="80" Height="80" CornerRadius="12"
+                                ClipToBounds="True" Background="{DynamicResource ControlFillColorDefaultBrush}">
+                            <Image x:Name="PackageIcon" Width="80" Height="80" Stretch="UniformToFill" />
+                        </Border>
+                        <StackPanel Grid.Column="1" Margin="16,0,0,0" VerticalAlignment="Center" Spacing="4">
+                            <TextBlock x:Name="PackageName" FontSize="28" FontWeight="Bold"
+                                       TextWrapping="Wrap" />
+                            <TextBlock x:Name="PackageId" FontSize="13" Opacity="0.5" />
+                            <TextBlock x:Name="PackageSource" FontSize="12" Opacity="0.4" />
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- ── Tags ── -->
+                    <ItemsControl x:Name="TagsList" IsVisible="False">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
+
+                    <!-- ── Description ── -->
+                    <TextBlock x:Name="DescriptionText" TextWrapping="Wrap" FontSize="14"
+                               Text="Loading description..." Opacity="0.7" />
+
+                    <!-- ── Basic info ── -->
+                    <StackPanel x:Name="BasicInfoPanel" Spacing="6">
+                        <Grid ColumnDefinitions="130,*" x:Name="HomepageRow" IsVisible="False">
+                            <TextBlock Text="Homepage" FontWeight="SemiBold" FontSize="13" />
+                            <TextBlock x:Name="HomepageText" Grid.Column="1" FontSize="13"
+                                       Foreground="{DynamicResource AccentFillColorDefaultBrush}"
+                                       Cursor="Hand" TextDecorations="Underline"
+                                       PointerPressed="HomepageLink_Click" TextTrimming="CharacterEllipsis" />
+                        </Grid>
+                        <Grid ColumnDefinitions="130,*" x:Name="PublisherRow" IsVisible="False">
+                            <TextBlock Text="Publisher" FontWeight="SemiBold" FontSize="13" />
+                            <TextBlock x:Name="PublisherText" Grid.Column="1" FontSize="13" TextWrapping="Wrap" />
+                        </Grid>
+                        <Grid ColumnDefinitions="130,*" x:Name="AuthorRow" IsVisible="False">
+                            <TextBlock Text="Author" FontWeight="SemiBold" FontSize="13" />
+                            <TextBlock x:Name="AuthorText" Grid.Column="1" FontSize="13" TextWrapping="Wrap" />
+                        </Grid>
+                        <Grid ColumnDefinitions="130,*" x:Name="LicenseRow" IsVisible="False">
+                            <TextBlock Text="License" FontWeight="SemiBold" FontSize="13" />
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                                <TextBlock x:Name="LicenseText" FontSize="13" />
+                                <TextBlock x:Name="LicenseUrlText" FontSize="13"
+                                           Foreground="{DynamicResource AccentFillColorDefaultBrush}"
+                                           Cursor="Hand" TextDecorations="Underline"
+                                           PointerPressed="LicenseLink_Click" IsVisible="False" />
+                            </StackPanel>
+                        </Grid>
+                        <Grid ColumnDefinitions="130,*" x:Name="UpdateDateRow" IsVisible="False">
+                            <TextBlock Text="Last updated" FontWeight="SemiBold" FontSize="13" />
+                            <TextBlock x:Name="UpdateDateText" Grid.Column="1" FontSize="13" />
+                        </Grid>
+                        <Grid ColumnDefinitions="130,*" x:Name="ManagerRow">
+                            <TextBlock Text="Package manager" FontWeight="SemiBold" FontSize="13" />
+                            <TextBlock x:Name="ManagerText" Grid.Column="1" FontSize="13" />
+                        </Grid>
+                    </StackPanel>
+
+                    <!-- ── Action buttons ── -->
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <Button x:Name="ActionButton" Classes="accent" Padding="20,10"
+                                Click="ActionButton_Click">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <fa:SymbolIcon x:Name="ActionIcon" Symbol="Download" FontSize="16" />
+                                <TextBlock x:Name="ActionButtonLabel" Text="Install" FontSize="14" />
+                            </StackPanel>
+                        </Button>
+                        <Button x:Name="ActionAdminButton" Padding="14,10"
+                                Click="ActionAdminButton_Click" ToolTip.Tip="Run as administrator">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <fa:SymbolIcon Symbol="Admin" FontSize="14" />
+                                <TextBlock x:Name="ActionAdminLabel" Text="Install as Admin" FontSize="13" />
+                            </StackPanel>
+                        </Button>
+                        <Button x:Name="OptionsButton" Padding="14,10"
+                                Click="OptionsButton_Click">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <fa:SymbolIcon Symbol="Setting" FontSize="14" />
+                                <TextBlock Text="Options..." FontSize="13" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+
+                    <!-- ── Installation options expander ── -->
+                    <fa:SettingsExpander x:Name="InstallOptionsExpander"
+                                        Header="Installation options"
+                                        Description="Configure how this package is installed"
+                                        IsExpanded="False">
+                        <fa:SettingsExpander.IconSource>
+                            <fa:SymbolIconSource Symbol="Setting" />
+                        </fa:SettingsExpander.IconSource>
+
+                        <!-- Version -->
+                        <fa:SettingsExpanderItem x:Name="VersionRow" Content="Version" IsVisible="False">
+                            <fa:SettingsExpanderItem.Footer>
+                                <ComboBox x:Name="VersionCombo" MinWidth="160" />
+                            </fa:SettingsExpanderItem.Footer>
+                        </fa:SettingsExpanderItem>
+
+                        <!-- Architecture -->
+                        <fa:SettingsExpanderItem x:Name="ArchRow" Content="Architecture" IsVisible="False">
+                            <fa:SettingsExpanderItem.Footer>
+                                <ComboBox x:Name="ArchCombo" MinWidth="120" />
+                            </fa:SettingsExpanderItem.Footer>
+                        </fa:SettingsExpanderItem>
+
+                        <!-- Scope -->
+                        <fa:SettingsExpanderItem x:Name="ScopeRow" Content="Installation scope" IsVisible="False">
+                            <fa:SettingsExpanderItem.Footer>
+                                <ComboBox x:Name="ScopeCombo" MinWidth="120" />
+                            </fa:SettingsExpanderItem.Footer>
+                        </fa:SettingsExpanderItem>
+
+                        <!-- Skip hash check -->
+                        <fa:SettingsExpanderItem x:Name="SkipHashRow" Content="Skip integrity checks" IsVisible="False">
+                            <fa:SettingsExpanderItem.Footer>
+                                <ToggleSwitch x:Name="SkipHashToggle" />
+                            </fa:SettingsExpanderItem.Footer>
+                        </fa:SettingsExpanderItem>
+
+                        <!-- Interactive -->
+                        <fa:SettingsExpanderItem x:Name="InteractiveRow" Content="Interactive installation" IsVisible="False">
+                            <fa:SettingsExpanderItem.Footer>
+                                <ToggleSwitch x:Name="InteractiveToggle" />
+                            </fa:SettingsExpanderItem.Footer>
+                        </fa:SettingsExpanderItem>
+
+                        <!-- Run as admin -->
+                        <fa:SettingsExpanderItem x:Name="AdminRow" Content="Run as administrator" IsVisible="False">
+                            <fa:SettingsExpanderItem.Footer>
+                                <ToggleSwitch x:Name="AdminToggle" />
+                            </fa:SettingsExpanderItem.Footer>
+                        </fa:SettingsExpanderItem>
+
+                        <!-- Custom parameters -->
+                        <fa:SettingsExpanderItem x:Name="CustomParamsRow" Content="Custom parameters">
+                            <fa:SettingsExpanderItem.Footer>
+                                <TextBox x:Name="CustomParamsBox" MinWidth="200" Watermark="e.g. --flag" />
+                            </fa:SettingsExpanderItem.Footer>
+                        </fa:SettingsExpanderItem>
+
+                        <!-- Save button -->
+                        <fa:SettingsExpanderItem>
+                            <fa:SettingsExpanderItem.Footer>
+                                <Button x:Name="SaveOptionsButton" Content="Save options"
+                                        Click="SaveOptionsButton_Click" Padding="14,7" Classes="accent" />
+                            </fa:SettingsExpanderItem.Footer>
+                        </fa:SettingsExpanderItem>
+                    </fa:SettingsExpander>
+
+                    <!-- ── Extended details (in single-column mode, shown below) ── -->
+                    <StackPanel x:Name="ExtendedDetailsInline" Spacing="16">
+
+                        <!-- Screenshots (inline, single-column) -->
+                        <Border x:Name="ScreenshotsInline" IsVisible="False"
+                                CornerRadius="8" ClipToBounds="True"
+                                Background="{DynamicResource ControlFillColorDefaultBrush}">
+                            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+                                <StackPanel x:Name="ScreenshotPanelInline" Orientation="Horizontal" Spacing="8" Margin="8" />
+                            </ScrollViewer>
+                        </Border>
+
+                        <!-- Detailed info -->
+                        <StackPanel Spacing="6">
+                            <Grid ColumnDefinitions="130,*" x:Name="PackageIdDetailRow">
+                                <TextBlock Text="Package ID" FontWeight="SemiBold" FontSize="13" />
+                                <TextBlock x:Name="PackageIdDetail" Grid.Column="1" FontSize="13" IsVisible="True" />
+                            </Grid>
+                            <Grid ColumnDefinitions="130,*" x:Name="ManifestRow" IsVisible="False">
+                                <TextBlock Text="Manifest" FontWeight="SemiBold" FontSize="13" />
+                                <TextBlock x:Name="ManifestText" Grid.Column="1" FontSize="13"
+                                           Foreground="{DynamicResource AccentFillColorDefaultBrush}"
+                                           Cursor="Hand" TextDecorations="Underline"
+                                           PointerPressed="ManifestLink_Click" TextTrimming="CharacterEllipsis" />
+                            </Grid>
+                            <Grid ColumnDefinitions="130,*" x:Name="InstalledVerRow" IsVisible="False">
+                                <TextBlock Text="Installed version" FontWeight="SemiBold" FontSize="13" />
+                                <TextBlock x:Name="InstalledVerText" Grid.Column="1" FontSize="13" />
+                            </Grid>
+                            <Grid ColumnDefinitions="130,*" x:Name="AvailableVerRow" IsVisible="False">
+                                <TextBlock Text="Available version" FontWeight="SemiBold" FontSize="13" />
+                                <TextBlock x:Name="AvailableVerText" Grid.Column="1" FontSize="13" />
+                            </Grid>
+                            <Grid ColumnDefinitions="130,*" x:Name="InstallerTypeRow" IsVisible="False">
+                                <TextBlock Text="Installer type" FontWeight="SemiBold" FontSize="13" />
+                                <TextBlock x:Name="InstallerTypeText" Grid.Column="1" FontSize="13" />
+                            </Grid>
+                            <Grid ColumnDefinitions="130,*" x:Name="InstallerUrlRow" IsVisible="False">
+                                <TextBlock Text="Installer URL" FontWeight="SemiBold" FontSize="13" />
+                                <TextBlock x:Name="InstallerUrlText" Grid.Column="1" FontSize="13"
+                                           Foreground="{DynamicResource AccentFillColorDefaultBrush}"
+                                           Cursor="Hand" TextDecorations="Underline"
+                                           PointerPressed="InstallerUrlLink_Click" TextTrimming="CharacterEllipsis" />
+                            </Grid>
+                            <Grid ColumnDefinitions="130,*" x:Name="InstallerHashRow" IsVisible="False">
+                                <TextBlock Text="SHA256" FontWeight="SemiBold" FontSize="13" />
+                                <TextBlock x:Name="InstallerHashText" Grid.Column="1" FontSize="13"
+                                           FontFamily="Menlo, Consolas, monospace" TextWrapping="Wrap" />
+                            </Grid>
+                            <Grid ColumnDefinitions="130,*" x:Name="InstallerSizeRow" IsVisible="False">
+                                <TextBlock Text="Size" FontWeight="SemiBold" FontSize="13" />
+                                <TextBlock x:Name="InstallerSizeText" Grid.Column="1" FontSize="13" />
+                            </Grid>
+                            <Grid ColumnDefinitions="130,*" x:Name="ReleaseNotesRow" IsVisible="False">
+                                <TextBlock Text="Release notes" FontWeight="SemiBold" FontSize="13" VerticalAlignment="Top" />
+                                <TextBlock x:Name="ReleaseNotesText" Grid.Column="1" FontSize="13" TextWrapping="Wrap" />
+                            </Grid>
+                            <Grid ColumnDefinitions="130,*" x:Name="ReleaseNotesUrlRow" IsVisible="False">
+                                <TextBlock Text="Release notes URL" FontWeight="SemiBold" FontSize="13" />
+                                <TextBlock x:Name="ReleaseNotesUrlText" Grid.Column="1" FontSize="13"
+                                           Foreground="{DynamicResource AccentFillColorDefaultBrush}"
+                                           Cursor="Hand" TextDecorations="Underline"
+                                           PointerPressed="ReleaseNotesUrlLink_Click" TextTrimming="CharacterEllipsis" />
+                            </Grid>
+                        </StackPanel>
+
+                        <!-- Dependencies -->
+                        <StackPanel x:Name="DependenciesPanel" IsVisible="False" Spacing="6">
+                            <TextBlock Text="Dependencies" FontWeight="SemiBold" FontSize="14" />
+                            <ItemsControl x:Name="DependenciesList" />
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- ═══ RIGHT PANEL (visible at >=950px) ═══ -->
+                <StackPanel x:Name="RightPanel" Grid.Column="1" Spacing="16" Margin="24,0,0,0"
+                            IsVisible="False">
+                    <!-- Screenshots (right panel, wide mode) -->
+                    <Border x:Name="ScreenshotsWide" IsVisible="False"
+                            CornerRadius="8" ClipToBounds="True"
+                            Background="{DynamicResource ControlFillColorDefaultBrush}">
+                        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+                            <StackPanel x:Name="ScreenshotPanelWide" Orientation="Horizontal" Spacing="8" Margin="8" />
+                        </ScrollViewer>
+                    </Border>
+                    <TextBlock x:Name="NoScreenshotsText" Text="No screenshots available"
+                               FontSize="13" Opacity="0.4" HorizontalAlignment="Center" />
+                </StackPanel>
+            </Grid>
+        </ScrollViewer>
+
+        <!-- Loading overlay -->
+        <Border x:Name="LoadingOverlay" IsVisible="True"
+                Background="{DynamicResource ApplicationPageBackgroundThemeBrush}">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="16">
+                <ProgressBar IsIndeterminate="True" MinWidth="200" />
+                <TextBlock Text="Loading package details..." FontSize="14" Opacity="0.6"
+                           HorizontalAlignment="Center" />
+            </StackPanel>
+        </Border>
+    </Grid>
+
+</UserControl>

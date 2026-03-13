@@ -7,6 +7,7 @@ using UniGetUI.PackageEngine.Managers.NpmManager;
 using UniGetUI.PackageEngine.Managers.PipManager;
 using UniGetUI.PackageEngine.Managers.PowerShell7Manager;
 using UniGetUI.PackageEngine.Managers.VcpkgManager;
+using UniGetUI.PackageEngine.Managers.HomebrewManager;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.PackageLoader;
 #if WINDOWS
@@ -38,12 +39,13 @@ namespace UniGetUI.PackageEngine
 #endif
         public static readonly Cargo Cargo = new();
         public static readonly Vcpkg Vcpkg = new();
+        public static readonly Homebrew Homebrew = new();
 
         public static readonly IPackageManager[] Managers = CreateManagers();
 
         private static IPackageManager[] CreateManagers()
         {
-            List<IPackageManager> managers = [Npm, Pip, Cargo, Vcpkg, DotNet, PowerShell7];
+            List<IPackageManager> managers = [Npm, Pip, Cargo, Vcpkg, DotNet, PowerShell7, Homebrew];
 #if WINDOWS
             managers.InsertRange(0, [WinGet, Scoop, Chocolatey]);
             managers.Add(PowerShell);

@@ -326,12 +326,13 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
 
         public override IReadOnlyList<string> FindCandidateExecutableFiles()
         {
-            var candidates = CoreTools.WhichMultiple("vcpkg.exe");
+            string exeName = OperatingSystem.IsWindows() ? "vcpkg.exe" : "vcpkg";
+            var candidates = CoreTools.WhichMultiple(exeName);
 
             var (rootFound, rootPath) = GetVcpkgRoot();
             if (rootFound)
             {
-                string VcpkgLocation = Path.Join(rootPath, "vcpkg.exe");
+                string VcpkgLocation = Path.Join(rootPath, exeName);
                 if (File.Exists(VcpkgLocation))
                     candidates.Add(VcpkgLocation);
             }

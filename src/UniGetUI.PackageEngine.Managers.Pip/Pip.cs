@@ -370,30 +370,42 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 foreach (var Path in FoundPaths)
                     Paths.Add(Path);
 
-            try
+            if (!OperatingSystem.IsWindows())
             {
-                List<string> DirsToSearch = [];
-                string ProgramFiles = @"C:\Program Files";
-                string? UserPythonInstallDir = null;
-                string? AppData = Environment.GetEnvironmentVariable("APPDATA");
-
-                if (AppData != null)
-                    UserPythonInstallDir = Path.Combine(AppData, "Programs", "Python");
-
-                if (Directory.Exists(ProgramFiles))
-                    DirsToSearch.Add(ProgramFiles);
-                if (Directory.Exists(UserPythonInstallDir))
-                    DirsToSearch.Add(UserPythonInstallDir);
-
-                foreach (var Dir in DirsToSearch)
-                {
-                    string DirName = Path.GetFileName(Dir);
-                    string PythonPath = Path.Join(Dir, "python.exe");
-                    if (DirName.StartsWith("Python") && File.Exists(PythonPath))
-                        Paths.Add(PythonPath);
-                }
+                // On macOS/Linux, python3 is often the correct binary
+                var python3Paths = CoreTools.WhichMultiple("python3");
+                foreach (var p in python3Paths)
+                    if (!Paths.Contains(p))
+                        Paths.Add(p);
             }
-            catch (Exception) { }
+
+            if (OperatingSystem.IsWindows())
+            {
+                try
+                {
+                    List<string> DirsToSearch = [];
+                    string ProgramFiles = @"C:\Program Files";
+                    string? UserPythonInstallDir = null;
+                    string? AppData = Environment.GetEnvironmentVariable("APPDATA");
+
+                    if (AppData != null)
+                        UserPythonInstallDir = Path.Combine(AppData, "Programs", "Python");
+
+                    if (Directory.Exists(ProgramFiles))
+                        DirsToSearch.Add(ProgramFiles);
+                    if (Directory.Exists(UserPythonInstallDir))
+                        DirsToSearch.Add(UserPythonInstallDir);
+
+                    foreach (var Dir in DirsToSearch)
+                    {
+                        string DirName = Path.GetFileName(Dir);
+                        string PythonPath = Path.Join(Dir, "python.exe");
+                        if (DirName.StartsWith("Python") && File.Exists(PythonPath))
+                            Paths.Add(PythonPath);
+                    }
+                }
+                catch (Exception) { }
+            }
 
             return Paths;
         }
@@ -427,6 +439,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             };
             process.Start();
             version = process.StandardOutput.ReadToEnd().Trim();
+            process.WaitForExit();
 
             if (process.ExitCode is 9009)
             {

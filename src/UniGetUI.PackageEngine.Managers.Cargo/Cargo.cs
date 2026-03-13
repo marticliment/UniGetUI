@@ -151,7 +151,7 @@ public partial class Cargo : PackageManager
     }
 
     public override IReadOnlyList<string> FindCandidateExecutableFiles() =>
-        CoreTools.WhichMultiple("cargo.exe");
+        CoreTools.WhichMultiple(OperatingSystem.IsWindows() ? "cargo.exe" : "cargo");
 
     protected override void _loadManagerExecutableFile(
         out bool found,

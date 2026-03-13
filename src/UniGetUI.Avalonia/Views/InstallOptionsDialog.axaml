@@ -1,0 +1,238 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:fa="using:FluentAvalonia.UI.Controls"
+             x:Class="UniGetUI.Avalonia.Views.InstallOptionsDialog">
+
+    <!-- Overlay -->
+    <Grid x:Name="Overlay" IsVisible="False">
+        <!-- Click-away background -->
+        <Border Background="#88000000" PointerPressed="Cancel_Click" />
+
+        <!-- Dialog card -->
+        <Border HorizontalAlignment="Center" VerticalAlignment="Center"
+                MinWidth="600" MaxWidth="750" MinHeight="400" MaxHeight="600"
+                Background="{DynamicResource SolidBackgroundFillColorBaseBrush}"
+                BorderBrush="{DynamicResource DividerStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="12"
+                Margin="40"
+                ClipToBounds="True">
+            <Grid RowDefinitions="Auto,*,Auto">
+
+                <!-- Header -->
+                <Border Grid.Row="0" Padding="24,18,24,14"
+                        BorderThickness="0,0,0,1"
+                        BorderBrush="{DynamicResource DividerStrokeColorDefaultBrush}">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <StackPanel>
+                            <TextBlock x:Name="DialogTitle" FontSize="18" FontWeight="SemiBold" />
+                            <TextBlock x:Name="DialogSubtitle" FontSize="12" Opacity="0.5" Margin="0,2,0,0" />
+                        </StackPanel>
+                        <!-- Profile selector -->
+                        <ComboBox x:Name="ProfileCombo" Grid.Column="1" MinWidth="120"
+                                  VerticalAlignment="Center" SelectionChanged="ProfileCombo_Changed">
+                            <ComboBoxItem Content="Install" Tag="Install" />
+                            <ComboBoxItem Content="Update" Tag="Update" />
+                            <ComboBoxItem Content="Uninstall" Tag="Uninstall" />
+                        </ComboBox>
+                    </Grid>
+                </Border>
+
+                <!-- Content -->
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="24,12">
+                    <StackPanel Spacing="4">
+
+                        <!-- Follow global options toggle -->
+                        <fa:SettingsExpander Header="Follow default options"
+                                            Description="Use the manager's default install options for this package">
+                            <fa:SettingsExpander.Footer>
+                                <ToggleSwitch x:Name="FollowGlobalToggle" IsCheckedChanged="FollowGlobalToggle_Changed" />
+                            </fa:SettingsExpander.Footer>
+                        </fa:SettingsExpander>
+
+                        <Border x:Name="OptionsContainer">
+                            <StackPanel Spacing="4">
+
+                                <!-- Run as admin -->
+                                <fa:SettingsExpander x:Name="OptAdmin" Header="Run as administrator">
+                                    <fa:SettingsExpander.Footer>
+                                        <ToggleSwitch x:Name="OptAdminToggle" />
+                                    </fa:SettingsExpander.Footer>
+                                </fa:SettingsExpander>
+
+                                <!-- Interactive -->
+                                <fa:SettingsExpander x:Name="OptInteractive" Header="Interactive installation">
+                                    <fa:SettingsExpander.Footer>
+                                        <ToggleSwitch x:Name="OptInteractiveToggle" />
+                                    </fa:SettingsExpander.Footer>
+                                </fa:SettingsExpander>
+
+                                <!-- Skip hash check -->
+                                <fa:SettingsExpander x:Name="OptSkipHash" Header="Skip integrity checks">
+                                    <fa:SettingsExpander.Footer>
+                                        <ToggleSwitch x:Name="OptSkipHashToggle" />
+                                    </fa:SettingsExpander.Footer>
+                                </fa:SettingsExpander>
+
+                                <!-- Version -->
+                                <fa:SettingsExpander x:Name="OptVersion" Header="Version">
+                                    <fa:SettingsExpander.Footer>
+                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                            <ComboBox x:Name="OptVersionCombo" MinWidth="160" />
+                                            <ProgressBar x:Name="VersionLoadingBar" IsIndeterminate="True"
+                                                         Width="60" IsVisible="False" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                    </fa:SettingsExpander.Footer>
+                                </fa:SettingsExpander>
+
+                                <!-- Pre-release -->
+                                <fa:SettingsExpander x:Name="OptPreRelease" Header="Include pre-release versions">
+                                    <fa:SettingsExpander.Footer>
+                                        <ToggleSwitch x:Name="OptPreReleaseToggle" />
+                                    </fa:SettingsExpander.Footer>
+                                </fa:SettingsExpander>
+
+                                <!-- Architecture -->
+                                <fa:SettingsExpander x:Name="OptArch" Header="Architecture">
+                                    <fa:SettingsExpander.Footer>
+                                        <ComboBox x:Name="OptArchCombo" MinWidth="120" />
+                                    </fa:SettingsExpander.Footer>
+                                </fa:SettingsExpander>
+
+                                <!-- Scope -->
+                                <fa:SettingsExpander x:Name="OptScope" Header="Installation scope">
+                                    <fa:SettingsExpander.Footer>
+                                        <ComboBox x:Name="OptScopeCombo" MinWidth="120" />
+                                    </fa:SettingsExpander.Footer>
+                                </fa:SettingsExpander>
+
+                                <!-- Custom install location -->
+                                <fa:SettingsExpander x:Name="OptLocation" Header="Custom install location">
+                                    <fa:SettingsExpander.Footer>
+                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                            <TextBlock x:Name="OptLocationText" FontSize="12" Opacity="0.5"
+                                                       VerticalAlignment="Center" Text="Default" />
+                                            <Button x:Name="OptLocationButton" Content="Browse..."
+                                                    Click="BrowseLocation_Click" Padding="10,5" />
+                                        </StackPanel>
+                                    </fa:SettingsExpander.Footer>
+                                </fa:SettingsExpander>
+
+                                <!-- Uninstall previous versions -->
+                                <fa:SettingsExpander x:Name="OptClearPrev" Header="Uninstall previous versions on update">
+                                    <fa:SettingsExpander.Footer>
+                                        <ToggleSwitch x:Name="OptClearPrevToggle" />
+                                    </fa:SettingsExpander.Footer>
+                                </fa:SettingsExpander>
+
+                                <!-- Remove data on uninstall -->
+                                <fa:SettingsExpander x:Name="OptRemoveData" Header="Remove data on uninstall">
+                                    <fa:SettingsExpander.Footer>
+                                        <ToggleSwitch x:Name="OptRemoveDataToggle" />
+                                    </fa:SettingsExpander.Footer>
+                                </fa:SettingsExpander>
+
+                                <!-- Skip minor updates -->
+                                <fa:SettingsExpander x:Name="OptSkipMinor" Header="Skip minor updates">
+                                    <fa:SettingsExpander.Footer>
+                                        <ToggleSwitch x:Name="OptSkipMinorToggle" />
+                                    </fa:SettingsExpander.Footer>
+                                </fa:SettingsExpander>
+
+                                <!-- Auto-update -->
+                                <fa:SettingsExpander x:Name="OptAutoUpdate" Header="Automatically update this package">
+                                    <fa:SettingsExpander.Footer>
+                                        <ToggleSwitch x:Name="OptAutoUpdateToggle" />
+                                    </fa:SettingsExpander.Footer>
+                                </fa:SettingsExpander>
+
+                                <!-- Custom parameters -->
+                                <fa:SettingsExpander Header="Custom command-line parameters"
+                                                    Description="Additional arguments to pass to the package manager"
+                                                    IsExpanded="False">
+                                    <fa:SettingsExpanderItem Content="Install parameters">
+                                        <fa:SettingsExpanderItem.Footer>
+                                            <TextBox x:Name="OptInstallParams" MinWidth="200" Watermark="--flag value" />
+                                        </fa:SettingsExpanderItem.Footer>
+                                    </fa:SettingsExpanderItem>
+                                    <fa:SettingsExpanderItem Content="Update parameters">
+                                        <fa:SettingsExpanderItem.Footer>
+                                            <TextBox x:Name="OptUpdateParams" MinWidth="200" Watermark="--flag value" />
+                                        </fa:SettingsExpanderItem.Footer>
+                                    </fa:SettingsExpanderItem>
+                                    <fa:SettingsExpanderItem Content="Uninstall parameters">
+                                        <fa:SettingsExpanderItem.Footer>
+                                            <TextBox x:Name="OptUninstallParams" MinWidth="200" Watermark="--flag value" />
+                                        </fa:SettingsExpanderItem.Footer>
+                                    </fa:SettingsExpanderItem>
+                                </fa:SettingsExpander>
+
+                                <!-- Pre/post commands -->
+                                <fa:SettingsExpander Header="Pre/Post operation commands"
+                                                    Description="Shell commands to run before or after operations"
+                                                    IsExpanded="False">
+                                    <fa:SettingsExpanderItem Content="Pre-install command">
+                                        <fa:SettingsExpanderItem.Footer>
+                                            <TextBox x:Name="OptPreInstCmd" MinWidth="200" />
+                                        </fa:SettingsExpanderItem.Footer>
+                                    </fa:SettingsExpanderItem>
+                                    <fa:SettingsExpanderItem Content="Post-install command">
+                                        <fa:SettingsExpanderItem.Footer>
+                                            <TextBox x:Name="OptPostInstCmd" MinWidth="200" />
+                                        </fa:SettingsExpanderItem.Footer>
+                                    </fa:SettingsExpanderItem>
+                                    <fa:SettingsExpanderItem Content="Pre-update command">
+                                        <fa:SettingsExpanderItem.Footer>
+                                            <TextBox x:Name="OptPreUpdCmd" MinWidth="200" />
+                                        </fa:SettingsExpanderItem.Footer>
+                                    </fa:SettingsExpanderItem>
+                                    <fa:SettingsExpanderItem Content="Post-update command">
+                                        <fa:SettingsExpanderItem.Footer>
+                                            <TextBox x:Name="OptPostUpdCmd" MinWidth="200" />
+                                        </fa:SettingsExpanderItem.Footer>
+                                    </fa:SettingsExpanderItem>
+                                    <fa:SettingsExpanderItem Content="Pre-uninstall command">
+                                        <fa:SettingsExpanderItem.Footer>
+                                            <TextBox x:Name="OptPreUninstCmd" MinWidth="200" />
+                                        </fa:SettingsExpanderItem.Footer>
+                                    </fa:SettingsExpanderItem>
+                                    <fa:SettingsExpanderItem Content="Post-uninstall command">
+                                        <fa:SettingsExpanderItem.Footer>
+                                            <TextBox x:Name="OptPostUninstCmd" MinWidth="200" />
+                                        </fa:SettingsExpanderItem.Footer>
+                                    </fa:SettingsExpanderItem>
+                                </fa:SettingsExpander>
+
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Command preview -->
+                        <Border x:Name="CommandPreviewBorder" Margin="0,12,0,0" Padding="12,8"
+                                CornerRadius="6"
+                                Background="{DynamicResource ControlFillColorDefaultBrush}">
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="Command preview" FontSize="11" FontWeight="SemiBold" Opacity="0.5" />
+                                <TextBlock x:Name="CommandPreviewText" FontSize="12"
+                                           FontFamily="Menlo, Consolas, monospace"
+                                           TextWrapping="Wrap" Opacity="0.7" />
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <!-- Footer -->
+                <Border Grid.Row="2" Padding="24,14"
+                        BorderThickness="0,1,0,0"
+                        BorderBrush="{DynamicResource DividerStrokeColorDefaultBrush}">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+                        <Button Content="Reset" Click="Reset_Click" Padding="14,7" />
+                        <Button Content="Cancel" Click="Cancel_Click" Padding="14,7" />
+                        <Button x:Name="SaveButton" Content="Save" Click="Save_Click"
+                                Padding="14,7" Classes="accent" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+    </Grid>
+
+</UserControl>

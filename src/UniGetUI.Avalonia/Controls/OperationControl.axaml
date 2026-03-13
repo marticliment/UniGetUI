@@ -1,0 +1,62 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="UniGetUI.Avalonia.Controls.OperationControl">
+
+    <Border x:Name="RootBorder"
+            Padding="10,6"
+            Margin="2,1"
+            CornerRadius="6"
+            BorderThickness="1"
+            BorderBrush="#33808080">
+        <Border.ContextMenu>
+            <ContextMenu x:Name="OpContextMenu">
+                <MenuItem Header="Retry" Click="Retry_Click" />
+                <MenuItem Header="Retry as Administrator (sudo)" Click="RetrySudo_Click" />
+                <MenuItem Header="Retry Interactive" Click="RetryInteractive_Click" />
+                <MenuItem Header="Retry (skip integrity)" Click="RetrySkipIntegrity_Click" />
+                <Separator />
+                <MenuItem Header="View Details" Click="DetailsButton_Click" />
+                <MenuItem Header="Cancel" x:Name="CtxCancel" Click="CtxCancel_Click" />
+                <Separator />
+                <MenuItem Header="Dismiss" x:Name="CtxDismiss" Click="CtxDismiss_Click" />
+            </ContextMenu>
+        </Border.ContextMenu>
+
+        <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto">
+            <!-- Status dot -->
+            <Ellipse x:Name="StatusDot" Grid.Column="0"
+                     Width="8" Height="8" Margin="0,0,10,0"
+                     VerticalAlignment="Center" />
+
+            <!-- Title + status -->
+            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,12,0">
+                <TextBlock x:Name="TitleText" FontSize="12" FontWeight="SemiBold"
+                           TextTrimming="CharacterEllipsis" />
+                <TextBlock x:Name="OutputText" FontSize="10" Opacity="0.5"
+                           TextTrimming="CharacterEllipsis" MaxLines="1" Margin="0,1,0,0" />
+            </StackPanel>
+
+            <!-- Progress -->
+            <ProgressBar x:Name="ProgressBar" Grid.Column="2"
+                         IsIndeterminate="True" Width="70"
+                         VerticalAlignment="Center" Margin="0,0,8,0" IsVisible="False" />
+
+            <!-- Details / Logs button -->
+            <Button x:Name="DetailsButton" Grid.Column="3"
+                    Padding="8,3" Margin="0,0,4,0"
+                    VerticalAlignment="Center"
+                    Click="DetailsButton_Click"
+                    Classes="theme-borderless">
+                <TextBlock x:Name="DetailsButtonText" Text="Logs" FontSize="11" />
+            </Button>
+
+            <!-- Cancel / Dismiss -->
+            <Button x:Name="ActionButton" Grid.Column="4"
+                    Padding="8,3" VerticalAlignment="Center"
+                    Click="ActionButton_Click" Classes="theme-borderless">
+                <TextBlock x:Name="ActionButtonText" Text="Cancel" FontSize="11" />
+            </Button>
+        </Grid>
+    </Border>
+
+</UserControl>

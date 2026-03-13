@@ -1,0 +1,353 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:fa="using:FluentAvalonia.UI.Controls"
+             x:Class="UniGetUI.Avalonia.Views.SettingsPage">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Spacing="4" Margin="24,20" MaxWidth="900">
+
+            <TextBlock Text="Settings" FontSize="28" FontWeight="Bold" Margin="0,0,0,16" />
+
+            <!-- ═══════════════════════════════════════════════════════════ -->
+            <!-- GENERAL -->
+            <!-- ═══════════════════════════════════════════════════════════ -->
+            <TextBlock Text="General" FontSize="16" FontWeight="SemiBold" Margin="0,12,0,8" />
+
+            <!-- Theme -->
+            <fa:SettingsExpander Header="App theme"
+                                Description="Select which app theme to display">
+                <fa:SettingsExpander.IconSource>
+                    <fa:SymbolIconSource Symbol="DarkTheme" />
+                </fa:SettingsExpander.IconSource>
+                <fa:SettingsExpander.Footer>
+                    <ComboBox x:Name="ThemeCombo" MinWidth="150" SelectionChanged="ThemeCombo_Changed">
+                        <ComboBoxItem Content="Follow system" Tag="auto" />
+                        <ComboBoxItem Content="Light" Tag="light" />
+                        <ComboBoxItem Content="Dark" Tag="dark" />
+                    </ComboBox>
+                </fa:SettingsExpander.Footer>
+            </fa:SettingsExpander>
+
+            <!-- Language -->
+            <fa:SettingsExpander Header="Language"
+                                Description="Select the display language (requires restart)">
+                <fa:SettingsExpander.IconSource>
+                    <fa:SymbolIconSource Symbol="Globe" />
+                </fa:SettingsExpander.IconSource>
+                <fa:SettingsExpander.Footer>
+                    <ComboBox x:Name="LanguageCombo" MinWidth="200" SelectionChanged="LanguageCombo_Changed" />
+                </fa:SettingsExpander.Footer>
+            </fa:SettingsExpander>
+
+            <!-- Startup page -->
+            <fa:SettingsExpander Header="Startup page"
+                                Description="Page to show when UniGetUI starts">
+                <fa:SettingsExpander.IconSource>
+                    <fa:SymbolIconSource Symbol="Home" />
+                </fa:SettingsExpander.IconSource>
+                <fa:SettingsExpander.Footer>
+                    <ComboBox x:Name="StartupPageCombo" MinWidth="150" SelectionChanged="StartupPageCombo_Changed">
+                        <ComboBoxItem Content="Discover" Tag="Discover" />
+                        <ComboBoxItem Content="Updates" Tag="Updates" />
+                        <ComboBoxItem Content="Installed" Tag="Installed" />
+                    </ComboBox>
+                </fa:SettingsExpander.Footer>
+            </fa:SettingsExpander>
+
+            <!-- ═══════════════════════════════════════════════════════════ -->
+            <!-- INTERFACE -->
+            <!-- ═══════════════════════════════════════════════════════════ -->
+            <TextBlock Text="Interface" FontSize="16" FontWeight="SemiBold" Margin="0,20,0,8" />
+
+            <!-- Disable system tray -->
+            <fa:SettingsExpander Header="System tray"
+                                Description="Show UniGetUI icon in the system tray / menu bar">
+                <fa:SettingsExpander.IconSource>
+                    <fa:SymbolIconSource Symbol="Pin" />
+                </fa:SettingsExpander.IconSource>
+                <fa:SettingsExpander.Footer>
+                    <ToggleSwitch x:Name="SystemTrayToggle" IsCheckedChanged="BoolSetting_Changed"
+                                  Tag="DisableSystemTray" />
+                </fa:SettingsExpander.Footer>
+            </fa:SettingsExpander>
+
+            <!-- Disable icons on package lists -->
+            <fa:SettingsExpander Header="Package icons"
+                                Description="Show icons next to package names in lists">
+                <fa:SettingsExpander.IconSource>
+                    <fa:SymbolIconSource Symbol="Image" />
+                </fa:SettingsExpander.IconSource>
+                <fa:SettingsExpander.Footer>
+                    <ToggleSwitch x:Name="PackageIconsToggle" IsCheckedChanged="BoolSetting_Changed"
+                                  Tag="DisableIconsOnPackageLists" />
+                </fa:SettingsExpander.Footer>
+            </fa:SettingsExpander>
+
+            <!-- Show version on titlebar -->
+            <fa:SettingsExpander Header="Version in title bar"
+                                Description="Show the version number in the window title bar">
+                <fa:SettingsExpander.IconSource>
+                    <fa:SymbolIconSource Symbol="Tag" />
+                </fa:SettingsExpander.IconSource>
+                <fa:SettingsExpander.Footer>
+                    <ToggleSwitch x:Name="VersionTitleToggle" IsCheckedChanged="BoolSetting_Changed"
+                                  Tag="ShowVersionNumberOnTitlebar" />
+                </fa:SettingsExpander.Footer>
+            </fa:SettingsExpander>
+
+            <!-- ═══════════════════════════════════════════════════════════ -->
+            <!-- NOTIFICATIONS -->
+            <!-- ═══════════════════════════════════════════════════════════ -->
+            <TextBlock Text="Notifications" FontSize="16" FontWeight="SemiBold" Margin="0,20,0,8" />
+
+            <fa:SettingsExpander Header="Notifications"
+                                Description="Configure which notifications are shown"
+                                IsExpanded="False">
+                <fa:SettingsExpander.IconSource>
+                    <fa:SymbolIconSource Symbol="Alert" />
+                </fa:SettingsExpander.IconSource>
+                <fa:SettingsExpander.Footer>
+                    <ToggleSwitch x:Name="NotificationsToggle" IsCheckedChanged="BoolSetting_Changed"
+                                  Tag="DisableNotifications" />
+                </fa:SettingsExpander.Footer>
+
+                <fa:SettingsExpanderItem Content="Update notifications">
+                    <fa:SettingsExpanderItem.Footer>
+                        <ToggleSwitch x:Name="UpdateNotifToggle" IsCheckedChanged="BoolSetting_Changed"
+                                      Tag="DisableUpdatesNotifications" />
+                    </fa:SettingsExpanderItem.Footer>
+                </fa:SettingsExpanderItem>
+                <fa:SettingsExpanderItem Content="Error notifications">
+                    <fa:SettingsExpanderItem.Footer>
+                        <ToggleSwitch x:Name="ErrorNotifToggle" IsCheckedChanged="BoolSetting_Changed"
+                                      Tag="DisableErrorNotifications" />
+                    </fa:SettingsExpanderItem.Footer>
+                </fa:SettingsExpanderItem>
+                <fa:SettingsExpanderItem Content="Success notifications">
+                    <fa:SettingsExpanderItem.Footer>
+                        <ToggleSwitch x:Name="SuccessNotifToggle" IsCheckedChanged="BoolSetting_Changed"
+                                      Tag="DisableSuccessNotifications" />
+                    </fa:SettingsExpanderItem.Footer>
+                </fa:SettingsExpanderItem>
+                <fa:SettingsExpanderItem Content="Progress notifications">
+                    <fa:SettingsExpanderItem.Footer>
+                        <ToggleSwitch x:Name="ProgressNotifToggle" IsCheckedChanged="BoolSetting_Changed"
+                                      Tag="DisableProgressNotifications" />
+                    </fa:SettingsExpanderItem.Footer>
+                </fa:SettingsExpanderItem>
+            </fa:SettingsExpander>
+
+            <!-- ═══════════════════════════════════════════════════════════ -->
+            <!-- UPDATES -->
+            <!-- ═══════════════════════════════════════════════════════════ -->
+            <TextBlock Text="Updates" FontSize="16" FontWeight="SemiBold" Margin="0,20,0,8" />
+
+            <!-- Auto check for updates -->
+            <fa:SettingsExpander Header="Automatically check for updates"
+                                Description="Periodically check if packages have updates available">
+                <fa:SettingsExpander.IconSource>
+                    <fa:SymbolIconSource Symbol="Sync" />
+                </fa:SettingsExpander.IconSource>
+                <fa:SettingsExpander.Footer>
+                    <ToggleSwitch x:Name="AutoCheckUpdatesToggle" IsCheckedChanged="BoolSetting_Changed"
+                                  Tag="DisableAutoCheckforUpdates" />
+                </fa:SettingsExpander.Footer>
+            </fa:SettingsExpander>
+
+            <!-- Update check interval -->
+            <fa:SettingsExpander Header="Update check interval"
+                                Description="How often to check for package updates (in minutes)">
+                <fa:SettingsExpander.IconSource>
+                    <fa:SymbolIconSource Symbol="Clock" />
+                </fa:SettingsExpander.IconSource>
+                <fa:SettingsExpander.Footer>
+                    <ComboBox x:Name="UpdateIntervalCombo" MinWidth="120" SelectionChanged="UpdateIntervalCombo_Changed">
+                        <ComboBoxItem Content="30 min" Tag="30" />
+                        <ComboBoxItem Content="1 hour" Tag="60" />
+                        <ComboBoxItem Content="2 hours" Tag="120" />
+                        <ComboBoxItem Content="4 hours" Tag="240" />
+                        <ComboBoxItem Content="12 hours" Tag="720" />
+                        <ComboBoxItem Content="24 hours" Tag="1440" />
+                    </ComboBox>
+                </fa:SettingsExpander.Footer>
+            </fa:SettingsExpander>
+
+            <!-- Automatically update packages -->
+            <fa:SettingsExpander Header="Automatically install updates"
+                                Description="Install available updates automatically in the background">
+                <fa:SettingsExpander.IconSource>
+                    <fa:SymbolIconSource Symbol="Download" />
+                </fa:SettingsExpander.IconSource>
+                <fa:SettingsExpander.Footer>
+                    <ToggleSwitch x:Name="AutoUpdatePkgsToggle" IsCheckedChanged="BoolSetting_Changed"
+                                  Tag="AutomaticallyUpdatePackages" />
+                </fa:SettingsExpander.Footer>
+            </fa:SettingsExpander>
+
+            <!-- ═══════════════════════════════════════════════════════════ -->
+            <!-- OPERATIONS -->
+            <!-- ═══════════════════════════════════════════════════════════ -->
+            <TextBlock Text="Operations" FontSize="16" FontWeight="SemiBold" Margin="0,20,0,8" />
+
+            <!-- Parallel operations -->
+            <fa:SettingsExpander Header="Parallel operations"
+                                Description="Maximum number of simultaneous package operations">
+                <fa:SettingsExpander.IconSource>
+                    <fa:SymbolIconSource Symbol="List" />
+                </fa:SettingsExpander.IconSource>
+                <fa:SettingsExpander.Footer>
+                    <ComboBox x:Name="ParallelOpsCombo" MinWidth="100" SelectionChanged="ParallelOpsCombo_Changed">
+                        <ComboBoxItem Content="1" Tag="1" />
+                        <ComboBoxItem Content="2" Tag="2" />
+                        <ComboBoxItem Content="3" Tag="3" />
+                        <ComboBoxItem Content="5" Tag="5" />
+                        <ComboBoxItem Content="10" Tag="10" />
+                    </ComboBox>
+                </fa:SettingsExpander.Footer>
+            </fa:SettingsExpander>
+
+            <!-- Maintain successful installs -->
+            <fa:SettingsExpander Header="Keep successful operations"
+                                Description="Don't automatically dismiss completed operations from the queue">
+                <fa:SettingsExpander.IconSource>
+                    <fa:SymbolIconSource Symbol="Accept" />
+                </fa:SettingsExpander.IconSource>
+                <fa:SettingsExpander.Footer>
+                    <ToggleSwitch x:Name="MaintainSuccessToggle" IsCheckedChanged="BoolSetting_Changed"
+                                  Tag="MaintainSuccessfulInstalls" />
+                </fa:SettingsExpander.Footer>
+            </fa:SettingsExpander>
+
+            <!-- ═══════════════════════════════════════════════════════════ -->
+            <!-- PACKAGE MANAGERS -->
+            <!-- ═══════════════════════════════════════════════════════════ -->
+            <TextBlock Text="Package managers" FontSize="16" FontWeight="SemiBold" Margin="0,20,0,8" />
+
+            <TextBlock Text="Enable or disable individual package managers" FontSize="13"
+                       Opacity="0.5" Margin="0,0,0,8" />
+
+            <StackPanel x:Name="ManagersPanel" Spacing="4" />
+
+            <!-- ═══════════════════════════════════════════════════════════ -->
+            <!-- ADMINISTRATOR / SECURITY -->
+            <!-- ═══════════════════════════════════════════════════════════ -->
+            <TextBlock Text="Administrator" FontSize="16" FontWeight="SemiBold" Margin="0,20,0,8" />
+
+            <fa:InfoBar Title="Security Warning"
+                        Message="These settings can affect the security of your system. Only change them if you know what you are doing."
+                        Severity="Warning" IsOpen="True" IsClosable="False" Margin="0,0,0,8" />
+
+            <!-- Prohibit elevation -->
+            <fa:SettingsExpander Header="Prohibit elevation"
+                                Description="Never request administrator privileges for package operations">
+                <fa:SettingsExpander.IconSource>
+                    <fa:SymbolIconSource Symbol="Admin" />
+                </fa:SettingsExpander.IconSource>
+                <fa:SettingsExpander.Footer>
+                    <ToggleSwitch x:Name="ProhibitElevationToggle" IsCheckedChanged="BoolSetting_Changed"
+                                  Tag="ProhibitElevation" />
+                </fa:SettingsExpander.Footer>
+            </fa:SettingsExpander>
+
+            <!-- Disable integrity checks -->
+            <fa:SettingsExpander Header="Disable integrity checks"
+                                Description="Skip hash verification for all package operations (not recommended)">
+                <fa:SettingsExpander.IconSource>
+                    <fa:SymbolIconSource Symbol="Permissions" />
+                </fa:SettingsExpander.IconSource>
+                <fa:SettingsExpander.Footer>
+                    <ToggleSwitch x:Name="DisableIntegrityToggle" IsCheckedChanged="BoolSetting_Changed"
+                                  Tag="DisableIntegrityChecks" />
+                </fa:SettingsExpander.Footer>
+            </fa:SettingsExpander>
+
+            <!-- ═══════════════════════════════════════════════════════════ -->
+            <!-- NETWORK / PROXY -->
+            <!-- ═══════════════════════════════════════════════════════════ -->
+            <TextBlock Text="Network" FontSize="16" FontWeight="SemiBold" Margin="0,20,0,8" />
+
+            <fa:SettingsExpander Header="Proxy"
+                                Description="Configure a proxy server for package manager operations"
+                                IsExpanded="False">
+                <fa:SettingsExpander.IconSource>
+                    <fa:SymbolIconSource Symbol="Globe" />
+                </fa:SettingsExpander.IconSource>
+                <fa:SettingsExpander.Footer>
+                    <ToggleSwitch x:Name="ProxyToggle" IsCheckedChanged="BoolSetting_Changed"
+                                  Tag="EnableProxy" />
+                </fa:SettingsExpander.Footer>
+
+                <fa:SettingsExpanderItem Content="Proxy URL">
+                    <fa:SettingsExpanderItem.Footer>
+                        <TextBox x:Name="ProxyUrlBox" MinWidth="250" Watermark="http://proxy:8080"
+                                 LostFocus="ProxyUrl_Changed" />
+                    </fa:SettingsExpanderItem.Footer>
+                </fa:SettingsExpanderItem>
+                <fa:SettingsExpanderItem Content="Proxy authentication">
+                    <fa:SettingsExpanderItem.Footer>
+                        <ToggleSwitch x:Name="ProxyAuthToggle" IsCheckedChanged="BoolSetting_Changed"
+                                      Tag="EnableProxyAuth" />
+                    </fa:SettingsExpanderItem.Footer>
+                </fa:SettingsExpanderItem>
+            </fa:SettingsExpander>
+
+            <!-- ═══════════════════════════════════════════════════════════ -->
+            <!-- EXPERIMENTAL -->
+            <!-- ═══════════════════════════════════════════════════════════ -->
+            <TextBlock Text="Experimental" FontSize="16" FontWeight="SemiBold" Margin="0,20,0,8" />
+
+            <!-- Background API -->
+            <fa:SettingsExpander Header="Background API"
+                                Description="Enable the local HTTP API server on port 7058">
+                <fa:SettingsExpander.IconSource>
+                    <fa:SymbolIconSource Symbol="Code" />
+                </fa:SettingsExpander.IconSource>
+                <fa:SettingsExpander.Footer>
+                    <ToggleSwitch x:Name="BackgroundApiToggle" IsCheckedChanged="BoolSetting_Changed"
+                                  Tag="DisableApi" />
+                </fa:SettingsExpander.Footer>
+            </fa:SettingsExpander>
+
+            <!-- Disable package listing timeout -->
+            <fa:SettingsExpander Header="Disable package listing timeout"
+                                Description="Don't timeout when loading packages from a manager">
+                <fa:SettingsExpander.IconSource>
+                    <fa:SymbolIconSource Symbol="Clock" />
+                </fa:SettingsExpander.IconSource>
+                <fa:SettingsExpander.Footer>
+                    <ToggleSwitch x:Name="DisableTimeoutToggle" IsCheckedChanged="BoolSetting_Changed"
+                                  Tag="DisableTimeoutOnPackageListingTasks" />
+                </fa:SettingsExpander.Footer>
+            </fa:SettingsExpander>
+
+            <!-- ═══════════════════════════════════════════════════════════ -->
+            <!-- RESET -->
+            <!-- ═══════════════════════════════════════════════════════════ -->
+            <TextBlock Text="Reset" FontSize="16" FontWeight="SemiBold" Margin="0,20,0,8" />
+
+            <fa:SettingsExpander Header="Reset all settings"
+                                Description="Restore all settings to their default values">
+                <fa:SettingsExpander.IconSource>
+                    <fa:SymbolIconSource Symbol="Refresh" />
+                </fa:SettingsExpander.IconSource>
+                <fa:SettingsExpander.Footer>
+                    <Button x:Name="ResetButton" Content="Reset settings" Click="ResetButton_Click"
+                            Padding="14,7" />
+                </fa:SettingsExpander.Footer>
+            </fa:SettingsExpander>
+
+            <!-- About -->
+            <Border Margin="0,24,0,12" Padding="16" CornerRadius="8"
+                    Background="{DynamicResource ControlFillColorDefaultBrush}">
+                <StackPanel Spacing="4">
+                    <TextBlock x:Name="AboutVersionText" FontSize="14" FontWeight="SemiBold" />
+                    <TextBlock Text="UniGetUI — The Package Manager Manager" FontSize="12" Opacity="0.5" />
+                    <TextBlock Text="Licensed under MIT. Avalonia PoC build." FontSize="11" Opacity="0.35" />
+                </StackPanel>
+            </Border>
+
+            <!-- Bottom padding -->
+            <Border Height="24" />
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

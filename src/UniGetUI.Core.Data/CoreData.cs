@@ -306,7 +306,7 @@ namespace UniGetUI.Core.Data
             }
         }
 
-        public static string ElevatorPath = "";
+        public static string ElevatorPath = OperatingSystem.IsWindows() ? "" : "/usr/bin/osascript";
 
         /// <summary>
         /// This method will return the most appropriate data directory.
