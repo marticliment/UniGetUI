@@ -335,41 +335,6 @@ jobs:
           Get-Content $ChecksumFile
           echo "::endgroup::"
 
-      - name: Create GitHub Release
-        shell: pwsh
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        working-directory: output
-        run: |
-          $PackageVersion = '${{ needs.preflight.outputs.package-version }}'
-          $DraftRelease = [System.Boolean]::Parse('${{ needs.preflight.outputs.draft-release }}')
-          $DryRun = [System.Boolean]::Parse('${{ needs.preflight.outputs.dry-run }}')
-
-          echo "::group::checksums"
-          Get-Content "./checksums.txt"
-          echo "::endgroup::"
-
-          $ReleaseTag = "v$PackageVersion"
-          $ReleaseTitle = "UniGetUI v${PackageVersion}"
-          $Repository = $Env:GITHUB_REPOSITORY
-          $DraftArg = if ($DraftRelease) { '--draft' } else { $null }
-
-          $Files = Get-ChildItem -Path . -Recurse -File | Where-Object {
-            $_.Name -eq 'checksums.txt' -or $_.Name -notmatch '^checksums\..+\.txt$'
-          }
-
-          if ($DryRun) {
-            Write-Host "Dry Run: skipping GitHub release creation!"
-            Write-Host "Would create release $ReleaseTag with title '$ReleaseTitle' (draft=$DraftRelease)"
-            $Files | ForEach-Object { Write-Host "  - $($_.FullName)" }
-          } else {
-            if ($DraftArg) {
-              & gh release create $ReleaseTag --repo $Repository --title $ReleaseTitle $DraftArg $Files.FullName
-            } else {
-              & gh release create $ReleaseTag --repo $Repository --title $ReleaseTitle $Files.FullName
-            }
-          }
-
       - name: Check out Devolutions/actions
         if: ${{ fromJSON(needs.preflight.outputs.dry-run) == false }}
         uses: actions/checkout@v4
