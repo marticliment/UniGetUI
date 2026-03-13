@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>$(WindowsTargetFramework)</TargetFramework>
+        <TargetFrameworks />
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\WindowsPackageManager.Interop\ExternalLibraries.WindowsPackageManager.Interop.csproj" />
+    </ItemGroup>
+</Project>
