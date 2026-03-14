@@ -67,6 +67,34 @@ public class MetaTests
         }
     }
 
+    [Fact]
+    public void TestJsonSerializerContextsDoNotReuseSharedOptions()
+    {
+        var solutionDirectory = FindRepositoryRoot();
+        var csFiles = Directory
+            .GetFiles(solutionDirectory, "*.cs", SearchOption.AllDirectories)
+            .Where(file =>
+                !file.Contains(@"bin\")
+                && !file.Contains(@"obj\")
+                && !file.EndsWith(".g.cs")
+                && !file.EndsWith("Tests.cs")
+            );
+
+        Regex forbiddenPattern = new(
+            @"JsonContext\s+\w+\s*=\s*new\(\s*SerializationHelpers\.DefaultOptions\s*\)",
+            RegexOptions.Multiline
+        );
+
+        foreach (var file in csFiles)
+        {
+            var fileContent = File.ReadAllText(file);
+            Assert.False(
+                forbiddenPattern.IsMatch(fileContent),
+                $"File {file} reuses SerializationHelpers.DefaultOptions when constructing a generated JsonSerializerContext. Clone the options first to avoid rebinding the shared resolver."
+            );
+        }
+    }
+
     private static string FindRepositoryRoot()
     {
         DirectoryInfo? currentDirectory = new(AppDomain.CurrentDomain.BaseDirectory);

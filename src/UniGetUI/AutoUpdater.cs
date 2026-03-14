@@ -40,7 +40,7 @@ public partial class AutoUpdater
     ];
 
     private static readonly AutoUpdaterJsonContext ProductInfoJsonContext = new(
-        SerializationHelpers.DefaultOptions
+        new JsonSerializerOptions(SerializationHelpers.DefaultOptions)
     );
 
     public static Window Window = null!;
