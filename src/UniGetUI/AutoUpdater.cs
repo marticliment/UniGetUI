@@ -745,13 +745,13 @@ public partial class AutoUpdater
     {
         if (Version.TryParse(rawVersion, out Version? parsed))
         {
-            return parsed;
+            return CoreTools.NormalizeVersionForComparison(parsed);
         }
 
         string sanitized = rawVersion.Trim().TrimStart('v', 'V');
         if (Version.TryParse(sanitized, out parsed))
         {
-            return parsed;
+            return CoreTools.NormalizeVersionForComparison(parsed);
         }
 
         Logger.Warn($"Could not parse version '{rawVersion}', using fallback '{fallbackVersion}'");
