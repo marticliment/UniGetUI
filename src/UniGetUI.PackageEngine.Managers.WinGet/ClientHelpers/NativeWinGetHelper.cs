@@ -16,11 +16,14 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager;
 
 internal sealed class NativeWinGetHelper : IWinGetManagerHelper
 {
-    public WindowsPackageManagerFactory Factory;
+    public WindowsPackageManagerFactory Factory = null!;
     public static WindowsPackageManagerFactory? ExternalFactory;
-    public PackageManager WinGetManager;
+    public PackageManager WinGetManager = null!;
     public static PackageManager? ExternalWinGetManager;
     private readonly WinGet Manager;
+
+    public string ActivationMode { get; private set; } = string.Empty;
+    public string ActivationSource { get; private set; } = string.Empty;
 
     public NativeWinGetHelper(WinGet manager)
     {
@@ -32,23 +35,111 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
             );
         }
 
+        if (TryInitializeBundledFactory())
+        {
+            return;
+        }
+
+        if (TryInitializeStandardFactory())
+        {
+            return;
+        }
+
+        InitializeLowerTrustFactory();
+    }
+
+    private bool TryInitializeBundledFactory()
+    {
         try
         {
-            Factory = new WindowsPackageManagerStandardFactory();
-            WinGetManager = Factory.CreatePackageManager();
-            ExternalFactory = Factory;
-            ExternalWinGetManager = WinGetManager;
+            var factory = new WindowsPackageManagerBundledFactory();
+            var winGetManager = factory.CreatePackageManager();
+            ApplyFactory(
+                factory,
+                winGetManager,
+                "bundled in-proc COM",
+                factory.LibraryPath,
+                "Connected to WinGet API using bundled in-proc activation."
+            );
+            return true;
         }
-        catch
+        catch (WinGetComActivationException ex)
         {
             Logger.Warn(
-                "Couldn't connect to WinGet API, attempting to connect with lower trust... (Are you running as administrator?)"
+                $"Bundled WinGet in-proc activation failed ({ex.HResultHex}: {ex.Reason}), attempting packaged COM activation..."
             );
-            Factory = new WindowsPackageManagerStandardFactory(allowLowerTrustRegistration: true);
-            WinGetManager = Factory.CreatePackageManager();
-            ExternalFactory = Factory;
-            ExternalWinGetManager = WinGetManager;
+            return false;
         }
+        catch (Exception ex)
+        {
+            Logger.Warn(
+                $"Bundled WinGet in-proc activation failed ({ex.Message}), attempting packaged COM activation..."
+            );
+            return false;
+        }
+    }
+
+    private bool TryInitializeStandardFactory()
+    {
+        try
+        {
+            var factory = new WindowsPackageManagerStandardFactory();
+            var winGetManager = factory.CreatePackageManager();
+            ApplyFactory(
+                factory,
+                winGetManager,
+                "packaged COM registration",
+                "system COM registration",
+                "Connected to WinGet API using packaged COM activation."
+            );
+            return true;
+        }
+        catch (WinGetComActivationException ex)
+        {
+            Logger.Warn(
+                $"Packaged WinGet COM activation failed ({ex.HResultHex}: {ex.Reason}), attempting lower-trust activation..."
+            );
+            return false;
+        }
+        catch (Exception ex)
+        {
+            Logger.Warn(
+                $"Packaged WinGet COM activation failed ({ex.Message}), attempting lower-trust activation..."
+            );
+            return false;
+        }
+    }
+
+    private void InitializeLowerTrustFactory()
+    {
+        var factory = new WindowsPackageManagerStandardFactory(allowLowerTrustRegistration: true);
+        var winGetManager = factory.CreatePackageManager();
+        ApplyFactory(
+            factory,
+            winGetManager,
+            "lower-trust COM registration",
+            "system COM registration (allow lower trust)",
+            "Connected to WinGet API using lower-trust COM activation."
+        );
+    }
+
+    private void ApplyFactory(
+        WindowsPackageManagerFactory factory,
+        PackageManager winGetManager,
+        string activationMode,
+        string activationSource,
+        string successMessage
+    )
+    {
+        Factory = factory;
+        WinGetManager = winGetManager;
+        ActivationMode = activationMode;
+        ActivationSource = activationSource;
+        ExternalFactory = factory;
+        ExternalWinGetManager = winGetManager;
+
+        Logger.Info(successMessage);
+        Logger.Info($"WinGet activation mode selected: {ActivationMode} | Source: {ActivationSource}");
     }
 
     public IReadOnlyList<Package> FindPackages_UnSafe(string query)

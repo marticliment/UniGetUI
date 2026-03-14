@@ -3,7 +3,6 @@
 
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
-using Windows.Win32;
 using Windows.Win32.System.Com;
 using WinRT;
 
@@ -20,42 +19,72 @@ public class WindowsPackageManagerStandardFactory : WindowsPackageManagerFactory
 
     protected override T CreateInstance<T>(Guid clsid, Guid iid)
     {
-        nint pUnknown = IntPtr.Zero;
-        try
+        if (!_allowLowerTrustRegistration)
         {
-            CLSCTX clsctx = CLSCTX.CLSCTX_LOCAL_SERVER;
-            if (_allowLowerTrustRegistration)
+            Type? projectedType = Type.GetTypeFromCLSID(clsid);
+            if (projectedType is null)
             {
-                clsctx |= CLSCTX.CLSCTX_ALLOW_LOWER_TRUST_REGISTRATION;
+                throw new WinGetComActivationException(
+                    clsid,
+                    iid,
+                    unchecked((int)0x80040154),
+                    _allowLowerTrustRegistration
+                );
             }
 
-            Windows.Win32.Foundation.HRESULT hr = PInvoke.CoCreateInstance(
+            object? activatedInstance = Activator.CreateInstance(projectedType);
+            if (activatedInstance is null)
+            {
+                throw new WinGetComActivationException(
+                    clsid,
+                    iid,
+                    unchecked((int)0x80004003),
+                    _allowLowerTrustRegistration
+                );
+            }
+
+            IntPtr pointer = Marshal.GetIUnknownForObject(activatedInstance);
+            return MarshalGeneric<T>.FromAbi(pointer);
+        }
+
+        CLSCTX clsctx = CLSCTX.CLSCTX_LOCAL_SERVER;
+        if (_allowLowerTrustRegistration)
+        {
+            clsctx |= CLSCTX.CLSCTX_ALLOW_LOWER_TRUST_REGISTRATION;
+        }
+
+        int errorCode = CoCreateInstanceRaw(
+            in clsid,
+            IntPtr.Zero,
+            (uint)clsctx,
+            in iid,
+            out IntPtr instance
+        );
+
+        if (errorCode < 0)
+        {
+            throw new WinGetComActivationException(
                 clsid,
-                null,
-                clsctx,
                 iid,
-                out object result
+                errorCode,
+                _allowLowerTrustRegistration
             );
-
-            //                     !! WARNING !!
-            // An exception may be thrown on the line below if UniGetUI
-            // runs as administrator and AllowLowerTrustRegistration settings is not checked
-            // or when WinGet is not installed on the system.
-            // It can be safely ignored if any of the conditions
-            // above are met.
-            Marshal.ThrowExceptionForHR(hr);
-
-            pUnknown = Marshal.GetIUnknownForObject(result);
-            return MarshalGeneric<T>.FromAbi(pUnknown);
         }
-        finally
-        {
-            // CoCreateInstance and FromAbi both AddRef on the native object.
-            // Release once to prevent memory leak.
-            if (pUnknown != IntPtr.Zero)
-            {
-                Marshal.Release(pUnknown);
-            }
-        }
+
+        return MarshalGeneric<T>.FromAbi(instance);
     }
+
+    [DllImport(
+        "api-ms-win-core-com-l1-1-0.dll",
+        EntryPoint = "CoCreateInstance",
+        ExactSpelling = true,
+        PreserveSig = true
+    )]
+    private static extern int CoCreateInstanceRaw(
+        in Guid clsid,
+        IntPtr pUnkOuter,
+        uint dwClsContext,
+        in Guid iid,
+        out IntPtr instance
+    );
 }

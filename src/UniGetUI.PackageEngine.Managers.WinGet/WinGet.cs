@@ -14,6 +14,7 @@ using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
+using WindowsPackageManager.Interop;
 using Architecture = UniGetUI.PackageEngine.Enums.Architecture;
 
 namespace UniGetUI.PackageEngine.Managers.WingetManager
@@ -319,10 +320,24 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             }
             catch (Exception ex)
             {
-                Logger.Warn(
-                    $"Cannot instantiate {(FORCE_BUNDLED ? "Bundled" : "Native")} WinGet Helper due to error: {ex.Message}"
-                );
-                Logger.Warn(ex);
+                if (
+                    !FORCE_BUNDLED
+                    && ex is WinGetComActivationException activationEx
+                    && activationEx.IsExpectedFallbackCondition
+                )
+                {
+                    Logger.Warn(
+                        $"Native WinGet helper is unavailable on this machine ({activationEx.HResultHex}: {activationEx.Reason})"
+                    );
+                }
+                else
+                {
+                    Logger.Warn(
+                        $"Cannot instantiate {(FORCE_BUNDLED ? "Bundled" : "Native")} WinGet Helper due to error: {ex.Message}"
+                    );
+                    Logger.Warn(ex);
+                }
+
                 Logger.Warn("WinGet will resort to using BundledWinGetHelper()");
                 WinGetHelper.Instance = new BundledWinGetHelper(this);
             }
@@ -361,7 +376,15 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             if (IS_BUNDLED)
                 version += "\nUsing bundled WinGet helper (CLI parsing)";
             else
+            {
                 version += "\nUsing Native WinGet helper (COM Api)";
+
+                if (WinGetHelper.Instance is NativeWinGetHelper nativeHelper)
+                {
+                    version += $"\nActivation mode: {nativeHelper.ActivationMode}";
+                    version += $"\nActivation source: {nativeHelper.ActivationSource}";
+                }
+            }
 
             string error = process.StandardError.ReadToEnd();
             if (error != "")

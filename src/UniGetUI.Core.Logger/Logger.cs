@@ -5,6 +5,30 @@ namespace UniGetUI.Core.Logging
     public static class Logger
     {
         private static readonly List<LogEntry> LogContents = [];
+        private static readonly Lock LogWriteLock = new();
+        private static readonly string SessionLogPath = Path.Combine(
+            Path.GetTempPath(),
+            "UniGetUI",
+            "session.log"
+        );
+
+        public static string GetSessionLogPath() => SessionLogPath;
+
+        private static void AppendToSessionLog(string text)
+        {
+            try
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(SessionLogPath)!);
+                lock (LogWriteLock)
+                {
+                    File.AppendAllText(
+                        SessionLogPath,
+                        $"[{DateTime.Now:yyyy-MM-dd h:mm:ss tt}] {text}{Environment.NewLine}"
+                    );
+                }
+            }
+            catch { }
+        }
 
         // String parameter log functions
         public static void ImportantInfo(
@@ -13,6 +37,7 @@ namespace UniGetUI.Core.Logging
         )
         {
             Diagnostics.Debug.WriteLine($"[{caller}] " + s);
+            AppendToSessionLog(s);
             LogContents.Add(new LogEntry(s, LogEntry.SeverityLevel.Success));
         }
 
@@ -22,6 +47,7 @@ namespace UniGetUI.Core.Logging
         )
         {
             Diagnostics.Debug.WriteLine($"[{caller}] " + s);
+            AppendToSessionLog(s);
             LogContents.Add(new LogEntry(s, LogEntry.SeverityLevel.Debug));
         }
 
@@ -31,6 +57,7 @@ namespace UniGetUI.Core.Logging
         )
         {
             Diagnostics.Debug.WriteLine($"[{caller}] " + s);
+            AppendToSessionLog(s);
             LogContents.Add(new LogEntry(s, LogEntry.SeverityLevel.Info));
         }
 
@@ -40,6 +67,7 @@ namespace UniGetUI.Core.Logging
         )
         {
             Diagnostics.Debug.WriteLine($"[{caller}] " + s);
+            AppendToSessionLog(s);
             LogContents.Add(new LogEntry(s, LogEntry.SeverityLevel.Warning));
         }
 
@@ -49,6 +77,7 @@ namespace UniGetUI.Core.Logging
         )
         {
             Diagnostics.Debug.WriteLine($"[{caller}] " + s);
+            AppendToSessionLog(s);
             LogContents.Add(new LogEntry(s, LogEntry.SeverityLevel.Error));
         }
 
@@ -59,6 +88,7 @@ namespace UniGetUI.Core.Logging
         )
         {
             Diagnostics.Debug.WriteLine($"[{caller}] " + e.ToString());
+            AppendToSessionLog(e.ToString());
             LogContents.Add(new LogEntry(e.ToString(), LogEntry.SeverityLevel.Success));
         }
 
@@ -68,6 +98,7 @@ namespace UniGetUI.Core.Logging
         )
         {
             Diagnostics.Debug.WriteLine($"[{caller}] " + e.ToString());
+            AppendToSessionLog(e.ToString());
             LogContents.Add(new LogEntry(e.ToString(), LogEntry.SeverityLevel.Debug));
         }
 
@@ -77,6 +108,7 @@ namespace UniGetUI.Core.Logging
         )
         {
             Diagnostics.Debug.WriteLine($"[{caller}] " + e.ToString());
+            AppendToSessionLog(e.ToString());
             LogContents.Add(new LogEntry(e.ToString(), LogEntry.SeverityLevel.Info));
         }
 
@@ -86,6 +118,7 @@ namespace UniGetUI.Core.Logging
         )
         {
             Diagnostics.Debug.WriteLine($"[{caller}] " + e.ToString());
+            AppendToSessionLog(e.ToString());
             LogContents.Add(new LogEntry(e.ToString(), LogEntry.SeverityLevel.Warning));
         }
 
@@ -95,6 +128,7 @@ namespace UniGetUI.Core.Logging
         )
         {
             Diagnostics.Debug.WriteLine($"[{caller}] " + e.ToString());
+            AppendToSessionLog(e.ToString());
             LogContents.Add(new LogEntry(e.ToString(), LogEntry.SeverityLevel.Error));
         }
 
