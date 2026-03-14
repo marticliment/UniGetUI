@@ -49,6 +49,13 @@
         <Exec Command="pwsh -NoProfile -File ../../scripts/generate-integrity-tree.ps1 -Path $(OutputPath) -MinOutput" />
     </Target>
 
+    <Target Name="PostPublishGenerateIntegrityTree" AfterTargets="Publish">
+        <Exec
+            Command="pwsh -NoProfile -File ../../scripts/generate-integrity-tree.ps1 -Path $(PublishDir) -MinOutput"
+            Condition="'$(PublishDir)' != '' and Exists('$(PublishDir)')"
+        />
+    </Target>
+
     <Target
         Name="EnsureBundledElevatorFromNuGet"
         BeforeTargets="PrepareForBuild"

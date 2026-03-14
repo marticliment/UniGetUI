@@ -94,15 +94,14 @@ Get-ChildItem $PublishDir | Move-Item -Destination $BinDir -Force
 # WingetUI.exe alias for backward compat
 Copy-Item (Join-Path $BinDir "UniGetUI.exe") (Join-Path $BinDir "WingetUI.exe") -Force
 
-# --- Integrity tree ---
-Write-Host "`n=== Generating integrity tree ===" -ForegroundColor Cyan
-& (Join-Path $PSScriptRoot "generate-integrity-tree.ps1") -Path $BinDir -MinOutput
-
 # --- Package output ---
 if (Test-Path $OutputPath) { Remove-Item $OutputPath -Recurse -Force }
 New-Item $OutputPath -ItemType Directory | Out-Null
 
 $ZipPath = Join-Path $OutputPath "UniGetUI.$Platform.zip"
+Write-Host "`n=== Refreshing integrity tree before zip packaging ===" -ForegroundColor Cyan
+& (Join-Path $PSScriptRoot "refresh-integrity-tree.ps1") -Path $BinDir -FailOnUnexpectedFiles
+
 Write-Host "`n=== Creating zip: $ZipPath ===" -ForegroundColor Cyan
 Compress-Archive -Path (Join-Path $BinDir "*") -DestinationPath $ZipPath -CompressionLevel Optimal
 
@@ -123,6 +122,9 @@ if (-not $SkipInstaller) {
         $InstallerBaseName = "UniGetUI.Installer.$Platform"
         $IssPath = Join-Path $RepoRoot "UniGetUI.iss"
         $IssContent = Get-Content $IssPath -Raw
+
+        Write-Host "`n=== Refreshing integrity tree before installer packaging ===" -ForegroundColor Cyan
+        & (Join-Path $PSScriptRoot "refresh-integrity-tree.ps1") -Path $BinDir -FailOnUnexpectedFiles
 
         try {
             $IssContentNoSign = $IssContent -Replace '(?m)^SignTool=.*$', '; SignTool=azsign (disabled for local build)'
