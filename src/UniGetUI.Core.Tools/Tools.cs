@@ -457,6 +457,13 @@ namespace UniGetUI.Core.Tools
             }
         }
 
+        public static System.Version NormalizeVersionForComparison(System.Version version)
+        {
+            return version.Revision >= 0
+                ? new System.Version(version.Major, version.Minor, version.Build)
+                : version;
+        }
+
         /// <summary>
         /// Returns the query that can be safely passed as a command-line parameter
         /// </summary>

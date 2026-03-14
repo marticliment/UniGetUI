@@ -141,6 +141,19 @@ namespace UniGetUI.Core.Tools.Tests
         }
 
         [Theory]
+        [InlineData("2026.1.0", "2026.1.0")]
+        [InlineData("2026.1.0.0", "2026.1.0")]
+        [InlineData("2026.1.0.5", "2026.1.0")]
+        [InlineData("2026.1", "2026.1")]
+        public void TestNormalizeVersionForComparison(string rawVersion, string expected)
+        {
+            var version = System.Version.Parse(rawVersion);
+            var normalized = CoreTools.NormalizeVersionForComparison(version);
+
+            Assert.Equal(System.Version.Parse(expected), normalized);
+        }
+
+        [Theory]
         [InlineData("Hello World", "Hello World")]
         [InlineData("Hello; World", "Hello World")]
         [InlineData("\"Hello; World\"", "Hello World")]
