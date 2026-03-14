@@ -106,6 +106,27 @@ function Invoke-BatchSign {
     }
 }
 
+function Update-IntegrityTree {
+    param(
+        [string] $RootPath
+    )
+
+    if (-not $RootPath -or -not (Test-Path $RootPath -PathType Container)) {
+        return
+    }
+
+    $TreeRefreshScriptPath = Join-Path $PSScriptRoot "refresh-integrity-tree.ps1"
+    if (-not (Test-Path $TreeRefreshScriptPath -PathType Leaf)) {
+        Write-Warning "Integrity tree refresh script not found at $TreeRefreshScriptPath"
+        return
+    }
+
+    & $TreeRefreshScriptPath -Path $RootPath -FailOnUnexpectedFiles
+    if ($LASTEXITCODE -ne 0) {
+        throw "refresh-integrity-tree.ps1 failed with exit code $LASTEXITCODE"
+    }
+}
+
 # --- Sign binaries in BinDir ---
 if ($FileListPath -and (Test-Path $FileListPath)) {
     Write-Host "`n=== Signing binaries from list: $FileListPath ===" -ForegroundColor Cyan
@@ -118,6 +139,7 @@ if ($FileListPath -and (Test-Path $FileListPath)) {
         Write-Warning "No .exe or .dll files found in $BinDir"
     } else {
         Invoke-BatchSign -Files ($filesToSign | ForEach-Object { $_.FullName })
+        Update-IntegrityTree -RootPath $BinDir
         Write-Host "Binary signing complete."
     }
 }

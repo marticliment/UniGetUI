@@ -225,16 +225,14 @@ jobs:
             -CertificateName '${{ secrets.CODE_SIGNING_CERTIFICATE_NAME }}' `
             -TimestampServer '${{ vars.CODE_SIGNING_TIMESTAMP_SERVER }}'
 
-      - name: Generate integrity tree
-        shell: pwsh
-        run: .\scripts\generate-integrity-tree.ps1 -Path $PWD/unigetui_bin -MinOutput
-
       - name: Build installer
         shell: pwsh
         run: |
           $Platform = '${{ matrix.platform }}'
           $OutputDir = Join-Path $PWD "output"
           New-Item $OutputDir -ItemType Directory -ErrorAction SilentlyContinue | Out-Null
+
+          .\scripts\refresh-integrity-tree.ps1 -Path $PWD/unigetui_bin -FailOnUnexpectedFiles
 
           # Configure Inno Setup to use AzureSignTool
           $IssPath = "UniGetUI.iss"
@@ -261,6 +259,8 @@ jobs:
         run: |
           $Platform = '${{ matrix.platform }}'
           New-Item "output" -ItemType Directory -ErrorAction SilentlyContinue | Out-Null
+
+          .\scripts\refresh-integrity-tree.ps1 -Path $PWD/unigetui_bin -FailOnUnexpectedFiles
 
           # Zip
           Compress-Archive -Path "unigetui_bin/*" -DestinationPath "output/UniGetUI.$Platform.zip" -CompressionLevel Optimal
