@@ -76,6 +76,11 @@ public partial class PackagePageView : UserControl, IShellPage
 
     private RadioButton ExactMatchFilterOption => GetControl<RadioButton>("ExactMatchFilterRadio");
 
+    private CheckBox InstantSearchOption => GetControl<CheckBox>("InstantSearchCheckBox");
+    private CheckBox UpperLowerCaseOption => GetControl<CheckBox>("UpperLowerCaseCheckBox");
+    private CheckBox IgnoreSpecialCharsOption => GetControl<CheckBox>("IgnoreSpecialCharsCheckBox");
+    private Button ReloadBtn => GetControl<Button>("ReloadButton");
+
     private Button PackageNameSortButton => GetControl<Button>("PackageNameSortBtn");
 
     private Button PackageIdSortButton => GetControl<Button>("PackageIdSortBtn");
@@ -213,6 +218,10 @@ public partial class PackagePageView : UserControl, IShellPage
         PackageIdFilterOption.Content = CoreTools.Translate("Package ID");
         BothFilterOption.Content = CoreTools.Translate("Both");
         ExactMatchFilterOption.Content = CoreTools.Translate("Exact match");
+        InstantSearchOption.Content = CoreTools.Translate("Instant search");
+        UpperLowerCaseOption.Content = CoreTools.Translate("Distinguish uppercase and lowercase");
+        IgnoreSpecialCharsOption.Content = CoreTools.Translate("Ignore special characters");
+        ReloadBtn.Content = CoreTools.Translate("Reload");
     }
 
     public string Title { get; }
@@ -229,7 +238,9 @@ public partial class PackagePageView : UserControl, IShellPage
 
         if (_pageMode == PackagePageMode.Discover)
         {
-            ScheduleDiscoverSearch();
+            // When instant search is disabled, only trigger on empty query (to reset the list)
+            if (string.IsNullOrWhiteSpace(_searchQuery) || InstantSearchOption.IsChecked != false)
+                ScheduleDiscoverSearch();
             return;
         }
 
@@ -260,6 +271,9 @@ public partial class PackagePageView : UserControl, IShellPage
         PackageIdFilterOption.IsCheckedChanged += FilterOption_OnChecked;
         BothFilterOption.IsCheckedChanged += FilterOption_OnChecked;
         ExactMatchFilterOption.IsCheckedChanged += FilterOption_OnChecked;
+        InstantSearchOption.IsCheckedChanged += FilterOption_OnChecked;
+        UpperLowerCaseOption.IsCheckedChanged += FilterOption_OnChecked;
+        IgnoreSpecialCharsOption.IsCheckedChanged += FilterOption_OnChecked;
     }
 
     private void FilterOption_OnChecked(object? sender, RoutedEventArgs e)
@@ -522,6 +536,8 @@ public partial class PackagePageView : UserControl, IShellPage
             });
         }
     }
+
+    private void ReloadButton_OnClick(object? sender, RoutedEventArgs e) => _ = LoadPackagesAsync();
 
     private void NameHeader_OnClick(object? sender, RoutedEventArgs e) => SetSort(SortColumn.Name);
 
@@ -1312,25 +1328,47 @@ public partial class PackagePageView : UserControl, IShellPage
 
     private bool MatchesSearch(IPackage package, string query)
     {
+        bool caseSensitive = UpperLowerCaseOption.IsChecked == true;
+        bool ignoreSpecial = IgnoreSpecialCharsOption.IsChecked == true;
+
+        string Treat(string s)
+        {
+            if (!caseSensitive) s = s.ToLowerInvariant();
+            if (ignoreSpecial) s = NormalizeSpecialChars(s);
+            return s;
+        }
+
+        string treatedQuery = Treat(query);
+
         if (ExactMatchFilterOption.IsChecked == true)
         {
-            return package.Name.Equals(query, StringComparison.OrdinalIgnoreCase)
-                || package.Id.Equals(query, StringComparison.OrdinalIgnoreCase);
+            return Treat(package.Name) == treatedQuery || Treat(package.Id) == treatedQuery;
         }
 
         if (PackageNameFilterOption.IsChecked == true)
         {
-            return package.Name.Contains(query, StringComparison.OrdinalIgnoreCase);
+            return Treat(package.Name).Contains(treatedQuery);
         }
 
         if (PackageIdFilterOption.IsChecked == true)
         {
-            return package.Id.Contains(query, StringComparison.OrdinalIgnoreCase);
+            return Treat(package.Id).Contains(treatedQuery);
         }
 
-        return package.Name.Contains(query, StringComparison.OrdinalIgnoreCase)
-            || package.Id.Contains(query, StringComparison.OrdinalIgnoreCase);
+        return Treat(package.Name).Contains(treatedQuery) || Treat(package.Id).Contains(treatedQuery);
     }
+
+    private static string NormalizeSpecialChars(string s) =>
+        s
+            .Replace("-", "").Replace("_", "").Replace(" ", "")
+            .Replace("@", "").Replace("\t", "").Replace(".", "")
+            .Replace(",", "").Replace(":", "")
+            .Replace("à", "a").Replace("á", "a").Replace("ä", "a").Replace("â", "a")
+            .Replace("è", "e").Replace("é", "e").Replace("ë", "e").Replace("ê", "e")
+            .Replace("ì", "i").Replace("í", "i").Replace("ï", "i").Replace("î", "i")
+            .Replace("ò", "o").Replace("ó", "o").Replace("ö", "o").Replace("ô", "o")
+            .Replace("ù", "u").Replace("ú", "u").Replace("ü", "u").Replace("û", "u")
+            .Replace("ý", "y").Replace("ÿ", "y").Replace("ç", "c").Replace("ñ", "n");
 
     private void UpdateSourceSummary(IReadOnlyList<IPackage> _)
     {

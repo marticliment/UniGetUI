@@ -44,7 +44,7 @@
                 <Border Grid.Row="1"
                                                 Padding="12"
                                                 Classes="surface-card">
-                        <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,*,Auto,Auto,Auto,Auto"
+                        <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,*,Auto,Auto,Auto,Auto,Auto"
                                                 ColumnSpacing="6">
                                 <Button x:Name="PrimaryActionButton"
                                                                 Classes="toolbar-primary accent"
@@ -104,6 +104,12 @@
                                                                 IsVisible="False"
                                                                 Click="ExportSelectionButton_OnClick"
                                                                 Content="Add to bundle" />
+
+                                <Button x:Name="ReloadButton"
+                                                                Grid.Column="10"
+                                                                Classes="toolbar-secondary"
+                                                                Content="Reload"
+                                                                Click="ReloadButton_OnClick" />
                         </Grid>
                 </Border>
 
@@ -164,6 +170,18 @@
                                                                                                  Content="Both" />
                                                 <RadioButton x:Name="ExactMatchFilterRadio"
                                                                                                  Content="Exact match" />
+
+                                                <Separator Margin="0,4" />
+
+                                                <CheckBox x:Name="InstantSearchCheckBox"
+                                                                          IsChecked="True"
+                                                                          Content="Instant search" />
+                                                <CheckBox x:Name="UpperLowerCaseCheckBox"
+                                                                          IsChecked="False"
+                                                                          Content="Distinguish uppercase and lowercase" />
+                                                <CheckBox x:Name="IgnoreSpecialCharsCheckBox"
+                                                                          IsChecked="True"
+                                                                          Content="Ignore special characters" />
                                         </StackPanel>
                                 </Border>
                         </StackPanel>
