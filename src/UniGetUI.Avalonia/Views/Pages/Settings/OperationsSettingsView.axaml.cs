@@ -42,10 +42,10 @@ public partial class OperationsSettingsView : UserControl, ISettingsSectionView
 
     private TextBlock ForceKillHintText => GetControl<TextBlock>("ForceKillHintBlock");
 
-    private TextBlock ShortcutsTitleText       => GetControl<TextBlock>("ShortcutsTitleBlock");
+    private TextBlock ShortcutsTitleText => GetControl<TextBlock>("ShortcutsTitleBlock");
     private TextBlock ShortcutsDescriptionText => GetControl<TextBlock>("ShortcutsDescriptionBlock");
-    private CheckBox  AskShortcutsCheckBoxCtrl => GetControl<CheckBox>("AskShortcutsCheckBox");
-    private Button    ManageShortcutsBtnCtrl   => GetControl<Button>("ManageShortcutsBtn");
+    private CheckBox AskShortcutsCheckBoxCtrl => GetControl<CheckBox>("AskShortcutsCheckBox");
+    private Button ManageShortcutsBtnCtrl => GetControl<Button>("ManageShortcutsBtn");
 
     public OperationsSettingsView()
     {
@@ -83,7 +83,7 @@ public partial class OperationsSettingsView : UserControl, ISettingsSectionView
         ForceKillDescriptionText.Text = CoreTools.Translate("Allow UniGetUI to kill package-manager processes that do not close after a graceful shutdown request.");
         ForceKillCheckBoxControl.Content = CoreTools.Translate("Try to kill processes that refuse to close when requested");
         ForceKillHintText.Text = CoreTools.Translate("You may lose unsaved data if a package-manager process is terminated forcefully.");
-        ShortcutsTitleText.Text       = CoreTools.Translate("Desktop shortcut management");
+        ShortcutsTitleText.Text = CoreTools.Translate("Desktop shortcut management");
         ShortcutsDescriptionText.Text = CoreTools.Translate("Choose which desktop shortcuts created by package installations UniGetUI should delete automatically.");
         AskShortcutsCheckBoxCtrl.Content = CoreTools.Translate("Ask to delete desktop shortcuts created during an install or upgrade");
         ManageShortcutsBtnCtrl.Content = CoreTools.Translate("Manage desktop shortcuts");

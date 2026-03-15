@@ -64,7 +64,7 @@ public partial class DesktopShortcutsWindow : Window
         Title = CoreTools.Translate("Automatic desktop shortcut remover");
         InitializeComponent();
 
-        TitleBlock.Text       = CoreTools.Translate("Automatic desktop shortcut remover");
+        TitleBlock.Text = CoreTools.Translate("Automatic desktop shortcut remover");
         DescriptionBlock.Text = CoreTools.Translate(
             "Here you can change UniGetUI's behaviour regarding the following shortcuts. " +
             "Checking a shortcut will make UniGetUI delete it if it gets created on a future upgrade. " +

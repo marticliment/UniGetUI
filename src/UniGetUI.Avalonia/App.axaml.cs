@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
@@ -6,7 +7,6 @@ using Avalonia.Themes.Fluent;
 using Devolutions.AvaloniaTheme.DevExpress;
 using Devolutions.AvaloniaTheme.Linux;
 using Devolutions.AvaloniaTheme.MacOS;
-using System.ComponentModel;
 
 namespace UniGetUI.Avalonia;
 

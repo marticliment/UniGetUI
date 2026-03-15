@@ -20,11 +20,11 @@ public partial class OperationWidgetView : UserControl
 {
     private AbstractOperation? _operation;
 
-    private static readonly IBrush _runningBrush  = Brushes.DodgerBlue;
-    private static readonly IBrush _successBrush  = Brushes.ForestGreen;
-    private static readonly IBrush _failedBrush   = Brushes.Crimson;
-    private static readonly IBrush _cancelBrush   = Brushes.DarkGoldenrod;
-    private static readonly IBrush _neutralBrush  = Brushes.DimGray;
+    private static readonly IBrush _runningBrush = Brushes.DodgerBlue;
+    private static readonly IBrush _successBrush = Brushes.ForestGreen;
+    private static readonly IBrush _failedBrush = Brushes.Crimson;
+    private static readonly IBrush _cancelBrush = Brushes.DarkGoldenrod;
+    private static readonly IBrush _neutralBrush = Brushes.DimGray;
 
     public OperationWidgetView()
     {
@@ -38,7 +38,7 @@ public partial class OperationWidgetView : UserControl
 
         if (_operation is not null)
         {
-            _operation.LogLineAdded  -= OnLogLineAdded;
+            _operation.LogLineAdded -= OnLogLineAdded;
             _operation.StatusChanged -= OnStatusChanged;
         }
 
@@ -55,7 +55,7 @@ public partial class OperationWidgetView : UserControl
 
         ApplyStatus(op.Status);
 
-        op.LogLineAdded  += OnLogLineAdded;
+        op.LogLineAdded += OnLogLineAdded;
         op.StatusChanged += OnStatusChanged;
     }
 

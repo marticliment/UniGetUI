@@ -106,10 +106,10 @@ public partial class AboutPageWindow : Window
 
     private void SwitchTab(int tab)
     {
-        AboutPanel.IsVisible      = tab == 0;
-        LicensesPanel.IsVisible   = tab == 1;
+        AboutPanel.IsVisible = tab == 0;
+        LicensesPanel.IsVisible = tab == 1;
         ContributorsPanel.IsVisible = tab == 2;
-        TranslatorsPanel.IsVisible  = tab == 3;
+        TranslatorsPanel.IsVisible = tab == 3;
 
         TabAboutButton.Classes.Set("accent", tab == 0);
         TabAboutButton.Classes.Set("toolbar-primary", tab == 0);

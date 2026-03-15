@@ -1,6 +1,6 @@
-using Avalonia;
 using System.Diagnostics;
 using System.Net.Http;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;

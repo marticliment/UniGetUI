@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
@@ -18,12 +19,11 @@ using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.Interface.Telemetry;
 using UniGetUI.PackageEngine.Classes.Packages.Classes;
-using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Operations;
+using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.PackageLoader;
 using UniGetUI.PackageOperations;
-using Avalonia.Controls.Primitives;
 
 namespace UniGetUI.Avalonia.Views.Pages;
 
@@ -495,8 +495,8 @@ public partial class PackagePageView : UserControl, IShellPage
 
         string adminLabel = _pageMode switch
         {
-            PackagePageMode.Discover  => CoreTools.Translate("Install as administrator"),
-            PackagePageMode.Updates   => CoreTools.Translate("Update as administrator"),
+            PackagePageMode.Discover => CoreTools.Translate("Install as administrator"),
+            PackagePageMode.Updates => CoreTools.Translate("Update as administrator"),
             PackagePageMode.Installed => CoreTools.Translate("Uninstall as administrator"),
             _ => CoreTools.Translate("Run as administrator"),
         };
@@ -506,8 +506,8 @@ public partial class PackagePageView : UserControl, IShellPage
 
         string interactiveLabel = _pageMode switch
         {
-            PackagePageMode.Discover  => CoreTools.Translate("Interactive installation"),
-            PackagePageMode.Updates   => CoreTools.Translate("Interactive update"),
+            PackagePageMode.Discover => CoreTools.Translate("Interactive installation"),
+            PackagePageMode.Updates => CoreTools.Translate("Interactive update"),
             PackagePageMode.Installed => CoreTools.Translate("Interactive uninstall"),
             _ => CoreTools.Translate("Interactive installation"),
         };
@@ -579,8 +579,8 @@ public partial class PackagePageView : UserControl, IShellPage
             if (skipHash) opts.SkipHashCheck = true;
             AbstractOperation? op = _pageMode switch
             {
-                PackagePageMode.Discover  => new InstallPackageOperation(package, opts),
-                PackagePageMode.Updates   => new UpdatePackageOperation(package, opts),
+                PackagePageMode.Discover => new InstallPackageOperation(package, opts),
+                PackagePageMode.Updates => new UpdatePackageOperation(package, opts),
                 PackagePageMode.Installed => new UninstallPackageOperation(package, opts),
                 _ => null,
             };
@@ -595,7 +595,7 @@ public partial class PackagePageView : UserControl, IShellPage
         {
             OperationStateText.Text = _pageMode switch
             {
-                PackagePageMode.Discover  => CoreTools.Translate("{0} installs queued", queuedCount),
+                PackagePageMode.Discover => CoreTools.Translate("{0} installs queued", queuedCount),
                 PackagePageMode.Installed => CoreTools.Translate("{0} uninstalls queued", queuedCount),
                 _ => CoreTools.Translate("{0} updates queued", queuedCount),
             };
@@ -1269,7 +1269,7 @@ public partial class PackagePageView : UserControl, IShellPage
             return;
         }
 
-        if (_selectedRow is not null) _selectedRow.IsSelected = false;
+        _selectedRow?.IsSelected = false;
 
         _selectedRow = row;
         _selectedRow.IsSelected = true;
@@ -1291,75 +1291,75 @@ public partial class PackagePageView : UserControl, IShellPage
         switch (e.Key)
         {
             case Key.Up:
-            {
-                int next = current <= 0 ? 0 : current - 1;
-                OnRowSelected(_visibleRows[next]);
-                ScrollRowIntoView(next);
-                e.Handled = true;
-                break;
-            }
+                {
+                    int next = current <= 0 ? 0 : current - 1;
+                    OnRowSelected(_visibleRows[next]);
+                    ScrollRowIntoView(next);
+                    e.Handled = true;
+                    break;
+                }
             case Key.Down:
-            {
-                int next = current < 0 ? 0 : Math.Min(current + 1, _visibleRows.Count - 1);
-                OnRowSelected(_visibleRows[next]);
-                ScrollRowIntoView(next);
-                e.Handled = true;
-                break;
-            }
+                {
+                    int next = current < 0 ? 0 : Math.Min(current + 1, _visibleRows.Count - 1);
+                    OnRowSelected(_visibleRows[next]);
+                    ScrollRowIntoView(next);
+                    e.Handled = true;
+                    break;
+                }
             case Key.Home:
-            {
-                OnRowSelected(_visibleRows[0]);
-                ScrollRowIntoView(0);
-                e.Handled = true;
-                break;
-            }
+                {
+                    OnRowSelected(_visibleRows[0]);
+                    ScrollRowIntoView(0);
+                    e.Handled = true;
+                    break;
+                }
             case Key.End:
-            {
-                int last = _visibleRows.Count - 1;
-                OnRowSelected(_visibleRows[last]);
-                ScrollRowIntoView(last);
-                e.Handled = true;
-                break;
-            }
+                {
+                    int last = _visibleRows.Count - 1;
+                    OnRowSelected(_visibleRows[last]);
+                    ScrollRowIntoView(last);
+                    e.Handled = true;
+                    break;
+                }
             case Key.Space when current >= 0:
-            {
-                _visibleRows[current].IsChecked = !_visibleRows[current].IsChecked;
-                UpdateSelectAllState();
-                UpdateStatusSummary(
-                    _loader?.Packages.Count ?? _visibleRows.Count,
-                    _visibleRows.Count);
-                e.Handled = true;
-                break;
-            }
+                {
+                    _visibleRows[current].IsChecked = !_visibleRows[current].IsChecked;
+                    UpdateSelectAllState();
+                    UpdateStatusSummary(
+                        _loader?.Packages.Count ?? _visibleRows.Count,
+                        _visibleRows.Count);
+                    e.Handled = true;
+                    break;
+                }
             case Key.Enter when current >= 0:
-            {
-                var mods = e.KeyModifiers;
-                if (mods.HasFlag(KeyModifiers.Control))
                 {
-                    // Ctrl+Enter → run primary action
-                    await QueuePrimaryActionAsync(_visibleRows[current].Package);
-                }
-                else if (mods.HasFlag(KeyModifiers.Alt))
-                {
-                    // Alt+Enter → install options
-                    var window = new InstallOptionsWindow(_visibleRows[current].Package, _pageMode);
-                    if (VisualRoot is Window parentWindow)
-                        await window.ShowDialog(parentWindow);
+                    var mods = e.KeyModifiers;
+                    if (mods.HasFlag(KeyModifiers.Control))
+                    {
+                        // Ctrl+Enter → run primary action
+                        await QueuePrimaryActionAsync(_visibleRows[current].Package);
+                    }
+                    else if (mods.HasFlag(KeyModifiers.Alt))
+                    {
+                        // Alt+Enter → install options
+                        var window = new InstallOptionsWindow(_visibleRows[current].Package, _pageMode);
+                        if (VisualRoot is Window parentWindow)
+                            await window.ShowDialog(parentWindow);
+                        else
+                            window.Show();
+                    }
                     else
-                        window.Show();
+                    {
+                        // Enter → package details
+                        var window = new PackageDetailsWindow(_visibleRows[current].Package, _pageMode);
+                        if (VisualRoot is Window parentWindow)
+                            await window.ShowDialog(parentWindow);
+                        else
+                            window.Show();
+                    }
+                    e.Handled = true;
+                    break;
                 }
-                else
-                {
-                    // Enter → package details
-                    var window = new PackageDetailsWindow(_visibleRows[current].Package, _pageMode);
-                    if (VisualRoot is Window parentWindow)
-                        await window.ShowDialog(parentWindow);
-                    else
-                        window.Show();
-                }
-                e.Handled = true;
-                break;
-            }
         }
 
         if (e.Handled)
@@ -1861,7 +1861,7 @@ public partial class PackagePageView : UserControl, IShellPage
                 menu.Items.Add(uninstallItem);
 
                 var uninstallThenUpdateItem = new MenuItem
-                    { Header = CoreTools.Translate("Uninstall package, then update it") };
+                { Header = CoreTools.Translate("Uninstall package, then update it") };
                 uninstallThenUpdateItem.Click += async (_, _) =>
                 {
                     var opts = await InstallOptionsFactory.LoadApplicableAsync(package);
@@ -1899,7 +1899,7 @@ public partial class PackagePageView : UserControl, IShellPage
                 menu.Items.Add(reinstallItem);
 
                 var uninstallReinstallItem = new MenuItem
-                    { Header = CoreTools.Translate("Uninstall package, then reinstall it") };
+                { Header = CoreTools.Translate("Uninstall package, then reinstall it") };
                 uninstallReinstallItem.Click += async (_, _) =>
                 {
                     var opts = await InstallOptionsFactory.LoadApplicableAsync(package);

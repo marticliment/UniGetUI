@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
@@ -6,15 +7,14 @@ using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using UniGetUI.Avalonia.Infrastructure;
-using UniGetUI.Avalonia.Views.Pages;
 using UniGetUI.Avalonia.Views;
+using UniGetUI.Avalonia.Views.Pages;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SecureSettings;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.PackageLoader;
-using System.Diagnostics;
 
 namespace UniGetUI.Avalonia.Views.Pages.SettingsPages;
 

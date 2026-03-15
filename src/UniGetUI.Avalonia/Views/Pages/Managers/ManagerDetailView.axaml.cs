@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
@@ -5,14 +6,13 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using Avalonia.VisualTree;
-using System.Diagnostics;
+using UniGetUI.Avalonia.Infrastructure;
+using UniGetUI.Avalonia.Models;
+using UniGetUI.Avalonia.Views;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.SettingsEngine.SecureSettings;
 using UniGetUI.Core.Tools;
-using UniGetUI.Avalonia.Infrastructure;
-using UniGetUI.Avalonia.Models;
-using UniGetUI.Avalonia.Views;
 using UniGetUI.PackageEngine.Classes.Manager;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
@@ -755,12 +755,12 @@ public partial class ManagerDetailView : UserControl, IManagerSectionView
             {
                 await InstallOptionsFactory.SaveForManagerAsync(new InstallOptions(), manager);
                 adminCheck.IsChecked = false;
-                if (interactiveCheck is not null) interactiveCheck.IsChecked = false;
-                if (skipHashCheck is not null) skipHashCheck.IsChecked = false;
-                if (preReleaseCheck is not null) preReleaseCheck.IsChecked = false;
-                if (archCombo is not null) archCombo.SelectedIndex = 0;
-                if (scopeCombo is not null) scopeCombo.SelectedIndex = 0;
-                if (locationBox is not null) locationBox.Text = string.Empty;
+                interactiveCheck?.IsChecked = false;
+                skipHashCheck?.IsChecked = false;
+                preReleaseCheck?.IsChecked = false;
+                archCombo?.SelectedIndex = 0;
+                scopeCombo?.SelectedIndex = 0;
+                locationBox?.Text = string.Empty;
             }
             finally { resetBtn.IsEnabled = true; }
         };

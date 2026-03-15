@@ -11,13 +11,14 @@ using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using UniGetUI.Avalonia.Infrastructure;
+using UniGetUI.Avalonia.Models;
 using UniGetUI.Avalonia.Views;
-using UniGetUI.Core.Logging;
 using UniGetUI.Core.Data;
+using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.SettingsEngine.SecureSettings;
 using UniGetUI.Core.Tools;
-using UniGetUI.Avalonia.Models;
+using UniGetUI.Interface.Telemetry;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Classes.Serializable;
 using UniGetUI.PackageEngine.Enums;
@@ -26,7 +27,6 @@ using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.PackageLoader;
 using UniGetUI.PackageEngine.Serializable;
-using UniGetUI.Interface.Telemetry;
 using UniGetUI.PackageOperations;
 
 namespace UniGetUI.Avalonia.Views.Pages;
@@ -105,26 +105,26 @@ public partial class BundlesPageView : UserControl, IShellPage
     }
 
     // ── Control accessors ────────────────────────────────────────────────────
-    private Button NewBtn          => GetControl<Button>("NewBundleButton");
-    private Button OpenBtn         => GetControl<Button>("OpenBundleButton");
-    private Button SaveBtn         => GetControl<Button>("SaveBundleButton");
+    private Button NewBtn => GetControl<Button>("NewBundleButton");
+    private Button OpenBtn => GetControl<Button>("OpenBundleButton");
+    private Button SaveBtn => GetControl<Button>("SaveBundleButton");
     private Button CreateScriptBtn => GetControl<Button>("CreateScriptButton");
-    private Button InstallBtn         => GetControl<Button>("InstallSelectedButton");
-    private Button InstallDropdownBtn  => GetControl<Button>("InstallDropdownButton");
-    private Button RemoveBtn           => GetControl<Button>("RemoveSelectedButton");
-    private Button DetailsBtn          => GetControl<Button>("BundleDetailsButton");
-    private Button ShareBtn            => GetControl<Button>("BundleShareButton");
-    private Button ViewOutputBtn       => GetControl<Button>("BundleViewOutputButton");
-    private Button AddToBundleInfoBtn  => GetControl<Button>("AddToBundleInfoButton");
-    private Button HelpBtn             => GetControl<Button>("BundleHelpButton");
-    private TextBlock StateText    => GetControl<TextBlock>("BundleStateBlock");
-    private TextBlock StatusBadge  => GetControl<TextBlock>("BundleStatusBlock");
-    private TextBox  SearchBox     => GetControl<TextBox>("BundleSearchBox");
-    private CheckBox CheckAll      => GetControl<CheckBox>("CheckAllCheckBox");
-    private ItemsControl Rows      => GetControl<ItemsControl>("BundleRowsItemsControl");
-    private ScrollViewer RowsHost  => GetControl<ScrollViewer>("BundleRowsScrollViewer");
-    private Border EmptyCard       => GetControl<Border>("BundleEmptyStateCard");
-    private TextBlock TitleBlock   => GetControl<TextBlock>("BundlesTitleBlock");
+    private Button InstallBtn => GetControl<Button>("InstallSelectedButton");
+    private Button InstallDropdownBtn => GetControl<Button>("InstallDropdownButton");
+    private Button RemoveBtn => GetControl<Button>("RemoveSelectedButton");
+    private Button DetailsBtn => GetControl<Button>("BundleDetailsButton");
+    private Button ShareBtn => GetControl<Button>("BundleShareButton");
+    private Button ViewOutputBtn => GetControl<Button>("BundleViewOutputButton");
+    private Button AddToBundleInfoBtn => GetControl<Button>("AddToBundleInfoButton");
+    private Button HelpBtn => GetControl<Button>("BundleHelpButton");
+    private TextBlock StateText => GetControl<TextBlock>("BundleStateBlock");
+    private TextBlock StatusBadge => GetControl<TextBlock>("BundleStatusBlock");
+    private TextBox SearchBox => GetControl<TextBox>("BundleSearchBox");
+    private CheckBox CheckAll => GetControl<CheckBox>("CheckAllCheckBox");
+    private ItemsControl Rows => GetControl<ItemsControl>("BundleRowsItemsControl");
+    private ScrollViewer RowsHost => GetControl<ScrollViewer>("BundleRowsScrollViewer");
+    private Border EmptyCard => GetControl<Border>("BundleEmptyStateCard");
+    private TextBlock TitleBlock => GetControl<TextBlock>("BundlesTitleBlock");
     private TextBlock SubtitleBlock => GetControl<TextBlock>("BundlesSubtitleBlock");
 
     // ── Constructor ──────────────────────────────────────────────────────────
@@ -135,16 +135,16 @@ public partial class BundlesPageView : UserControl, IShellPage
         Rows.ItemsSource = _visibleRows;
 
         // Toolbar wiring
-        NewBtn.Click  += NewBtn_OnClick;
+        NewBtn.Click += NewBtn_OnClick;
         OpenBtn.Click += OpenBtn_OnClick;
         SaveBtn.Click += SaveBtn_OnClick;
-        InstallBtn.Click         += async (_, _) => await QueueInstallCheckedAsync();
+        InstallBtn.Click += async (_, _) => await QueueInstallCheckedAsync();
         InstallDropdownBtn.Click += InstallDropdownBtn_OnClick;
-        RemoveBtn.Click  += RemoveBtn_OnClick;
+        RemoveBtn.Click += RemoveBtn_OnClick;
         DetailsBtn.Click += DetailsBtn_OnClick;
-        ShareBtn.Click   += ShareBtn_OnClick;
+        ShareBtn.Click += ShareBtn_OnClick;
         AddToBundleInfoBtn.Click += AddToBundleInfoBtn_OnClick;
-        HelpBtn.Click            += HelpBtn_OnClick;
+        HelpBtn.Click += HelpBtn_OnClick;
         CreateScriptBtn.Click += async (_, _) => await CreateBatchScriptAsync();
         CheckAll.IsCheckedChanged += CheckAll_OnChanged;
 
@@ -175,17 +175,17 @@ public partial class BundlesPageView : UserControl, IShellPage
 
     private void ApplyTranslations()
     {
-        TitleBlock.Text    = CoreTools.Translate("Package Bundles");
+        TitleBlock.Text = CoreTools.Translate("Package Bundles");
         SubtitleBlock.Text = CoreTools.Translate("Create, save and install sets of packages");
 
-        NewBtn.Content     = CoreTools.Translate("New");
-        OpenBtn.Content    = CoreTools.Translate("Open");
-        SaveBtn.Content    = CoreTools.Translate("Save as");
+        NewBtn.Content = CoreTools.Translate("New");
+        OpenBtn.Content = CoreTools.Translate("Open");
+        SaveBtn.Content = CoreTools.Translate("Save as");
         InstallBtn.Content = CoreTools.Translate("Install checked");
-        RemoveBtn.Content  = CoreTools.Translate("Remove from bundle");
+        RemoveBtn.Content = CoreTools.Translate("Remove from bundle");
         DetailsBtn.Content = CoreTools.Translate("Details");
-        ShareBtn.Content   = CoreTools.Translate("Share");
-        HelpBtn.Content    = CoreTools.Translate("Help");
+        ShareBtn.Content = CoreTools.Translate("Share");
+        HelpBtn.Content = CoreTools.Translate("Help");
         ToolTip.SetTip(AddToBundleInfoBtn, CoreTools.Translate(
             "To add packages to a bundle, right-click on a package in the Discover, Updates or Installed pages and select \"Add to bundle\"."));
         CreateScriptBtn.Content = CoreTools.Translate("Create .ps1 script");
@@ -363,7 +363,7 @@ public partial class BundlesPageView : UserControl, IShellPage
         foreach (var row in packages)
             _visibleRows.Add(row);
 
-        RowsHost.IsVisible  = _visibleRows.Count > 0;
+        RowsHost.IsVisible = _visibleRows.Count > 0;
         EmptyCard.IsVisible = _visibleRows.Count == 0;
 
         UpdateToolbar();
@@ -401,16 +401,16 @@ public partial class BundlesPageView : UserControl, IShellPage
 
     private void UpdateToolbar()
     {
-        bool anyRows    = _visibleRows.Count > 0;
+        bool anyRows = _visibleRows.Count > 0;
         bool anyChecked = _visibleRows.Any(r => r.IsChecked);
         bool rowSelected = _selectedRow is not null && _visibleRows.Any(r => r == _selectedRow);
 
-        InstallBtn.IsEnabled         = anyChecked;
+        InstallBtn.IsEnabled = anyChecked;
         InstallDropdownBtn.IsEnabled = anyChecked;
-        RemoveBtn.IsEnabled  = anyChecked || rowSelected;
+        RemoveBtn.IsEnabled = anyChecked || rowSelected;
         DetailsBtn.IsEnabled = rowSelected;
-        ShareBtn.IsEnabled   = rowSelected;
-        SaveBtn.IsEnabled    = anyRows;
+        ShareBtn.IsEnabled = rowSelected;
+        SaveBtn.IsEnabled = anyRows;
     }
 
     private void UpdateStatusBadge()
@@ -438,7 +438,7 @@ public partial class BundlesPageView : UserControl, IShellPage
 
     private void SelectRow(BundleRowModel row)
     {
-        if (_selectedRow is not null) { _selectedRow.IsSelected = false; }
+        _selectedRow?.IsSelected = false;
         _selectedRow = row;
         _selectedRow.IsSelected = true;
         UpdateToolbar();
@@ -517,10 +517,10 @@ public partial class BundlesPageView : UserControl, IShellPage
             string ext = filePath.Split('.')[^1].ToLowerInvariant();
             BundleFormatType format = ext switch
             {
-                "yaml"    => BundleFormatType.YAML,
-                "xml"     => BundleFormatType.XML,
-                "json"    => BundleFormatType.JSON,
-                _         => BundleFormatType.UBUNDLE,
+                "yaml" => BundleFormatType.YAML,
+                "xml" => BundleFormatType.XML,
+                "json" => BundleFormatType.JSON,
+                _ => BundleFormatType.UBUNDLE,
             };
 
             string content = await File.ReadAllTextAsync(filePath);
@@ -544,7 +544,7 @@ public partial class BundlesPageView : UserControl, IShellPage
 
         var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Title           = CoreTools.Translate("Save package bundle"),
+            Title = CoreTools.Translate("Save package bundle"),
             SuggestedFileName = CoreTools.Translate("Package bundle"),
             FileTypeChoices =
             [
@@ -742,10 +742,10 @@ public partial class BundlesPageView : UserControl, IShellPage
             return;
         }
         var url = "https://marticliment.com/unigetui/share?"
-            + "name="        + Uri.EscapeDataString(package.Name)
-            + "&id="         + Uri.EscapeDataString(package.Id)
+            + "name=" + Uri.EscapeDataString(package.Name)
+            + "&id=" + Uri.EscapeDataString(package.Id)
             + "&sourceName=" + Uri.EscapeDataString(package.Source.Name)
-            + "&managerName="+ Uri.EscapeDataString(package.Manager.DisplayName);
+            + "&managerName=" + Uri.EscapeDataString(package.Manager.DisplayName);
         var clipboard = global::Avalonia.Controls.TopLevel.GetTopLevel(this)?.Clipboard;
         if (clipboard is not null)
         {
@@ -791,7 +791,7 @@ public partial class BundlesPageView : UserControl, IShellPage
             )
         );
 
-        bool allowCLI     = SecureSettings.Get(SecureSettings.K.AllowCLIArguments)
+        bool allowCLI = SecureSettings.Get(SecureSettings.K.AllowCLIArguments)
                          && SecureSettings.Get(SecureSettings.K.AllowImportingCLIArguments);
         bool allowPrePost = SecureSettings.Get(SecureSettings.K.AllowPrePostOpCommand)
                          && SecureSettings.Get(SecureSettings.K.AllowImportPrePostOpCommands);
@@ -808,10 +808,10 @@ public partial class BundlesPageView : UserControl, IShellPage
             }
             if (!allowPrePost)
             {
-                opts.PreInstallCommand   = "";
-                opts.PostInstallCommand  = "";
-                opts.PreUpdateCommand    = "";
-                opts.PostUpdateCommand   = "";
+                opts.PreInstallCommand = "";
+                opts.PostInstallCommand = "";
+                opts.PreUpdateCommand = "";
+                opts.PostUpdateCommand = "";
                 opts.PreUninstallCommand = "";
                 opts.PostUninstallCommand = "";
             }
@@ -869,8 +869,8 @@ public partial class BundlesPageView : UserControl, IShellPage
 
         var dialog = new Window
         {
-            Title  = title,
-            Width  = 460,
+            Title = title,
+            Width = 460,
             Height = 200,
             WindowStartupLocation = WindowStartupLocation.CenterOwner,
             CanResize = false,
@@ -878,13 +878,13 @@ public partial class BundlesPageView : UserControl, IShellPage
 
         bool result = false;
         var confirmBtn = new Button { Content = confirmLabel };
-        var cancelBtn  = new Button { Content = cancelLabel  };
-        confirmBtn.Click += (_, _) => { result = true;  dialog.Close(); };
-        cancelBtn.Click  += (_, _) => { result = false; dialog.Close(); };
+        var cancelBtn = new Button { Content = cancelLabel };
+        confirmBtn.Click += (_, _) => { result = true; dialog.Close(); };
+        cancelBtn.Click += (_, _) => { result = false; dialog.Close(); };
 
         dialog.Content = new StackPanel
         {
-            Margin  = new global::Avalonia.Thickness(24),
+            Margin = new global::Avalonia.Thickness(24),
             Spacing = 16,
             Children =
             {

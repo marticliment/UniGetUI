@@ -10,18 +10,18 @@ using global::Avalonia.Threading;
 using global::Avalonia.VisualTree;
 using UniGetUI.Avalonia.Infrastructure;
 using UniGetUI.Avalonia.Models;
-using UniGetUI.Avalonia.Views.Pages.ManagersPages;
 using UniGetUI.Avalonia.Views.Pages;
+using UniGetUI.Avalonia.Views.Pages.ManagersPages;
 using UniGetUI.Avalonia.Views.Pages.SettingsPages;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
+using UniGetUI.Interface.Telemetry;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.PackageLoader;
 using UniGetUI.PackageOperations;
-using UniGetUI.Interface.Telemetry;
 
 namespace UniGetUI.Avalonia.Views;
 
@@ -608,7 +608,7 @@ public partial class MainShellView : UserControl
 
     private void OnWindowKeyDown(object? sender, KeyEventArgs e)
     {
-        bool ctrl  = e.KeyModifiers.HasFlag(KeyModifiers.Control);
+        bool ctrl = e.KeyModifiers.HasFlag(KeyModifiers.Control);
         bool shift = e.KeyModifiers.HasFlag(KeyModifiers.Shift);
 
         if (ctrl && e.Key == Key.Tab)
@@ -676,8 +676,8 @@ public partial class MainShellView : UserControl
         Dispatcher.UIThread.Post(() =>
         {
             int count = UpgradablePackagesLoader.Instance.Packages.Count;
-            UpdatesBadgeHost.IsVisible     = count > 0;
-            UpdatesBadgeCountText.Text     = count > 99 ? "99+" : count.ToString();
+            UpdatesBadgeHost.IsVisible = count > 0;
+            UpdatesBadgeCountText.Text = count > 99 ? "99+" : count.ToString();
 
             // Refresh tray tooltip whenever the update count changes
             if (Application.Current?.ApplicationLifetime

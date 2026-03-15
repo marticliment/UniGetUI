@@ -5,8 +5,8 @@ using UniGetUI.Avalonia.Infrastructure;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Packages.Classes;
 using UniGetUI.PackageEngine.Enums;
-using UniGetUI.PackageEngine.Serializable;
 using UniGetUI.PackageEngine.Operations;
+using UniGetUI.PackageEngine.Serializable;
 using UniGetUI.PackageOperations;
 
 namespace UniGetUI.Avalonia.Views.Pages;

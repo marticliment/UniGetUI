@@ -1,10 +1,10 @@
+using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.SettingsEngine.SecureSettings;
 using UniGetUI.Core.Tools;
-using System.Threading.Tasks;
 
 namespace UniGetUI.Avalonia.Views.Pages.SettingsPages;
 

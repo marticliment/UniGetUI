@@ -1,3 +1,4 @@
+using System.Net;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Notifications;
@@ -15,7 +16,6 @@ using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
-using System.Net;
 
 namespace UniGetUI.Avalonia;
 

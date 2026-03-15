@@ -44,22 +44,22 @@ public partial class LogsPageView : global::Avalonia.Controls.UserControl, IShel
 
     // ── Color palettes ────────────────────────────────────────────────────────
     // Dark-theme colours
-    private static IBrush DarkGrey      => new SolidColorBrush(Color.FromRgb(130, 130, 130));
+    private static IBrush DarkGrey => new SolidColorBrush(Color.FromRgb(130, 130, 130));
     private static IBrush DarkLightGrey => new SolidColorBrush(Color.FromRgb(190, 190, 190));
-    private static IBrush DarkWhite     => new SolidColorBrush(Color.FromRgb(250, 250, 250));
-    private static IBrush DarkYellow    => new SolidColorBrush(Color.FromRgb(255, 255,  90));
-    private static IBrush DarkRed       => new SolidColorBrush(Color.FromRgb(255,  80,  80));
-    private static IBrush DarkGreen     => new SolidColorBrush(Color.FromRgb( 80, 255,  80));
-    private static IBrush DarkBlue      => new SolidColorBrush(Color.FromRgb(120, 120, 255));
+    private static IBrush DarkWhite => new SolidColorBrush(Color.FromRgb(250, 250, 250));
+    private static IBrush DarkYellow => new SolidColorBrush(Color.FromRgb(255, 255, 90));
+    private static IBrush DarkRed => new SolidColorBrush(Color.FromRgb(255, 80, 80));
+    private static IBrush DarkGreen => new SolidColorBrush(Color.FromRgb(80, 255, 80));
+    private static IBrush DarkBlue => new SolidColorBrush(Color.FromRgb(120, 120, 255));
 
     // Light-theme colours
-    private static IBrush LightGrey      => new SolidColorBrush(Color.FromRgb(125, 125, 225));
-    private static IBrush LightLightGrey => new SolidColorBrush(Color.FromRgb( 50,  50, 150));
-    private static IBrush LightWhite     => new SolidColorBrush(Color.FromRgb(  0,   0,   0));
-    private static IBrush LightYellow    => new SolidColorBrush(Color.FromRgb(150, 150,   0));
-    private static IBrush LightRed       => new SolidColorBrush(Color.FromRgb(205,   0,   0));
-    private static IBrush LightGreen     => new SolidColorBrush(Color.FromRgb(  0, 205,   0));
-    private static IBrush LightBlue      => new SolidColorBrush(Color.FromRgb(  0,   0, 205));
+    private static IBrush LightGrey => new SolidColorBrush(Color.FromRgb(125, 125, 225));
+    private static IBrush LightLightGrey => new SolidColorBrush(Color.FromRgb(50, 50, 150));
+    private static IBrush LightWhite => new SolidColorBrush(Color.FromRgb(0, 0, 0));
+    private static IBrush LightYellow => new SolidColorBrush(Color.FromRgb(150, 150, 0));
+    private static IBrush LightRed => new SolidColorBrush(Color.FromRgb(205, 0, 0));
+    private static IBrush LightGreen => new SolidColorBrush(Color.FromRgb(0, 205, 0));
+    private static IBrush LightBlue => new SolidColorBrush(Color.FromRgb(0, 0, 205));
 
     private bool IsDark => ActualThemeVariant == ThemeVariant.Dark;
 
@@ -135,10 +135,10 @@ public partial class LogsPageView : global::Avalonia.Controls.UserControl, IShel
 
         // Show / hide toolbar controls
         LogLevelCombo.IsVisible = tab == 0;
-        ManagerCombo.IsVisible  = tab == 2;
+        ManagerCombo.IsVisible = tab == 2;
 
         // Show / hide content controls
-        LogLinesItems.IsVisible  = tab != 1;
+        LogLinesItems.IsVisible = tab != 1;
         PlainTextBlock.IsVisible = tab == 1;
 
         Reload();
@@ -191,12 +191,12 @@ public partial class LogsPageView : global::Avalonia.Controls.UserControl, IShel
 
             IBrush brush = entry.Severity switch
             {
-                LogEntry.SeverityLevel.Debug   => dark ? DarkGrey      : LightGrey,
-                LogEntry.SeverityLevel.Info    => dark ? DarkLightGrey : LightLightGrey,
-                LogEntry.SeverityLevel.Success => dark ? DarkWhite     : LightWhite,
-                LogEntry.SeverityLevel.Warning => dark ? DarkYellow    : LightYellow,
-                LogEntry.SeverityLevel.Error   => dark ? DarkRed       : LightRed,
-                _                              => dark ? DarkGrey      : LightGrey,
+                LogEntry.SeverityLevel.Debug => dark ? DarkGrey : LightGrey,
+                LogEntry.SeverityLevel.Info => dark ? DarkLightGrey : LightLightGrey,
+                LogEntry.SeverityLevel.Success => dark ? DarkWhite : LightWhite,
+                LogEntry.SeverityLevel.Warning => dark ? DarkYellow : LightYellow,
+                LogEntry.SeverityLevel.Error => dark ? DarkRed : LightRed,
+                _ => dark ? DarkGrey : LightGrey,
             };
 
             string prefix = $"[{entry.Time:HH:mm:ss}] ";
@@ -261,13 +261,13 @@ public partial class LogsPageView : global::Avalonia.Controls.UserControl, IShel
 
                 IBrush brush = line[0] switch
                 {
-                    '0' => dark ? DarkWhite     : LightWhite,
+                    '0' => dark ? DarkWhite : LightWhite,
                     '1' => dark ? DarkLightGrey : LightLightGrey,
-                    '2' => dark ? DarkRed       : LightRed,
-                    '3' => dark ? DarkBlue      : LightBlue,
-                    '4' => dark ? DarkGreen     : LightGreen,
-                    '5' => dark ? DarkYellow    : LightYellow,
-                    _   => dark ? DarkYellow    : LightYellow,
+                    '2' => dark ? DarkRed : LightRed,
+                    '3' => dark ? DarkBlue : LightBlue,
+                    '4' => dark ? DarkGreen : LightGreen,
+                    '5' => dark ? DarkYellow : LightYellow,
+                    _ => dark ? DarkYellow : LightYellow,
                 };
                 _lines.Add(new LogLineModel { Text = line[1..], Foreground = brush });
             }
