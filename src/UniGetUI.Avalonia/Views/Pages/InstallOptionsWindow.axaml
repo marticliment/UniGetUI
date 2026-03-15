@@ -1,0 +1,307 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="UniGetUI.Avalonia.Views.Pages.InstallOptionsWindow"
+        Width="660"
+        Height="700"
+        MinWidth="480"
+        MinHeight="460"
+        Title="Install Options"
+        CanResize="True"
+        WindowStartupLocation="CenterOwner">
+  <Window.Styles>
+    <StyleInclude Source="/Styles/AppStyles.axaml" />
+  </Window.Styles>
+  <Grid RowDefinitions="*,Auto">
+
+    <!-- Scrollable content -->
+    <ScrollViewer Grid.Row="0"
+                  Margin="18,18,18,0">
+      <StackPanel Spacing="10">
+
+        <!-- Header: package info -->
+        <Border Padding="18"
+                Classes="surface-card subtle-panel">
+          <StackPanel Spacing="4">
+            <TextBlock x:Name="PackageTitleBlock"
+                       FontSize="20"
+                       FontWeight="Bold" />
+            <Grid ColumnDefinitions="Auto,8,*,16,Auto,8,*">
+              <TextBlock Text="ID:"
+                         Opacity="0.60"
+                         VerticalAlignment="Center" />
+              <TextBlock x:Name="PackageIdBlock"
+                         Grid.Column="2"
+                         FontWeight="SemiBold"
+                         VerticalAlignment="Center"
+                         TextTrimming="CharacterEllipsis" />
+              <TextBlock Text="Version:"
+                         Grid.Column="4"
+                         Opacity="0.60"
+                         VerticalAlignment="Center" />
+              <TextBlock x:Name="PackageVersionBlock"
+                         Grid.Column="6"
+                         FontWeight="SemiBold"
+                         VerticalAlignment="Center"
+                         TextTrimming="CharacterEllipsis" />
+            </Grid>
+            <TextBlock x:Name="PackageManagerBlock"
+                       Opacity="0.60"
+                       FontSize="12" />
+          </StackPanel>
+        </Border>
+
+        <!-- General options -->
+        <Border Padding="18"
+                Classes="surface-card">
+          <StackPanel Spacing="10">
+            <TextBlock Text="General options"
+                       x:Name="GeneralOptionsTitleBlock"
+                       FontWeight="SemiBold"
+                       FontSize="14"
+                       Opacity="0.80" />
+            <CheckBox x:Name="RunAsAdminCheckBox">Run as administrator</CheckBox>
+            <CheckBox x:Name="InteractiveCheckBox">Interactive installation</CheckBox>
+            <CheckBox x:Name="HashCheckBox">Skip hash / integrity check</CheckBox>
+            <CheckBox x:Name="AutoUpdateCheckBox">Auto-update this package</CheckBox>
+            <CheckBox x:Name="SkipMinorUpdatesCheckBox">Skip minor version updates</CheckBox>
+            <CheckBox x:Name="IgnoreUpdatesCheckBox">Ignore updates for this package</CheckBox>
+            <CheckBox x:Name="UninstallPreviousCheckBox"
+                      IsVisible="False">Uninstall previous version on update</CheckBox>
+          </StackPanel>
+        </Border>
+
+        <!-- Version / Architecture / Scope -->
+        <Border Padding="18"
+                Classes="surface-card">
+          <StackPanel Spacing="12">
+            <TextBlock Text="Version, architecture and scope"
+                       x:Name="VersionSectionTitleBlock"
+                       FontWeight="SemiBold"
+                       FontSize="14"
+                       Opacity="0.80" />
+
+            <!-- Version row -->
+            <Grid ColumnDefinitions="120,*,Auto">
+              <TextBlock x:Name="VersionLabelBlock"
+                         Text="Version"
+                         VerticalAlignment="Center"
+                         Opacity="0.70" />
+              <ComboBox x:Name="VersionComboBox"
+                        Grid.Column="1"
+                        HorizontalAlignment="Stretch" />
+              <ProgressBar x:Name="VersionLoadingBar"
+                           Grid.Column="2"
+                           Width="18"
+                           Height="18"
+                           Margin="8,0,0,0"
+                           IsIndeterminate="True"
+                           IsVisible="False" />
+            </Grid>
+
+            <!-- Architecture row -->
+            <Grid ColumnDefinitions="120,*">
+              <TextBlock x:Name="ArchitectureLabelBlock"
+                         Text="Architecture"
+                         VerticalAlignment="Center"
+                         Opacity="0.70" />
+              <ComboBox x:Name="ArchitectureComboBox"
+                        Grid.Column="1"
+                        HorizontalAlignment="Stretch" />
+            </Grid>
+
+            <!-- Scope row -->
+            <Grid ColumnDefinitions="120,*">
+              <TextBlock x:Name="ScopeLabelBlock"
+                         Text="Scope"
+                         VerticalAlignment="Center"
+                         Opacity="0.70" />
+              <ComboBox x:Name="ScopeComboBox"
+                        Grid.Column="1"
+                        HorizontalAlignment="Stretch" />
+            </Grid>
+
+          </StackPanel>
+        </Border>
+
+        <!-- Custom install location (conditional) -->
+        <Border x:Name="CustomLocationCard"
+                Padding="18"
+                Classes="surface-card"
+                IsVisible="False">
+          <StackPanel Spacing="10">
+            <TextBlock Text="Custom install location"
+                       x:Name="LocationTitleBlock"
+                       FontWeight="SemiBold"
+                       FontSize="14"
+                       Opacity="0.80" />
+            <TextBox x:Name="CustomLocationTextBox"
+                     Watermark="Leave empty to use the default location" />
+          </StackPanel>
+        </Border>
+
+        <!-- Custom CLI parameters (conditional on AllowCLIArguments) -->
+        <Border x:Name="CustomParametersCard"
+                Padding="18"
+                Classes="surface-card"
+                IsVisible="False">
+          <StackPanel Spacing="10">
+            <TextBlock Text="Custom CLI arguments"
+                       x:Name="ParametersTitleBlock"
+                       FontWeight="SemiBold"
+                       FontSize="14"
+                       Opacity="0.80" />
+            <TextBlock x:Name="CustomParamsDescBlock"
+                       Text="Additional arguments passed to the installer executable."
+                       Opacity="0.60"
+                       FontSize="12"
+                       TextWrapping="Wrap" />
+            <TextBlock Text="Install arguments"
+                       x:Name="InstallParamsLabelBlock"
+                       Opacity="0.70" />
+            <TextBox x:Name="CustomParams1TextBox"
+                     FontFamily="Consolas,Menlo,monospace"
+                     Watermark="e.g.  /norestart /quiet" />
+            <TextBlock Text="Update arguments"
+                       x:Name="UpdateParamsLabelBlock"
+                       Opacity="0.70" />
+            <TextBox x:Name="CustomParams2TextBox"
+                     FontFamily="Consolas,Menlo,monospace"
+                     Watermark="e.g.  /norestart /quiet" />
+            <TextBlock Text="Uninstall arguments"
+                       x:Name="UninstallParamsLabelBlock"
+                       Opacity="0.70" />
+            <TextBox x:Name="CustomParams3TextBox"
+                     FontFamily="Consolas,Menlo,monospace"
+                     Watermark="e.g.  /norestart /quiet" />
+          </StackPanel>
+        </Border>
+
+        <!-- Processes to kill before operation -->
+        <Border x:Name="KillProcessesCard"
+                Padding="18"
+                Classes="surface-card">
+          <StackPanel Spacing="10">
+            <TextBlock Text="Processes to kill before operation"
+                       x:Name="KillProcessesTitleBlock"
+                       FontWeight="SemiBold"
+                       FontSize="14"
+                       Opacity="0.80" />
+            <TextBlock Text="Enter process names (comma-separated) that should be closed before this package operation runs."
+                       x:Name="KillProcessesDescBlock"
+                       Opacity="0.60"
+                       FontSize="12"
+                       TextWrapping="Wrap" />
+            <TextBox x:Name="KillProcessesTextBox"
+                     FontFamily="Consolas,Menlo,monospace"
+                     Watermark="e.g.  Chrome.exe, Notepad.exe" />
+            <CheckBox x:Name="KillProcessesThatWontDieCheckBox">Try to kill processes that refuse to close</CheckBox>
+          </StackPanel>
+        </Border>
+
+        <!-- Pre/Post commands (conditional on AllowPrePostOpCommand) -->
+        <Border x:Name="PrePostCommandsCard"
+                Padding="18"
+                Classes="surface-card"
+                IsVisible="False">
+          <StackPanel Spacing="10">
+            <TextBlock Text="Pre / post operation commands"
+                       x:Name="PrePostTitleBlock"
+                       FontWeight="SemiBold"
+                       FontSize="14"
+                       Opacity="0.80" />
+            <TextBlock x:Name="PrePostCommandsDescBlock"
+                       Text="These shell commands run before or after the package operation."
+                       Opacity="0.60"
+                       FontSize="12"
+                       TextWrapping="Wrap" />
+
+            <!-- Install commands -->
+            <TextBlock Text="Pre-install command"
+                       x:Name="PreInstallLabelBlock"
+                       Opacity="0.70" />
+            <Grid ColumnDefinitions="*,12,Auto">
+              <TextBox x:Name="PreInstallCommandBox"
+                       FontFamily="Consolas,Menlo,monospace"
+                       Watermark="Command to run before installation" />
+              <CheckBox x:Name="AbortInstallCheckBox"
+                        Grid.Column="2"
+                        VerticalAlignment="Center"
+                        ToolTip.Tip="Abort install if this command fails">Abort if fails</CheckBox>
+            </Grid>
+
+            <TextBlock Text="Post-install command"
+                       x:Name="PostInstallLabelBlock"
+                       Opacity="0.70" />
+            <TextBox x:Name="PostInstallCommandBox"
+                     FontFamily="Consolas,Menlo,monospace"
+                     Watermark="Command to run after installation" />
+
+            <!-- Update commands -->
+            <TextBlock Text="Pre-update command"
+                       x:Name="PreUpdateLabelBlock"
+                       Opacity="0.70" />
+            <Grid ColumnDefinitions="*,12,Auto">
+              <TextBox x:Name="PreUpdateCommandBox"
+                       FontFamily="Consolas,Menlo,monospace"
+                       Watermark="Command to run before update" />
+              <CheckBox x:Name="AbortUpdateCheckBox"
+                        Grid.Column="2"
+                        VerticalAlignment="Center"
+                        ToolTip.Tip="Abort update if this command fails">Abort if fails</CheckBox>
+            </Grid>
+
+            <TextBlock Text="Post-update command"
+                       x:Name="PostUpdateLabelBlock"
+                       Opacity="0.70" />
+            <TextBox x:Name="PostUpdateCommandBox"
+                     FontFamily="Consolas,Menlo,monospace"
+                     Watermark="Command to run after update" />
+
+            <!-- Uninstall commands -->
+            <TextBlock Text="Pre-uninstall command"
+                       x:Name="PreUninstallLabelBlock"
+                       Opacity="0.70" />
+            <Grid ColumnDefinitions="*,12,Auto">
+              <TextBox x:Name="PreUninstallCommandBox"
+                       FontFamily="Consolas,Menlo,monospace"
+                       Watermark="Command to run before uninstall" />
+              <CheckBox x:Name="AbortUninstallCheckBox"
+                        Grid.Column="2"
+                        VerticalAlignment="Center"
+                        ToolTip.Tip="Abort uninstall if this command fails">Abort if fails</CheckBox>
+            </Grid>
+
+            <TextBlock Text="Post-uninstall command"
+                       x:Name="PostUninstallLabelBlock"
+                       Opacity="0.70" />
+            <TextBox x:Name="PostUninstallCommandBox"
+                     FontFamily="Consolas,Menlo,monospace"
+                     Watermark="Command to run after uninstall" />
+          </StackPanel>
+        </Border>
+
+        <!-- Spacer at bottom -->
+        <Border Height="8" />
+
+      </StackPanel>
+    </ScrollViewer>
+
+    <!-- Footer buttons (sticky) -->
+    <Border Grid.Row="1"
+            Padding="18,12"
+            Classes="surface-card flat-shell-panel"
+            BorderThickness="0,1,0,0">
+      <StackPanel Orientation="Horizontal"
+                  Spacing="10"
+                  HorizontalAlignment="Right">
+        <Button x:Name="CancelBtn"
+                Classes="toolbar-secondary"
+                MinWidth="90">Cancel</Button>
+        <Button x:Name="SaveBtn"
+                Classes="toolbar-primary"
+                MinWidth="90">Save</Button>
+      </StackPanel>
+    </Border>
+
+  </Grid>
+</Window>

@@ -9,4 +9,5 @@ internal enum ShellPageType
     Settings,
     Managers,
     Help,
+    Logs,
 }

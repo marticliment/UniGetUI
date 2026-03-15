@@ -1,0 +1,708 @@
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Text.Json;
+using System.Text.Json.Nodes;
+using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.Interactivity;
+using Avalonia.Markup.Xaml;
+using Avalonia.Platform.Storage;
+using Avalonia.Threading;
+using Avalonia.VisualTree;
+using UniGetUI.Avalonia.Infrastructure;
+using UniGetUI.Avalonia.Views;
+using UniGetUI.Core.Logging;
+using UniGetUI.Core.Data;
+using UniGetUI.Core.SettingsEngine;
+using UniGetUI.Core.SettingsEngine.SecureSettings;
+using UniGetUI.Core.Tools;
+using UniGetUI.Avalonia.Models;
+using UniGetUI.PackageEngine;
+using UniGetUI.PackageEngine.Classes.Serializable;
+using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.Operations;
+using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.PackageEngine.PackageLoader;
+using UniGetUI.PackageEngine.Serializable;
+using UniGetUI.PackageOperations;
+
+namespace UniGetUI.Avalonia.Views.Pages;
+
+/// <summary>
+/// Row view-model for the bundle package list.
+/// </summary>
+public sealed class BundleRowModel : INotifyPropertyChanged
+{
+    public IPackage Package { get; }
+    public string Name => Package.Name;
+    public string Id => Package.Id;
+    public string Version => Package.VersionString;
+    public string Source => Package.Source.AsString_DisplayName;
+    public bool IsValid => Package is ImportedPackage;
+
+    private bool _isSelected;
+    public bool IsSelected
+    {
+        get => _isSelected;
+        set
+        {
+            _isSelected = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsSelected)));
+        }
+    }
+
+    private bool _isChecked;
+    public bool IsChecked
+    {
+        get => _isChecked;
+        set
+        {
+            _isChecked = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsChecked)));
+        }
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    public BundleRowModel(IPackage package)
+    {
+        Package = package;
+    }
+}
+
+public partial class BundlesPageView : UserControl, IShellPage
+{
+    // ── IShellPage ──────────────────────────────────────────────────────────
+    public string Title { get; } = string.Empty;
+    public string Subtitle { get; } = string.Empty;
+    public bool SupportsSearch => true;
+    public string SearchPlaceholder { get; } = string.Empty;
+
+    public void UpdateSearchQuery(string query)
+    {
+        _searchQuery = query.Trim();
+        RefreshRows();
+    }
+
+    // ── State ────────────────────────────────────────────────────────────────
+    private readonly ObservableCollection<BundleRowModel> _visibleRows = [];
+    private BundleRowModel? _selectedRow;
+    private string _searchQuery = string.Empty;
+    private AbstractOperation? _lastOperation;
+
+    private bool _hasUnsavedChanges;
+    private bool HasUnsavedChanges
+    {
+        get => _hasUnsavedChanges;
+        set
+        {
+            _hasUnsavedChanges = value;
+            Dispatcher.UIThread.Post(UpdateStatusBadge);
+        }
+    }
+
+    // ── Control accessors ────────────────────────────────────────────────────
+    private Button NewBtn          => GetControl<Button>("NewBundleButton");
+    private Button OpenBtn         => GetControl<Button>("OpenBundleButton");
+    private Button SaveBtn         => GetControl<Button>("SaveBundleButton");
+    private Button InstallBtn      => GetControl<Button>("InstallSelectedButton");
+    private Button RemoveBtn       => GetControl<Button>("RemoveSelectedButton");
+    private Button DetailsBtn      => GetControl<Button>("BundleDetailsButton");
+    private Button ShareBtn        => GetControl<Button>("BundleShareButton");
+    private Button ViewOutputBtn   => GetControl<Button>("BundleViewOutputButton");
+    private TextBlock StateText    => GetControl<TextBlock>("BundleStateBlock");
+    private TextBlock StatusBadge  => GetControl<TextBlock>("BundleStatusBlock");
+    private TextBox  SearchBox     => GetControl<TextBox>("BundleSearchBox");
+    private CheckBox CheckAll      => GetControl<CheckBox>("CheckAllCheckBox");
+    private ItemsControl Rows      => GetControl<ItemsControl>("BundleRowsItemsControl");
+    private ScrollViewer RowsHost  => GetControl<ScrollViewer>("BundleRowsScrollViewer");
+    private Border EmptyCard       => GetControl<Border>("BundleEmptyStateCard");
+    private TextBlock TitleBlock   => GetControl<TextBlock>("BundlesTitleBlock");
+    private TextBlock SubtitleBlock => GetControl<TextBlock>("BundlesSubtitleBlock");
+
+    // ── Constructor ──────────────────────────────────────────────────────────
+    public BundlesPageView()
+    {
+        InitializeComponent();
+        ApplyTranslations();
+        Rows.ItemsSource = _visibleRows;
+
+        // Toolbar wiring
+        NewBtn.Click  += NewBtn_OnClick;
+        OpenBtn.Click += OpenBtn_OnClick;
+        SaveBtn.Click += SaveBtn_OnClick;
+        InstallBtn.Click += InstallBtn_OnClick;
+        RemoveBtn.Click  += RemoveBtn_OnClick;
+        DetailsBtn.Click += DetailsBtn_OnClick;
+        ShareBtn.Click   += ShareBtn_OnClick;
+        CheckAll.IsCheckedChanged += CheckAll_OnChanged;
+
+        SearchBox.TextChanged += (_, _) =>
+        {
+            _searchQuery = SearchBox.Text?.Trim() ?? string.Empty;
+            RefreshRows();
+        };
+
+        // Row pointer-press for selection
+        Rows.AddHandler(
+            InputElement.PointerPressedEvent,
+            OnRowsPointerPressed,
+            RoutingStrategies.Bubble
+        );
+
+        // Loader events
+        var loader = PackageBundlesLoader.Instance;
+        loader.PackagesChanged += (_, _) =>
+        {
+            HasUnsavedChanges = true;
+            Dispatcher.UIThread.Post(RefreshRows);
+        };
+        loader.FinishedLoading += (_, _) => Dispatcher.UIThread.Post(RefreshRows);
+
+        RefreshRows();
+    }
+
+    private void ApplyTranslations()
+    {
+        TitleBlock.Text    = CoreTools.Translate("Package Bundles");
+        SubtitleBlock.Text = CoreTools.Translate("Create, save and install sets of packages");
+
+        NewBtn.Content     = CoreTools.Translate("New");
+        OpenBtn.Content    = CoreTools.Translate("Open");
+        SaveBtn.Content    = CoreTools.Translate("Save as");
+        InstallBtn.Content = CoreTools.Translate("Install checked");
+        RemoveBtn.Content  = CoreTools.Translate("Remove from bundle");
+        DetailsBtn.Content = CoreTools.Translate("Details");
+        ShareBtn.Content   = CoreTools.Translate("Share");
+        SearchBox.Watermark = CoreTools.Translate("Search");
+
+        GetControl<TextBlock>("BundleEmptyTitleBlock").Text =
+            CoreTools.Translate("Add packages or open an existing package bundle");
+        GetControl<TextBlock>("BundleEmptyDescBlock").Text =
+            CoreTools.Translate("Add some packages to get started");
+        GetControl<TextBlock>("BundleColNameBlock").Text = CoreTools.Translate("Package Name");
+        GetControl<TextBlock>("BundleColIdBlock").Text = CoreTools.Translate("Package ID");
+        GetControl<TextBlock>("BundleColVersionBlock").Text = CoreTools.Translate("Version");
+        GetControl<TextBlock>("BundleColSourceBlock").Text = CoreTools.Translate("Source");
+    }
+
+    // ── Row management ───────────────────────────────────────────────────────
+
+    private void RefreshRows()
+    {
+        var packages = GetFilteredPackages();
+
+        // Deselect removed row
+        if (_selectedRow is not null && !packages.Any(r => r.Package == _selectedRow.Package))
+        {
+            _selectedRow.IsSelected = false;
+            _selectedRow = null;
+        }
+
+        _visibleRows.Clear();
+        foreach (var row in packages)
+            _visibleRows.Add(row);
+
+        RowsHost.IsVisible  = _visibleRows.Count > 0;
+        EmptyCard.IsVisible = _visibleRows.Count == 0;
+
+        UpdateToolbar();
+        UpdateStatusBadge();
+    }
+
+    private List<BundleRowModel> GetFilteredPackages()
+    {
+        var allPackages = PackageBundlesLoader.Instance.Packages;
+        if (string.IsNullOrWhiteSpace(_searchQuery))
+            return allPackages
+                .Select(FindOrCreateRow)
+                .ToList();
+
+        var q = _searchQuery.ToLowerInvariant();
+        return allPackages
+            .Where(p =>
+                p.Name.ToLowerInvariant().Contains(q)
+                || p.Id.ToLowerInvariant().Contains(q))
+            .Select(FindOrCreateRow)
+            .ToList();
+    }
+
+    private readonly Dictionary<IPackage, BundleRowModel> _rowCache = new(ReferenceEqualityComparer.Instance);
+
+    private BundleRowModel FindOrCreateRow(IPackage package)
+    {
+        if (!_rowCache.TryGetValue(package, out var row))
+        {
+            row = new BundleRowModel(package);
+            _rowCache[package] = row;
+        }
+        return row;
+    }
+
+    private void UpdateToolbar()
+    {
+        bool anyRows    = _visibleRows.Count > 0;
+        bool anyChecked = _visibleRows.Any(r => r.IsChecked);
+        bool rowSelected = _selectedRow is not null && _visibleRows.Any(r => r == _selectedRow);
+
+        InstallBtn.IsEnabled = anyChecked;
+        RemoveBtn.IsEnabled  = anyChecked || rowSelected;
+        DetailsBtn.IsEnabled = rowSelected;
+        ShareBtn.IsEnabled   = rowSelected;
+        SaveBtn.IsEnabled    = anyRows;
+    }
+
+    private void UpdateStatusBadge()
+    {
+        StatusBadge.Text = _hasUnsavedChanges
+            ? CoreTools.Translate("Unsaved changes")
+            : string.Empty;
+    }
+
+    // ── Row selection ────────────────────────────────────────────────────────
+
+    private void OnRowsPointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        var visual = e.Source as global::Avalonia.Visual;
+        while (visual is not null)
+        {
+            if (visual is Control ctrl && ctrl.DataContext is BundleRowModel row)
+            {
+                SelectRow(row);
+                return;
+            }
+            visual = visual.GetVisualParent();
+        }
+    }
+
+    private void SelectRow(BundleRowModel row)
+    {
+        if (_selectedRow is not null) { _selectedRow.IsSelected = false; }
+        _selectedRow = row;
+        _selectedRow.IsSelected = true;
+        UpdateToolbar();
+    }
+
+    // ── Check-all ────────────────────────────────────────────────────────────
+
+    private void CheckAll_OnChanged(object? sender, RoutedEventArgs e)
+    {
+        bool check = CheckAll.IsChecked ?? false;
+        foreach (var row in _visibleRows)
+            row.IsChecked = check;
+        UpdateToolbar();
+    }
+
+    // ── Toolbar handlers ─────────────────────────────────────────────────────
+
+    private async void NewBtn_OnClick(object? sender, RoutedEventArgs e)
+    {
+        if (PackageBundlesLoader.Instance.Any() && HasUnsavedChanges)
+        {
+            bool confirmed = await ShowConfirmDialogAsync(
+                CoreTools.Translate("Unsaved changes"),
+                CoreTools.Translate("You have unsaved changes. Do you want to discard them and create a new bundle?"),
+                CoreTools.Translate("Discard and continue"),
+                CoreTools.Translate("Cancel")
+            );
+            if (!confirmed) return;
+        }
+
+        _rowCache.Clear();
+        PackageBundlesLoader.Instance.ClearPackages(emitFinishSignal: true);
+        HasUnsavedChanges = false;
+        StateText.Text = CoreTools.Translate("New bundle created");
+        RefreshRows();
+    }
+
+    private async void OpenBtn_OnClick(object? sender, RoutedEventArgs e)
+    {
+        if (PackageBundlesLoader.Instance.Any() && HasUnsavedChanges)
+        {
+            bool confirmed = await ShowConfirmDialogAsync(
+                CoreTools.Translate("Unsaved changes"),
+                CoreTools.Translate("You have unsaved changes. Do you want to discard them and open a bundle?"),
+                CoreTools.Translate("Discard and open"),
+                CoreTools.Translate("Cancel")
+            );
+            if (!confirmed) return;
+        }
+
+        var topLevel = global::Avalonia.Controls.TopLevel.GetTopLevel(this);
+        if (topLevel is null) return;
+
+        var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+        {
+            Title = CoreTools.Translate("Open package bundle"),
+            AllowMultiple = false,
+            FileTypeFilter =
+            [
+                new FilePickerFileType("UniGetUI Bundle (*.ubundle)") { Patterns = ["*.ubundle"] },
+                new FilePickerFileType("JSON (*.json)")               { Patterns = ["*.json"]    },
+                new FilePickerFileType("YAML (*.yaml)")               { Patterns = ["*.yaml"]    },
+                new FilePickerFileType("XML  (*.xml)")                { Patterns = ["*.xml"]     },
+            ],
+        });
+
+        if (files.Count == 0) return;
+        await OpenFromFileAsync(files[0].Path.LocalPath);
+    }
+
+    private async Task OpenFromFileAsync(string filePath)
+    {
+        StateText.Text = CoreTools.Translate("Loading packages, please wait...");
+        try
+        {
+            string ext = filePath.Split('.')[^1].ToLowerInvariant();
+            BundleFormatType format = ext switch
+            {
+                "yaml"    => BundleFormatType.YAML,
+                "xml"     => BundleFormatType.XML,
+                "json"    => BundleFormatType.JSON,
+                _         => BundleFormatType.UBUNDLE,
+            };
+
+            string content = await File.ReadAllTextAsync(filePath);
+            await AddFromBundleStringAsync(content, format);
+            HasUnsavedChanges = false;
+            StateText.Text = CoreTools.Translate("{0} packages loaded from bundle", PackageBundlesLoader.Instance.Packages.Count);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error("Failed to open bundle file");
+            Logger.Error(ex);
+            StateText.Text = CoreTools.Translate("Could not open bundle: {0}", ex.Message);
+        }
+    }
+
+    private async void SaveBtn_OnClick(object? sender, RoutedEventArgs e)
+    {
+        var topLevel = global::Avalonia.Controls.TopLevel.GetTopLevel(this);
+        if (topLevel is null) return;
+
+        var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+        {
+            Title           = CoreTools.Translate("Save package bundle"),
+            SuggestedFileName = CoreTools.Translate("Package bundle"),
+            FileTypeChoices =
+            [
+                new FilePickerFileType("UniGetUI Bundle (*.ubundle)") { Patterns = ["*.ubundle"] },
+                new FilePickerFileType("JSON (*.json)")               { Patterns = ["*.json"]    },
+            ],
+        });
+
+        if (file is null) return;
+
+        StateText.Text = CoreTools.Translate("Saving packages, please wait...");
+        try
+        {
+            string serialized = await CreateBundleStringAsync(PackageBundlesLoader.Instance.Packages);
+            string path = file.Path.LocalPath;
+            await File.WriteAllTextAsync(path, serialized);
+            HasUnsavedChanges = false;
+            StateText.Text = CoreTools.Translate("Bundle saved to {0}", path);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error("Failed to save bundle file");
+            Logger.Error(ex);
+            StateText.Text = CoreTools.Translate("Could not save bundle: {0}", ex.Message);
+        }
+    }
+
+    private async void InstallBtn_OnClick(object? sender, RoutedEventArgs e)
+    {
+        var checkedPackages = _visibleRows
+            .Where(r => r.IsChecked && r.IsValid)
+            .Select(r => r.Package)
+            .ToList();
+
+        if (checkedPackages.Count == 0)
+        {
+            StateText.Text = CoreTools.Translate("No valid packages selected for installation");
+            return;
+        }
+
+        StateText.Text = CoreTools.Translate("Preparing packages, please wait...");
+        var toInstall = new List<Package>();
+
+        foreach (var pkg in checkedPackages)
+        {
+            if (pkg is ImportedPackage imported)
+            {
+                try
+                {
+                    toInstall.Add(await imported.RegisterAndGetPackageAsync());
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error($"Failed to register bundle package {imported.Id}");
+                    Logger.Error(ex);
+                }
+            }
+        }
+
+        if (toInstall.Count == 0)
+        {
+            StateText.Text = CoreTools.Translate("No packages could be prepared for installation");
+            return;
+        }
+
+        StateText.Text = CoreTools.Translate("{0} packages queued for installation", toInstall.Count);
+
+        foreach (var package in toInstall)
+        {
+            try
+            {
+                var options = await InstallOptionsFactory.LoadApplicableAsync(package);
+                var op = new InstallPackageOperation(package, options);
+                _lastOperation = op;
+                ViewOutputBtn.IsVisible = true;
+                AvaloniaOperationRegistry.Add(op);
+                _ = op.MainThread();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"Failed to queue installation of {package.Id}");
+                Logger.Error(ex);
+            }
+        }
+    }
+
+    private async void BundleViewOutputButton_OnClick(object? sender, RoutedEventArgs e)
+    {
+        if (_lastOperation is null) return;
+        var window = new OperationLogWindow(_lastOperation);
+        if (VisualRoot is Window parentWindow)
+            await window.ShowDialog(parentWindow);
+        else
+            window.Show();
+    }
+
+    private void RemoveBtn_OnClick(object? sender, RoutedEventArgs e)
+    {
+        var checkedPackages = _visibleRows
+            .Where(r => r.IsChecked)
+            .Select(r => r.Package)
+            .ToList();
+
+        if (checkedPackages.Count > 0)
+        {
+            foreach (var pkg in checkedPackages)
+                _rowCache.Remove(pkg);
+            PackageBundlesLoader.Instance.RemoveRange(checkedPackages);
+            HasUnsavedChanges = true;
+            return;
+        }
+
+        // Fall back to selected row
+        if (_selectedRow is not null)
+        {
+            _rowCache.Remove(_selectedRow.Package);
+            PackageBundlesLoader.Instance.RemoveRange([_selectedRow.Package]);
+            _selectedRow = null;
+            HasUnsavedChanges = true;
+        }
+    }
+
+    private async void DetailsBtn_OnClick(object? sender, RoutedEventArgs e)
+    {
+        if (_selectedRow is null) return;
+        var pkg = _selectedRow.Package;
+        if (pkg.Source.IsVirtualManager)
+        {
+            StateText.Text = CoreTools.Translate("This package cannot show details");
+            return;
+        }
+        var window = new PackageDetailsWindow(pkg, PackagePageMode.None);
+        if (VisualRoot is Window parentWindow)
+            await window.ShowDialog(parentWindow);
+        else
+            window.Show();
+    }
+
+    private async void ShareBtn_OnClick(object? sender, RoutedEventArgs e)
+    {
+        if (_selectedRow is null) return;
+        var package = _selectedRow.Package;
+        if (package.Source.IsVirtualManager)
+        {
+            StateText.Text = CoreTools.Translate("This package cannot be shared");
+            return;
+        }
+        var url = "https://marticliment.com/unigetui/share?"
+            + "name="        + Uri.EscapeDataString(package.Name)
+            + "&id="         + Uri.EscapeDataString(package.Id)
+            + "&sourceName=" + Uri.EscapeDataString(package.Source.Name)
+            + "&managerName="+ Uri.EscapeDataString(package.Manager.DisplayName);
+        var clipboard = global::Avalonia.Controls.TopLevel.GetTopLevel(this)?.Clipboard;
+        if (clipboard is not null)
+        {
+            await clipboard.SetTextAsync(url);
+            StateText.Text = CoreTools.Translate("Share link copied to clipboard");
+        }
+    }
+
+    // ── Bundle serialization helpers ─────────────────────────────────────────
+
+    internal static async Task<string> CreateBundleStringAsync(IReadOnlyList<IPackage> packages)
+    {
+        var bundle = new SerializableBundle();
+        var sorted = packages.ToList();
+        sorted.Sort((a, b) =>
+        {
+            int c = string.Compare(a.Id, b.Id, StringComparison.Ordinal);
+            return c != 0 ? c : string.Compare(a.Name, b.Name, StringComparison.Ordinal);
+        });
+
+        foreach (var pkg in sorted)
+        {
+            if (pkg is Package && !pkg.Source.IsVirtualManager)
+                bundle.packages.Add(await pkg.AsSerializableAsync());
+            else
+                bundle.incompatible_packages.Add(pkg.AsSerializable_Incompatible());
+        }
+
+        return bundle.AsJsonString();
+    }
+
+    private async Task AddFromBundleStringAsync(string content, BundleFormatType format)
+    {
+        if (format is BundleFormatType.YAML)
+            content = await SerializationHelpers.YAML_to_JSON(content);
+
+        if (format is BundleFormatType.XML)
+            content = await SerializationHelpers.XML_to_JSON(content);
+
+        var data = await Task.Run(() =>
+            new SerializableBundle(
+                JsonNode.Parse(content) ?? throw new JsonException("Could not parse JSON")
+            )
+        );
+
+        bool allowCLI     = SecureSettings.Get(SecureSettings.K.AllowCLIArguments)
+                         && SecureSettings.Get(SecureSettings.K.AllowImportingCLIArguments);
+        bool allowPrePost = SecureSettings.Get(SecureSettings.K.AllowPrePostOpCommand)
+                         && SecureSettings.Get(SecureSettings.K.AllowImportPrePostOpCommands);
+
+        var packages = new List<IPackage>();
+        foreach (var pkg in data.packages)
+        {
+            var opts = pkg.InstallationOptions;
+            if (!allowCLI)
+            {
+                opts.CustomParameters_Install.Clear();
+                opts.CustomParameters_Update.Clear();
+                opts.CustomParameters_Uninstall.Clear();
+            }
+            if (!allowPrePost)
+            {
+                opts.PreInstallCommand   = "";
+                opts.PostInstallCommand  = "";
+                opts.PreUpdateCommand    = "";
+                opts.PostUpdateCommand   = "";
+                opts.PreUninstallCommand = "";
+                opts.PostUninstallCommand = "";
+            }
+            pkg.InstallationOptions = opts;
+            packages.Add(DeserializePackage(pkg));
+        }
+
+        foreach (var inc in data.incompatible_packages)
+            packages.Add(DeserializeIncompatiblePackage(inc));
+
+        _rowCache.Clear();
+        PackageBundlesLoader.Instance.ClearPackages(emitFinishSignal: false);
+        await PackageBundlesLoader.Instance.AddPackagesAsync(packages);
+    }
+
+    private static IPackage DeserializePackage(SerializablePackage raw)
+    {
+        IPackageManager? manager = PackageEngine.PEInterface.Managers
+            .FirstOrDefault(m => m.Name == raw.ManagerName || m.DisplayName == raw.ManagerName);
+
+        IManagerSource? source = null;
+        if (manager?.Capabilities.SupportsCustomSources == true)
+        {
+            string sourceName = raw.Source.Contains(": ")
+                ? raw.Source.Split(": ")[^1]
+                : raw.Source;
+            source = manager.SourcesHelper?.Factory.GetSourceIfExists(sourceName);
+        }
+        else
+        {
+            source = manager?.DefaultSource;
+        }
+
+        if (manager is null || source is null)
+            return DeserializeIncompatiblePackage(raw.GetInvalidEquivalent());
+
+        return new ImportedPackage(raw, manager, source);
+    }
+
+    private static IPackage DeserializeIncompatiblePackage(SerializableIncompatiblePackage raw)
+    {
+        return new InvalidImportedPackage(raw, NullSource.Instance);
+    }
+
+    // ── Confirm dialog helper ─────────────────────────────────────────────────
+
+    private async Task<bool> ShowConfirmDialogAsync(
+        string title,
+        string message,
+        string confirmLabel,
+        string cancelLabel)
+    {
+        if (VisualRoot is not Window parentWindow)
+            return true;
+
+        var dialog = new Window
+        {
+            Title  = title,
+            Width  = 460,
+            Height = 200,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            CanResize = false,
+        };
+
+        bool result = false;
+        var confirmBtn = new Button { Content = confirmLabel };
+        var cancelBtn  = new Button { Content = cancelLabel  };
+        confirmBtn.Click += (_, _) => { result = true;  dialog.Close(); };
+        cancelBtn.Click  += (_, _) => { result = false; dialog.Close(); };
+
+        dialog.Content = new StackPanel
+        {
+            Margin  = new global::Avalonia.Thickness(24),
+            Spacing = 16,
+            Children =
+            {
+                new TextBlock { Text = message, TextWrapping = global::Avalonia.Media.TextWrapping.Wrap },
+                new StackPanel
+                {
+                    Orientation = global::Avalonia.Layout.Orientation.Horizontal,
+                    Spacing = 12,
+                    HorizontalAlignment = global::Avalonia.Layout.HorizontalAlignment.Right,
+                    Children = { confirmBtn, cancelBtn },
+                },
+            },
+        };
+
+        await dialog.ShowDialog(parentWindow);
+        return result;
+    }
+
+    // ── Helpers ──────────────────────────────────────────────────────────────
+
+    private void InitializeComponent()
+    {
+        AvaloniaXamlLoader.Load(this);
+    }
+
+    private T GetControl<T>(string name) where T : Control
+    {
+        return this.FindControl<T>(name)
+            ?? throw new InvalidOperationException($"Control '{name}' not found.");
+    }
+}

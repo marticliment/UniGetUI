@@ -27,6 +27,26 @@
     <Setter Property="CornerRadius" Value="999" />
   </Style>
 
+  <Style Selector="Border.surface-card.warning-panel">
+    <Setter Property="Background" Value="#3A2E14" />
+    <Setter Property="BorderBrush" Value="#7A5D20" />
+  </Style>
+
+  <Style Selector="Border.surface-card.success-panel">
+    <Setter Property="Background" Value="#11311F" />
+    <Setter Property="BorderBrush" Value="#295C3D" />
+  </Style>
+
+  <Style Selector="Border.surface-card.danger-panel">
+    <Setter Property="Background" Value="#402028" />
+    <Setter Property="BorderBrush" Value="#8A3E4E" />
+  </Style>
+
+  <Style Selector="Border.surface-card.info-panel">
+    <Setter Property="Background" Value="#1E2940" />
+    <Setter Property="BorderBrush" Value="#35588D" />
+  </Style>
+
   <Style Selector="Button.nav">
     <Setter Property="BorderBrush" Value="#00000000" />
     <Setter Property="BorderThickness" Value="0" />
@@ -89,6 +109,67 @@
     <Setter Property="HorizontalAlignment" Value="Right" />
   </Style>
 
+  <Style Selector="Button.settings-tile">
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="BorderBrush" Value="#16000000" />
+    <Setter Property="Background" Value="#06000000" />
+    <Setter Property="Padding" Value="18" />
+    <Setter Property="CornerRadius" Value="16" />
+    <Setter Property="MinHeight" Value="92" />
+  </Style>
+
+  <Style Selector="Button.settings-tile:pointerover">
+    <Setter Property="Background" Value="#0C000000" />
+    <Setter Property="BorderBrush" Value="#22000000" />
+  </Style>
+
+  <Style Selector="Button.settings-tile:pressed">
+    <Setter Property="Background" Value="#12000000" />
+  </Style>
+
+  <Style Selector="Button.manager-row-button">
+    <Setter Property="Background" Value="#00000000" />
+    <Setter Property="BorderBrush" Value="#00000000" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Padding" Value="0" />
+  </Style>
+
+  <Style Selector="Button.manager-row-button:pointerover">
+    <Setter Property="Opacity" Value="1" />
+  </Style>
+
+  <Style Selector="Button.manager-row-button /template/ ContentPresenter">
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+  </Style>
+
+  <Style Selector="Border.manager-avatar">
+    <Setter Property="CornerRadius" Value="14" />
+  </Style>
+
+  <Style Selector="Border.manager-status.ready">
+    <Setter Property="Background" Value="#11311F" />
+    <Setter Property="BorderBrush" Value="#295C3D" />
+  </Style>
+
+  <Style Selector="Border.manager-status.disabled">
+    <Setter Property="Background" Value="#3A2E14" />
+    <Setter Property="BorderBrush" Value="#7A5D20" />
+  </Style>
+
+  <Style Selector="Border.manager-status.missing">
+    <Setter Property="Background" Value="#402028" />
+    <Setter Property="BorderBrush" Value="#8A3E4E" />
+  </Style>
+
+  <Style Selector="Border.manager-status.loading">
+    <Setter Property="Background" Value="#1E2940" />
+    <Setter Property="BorderBrush" Value="#35588D" />
+  </Style>
+
+  <Style Selector="TextBlock.manager-path">
+    <Setter Property="MaxWidth" Value="520" />
+  </Style>
+
   <Style Selector="TextBlock.data-header">
     <Setter Property="FontSize" Value="12" />
     <Setter Property="FontWeight" Value="SemiBold" />
@@ -112,5 +193,46 @@
     <Setter Property="Padding" Value="0,10" />
     <Setter Property="BorderBrush" Value="#12000000" />
     <Setter Property="BorderThickness" Value="0,0,0,1" />
+    <Setter Property="Cursor" Value="Hand" />
+  </Style>
+
+  <Style Selector="Border.data-row.selected">
+    <Setter Property="Background" Value="#18007FD4" />
+    <Setter Property="BorderBrush" Value="#40007FD4" />
+    <Setter Property="CornerRadius" Value="6" />
+  </Style>
+
+  <Style Selector="TextBlock.mono-data">
+    <Setter Property="FontFamily" Value="Consolas, Cascadia Mono, Courier New" />
+  </Style>
+
+  <Style Selector="Button.sort-header">
+    <Setter Property="Background" Value="#00000000" />
+    <Setter Property="BorderBrush" Value="#00000000" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="HorizontalAlignment" Value="Stretch" />
+    <Setter Property="HorizontalContentAlignment" Value="Left" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+    <Setter Property="FontSize" Value="12" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="Opacity" Value="0.7" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="MinHeight" Value="0" />
+    <Setter Property="MinWidth" Value="0" />
+  </Style>
+
+  <Style Selector="Button.sort-header:pointerover">
+    <Setter Property="Background" Value="#00000000" />
+    <Setter Property="BorderBrush" Value="#00000000" />
+    <Setter Property="Opacity" Value="1.0" />
+  </Style>
+
+  <Style Selector="Button.sort-header:pressed">
+    <Setter Property="Background" Value="#00000000" />
+  </Style>
+
+  <Style Selector="Button.sort-header.active">
+    <Setter Property="Opacity" Value="1.0" />
   </Style>
 </Styles>

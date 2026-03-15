@@ -10,7 +10,8 @@
             BorderBrush="#7A3646"
             CornerRadius="24">
       <StackPanel Spacing="14">
-        <TextBlock FontSize="30"
+        <TextBlock x:Name="ErrorHeadingBlock"
+                   FontSize="30"
                    FontWeight="Bold"
                    Text="Shell Error" />
         <TextBlock x:Name="ErrorTitleBlock"

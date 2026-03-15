@@ -22,6 +22,7 @@
                      Classes="hero-title" />
           <TextBlock FontSize="18"
                      Opacity="0.85"
+                     x:Name="TaglineBlock"
                      Text="Package management made easy" />
           <StackPanel Margin="0,18,0,0"
                       Orientation="Horizontal"
@@ -29,7 +30,8 @@
             <ProgressBar Width="220"
                          IsIndeterminate="True" />
             <TextBlock VerticalAlignment="Center"
-                       Text="Preparing Avalonia shell" />
+                       x:Name="StatusBlock"
+                       Text="Preparing..." />
           </StackPanel>
         </StackPanel>
       </Grid>

@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using UniGetUI.Avalonia.Infrastructure;
+using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 
@@ -11,6 +12,8 @@ internal sealed class PackageRowModel : INotifyPropertyChanged, IDisposable
 {
     private readonly PackagePageMode _pageMode;
     private readonly AsyncCommand _primaryActionCommand;
+    private bool _isSelected;
+    private bool _isChecked;
 
     public PackageRowModel(
         IPackage package,
@@ -53,6 +56,28 @@ internal sealed class PackageRowModel : INotifyPropertyChanged, IDisposable
 
     public ICommand PrimaryActionCommand => _primaryActionCommand;
 
+    public bool IsSelected
+    {
+        get => _isSelected;
+        set
+        {
+            if (_isSelected == value) return;
+            _isSelected = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public bool IsChecked
+    {
+        get => _isChecked;
+        set
+        {
+            if (_isChecked == value) return;
+            _isChecked = value;
+            OnPropertyChanged();
+        }
+    }
+
     public string PrimaryActionLabel => GetPrimaryActionLabel();
 
     public bool CanExecutePrimaryAction => CanExecutePrimaryActionInternal();
@@ -73,22 +98,22 @@ internal sealed class PackageRowModel : INotifyPropertyChanged, IDisposable
     {
         return Package.Tag switch
         {
-            PackageTag.OnQueue => "Queued",
+            PackageTag.OnQueue => CoreTools.Translate("Queued"),
             PackageTag.BeingProcessed => _pageMode switch
             {
-                PackagePageMode.Discover => "Installing",
-                PackagePageMode.Updates => "Updating",
-                PackagePageMode.Installed => "Removing",
-                _ => "Working",
+                PackagePageMode.Discover => CoreTools.Translate("Installing"),
+                PackagePageMode.Updates => CoreTools.Translate("Updating"),
+                PackagePageMode.Installed => CoreTools.Translate("Removing"),
+                _ => CoreTools.Translate("Working"),
             },
-            PackageTag.AlreadyInstalled when _pageMode == PackagePageMode.Discover => "Installed",
-            PackageTag.Failed => "Retry",
+            PackageTag.AlreadyInstalled when _pageMode == PackagePageMode.Discover => CoreTools.Translate("Installed"),
+            PackageTag.Failed => CoreTools.Translate("Retry"),
             _ => _pageMode switch
             {
-                PackagePageMode.Discover => "Install",
-                PackagePageMode.Updates => "Update",
-                PackagePageMode.Installed => "Uninstall",
-                _ => "Open",
+                PackagePageMode.Discover => CoreTools.Translate("Install"),
+                PackagePageMode.Updates => CoreTools.Translate("Update"),
+                PackagePageMode.Installed => CoreTools.Translate("Uninstall"),
+                _ => CoreTools.Translate("Open"),
             },
         };
     }

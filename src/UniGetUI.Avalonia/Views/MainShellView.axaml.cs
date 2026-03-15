@@ -1,13 +1,21 @@
+using global::Avalonia;
 using global::Avalonia.Controls;
+using global::Avalonia.Controls.ApplicationLifetimes;
 using global::Avalonia.Input;
 using global::Avalonia.Interactivity;
 using global::Avalonia.Markup.Xaml;
+using global::Avalonia.Threading;
 using global::Avalonia.VisualTree;
+using UniGetUI.Avalonia.Infrastructure;
 using UniGetUI.Avalonia.Models;
+using UniGetUI.Avalonia.Views.Pages.ManagersPages;
 using UniGetUI.Avalonia.Views.Pages;
+using UniGetUI.Avalonia.Views.Pages.SettingsPages;
 using UniGetUI.Core.Data;
+using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
+using UniGetUI.PackageEngine.PackageLoader;
 
 namespace UniGetUI.Avalonia.Views;
 
@@ -52,6 +60,10 @@ public partial class MainShellView : UserControl
 
     private TextBlock HelpNavLabel => GetControl<TextBlock>("HelpLabel");
 
+    private Button LogsNavButton => GetControl<Button>("LogsButton");
+
+    private TextBlock LogsNavLabel => GetControl<TextBlock>("LogsLabel");
+
     private Button BackNavigationButton => GetControl<Button>("BackButton");
 
     private TextBlock CurrentPageTitleText => GetControl<TextBlock>("CurrentPageTitleBlock");
@@ -66,6 +78,29 @@ public partial class MainShellView : UserControl
 
     private ContentControl PageContentHost => GetControl<ContentControl>("PageHost");
 
+    private Border UpdatesBadgeHost => GetControl<Border>("UpdatesBadge");
+
+    private TextBlock UpdatesBadgeCountText => GetControl<TextBlock>("UpdatesBadgeCount");
+
+    private Border UpdateBannerBorderHost => GetControl<Border>("UpdateBannerBorder");
+
+    private TextBlock UpdateBannerTextBlock => GetControl<TextBlock>("UpdateBannerText");
+
+    private ItemsControl OperationsListControl => GetControl<ItemsControl>("OperationListControl");
+
+    private Border OperationsPanelHost => GetControl<Border>("OperationsPanelBorder");
+
+    // Ctrl+Tab / Ctrl+Shift+Tab cycle order (excludes log-like extra pages)
+    private static readonly ShellPageType[] _cyclePages =
+    [
+        ShellPageType.Discover,
+        ShellPageType.Updates,
+        ShellPageType.Installed,
+        ShellPageType.Bundles,
+        ShellPageType.Settings,
+        ShellPageType.Managers,
+    ];
+
     public MainShellView()
     {
         InitializeComponent();
@@ -75,7 +110,15 @@ public partial class MainShellView : UserControl
         RegisterNavigationButtons();
         ApplyNavigationWidth();
         NavigateTo(GetDefaultPage(), false);
-        AttachedToVisualTree += (_, _) => UpdateWindowButtons();
+        AttachedToVisualTree += (_, _) =>
+        {
+            UpdateWindowButtons();
+            AttachKeyboardShortcuts();
+            AttachUpdatesBadge();
+            AttachOperationsPanel();
+            AttachUpdateBanner();
+            AttachStartupChecks();
+        };
     }
 
     private void ApplyLocalizedShellText()
@@ -87,6 +130,8 @@ public partial class MainShellView : UserControl
         SettingsNavLabel.Text = CoreTools.Translate("Settings");
         ManagersNavLabel.Text = CoreTools.Translate("Package Managers");
         HelpNavLabel.Text = CoreTools.Translate("Help");
+        LogsNavLabel.Text = CoreTools.Translate("Logs");
+        GetControl<TextBlock>("ActiveOperationsHeaderBlock").Text = CoreTools.Translate("Active operations");
     }
 
     private void RegisterNavigationButtons()
@@ -98,6 +143,7 @@ public partial class MainShellView : UserControl
         _navButtons[ShellPageType.Settings] = (SettingsNavButton, SettingsNavLabel);
         _navButtons[ShellPageType.Managers] = (ManagersNavButton, ManagersNavLabel);
         _navButtons[ShellPageType.Help] = (HelpNavButton, HelpNavLabel);
+        _navButtons[ShellPageType.Logs] = (LogsNavButton, LogsNavLabel);
     }
 
     private static string BuildShellSubtitle()
@@ -112,8 +158,6 @@ public partial class MainShellView : UserControl
 #if DEBUG
         labels.Add(CoreTools.Translate("DEBUG BUILD"));
 #endif
-
-    labels.Add(CoreTools.Translate("Avalonia preview"));
 
         return string.Join("  •  ", labels);
     }
@@ -142,7 +186,20 @@ public partial class MainShellView : UserControl
             _history.Add(_currentPage);
         }
 
-        var page = GetPage(pageType);
+        IShellPage page;
+
+        try
+        {
+            page = GetPage(pageType);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error($"Failed to create shell page {pageType}");
+            Logger.Error(ex);
+            ShowNavigationError(pageType, ex);
+            return;
+        }
+
         _currentPage = pageType;
         PageContentHost.Content = (Control)page;
         CurrentPageTitleText.Text = page.Title;
@@ -158,6 +215,23 @@ public partial class MainShellView : UserControl
 
         page.UpdateSearchQuery(GlobalSearchTextBox.Text ?? string.Empty);
 
+        BackNavigationButton.IsVisible = _history.Count > 0;
+        UpdateNavigationSelection();
+    }
+
+    private void ShowNavigationError(ShellPageType pageType, Exception ex)
+    {
+        _currentPage = pageType;
+        PageContentHost.Content = new ErrorView(
+            CoreTools.Translate("The requested page could not be loaded"),
+            ex.Message
+        );
+        CurrentPageTitleText.Text = CoreTools.Translate("Navigation error");
+        CurrentPageSubtitleText.Text = CoreTools.Translate("The selected shell page failed during construction.");
+        GlobalSearchHost.IsVisible = false;
+        GlobalSearchTextBox.IsEnabled = false;
+        GlobalSearchTextBox.Watermark = string.Empty;
+        GlobalSearchTextBox.Text = string.Empty;
         BackNavigationButton.IsVisible = _history.Count > 0;
         UpdateNavigationSelection();
     }
@@ -207,30 +281,11 @@ public partial class MainShellView : UserControl
                 filtersTitle: CoreTools.Translate("Search mode"),
                 pageMode: PackagePageMode.Installed
             ),
-            ShellPageType.Bundles => new SimplePageView(
-                title: CoreTools.Translate("Package Bundles"),
-                subtitle: CoreTools.Translate("Bundle editor scaffold"),
-                lead: CoreTools.Translate("Bundle editing is reserved for a later implementation step."),
-                description: CoreTools.Translate("The package data loaders now drive Discover, Updates, and Installed. Package Bundles remain a separate workflow that still needs its own editor surface.")
-            ),
-            ShellPageType.Settings => new SimplePageView(
-                CoreTools.Translate("Settings"),
-                CoreTools.Translate("Avalonia settings shell"),
-                CoreTools.Translate("The Windows settings experience has not been ported yet."),
-                CoreTools.Translate("This placeholder keeps the shell layout and navigation structure in place while the settings pages are split into reusable Avalonia sections.")
-            ),
-            ShellPageType.Managers => new SimplePageView(
-                CoreTools.Translate("Package Managers"),
-                CoreTools.Translate("Manager configuration shell"),
-                CoreTools.Translate("Package manager configuration is not ported yet."),
-                CoreTools.Translate("The next layer here is a source and capability matrix built from the existing package-engine metadata.")
-            ),
-            ShellPageType.Help => new SimplePageView(
-                CoreTools.Translate("Help"),
-                CoreTools.Translate("Help and diagnostics shell"),
-                CoreTools.Translate("Help content is pending porting."),
-                CoreTools.Translate("The main goal of this first Avalonia slice is shell parity, layout parity, and a reusable package-page scaffold.")
-            ),
+            ShellPageType.Bundles => new BundlesPageView(),
+            ShellPageType.Settings => new SettingsPageView(),
+            ShellPageType.Managers => new ManagersPageView(),
+            ShellPageType.Help => new HelpPageView(),
+            ShellPageType.Logs => new LogsPageView(),
             _ => throw new InvalidOperationException($"Unsupported page type {pageType}"),
         };
 
@@ -257,6 +312,14 @@ public partial class MainShellView : UserControl
 
         ShellSubtitleText.IsVisible = _navigationExpanded;
     }
+
+    public void SetNavigationCollapsedPreference(bool collapseNavigation)
+    {
+        _navigationExpanded = !collapseNavigation;
+        ApplyNavigationWidth();
+    }
+
+    internal void OpenPage(ShellPageType pageType) => NavigateTo(pageType);
 
     private void ToggleNavigationButton_OnClick(object? sender, RoutedEventArgs e)
     {
@@ -376,6 +439,161 @@ public partial class MainShellView : UserControl
     private void ManagersButton_OnClick(object? sender, RoutedEventArgs e) => NavigateTo(ShellPageType.Managers);
 
     private void HelpButton_OnClick(object? sender, RoutedEventArgs e) => NavigateTo(ShellPageType.Help);
+
+    private void LogsButton_OnClick(object? sender, RoutedEventArgs e) => NavigateTo(ShellPageType.Logs);
+
+    // ── Keyboard shortcuts ────────────────────────────────────────────────────
+
+    private void AttachKeyboardShortcuts()
+    {
+        if (TopLevel.GetTopLevel(this) is not { } topLevel) return;
+        topLevel.AddHandler(InputElement.KeyDownEvent, OnWindowKeyDown, RoutingStrategies.Tunnel);
+    }
+
+    private void OnWindowKeyDown(object? sender, KeyEventArgs e)
+    {
+        bool ctrl  = e.KeyModifiers.HasFlag(KeyModifiers.Control);
+        bool shift = e.KeyModifiers.HasFlag(KeyModifiers.Shift);
+
+        if (ctrl && e.Key == Key.Tab)
+        {
+            e.Handled = true;
+            NavigateCycle(shift ? -1 : +1);
+        }
+        else if (e.Key == Key.F1 && !ctrl && !shift)
+        {
+            e.Handled = true;
+            NavigateTo(ShellPageType.Help);
+        }
+        else if (ctrl && !shift && (e.Key == Key.Q || e.Key == Key.W))
+        {
+            GetHostWindow()?.Close();
+            e.Handled = true;
+        }
+        else if (!ctrl && !shift && e.Key == Key.F5 || ctrl && !shift && e.Key == Key.R)
+        {
+            // Reload: re-create the current page by evicting the cache
+            if (_pageCache.Remove(_currentPage))
+            {
+                var current = _currentPage;
+                _currentPage = default;
+                NavigateTo(current, false);
+            }
+            e.Handled = true;
+        }
+        else if (ctrl && !shift && e.Key == Key.F)
+        {
+            if (GlobalSearchHost.IsVisible)
+            {
+                GlobalSearchHost.Focus();
+                e.Handled = true;
+            }
+        }
+    }
+
+    private void NavigateCycle(int direction)
+    {
+        int idx = Array.IndexOf(_cyclePages, _currentPage);
+        if (idx < 0) idx = 0;
+        int next = ((idx + direction) % _cyclePages.Length + _cyclePages.Length) % _cyclePages.Length;
+        NavigateTo(_cyclePages[next]);
+    }
+
+    // ── Updates badge ─────────────────────────────────────────────────────────
+
+    private void AttachUpdatesBadge()
+    {
+        UpgradablePackagesLoader.Instance.PackagesChanged += OnUpgradablePackagesChanged;
+        OnUpgradablePackagesChanged(null, default!);
+    }
+
+    private void OnUpgradablePackagesChanged(object? sender, PackagesChangedEvent e)
+    {
+        Dispatcher.UIThread.Post(() =>
+        {
+            int count = UpgradablePackagesLoader.Instance.Packages.Count;
+            UpdatesBadgeHost.IsVisible     = count > 0;
+            UpdatesBadgeCountText.Text     = count > 99 ? "99+" : count.ToString();
+
+            // Refresh tray tooltip whenever the update count changes
+            if (Application.Current?.ApplicationLifetime
+                    is IClassicDesktopStyleApplicationLifetime { MainWindow: UniGetUI.Avalonia.MainWindow mw })
+                mw.UpdateSystemTrayStatus();
+        });
+    }
+
+    // ── Operations panel ──────────────────────────────────────────────────────
+
+    private void AttachOperationsPanel()
+    {
+        OperationsListControl.ItemsSource = AvaloniaOperationRegistry.Operations;
+        AvaloniaOperationRegistry.Operations.CollectionChanged += (_, _) =>
+            Dispatcher.UIThread.Post(UpdateOperationsPanelVisibility);
+        UpdateOperationsPanelVisibility();
+    }
+
+    private void UpdateOperationsPanelVisibility()
+    {
+        OperationsPanelHost.IsVisible = AvaloniaOperationRegistry.Operations.Count > 0;
+    }
+
+    // ── Auto-update banner ────────────────────────────────────────────────────
+
+    private void AttachUpdateBanner()
+    {
+        AvaloniaAutoUpdater.UpdateAvailable += OnUpdateAvailable;
+    }
+
+    private void OnUpdateAvailable(string versionName)
+    {
+        Dispatcher.UIThread.Post(() =>
+        {
+            UpdateBannerTextBlock.Text = CoreTools.Translate(
+                "UniGetUI {0} is ready to be installed. Click \"Update now\" to restart and update.",
+                versionName
+            );
+            UpdateBannerBorderHost.IsVisible = true;
+        });
+    }
+
+    private void UpdateBannerButton_OnClick(object? sender, RoutedEventArgs e)
+    {
+        AvaloniaAutoUpdater.TriggerInstall();
+        UpdateBannerBorderHost.IsVisible = false;
+    }
+
+    private void UpdateBannerDismissButton_OnClick(object? sender, RoutedEventArgs e)
+    {
+        UpdateBannerBorderHost.IsVisible = false;
+    }
+
+    // ── Startup checks ────────────────────────────────────────────────────────
+
+    private void AttachStartupChecks()
+    {
+        if (CoreTools.IsAdministrator() && !Settings.Get(Settings.K.AlreadyWarnedAboutAdmin))
+        {
+            Settings.Set(Settings.K.AlreadyWarnedAboutAdmin, true);
+            _ = ShowStartupDialogAsync(new AdminWarningWindow());
+        }
+
+        if (!Settings.Get(Settings.K.ShownTelemetryBanner))
+        {
+            _ = ShowStartupDialogAsync(new TelemetryConsentWindow());
+        }
+    }
+
+    private async Task ShowStartupDialogAsync(Window dialog)
+    {
+        if (GetHostWindow() is { } owner)
+        {
+            await dialog.ShowDialog(owner);
+        }
+        else
+        {
+            dialog.Show();
+        }
+    }
 
     private void InitializeComponent()
     {

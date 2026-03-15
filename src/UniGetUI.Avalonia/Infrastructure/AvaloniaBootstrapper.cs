@@ -20,8 +20,7 @@ internal static class AvaloniaBootstrapper
 
         await Task.WhenAll(
             InitializeSharedServicesAsync(),
-            InitializePackageEngineAsync(),
-            SimulateShellWarmupAsync()
+            InitializePackageEngineAsync()
         );
 
         Logger.Info("Avalonia shell bootstrap completed");
@@ -30,6 +29,13 @@ internal static class AvaloniaBootstrapper
     private static Task InitializeSharedServicesAsync()
     {
         CoreTools.ReloadLanguageEngineInstance();
+        MainWindow.ApplyProxyVariableToProcess();
+        _ = Task.Run(AvaloniaAutoUpdater.UpdateCheckLoopAsync)
+            .ContinueWith(
+                t => Logger.Error(t.Exception!),
+                CancellationToken.None,
+                TaskContinuationOptions.OnlyOnFaulted,
+                TaskScheduler.Default);
         return Task.CompletedTask;
     }
 
@@ -38,12 +44,12 @@ internal static class AvaloniaBootstrapper
         return Task.Run(() =>
         {
             PEInterface.LoadLoaders();
-            _ = Task.Run(PEInterface.LoadManagers);
+            _ = Task.Run(PEInterface.LoadManagers)
+                .ContinueWith(
+                    t => Logger.Error(t.Exception!),
+                    CancellationToken.None,
+                    TaskContinuationOptions.OnlyOnFaulted,
+                    TaskScheduler.Default);
         });
-    }
-
-    private static Task SimulateShellWarmupAsync()
-    {
-        return Task.Delay(150);
     }
 }

@@ -44,7 +44,7 @@
                 <Border Grid.Row="1"
                                                 Padding="12"
                                                 Classes="surface-card">
-                        <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,*,Auto,Auto,Auto"
+                        <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,*,Auto,Auto,Auto,Auto"
                                                 ColumnSpacing="6">
                                 <Button x:Name="PrimaryActionButton"
                                                                 Classes="toolbar-primary accent"
@@ -71,28 +71,33 @@
                                                                Opacity="0.76"
                                                                TextTrimming="CharacterEllipsis" />
 
-                                <StackPanel Grid.Column="5"
-                                                                                Orientation="Horizontal"
-                                                                                Spacing="4">
-                                        <Button Width="36"
-                                                                        Height="36"
-                                                                        Padding="0"
-                                                                        Classes="icon-shell"
-                                                                        IsEnabled="False"
-                                                                        Content="☰" />
-                                        <Button Width="36"
-                                                                        Height="36"
-                                                                        Padding="0"
-                                                                        Classes="icon-shell"
-                                                                        IsEnabled="False"
-                                                                        Content="▦" />
-                                        <Button Width="36"
-                                                                        Height="36"
-                                                                        Padding="0"
-                                                                        Classes="icon-shell"
-                                                                        IsEnabled="False"
-                                                                        Content="⌗" />
-                                </StackPanel>
+                                <Button x:Name="ViewOutputButton"
+                                                                Grid.Column="5"
+                                                                Classes="toolbar-secondary"
+                                                                IsVisible="False"
+                                                                Click="ViewOutputButton_OnClick"
+                                                                Content="View output" />
+
+                                <Button x:Name="ManageIgnoredButton"
+                                                                Grid.Column="7"
+                                                                Classes="toolbar-secondary"
+                                                                IsVisible="False"
+                                                                Click="ManageIgnoredButton_OnClick"
+                                                                Content="Manage ignored" />
+
+                                <Button x:Name="IgnoreSelectedButton"
+                                                                Grid.Column="6"
+                                                                Classes="toolbar-secondary"
+                                                                IsVisible="False"
+                                                                Click="IgnoreSelectedButton_OnClick"
+                                                                Content="Ignore selected" />
+
+                                <Button x:Name="ExportSelectionButton"
+                                                                Grid.Column="8"
+                                                                Classes="toolbar-secondary"
+                                                                IsVisible="False"
+                                                                Click="ExportSelectionButton_OnClick"
+                                                                Content="Add to bundle" />
                         </Grid>
                 </Border>
 
@@ -103,34 +108,38 @@
                                 <Border Padding="16"
                                                                 Classes="surface-card">
                                         <StackPanel Spacing="12">
-                                                <TextBlock x:Name="SourcesTitleBlock"
-                                                                                         FontSize="18"
-                                                                                         FontWeight="SemiBold"
-                                                                                         Text="Sources" />
+                                                <StackPanel Orientation="Horizontal"
+                                                                                        Spacing="8">
+                                                        <TextBlock x:Name="SourcesTitleBlock"
+                                                                                                 FontSize="18"
+                                                                                                 FontWeight="SemiBold"
+                                                                                                 VerticalAlignment="Center"
+                                                                                                 Text="Sources" />
+                                                        <Button x:Name="ClearSourceFilterButton"
+                                                                                        Classes="toolbar-secondary"
+                                                                                        Padding="6,2"
+                                                                                        FontSize="11"
+                                                                                        IsVisible="False"
+                                                                                        Click="ClearSourceFilterButton_OnClick" />
+                                                </StackPanel>
                                                 <TextBlock x:Name="SourcesDescriptionBlock"
                                                                                          Opacity="0.72"
                                                                                          TextWrapping="Wrap"
-                                                                                         Text="Cross-platform source selection is not wired yet." />
-                                                <Border Padding="12"
-                                                                                Classes="surface-card subtle-panel">
-                                                        <TextBlock x:Name="SourcesEmptyStateBlock"
-                                                                                                 TextWrapping="Wrap"
-                                                                                                 Text="No packages were found" />
-                                                </Border>
-                                        </StackPanel>
-                                </Border>
-
-                                <Border Padding="16"
-                                                                Classes="surface-card">
-                                        <StackPanel Spacing="12">
-                                                <TextBlock x:Name="FiltersSectionTitleBlock"
-                                                                                         FontSize="18"
-                                                                                         FontWeight="SemiBold"
-                                                                                         Text="Filters" />
-                                                <TextBlock x:Name="FiltersSectionDescriptionBlock"
-                                                                                         Opacity="0.72"
+                                                                                         IsVisible="False"
+                                                                                         Text="Click a source to filter." />
+                                                <TextBlock x:Name="SourcesEmptyStateBlock"
+                                                                                         Opacity="0.62"
                                                                                          TextWrapping="Wrap"
-                                                                                         Text="The left pane structure is now in place for sources, search modes, and future package filters." />
+                                                                                         IsVisible="False"
+                                                                                         FontSize="12"
+                                                                                         Text="No packages were found" />
+                                                <ItemsControl x:Name="SourceTogglesItemsControl">
+                                                        <ItemsControl.ItemsPanel>
+                                                                <ItemsPanelTemplate>
+                                                                        <StackPanel Spacing="6" />
+                                                                </ItemsPanelTemplate>
+                                                        </ItemsControl.ItemsPanel>
+                                                </ItemsControl>
                                         </StackPanel>
                                 </Border>
 
@@ -158,31 +167,36 @@
                                                         Classes="surface-card">
                                 <Grid RowDefinitions="Auto,*">
                                         <Grid Margin="16,16,16,8"
-                                                                ColumnDefinitions="2.5*,2.2*,1.1*,1.2*,1.4*,Auto"
+                                                                ColumnDefinitions="36,2.5*,2.2*,1.1*,1.2*,1.4*,Auto"
                                                                 ColumnSpacing="14">
-                                                <TextBlock x:Name="PackageNameHeaderBlock"
-                                                                                         Classes="data-header"
-                                                                                         Text="Package Name" />
-                                                <TextBlock x:Name="PackageIdHeaderBlock"
-                                                                                         Grid.Column="1"
-                                                                                         Classes="data-header"
-                                                                                         Text="Package ID" />
-                                                <TextBlock x:Name="VersionHeaderBlock"
-                                                                                         Grid.Column="2"
-                                                                                         Classes="data-header"
-                                                                                         Text="Version" />
-                                                <TextBlock x:Name="UpgradeColumnBlock"
-                                                                                         Grid.Column="3"
-                                                                                         Classes="data-header"
-                                                                                         Text="New version" />
-                                                <TextBlock x:Name="SourceHeaderBlock"
-                                                                                         Grid.Column="4"
-                                                                                         Classes="data-header"
-                                                                                         Text="Source" />
+                                                <CheckBox x:Name="SelectAllCheckBox"
+                                                                          HorizontalAlignment="Center"
+                                                                          VerticalAlignment="Center"
+                                                                          IsThreeState="True"
+                                                                          Click="SelectAllCheckBox_OnClick" />
+                                                <Button x:Name="PackageNameSortBtn"
+                                                                Grid.Column="1"
+                                                                Classes="sort-header"
+                                                                Click="NameHeader_OnClick" />
+                                                <Button x:Name="PackageIdSortBtn"
+                                                                Grid.Column="2"
+                                                                Classes="sort-header"
+                                                                Click="IdHeader_OnClick" />
+                                                <Button x:Name="VersionSortBtn"
+                                                                Grid.Column="3"
+                                                                Classes="sort-header"
+                                                                Click="VersionHeader_OnClick" />
+                                                <Button x:Name="UpgradeColumnSortBtn"
+                                                                Grid.Column="4"
+                                                                Classes="sort-header"
+                                                                Click="StatusHeader_OnClick" />
+                                                <Button x:Name="SourceSortBtn"
+                                                                Grid.Column="5"
+                                                                Classes="sort-header"
+                                                                Click="SourceHeader_OnClick" />
                                                 <TextBlock x:Name="ActionHeaderBlock"
-                                                                                         Grid.Column="5"
-                                                                                         Classes="data-header"
-                                                                                         Text="Action" />
+                                                                                         Grid.Column="6"
+                                                                                         Classes="data-header" />
                                         </Grid>
 
                                         <Grid Grid.Row="1"
@@ -192,24 +206,31 @@
                                                         <ItemsControl x:Name="PackageRowsItemsControl">
                                                                 <ItemsControl.ItemTemplate>
                                                                         <DataTemplate>
-                                                                                <Border Classes="data-row">
-                                                                                                <Grid ColumnDefinitions="2.5*,2.2*,1.1*,1.2*,1.4*,Auto"
+                                                                                <Border Classes="data-row"
+                                                                                        Classes.selected="{Binding IsSelected}"
+                                                                                        ContextRequested="PackageRow_ContextRequested">
+                                                                                                <Grid ColumnDefinitions="36,2.5*,2.2*,1.1*,1.2*,1.4*,Auto"
                                                                                                                 ColumnSpacing="14">
-                                                                                                <TextBlock Text="{Binding Name}"
-                                                                                                                                         Classes="data-primary" />
+                                                                                                <CheckBox HorizontalAlignment="Center"
+                                                                                                                          VerticalAlignment="Center"
+                                                                                                                          IsChecked="{Binding IsChecked, Mode=TwoWay}"
+                                                                                                                          Click="RowCheckBox_OnClick" />
                                                                                                 <TextBlock Grid.Column="1"
+                                                                                                                                         Text="{Binding Name}"
+                                                                                                                                         Classes="data-primary" />
+                                                                                                <TextBlock Grid.Column="2"
                                                                                                                                          Text="{Binding Id}"
                                                                                                                                          Classes="data-secondary" />
-                                                                                                <TextBlock Grid.Column="2"
+                                                                                                <TextBlock Grid.Column="3"
                                                                                                                                          Text="{Binding Version}"
                                                                                                                                          Classes="data-secondary" />
-                                                                                                <TextBlock Grid.Column="3"
+                                                                                                <TextBlock Grid.Column="4"
                                                                                                                                          Text="{Binding Status}"
                                                                                                                                          Classes="data-secondary" />
-                                                                                                <TextBlock Grid.Column="4"
+                                                                                                <TextBlock Grid.Column="5"
                                                                                                                                          Text="{Binding Source}"
                                                                                                                                          Classes="data-secondary" />
-                                                                                                        <Button Grid.Column="5"
+                                                                                                        <Button Grid.Column="6"
                                                                                                                                 Classes="toolbar-secondary inline-row-action"
                                                                                                                                 Content="{Binding PrimaryActionLabel}"
                                                                                                                                 Command="{Binding PrimaryActionCommand}"

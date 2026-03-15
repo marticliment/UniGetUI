@@ -1,10 +1,13 @@
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using UniGetUI.Core.Tools;
 
 namespace UniGetUI.Avalonia.Views;
 
 public partial class ErrorView : UserControl
 {
+    private TextBlock ErrorHeadingText => GetControl<TextBlock>("ErrorHeadingBlock");
+
     private TextBlock ErrorTitleText => GetControl<TextBlock>("ErrorTitleBlock");
 
     private TextBlock ErrorDescriptionText => GetControl<TextBlock>("ErrorDescriptionBlock");
@@ -17,6 +20,7 @@ public partial class ErrorView : UserControl
     public ErrorView(string title, string description)
     {
         InitializeComponent();
+        ErrorHeadingText.Text = CoreTools.Translate("Shell Error");
         ErrorTitleText.Text = title;
         ErrorDescriptionText.Text = description;
     }

@@ -21,7 +21,7 @@
               <TextBlock x:Name="ShellSubtitleBlock"
                          Opacity="0.68"
                          TextTrimming="CharacterEllipsis"
-                         Text="Avalonia preview" />
+                         Text="" />
             </StackPanel>
             <Button x:Name="ToggleNavigationButton"
                     Grid.Column="1"
@@ -48,12 +48,24 @@
             <Button x:Name="UpdatesButton"
                     Classes="nav"
                     Click="UpdatesButton_OnClick">
-              <Grid ColumnDefinitions="20,*"
+              <Grid ColumnDefinitions="20,*,Auto"
                 ColumnSpacing="10">
                 <TextBlock Text="↻" />
                 <TextBlock x:Name="UpdatesLabel"
                            Grid.Column="1"
                            Text="Software Updates" />
+                <Border x:Name="UpdatesBadge"
+                        Grid.Column="2"
+                        IsVisible="False"
+                        CornerRadius="10"
+                        Padding="5,2"
+                        Background="{DynamicResource SystemAccentColor}">
+                  <TextBlock x:Name="UpdatesBadgeCount"
+                             FontSize="10"
+                             FontWeight="Bold"
+                             Foreground="White"
+                             Text="0" />
+                </Border>
               </Grid>
             </Button>
             <Button x:Name="InstalledButton"
@@ -116,12 +128,23 @@
                          Text="Help" />
             </Grid>
           </Button>
+          <Button x:Name="LogsButton"
+                  Classes="nav"
+                  Click="LogsButton_OnClick">
+            <Grid ColumnDefinitions="20,*"
+              ColumnSpacing="10">
+              <TextBlock Text="📋" />
+              <TextBlock x:Name="LogsLabel"
+                         Grid.Column="1"
+                         Text="Logs" />
+            </Grid>
+          </Button>
         </StackPanel>
       </Grid>
     </Border>
 
     <Grid Grid.Column="1"
-          RowDefinitions="Auto,*">
+          RowDefinitions="Auto,Auto,*,Auto">
       <Border Padding="18,14,18,14"
         Classes="surface-card flat-shell-panel"
         BorderThickness="0,0,0,1"
@@ -145,10 +168,10 @@
               <TextBlock x:Name="CurrentPageTitleBlock"
                          FontSize="24"
                          FontWeight="Bold"
-                         Text="Discover Packages" />
+                         Text="" />
               <TextBlock x:Name="CurrentPageSubtitleBlock"
                          Opacity="0.68"
-                         Text="Cross-platform shell scaffold" />
+                         Text="" />
             </StackPanel>
             <TextBox x:Name="GlobalSearchBox"
                      Grid.Column="1"
@@ -189,9 +212,69 @@
         </Grid>
       </Border>
 
+      <!-- Auto-update banner (shown when a new installer is ready) -->
+      <Border x:Name="UpdateBannerBorder"
+              Grid.Row="1"
+              IsVisible="False"
+              Padding="16,10"
+              Background="{DynamicResource SystemAccentColor}">
+        <Grid ColumnDefinitions="*,Auto,Auto"
+              ColumnSpacing="12">
+          <TextBlock x:Name="UpdateBannerText"
+                     VerticalAlignment="Center"
+                     Foreground="White"
+                     TextWrapping="Wrap"
+                     Text="" />
+          <Button x:Name="UpdateBannerButton"
+                  Grid.Column="1"
+                  Classes="accent"
+                  Content="Update now"
+                  Click="UpdateBannerButton_OnClick" />
+          <Button x:Name="UpdateBannerDismissButton"
+                  Grid.Column="2"
+                  Padding="6"
+                  Classes="icon-shell"
+                  Content="✕"
+                  Click="UpdateBannerDismissButton_OnClick" />
+        </Grid>
+      </Border>
+
       <ContentControl x:Name="PageHost"
-                      Grid.Row="1"
+                      Grid.Row="2"
                       Margin="16" />
+
+      <!-- Operations panel -->
+      <Border x:Name="OperationsPanelBorder"
+              Grid.Row="3"
+              IsVisible="False"
+              Classes="surface-card flat-shell-panel"
+              BorderThickness="0,1,0,0"
+              Padding="0">
+        <Grid RowDefinitions="Auto,Auto">
+          <Border Grid.Row="0"
+                  Padding="16,6"
+                  BorderThickness="0,0,0,1">
+            <Border.BorderBrush>
+              <SolidColorBrush Color="{DynamicResource SystemBaseMediumLowColor}" />
+            </Border.BorderBrush>
+            <TextBlock x:Name="ActiveOperationsHeaderBlock"
+                       FontSize="12"
+                       Opacity="0.7"
+                       Text="Active operations" />
+          </Border>
+          <ScrollViewer Grid.Row="1"
+                        MaxHeight="220"
+                        Padding="8">
+            <ItemsControl x:Name="OperationListControl">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <pages:OperationWidgetView />
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </ScrollViewer>
+        </Grid>
+      </Border>
     </Grid>
   </Grid>
 </UserControl>
