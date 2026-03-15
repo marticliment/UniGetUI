@@ -38,7 +38,7 @@ internal static class SingleInstanceRedirector
                         PipeName,
                         PipeDirection.In,
                         maxNumberOfServerInstances: 1,
-                        transmissionMode: PipeTransmissionMode.Message);
+                        transmissionMode: PipeTransmissionMode.Byte);
 
                     pipe.WaitForConnection();
 

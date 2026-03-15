@@ -45,6 +45,7 @@ public partial class BackupSettingsView : UserControl, ISettingsSectionView
 
     // Panels / cards
     private Border RestartNoticeCardControl => GetControl<Border>("RestartNoticeCard");
+    private Button RestartAppBtnCtrl => GetControl<Button>("RestartAppButton");
     private Border DirectoryCardControl => GetControl<Border>("DirectoryCard");
     private Border AdvancedCardControl => GetControl<Border>("AdvancedCard");
 
@@ -118,6 +119,7 @@ public partial class BackupSettingsView : UserControl, ISettingsSectionView
 
         RestartTitleText.Text = CoreTools.Translate("Restart required");
         RestartDescriptionText.Text = CoreTools.Translate("Changes to one or more settings on this page will take effect after restarting UniGetUI.");
+        RestartAppBtnCtrl.Content = CoreTools.Translate("Restart UniGetUI");
 
         CloudSectionTitleText.Text = CoreTools.Translate("Cloud package backup");
         CloudNotAvailableDescriptionText.Text = CoreTools.Translate("Cloud backup uses GitHub Gist. Sign in using a GitHub personal access token with the gist scope.");
@@ -695,4 +697,7 @@ public partial class BackupSettingsView : UserControl, ISettingsSectionView
         return this.FindControl<T>(name)
             ?? throw new InvalidOperationException($"Control '{name}' was not found.");
     }
+
+    private void RestartAppButton_OnClick(object? sender, RoutedEventArgs e)
+        => MainWindow.KillAndRestart();
 }

@@ -2,6 +2,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Platform.Storage;
+using UniGetUI.Avalonia;
 using UniGetUI.Avalonia.Infrastructure;
 using UniGetUI.Avalonia.Views.Pages;
 using UniGetUI.Core.Language;
@@ -17,6 +18,8 @@ public partial class GeneralSettingsView : UserControl, ISettingsSectionView
     private string _initialPreferredLanguage = "default";
 
     private Border RestartNoticeCardControl => GetControl<Border>("RestartNoticeCard");
+
+    private Button RestartAppBtnCtrl => GetControl<Button>("RestartAppButton");
 
     private ComboBox LanguageSelectorControl => GetControl<ComboBox>("LanguageSelector");
 
@@ -101,6 +104,7 @@ public partial class GeneralSettingsView : UserControl, ISettingsSectionView
         LeadDescriptionText.Text = CoreTools.Translate("Language selection takes effect after a restart. The title-bar version flag updates immediately.");
         RestartTitleText.Text = CoreTools.Translate("Restart required");
         RestartDescriptionText.Text = CoreTools.Translate("Restart UniGetUI to fully apply changes");
+        RestartAppBtnCtrl.Content = CoreTools.Translate("Restart UniGetUI");
         LanguageTitleText.Text = CoreTools.Translate("Language");
         LanguageDescriptionText.Text = CoreTools.Translate("Choose the display language used when the shell is created.");
         LanguageHintText.Text = CoreTools.Translate("Languages with a completion percentage display that value next to their name. Changing this setting requires a restart because the current shell is already translated.");
@@ -297,6 +301,9 @@ public partial class GeneralSettingsView : UserControl, ISettingsSectionView
     {
         RestartNoticeCardControl.IsVisible = isVisible;
     }
+
+    private void RestartAppButton_OnClick(object? sender, RoutedEventArgs e)
+        => MainWindow.KillAndRestart();
 
     private static List<(string Label, string Value)> BuildLanguageEntries()
     {

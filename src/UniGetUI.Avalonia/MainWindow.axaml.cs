@@ -348,6 +348,27 @@ public partial class MainWindow : Window
         Close();
     }
 
+    /// <summary>
+    /// Restart the application by spawning a fresh process and exiting immediately.
+    /// Mirrors WinUI3's <c>MainApp.Instance.KillAndRestart()</c>.
+    /// </summary>
+    public static void KillAndRestart()
+    {
+        try
+        {
+            System.Diagnostics.Process.Start(CoreData.UniGetUIExecutableFile);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error("KillAndRestart: failed to start new process");
+            Logger.Error(ex);
+        }
+        finally
+        {
+            Instance?.QuitApplication();
+        }
+    }
+
     private static async Task ShowIntegrityWarningAsync(Window owner)
     {
         try

@@ -2,6 +2,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
+using UniGetUI.Avalonia;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.SettingsEngine.SecureSettings;
 using UniGetUI.Core.Tools;
@@ -27,6 +28,7 @@ public partial class ExperimentalSettingsView : UserControl, ISettingsSectionVie
 
     // Restart notice
     private Border RestartNoticeCardControl => GetControl<Border>("RestartNoticeCard");
+    private Button RestartAppBtnCtrl => GetControl<Button>("RestartAppButton");
 
     // GSudo UAC pending
     private Border GsudoPendingBadgeControl => GetControl<Border>("GsudoPendingBadge");
@@ -95,6 +97,7 @@ public partial class ExperimentalSettingsView : UserControl, ISettingsSectionVie
 
         RestartTitleText.Text = CoreTools.Translate("Restart required");
         RestartDescriptionText.Text = CoreTools.Translate("Changes to one or more settings on this page will take effect after restarting UniGetUI.");
+        RestartAppBtnCtrl.Content = CoreTools.Translate("Restart UniGetUI");
 
         ServicesTitleText.Text = CoreTools.Translate("Background services");
         ServicesDescriptionText.Text = CoreTools.Translate("Configure background API services hosted by UniGetUI.");
@@ -248,6 +251,9 @@ public partial class ExperimentalSettingsView : UserControl, ISettingsSectionVie
     {
         RestartNoticeCardControl.IsVisible = true;
     }
+
+    private void RestartAppButton_OnClick(object? sender, RoutedEventArgs e)
+        => MainWindow.KillAndRestart();
 
     private void InitializeComponent()
     {
