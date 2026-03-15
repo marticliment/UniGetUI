@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
@@ -108,11 +109,14 @@ public partial class BundlesPageView : UserControl, IShellPage
     private Button OpenBtn         => GetControl<Button>("OpenBundleButton");
     private Button SaveBtn         => GetControl<Button>("SaveBundleButton");
     private Button CreateScriptBtn => GetControl<Button>("CreateScriptButton");
-    private Button InstallBtn      => GetControl<Button>("InstallSelectedButton");
-    private Button RemoveBtn       => GetControl<Button>("RemoveSelectedButton");
-    private Button DetailsBtn      => GetControl<Button>("BundleDetailsButton");
-    private Button ShareBtn        => GetControl<Button>("BundleShareButton");
-    private Button ViewOutputBtn   => GetControl<Button>("BundleViewOutputButton");
+    private Button InstallBtn         => GetControl<Button>("InstallSelectedButton");
+    private Button InstallDropdownBtn  => GetControl<Button>("InstallDropdownButton");
+    private Button RemoveBtn           => GetControl<Button>("RemoveSelectedButton");
+    private Button DetailsBtn          => GetControl<Button>("BundleDetailsButton");
+    private Button ShareBtn            => GetControl<Button>("BundleShareButton");
+    private Button ViewOutputBtn       => GetControl<Button>("BundleViewOutputButton");
+    private Button AddToBundleInfoBtn  => GetControl<Button>("AddToBundleInfoButton");
+    private Button HelpBtn             => GetControl<Button>("BundleHelpButton");
     private TextBlock StateText    => GetControl<TextBlock>("BundleStateBlock");
     private TextBlock StatusBadge  => GetControl<TextBlock>("BundleStatusBlock");
     private TextBox  SearchBox     => GetControl<TextBox>("BundleSearchBox");
@@ -134,10 +138,13 @@ public partial class BundlesPageView : UserControl, IShellPage
         NewBtn.Click  += NewBtn_OnClick;
         OpenBtn.Click += OpenBtn_OnClick;
         SaveBtn.Click += SaveBtn_OnClick;
-        InstallBtn.Click += InstallBtn_OnClick;
+        InstallBtn.Click         += async (_, _) => await QueueInstallCheckedAsync();
+        InstallDropdownBtn.Click += InstallDropdownBtn_OnClick;
         RemoveBtn.Click  += RemoveBtn_OnClick;
         DetailsBtn.Click += DetailsBtn_OnClick;
         ShareBtn.Click   += ShareBtn_OnClick;
+        AddToBundleInfoBtn.Click += AddToBundleInfoBtn_OnClick;
+        HelpBtn.Click            += HelpBtn_OnClick;
         CreateScriptBtn.Click += async (_, _) => await CreateBatchScriptAsync();
         CheckAll.IsCheckedChanged += CheckAll_OnChanged;
 
@@ -178,6 +185,9 @@ public partial class BundlesPageView : UserControl, IShellPage
         RemoveBtn.Content  = CoreTools.Translate("Remove from bundle");
         DetailsBtn.Content = CoreTools.Translate("Details");
         ShareBtn.Content   = CoreTools.Translate("Share");
+        HelpBtn.Content    = CoreTools.Translate("Help");
+        ToolTip.SetTip(AddToBundleInfoBtn, CoreTools.Translate(
+            "To add packages to a bundle, right-click on a package in the Discover, Updates or Installed pages and select \"Add to bundle\"."));
         CreateScriptBtn.Content = CoreTools.Translate("Create .ps1 script");
         SearchBox.Watermark = CoreTools.Translate("Search");
 
@@ -395,7 +405,8 @@ public partial class BundlesPageView : UserControl, IShellPage
         bool anyChecked = _visibleRows.Any(r => r.IsChecked);
         bool rowSelected = _selectedRow is not null && _visibleRows.Any(r => r == _selectedRow);
 
-        InstallBtn.IsEnabled = anyChecked;
+        InstallBtn.IsEnabled         = anyChecked;
+        InstallDropdownBtn.IsEnabled = anyChecked;
         RemoveBtn.IsEnabled  = anyChecked || rowSelected;
         DetailsBtn.IsEnabled = rowSelected;
         ShareBtn.IsEnabled   = rowSelected;
@@ -563,7 +574,51 @@ public partial class BundlesPageView : UserControl, IShellPage
         }
     }
 
+    private void AddToBundleInfoBtn_OnClick(object? sender, RoutedEventArgs e)
+    {
+        StateText.Text = CoreTools.Translate(
+            "To add packages to a bundle, right-click on a package in the Discover, Updates or Installed pages and select \"Add to bundle\".");
+    }
+
+    private void HelpBtn_OnClick(object? sender, RoutedEventArgs e)
+    {
+        var shell = this.FindAncestorOfType<MainShellView>();
+        shell?.OpenPage(ShellPageType.Help);
+    }
+
+    private void InstallDropdownBtn_OnClick(object? sender, RoutedEventArgs e)
+    {
+        var menu = new ContextMenu();
+
+        var adminItem = new MenuItem { Header = CoreTools.Translate("Install as administrator") };
+        adminItem.Click += async (_, _) => await QueueInstallCheckedAsync(elevated: true);
+        menu.Items.Add(adminItem);
+
+        var interactiveItem = new MenuItem { Header = CoreTools.Translate("Interactive installation") };
+        interactiveItem.Click += async (_, _) => await QueueInstallCheckedAsync(interactive: true);
+        menu.Items.Add(interactiveItem);
+
+        var skipHashItem = new MenuItem { Header = CoreTools.Translate("Skip integrity checks") };
+        skipHashItem.Click += async (_, _) => await QueueInstallCheckedAsync(skipHash: true);
+        menu.Items.Add(skipHashItem);
+
+        if (sender is Control anchor)
+        {
+            menu.PlacementTarget = anchor;
+            menu.Placement = PlacementMode.Bottom;
+            menu.Open(anchor);
+        }
+    }
+
     private async void InstallBtn_OnClick(object? sender, RoutedEventArgs e)
+    {
+        await QueueInstallCheckedAsync();
+    }
+
+    private async Task QueueInstallCheckedAsync(
+        bool elevated = false,
+        bool interactive = false,
+        bool skipHash = false)
     {
         var checkedPackages = _visibleRows
             .Where(r => r.IsChecked && r.IsValid)
@@ -608,6 +663,9 @@ public partial class BundlesPageView : UserControl, IShellPage
             try
             {
                 var options = await InstallOptionsFactory.LoadApplicableAsync(package);
+                if (elevated) options.RunAsAdministrator = true;
+                if (interactive) options.InteractiveInstallation = true;
+                if (skipHash) options.SkipHashCheck = true;
                 var op = new InstallPackageOperation(package, options);
                 _lastOperation = op;
                 ViewOutputBtn.IsVisible = true;

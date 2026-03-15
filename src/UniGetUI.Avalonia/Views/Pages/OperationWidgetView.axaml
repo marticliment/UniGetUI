@@ -5,7 +5,8 @@
   <Border Margin="0,2"
           Padding="12,8"
           CornerRadius="8"
-          Classes="surface-card">
+          Classes="surface-card"
+          ContextRequested="Card_ContextRequested">
     <Grid ColumnDefinitions="*,Auto,Auto"
           ColumnSpacing="8">
 
@@ -28,7 +29,7 @@
                      IsIndeterminate="False" />
       </StackPanel>
 
-      <!-- View output button -->
+      <!-- Retry / view-output button (content and click handler change by state) -->
       <Button x:Name="ViewOutputBtn"
               Grid.Column="1"
               Classes="toolbar-secondary"

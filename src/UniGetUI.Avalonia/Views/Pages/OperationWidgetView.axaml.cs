@@ -1,4 +1,6 @@
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Threading;
@@ -106,7 +108,7 @@ public partial class OperationWidgetView : UserControl
                     ? _operation.Metadata.FailureMessage
                     : CoreTools.Translate("Operation failed");
                 ActionBtn.Content = CoreTools.Translate("Close");
-                ViewOutputBtn.Content = CoreTools.Translate("Details");
+                ViewOutputBtn.Content = CoreTools.Translate("Retry ▾");
                 break;
 
             case OperationStatus.Canceled:
@@ -115,7 +117,7 @@ public partial class OperationWidgetView : UserControl
                 SetProgressForeground(_cancelBrush);
                 LiveLineBlock.Text = CoreTools.Translate("Canceled");
                 ActionBtn.Content = CoreTools.Translate("Close");
-                ViewOutputBtn.Content = CoreTools.Translate("Details");
+                ViewOutputBtn.Content = CoreTools.Translate("Retry ▾");
                 break;
         }
     }
@@ -149,13 +151,84 @@ public partial class OperationWidgetView : UserControl
     {
         if (_operation is null) return;
 
-        Window window = _operation.Status is OperationStatus.Failed or OperationStatus.Canceled
-            ? new OperationFailedWindow(_operation)
-            : new OperationLogWindow(_operation);
+        if (_operation.Status is OperationStatus.Failed or OperationStatus.Canceled)
+        {
+            // Build a retry flyout context menu
+            var menu = new ContextMenu();
+
+            var retryItem = new MenuItem { Header = CoreTools.Translate("Retry") };
+            retryItem.Click += (_, _) => _operation.Retry(AbstractOperation.RetryMode.Retry);
+            menu.Items.Add(retryItem);
+
+            var adminItem = new MenuItem { Header = CoreTools.Translate("Retry as administrator") };
+            adminItem.Click += (_, _) => _operation.Retry(AbstractOperation.RetryMode.Retry_AsAdmin);
+            menu.Items.Add(adminItem);
+
+            var interactiveItem = new MenuItem { Header = CoreTools.Translate("Retry with interactive mode") };
+            interactiveItem.Click += (_, _) => _operation.Retry(AbstractOperation.RetryMode.Retry_Interactive);
+            menu.Items.Add(interactiveItem);
+
+            var skipHashItem = new MenuItem { Header = CoreTools.Translate("Retry skipping integrity checks") };
+            skipHashItem.Click += (_, _) => _operation.Retry(AbstractOperation.RetryMode.Retry_SkipIntegrity);
+            menu.Items.Add(skipHashItem);
+
+            menu.Items.Add(new Separator());
+
+            var viewOutputItem = new MenuItem { Header = CoreTools.Translate("View output") };
+            viewOutputItem.Click += async (_, _) =>
+            {
+                var win = new OperationLogWindow(_operation);
+                if (VisualRoot is Window p) await win.ShowDialog(p); else win.Show();
+            };
+            menu.Items.Add(viewOutputItem);
+
+            if (sender is Control anchor)
+            {
+                menu.PlacementTarget = anchor;
+                menu.Placement = PlacementMode.Bottom;
+                menu.Open(anchor);
+            }
+            return;
+        }
+
+        Window window = new OperationLogWindow(_operation);
 
         if (VisualRoot is Window parent)
             await window.ShowDialog(parent);
         else
             window.Show();
+    }
+
+    private void Card_ContextRequested(object? sender, ContextRequestedEventArgs e)
+    {
+        if (_operation is null || _operation.Status != OperationStatus.InQueue) return;
+
+        var menu = new ContextMenu();
+
+        var runNowItem = new MenuItem { Header = CoreTools.Translate("Run now") };
+        runNowItem.Click += (_, _) => _operation.SkipQueue();
+        menu.Items.Add(runNowItem);
+
+        var runNextItem = new MenuItem { Header = CoreTools.Translate("Run next") };
+        runNextItem.Click += (_, _) => _operation.RunNext();
+        menu.Items.Add(runNextItem);
+
+        var runLastItem = new MenuItem { Header = CoreTools.Translate("Run last") };
+        runLastItem.Click += (_, _) => _operation.BackOfTheQueue();
+        menu.Items.Add(runLastItem);
+
+        menu.Items.Add(new Separator());
+
+        var cancelItem = new MenuItem { Header = CoreTools.Translate("Cancel") };
+        cancelItem.Click += (_, _) => _operation.Cancel();
+        menu.Items.Add(cancelItem);
+
+        if (sender is Control ctrl)
+        {
+            menu.PlacementTarget = ctrl;
+            menu.Placement = PlacementMode.Pointer;
+            menu.Open(ctrl);
+        }
+        e.Handled = true;
     }
 }

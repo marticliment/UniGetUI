@@ -52,7 +52,7 @@
     <Border Grid.Row="1"
             Padding="12"
             Classes="surface-card">
-      <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,12,Auto,Auto,Auto,Auto,*,Auto,Auto"
+      <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,12,Auto,Auto,Auto,Auto,Auto,*,Auto,Auto,Auto"
             ColumnSpacing="6">
 
         <!-- File operations -->
@@ -71,34 +71,45 @@
                 Grid.Column="3"
                 Classes="toolbar-secondary"
                 Content="Create .ps1 script" />
+        <!-- How to add packages to bundle info button -->
+        <Button x:Name="AddToBundleInfoButton"
+                Grid.Column="4"
+                Classes="toolbar-secondary"
+                Content="?" />
 
-        <!-- Separator gap is the ColumnDefinitions="12" at index 4 -->
+        <!-- Separator gap is the ColumnDefinitions="12" at index 5 -->
 
         <!-- Package actions -->
         <Button x:Name="InstallSelectedButton"
-                Grid.Column="5"
+                Grid.Column="6"
                 Classes="toolbar-primary accent"
                 IsEnabled="False"
                 Content="Install checked" />
+        <!-- Install-options dropdown -->
+        <Button x:Name="InstallDropdownButton"
+                Grid.Column="7"
+                Classes="toolbar-secondary"
+                IsEnabled="False"
+                Content="▾" />
         <Button x:Name="RemoveSelectedButton"
-                Grid.Column="6"
+                Grid.Column="8"
                 Classes="toolbar-secondary"
                 IsEnabled="False"
                 Content="Remove from bundle" />
         <Button x:Name="BundleDetailsButton"
-                Grid.Column="7"
+                Grid.Column="9"
                 Classes="toolbar-secondary"
                 IsEnabled="False"
                 Content="Details" />
         <Button x:Name="BundleShareButton"
-                Grid.Column="8"
+                Grid.Column="10"
                 Classes="toolbar-secondary"
                 IsEnabled="False"
                 Content="Share" />
 
         <!-- Status / operation feedback -->
         <TextBlock x:Name="BundleStateBlock"
-                   Grid.Column="9"
+                   Grid.Column="11"
                    VerticalAlignment="Center"
                    Margin="8,0,0,0"
                    Opacity="0.76"
@@ -106,15 +117,21 @@
 
         <!-- View output button (visible after an install/operation is started) -->
         <Button x:Name="BundleViewOutputButton"
-                Grid.Column="10"
+                Grid.Column="12"
                 Classes="toolbar-secondary"
                 IsVisible="False"
                 Click="BundleViewOutputButton_OnClick"
                 Content="View output" />
 
+        <!-- Help button -->
+        <Button x:Name="BundleHelpButton"
+                Grid.Column="13"
+                Classes="toolbar-secondary"
+                Content="Help" />
+
         <!-- Search -->
         <TextBox x:Name="BundleSearchBox"
-                 Grid.Column="11"
+                 Grid.Column="14"
                  Width="220"
                  VerticalAlignment="Center"
                  Watermark="Search" />
