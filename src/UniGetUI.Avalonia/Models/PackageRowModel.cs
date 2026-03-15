@@ -1,7 +1,10 @@
 using System.ComponentModel;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using Avalonia.Media.Imaging;
 using UniGetUI.Avalonia.Infrastructure;
+using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Interfaces;
@@ -10,10 +13,13 @@ namespace UniGetUI.Avalonia.Models;
 
 internal sealed class PackageRowModel : INotifyPropertyChanged, IDisposable
 {
+    private static readonly HttpClient _iconHttpClient = new() { Timeout = TimeSpan.FromSeconds(8) };
+
     private readonly PackagePageMode _pageMode;
     private readonly AsyncCommand _primaryActionCommand;
     private bool _isSelected;
     private bool _isChecked;
+    private Bitmap? _iconBitmap;
 
     public PackageRowModel(
         IPackage package,
@@ -38,6 +44,9 @@ internal sealed class PackageRowModel : INotifyPropertyChanged, IDisposable
         );
 
         Package.PropertyChanged += Package_OnPropertyChanged;
+
+        if (!Settings.Get(Settings.K.DisableIconsOnPackageLists))
+            _ = LoadIconAsync();
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -55,6 +64,12 @@ internal sealed class PackageRowModel : INotifyPropertyChanged, IDisposable
     public string Source { get; }
 
     public ICommand PrimaryActionCommand => _primaryActionCommand;
+
+    public Bitmap? IconBitmap
+    {
+        get => _iconBitmap;
+        private set { _iconBitmap = value; OnPropertyChanged(); }
+    }
 
     public bool IsSelected
     {
@@ -139,6 +154,31 @@ internal sealed class PackageRowModel : INotifyPropertyChanged, IDisposable
     public void Dispose()
     {
         Package.PropertyChanged -= Package_OnPropertyChanged;
+    }
+
+    private async Task LoadIconAsync()
+    {
+        try
+        {
+            var uri = Package.GetIconUrlIfAny();
+            if (uri is null) return;
+
+            Bitmap bitmap;
+            if (uri.IsFile)
+            {
+                bitmap = new Bitmap(uri.LocalPath);
+            }
+            else if (uri.Scheme is "http" or "https")
+            {
+                var bytes = await _iconHttpClient.GetByteArrayAsync(uri);
+                using var ms = new MemoryStream(bytes);
+                bitmap = new Bitmap(ms);
+            }
+            else return;
+
+            IconBitmap = bitmap;
+        }
+        catch { /* ignore — no icon is fine */ }
     }
 
     private void OnPropertyChanged([CallerMemberName] string? propertyName = null)

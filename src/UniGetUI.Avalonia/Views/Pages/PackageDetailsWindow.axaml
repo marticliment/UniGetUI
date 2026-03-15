@@ -24,11 +24,20 @@
                     Height="42"
                     Classes="surface-card"
                     CornerRadius="12">
-              <TextBlock x:Name="PackageIconGlyphBlock"
-                         HorizontalAlignment="Center"
-                         VerticalAlignment="Center"
-                         FontSize="18"
-                         Text="📦" />
+              <Panel>
+                <TextBlock x:Name="PackageIconGlyphBlock"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           FontSize="18"
+                           Text="📦" />
+                <Image x:Name="PackageIconImage"
+                       Width="30"
+                       Height="30"
+                       IsVisible="False"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Stretch="Uniform" />
+              </Panel>
             </Border>
             <StackPanel Spacing="2">
               <TextBlock x:Name="PackageNameBlock"
@@ -151,6 +160,66 @@
         </StackPanel>
       </Border>
 
+      <!-- Installer details (hash, URL, size, download) -->
+      <Border x:Name="InstallerCard"
+              Padding="18"
+              Classes="surface-card"
+              IsVisible="False">
+        <StackPanel Spacing="10">
+          <TextBlock x:Name="InstallerTitleBlock"
+                     FontSize="16"
+                     FontWeight="SemiBold" />
+          <Grid x:Name="InstallerHashRow"
+                ColumnDefinitions="160,*"
+                IsVisible="False">
+            <TextBlock x:Name="InstallerHashLabelBlock"
+                       Opacity="0.68" />
+            <TextBlock x:Name="InstallerHashValueBlock"
+                       Grid.Column="1"
+                       TextWrapping="Wrap"
+                       FontFamily="Cascadia Mono,Cascadia Code,Consolas,monospace"
+                       FontSize="11" />
+          </Grid>
+          <Grid x:Name="InstallerUrlRow"
+                ColumnDefinitions="160,*"
+                IsVisible="False">
+            <TextBlock x:Name="InstallerUrlLabelBlock"
+                       Opacity="0.68" />
+            <TextBlock x:Name="InstallerUrlValueBlock"
+                       Grid.Column="1"
+                       TextWrapping="Wrap"
+                       TextTrimming="CharacterEllipsis" />
+          </Grid>
+          <Grid x:Name="InstallerSizeRow"
+                ColumnDefinitions="160,*"
+                IsVisible="False">
+            <TextBlock x:Name="InstallerSizeLabelBlock"
+                       Opacity="0.68" />
+            <TextBlock x:Name="InstallerSizeValueBlock"
+                       Grid.Column="1" />
+          </Grid>
+          <Button x:Name="DownloadInstallerButton"
+                  Classes="toolbar-secondary"
+                  HorizontalAlignment="Left"
+                  IsVisible="False"
+                  Click="DownloadInstallerButton_OnClick" />
+        </StackPanel>
+      </Border>
+
+      <!-- Dependencies -->
+      <Border x:Name="DependenciesCard"
+              Padding="18"
+              Classes="surface-card"
+              IsVisible="False">
+        <StackPanel Spacing="8">
+          <TextBlock x:Name="DependenciesTitleBlock"
+                     FontSize="16"
+                     FontWeight="SemiBold" />
+          <StackPanel x:Name="DependenciesPanel"
+                      Spacing="4" />
+        </StackPanel>
+      </Border>
+
       <!-- Homepage & release notes links -->
       <Border x:Name="LinksCard"
               Padding="18"
@@ -201,15 +270,22 @@
       </Border>
 
       <!-- Bottom actions -->
-      <Grid ColumnDefinitions="*,Auto,Auto"
-            ColumnSpacing="8">
+      <Grid ColumnDefinitions="*,Auto,Auto,Auto"
+            ColumnSpacing="4">
         <Button x:Name="ActionButton"
                 Grid.Column="1"
                 Classes="toolbar-primary accent"
                 IsVisible="False"
                 Click="ActionButton_OnClick" />
-        <Button x:Name="CloseButton"
+        <Button x:Name="ActionDropdownButton"
                 Grid.Column="2"
+                Classes="toolbar-primary accent"
+                Content="▾"
+                Padding="6,4"
+                IsVisible="False" />
+        <Button x:Name="CloseButton"
+                Grid.Column="3"
+                Margin="8,0,0,0"
                 HorizontalAlignment="Right"
                 Classes="toolbar-secondary"
                 Click="CloseButton_OnClick" />

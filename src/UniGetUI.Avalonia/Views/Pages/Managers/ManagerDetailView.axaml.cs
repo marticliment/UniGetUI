@@ -11,9 +11,12 @@ using UniGetUI.Core.SettingsEngine.SecureSettings;
 using UniGetUI.Core.Tools;
 using UniGetUI.Avalonia.Infrastructure;
 using UniGetUI.PackageEngine.Classes.Manager;
+using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Operations;
+using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.PackageLoader;
+using UniGetUI.PackageEngine.Serializable;
 
 namespace UniGetUI.Avalonia.Views.Pages.ManagersPages;
 
@@ -526,6 +529,222 @@ public partial class ManagerDetailView : UserControl, IManagerSectionView
 
             _ = LoadSourcesAsync(manager, sourcesListPanel);
         }
+
+        // Default install options (all managers)
+        _ = AddDefaultInstallOptionsSectionAsync(manager);
+    }
+
+    // ── Default install options ───────────────────────────────────────────
+
+    private async Task AddDefaultInstallOptionsSectionAsync(IPackageManager manager)
+    {
+        var card = MakeSettingsCard();
+        var panel = (StackPanel)card.Child!;
+
+        panel.Children.Add(MakeSectionTitle(CoreTools.Translate("Default install options")));
+        panel.Children.Add(MakeSectionDesc(CoreTools.Translate(
+            "These options are applied by default to all {0} operations unless overridden per-package.", manager.DisplayName)));
+
+        var loadingBlock = new TextBlock { Text = CoreTools.Translate("Loading..."), Opacity = 0.60 };
+        panel.Children.Add(loadingBlock);
+        ExtraSettingsPanel.Children.Add(card);
+
+        InstallOptions options;
+        try
+        {
+            options = await InstallOptionsFactory.LoadForManagerAsync(manager);
+        }
+        catch (Exception ex)
+        {
+            loadingBlock.Text = CoreTools.Translate("Failed to load: {0}", ex.Message);
+            return;
+        }
+
+        panel.Children.Remove(loadingBlock);
+        var caps = manager.Capabilities;
+
+        var adminCheck = new CheckBox
+        {
+            Content = CoreTools.Translate("Run as administrator by default"),
+            IsChecked = options.RunAsAdministrator,
+        };
+        panel.Children.Add(adminCheck);
+
+        CheckBox? interactiveCheck = null;
+        if (caps.CanRunInteractively)
+        {
+            interactiveCheck = new CheckBox
+            {
+                Content = CoreTools.Translate("Interactive installation by default"),
+                IsChecked = options.InteractiveInstallation,
+                Margin = new Thickness(0, 2, 0, 0),
+            };
+            panel.Children.Add(interactiveCheck);
+        }
+
+        CheckBox? skipHashCheck = null;
+        if (caps.CanSkipIntegrityChecks)
+        {
+            skipHashCheck = new CheckBox
+            {
+                Content = CoreTools.Translate("Skip integrity checks by default"),
+                IsChecked = options.SkipHashCheck,
+                Margin = new Thickness(0, 2, 0, 0),
+            };
+            panel.Children.Add(skipHashCheck);
+        }
+
+        CheckBox? preReleaseCheck = null;
+        if (caps.SupportsPreRelease)
+        {
+            preReleaseCheck = new CheckBox
+            {
+                Content = CoreTools.Translate("Use pre-release versions by default"),
+                IsChecked = options.PreRelease,
+                Margin = new Thickness(0, 2, 0, 0),
+            };
+            panel.Children.Add(preReleaseCheck);
+        }
+
+        ComboBox? archCombo = null;
+        if (caps.SupportsCustomArchitectures)
+        {
+            panel.Children.Add(MakeSectionDesc(CoreTools.Translate("Default architecture:")));
+            archCombo = new ComboBox
+            {
+                MinWidth = 160,
+                HorizontalAlignment = global::Avalonia.Layout.HorizontalAlignment.Left,
+                Margin = new Thickness(0, 2, 0, 0),
+            };
+            archCombo.Items.Add(CoreTools.Translate("Default"));
+            archCombo.SelectedIndex = 0;
+            foreach (var arch in caps.SupportedCustomArchitectures)
+            {
+                archCombo.Items.Add(arch);
+                if (options.Architecture == arch)
+                    archCombo.SelectedItem = arch;
+            }
+            panel.Children.Add(archCombo);
+        }
+
+        ComboBox? scopeCombo = null;
+        if (caps.SupportsCustomScopes)
+        {
+            panel.Children.Add(MakeSectionDesc(CoreTools.Translate("Default installation scope:")));
+            scopeCombo = new ComboBox
+            {
+                MinWidth = 160,
+                HorizontalAlignment = global::Avalonia.Layout.HorizontalAlignment.Left,
+                Margin = new Thickness(0, 2, 0, 0),
+            };
+            scopeCombo.Items.Add(CoreTools.Translate("Default"));
+            scopeCombo.SelectedIndex = 0;
+            scopeCombo.Items.Add(CoreTools.Translate("User / current user"));
+            scopeCombo.Items.Add(CoreTools.Translate("Machine / all users"));
+            if (options.InstallationScope == PackageScope.User)
+                scopeCombo.SelectedItem = CoreTools.Translate("User / current user");
+            else if (options.InstallationScope == PackageScope.Machine)
+                scopeCombo.SelectedItem = CoreTools.Translate("Machine / all users");
+            panel.Children.Add(scopeCombo);
+        }
+
+        TextBox? locationBox = null;
+        if (caps.SupportsCustomLocations)
+        {
+            panel.Children.Add(MakeSectionDesc(CoreTools.Translate("Default install location:")));
+            var locationRow = new StackPanel
+            {
+                Orientation = global::Avalonia.Layout.Orientation.Horizontal,
+                Spacing = 6,
+                Margin = new Thickness(0, 2, 0, 0),
+            };
+            locationBox = new TextBox
+            {
+                Watermark = CoreTools.Translate("Leave empty to use the default location"),
+                MinWidth = 220,
+                Text = options.CustomInstallLocation,
+            };
+            var browseBtn = new Button { Content = CoreTools.Translate("Browse\u2026") };
+            browseBtn.Click += async (_, _) =>
+            {
+                var sp = TopLevel.GetTopLevel(this)?.StorageProvider;
+                if (sp is null) return;
+                var result = await sp.OpenFolderPickerAsync(new FolderPickerOpenOptions
+                {
+                    Title = CoreTools.Translate("Select install location"),
+                    AllowMultiple = false,
+                });
+                if (result.Count > 0)
+                {
+                    var path = result[0].TryGetLocalPath();
+                    if (!string.IsNullOrWhiteSpace(path)) locationBox.Text = path;
+                }
+            };
+            var resetLocationBtn = new Button { Content = CoreTools.Translate("Reset") };
+            resetLocationBtn.Click += (_, _) => locationBox.Text = string.Empty;
+            locationRow.Children.Add(locationBox);
+            locationRow.Children.Add(browseBtn);
+            locationRow.Children.Add(resetLocationBtn);
+            panel.Children.Add(locationRow);
+        }
+
+        // Save / Reset buttons
+        var buttonRow = new StackPanel
+        {
+            Orientation = global::Avalonia.Layout.Orientation.Horizontal,
+            Spacing = 8,
+            Margin = new Thickness(0, 10, 0, 0),
+        };
+
+        var saveBtn = new Button { Content = CoreTools.Translate("Save defaults") };
+        saveBtn.Click += async (_, _) =>
+        {
+            saveBtn.IsEnabled = false;
+            try
+            {
+                var newOpts = new InstallOptions();
+                newOpts.RunAsAdministrator = adminCheck.IsChecked ?? false;
+                if (interactiveCheck is not null) newOpts.InteractiveInstallation = interactiveCheck.IsChecked ?? false;
+                if (skipHashCheck is not null) newOpts.SkipHashCheck = skipHashCheck.IsChecked ?? false;
+                if (preReleaseCheck is not null) newOpts.PreRelease = preReleaseCheck.IsChecked ?? false;
+                if (archCombo is not null)
+                {
+                    string sel = archCombo.SelectedItem?.ToString() ?? "";
+                    newOpts.Architecture = Architecture.ValidValues.Contains(sel) ? sel : string.Empty;
+                }
+                if (scopeCombo is not null)
+                {
+                    string sel = scopeCombo.SelectedItem?.ToString() ?? "";
+                    if (sel == CoreTools.Translate("User / current user")) newOpts.InstallationScope = PackageScope.User;
+                    else if (sel == CoreTools.Translate("Machine / all users")) newOpts.InstallationScope = PackageScope.Machine;
+                }
+                if (locationBox is not null) newOpts.CustomInstallLocation = locationBox.Text?.Trim() ?? string.Empty;
+                await InstallOptionsFactory.SaveForManagerAsync(newOpts, manager);
+            }
+            finally { saveBtn.IsEnabled = true; }
+        };
+
+        var resetBtn = new Button { Content = CoreTools.Translate("Reset to defaults") };
+        resetBtn.Click += async (_, _) =>
+        {
+            resetBtn.IsEnabled = false;
+            try
+            {
+                await InstallOptionsFactory.SaveForManagerAsync(new InstallOptions(), manager);
+                adminCheck.IsChecked = false;
+                if (interactiveCheck is not null) interactiveCheck.IsChecked = false;
+                if (skipHashCheck is not null) skipHashCheck.IsChecked = false;
+                if (preReleaseCheck is not null) preReleaseCheck.IsChecked = false;
+                if (archCombo is not null) archCombo.SelectedIndex = 0;
+                if (scopeCombo is not null) scopeCombo.SelectedIndex = 0;
+                if (locationBox is not null) locationBox.Text = string.Empty;
+            }
+            finally { resetBtn.IsEnabled = true; }
+        };
+
+        buttonRow.Children.Add(saveBtn);
+        buttonRow.Children.Add(resetBtn);
+        panel.Children.Add(buttonRow);
     }
 
     // ── Event handlers ────────────────────────────────────────────────────
