@@ -796,25 +796,68 @@ public partial class BundlesPageView : UserControl, IShellPage
         bool allowPrePost = SecureSettings.Get(SecureSettings.K.AllowPrePostOpCommand)
                          && SecureSettings.Get(SecureSettings.K.AllowImportPrePostOpCommands);
 
+        // Build a security report tracking stripped / allowed-through sensitive settings
+        var report = new UniGetUI.Interface.Enums.BundleReport { IsEmpty = true };
+
+        void AddToReport(string pkgId, string line, bool allowed)
+        {
+            report.IsEmpty = false;
+            if (!report.Contents.ContainsKey(pkgId))
+                report.Contents[pkgId] = new List<UniGetUI.Interface.Enums.BundleReportEntry>();
+            report.Contents[pkgId].Add(new UniGetUI.Interface.Enums.BundleReportEntry(line, allowed));
+        }
+
         var packages = new List<IPackage>();
         foreach (var pkg in data.packages)
         {
             var opts = pkg.InstallationOptions;
-            if (!allowCLI)
+
+            if (opts.CustomParameters_Install.Any(x => x.Any()))
             {
-                opts.CustomParameters_Install.Clear();
-                opts.CustomParameters_Update.Clear();
-                opts.CustomParameters_Uninstall.Clear();
+                AddToReport(pkg.Id, $"Custom install arguments: [{string.Join(", ", opts.CustomParameters_Install)}]", allowCLI);
+                if (!allowCLI) opts.CustomParameters_Install.Clear();
             }
-            if (!allowPrePost)
+            if (opts.CustomParameters_Update.Any(x => x.Any()))
             {
-                opts.PreInstallCommand = "";
-                opts.PostInstallCommand = "";
-                opts.PreUpdateCommand = "";
-                opts.PostUpdateCommand = "";
-                opts.PreUninstallCommand = "";
-                opts.PostUninstallCommand = "";
+                AddToReport(pkg.Id, $"Custom update arguments: [{string.Join(", ", opts.CustomParameters_Update)}]", allowCLI);
+                if (!allowCLI) opts.CustomParameters_Update.Clear();
             }
+            if (opts.CustomParameters_Uninstall.Any(x => x.Any()))
+            {
+                AddToReport(pkg.Id, $"Custom uninstall arguments: [{string.Join(", ", opts.CustomParameters_Uninstall)}]", allowCLI);
+                if (!allowCLI) opts.CustomParameters_Uninstall.Clear();
+            }
+            if (opts.PreInstallCommand.Any())
+            {
+                AddToReport(pkg.Id, $"Pre-install command: {opts.PreInstallCommand}", allowPrePost);
+                if (!allowPrePost) opts.PreInstallCommand = "";
+            }
+            if (opts.PostInstallCommand.Any())
+            {
+                AddToReport(pkg.Id, $"Post-install command: {opts.PostInstallCommand}", allowPrePost);
+                if (!allowPrePost) opts.PostInstallCommand = "";
+            }
+            if (opts.PreUpdateCommand.Any())
+            {
+                AddToReport(pkg.Id, $"Pre-update command: {opts.PreUpdateCommand}", allowPrePost);
+                if (!allowPrePost) opts.PreUpdateCommand = "";
+            }
+            if (opts.PostUpdateCommand.Any())
+            {
+                AddToReport(pkg.Id, $"Post-update command: {opts.PostUpdateCommand}", allowPrePost);
+                if (!allowPrePost) opts.PostUpdateCommand = "";
+            }
+            if (opts.PreUninstallCommand.Any())
+            {
+                AddToReport(pkg.Id, $"Pre-uninstall command: {opts.PreUninstallCommand}", allowPrePost);
+                if (!allowPrePost) opts.PreUninstallCommand = "";
+            }
+            if (opts.PostUninstallCommand.Any())
+            {
+                AddToReport(pkg.Id, $"Post-uninstall command: {opts.PostUninstallCommand}", allowPrePost);
+                if (!allowPrePost) opts.PostUninstallCommand = "";
+            }
+
             pkg.InstallationOptions = opts;
             packages.Add(DeserializePackage(pkg));
         }
@@ -825,6 +868,10 @@ public partial class BundlesPageView : UserControl, IShellPage
         _rowCache.Clear();
         PackageBundlesLoader.Instance.ClearPackages(emitFinishSignal: false);
         await PackageBundlesLoader.Instance.AddPackagesAsync(packages);
+
+        // Show security report if anything sensitive was found (D1)
+        if (!report.IsEmpty)
+            await ShowBundleSecurityReportAsync(report);
     }
 
     private static IPackage DeserializePackage(SerializablePackage raw)
@@ -857,6 +904,99 @@ public partial class BundlesPageView : UserControl, IShellPage
     }
 
     // ── Confirm dialog helper ─────────────────────────────────────────────────
+
+    private async Task ShowBundleSecurityReportAsync(UniGetUI.Interface.Enums.BundleReport report)
+    {
+        if (VisualRoot is not Window parentWindow)
+            return;
+
+        bool isDark = ActualThemeVariant == global::Avalonia.Styling.ThemeVariant.Dark;
+        var colorIgnored  = new global::Avalonia.Media.SolidColorBrush(isDark
+            ? global::Avalonia.Media.Color.Parse("#FFD700") // gold
+            : global::Avalonia.Media.Color.Parse("#B8860B")); // dark golden rod
+        var colorAllowed  = new global::Avalonia.Media.SolidColorBrush(isDark
+            ? global::Avalonia.Media.Color.Parse("#FF6B6B") // light red
+            : global::Avalonia.Media.Color.Parse("#CC0000")); // dark red
+
+        var itemsList = new StackPanel { Spacing = 4 };
+
+        foreach (var pair in report.Contents)
+        {
+            itemsList.Children.Add(new TextBlock
+            {
+                Text = $" - {CoreTools.Translate("Package")}: {pair.Key}:",
+                FontFamily = new global::Avalonia.Media.FontFamily("Cascadia Code,Consolas,monospace"),
+                FontWeight = global::Avalonia.Media.FontWeight.SemiBold,
+                TextWrapping = global::Avalonia.Media.TextWrapping.Wrap,
+            });
+            foreach (var entry in pair.Value)
+            {
+                itemsList.Children.Add(new TextBlock
+                {
+                    Text = $"   * {entry.Line}",
+                    FontFamily = new global::Avalonia.Media.FontFamily("Cascadia Code,Consolas,monospace"),
+                    Foreground = entry.Allowed ? colorAllowed : colorIgnored,
+                    TextWrapping = global::Avalonia.Media.TextWrapping.Wrap,
+                });
+            }
+        }
+
+        var dialog = new Window
+        {
+            Title = CoreTools.Translate("Bundle security report"),
+            Width = 700,
+            Height = 520,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            CanResize = true,
+        };
+
+        var closeBtn = new Button { Content = CoreTools.Translate("Close"), HorizontalAlignment = global::Avalonia.Layout.HorizontalAlignment.Right };
+        closeBtn.Click += (_, _) => dialog.Close();
+
+        dialog.Content = new StackPanel
+        {
+            Margin = new global::Avalonia.Thickness(20),
+            Spacing = 12,
+            Children =
+            {
+                new TextBlock
+                {
+                    Text = CoreTools.Translate("This package bundle had some settings that are potentially dangerous, and may be ignored by default."),
+                    TextWrapping = global::Avalonia.Media.TextWrapping.Wrap,
+                },
+                new TextBlock
+                {
+                    Text = " - " + CoreTools.Translate("Entries that show in YELLOW will be IGNORED."),
+                    Foreground = colorIgnored,
+                    TextWrapping = global::Avalonia.Media.TextWrapping.Wrap,
+                },
+                new TextBlock
+                {
+                    Text = " - " + CoreTools.Translate("Entries that show in RED will be IMPORTED."),
+                    Foreground = colorAllowed,
+                    TextWrapping = global::Avalonia.Media.TextWrapping.Wrap,
+                },
+                new TextBlock
+                {
+                    Text = CoreTools.Translate("You can change this behavior on UniGetUI security settings."),
+                    TextWrapping = global::Avalonia.Media.TextWrapping.Wrap,
+                },
+                new TextBlock
+                {
+                    Text = CoreTools.Translate("Details of the report:"),
+                    FontWeight = global::Avalonia.Media.FontWeight.SemiBold,
+                },
+                new ScrollViewer
+                {
+                    HorizontalScrollBarVisibility = global::Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled,
+                    Content = itemsList,
+                },
+                closeBtn,
+            },
+        };
+
+        await dialog.ShowDialog(parentWindow);
+    }
 
     private async Task<bool> ShowConfirmDialogAsync(
         string title,

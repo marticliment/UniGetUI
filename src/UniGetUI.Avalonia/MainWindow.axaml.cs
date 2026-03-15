@@ -1,4 +1,5 @@
 using System.Net;
+using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Notifications;
@@ -16,6 +17,7 @@ using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
+using UniGetUI.Interface.Enums;
 
 namespace UniGetUI.Avalonia;
 
@@ -49,6 +51,42 @@ public partial class MainWindow : Window
             Position = NotificationPosition.TopRight,
             MaxItems = 4,
         };
+
+        // ── B2: hook notification activation callback ──────────────────────
+        WindowsAppNotificationBridge.NotificationActivated += OnNotificationActivated;
+    }
+
+    private void OnNotificationActivated(string action)
+    {
+        Dispatcher.UIThread.Post(() =>
+        {
+            try
+            {
+                if (action == NotificationArguments.UpdateAllPackages)
+                {
+                    _ = AvaloniaPackageOperationHelper.UpdateAllAsync();
+                }
+                else if (action == NotificationArguments.ShowOnUpdatesTab)
+                {
+                    ShowFromTray();
+                    if (Content is Views.MainShellView shell)
+                        shell.OpenPage(Models.ShellPageType.Updates);
+                }
+                else if (action == NotificationArguments.Show)
+                {
+                    ShowFromTray();
+                }
+                else if (action == NotificationArguments.ReleaseSelfUpdateLock)
+                {
+                    AvaloniaAutoUpdater.ReleaseLockForAutoupdate_Notification = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("OnNotificationActivated error:");
+                Logger.Error(ex);
+            }
+        });
     }
 
     private async void OnOpened(object? sender, EventArgs e)
@@ -270,9 +308,15 @@ public partial class MainWindow : Window
 
     internal void ShowFromTray()
     {
+        SetEfficiencyMode(false); // B3: leave EcoQoS when coming back to foreground
         Show();
         Activate();
         WindowState = WindowState.Normal;
+
+        // Silently reload the Installed packages list so changes made outside
+        // UniGetUI while it was minimized/hidden are reflected immediately.
+        if (!UniGetUI.PackageEngine.PackageLoader.InstalledPackagesLoader.Instance.IsLoading)
+            _ = UniGetUI.PackageEngine.PackageLoader.InstalledPackagesLoader.Instance.ReloadPackagesSilently();
     }
 
     public void ShowRuntimeNotification(string title, string message, RuntimeNotificationLevel level)
@@ -298,6 +342,8 @@ public partial class MainWindow : Window
 
     public void QuitApplication()
     {
+        // A3: release the auto-updater window lock so a pending installer can proceed
+        AvaloniaAutoUpdater.ReleaseLockForAutoupdate_Window = true;
         _isExplicitQuit = true;
         Close();
     }
@@ -363,6 +409,82 @@ public partial class MainWindow : Window
         {
             e.Cancel = true;
             Hide();
+            SetEfficiencyMode(true); // B3: enter EcoQoS while hidden to tray
+            return;
+        }
+
+        // When tray is disabled (or user did an explicit quit via tray menu),
+        // check for active operations and ask for confirmation.
+        if (!_isExplicitQuit && HasRunningOperations())
+        {
+            e.Cancel = true;
+            Dispatcher.UIThread.Post(async () => await ConfirmQuitWithRunningOpsAsync());
+        }
+    }
+
+    private static bool HasRunningOperations()
+    {
+        return AvaloniaOperationRegistry.Operations.Any(
+            o => o.Status is UniGetUI.PackageEngine.Enums.OperationStatus.Running
+                or UniGetUI.PackageEngine.Enums.OperationStatus.InQueue);
+    }
+
+    private async Task ConfirmQuitWithRunningOpsAsync()
+    {
+        try
+        {
+            var tcs = new TaskCompletionSource<bool>();
+            var dialog = new Window
+            {
+                Title = CoreTools.Translate("Running operations"),
+                Width = 460,
+                SizeToContent = SizeToContent.Height,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                Content = new StackPanel
+                {
+                    Margin = new Thickness(20),
+                    Spacing = 16,
+                    Children =
+                    {
+                        new TextBlock
+                        {
+                            Text = CoreTools.Translate("There are ongoing operations. Are you sure you want to quit UniGetUI?"),
+                            TextWrapping = TextWrapping.Wrap,
+                        },
+                        new StackPanel
+                        {
+                            Orientation = Orientation.Horizontal,
+                            HorizontalAlignment = HorizontalAlignment.Right,
+                            Spacing = 8,
+                            Children =
+                            {
+                                new Button { Content = CoreTools.Translate("Close UniGetUI") },
+                                new Button { Content = CoreTools.Translate("Cancel") },
+                            },
+                        },
+                    },
+                },
+            };
+
+            if (dialog.Content is StackPanel sp
+                && sp.Children[1] is StackPanel btns)
+            {
+                ((Button)btns.Children[0]).Click += (_, _) => { tcs.TrySetResult(true);  dialog.Close(); };
+                ((Button)btns.Children[1]).Click += (_, _) => { tcs.TrySetResult(false); dialog.Close(); };
+            }
+
+            dialog.Closed += (_, _) => tcs.TrySetResult(false);
+
+            await dialog.ShowDialog(this);
+            if (await tcs.Task)
+            {
+                QuitApplication();
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error("Failed to show quit-confirmation dialog:");
+            Logger.Error(ex);
         }
     }
 
@@ -370,6 +492,55 @@ public partial class MainWindow : Window
     {
         _trayIcon?.Dispose();
         _trayIcon = null;
+    }
+
+    // ── B3: Windows EcoQoS / efficiency mode ──────────────────────────────
+    // Applied when the window hides to tray to reduce CPU/battery consumption;
+    // reverted when the window is brought back to the foreground.
+    // P/Invoke is guarded by RuntimeInformation so it compiles on all platforms.
+
+#pragma warning disable CA1416
+    private const int ProcessPowerThrottling = 4;
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct PROCESS_POWER_THROTTLING_STATE
+    {
+        public uint Version;
+        public uint ControlMask;
+        public uint StateMask;
+    }
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    private static extern bool SetProcessInformation(
+        IntPtr hProcess,
+        int ProcessInformationClass,
+        ref PROCESS_POWER_THROTTLING_STATE ProcessInformation,
+        uint ProcessInformationSize);
+#pragma warning restore CA1416
+
+    private static void SetEfficiencyMode(bool enable)
+    {
+        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            return;
+        try
+        {
+            var state = new PROCESS_POWER_THROTTLING_STATE
+            {
+                Version = 1,
+                ControlMask = 1, // PROCESS_POWER_THROTTLING_EXECUTION_SPEED
+                StateMask = enable ? 1u : 0u,
+            };
+            SetProcessInformation(
+                System.Diagnostics.Process.GetCurrentProcess().Handle,
+                ProcessPowerThrottling,
+                ref state,
+                (uint)Marshal.SizeOf<PROCESS_POWER_THROTTLING_STATE>());
+        }
+        catch (Exception ex)
+        {
+            Logger.Warn("EcoQoS efficiency mode change failed:");
+            Logger.Warn(ex);
+        }
     }
 
     private static string BuildWindowTitle()

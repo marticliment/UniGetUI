@@ -738,6 +738,9 @@ public partial class PackagePageView : UserControl, IShellPage
                 return;
             }
 
+            // ── B2: show update available notification ─────────────────────
+            WindowsAppNotificationBridge.ShowUpdatesAvailableNotification(upgradable);
+
             if (Settings.Get(Settings.K.AutomaticallyUpdatePackages)
                 || Environment.GetCommandLineArgs().Contains("--updateapps"))
             {

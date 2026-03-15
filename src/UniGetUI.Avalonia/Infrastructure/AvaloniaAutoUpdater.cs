@@ -66,11 +66,23 @@ internal static partial class AvaloniaAutoUpdater
     private static string? _pendingInstallerPath;
 
     /// <summary>
+    /// Set to <c>true</c> when the main window is closing (user quit or hidden path).
+    /// Mirrors WinUI's <c>AutoUpdater.ReleaseLockForAutoupdate_Window</c> — once set,
+    /// a pending installer is allowed to launch even if the user has not yet clicked
+    /// the banner (e.g. user quits via tray while an update is ready).
+    /// </summary>
+    public static bool ReleaseLockForAutoupdate_Window;
+
+    /// <summary>
+    /// Set to <c>true</c> when the user clicks the "Update now" button in the Windows toast
+    /// notification.  Mirrors WinUI's <c>AutoUpdater.ReleaseLockForAutoupdate_Notification</c>.
+    /// </summary>
+    public static bool ReleaseLockForAutoupdate_Notification;
+
+    /// <summary>
     /// Called by the user when they click "Update now" in the update banner.
     /// </summary>
     public static void TriggerInstall() => _installRequested = true;
-
-    // ------------------------------------------------------------------ main loop
     public static async Task UpdateCheckLoopAsync()
     {
         if (Settings.Get(Settings.K.DisableAutoUpdateWingetUI))
@@ -163,27 +175,29 @@ internal static partial class AvaloniaAutoUpdater
     {
         _pendingInstallerPath = installerPath;
         _installRequested = false;
+        ReleaseLockForAutoupdate_Notification = false;
 
-        // Notify UI
+        // Notify UI (update banner + toast)
         Dispatcher.UIThread.Post(() => UpdateAvailable?.Invoke(versionName));
+        WindowsAppNotificationBridge.ShowSelfUpdateAvailableNotification(versionName);
 
         if (autoLaunch)
         {
             // On first launch in background we wait for user interaction
         }
 
-        // Wait until user requests install or auto-launch
-        while (!_installRequested)
+        // Wait until user requests install, clicks the toast, or the window is being closed
+        while (!_installRequested && !ReleaseLockForAutoupdate_Window && !ReleaseLockForAutoupdate_Notification)
         {
             if (Settings.Get(Settings.K.DisableAutoUpdateWingetUI))
             {
-                Logger.Warn("Auto-updater: disabled while waiting for user — aborting.");
+                Logger.Warn("Auto-updater: disabled while waiting for user \u2014 aborting.");
                 return true;
             }
             await Task.Delay(500);
         }
 
-        Logger.Info("User triggered update — launching installer and quitting.");
+        Logger.Info("Installing update \u2014 launching installer and quitting.");
         await LaunchInstallerAndQuitAsync(installerPath);
         return true;
     }
