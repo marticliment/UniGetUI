@@ -195,6 +195,46 @@ namespace UniGetUI.Core.SettingsEngine.Tests
         }
 
         [Theory]
+        [InlineData("http://proxy.company.local:8080", "http", "proxy.company.local", 8080)]
+        [InlineData("https://proxy.company.local:8443", "https", "proxy.company.local", 8443)]
+        [InlineData("proxy.company.local:8080", "http", "proxy.company.local", 8080)]
+        public void TestGetProxyUrlReturnsAbsoluteUri(string configuredValue, string scheme, string host, int port)
+        {
+            Settings.Set(Settings.K.EnableProxy, true);
+            Settings.SetValue(Settings.K.ProxyURL, configuredValue);
+
+            Uri? proxyUri = Settings.GetProxyUrl();
+
+            Assert.NotNull(proxyUri);
+            Assert.True(proxyUri!.IsAbsoluteUri);
+            Assert.Equal(scheme, proxyUri.Scheme);
+            Assert.Equal(host, proxyUri.Host);
+            Assert.Equal(port, proxyUri.Port);
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData("   ")]
+        [InlineData("http://proxy host:8080")]
+        [InlineData("://proxy")]
+        public void TestGetProxyUrlRejectsInvalidValues(string configuredValue)
+        {
+            Settings.Set(Settings.K.EnableProxy, true);
+            Settings.SetValue(Settings.K.ProxyURL, configuredValue);
+
+            Assert.Null(Settings.GetProxyUrl());
+        }
+
+        [Fact]
+        public void TestGetProxyUrlReturnsNullWhenProxyDisabled()
+        {
+            Settings.Set(Settings.K.EnableProxy, false);
+            Settings.SetValue(Settings.K.ProxyURL, "proxy.company.local:8080");
+
+            Assert.Null(Settings.GetProxyUrl());
+        }
+
+        [Theory]
         [InlineData(
             "lsTestSetting1",
             new[] { "UpdatedFirstValue", "RandomString1", "RandomTestValue", "AnotherRandomValue" },

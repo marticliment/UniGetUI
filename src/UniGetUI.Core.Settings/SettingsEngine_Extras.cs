@@ -8,6 +8,12 @@ namespace UniGetUI.Core.SettingsEngine;
 
 public partial class Settings
 {
+    private static readonly string[] SupportedProxySchemes =
+    [
+        Uri.UriSchemeHttp,
+        Uri.UriSchemeHttps,
+    ];
+
     /*
      *
      *
@@ -33,12 +39,42 @@ public partial class Settings
         if (!Get(K.EnableProxy))
             return null;
 
-        string plainUrl = GetValue(K.ProxyURL);
-        Uri.TryCreate(plainUrl, UriKind.RelativeOrAbsolute, out Uri? var);
-        if (Get(K.EnableProxy) && var is null)
+        string plainUrl = GetValue(K.ProxyURL).Trim();
+        if (plainUrl.Length is 0)
+        {
+            Logger.Warn("Proxy is enabled, but no proxy URL has been configured");
+            return null;
+        }
+
+        Uri? proxyUri = TryCreateAbsoluteProxyUri(plainUrl);
+        if (proxyUri is null)
             Logger.Warn($"Proxy setting {plainUrl} is not valid");
-        return var;
+        return proxyUri;
     }
+
+    private static Uri? TryCreateAbsoluteProxyUri(string plainUrl)
+    {
+        if (Uri.TryCreate(plainUrl, UriKind.Absolute, out Uri? proxyUri) && IsSupportedProxyUri(proxyUri))
+        {
+            return proxyUri;
+        }
+
+        if (plainUrl.Contains("://", StringComparison.Ordinal))
+        {
+            return null;
+        }
+
+        string normalizedUrl = $"http://{plainUrl}";
+        return Uri.TryCreate(normalizedUrl, UriKind.Absolute, out proxyUri)
+                && IsSupportedProxyUri(proxyUri)
+            ? proxyUri
+            : null;
+    }
+
+    private static bool IsSupportedProxyUri(Uri proxyUri) =>
+        proxyUri.IsAbsoluteUri
+        && !string.IsNullOrWhiteSpace(proxyUri.Host)
+        && SupportedProxySchemes.Contains(proxyUri.Scheme, StringComparer.OrdinalIgnoreCase);
 
     private const string PROXY_RES_ID = "UniGetUI_proxy";
 
