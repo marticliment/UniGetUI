@@ -6,6 +6,7 @@ using UniGetUI.Core.Tools;
 using UniGetUI.Interface;
 using UniGetUI.Interface.Telemetry;
 using UniGetUI.PackageEngine;
+using UniGetUI.PackageEngine.Classes.Manager.Classes;
 
 namespace UniGetUI.Avalonia.Infrastructure;
 
@@ -122,4 +123,52 @@ internal static class AvaloniaBootstrapper
     }
 
     public static void StopBackgroundApi() => _backgroundApi?.Stop();
+
+    /// <summary>
+    /// Checks all ready package managers for missing dependencies.
+    /// Returns the list of dependencies whose installation was not skipped by the user.
+    /// </summary>
+    public static async Task<IReadOnlyList<ManagerDependency>> GetMissingDependenciesAsync()
+    {
+        var missing = new List<ManagerDependency>();
+
+        foreach (var manager in PEInterface.Managers)
+        {
+            if (!manager.IsReady()) continue;
+
+            foreach (var dep in manager.Dependencies)
+            {
+                bool isInstalled = true;
+                try
+                {
+                    isInstalled = await dep.IsInstalled();
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error($"Error checking dependency {dep.Name}: {ex.Message}");
+                }
+
+                if (!isInstalled)
+                {
+                    if (Settings.GetDictionaryItem<string, string>(
+                            Settings.K.DependencyManagement, dep.Name) == "skipped")
+                    {
+                        Logger.Info($"Dependency {dep.Name} skipped by user preference.");
+                    }
+                    else
+                    {
+                        Logger.Warn(
+                            $"Dependency {dep.Name} not found for manager {manager.Name}.");
+                        missing.Add(dep);
+                    }
+                }
+                else
+                {
+                    Logger.Info($"Dependency {dep.Name} for {manager.Name} is present.");
+                }
+            }
+        }
+
+        return missing;
+    }
 }

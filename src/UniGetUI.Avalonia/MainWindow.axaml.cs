@@ -83,6 +83,16 @@ public partial class MainWindow : Window
                 if (!t.Result.Passed && !Settings.Get(Settings.K.DisableIntegrityChecks))
                     await Dispatcher.UIThread.InvokeAsync(() => ShowIntegrityWarningAsync(this));
             }, TaskScheduler.Default);
+
+            // Check for missing package manager dependencies (non-blocking — runs after shell is shown)
+            _ = Task.Run(AvaloniaBootstrapper.GetMissingDependenciesAsync)
+                .ContinueWith(async t =>
+                {
+                    if (t.IsCompletedSuccessfully && t.Result.Count > 0)
+                        await Dispatcher.UIThread.InvokeAsync(() => HandleMissingDependenciesAsync(t.Result));
+                    else if (t.IsFaulted)
+                        Logger.Error(t.Exception!);
+                }, TaskScheduler.Default);
         }
         catch (Exception ex)
         {
@@ -92,6 +102,18 @@ public partial class MainWindow : Window
                 CoreTools.Translate("UniGetUI failed to initialize"),
                 ex.Message
             );
+        }
+    }
+
+    /// <summary>Sequentially shows a <see cref="MissingDependencyDialog"/> for each missing dependency.</summary>
+    private async Task HandleMissingDependenciesAsync(
+        IReadOnlyList<UniGetUI.PackageEngine.Classes.Manager.Classes.ManagerDependency> dependencies)
+    {
+        int current = 1, total = dependencies.Count;
+        foreach (var dep in dependencies)
+        {
+            var dialog = new Views.Pages.MissingDependencyDialog(dep, current++, total);
+            await dialog.ShowDialog(this);
         }
     }
 

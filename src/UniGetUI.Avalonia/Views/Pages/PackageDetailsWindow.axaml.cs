@@ -31,6 +31,7 @@ public partial class PackageDetailsWindow : Window
     private Uri? _manifestUrl;
     private IReadOnlyList<Uri> _screenshotUris = [];
     private int _selectedScreenshotIndex;
+    private bool _isTwoColumnLayout;
 
     private TextBlock PackageVersionLabelText => GetControl<TextBlock>("PackageVersionLabelBlock");
     private TextBlock PackageManagerLabelText => GetControl<TextBlock>("PackageManagerLabelBlock");
@@ -107,6 +108,9 @@ public partial class PackageDetailsWindow : Window
     private Border DependenciesCardControl => GetControl<Border>("DependenciesCard");
     private TextBlock DependenciesTitleText => GetControl<TextBlock>("DependenciesTitleBlock");
     private StackPanel DependenciesPanelControl => GetControl<StackPanel>("DependenciesPanel");
+    private Grid RootLayoutGridControl => GetControl<Grid>("RootLayoutGrid");
+    private StackPanel PrimaryContentControl => GetControl<StackPanel>("PrimaryContent");
+    private StackPanel SidePanelContentControl => GetControl<StackPanel>("SidePanelContent");
 
     public PackageDetailsWindow(IPackage package, PackagePageMode pageMode)
     {
@@ -119,6 +123,46 @@ public partial class PackageDetailsWindow : Window
         InitializeComponent();
         ApplyStaticContent(package);
         _ = LoadDetailsAsync();
+    }
+
+    protected override void OnSizeChanged(SizeChangedEventArgs e)
+    {
+        base.OnSizeChanged(e);
+        UpdateColumnsLayout(e.NewSize.Width);
+    }
+
+    private void UpdateColumnsLayout(double width)
+    {
+        bool wantTwoColumn = width >= 950;
+        if (wantTwoColumn == _isTwoColumnLayout) return;
+        _isTwoColumnLayout = wantTwoColumn;
+
+        var rootGrid = RootLayoutGridControl;
+        var primaryContent = PrimaryContentControl;
+        var sideContent = SidePanelContentControl;
+        var screenshotsCard = ScreenshotsCardControl;
+
+        if (wantTwoColumn)
+        {
+            rootGrid.ColumnDefinitions[1].Width = new GridLength(380, GridUnitType.Pixel);
+            rootGrid.ColumnSpacing = 12;
+            if (primaryContent.Children.Contains(screenshotsCard))
+            {
+                primaryContent.Children.Remove(screenshotsCard);
+                sideContent.Children.Insert(0, screenshotsCard);
+            }
+        }
+        else
+        {
+            rootGrid.ColumnDefinitions[1].Width = new GridLength(0, GridUnitType.Pixel);
+            rootGrid.ColumnSpacing = 0;
+            if (sideContent.Children.Contains(screenshotsCard))
+            {
+                sideContent.Children.Remove(screenshotsCard);
+                // Insert after header (index 0) — LoadingCard moves to index 1
+                primaryContent.Children.Insert(Math.Min(1, primaryContent.Children.Count), screenshotsCard);
+            }
+        }
     }
 
     private void ApplyStaticContent(IPackage package)

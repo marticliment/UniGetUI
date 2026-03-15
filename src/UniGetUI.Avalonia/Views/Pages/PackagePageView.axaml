@@ -72,7 +72,7 @@
                 <Border Grid.Row="2"
                                                 Padding="12"
                                                 Classes="surface-card">
-                        <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,*,Auto,Auto,Auto,Auto,Auto,Auto,Auto"
+                        <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,*,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto"
                                                 ColumnSpacing="6">
                                 <Button x:Name="PrimaryActionButton"
                                                                 Classes="toolbar-primary accent"
@@ -153,13 +153,20 @@
                                                                 Classes="toolbar-secondary"
                                                                 Content="Reload"
                                                                 Click="ReloadButton_OnClick" />
+                                <ToggleButton x:Name="ToggleFiltersButton"
+                                                                  Grid.Column="13"
+                                                                  Classes="toolbar-secondary"
+                                                                  IsChecked="True"
+                                                                  Content="☰ Filters"
+                                                                  Click="ToggleFiltersButton_OnClick" />
                         </Grid>
                 </Border>
 
                 <Grid Grid.Row="3"
+                                        x:Name="FilterContentGrid"
                                         ColumnDefinitions="264,*"
                                         ColumnSpacing="12">
-                        <StackPanel Spacing="12">
+                        <StackPanel x:Name="FilterPanelContainer" Spacing="12">
                                 <Border Padding="16"
                                                                 Classes="surface-card">
                                         <StackPanel Spacing="12">

@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
@@ -299,6 +300,7 @@ public partial class PackagePageView : UserControl, IShellPage
         IgnoreSpecialCharsOption.Content = CoreTools.Translate("Ignore special characters");
         ReloadBtn.Content = CoreTools.Translate("Reload");
         ViewModeLabelText.Text = CoreTools.Translate("View");
+        ToggleFiltersButtonControl.Content = CoreTools.Translate("Filters");
 
         if (ViewModeSelectorControl.Items is IList<object> items && items.Count >= 3)
         {
@@ -676,6 +678,112 @@ public partial class PackagePageView : UserControl, IShellPage
             _hasBackedUp = true;
             _ = Task.Run(TriggerInstalledPageBackupAsync);
         }
+
+        if (_pageMode == PackagePageMode.Updates)
+        {
+            _ = Task.Run(TriggerAutoUpdateCheckAsync);
+        }
+    }
+
+    // ── Auto-update trigger (D3: battery / battery-saver gate) ──────────────
+
+    // P/Invoke for battery status — compiles on all platforms; only called on Windows.
+    [StructLayout(LayoutKind.Sequential)]
+    private struct SYSTEM_POWER_STATUS
+    {
+        public byte ACLineStatus;       // 0 = offline (on battery), 1 = online
+        public byte BatteryFlag;
+        public byte BatteryLifePercent;
+        public byte SystemStatusFlag;   // bit 0 = Battery Saver active
+        public uint BatteryLifeTime;
+        public uint BatteryFullLifeTime;
+    }
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    private static extern bool GetSystemPowerStatus(out SYSTEM_POWER_STATUS status);
+
+    private static bool IsOnBattery()
+    {
+        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return false;
+        try { return GetSystemPowerStatus(out var s) && s.ACLineStatus == 0; }
+        catch { return false; }
+    }
+
+    private static bool IsBatterySaverActive()
+    {
+        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return false;
+        try { return GetSystemPowerStatus(out var s) && (s.SystemStatusFlag & 0x1) != 0; }
+        catch { return false; }
+    }
+
+    private static async Task TriggerAutoUpdateCheckAsync()
+    {
+        try
+        {
+            var upgradable = UpgradablePackagesLoader.Instance.Packages
+                .Where(p => p.Tag is not PackageTag.OnQueue and not PackageTag.BeingProcessed)
+                .ToList();
+
+            if (upgradable.Count == 0) return;
+
+            if (Settings.Get(Settings.K.DisableAUPOnBattery) && IsOnBattery())
+            {
+                Logger.Warn("Auto-updates skipped: device is running on battery.");
+                return;
+            }
+
+            if (Settings.Get(Settings.K.DisableAUPOnBatterySaver) && IsBatterySaverActive())
+            {
+                Logger.Warn("Auto-updates skipped: Battery Saver is enabled.");
+                return;
+            }
+
+            if (Settings.Get(Settings.K.AutomaticallyUpdatePackages)
+                || Environment.GetCommandLineArgs().Contains("--updateapps"))
+            {
+                Logger.Info("Triggering automatic update of all upgradable packages.");
+                await AvaloniaPackageOperationHelper.UpdateAllAsync();
+                return;
+            }
+
+            // Per-package AutoUpdatePackage flag
+            foreach (var pkg in upgradable)
+            {
+                var opts = await InstallOptionsFactory.LoadApplicableAsync(pkg);
+                if (!opts.AutoUpdatePackage) continue;
+                var op = new UpdatePackageOperation(pkg, opts);
+                AvaloniaOperationRegistry.Add(op);
+                _ = op.MainThread();
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error("Auto-update trigger failed:");
+            Logger.Error(ex);
+        }
+    }
+
+    // ── Filter panel toggle (B1) ────────────────────────────────────────────
+
+    private bool _filterPanelVisible = true;
+
+    private Grid FilterContentGridControl => GetControl<Grid>("FilterContentGrid");
+    private StackPanel FilterPanelContainerControl => GetControl<StackPanel>("FilterPanelContainer");
+    private ToggleButton ToggleFiltersButtonControl => GetControl<ToggleButton>("ToggleFiltersButton");
+
+    private void ToggleFiltersButton_OnClick(object? sender, RoutedEventArgs e)
+    {
+        _filterPanelVisible = ToggleFiltersButtonControl.IsChecked == true;
+        ApplyFilterPanelVisibility();
+    }
+
+    private void ApplyFilterPanelVisibility()
+    {
+        FilterPanelContainerControl.IsVisible = _filterPanelVisible;
+        var col = FilterContentGridControl.ColumnDefinitions[0];
+        col.Width = _filterPanelVisible
+            ? new GridLength(264, GridUnitType.Pixel)
+            : new GridLength(0, GridUnitType.Pixel);
     }
 
     private static bool IsWinGetMalfunctionDetected()

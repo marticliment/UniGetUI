@@ -12,65 +12,73 @@
   <Window.Styles>
     <StyleInclude Source="/Styles/AppStyles.axaml" />
   </Window.Styles>
-  <ScrollViewer Margin="18">
-    <StackPanel Spacing="12">
 
-      <!-- Header -->
-      <Border Padding="18"
-              Classes="surface-card subtle-panel">
-        <StackPanel Spacing="6">
-          <StackPanel Orientation="Horizontal"
-                      Spacing="12">
-            <Border Width="42"
-                    Height="42"
-                    Classes="surface-card"
-                    CornerRadius="12">
-              <Panel>
-                <TextBlock x:Name="PackageIconGlyphBlock"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"
-                           FontSize="18"
-                           Text="📦" />
-                <Image x:Name="PackageIconImage"
-                       Width="30"
-                       Height="30"
-                       IsVisible="False"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center"
-                       Stretch="Uniform" />
-              </Panel>
-            </Border>
-            <StackPanel Spacing="2">
-              <TextBlock x:Name="PackageNameBlock"
-                         FontSize="22"
-                         FontWeight="Bold" />
-              <TextBlock x:Name="PackageIdBlock"
-                         Opacity="0.70" />
+  <!-- Two-column responsive root: column 1 is the screenshots side panel (shown at ≥950 px) -->
+  <Grid x:Name="RootLayoutGrid"
+        ColumnDefinitions="*,0"
+        ColumnSpacing="0"
+        Margin="18">
+
+    <!-- LEFT / primary column -->
+    <ScrollViewer>
+      <StackPanel x:Name="PrimaryContent" Spacing="12">
+
+        <!-- Header -->
+        <Border Padding="18"
+                Classes="surface-card subtle-panel">
+          <StackPanel Spacing="6">
+            <StackPanel Orientation="Horizontal"
+                        Spacing="12">
+              <Border Width="42"
+                      Height="42"
+                      Classes="surface-card"
+                      CornerRadius="12">
+                <Panel>
+                  <TextBlock x:Name="PackageIconGlyphBlock"
+                             HorizontalAlignment="Center"
+                             VerticalAlignment="Center"
+                             FontSize="18"
+                             Text="📦" />
+                  <Image x:Name="PackageIconImage"
+                         Width="30"
+                         Height="30"
+                         IsVisible="False"
+                         HorizontalAlignment="Center"
+                         VerticalAlignment="Center"
+                         Stretch="Uniform" />
+                </Panel>
+              </Border>
+              <StackPanel Spacing="2">
+                <TextBlock x:Name="PackageNameBlock"
+                           FontSize="22"
+                           FontWeight="Bold" />
+                <TextBlock x:Name="PackageIdBlock"
+                           Opacity="0.70" />
+              </StackPanel>
             </StackPanel>
+            <Grid ColumnDefinitions="Auto,*,Auto,*"
+                  ColumnSpacing="6"
+                  Margin="0,6,0,0">
+              <TextBlock x:Name="PackageVersionLabelBlock"
+                         Text="Version:"
+                         Opacity="0.60"
+                         VerticalAlignment="Center" />
+              <TextBlock x:Name="PackageVersionBlock"
+                         Grid.Column="1"
+                         FontWeight="SemiBold"
+                         VerticalAlignment="Center" />
+              <TextBlock x:Name="PackageManagerLabelBlock"
+                         Text="Manager:"
+                         Grid.Column="2"
+                         Opacity="0.60"
+                         VerticalAlignment="Center" />
+              <TextBlock x:Name="PackageManagerBlock"
+                         Grid.Column="3"
+                         FontWeight="SemiBold"
+                         VerticalAlignment="Center" />
+            </Grid>
           </StackPanel>
-          <Grid ColumnDefinitions="Auto,*,Auto,*"
-                ColumnSpacing="6"
-                Margin="0,6,0,0">
-            <TextBlock x:Name="PackageVersionLabelBlock"
-                       Text="Version:"
-                       Opacity="0.60"
-                       VerticalAlignment="Center" />
-            <TextBlock x:Name="PackageVersionBlock"
-                       Grid.Column="1"
-                       FontWeight="SemiBold"
-                       VerticalAlignment="Center" />
-            <TextBlock x:Name="PackageManagerLabelBlock"
-                       Text="Manager:"
-                       Grid.Column="2"
-                       Opacity="0.60"
-                       VerticalAlignment="Center" />
-            <TextBlock x:Name="PackageManagerBlock"
-                       Grid.Column="3"
-                       FontWeight="SemiBold"
-                       VerticalAlignment="Center" />
-          </Grid>
-        </StackPanel>
-      </Border>
+        </Border>
 
       <!-- Loading indicator -->
       <Border x:Name="LoadingCard"
@@ -398,4 +406,16 @@
 
     </StackPanel>
   </ScrollViewer>
+
+  <!-- RIGHT column: side screenshots panel (activated at ≥950 px) -->
+  <ScrollViewer x:Name="SidePanelScrollViewer"
+                Grid.Column="1"
+                HorizontalScrollBarVisibility="Disabled"
+                VerticalScrollBarVisibility="Auto">
+    <StackPanel x:Name="SidePanelContent"
+                Spacing="12"
+                Margin="0,0,0,18" />
+  </ScrollViewer>
+
+  </Grid>
 </Window>
