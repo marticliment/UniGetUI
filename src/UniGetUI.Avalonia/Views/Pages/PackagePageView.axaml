@@ -235,7 +235,9 @@
                                         <Grid Grid.Row="2"
                                                                 Margin="16,0,16,16">
                                                 <ScrollViewer x:Name="PackageRowsScrollViewer"
-                                                                                                        IsVisible="False">
+                                                                IsVisible="False"
+                                                                Focusable="True"
+                                                                KeyDown="PackageRowsScrollViewer_KeyDown">
                                                         <ItemsControl x:Name="PackageRowsItemsControl">
                                                                 <ItemsControl.ItemTemplate>
                                                                         <DataTemplate>

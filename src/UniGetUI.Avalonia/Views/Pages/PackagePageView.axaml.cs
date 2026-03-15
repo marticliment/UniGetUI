@@ -363,6 +363,25 @@ public partial class PackagePageView : UserControl, IShellPage
             menu.Items.Add(skipHashItem);
         }
 
+        // Download selected installers (Discover / Updates only, for capable managers)
+        if (_pageMode != PackagePageMode.Installed)
+        {
+            var checkedDownloadable = _visibleRows
+                .Where(r => r.IsChecked && r.Package.Manager.Capabilities.CanDownloadInstaller)
+                .ToArray();
+            if (checkedDownloadable.Length > 0)
+            {
+                menu.Items.Add(new Separator());
+                var downloadSelectedItem = new MenuItem { Header = CoreTools.Translate("Download selected installers") };
+                downloadSelectedItem.Click += async (_, _) =>
+                {
+                    foreach (var row in checkedDownloadable)
+                        await DownloadPackageInstallerAsync(row.Package);
+                };
+                menu.Items.Add(downloadSelectedItem);
+            }
+        }
+
         if (sender is Control anchor)
         {
             menu.PlacementTarget = anchor;
@@ -953,6 +972,98 @@ public partial class PackagePageView : UserControl, IShellPage
         DetailsAction.IsEnabled = rowVisible;
         InstallOptionsAction.IsEnabled = rowVisible;
         ShareAction.IsEnabled = rowVisible;
+    }
+
+    private async void PackageRowsScrollViewer_KeyDown(object? sender, KeyEventArgs e)
+    {
+        if (_visibleRows.Count == 0)
+            return;
+
+        int current = _selectedRow is not null ? _visibleRows.IndexOf(_selectedRow) : -1;
+
+        switch (e.Key)
+        {
+            case Key.Up:
+            {
+                int next = current <= 0 ? 0 : current - 1;
+                OnRowSelected(_visibleRows[next]);
+                ScrollRowIntoView(next);
+                e.Handled = true;
+                break;
+            }
+            case Key.Down:
+            {
+                int next = current < 0 ? 0 : Math.Min(current + 1, _visibleRows.Count - 1);
+                OnRowSelected(_visibleRows[next]);
+                ScrollRowIntoView(next);
+                e.Handled = true;
+                break;
+            }
+            case Key.Home:
+            {
+                OnRowSelected(_visibleRows[0]);
+                ScrollRowIntoView(0);
+                e.Handled = true;
+                break;
+            }
+            case Key.End:
+            {
+                int last = _visibleRows.Count - 1;
+                OnRowSelected(_visibleRows[last]);
+                ScrollRowIntoView(last);
+                e.Handled = true;
+                break;
+            }
+            case Key.Space when current >= 0:
+            {
+                _visibleRows[current].IsChecked = !_visibleRows[current].IsChecked;
+                UpdateSelectAllState();
+                UpdateStatusSummary(
+                    _loader?.Packages.Count ?? _visibleRows.Count,
+                    _visibleRows.Count);
+                e.Handled = true;
+                break;
+            }
+            case Key.Enter when current >= 0:
+            {
+                var mods = e.KeyModifiers;
+                if (mods.HasFlag(KeyModifiers.Control))
+                {
+                    // Ctrl+Enter → run primary action
+                    await QueuePrimaryActionAsync(_visibleRows[current].Package);
+                }
+                else if (mods.HasFlag(KeyModifiers.Alt))
+                {
+                    // Alt+Enter → install options
+                    var window = new InstallOptionsWindow(_visibleRows[current].Package, _pageMode);
+                    if (VisualRoot is Window parentWindow)
+                        await window.ShowDialog(parentWindow);
+                    else
+                        window.Show();
+                }
+                else
+                {
+                    // Enter → package details
+                    var window = new PackageDetailsWindow(_visibleRows[current].Package, _pageMode);
+                    if (VisualRoot is Window parentWindow)
+                        await window.ShowDialog(parentWindow);
+                    else
+                        window.Show();
+                }
+                e.Handled = true;
+                break;
+            }
+        }
+    }
+
+    private void ScrollRowIntoView(int index)
+    {
+        // Best-effort: scroll the ItemsControl's container at the given index into view.
+        var itemsControl = PackageRowsScrollHost.GetVisualDescendants()
+            .OfType<ItemsControl>()
+            .FirstOrDefault();
+        if (itemsControl?.ContainerFromIndex(index) is Control container)
+            container.BringIntoView();
     }
 
     private async void DetailsAction_OnClick(object? sender, RoutedEventArgs e)
@@ -1562,6 +1673,23 @@ public partial class PackagePageView : UserControl, IShellPage
             return;
         }
 
+        // Distinguish "loader has packages but filters hide them" from "loader found nothing"
+        bool loaderHasPackages = (_loader?.Packages.Count ?? 0) > 0;
+
+        if (_pageMode == PackagePageMode.Updates && !loaderHasPackages)
+        {
+            EmptyStateTitleText.Text = CoreTools.Translate("Hooray! No updates were found.");
+            EmptyStateDescriptionText.Text = CoreTools.Translate("All your software is up to date");
+            return;
+        }
+
+        if (loaderHasPackages)
+        {
+            EmptyStateTitleText.Text = CoreTools.Translate("No packages match the specified filters");
+            EmptyStateDescriptionText.Text = CoreTools.Translate("Adjust the query or filters to broaden the results shown on this page.");
+            return;
+        }
+
         EmptyStateTitleText.Text = CoreTools.Translate("No results were found matching the input criteria");
         EmptyStateDescriptionText.Text = CoreTools.Translate("Adjust the query or filters to broaden the results shown on this page.");
     }
@@ -1591,14 +1719,21 @@ public partial class PackagePageView : UserControl, IShellPage
         if (totalPackageCount == visiblePackageCount)
         {
             SearchStateText.Text = CoreTools.Translate("{0} packages found", visiblePackageCount);
-            return;
+        }
+        else
+        {
+            SearchStateText.Text = CoreTools.Translate(
+                "{0} packages were found, {1} of which match the specified filters.",
+                totalPackageCount,
+                visiblePackageCount
+            );
         }
 
-        SearchStateText.Text = CoreTools.Translate(
-            "{0} packages were found, {1} of which match the specified filters.",
-            totalPackageCount,
-            visiblePackageCount
-        );
+        int selectedCount = _visibleRows.Count(r => r.IsChecked);
+        if (selectedCount > 0)
+        {
+            SearchStateText.Text += " " + CoreTools.Translate("({0} selected)", selectedCount);
+        }
     }
 
     private string GetLoadingStateText()
