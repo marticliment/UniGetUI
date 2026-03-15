@@ -134,8 +134,19 @@
                        FontWeight="SemiBold"
                        FontSize="14"
                        Opacity="0.80" />
-            <TextBox x:Name="CustomLocationTextBox"
-                     Watermark="Leave empty to use the default location" />
+            <Grid ColumnDefinitions="*,Auto,Auto"
+                  ColumnSpacing="6">
+              <TextBox x:Name="CustomLocationTextBox"
+                       Watermark="Leave empty to use the default location" />
+              <Button x:Name="BrowseLocationButton"
+                      Grid.Column="1"
+                      Classes="toolbar-secondary"
+                      Content="Browse…" />
+              <Button x:Name="ResetLocationButton"
+                      Grid.Column="2"
+                      Classes="toolbar-secondary"
+                      Content="Reset" />
+            </Grid>
           </StackPanel>
         </Border>
 

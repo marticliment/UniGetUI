@@ -1,8 +1,11 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media;
+using UniGetUI.Avalonia.Infrastructure;
 using UniGetUI.Core.Tools;
+using UniGetUI.PackageEngine.Classes.Packages.Classes;
 using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.Serializable;
 using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageOperations;
 
@@ -75,58 +78,99 @@ public partial class OperationFailedWindow : Window
 
     private void BuildRetryFlyout()
     {
-        var items = new List<(string label, string mode)>();
+        var flyout = new MenuFlyout();
 
+        // Plain retry is always the first option
+        var plainRetry = new MenuItem { Header = CoreTools.Translate("Retry") };
+        plainRetry.Click += (_, _) => { _operation.Retry(AbstractOperation.RetryMode.Retry); Close(); };
+        flyout.Items.Add(plainRetry);
+
+        // --- Basic retry-mode options ---
         if (_operation is PackageOperation pkgOp)
         {
             var caps = pkgOp.Package.Manager.Capabilities;
 
             if (!pkgOp.Options.RunAsAdministrator && caps.CanRunAsAdmin)
-                items.Add((
-                    CoreTools.Translate("Retry as administrator"),
-                    AbstractOperation.RetryMode.Retry_AsAdmin));
+                AddRetryItem(flyout, CoreTools.Translate("Retry as administrator"), AbstractOperation.RetryMode.Retry_AsAdmin);
 
             if (!pkgOp.Options.InteractiveInstallation && caps.CanRunInteractively)
-                items.Add((
-                    CoreTools.Translate("Retry interactively"),
-                    AbstractOperation.RetryMode.Retry_Interactive));
+                AddRetryItem(flyout, CoreTools.Translate("Retry interactively"), AbstractOperation.RetryMode.Retry_Interactive);
 
             if (!pkgOp.Options.SkipHashCheck && caps.CanSkipIntegrityChecks)
-                items.Add((
-                    CoreTools.Translate("Retry skipping integrity checks"),
-                    AbstractOperation.RetryMode.Retry_SkipIntegrity));
+                AddRetryItem(flyout, CoreTools.Translate("Retry skipping integrity checks"), AbstractOperation.RetryMode.Retry_SkipIntegrity);
         }
         else if (_operation is SourceOperation srcOp && !srcOp.ForceAsAdministrator)
         {
-            items.Add((
-                CoreTools.Translate("Retry as administrator"),
-                AbstractOperation.RetryMode.Retry_AsAdmin));
+            AddRetryItem(flyout, CoreTools.Translate("Retry as administrator"), AbstractOperation.RetryMode.Retry_AsAdmin);
         }
 
-        if (items.Count == 0) return;
-
-        var flyout = new MenuFlyout();
-
-        // Plain retry is always the first option in the flyout
-        var plainRetry = new MenuItem { Header = CoreTools.Translate("Retry") };
-        plainRetry.Click += (_, _) => { _operation.Retry(AbstractOperation.RetryMode.Retry); Close(); };
-        flyout.Items.Add(plainRetry);
-        flyout.Items.Add(new Separator());
-
-        foreach (var (label, mode) in items)
+        // --- Update-failure-specific actions ---
+        if (_operation is UpdatePackageOperation updateOp)
         {
-            var capturedMode = mode;
-            var item = new MenuItem { Header = label };
-            item.Click += (_, _) =>
+            flyout.Items.Add(new Separator());
+
+            var reinstallItem = new MenuItem { Header = CoreTools.Translate("Reinstall package") };
+            reinstallItem.Click += (_, _) =>
             {
-                _operation.Retry(capturedMode);
+                var opts = updateOp.Options.Copy();
+                var op = new InstallPackageOperation(updateOp.Package, opts);
+                AvaloniaOperationRegistry.Add(op);
+                _ = op.MainThread();
                 Close();
             };
-            flyout.Items.Add(item);
+            flyout.Items.Add(reinstallItem);
+
+            var uninstallReinstallItem = new MenuItem
+            {
+                Header = CoreTools.Translate("Uninstall package, then reinstall it")
+            };
+            uninstallReinstallItem.Click += (_, _) =>
+            {
+                var opts = updateOp.Options.Copy();
+                var reinstallOp = new InstallPackageOperation(updateOp.Package, opts);
+                var uninstallOp = new UninstallPackageOperation(updateOp.Package, new InstallOptions(), req: reinstallOp);
+                AvaloniaOperationRegistry.Add(reinstallOp);
+                AvaloniaOperationRegistry.Add(uninstallOp);
+                _ = uninstallOp.MainThread();
+                Close();
+            };
+            flyout.Items.Add(uninstallReinstallItem);
+
+            flyout.Items.Add(new Separator());
+
+            var skipVersionItem = new MenuItem { Header = CoreTools.Translate("Skip this version") };
+            skipVersionItem.Click += async (_, _) =>
+            {
+                await updateOp.Package.AddToIgnoredUpdatesAsync(updateOp.Package.NewVersionString);
+                Close();
+            };
+            flyout.Items.Add(skipVersionItem);
+
+            var ignoreItem = new MenuItem { Header = CoreTools.Translate("Ignore updates for this package") };
+            ignoreItem.Click += async (_, _) =>
+            {
+                await updateOp.Package.AddToIgnoredUpdatesAsync();
+                Close();
+            };
+            flyout.Items.Add(ignoreItem);
         }
 
-        RetryBtn.Flyout = flyout;
-        RetryBtn.Content = CoreTools.Translate("Retry ▾");
+        // Only attach the flyout (showing "Retry ▾") when there are extra options beyond plain retry
+        if (flyout.Items.Count > 1)
+        {
+            RetryBtn.Flyout = flyout;
+            RetryBtn.Content = CoreTools.Translate("Retry ▾");
+        }
+    }
+
+    private void AddRetryItem(MenuFlyout flyout, string label, string mode)
+    {
+        if (flyout.Items.Count == 1) // first extra option — add separator after "Retry"
+            flyout.Items.Add(new Separator());
+
+        var item = new MenuItem { Header = label };
+        item.Click += (_, _) => { _operation.Retry(mode); Close(); };
+        flyout.Items.Add(item);
     }
 
     // ── Button handlers ──────────────────────────────────────────────────────

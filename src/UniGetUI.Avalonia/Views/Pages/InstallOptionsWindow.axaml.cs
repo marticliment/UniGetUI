@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using Avalonia.Platform.Storage;
 using UniGetUI.Avalonia.Models;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.SettingsEngine.SecureSettings;
@@ -57,6 +58,10 @@ public partial class InstallOptionsWindow : Window
 
         LocationTitleBlock.Text = CoreTools.Translate("Custom install location");
         CustomLocationTextBox.Watermark = CoreTools.Translate("Leave empty to use the default location");
+        BrowseLocationButton.Content = CoreTools.Translate("Browse…");
+        ResetLocationButton.Content = CoreTools.Translate("Reset");
+        BrowseLocationButton.Click += BrowseLocationButton_OnClick;
+        ResetLocationButton.Click += (_, _) => CustomLocationTextBox.Text = string.Empty;
 
         ParametersTitleBlock.Text = CoreTools.Translate("Custom CLI arguments");
         CustomParamsDescBlock.Text = CoreTools.Translate("Additional arguments passed to the installer executable.");
@@ -359,5 +364,30 @@ public partial class InstallOptionsWindow : Window
     private void CancelBtn_OnClick(object? sender, RoutedEventArgs e)
     {
         Close();
+    }
+
+    private async void BrowseLocationButton_OnClick(object? sender, RoutedEventArgs e)
+    {
+        var options = new FolderPickerOpenOptions
+        {
+            Title = CoreTools.Translate("Select install location"),
+            AllowMultiple = false,
+        };
+
+        if (!string.IsNullOrWhiteSpace(CustomLocationTextBox.Text))
+        {
+            try
+            {
+                var current = await TopLevel.GetTopLevel(this)!.StorageProvider
+                    .TryGetFolderFromPathAsync(new Uri(CustomLocationTextBox.Text.Trim()));
+                if (current is not null)
+                    options.SuggestedStartLocation = current;
+            }
+            catch { /* ignore invalid path */ }
+        }
+
+        var folders = await TopLevel.GetTopLevel(this)!.StorageProvider.OpenFolderPickerAsync(options);
+        if (folders.Count > 0)
+            CustomLocationTextBox.Text = folders[0].TryGetLocalPath() ?? string.Empty;
     }
 }
