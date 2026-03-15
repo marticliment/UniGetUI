@@ -1,7 +1,10 @@
 using Avalonia.Threading;
 using UniGetUI.Avalonia.Models;
+using UniGetUI.Core.Data;
+using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
+using UniGetUI.Core.SettingsEngine.SecureSettings;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface;
 using UniGetUI.Interface.Telemetry;
@@ -50,6 +53,24 @@ internal static class AvaloniaBootstrapper
                 TaskContinuationOptions.OnlyOnFaulted,
                 TaskScheduler.Default);
         _ = TelemetryHandler.InitializeAsync()
+            .ContinueWith(
+                t => Logger.Error(t.Exception!),
+                CancellationToken.None,
+                TaskContinuationOptions.OnlyOnFaulted,
+                TaskScheduler.Default);
+        _ = Task.Run(LoadElevatorAsync)
+            .ContinueWith(
+                t => Logger.Error(t.Exception!),
+                CancellationToken.None,
+                TaskContinuationOptions.OnlyOnFaulted,
+                TaskScheduler.Default);
+        _ = Task.Run(IconDatabase.Instance.LoadFromCacheAsync)
+            .ContinueWith(
+                t => Logger.Error(t.Exception!),
+                CancellationToken.None,
+                TaskContinuationOptions.OnlyOnFaulted,
+                TaskScheduler.Default);
+        _ = Task.Run(IconDatabase.Instance.LoadIconAndScreenshotsDatabaseAsync)
             .ContinueWith(
                 t => Logger.Error(t.Exception!),
                 CancellationToken.None,
@@ -123,6 +144,47 @@ internal static class AvaloniaBootstrapper
     }
 
     public static void StopBackgroundApi() => _backgroundApi?.Stop();
+
+    private static async Task LoadElevatorAsync()
+    {
+        try
+        {
+            if (Settings.Get(Settings.K.ProhibitElevation))
+            {
+                Logger.Warn("UniGetUI Elevator has been disabled since elevation is prohibited!");
+                return;
+            }
+
+            if (SecureSettings.Get(SecureSettings.K.ForceUserGSudo))
+            {
+                var res = await CoreTools.WhichAsync("gsudo.exe");
+                if (res.Item1)
+                {
+                    CoreData.ElevatorPath = res.Item2;
+                    Logger.Warn($"Using user GSudo (forced by user) at {CoreData.ElevatorPath}");
+                    return;
+                }
+            }
+
+#if DEBUG
+            Logger.Warn($"Using system GSudo since UniGetUI Elevator is not available in DEBUG builds");
+            CoreData.ElevatorPath = (await CoreTools.WhichAsync("gsudo.exe")).Item2;
+#else
+            CoreData.ElevatorPath = Path.Join(
+                CoreData.UniGetUIExecutableDirectory,
+                "Assets",
+                "Utilities",
+                "UniGetUI Elevator.exe"
+            );
+            Logger.Debug($"Using built-in UniGetUI Elevator at {CoreData.ElevatorPath}");
+#endif
+        }
+        catch (Exception ex)
+        {
+            Logger.Error("Elevator/GSudo failed to be loaded!");
+            Logger.Error(ex);
+        }
+    }
 
     /// <summary>
     /// Checks all ready package managers for missing dependencies.

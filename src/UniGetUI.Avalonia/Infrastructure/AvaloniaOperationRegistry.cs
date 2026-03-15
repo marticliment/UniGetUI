@@ -215,9 +215,11 @@ public static class AvaloniaOperationRegistry
             && Settings.Get(Settings.K.AskToDeleteNewDesktopShortcuts)
             && DesktopShortcutsDatabase.GetUnknownShortcuts().Count > 0)
         {
+            var unknownShortcuts = DesktopShortcutsDatabase.GetUnknownShortcuts().ToList();
+            WindowsAppNotificationBridge.ShowNewShortcutsNotification(unknownShortcuts);
             Dispatcher.UIThread.Post(() =>
             {
-                var window = new UniGetUI.Avalonia.Views.Pages.DesktopShortcutsWindow();
+                var window = new UniGetUI.Avalonia.Views.Pages.DesktopShortcutsWindow(unknownShortcuts);
                 if (Application.Current?.ApplicationLifetime
                         is IClassicDesktopStyleApplicationLifetime { MainWindow: Window mainWin })
                     _ = window.ShowDialog(mainWin);

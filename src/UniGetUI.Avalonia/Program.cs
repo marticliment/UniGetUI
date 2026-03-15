@@ -1,9 +1,11 @@
 using System.Threading;
 using Avalonia;
 using AvaloniaUI.DiagnosticsProtocol;
+using UniGetUI.Avalonia.Infrastructure;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
+using UniGetUI.Core.Tools;
 
 namespace UniGetUI.Avalonia;
 
@@ -45,6 +47,20 @@ internal sealed class Program
             return;
         }
 
+        // ── A6: WinGetUI→UniGetUI shortcut migration (called by installer) ──
+        if (args.Contains("--migrate-wingetui-to-unigetui"))
+        {
+            Environment.Exit(RunCli_MigrateWingetUI());
+            return;
+        }
+
+        // ── Stub: prevents re-launch during MSI/MSIX uninstall ────────────
+        if (args.Contains("--uninstall-unigetui") || args.Contains("--uninstall-wingetui"))
+        {
+            Environment.Exit(0);
+            return;
+        }
+
         // ── Single-instance enforcement ────────────────────────────────────
         _singleInstanceMutex = new Mutex(
             initiallyOwned: true,
@@ -53,12 +69,19 @@ internal sealed class Program
 
         if (!createdNew)
         {
-            // Another instance already holds the mutex — exit gracefully.
-            Logger.Warn("UniGetUI is already running. Exiting duplicate instance.");
+            // Forward args to the first instance then exit (mirrors WinUI3's AppInstance.RedirectActivationToAsync).
+            Logger.Warn("UniGetUI is already running. Forwarding args to first instance.");
+            SingleInstanceRedirector.TryForwardToFirstInstance(args);
             _singleInstanceMutex.Close();
             _singleInstanceMutex = null;
             return;
         }
+
+        // Start the pipe listener so future second instances can forward their args.
+        SingleInstanceRedirector.StartListener(OnIncomingArgs);
+
+        // Register global exception handlers for logging and crash reporting
+        RegisterErrorHandling();
 
         try
         {
@@ -75,6 +98,18 @@ internal sealed class Program
             _singleInstanceMutex.Dispose();
             _singleInstanceMutex = null;
         }
+    }
+
+    // ── Second-instance arg handler ──────────────────────────────────────
+
+    private static void OnIncomingArgs(string[] incomingArgs)
+    {
+        // Show the main window.
+        MainWindow.Instance?.ShowFromTray();
+
+        // Route the forwarded arguments through the shell's arg processor.
+        if (MainWindow.Instance?.Content is Views.MainShellView shell)
+            shell.ProcessIncomingArgs(incomingArgs);
     }
 
     // ── Headless CLI helpers ───────────────────────────────────────────────
@@ -129,7 +164,86 @@ internal sealed class Program
         catch (Exception ex) { return ex.HResult; }
     }
 
+    // ── A6: WinGetUI→UniGetUI shortcut migrator ────────────────────────────
+
+    private static int RunCli_MigrateWingetUI()
+    {
+        try
+        {
+            string[] basePaths =
+            [
+                Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory),
+                Environment.GetFolderPath(Environment.SpecialFolder.StartMenu),
+                Environment.GetFolderPath(Environment.SpecialFolder.CommonDesktopDirectory),
+                Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu),
+            ];
+
+            foreach (string basePath in basePaths)
+            {
+                foreach (string oldName in new[]
+                {
+                    "WingetUI.lnk",
+                    "WingetUI .lnk",
+                    "UniGetUI (formerly WingetUI) .lnk",
+                    "UniGetUI (formerly WingetUI).lnk",
+                })
+                {
+                    try
+                    {
+                        string oldFile = Path.Join(basePath, oldName);
+                        string newFile = Path.Join(basePath, "UniGetUI.lnk");
+                        if (!File.Exists(oldFile))
+                            continue;
+
+                        if (File.Exists(newFile))
+                        {
+                            Logger.Info($"Deleting old shortcut '{oldFile}' (new one already exists)");
+                            File.Delete(oldFile);
+                        }
+                        else
+                        {
+                            Logger.Info($"Renaming shortcut '{oldFile}' → '{newFile}'");
+                            File.Move(oldFile, newFile);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Warn($"Could not migrate shortcut '{Path.Join(basePath, oldName)}'");
+                        Logger.Warn(ex);
+                    }
+                }
+            }
+
+            return 0;
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+            return ex.HResult;
+        }
+    }
+
     // ── A7: crash reporter ─────────────────────────────────────────────────
+
+    private static void RegisterErrorHandling()
+    {
+        // Log unobserved task exceptions and mark them as observed to
+        // prevent .NET from terminating the process on GC finalization.
+        TaskScheduler.UnobservedTaskException += (_, e) =>
+        {
+            Logger.Error("Unobserved task exception:");
+            Logger.Error(e.Exception);
+            e.SetObserved();
+        };
+
+        // Log truly unhandled exceptions on any thread. These are fatal —
+        // the process is about to terminate (e.IsTerminating == true).
+        AppDomain.CurrentDomain.UnhandledException += (_, e) =>
+        {
+            if (e.ExceptionObject is Exception ex)
+                ReportFatalException(ex);
+        };
+    }
 
     private static void ReportFatalException(Exception ex)
     {

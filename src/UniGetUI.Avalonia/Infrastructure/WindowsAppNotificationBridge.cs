@@ -242,6 +242,58 @@ internal static class WindowsAppNotificationBridge
         }
     }
 
+    /// <summary>
+    /// Shows a Windows toast notification after new desktop shortcuts are detected.
+    /// </summary>
+    public static void ShowNewShortcutsNotification(IReadOnlyList<string> shortcuts)
+    {
+        if (!EnsureRegistered()) return;
+        if (Settings.AreNotificationsDisabled()) return;
+
+        try
+        {
+            _removeByTagAsyncMethod?.Invoke(_managerDefault,
+                [CoreData.NewShortcutsNotificationTag.ToString()]);
+
+            string title;
+            string message;
+
+            if (shortcuts.Count == 1)
+            {
+                title = CoreTools.Translate("Desktop shortcut created");
+                message = CoreTools.Translate(
+                    "UniGetUI has detected a new desktop shortcut that can be deleted automatically.")
+                    + "\n" + shortcuts[0].Split('\\')[^1];
+            }
+            else
+            {
+                string names = string.Join(", ", shortcuts.Select(s => s.Split('\\')[^1]));
+                title = CoreTools.Translate("{0} desktop shortcuts created", shortcuts.Count);
+                message = CoreTools.Translate(
+                    "UniGetUI has detected {0} new desktop shortcuts that can be deleted automatically.",
+                    shortcuts.Count) + "\n" + names;
+            }
+
+            ShowTextToast(
+                tag: CoreData.NewShortcutsNotificationTag.ToString(),
+                scenario: ScenarioDefault,
+                title: title,
+                message: message,
+                suppressDisplay: false,
+                defaultAction: NotificationArguments.Show,
+                buttons:
+                [
+                    (CoreTools.Translate("Open UniGetUI").Replace("'", "\u00b4"),
+                        NotificationArguments.Show),
+                ]);
+        }
+        catch (Exception ex)
+        {
+            Logger.Warn("Could not show new shortcuts notification");
+            Logger.Warn(ex);
+        }
+    }
+
     private static bool EnsureRegistered()
     {
         if (!OperatingSystem.IsWindows())
@@ -434,7 +486,7 @@ internal static class WindowsAppNotificationBridge
 
     // ── B2: notification activation handler ───────────────────────────────
 
-    private static void OnNotificationInvoked(object sender, object args)
+    private static void OnNotificationInvoked(object _, object args)
     {
         try
         {

@@ -818,10 +818,17 @@ public partial class MainShellView : UserControl
         ProcessStartupArgs();
     }
 
-    private void ProcessStartupArgs()
+    /// <summary>
+    /// Called by <c>Program.OnIncomingArgs</c> when a second instance forwards its
+    /// command-line arguments via the named pipe.  Must be invoked on the UI thread.
+    /// </summary>
+    public void ProcessIncomingArgs(string[] args) => ProcessArgs(args);
+
+    private void ProcessStartupArgs() => ProcessArgs(Environment.GetCommandLineArgs().Skip(1));
+
+    private void ProcessArgs(IEnumerable<string> rawArgs)
     {
-        var args = Environment.GetCommandLineArgs().Skip(1).ToList();
-        foreach (var rawArg in args)
+        foreach (var rawArg in rawArgs)
         {
             string arg = rawArg.Trim('\'').Trim('"');
             if (string.IsNullOrWhiteSpace(arg)) continue;
