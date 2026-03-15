@@ -4,6 +4,7 @@ using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface;
+using UniGetUI.Interface.Telemetry;
 using UniGetUI.PackageEngine;
 
 namespace UniGetUI.Avalonia.Infrastructure;
@@ -42,6 +43,12 @@ internal static class AvaloniaBootstrapper
                 TaskContinuationOptions.OnlyOnFaulted,
                 TaskScheduler.Default);
         _ = Task.Run(InitializeBackgroundApiAsync)
+            .ContinueWith(
+                t => Logger.Error(t.Exception!),
+                CancellationToken.None,
+                TaskContinuationOptions.OnlyOnFaulted,
+                TaskScheduler.Default);
+        _ = TelemetryHandler.InitializeAsync()
             .ContinueWith(
                 t => Logger.Error(t.Exception!),
                 CancellationToken.None,

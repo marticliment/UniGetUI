@@ -25,6 +25,7 @@ using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.PackageLoader;
 using UniGetUI.PackageEngine.Serializable;
+using UniGetUI.Interface.Telemetry;
 using UniGetUI.PackageOperations;
 
 namespace UniGetUI.Avalonia.Views.Pages;
@@ -239,6 +240,7 @@ public partial class BundlesPageView : UserControl, IShellPage
             await using var writer = new StreamWriter(stream);
             await writer.WriteAsync(GeneratePowerShellScript(packages, commands));
 
+            TelemetryHandler.ExportBatch();
             StateText.Text = CoreTools.Translate("The installation script saved to {0}", file.Name);
         }
         catch (Exception ex)
@@ -512,6 +514,7 @@ public partial class BundlesPageView : UserControl, IShellPage
 
             string content = await File.ReadAllTextAsync(filePath);
             await AddFromBundleStringAsync(content, format);
+            TelemetryHandler.ImportBundle(format);
             HasUnsavedChanges = false;
             StateText.Text = CoreTools.Translate("{0} packages loaded from bundle", PackageBundlesLoader.Instance.Packages.Count);
         }
@@ -547,6 +550,8 @@ public partial class BundlesPageView : UserControl, IShellPage
             string serialized = await CreateBundleStringAsync(PackageBundlesLoader.Instance.Packages);
             string path = file.Path.LocalPath;
             await File.WriteAllTextAsync(path, serialized);
+            string saveExt = path.Split('.')[^1].ToLowerInvariant();
+            TelemetryHandler.ExportBundle(saveExt == "json" ? BundleFormatType.JSON : BundleFormatType.UBUNDLE);
             HasUnsavedChanges = false;
             StateText.Text = CoreTools.Translate("Bundle saved to {0}", path);
         }

@@ -9,6 +9,7 @@ using Avalonia.Threading;
 using UniGetUI.Avalonia.Infrastructure;
 using UniGetUI.Avalonia.Models;
 using UniGetUI.Avalonia.Views;
+using UniGetUI.Avalonia.Views.Pages;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
@@ -115,6 +116,12 @@ public partial class MainWindow : Window
             var installedItem = new NativeMenuItem(CoreTools.Translate("Installed packages"));
             installedItem.Click += (_, _) => { ShowFromTray(); NavigateShell(ShellPageType.Installed); };
             menu.Items.Add(installedItem);
+
+            menu.Items.Add(new NativeMenuItemSeparator());
+
+            var aboutItem = new NativeMenuItem(CoreTools.Translate("About UniGetUI"));
+            aboutItem.Click += (_, _) => new AboutPageWindow().Show();
+            menu.Items.Add(aboutItem);
 
             menu.Items.Add(new NativeMenuItemSeparator());
 

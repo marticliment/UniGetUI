@@ -11,6 +11,7 @@ using UniGetUI.Avalonia.Models;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
+using UniGetUI.Interface.Telemetry;
 using UniGetUI.PackageEngine.Classes.Packages.Classes;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.Interfaces;
@@ -749,12 +750,28 @@ public partial class PackagePageView : UserControl, IShellPage
         {
             OperationStateText.Text = GetSuccessStateText(package);
             RefreshRows();
+            if (operation is InstallPackageOperation)
+                TelemetryHandler.InstallPackage(package, TEL_OP_RESULT.SUCCESS, TEL_InstallReferral.DIRECT_SEARCH);
+            else if (operation is UpdatePackageOperation)
+                TelemetryHandler.UpdatePackage(package, TEL_OP_RESULT.SUCCESS);
+            else if (operation is UninstallPackageOperation)
+                TelemetryHandler.UninstallPackage(package, TEL_OP_RESULT.SUCCESS);
+            else if (operation is DownloadOperation)
+                TelemetryHandler.DownloadPackage(package, TEL_OP_RESULT.SUCCESS, TEL_InstallReferral.DIRECT_SEARCH);
         });
 
         operation.OperationFailed += (_, _) => Dispatcher.UIThread.Post(() =>
         {
             OperationStateText.Text = GetFailureStateText(package);
             RefreshRows();
+            if (operation is InstallPackageOperation)
+                TelemetryHandler.InstallPackage(package, TEL_OP_RESULT.FAILED, TEL_InstallReferral.DIRECT_SEARCH);
+            else if (operation is UpdatePackageOperation)
+                TelemetryHandler.UpdatePackage(package, TEL_OP_RESULT.FAILED);
+            else if (operation is UninstallPackageOperation)
+                TelemetryHandler.UninstallPackage(package, TEL_OP_RESULT.FAILED);
+            else if (operation is DownloadOperation)
+                TelemetryHandler.DownloadPackage(package, TEL_OP_RESULT.FAILED, TEL_InstallReferral.DIRECT_SEARCH);
         });
     }
 
