@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -8,7 +9,9 @@ using Avalonia.Threading;
 using Avalonia.VisualTree;
 using UniGetUI.Avalonia.Infrastructure;
 using UniGetUI.Avalonia.Models;
+using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
+using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.Interface.Telemetry;
@@ -40,6 +43,9 @@ public partial class PackagePageView : UserControl, IShellPage
     private AbstractOperation? _lastOperation;
     private SortColumn _sortColumn = SortColumn.Name;
     private bool _sortDescending;
+
+    // Tracks whether the one-time backup-on-load has run for the Installed page
+    private static bool _hasBackedUp;
 
     private TextBlock PageTitleText => GetControl<TextBlock>("PageTitleBlock");
 
@@ -115,6 +121,8 @@ public partial class PackagePageView : UserControl, IShellPage
     private ScrollViewer PackageRowsScrollHost => GetControl<ScrollViewer>("PackageRowsScrollViewer");
 
     private Border EmptyStateHost => GetControl<Border>("EmptyStateCard");
+
+    private ProgressBar LoadingProgressBarControl => GetControl<ProgressBar>("LoadingProgressBar");
 
     public PackagePageView()
         : this(
@@ -450,6 +458,7 @@ public partial class PackagePageView : UserControl, IShellPage
     {
         Dispatcher.UIThread.Post(() =>
         {
+            LoadingProgressBarControl.IsVisible = true;
             SearchStateText.Text = GetLoadingStateText();
             RefreshRows();
         });
@@ -462,7 +471,55 @@ public partial class PackagePageView : UserControl, IShellPage
 
     private void OnLoaderFinishedLoading(object? sender, EventArgs e)
     {
-        Dispatcher.UIThread.Post(RefreshRows);
+        Dispatcher.UIThread.Post(() =>
+        {
+            LoadingProgressBarControl.IsVisible = false;
+            RefreshRows();
+        });
+
+        if (_pageMode == PackagePageMode.Installed && !_hasBackedUp)
+        {
+            _hasBackedUp = true;
+            _ = Task.Run(TriggerInstalledPageBackupAsync);
+        }
+    }
+
+    private static async Task TriggerInstalledPageBackupAsync()
+    {
+        try
+        {
+            if (!Settings.Get(Settings.K.EnablePackageBackup_LOCAL))
+                return;
+
+            var packages = InstalledPackagesLoader.Instance.Packages.ToArray();
+            string backupContents = await BundlesPageView.CreateBundleStringAsync(packages);
+
+            string dirName = Settings.GetValue(Settings.K.ChangeBackupOutputDirectory);
+            if (string.IsNullOrEmpty(dirName))
+                dirName = CoreData.UniGetUI_DefaultBackupDirectory;
+
+            if (!Directory.Exists(dirName))
+                Directory.CreateDirectory(dirName);
+
+            string fileName = Settings.GetValue(Settings.K.ChangeBackupFileName);
+            if (string.IsNullOrEmpty(fileName))
+                fileName = CoreTools.Translate("{pcName} installed packages",
+                    new Dictionary<string, object?> { { "pcName", Environment.MachineName } });
+
+            if (Settings.Get(Settings.K.EnableBackupTimestamping))
+                fileName += " " + DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss");
+
+            fileName += ".ubundle";
+
+            string filePath = Path.Combine(dirName, fileName);
+            await File.WriteAllTextAsync(filePath, backupContents);
+            Logger.ImportantInfo("Backup saved to " + filePath);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error("An error occurred while performing a LOCAL backup");
+            Logger.Error(ex);
+        }
     }
 
     private void ScheduleDiscoverSearch()
@@ -966,19 +1023,21 @@ public partial class PackagePageView : UserControl, IShellPage
         }
     }
 
-    private void PackageRow_ContextRequested(object? sender, ContextRequestedEventArgs e)
+    private async void PackageRow_ContextRequested(object? sender, ContextRequestedEventArgs e)
     {
         if (sender is not Control ctrl || ctrl.DataContext is not PackageRowModel row)
         {
             return;
         }
 
+        e.Handled = true;
         OnRowSelected(row);
-        ctrl.ContextMenu = BuildContextMenu(row);
-        // Returning without setting e.Handled lets Avalonia open the ContextMenu automatically.
+        var menu = await BuildContextMenuAsync(row);
+        ctrl.ContextMenu = menu;
+        menu.Open(ctrl);
     }
 
-    private ContextMenu BuildContextMenu(PackageRowModel row)
+    private async Task<ContextMenu> BuildContextMenuAsync(PackageRowModel row)
     {
         var menu = new ContextMenu();
         var package = row.Package;
@@ -1113,12 +1172,30 @@ public partial class PackagePageView : UserControl, IShellPage
         if (_pageMode is PackagePageMode.Updates or PackagePageMode.Installed)
         {
             menu.Items.Add(new Separator());
-            var ignoreItem = new MenuItem { Header = CoreTools.Translate("Ignore updates") };
+
+            bool alreadyIgnored = _pageMode == PackagePageMode.Installed
+                && await package.HasUpdatesIgnoredAsync();
+
+            var ignoreItem = new MenuItem
+            {
+                Header = alreadyIgnored
+                    ? CoreTools.Translate("Do not ignore updates for this package anymore")
+                    : CoreTools.Translate("Ignore updates")
+            };
             ignoreItem.Click += async (_, _) =>
             {
-                await package.AddToIgnoredUpdatesAsync();
-                OperationStateText.Text = CoreTools.Translate(
-                    "Updates for {0} will be ignored", package.Name);
+                if (alreadyIgnored)
+                {
+                    await package.RemoveFromIgnoredUpdatesAsync();
+                    OperationStateText.Text = CoreTools.Translate(
+                        "Updates for {0} will no longer be ignored", package.Name);
+                }
+                else
+                {
+                    await package.AddToIgnoredUpdatesAsync();
+                    OperationStateText.Text = CoreTools.Translate(
+                        "Updates for {0} will be ignored", package.Name);
+                }
                 RefreshRows();
             };
             menu.Items.Add(ignoreItem);

@@ -156,6 +156,9 @@ public partial class MainWindow : Window
                 o => o.Status is UniGetUI.PackageEngine.Enums.OperationStatus.Running
                     or UniGetUI.PackageEngine.Enums.OperationStatus.InQueue);
 
+            bool anyFailed = AvaloniaOperationRegistry.Operations.Any(
+                o => o.Status == UniGetUI.PackageEngine.Enums.OperationStatus.Failed);
+
             int updates = UniGetUI.PackageEngine.PackageLoader.UpgradablePackagesLoader.Instance.Count();
 
             string modifier;
@@ -165,6 +168,11 @@ public partial class MainWindow : Window
             {
                 modifier = "blue";
                 tooltip = CoreTools.Translate("Operation in progress") + " — UniGetUI";
+            }
+            else if (anyFailed)
+            {
+                modifier = "orange";
+                tooltip = CoreTools.Translate("Some operations failed") + " — UniGetUI";
             }
             else if (updates == 1)
             {

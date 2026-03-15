@@ -191,7 +191,7 @@
                         <Border Grid.Column="1"
                                                         Padding="0"
                                                         Classes="surface-card">
-                                <Grid RowDefinitions="Auto,*">
+                                <Grid RowDefinitions="Auto,Auto,*">
                                         <Grid Margin="16,16,16,8"
                                                                 ColumnDefinitions="36,2.5*,2.2*,1.1*,1.2*,1.4*,Auto"
                                                                 ColumnSpacing="14">
@@ -225,7 +225,14 @@
                                                                                          Classes="data-header" />
                                         </Grid>
 
-                                        <Grid Grid.Row="1"
+                                        <ProgressBar x:Name="LoadingProgressBar"
+                                                                     Grid.Row="1"
+                                                                     Height="2"
+                                                                     IsIndeterminate="True"
+                                                                     IsVisible="False"
+                                                                     Margin="0" />
+
+                                        <Grid Grid.Row="2"
                                                                 Margin="16,0,16,16">
                                                 <ScrollViewer x:Name="PackageRowsScrollViewer"
                                                                                                         IsVisible="False">
