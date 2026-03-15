@@ -45,6 +45,7 @@ public partial class PackagePageView : UserControl, IShellPage
     private TextBlock PageSubtitleText => GetControl<TextBlock>("PageSubtitleBlock");
 
     private Button PrimaryAction => GetControl<Button>("PrimaryActionButton");
+    private Button PrimaryActionDropdown => GetControl<Button>("PrimaryActionDropdownButton");
 
     private Button InstallOptionsAction => GetControl<Button>("InstallOptionsButton");
 
@@ -162,6 +163,7 @@ public partial class PackagePageView : UserControl, IShellPage
         ActionHeaderText.Text = CoreTools.Translate("Action");
 
         PrimaryAction.Click += PrimaryAction_OnClick;
+        PrimaryActionDropdown.Click += PrimaryActionDropdown_OnClick;
         DetailsAction.Click += DetailsAction_OnClick;
         InstallOptionsAction.Click += InstallOptionsAction_OnClick;
         ShareAction.Click += ShareAction_OnClick;
@@ -294,6 +296,95 @@ public partial class PackagePageView : UserControl, IShellPage
             OperationStateText.Text = _pageMode switch
             {
                 PackagePageMode.Discover => CoreTools.Translate("{0} installs queued", queuedCount),
+                PackagePageMode.Installed => CoreTools.Translate("{0} uninstalls queued", queuedCount),
+                _ => CoreTools.Translate("{0} updates queued", queuedCount),
+            };
+            RefreshRows();
+        }
+    }
+
+    private void PrimaryActionDropdown_OnClick(object? sender, RoutedEventArgs e)
+    {
+        var menu = new ContextMenu();
+
+        string adminLabel = _pageMode switch
+        {
+            PackagePageMode.Discover  => CoreTools.Translate("Install as administrator"),
+            PackagePageMode.Updates   => CoreTools.Translate("Update as administrator"),
+            PackagePageMode.Installed => CoreTools.Translate("Uninstall as administrator"),
+            _ => CoreTools.Translate("Run as administrator"),
+        };
+        var adminItem = new MenuItem { Header = adminLabel };
+        adminItem.Click += async (_, _) => await QueueAllCheckedWithFlagsAsync(elevated: true);
+        menu.Items.Add(adminItem);
+
+        string interactiveLabel = _pageMode switch
+        {
+            PackagePageMode.Discover  => CoreTools.Translate("Interactive installation"),
+            PackagePageMode.Updates   => CoreTools.Translate("Interactive update"),
+            PackagePageMode.Installed => CoreTools.Translate("Interactive uninstall"),
+            _ => CoreTools.Translate("Interactive installation"),
+        };
+        var interactiveItem = new MenuItem { Header = interactiveLabel };
+        interactiveItem.Click += async (_, _) => await QueueAllCheckedWithFlagsAsync(interactive: true);
+        menu.Items.Add(interactiveItem);
+
+        if (_pageMode != PackagePageMode.Installed)
+        {
+            var skipHashItem = new MenuItem { Header = CoreTools.Translate("Skip integrity checks") };
+            skipHashItem.Click += async (_, _) => await QueueAllCheckedWithFlagsAsync(skipHash: true);
+            menu.Items.Add(skipHashItem);
+        }
+
+        if (sender is Control anchor)
+        {
+            menu.PlacementTarget = anchor;
+            menu.Placement = PlacementMode.Bottom;
+            menu.Open(anchor);
+        }
+    }
+
+    private async Task QueueAllCheckedWithFlagsAsync(
+        bool elevated = false,
+        bool interactive = false,
+        bool skipHash = false)
+    {
+        var checkedRows = _visibleRows.Where(r => r.IsChecked).ToArray();
+        var packages = (checkedRows.Length > 0
+                ? checkedRows.Select(r => r.Package)
+                : GetPackageSnapshot())
+            .Where(CanRunPrimaryAction)
+            .OrderBy(p => p.Name, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+
+        if (packages.Length == 0) return;
+
+        int queuedCount = 0;
+        foreach (var package in packages)
+        {
+            var opts = await InstallOptionsFactory.LoadApplicableAsync(package);
+            if (elevated) opts.RunAsAdministrator = true;
+            if (interactive) opts.InteractiveInstallation = true;
+            if (skipHash) opts.SkipHashCheck = true;
+            AbstractOperation? op = _pageMode switch
+            {
+                PackagePageMode.Discover  => new InstallPackageOperation(package, opts),
+                PackagePageMode.Updates   => new UpdatePackageOperation(package, opts),
+                PackagePageMode.Installed => new UninstallPackageOperation(package, opts),
+                _ => null,
+            };
+            if (op is null) continue;
+            AttachOperationEvents(op, package);
+            AvaloniaOperationRegistry.Add(op);
+            _ = op.MainThread();
+            queuedCount++;
+        }
+
+        if (queuedCount > 0)
+        {
+            OperationStateText.Text = _pageMode switch
+            {
+                PackagePageMode.Discover  => CoreTools.Translate("{0} installs queued", queuedCount),
                 PackagePageMode.Installed => CoreTools.Translate("{0} uninstalls queued", queuedCount),
                 _ => CoreTools.Translate("{0} updates queued", queuedCount),
             };
@@ -729,6 +820,7 @@ public partial class PackagePageView : UserControl, IShellPage
     {
         PrimaryAction.IsEnabled = _pageMode != PackagePageMode.None
             && filteredPackages.Any(CanRunPrimaryAction);
+        PrimaryActionDropdown.IsEnabled = PrimaryAction.IsEnabled;
         bool rowSelected = _selectedRow is not null && filteredPackages.Contains(_selectedRow.Package);
         DetailsAction.IsEnabled = rowSelected;
         InstallOptionsAction.IsEnabled = rowSelected;
