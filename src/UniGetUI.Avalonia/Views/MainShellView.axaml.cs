@@ -599,7 +599,9 @@ public partial class MainShellView : UserControl
             {
                 if (arg == "--help")
                     NavigateTo(ShellPageType.Help);
-                // --daemon, --updateapps, and similar startup-only flags are handled elsewhere
+                else if (arg == "--updateapps")
+                    _ = AvaloniaPackageOperationHelper.UpdateAllAsync();
+                // --daemon and other startup-only flags are handled in MainWindow
             }
             else if (arg.StartsWith("unigetui://", StringComparison.OrdinalIgnoreCase))
             {

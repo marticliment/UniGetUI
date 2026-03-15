@@ -1,5 +1,9 @@
+using Avalonia.Threading;
+using UniGetUI.Avalonia.Models;
 using UniGetUI.Core.Logging;
+using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
+using UniGetUI.Interface;
 using UniGetUI.PackageEngine;
 
 namespace UniGetUI.Avalonia.Infrastructure;
@@ -7,6 +11,7 @@ namespace UniGetUI.Avalonia.Infrastructure;
 internal static class AvaloniaBootstrapper
 {
     private static bool _hasStarted;
+    private static BackgroundApiRunner? _backgroundApi;
 
     public static async Task InitializeAsync()
     {
@@ -36,6 +41,12 @@ internal static class AvaloniaBootstrapper
                 CancellationToken.None,
                 TaskContinuationOptions.OnlyOnFaulted,
                 TaskScheduler.Default);
+        _ = Task.Run(InitializeBackgroundApiAsync)
+            .ContinueWith(
+                t => Logger.Error(t.Exception!),
+                CancellationToken.None,
+                TaskContinuationOptions.OnlyOnFaulted,
+                TaskScheduler.Default);
         return Task.CompletedTask;
     }
 
@@ -52,4 +63,49 @@ internal static class AvaloniaBootstrapper
                     TaskScheduler.Default);
         });
     }
+
+    private static async Task InitializeBackgroundApiAsync()
+    {
+        try
+        {
+            if (Settings.Get(Settings.K.DisableApi))
+                return;
+
+            _backgroundApi = new BackgroundApiRunner();
+
+            _backgroundApi.OnOpenWindow += (_, _) =>
+                Dispatcher.UIThread.Post(() => MainWindow.Instance?.ShowFromTray());
+
+            _backgroundApi.OnOpenUpdatesPage += (_, _) =>
+                Dispatcher.UIThread.Post(() =>
+                {
+                    MainWindow.Instance?.NavigateShell(ShellPageType.Updates);
+                    MainWindow.Instance?.ShowFromTray();
+                });
+
+            _backgroundApi.OnShowSharedPackage += (_, pkg) =>
+                Dispatcher.UIThread.Post(() =>
+                    Logger.Info($"BackgroundApi: ShowSharedPackage {pkg.Key}/{pkg.Value}"));
+
+            _backgroundApi.OnUpgradeAll += (_, _) =>
+                Dispatcher.UIThread.Post(() => _ = AvaloniaPackageOperationHelper.UpdateAllAsync());
+
+            _backgroundApi.OnUpgradeAllForManager += (_, managerName) =>
+                Dispatcher.UIThread.Post(() =>
+                    _ = AvaloniaPackageOperationHelper.UpdateAllForManagerAsync(managerName));
+
+            _backgroundApi.OnUpgradePackage += (_, packageId) =>
+                Dispatcher.UIThread.Post(() =>
+                    _ = AvaloniaPackageOperationHelper.UpdateForIdAsync(packageId));
+
+            await _backgroundApi.Start();
+        }
+        catch (Exception ex)
+        {
+            Logger.Error("Could not initialize Background API:");
+            Logger.Error(ex);
+        }
+    }
+
+    public static void StopBackgroundApi() => _backgroundApi?.Stop();
 }

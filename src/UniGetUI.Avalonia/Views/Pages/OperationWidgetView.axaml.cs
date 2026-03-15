@@ -3,6 +3,7 @@ using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Threading;
 using UniGetUI.Avalonia.Infrastructure;
+using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageOperations;
@@ -93,6 +94,8 @@ public partial class OperationWidgetView : UserControl
                     : CoreTools.Translate("Completed successfully");
                 ActionBtn.Content = CoreTools.Translate("Close");
                 ViewOutputBtn.Content = CoreTools.Translate("View output");
+                if (!Settings.Get(Settings.K.MaintainSuccessfulInstalls))
+                    ScheduleAutoDismiss();
                 break;
 
             case OperationStatus.Failed:
@@ -119,6 +122,18 @@ public partial class OperationWidgetView : UserControl
 
     private void SetProgressForeground(IBrush brush) =>
         ProgressBar.Foreground = brush;
+
+    private void ScheduleAutoDismiss()
+    {
+        var captured = _operation;
+        _ = Task.Delay(TimeSpan.FromSeconds(10)).ContinueWith(_ =>
+            Dispatcher.UIThread.Post(() =>
+            {
+                if (captured?.Status is OperationStatus.Succeeded)
+                    AvaloniaOperationRegistry.Operations.Remove(captured);
+            }),
+            TaskScheduler.Default);
+    }
 
     private void ActionButton_OnClick(object? sender, RoutedEventArgs e)
     {

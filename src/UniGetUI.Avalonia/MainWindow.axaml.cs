@@ -16,6 +16,9 @@ namespace UniGetUI.Avalonia;
 
 public partial class MainWindow : Window
 {
+    /// <summary>Gets the currently active <see cref="MainWindow"/> instance.</summary>
+    public static MainWindow? Instance { get; private set; }
+
     private bool _initialized;
     private TrayIcon? _trayIcon;
     private bool _isExplicitQuit;
@@ -23,6 +26,7 @@ public partial class MainWindow : Window
 
     public MainWindow()
     {
+        Instance = this;
         ApplyTheme();
         InitializeComponent();
         Title = BuildWindowTitle();
@@ -118,11 +122,13 @@ public partial class MainWindow : Window
         }
     }
 
-    private void NavigateShell(ShellPageType pageType)
+    internal void NavigateShell(ShellPageType pageType)
     {
         if (Content is MainShellView shell)
             shell.OpenPage(pageType);
     }
+
+    private string _lastTrayIconVariant = "";
 
     public void UpdateSystemTrayStatus()
     {
@@ -135,17 +141,51 @@ public partial class MainWindow : Window
 
             int updates = UniGetUI.PackageEngine.PackageLoader.UpgradablePackagesLoader.Instance.Count();
 
+            string modifier;
             string tooltip;
+
             if (anyRunning)
+            {
+                modifier = "blue";
                 tooltip = CoreTools.Translate("Operation in progress") + " — UniGetUI";
+            }
             else if (updates == 1)
+            {
+                modifier = "green";
                 tooltip = CoreTools.Translate("1 update is available") + " — UniGetUI";
+            }
             else if (updates > 1)
+            {
+                modifier = "green";
                 tooltip = CoreTools.Translate("{0} updates are available", updates) + " — UniGetUI";
+            }
             else
+            {
+                modifier = "empty";
                 tooltip = CoreTools.Translate("Everything is up to date") + " — UniGetUI";
+            }
 
             _trayIcon.ToolTipText = tooltip;
+
+            // Determine light/dark theme from registry to pick black/white icon variant
+            string themeSuffix = "white"; // default: dark taskbar → white icon
+#pragma warning disable CA1416
+            try
+            {
+                using var key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(
+                    @"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize");
+                if (key?.GetValue("SystemUsesLightTheme") is int val && val > 0)
+                    themeSuffix = "black";
+            }
+            catch { /* registry unavailable; keep default */ }
+#pragma warning restore CA1416
+
+            string variant = $"tray_{modifier}_{themeSuffix}";
+            if (variant == _lastTrayIconVariant) return;
+            _lastTrayIconVariant = variant;
+
+            using var stream = AssetLoader.Open(new Uri($"avares://UniGetUI.Avalonia/Assets/{variant}.ico"));
+            _trayIcon.Icon = new WindowIcon(stream);
         }
         catch (Exception ex)
         {
@@ -160,7 +200,7 @@ public partial class MainWindow : Window
         _trayIcon.IsVisible = !Settings.Get(Settings.K.DisableSystemTray);
     }
 
-    private void ShowFromTray()
+    internal void ShowFromTray()
     {
         Show();
         Activate();
