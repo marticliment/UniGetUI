@@ -106,6 +106,7 @@ public partial class BundlesPageView : UserControl, IShellPage
     private Button NewBtn          => GetControl<Button>("NewBundleButton");
     private Button OpenBtn         => GetControl<Button>("OpenBundleButton");
     private Button SaveBtn         => GetControl<Button>("SaveBundleButton");
+    private Button CreateScriptBtn => GetControl<Button>("CreateScriptButton");
     private Button InstallBtn      => GetControl<Button>("InstallSelectedButton");
     private Button RemoveBtn       => GetControl<Button>("RemoveSelectedButton");
     private Button DetailsBtn      => GetControl<Button>("BundleDetailsButton");
@@ -136,6 +137,7 @@ public partial class BundlesPageView : UserControl, IShellPage
         RemoveBtn.Click  += RemoveBtn_OnClick;
         DetailsBtn.Click += DetailsBtn_OnClick;
         ShareBtn.Click   += ShareBtn_OnClick;
+        CreateScriptBtn.Click += async (_, _) => await CreateBatchScriptAsync();
         CheckAll.IsCheckedChanged += CheckAll_OnChanged;
 
         SearchBox.TextChanged += (_, _) =>
@@ -175,6 +177,7 @@ public partial class BundlesPageView : UserControl, IShellPage
         RemoveBtn.Content  = CoreTools.Translate("Remove from bundle");
         DetailsBtn.Content = CoreTools.Translate("Details");
         ShareBtn.Content   = CoreTools.Translate("Share");
+        CreateScriptBtn.Content = CoreTools.Translate("Create .ps1 script");
         SearchBox.Watermark = CoreTools.Translate("Search");
 
         GetControl<TextBlock>("BundleEmptyTitleBlock").Text =
@@ -185,6 +188,150 @@ public partial class BundlesPageView : UserControl, IShellPage
         GetControl<TextBlock>("BundleColIdBlock").Text = CoreTools.Translate("Package ID");
         GetControl<TextBlock>("BundleColVersionBlock").Text = CoreTools.Translate("Version");
         GetControl<TextBlock>("BundleColSourceBlock").Text = CoreTools.Translate("Source");
+    }
+
+    // ── PS1 script export ────────────────────────────────────────────────────
+
+    private async Task CreateBatchScriptAsync()
+    {
+        try
+        {
+            var topLevel = TopLevel.GetTopLevel(this);
+            if (topLevel is null) return;
+
+            var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+            {
+                Title = CoreTools.Translate("Save PowerShell script"),
+                SuggestedFileName = CoreTools.Translate("Install script") + ".ps1",
+                FileTypeChoices = [new FilePickerFileType("PowerShell script") { Patterns = ["*.ps1"] }],
+            });
+            if (file is null) return;
+
+            var packages = new List<string>();
+            var commands = new List<string>();
+            var forceKill = Settings.Get(Settings.K.KillProcessesThatRefuseToDie);
+
+            foreach (var pkg in PackageBundlesLoader.Instance.Packages)
+            {
+                if (pkg is not ImportedPackage package) continue;
+
+                packages.Add(package.Name + " from " + package.Manager.DisplayName);
+
+                foreach (var process in package.installation_options.KillBeforeOperation)
+                    commands.Add($"taskkill /im \"{process}\"" + (forceKill ? " /f" : ""));
+
+                if (package.installation_options.PreInstallCommand != "")
+                    commands.Add(package.installation_options.PreInstallCommand);
+
+                var exeName = package.Manager.Properties.ExecutableFriendlyName;
+                var param = package.Manager.OperationHelper.GetParameters(
+                    package,
+                    package.installation_options,
+                    OperationType.Install
+                );
+                commands.Add($"{exeName} {string.Join(' ', param)}");
+
+                if (package.installation_options.PostInstallCommand != "")
+                    commands.Add(package.installation_options.PostInstallCommand);
+            }
+
+            await using var stream = await file.OpenWriteAsync();
+            await using var writer = new StreamWriter(stream);
+            await writer.WriteAsync(GeneratePowerShellScript(packages, commands));
+
+            StateText.Text = CoreTools.Translate("The installation script saved to {0}", file.Name);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error("Failed to create batch script:");
+            Logger.Error(ex);
+        }
+    }
+
+    private static string GeneratePowerShellScript(
+        IReadOnlyList<string> names,
+        IReadOnlyList<string> commands)
+    {
+        return $$"""
+            Clear-Host
+            Write-Host ""
+            Write-Host "========================================================"
+            Write-Host ""
+            Write-Host "        __  __      _ ______     __  __  ______" -ForegroundColor Cyan
+            Write-Host "       / / / /___  (_) ____/__  / /_/ / / /  _/" -ForegroundColor Cyan
+            Write-Host "      / / / / __ \/ / / __/ _ \/ __/ / / // /" -ForegroundColor Cyan
+            Write-Host "     / /_/ / / / / / /_/ /  __/ /_/ /_/ // /" -ForegroundColor Cyan
+            Write-Host "     \____/_/ /_/_/\____/\___/\__/\____/___/" -ForegroundColor Cyan
+            Write-Host "          UniGetUI Package Installer Script" 
+            Write-Host "        Created with UniGetUI Version {{CoreData.VersionName}}"
+            Write-Host ""
+            Write-Host "========================================================"
+            Write-Host ""
+            Write-Host "NOTES:" -ForegroundColor Yellow
+            Write-Host "  - The install process will not be as reliable as importing a bundle with UniGetUI. Expect issues and errors." -ForegroundColor Yellow
+            Write-Host "  - Packages will be installed with the install options specified at the time of creation of this script." -ForegroundColor Yellow
+            Write-Host "  - Error/Sucess detection may not be 100% accurate." -ForegroundColor Yellow
+            Write-Host "  - Some of the packages may require elevation. Some of them may ask for permission, but others may fail. Consider running this script elevated." -ForegroundColor Yellow
+            Write-Host "  - You can skip confirmation prompts by running this script with the parameter `/DisablePausePrompts` " -ForegroundColor Yellow
+            Write-Host ""
+            Write-Host ""
+            if ($args[0] -ne "/DisablePausePrompts") { pause }
+            Write-Host ""
+            Write-Host "This script will attempt to install the following packages:"
+            {{string.Join('\n', names.Select(x => $"Write-Host \"  - {x}\""))}}
+            Write-Host ""
+            if ($args[0] -ne "/DisablePausePrompts") { pause }
+            Clear-Host
+
+            $success_count=0
+            $failure_count=0
+            $commands_run=0
+            $results=""
+
+            $commands= @(
+                {{string.Join(
+                ",\n    ",
+                commands.Select(x => $"'cmd.exe /C {x.Replace("'", "''")}'"))}}
+            )
+
+            foreach ($command in $commands) {
+                Write-Host "Running: $command" -ForegroundColor Yellow
+                cmd.exe /C $command
+                if ($LASTEXITCODE -eq 0) {
+                    Write-Host "[  OK  ] $command" -ForegroundColor Green
+                    $success_count++
+                    $results += "$([char]0x1b)[32m[  OK  ] $command`n"
+                }
+                else {
+                    Write-Host "[ FAIL ] $command" -ForegroundColor Red
+                    $failure_count++
+                    $results += "$([char]0x1b)[31m[ FAIL ] $command`n"
+                }
+                $commands_run++
+                Write-Host ""
+            }
+
+            Write-Host "========================================================"
+            Write-Host "                  OPERATION SUMMARY"
+            Write-Host "========================================================"
+            Write-Host "Total commands run: $commands_run"
+            Write-Host "Successful: $success_count"
+            Write-Host "Failed: $failure_count"
+            Write-Host ""
+            Write-Host "Details:"
+            Write-Host "$results$([char]0x1b)[37m"
+            Write-Host "========================================================"
+
+            if ($failure_count -gt 0) {
+                Write-Host "Some commands failed. Please check the log above." -ForegroundColor Yellow
+            }
+            else {
+                Write-Host "All commands executed successfully!" -ForegroundColor Green
+            }
+            Write-Host ""
+            if ($args[0] -ne "/DisablePausePrompts") { pause }
+            exit $failure_count
+            """;
     }
 
     // ── Row management ───────────────────────────────────────────────────────

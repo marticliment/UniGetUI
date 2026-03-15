@@ -1,8 +1,11 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Layout;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media;
 using Avalonia.Platform;
 using Avalonia.Styling;
+using Avalonia.Threading;
 using UniGetUI.Avalonia.Infrastructure;
 using UniGetUI.Avalonia.Models;
 using UniGetUI.Avalonia.Views;
@@ -60,6 +63,13 @@ public partial class MainWindow : Window
             Closing += OnWindowClosing;
             Closed += OnWindowClosed;
             InitTrayIcon();
+
+            // Background integrity check (non-blocking)
+            _ = Task.Run(() => IntegrityTester.CheckIntegrity()).ContinueWith(async t =>
+            {
+                if (!t.Result.Passed && !Settings.Get(Settings.K.DisableIntegrityChecks))
+                    await Dispatcher.UIThread.InvokeAsync(() => ShowIntegrityWarningAsync(this));
+            }, TaskScheduler.Default);
         }
         catch (Exception ex)
         {
@@ -211,6 +221,61 @@ public partial class MainWindow : Window
     {
         _isExplicitQuit = true;
         Close();
+    }
+
+    private static async Task ShowIntegrityWarningAsync(Window owner)
+    {
+        try
+        {
+            var dialog = new Window
+            {
+                Title = CoreTools.Translate("Integrity violation"),
+                Width = 520,
+                SizeToContent = SizeToContent.Height,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                Content = new StackPanel
+                {
+                    Margin = new Thickness(20),
+                    Spacing = 12,
+                    Children =
+                    {
+                        new TextBlock
+                        {
+                            Text = CoreTools.Translate("UniGetUI or some of its components are missing or corrupt.")
+                                   + " " + CoreTools.Translate("It is strongly recommended to reinstall UniGetUI to adress the situation."),
+                            TextWrapping = TextWrapping.Wrap,
+                            FontWeight = FontWeight.SemiBold,
+                        },
+                        new TextBlock
+                        {
+                            Text = " ● " + CoreTools.Translate("Refer to the UniGetUI Logs to get more details regarding the affected file(s)"),
+                            TextWrapping = TextWrapping.Wrap,
+                        },
+                        new TextBlock
+                        {
+                            Text = " ● " + CoreTools.Translate("Integrity checks can be disabled from the Experimental Settings"),
+                            TextWrapping = TextWrapping.Wrap,
+                        },
+                        new Button
+                        {
+                            Content = CoreTools.Translate("Close"),
+                            HorizontalAlignment = HorizontalAlignment.Right,
+                        },
+                    },
+                },
+            };
+            // Wire close button
+            if (dialog.Content is StackPanel sp
+                && sp.Children[^1] is Button btn)
+                btn.Click += (_, _) => dialog.Close();
+
+            await dialog.ShowDialog(owner);
+        }
+        catch (Exception ex)
+        {
+            Logger.Warn("Failed to show integrity warning dialog");
+            Logger.Warn(ex);
+        }
     }
 
     private void OnWindowClosing(object? sender, WindowClosingEventArgs e)

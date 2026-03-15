@@ -491,6 +491,14 @@ public partial class MainShellView : UserControl
                 e.Handled = true;
             }
         }
+        else if (ctrl && !shift && e.Key == Key.A)
+        {
+            if (_pageCache.TryGetValue(_currentPage, out var page) && page is PackagePageView ppv)
+            {
+                ppv.TriggerSelectAll();
+                e.Handled = true;
+            }
+        }
     }
 
     private void NavigateCycle(int direction)

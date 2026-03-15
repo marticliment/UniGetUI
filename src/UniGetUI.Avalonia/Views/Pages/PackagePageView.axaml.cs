@@ -311,6 +311,16 @@ public partial class PackagePageView : UserControl, IShellPage
         }
     }
 
+    /// <summary>Keyboard-triggered select-all: check all when nothing or some are checked; uncheck all when all are checked.</summary>
+    internal void TriggerSelectAll()
+    {
+        bool allChecked = _visibleRows.Count > 0 && _visibleRows.All(r => r.IsChecked);
+        bool target = !allChecked;
+        foreach (var row in _visibleRows)
+            row.IsChecked = target;
+        UpdateSelectAllState();
+    }
+
     private void RowCheckBox_OnClick(object? sender, RoutedEventArgs e)
     {
         UpdateSelectAllState();
@@ -874,17 +884,36 @@ public partial class PackagePageView : UserControl, IShellPage
             }
 
             // Interactive
-            if (package.Manager.Capabilities.CanRunInteractively && _pageMode != PackagePageMode.Installed)
+            if (package.Manager.Capabilities.CanRunInteractively)
             {
                 string interactiveLabel = _pageMode switch
                 {
                     PackagePageMode.Discover => CoreTools.Translate("Interactive installation"),
                     PackagePageMode.Updates => CoreTools.Translate("Interactive update"),
+                    PackagePageMode.Installed => CoreTools.Translate("Interactive uninstall"),
                     _ => CoreTools.Translate("Interactive installation"),
                 };
                 var interactiveItem = new MenuItem { Header = interactiveLabel };
                 interactiveItem.Click += async (_, _) => await QueuePrimaryActionWithFlagsAsync(package, interactive: true);
                 menu.Items.Add(interactiveItem);
+            }
+
+            // Uninstall and remove data (Installed page only)
+            if (package.Manager.Capabilities.CanRemoveDataOnUninstall && _pageMode == PackagePageMode.Installed)
+            {
+                var removeDataItem = new MenuItem { Header = CoreTools.Translate("Uninstall and remove data") };
+                removeDataItem.Click += async (_, _) =>
+                {
+                    var opts = await InstallOptionsFactory.LoadApplicableAsync(package);
+                    opts.RemoveDataOnUninstall = true;
+                    var op = new UninstallPackageOperation(package, opts);
+                    AttachOperationEvents(op, package);
+                    AvaloniaOperationRegistry.Add(op);
+                    _ = op.MainThread();
+                    OperationStateText.Text = CoreTools.Translate("Queued uninstall for {0}", package.Name);
+                    RefreshRows();
+                };
+                menu.Items.Add(removeDataItem);
             }
 
             // Skip integrity checks
@@ -1041,6 +1070,41 @@ public partial class PackagePageView : UserControl, IShellPage
                     RefreshRows();
                 };
                 menu.Items.Add(uninstallThenUpdateItem);
+            }
+
+            // Installed-page-specific actions
+            if (_pageMode == PackagePageMode.Installed && !package.Source.IsVirtualManager)
+            {
+                menu.Items.Add(new Separator());
+
+                var reinstallItem = new MenuItem { Header = CoreTools.Translate("Reinstall package") };
+                reinstallItem.Click += async (_, _) =>
+                {
+                    var opts = await InstallOptionsFactory.LoadApplicableAsync(package);
+                    var op = new InstallPackageOperation(package, opts);
+                    AttachOperationEvents(op, package);
+                    AvaloniaOperationRegistry.Add(op);
+                    _ = op.MainThread();
+                    OperationStateText.Text = CoreTools.Translate("Queued reinstall for {0}", package.Name);
+                    RefreshRows();
+                };
+                menu.Items.Add(reinstallItem);
+
+                var uninstallReinstallItem = new MenuItem
+                    { Header = CoreTools.Translate("Uninstall package, then reinstall it") };
+                uninstallReinstallItem.Click += async (_, _) =>
+                {
+                    var opts = await InstallOptionsFactory.LoadApplicableAsync(package);
+                    var uninstallOp = new UninstallPackageOperation(package, opts.Copy());
+                    var installOp = new InstallPackageOperation(package, opts, req: uninstallOp);
+                    AttachOperationEvents(uninstallOp, package);
+                    AvaloniaOperationRegistry.Add(uninstallOp);
+                    AvaloniaOperationRegistry.Add(installOp);
+                    _ = uninstallOp.MainThread();
+                    OperationStateText.Text = CoreTools.Translate("Queued reinstall for {0}", package.Name);
+                    RefreshRows();
+                };
+                menu.Items.Add(uninstallReinstallItem);
             }
         }
 

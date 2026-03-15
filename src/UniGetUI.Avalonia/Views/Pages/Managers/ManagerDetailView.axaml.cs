@@ -13,6 +13,7 @@ using UniGetUI.Avalonia.Infrastructure;
 using UniGetUI.PackageEngine.Classes.Manager;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Operations;
+using UniGetUI.PackageEngine.PackageLoader;
 
 namespace UniGetUI.Avalonia.Views.Pages.ManagersPages;
 
@@ -177,9 +178,49 @@ public partial class ManagerDetailView : UserControl, IManagerSectionView
                 _ = ReloadManagerAsync();
             };
 
+            var resetWinGetBtn = new Button
+            {
+                Content = CoreTools.Translate("Reset WinGet") + $" ({CoreTools.Translate("This may help if WinGet packages are not shown")})",
+                Margin = new Thickness(0, 4, 0, 0),
+            };
+            resetWinGetBtn.Click += async (_, _) =>
+            {
+                resetWinGetBtn.IsEnabled = false;
+                try
+                {
+                    using var p = new Process
+                    {
+                        StartInfo = new()
+                        {
+                            FileName = CoreData.PowerShell5,
+                            Arguments =
+                                "-ExecutionPolicy Bypass -NoLogo -NoProfile -Command \"& {"
+                                + "cmd.exe /C \"rmdir /Q /S `\"%temp%\\WinGet`\"\"; "
+                                + "cmd.exe /C \"`\"%localappdata%\\Microsoft\\WindowsApps\\winget.exe`\" source reset --force\"; "
+                                + "taskkill /im winget.exe /f; "
+                                + "taskkill /im WindowsPackageManagerServer.exe /f; "
+                                + "Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force; "
+                                + "Install-Module Microsoft.WinGet.Client -Force -AllowClobber; "
+                                + "Import-Module Microsoft.WinGet.Client; "
+                                + "Repair-WinGetPackageManager -Force -Latest; "
+                                + "Get-AppxPackage -Name 'Microsoft.DesktopAppInstaller' | Reset-AppxPackage; "
+                                + "}\"",
+                            UseShellExecute = true,
+                            Verb = "runas",
+                        },
+                    };
+                    p.Start();
+                    await p.WaitForExitAsync();
+                    _ = UpgradablePackagesLoader.Instance.ReloadPackages();
+                    _ = InstalledPackagesLoader.Instance.ReloadPackages();
+                }
+                finally { resetWinGetBtn.IsEnabled = true; }
+            };
+
             ((StackPanel)wingetSection.Child!).Children.Add(wingetTitle);
             ((StackPanel)wingetSection.Child!).Children.Add(forceLocationCheck);
             ((StackPanel)wingetSection.Child!).Children.Add(useBundledCheck);
+            ((StackPanel)wingetSection.Child!).Children.Add(resetWinGetBtn);
             ExtraSettingsPanel.Children.Add(wingetSection);
         }
         // Scoop-specific
