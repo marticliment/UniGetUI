@@ -40,6 +40,13 @@ public partial class MainWindow : Window
 
         _initialized = true;
         RestoreGeometry();
+
+        // Handle --daemon: launch straight to tray without showing the window
+        if (Environment.GetCommandLineArgs().Contains("--daemon"))
+        {
+            Hide();
+        }
+
         Content = new LoadingView();
 
         try

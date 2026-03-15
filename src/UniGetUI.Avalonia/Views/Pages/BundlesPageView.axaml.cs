@@ -349,7 +349,7 @@ public partial class BundlesPageView : UserControl, IShellPage
         await OpenFromFileAsync(files[0].Path.LocalPath);
     }
 
-    private async Task OpenFromFileAsync(string filePath)
+    internal async Task OpenFromFileAsync(string filePath)
     {
         StateText.Text = CoreTools.Translate("Loading packages, please wait...");
         try

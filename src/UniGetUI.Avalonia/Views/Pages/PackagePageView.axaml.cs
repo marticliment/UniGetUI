@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -10,6 +11,7 @@ using UniGetUI.Avalonia.Models;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
+using UniGetUI.PackageEngine.Classes.Packages.Classes;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Operations;
@@ -904,6 +906,23 @@ public partial class PackagePageView : UserControl, IShellPage
             menu.Items.Add(new Separator());
         }
 
+        // Open install location (Updates + Installed pages)
+        if (_pageMode is PackagePageMode.Updates or PackagePageMode.Installed)
+        {
+            string? installPath = null;
+            try { installPath = package.Manager.DetailsHelper.GetInstallLocation(package); }
+            catch (Exception ex) { Logger.Warn($"GetInstallLocation failed: {ex.Message}"); }
+
+            var openLocationItem = new MenuItem
+            {
+                Header = CoreTools.Translate("Open install location"),
+                IsEnabled = installPath is not null,
+            };
+            openLocationItem.Click += (_, _) => CoreTools.Launch(installPath);
+            menu.Items.Add(openLocationItem);
+            menu.Items.Add(new Separator());
+        }
+
         // Details
         var detailsItem = new MenuItem { Header = CoreTools.Translate("Details") };
         detailsItem.Click += async (_, _) =>
@@ -958,6 +977,70 @@ public partial class PackagePageView : UserControl, IShellPage
                     RefreshRows();
                 };
                 menu.Items.Add(skipItem);
+
+                // Pause updates for… submenu
+                var pauseParent = new MenuItem { Header = CoreTools.Translate("Pause updates for") };
+                foreach (var pauseTime in new[]
+                {
+                    new IgnoredUpdatesDatabase.PauseTime { Days = 1 },
+                    new IgnoredUpdatesDatabase.PauseTime { Days = 3 },
+                    new IgnoredUpdatesDatabase.PauseTime { Weeks = 1 },
+                    new IgnoredUpdatesDatabase.PauseTime { Weeks = 2 },
+                    new IgnoredUpdatesDatabase.PauseTime { Weeks = 4 },
+                    new IgnoredUpdatesDatabase.PauseTime { Months = 3 },
+                    new IgnoredUpdatesDatabase.PauseTime { Months = 6 },
+                    new IgnoredUpdatesDatabase.PauseTime { Months = 12 },
+                })
+                {
+                    var pt = pauseTime; // capture
+                    var pauseItem = new MenuItem { Header = pt.StringRepresentation() };
+                    pauseItem.Click += async (_, _) =>
+                    {
+                        await package.AddToIgnoredUpdatesAsync("<" + pt.GetDateFromNow());
+                        UpgradablePackagesLoader.Instance.IgnoredPackages[package.Id] = package;
+                        UpgradablePackagesLoader.Instance.Remove(package);
+                        OperationStateText.Text = CoreTools.Translate(
+                            "Updates for {0} are paused until {1}", package.Name, pt.GetDateFromNow());
+                        RefreshRows();
+                    };
+                    pauseParent.Items.Add(pauseItem);
+                }
+                menu.Items.Add(pauseParent);
+
+                // Updates-page uninstall actions
+                menu.Items.Add(new Separator());
+
+                var uninstallItem = new MenuItem { Header = CoreTools.Translate("Uninstall package") };
+                uninstallItem.Click += async (_, _) =>
+                {
+                    var opts = await InstallOptionsFactory.LoadApplicableAsync(package);
+                    var op = new UninstallPackageOperation(package, opts);
+                    AttachOperationEvents(op, package);
+                    AvaloniaOperationRegistry.Add(op);
+                    _ = op.MainThread();
+                    OperationStateText.Text = CoreTools.Translate("Queued uninstall for {0}", package.Name);
+                    RefreshRows();
+                };
+                menu.Items.Add(uninstallItem);
+
+                var uninstallThenUpdateItem = new MenuItem
+                    { Header = CoreTools.Translate("Uninstall package, then update it") };
+                uninstallThenUpdateItem.Click += async (_, _) =>
+                {
+                    var opts = await InstallOptionsFactory.LoadApplicableAsync(package);
+                    var uninstallOp = new UninstallPackageOperation(package, opts.Copy());
+                    opts.Version = package.NewVersionString;
+                    opts.OverridesNextLevelOpts = true;
+                    var installOp = new InstallPackageOperation(package, opts, req: uninstallOp);
+                    AttachOperationEvents(uninstallOp, package);
+                    AvaloniaOperationRegistry.Add(uninstallOp);
+                    AvaloniaOperationRegistry.Add(installOp);
+                    _ = uninstallOp.MainThread();
+                    OperationStateText.Text = CoreTools.Translate(
+                        "Queued reinstall/update for {0}", package.Name);
+                    RefreshRows();
+                };
+                menu.Items.Add(uninstallThenUpdateItem);
             }
         }
 

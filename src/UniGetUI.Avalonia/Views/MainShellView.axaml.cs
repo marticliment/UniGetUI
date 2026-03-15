@@ -1,3 +1,5 @@
+using System.IO;
+using System.Text.RegularExpressions;
 using global::Avalonia;
 using global::Avalonia.Controls;
 using global::Avalonia.Controls.ApplicationLifetimes;
@@ -580,6 +582,84 @@ public partial class MainShellView : UserControl
         if (!Settings.Get(Settings.K.ShownTelemetryBanner))
         {
             _ = ShowStartupDialogAsync(new TelemetryConsentWindow());
+        }
+
+        ProcessStartupArgs();
+    }
+
+    private void ProcessStartupArgs()
+    {
+        var args = Environment.GetCommandLineArgs().Skip(1).ToList();
+        foreach (var rawArg in args)
+        {
+            string arg = rawArg.Trim('\'').Trim('"');
+            if (string.IsNullOrWhiteSpace(arg)) continue;
+
+            if (arg.StartsWith("--"))
+            {
+                if (arg == "--help")
+                    NavigateTo(ShellPageType.Help);
+                // --daemon, --updateapps, and similar startup-only flags are handled elsewhere
+            }
+            else if (arg.StartsWith("unigetui://", StringComparison.OrdinalIgnoreCase))
+            {
+                HandleDeepLink(arg);
+            }
+            else if (Path.IsPathFullyQualified(arg) && File.Exists(arg))
+            {
+                string ext = Path.GetExtension(arg).ToLowerInvariant();
+                if (ext is ".ubundle" or ".json" or ".xml" or ".yaml")
+                {
+                    NavigateTo(ShellPageType.Bundles);
+                    if (_pageCache.TryGetValue(ShellPageType.Bundles, out var page)
+                        && page is BundlesPageView bpv)
+                    {
+                        _ = bpv.OpenFromFileAsync(arg);
+                    }
+                }
+                else
+                {
+                    Logger.Warn($"Attempted to open unrecognized file: {arg}");
+                }
+            }
+        }
+    }
+
+    private void HandleDeepLink(string link)
+    {
+        try
+        {
+            string baseUrl = link["unigetui://".Length..];
+
+            if (baseUrl.StartsWith("showPackage", StringComparison.OrdinalIgnoreCase))
+            {
+                // Full ShowSharedPackage implementation requires async package search across managers;
+                // navigate to Discover page so the user can search manually.
+                string id = Regex.Match(baseUrl, "id=([^&]+)").Groups[1].Value;
+                Logger.Info($"Deep link showPackage: id={id}. Opening Discover page.");
+                NavigateTo(ShellPageType.Discover);
+            }
+            else if (baseUrl.StartsWith("showDiscoverPage", StringComparison.OrdinalIgnoreCase))
+            {
+                NavigateTo(ShellPageType.Discover);
+            }
+            else if (baseUrl.StartsWith("showUpdatesPage", StringComparison.OrdinalIgnoreCase))
+            {
+                NavigateTo(ShellPageType.Updates);
+            }
+            else if (baseUrl.StartsWith("showInstalledPage", StringComparison.OrdinalIgnoreCase))
+            {
+                NavigateTo(ShellPageType.Installed);
+            }
+            else
+            {
+                Logger.Warn($"Unhandled deep link: {link}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error($"Failed to handle deep link: {link}");
+            Logger.Error(ex);
         }
     }
 
