@@ -119,6 +119,15 @@ public partial class MainWindow : Window
 
             menu.Items.Add(new NativeMenuItemSeparator());
 
+            var releaseNotesItem = new NativeMenuItem(CoreTools.Translate("Release notes"));
+            releaseNotesItem.Click += (_, _) =>
+            {
+                ShowFromTray();
+                var win = new ReleaseNotesWindow();
+                _ = win.ShowDialog(this);
+            };
+            menu.Items.Add(releaseNotesItem);
+
             var aboutItem = new NativeMenuItem(CoreTools.Translate("About UniGetUI"));
             aboutItem.Click += (_, _) => new AboutPageWindow().Show();
             menu.Items.Add(aboutItem);

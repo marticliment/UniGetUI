@@ -1,0 +1,68 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="UniGetUI.Avalonia.Views.Pages.ReleaseNotesWindow"
+        Width="700"
+        Height="360"
+        MinWidth="560"
+        MinHeight="300"
+        Title="Release notes"
+        WindowStartupLocation="CenterOwner">
+  <Window.Styles>
+    <StyleInclude Source="/Styles/AppStyles.axaml" />
+  </Window.Styles>
+
+  <Grid Margin="18"
+        RowDefinitions="Auto,Auto,*,Auto"
+        RowSpacing="10">
+    <TextBlock x:Name="TitleBlock"
+               FontSize="18"
+               FontWeight="SemiBold"
+               TextWrapping="Wrap"
+               Text="Release notes" />
+
+    <TextBlock x:Name="VersionBlock"
+               Grid.Row="1"
+               Opacity="0.75"
+               TextWrapping="Wrap" />
+
+    <Border Grid.Row="2"
+            Padding="12"
+            Classes="surface-card subtle-panel"
+            CornerRadius="12">
+      <Grid RowDefinitions="Auto,Auto,*"
+            RowSpacing="8">
+        <TextBlock x:Name="UrlLabelBlock"
+                   FontWeight="SemiBold"
+                   Text="Release notes URL:" />
+
+        <TextBox x:Name="UrlTextBox"
+                 Grid.Row="1"
+                 IsReadOnly="True"
+                 TextWrapping="NoWrap" />
+
+        <TextBlock x:Name="HintBlock"
+                   Grid.Row="2"
+                   Opacity="0.72"
+                   TextWrapping="Wrap"
+                   Text="Open release notes to view the full changelog in your browser." />
+      </Grid>
+    </Border>
+
+    <Grid Grid.Row="3"
+          ColumnDefinitions="*,Auto,Auto"
+          ColumnSpacing="8">
+      <Button x:Name="OpenButton"
+              Grid.Column="1"
+              MinWidth="160"
+              Classes="accent"
+              Content="Open release notes"
+              Click="OpenButton_OnClick" />
+
+      <Button x:Name="CloseButton"
+              Grid.Column="2"
+              MinWidth="96"
+              Content="Close"
+              Click="CloseButton_OnClick" />
+    </Grid>
+  </Grid>
+</Window>

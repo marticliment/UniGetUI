@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -88,6 +89,11 @@ public partial class PackagePageView : UserControl, IShellPage
     private CheckBox UpperLowerCaseOption => GetControl<CheckBox>("UpperLowerCaseCheckBox");
     private CheckBox IgnoreSpecialCharsOption => GetControl<CheckBox>("IgnoreSpecialCharsCheckBox");
     private Button ReloadBtn => GetControl<Button>("ReloadButton");
+
+    private Border WinGetWarningCardControl => GetControl<Border>("WinGetWarningCard");
+    private TextBlock WinGetWarningTitleText => GetControl<TextBlock>("WinGetWarningTitleBlock");
+    private TextBlock WinGetWarningDescriptionText => GetControl<TextBlock>("WinGetWarningDescriptionBlock");
+    private Button RepairWinGetButtonControl => GetControl<Button>("RepairWinGetButton");
 
     private Button PackageNameSortButton => GetControl<Button>("PackageNameSortBtn");
 
@@ -233,6 +239,12 @@ public partial class PackagePageView : UserControl, IShellPage
         UpperLowerCaseOption.Content = CoreTools.Translate("Distinguish uppercase and lowercase");
         IgnoreSpecialCharsOption.Content = CoreTools.Translate("Ignore special characters");
         ReloadBtn.Content = CoreTools.Translate("Reload");
+
+        WinGetWarningTitleText.Text = CoreTools.Translate("WinGet malfunction detected");
+        WinGetWarningDescriptionText.Text = CoreTools.Translate(
+            "It looks like WinGet is not working properly. Do you want to attempt to repair WinGet?"
+        );
+        RepairWinGetButtonControl.Content = CoreTools.Translate("Repair WinGet");
     }
 
     public string Title { get; }
@@ -494,12 +506,83 @@ public partial class PackagePageView : UserControl, IShellPage
         {
             LoadingProgressBarControl.IsVisible = false;
             RefreshRows();
+
+            if (_pageMode == PackagePageMode.Installed)
+            {
+                WinGetWarningCardControl.IsVisible = IsWinGetMalfunctionDetected();
+            }
+            else
+            {
+                WinGetWarningCardControl.IsVisible = false;
+            }
         });
 
         if (_pageMode == PackagePageMode.Installed && !_hasBackedUp)
         {
             _hasBackedUp = true;
             _ = Task.Run(TriggerInstalledPageBackupAsync);
+        }
+    }
+
+    private static bool IsWinGetMalfunctionDetected()
+    {
+        try
+        {
+            var type = Type.GetType(
+                "UniGetUI.PackageEngine.Managers.WingetManager.WinGet, UniGetUI.PackageEngine.Managers.WinGet"
+            );
+            var property = type?.GetProperty(
+                "NO_PACKAGES_HAVE_BEEN_LOADED",
+                BindingFlags.Public | BindingFlags.Static
+            );
+            return property?.GetValue(null) as bool? == true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    private async void RepairWinGetButton_OnClick(object? sender, RoutedEventArgs e)
+    {
+        RepairWinGetButtonControl.IsEnabled = false;
+        try
+        {
+            using var p = new Process
+            {
+                StartInfo = new()
+                {
+                    FileName = CoreData.PowerShell5,
+                    Arguments =
+                        "-ExecutionPolicy Bypass -NoLogo -NoProfile -Command \"& {"
+                        + "cmd.exe /C \"rmdir /Q /S `\"%temp%\\WinGet`\"\"; "
+                        + "cmd.exe /C \"`\"%localappdata%\\Microsoft\\WindowsApps\\winget.exe`\" source reset --force\"; "
+                        + "taskkill /im winget.exe /f; "
+                        + "taskkill /im WindowsPackageManagerServer.exe /f; "
+                        + "Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force; "
+                        + "Install-Module Microsoft.WinGet.Client -Force -AllowClobber; "
+                        + "Import-Module Microsoft.WinGet.Client; "
+                        + "Repair-WinGetPackageManager -Force -Latest; "
+                        + "Get-AppxPackage -Name 'Microsoft.DesktopAppInstaller' | Reset-AppxPackage; "
+                        + "}\"",
+                    UseShellExecute = true,
+                    Verb = "runas",
+                },
+            };
+            p.Start();
+            await p.WaitForExitAsync();
+
+            _ = UpgradablePackagesLoader.Instance.ReloadPackages();
+            _ = InstalledPackagesLoader.Instance.ReloadPackages();
+        }
+        catch (Exception ex)
+        {
+            Logger.Error("An error occurred while trying to repair WinGet");
+            Logger.Error(ex);
+        }
+        finally
+        {
+            RepairWinGetButtonControl.IsEnabled = true;
         }
     }
 

@@ -69,8 +69,14 @@ public partial class HelpPageView : UserControl, IShellPage
     private void OpenDocumentationButton_OnClick(object? sender, RoutedEventArgs e)
         => OpenUrl("https://marticliment.com/unigetui/help/");
 
-    private void OpenChangelogButton_OnClick(object? sender, RoutedEventArgs e)
-        => OpenUrl($"https://github.com/marticliment/UniGetUI/releases/tag/v{CoreData.VersionName}");
+    private async void OpenChangelogButton_OnClick(object? sender, RoutedEventArgs e)
+    {
+        var win = new ReleaseNotesWindow();
+        if (VisualRoot is Window owner)
+            await win.ShowDialog(owner);
+        else
+            win.Show();
+    }
 
     private void OpenIssuesButton_OnClick(object? sender, RoutedEventArgs e)
         => OpenUrl("https://github.com/marticliment/UniGetUI/issues");

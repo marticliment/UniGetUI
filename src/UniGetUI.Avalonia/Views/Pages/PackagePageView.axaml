@@ -1,7 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
                                                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                                                  x:Class="UniGetUI.Avalonia.Views.Pages.PackagePageView">
-        <Grid RowDefinitions="Auto,Auto,*"
+        <Grid RowDefinitions="Auto,Auto,Auto,*"
                                 RowSpacing="12">
                 <Border Padding="18"
                                                 Classes="surface-card">
@@ -41,7 +41,33 @@
                         </Grid>
                 </Border>
 
-                <Border Grid.Row="1"
+                <Border x:Name="WinGetWarningCard"
+                                                Grid.Row="1"
+                                                IsVisible="False"
+                                                Padding="14"
+                                                Classes="surface-card warning-panel">
+                        <Grid ColumnDefinitions="*,Auto"
+                                                ColumnSpacing="12">
+                                <StackPanel Spacing="4">
+                                        <TextBlock x:Name="WinGetWarningTitleBlock"
+                                                                                 FontSize="16"
+                                                                                 FontWeight="SemiBold"
+                                                                                 Text="WinGet malfunction detected" />
+                                        <TextBlock x:Name="WinGetWarningDescriptionBlock"
+                                                                                 Opacity="0.8"
+                                                                                 TextWrapping="Wrap"
+                                                                                 Text="It looks like WinGet is not working properly. Do you want to attempt to repair WinGet?" />
+                                </StackPanel>
+                                <Button x:Name="RepairWinGetButton"
+                                                                Grid.Column="1"
+                                                                Classes="toolbar-primary accent"
+                                                                VerticalAlignment="Center"
+                                                                Content="Repair WinGet"
+                                                                Click="RepairWinGetButton_OnClick" />
+                        </Grid>
+                </Border>
+
+                <Border Grid.Row="2"
                                                 Padding="12"
                                                 Classes="surface-card">
                         <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,*,Auto,Auto,Auto,Auto,Auto"
@@ -113,7 +139,7 @@
                         </Grid>
                 </Border>
 
-                <Grid Grid.Row="2"
+                <Grid Grid.Row="3"
                                         ColumnDefinitions="264,*"
                                         ColumnSpacing="12">
                         <StackPanel Spacing="12">
