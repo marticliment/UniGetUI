@@ -170,6 +170,8 @@
                                                                                                  Content="Both" />
                                                 <RadioButton x:Name="ExactMatchFilterRadio"
                                                                                                  Content="Exact match" />
+                                                <RadioButton x:Name="ShowSimilarResultsRadio"
+                                                                                                 Content="Show all packages" />
 
                                                 <Separator Margin="0,4" />
 

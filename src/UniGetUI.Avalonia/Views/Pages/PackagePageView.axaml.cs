@@ -76,6 +76,8 @@ public partial class PackagePageView : UserControl, IShellPage
 
     private RadioButton ExactMatchFilterOption => GetControl<RadioButton>("ExactMatchFilterRadio");
 
+    private RadioButton ShowSimilarResultsOption => GetControl<RadioButton>("ShowSimilarResultsRadio");
+
     private CheckBox InstantSearchOption => GetControl<CheckBox>("InstantSearchCheckBox");
     private CheckBox UpperLowerCaseOption => GetControl<CheckBox>("UpperLowerCaseCheckBox");
     private CheckBox IgnoreSpecialCharsOption => GetControl<CheckBox>("IgnoreSpecialCharsCheckBox");
@@ -218,6 +220,7 @@ public partial class PackagePageView : UserControl, IShellPage
         PackageIdFilterOption.Content = CoreTools.Translate("Package ID");
         BothFilterOption.Content = CoreTools.Translate("Both");
         ExactMatchFilterOption.Content = CoreTools.Translate("Exact match");
+        ShowSimilarResultsOption.Content = CoreTools.Translate("Show all packages");
         InstantSearchOption.Content = CoreTools.Translate("Instant search");
         UpperLowerCaseOption.Content = CoreTools.Translate("Distinguish uppercase and lowercase");
         IgnoreSpecialCharsOption.Content = CoreTools.Translate("Ignore special characters");
@@ -271,6 +274,7 @@ public partial class PackagePageView : UserControl, IShellPage
         PackageIdFilterOption.IsCheckedChanged += FilterOption_OnChecked;
         BothFilterOption.IsCheckedChanged += FilterOption_OnChecked;
         ExactMatchFilterOption.IsCheckedChanged += FilterOption_OnChecked;
+        ShowSimilarResultsOption.IsCheckedChanged += FilterOption_OnChecked;
         InstantSearchOption.IsCheckedChanged += FilterOption_OnChecked;
         UpperLowerCaseOption.IsCheckedChanged += FilterOption_OnChecked;
         IgnoreSpecialCharsOption.IsCheckedChanged += FilterOption_OnChecked;
@@ -1313,7 +1317,7 @@ public partial class PackagePageView : UserControl, IShellPage
 
         IEnumerable<IPackage> filtered = packages;
 
-        if (!string.IsNullOrWhiteSpace(_searchQuery))
+        if (!string.IsNullOrWhiteSpace(_searchQuery) && ShowSimilarResultsOption.IsChecked != true)
         {
             filtered = filtered.Where(package => MatchesSearch(package, _searchQuery));
         }

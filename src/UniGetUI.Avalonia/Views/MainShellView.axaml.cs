@@ -17,7 +17,9 @@ using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
+using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.PackageLoader;
+using UniGetUI.PackageOperations;
 
 namespace UniGetUI.Avalonia.Views;
 
@@ -91,6 +93,8 @@ public partial class MainShellView : UserControl
     private ItemsControl OperationsListControl => GetControl<ItemsControl>("OperationListControl");
 
     private Border OperationsPanelHost => GetControl<Border>("OperationsPanelBorder");
+
+    private Button OperationsBulkMenuBtn => GetControl<Button>("OperationsBulkMenuButton");
 
     // Ctrl+Tab / Ctrl+Shift+Tab cycle order (excludes log-like extra pages)
     private static readonly ShellPageType[] _cyclePages =
@@ -540,6 +544,75 @@ public partial class MainShellView : UserControl
         AvaloniaOperationRegistry.Operations.CollectionChanged += (_, _) =>
             Dispatcher.UIThread.Post(UpdateOperationsPanelVisibility);
         UpdateOperationsPanelVisibility();
+        OperationsBulkMenuBtn.Click += OperationsBulkMenuBtn_OnClick;
+    }
+
+    private void OperationsBulkMenuBtn_OnClick(object? sender, RoutedEventArgs e)
+    {
+        var menu = new ContextMenu
+        {
+            Items =
+            {
+                new MenuItem
+                {
+                    Header = CoreTools.Translate("Retry failed operations"),
+                    Command = new RelayCommand(RetryFailedOps)
+                },
+                new MenuItem
+                {
+                    Header = CoreTools.Translate("Clear successful operations"),
+                    Command = new RelayCommand(ClearSuccessfulOps)
+                },
+                new MenuItem
+                {
+                    Header = CoreTools.Translate("Clear finished operations"),
+                    Command = new RelayCommand(ClearFinishedOps)
+                },
+                new Separator(),
+                new MenuItem
+                {
+                    Header = CoreTools.Translate("Cancel all operations"),
+                    Command = new RelayCommand(CancelAllOps)
+                }
+            }
+        };
+        menu.Open(OperationsBulkMenuBtn);
+    }
+
+    private void CancelAllOps()
+    {
+        foreach (var op in AvaloniaOperationRegistry.Operations.ToList())
+        {
+            if (op.Status is OperationStatus.InQueue or OperationStatus.Running)
+                op.Cancel();
+        }
+    }
+
+    private void RetryFailedOps()
+    {
+        foreach (var op in AvaloniaOperationRegistry.Operations.ToList())
+        {
+            if (op.Status == OperationStatus.Failed)
+                op.Retry(AbstractOperation.RetryMode.Retry);
+        }
+    }
+
+    private void ClearSuccessfulOps()
+    {
+        foreach (var op in AvaloniaOperationRegistry.Operations.ToList())
+        {
+            if (op.Status == OperationStatus.Succeeded)
+                AvaloniaOperationRegistry.Operations.Remove(op);
+        }
+    }
+
+    private void ClearFinishedOps()
+    {
+        foreach (var op in AvaloniaOperationRegistry.Operations.ToList())
+        {
+            if (op.Status is OperationStatus.Succeeded or OperationStatus.Failed or OperationStatus.Canceled)
+                AvaloniaOperationRegistry.Operations.Remove(op);
+        }
     }
 
     private void UpdateOperationsPanelVisibility()

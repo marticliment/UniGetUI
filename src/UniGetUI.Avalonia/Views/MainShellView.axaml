@@ -257,10 +257,21 @@
             <Border.BorderBrush>
               <SolidColorBrush Color="{DynamicResource SystemBaseMediumLowColor}" />
             </Border.BorderBrush>
-            <TextBlock x:Name="ActiveOperationsHeaderBlock"
-                       FontSize="12"
-                       Opacity="0.7"
-                       Text="Active operations" />
+            <Grid ColumnDefinitions="*,Auto">
+              <TextBlock x:Name="ActiveOperationsHeaderBlock"
+                         Grid.Column="0"
+                         VerticalAlignment="Center"
+                         FontSize="12"
+                         Opacity="0.7"
+                         Text="Active operations" />
+              <Button x:Name="OperationsBulkMenuButton"
+                      Grid.Column="1"
+                      Padding="6,2"
+                      VerticalAlignment="Center"
+                      Classes="icon-button"
+                      Content="⋯"
+                      ToolTip.Tip="More actions" />
+            </Grid>
           </Border>
           <ScrollViewer Grid.Row="1"
                         MaxHeight="220"
