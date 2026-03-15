@@ -18,6 +18,7 @@ using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.PackageLoader;
 using UniGetUI.PackageOperations;
 
@@ -31,6 +32,8 @@ public partial class MainShellView : UserControl
 
     private ShellPageType _currentPage;
     private bool _navigationExpanded = !Settings.Get(Settings.K.CollapseNavMenuOnWideScreen);
+    private ContextMenu? _searchSuggestionsMenu;
+    private bool _isApplyingSearchSuggestion;
 
     private Border Sidebar => GetControl<Border>("SidebarBorder");
 
@@ -220,6 +223,7 @@ public partial class MainShellView : UserControl
         }
 
         page.UpdateSearchQuery(GlobalSearchTextBox.Text ?? string.Empty);
+        UpdateSearchSuggestions();
 
         BackNavigationButton.IsVisible = _history.Count > 0;
         UpdateNavigationSelection();
@@ -347,9 +351,111 @@ public partial class MainShellView : UserControl
 
     private void GlobalSearchBox_OnTextChanged(object? sender, TextChangedEventArgs e)
     {
+        if (_isApplyingSearchSuggestion)
+        {
+            return;
+        }
+
         if (_pageCache.TryGetValue(_currentPage, out var page) && page.SupportsSearch)
         {
             page.UpdateSearchQuery(GlobalSearchTextBox.Text ?? string.Empty);
+        }
+
+        UpdateSearchSuggestions();
+    }
+
+    private void UpdateSearchSuggestions()
+    {
+        if (!_pageCache.TryGetValue(_currentPage, out var page) || !page.SupportsSearch)
+        {
+            CloseSearchSuggestions();
+            return;
+        }
+
+        string query = GlobalSearchTextBox.Text?.Trim() ?? string.Empty;
+        if (query.Length < 2)
+        {
+            CloseSearchSuggestions();
+            return;
+        }
+
+        var suggestions = GetSearchSuggestions(query).ToArray();
+        if (suggestions.Length == 0)
+        {
+            CloseSearchSuggestions();
+            return;
+        }
+
+        CloseSearchSuggestions();
+
+        var menu = new ContextMenu
+        {
+            PlacementTarget = GlobalSearchTextBox,
+            Placement = PlacementMode.Bottom,
+        };
+
+        foreach (string suggestion in suggestions)
+        {
+            var item = new MenuItem { Header = suggestion };
+            item.Click += (_, _) => ApplySearchSuggestion(suggestion);
+            menu.Items.Add(item);
+        }
+
+        _searchSuggestionsMenu = menu;
+        GlobalSearchTextBox.ContextMenu = menu;
+        menu.Open(GlobalSearchTextBox);
+    }
+
+    private IEnumerable<string> GetSearchSuggestions(string query)
+    {
+        IEnumerable<IPackage> packages = _currentPage switch
+        {
+            ShellPageType.Discover => DiscoverablePackagesLoader.Instance.Packages,
+            ShellPageType.Updates => UpgradablePackagesLoader.Instance.Packages,
+            ShellPageType.Installed => InstalledPackagesLoader.Instance.Packages,
+            _ => [],
+        };
+
+        return packages
+            .SelectMany(package => new[] { package.Name, package.Id })
+            .Where(value => !string.IsNullOrWhiteSpace(value))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .Where(value => value.Contains(query, StringComparison.OrdinalIgnoreCase))
+            .OrderBy(value => value.StartsWith(query, StringComparison.OrdinalIgnoreCase) ? 0 : 1)
+            .ThenBy(value => value, StringComparer.OrdinalIgnoreCase)
+            .Take(8);
+    }
+
+    private void ApplySearchSuggestion(string suggestion)
+    {
+        _isApplyingSearchSuggestion = true;
+        try
+        {
+            GlobalSearchTextBox.Text = suggestion;
+            GlobalSearchTextBox.CaretIndex = suggestion.Length;
+
+            if (_pageCache.TryGetValue(_currentPage, out var page) && page.SupportsSearch)
+            {
+                page.UpdateSearchQuery(suggestion);
+            }
+        }
+        finally
+        {
+            _isApplyingSearchSuggestion = false;
+            CloseSearchSuggestions();
+        }
+    }
+
+    private void CloseSearchSuggestions()
+    {
+        if (_searchSuggestionsMenu is not null)
+        {
+            _searchSuggestionsMenu.Close();
+            if (ReferenceEquals(GlobalSearchTextBox.ContextMenu, _searchSuggestionsMenu))
+            {
+                GlobalSearchTextBox.ContextMenu = null;
+            }
+            _searchSuggestionsMenu = null;
         }
     }
 
