@@ -56,14 +56,19 @@
           <TextBlock x:Name="CloudNotAvailableDescriptionBlock"
                      Opacity="0.82"
                      TextWrapping="Wrap" />
-          <CheckBox x:Name="EnableCloudBackupCheckBox"
-                    IsEnabled="False" />
+          <TextBlock x:Name="CloudStatusBlock"
+                     Opacity="0.78"
+                     TextWrapping="Wrap" />
           <StackPanel Orientation="Horizontal"
                       Spacing="8">
-            <Button x:Name="BackupToCloudButton"
-                    IsEnabled="False" />
-            <Button x:Name="RestoreFromCloudButton"
-                    IsEnabled="False" />
+            <Button x:Name="LoginCloudButton" />
+            <Button x:Name="LogoutCloudButton" />
+          </StackPanel>
+          <CheckBox x:Name="EnableCloudBackupCheckBox" />
+          <StackPanel Orientation="Horizontal"
+                      Spacing="8">
+            <Button x:Name="BackupToCloudButton" />
+            <Button x:Name="RestoreFromCloudButton" />
           </StackPanel>
         </StackPanel>
       </Border>

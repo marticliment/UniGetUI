@@ -32,12 +32,19 @@ public static class AvaloniaOperationRegistry
                 Operations.Add(op);
         });
 
+        op.OperationStarting += (_, _) =>
+        {
+            Dispatcher.UIThread.Post(() => ShowOperationProgressNotification(op));
+        };
+
         op.OperationSucceeded += (_, _) =>
         {
             if (!Settings.Get(Settings.K.MaintainSuccessfulInstalls))
                 _ = RemoveAfterDelayAsync(op, milliseconds: 4000);
 
             _ = Task.Run(() => AppendOperationHistory(op));
+
+            Dispatcher.UIThread.Post(() => ShowOperationSuccessNotification(op));
 
             _ = RunPostOperationChecksAsync();
             Dispatcher.UIThread.Post(UpdateTrayStatus);
@@ -46,13 +53,17 @@ public static class AvaloniaOperationRegistry
         op.OperationFailed += (_, _) =>
         {
             _ = Task.Run(() => AppendOperationHistory(op));
+            Dispatcher.UIThread.Post(() => ShowOperationFailureNotification(op));
             Dispatcher.UIThread.Post(UpdateTrayStatus);
         };
 
         op.StatusChanged += (_, status) =>
         {
             if (status is OperationStatus.Canceled)
+            {
+                WindowsAppNotificationBridge.RemoveProgress(op);
                 _ = RemoveAfterDelayAsync(op, milliseconds: 2500);
+            }
             Dispatcher.UIThread.Post(UpdateTrayStatus);
         };
     }
@@ -68,6 +79,93 @@ public static class AvaloniaOperationRegistry
         if (Application.Current?.ApplicationLifetime
                 is IClassicDesktopStyleApplicationLifetime { MainWindow: UniGetUI.Avalonia.MainWindow mw })
             mw.UpdateSystemTrayStatus();
+    }
+
+    private static void ShowOperationProgressNotification(AbstractOperation op)
+    {
+        if (Settings.AreProgressNotificationsDisabled())
+            return;
+
+        if (WindowsAppNotificationBridge.ShowProgress(op))
+            return;
+
+        if (TryGetMainWindow() is not { } mainWindow)
+            return;
+
+        string title = op.Metadata.Title.Length > 0
+            ? op.Metadata.Title
+            : CoreTools.Translate("Package operation");
+
+        string message = op.Metadata.Status.Length > 0
+            ? op.Metadata.Status
+            : CoreTools.Translate("Please wait...");
+
+        mainWindow.ShowRuntimeNotification(
+            title,
+            message,
+            UniGetUI.Avalonia.MainWindow.RuntimeNotificationLevel.Progress);
+    }
+
+    private static void ShowOperationSuccessNotification(AbstractOperation op)
+    {
+        if (Settings.AreSuccessNotificationsDisabled())
+            return;
+
+        WindowsAppNotificationBridge.RemoveProgress(op);
+
+        if (WindowsAppNotificationBridge.ShowSuccess(op))
+            return;
+
+        if (TryGetMainWindow() is not { } mainWindow)
+            return;
+
+        string title = op.Metadata.SuccessTitle.Length > 0
+            ? op.Metadata.SuccessTitle
+            : CoreTools.Translate("Operation completed");
+
+        string message = op.Metadata.SuccessMessage.Length > 0
+            ? op.Metadata.SuccessMessage
+            : CoreTools.Translate("Completed successfully");
+
+        mainWindow.ShowRuntimeNotification(
+            title,
+            message,
+            UniGetUI.Avalonia.MainWindow.RuntimeNotificationLevel.Success);
+    }
+
+    private static void ShowOperationFailureNotification(AbstractOperation op)
+    {
+        if (Settings.AreErrorNotificationsDisabled())
+            return;
+
+        WindowsAppNotificationBridge.RemoveProgress(op);
+
+        if (WindowsAppNotificationBridge.ShowError(op))
+            return;
+
+        if (TryGetMainWindow() is not { } mainWindow)
+            return;
+
+        string title = op.Metadata.FailureTitle.Length > 0
+            ? op.Metadata.FailureTitle
+            : CoreTools.Translate("Operation failed");
+
+        string message = op.Metadata.FailureMessage.Length > 0
+            ? op.Metadata.FailureMessage
+            : CoreTools.Translate("An error occurred while processing the operation.");
+
+        mainWindow.ShowRuntimeNotification(
+            title,
+            message,
+            UniGetUI.Avalonia.MainWindow.RuntimeNotificationLevel.Error);
+    }
+
+    private static UniGetUI.Avalonia.MainWindow? TryGetMainWindow()
+    {
+        return Application.Current?.ApplicationLifetime
+            is IClassicDesktopStyleApplicationLifetime { MainWindow: UniGetUI.Avalonia.MainWindow mw }
+            ? mw
+            : null;
     }
 
     private static void AppendOperationHistory(AbstractOperation op)

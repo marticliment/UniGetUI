@@ -40,6 +40,9 @@
           <TextBlock x:Name="ExecutablePathBlock"
                      Classes="data-secondary"
                      TextWrapping="Wrap" />
+            <Button x:Name="CopyExecutablePathButton"
+              HorizontalAlignment="Left"
+              Classes="toolbar-secondary" />
         </StackPanel>
       </Border>
 
@@ -77,9 +80,14 @@
                   Padding="10,8"
                   CornerRadius="6"
                   Classes="subtle-panel">
-            <TextBlock x:Name="ExeWarningBlock"
-                       Opacity="0.82"
-                       TextWrapping="Wrap" />
+            <StackPanel Spacing="8">
+              <TextBlock x:Name="ExeWarningBlock"
+                         Opacity="0.82"
+                         TextWrapping="Wrap" />
+              <Button x:Name="OpenAdminSettingsButton"
+                      HorizontalAlignment="Left"
+                      Classes="toolbar-secondary" />
+            </StackPanel>
           </Border>
         </StackPanel>
       </Border>

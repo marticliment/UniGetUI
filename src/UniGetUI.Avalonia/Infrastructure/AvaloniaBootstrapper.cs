@@ -92,7 +92,14 @@ internal static class AvaloniaBootstrapper
 
             _backgroundApi.OnShowSharedPackage += (_, pkg) =>
                 Dispatcher.UIThread.Post(() =>
-                    Logger.Info($"BackgroundApi: ShowSharedPackage {pkg.Key}/{pkg.Value}"));
+                {
+                    Logger.Info($"BackgroundApi: ShowSharedPackage {pkg.Key}/{pkg.Value}");
+                    MainWindow.Instance?.ShowFromTray();
+                    if (MainWindow.Instance?.Content is Views.MainShellView shell)
+                    {
+                        shell.OpenSharedPackage(pkg.Key, pkg.Value);
+                    }
+                });
 
             _backgroundApi.OnUpgradeAll += (_, _) =>
                 Dispatcher.UIThread.Post(() => _ = AvaloniaPackageOperationHelper.UpdateAllAsync());

@@ -5,6 +5,7 @@ internal enum SettingsSectionRoute
     Home,
     General,
     Interface,
+    Managers,
     Updates,
     Notifications,
     Operations,

@@ -1,11 +1,16 @@
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
+using UniGetUI.Avalonia.Infrastructure;
 using UniGetUI.Avalonia.Views.Pages;
+using UniGetUI.Avalonia.Views;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
+using UniGetUI.Core.SecureSettings;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.PackageLoader;
@@ -16,6 +21,8 @@ namespace UniGetUI.Avalonia.Views.Pages.SettingsPages;
 public partial class BackupSettingsView : UserControl, ISettingsSectionView
 {
     private bool _isLoading;
+    private bool _isCloudLoading;
+    private bool _isCloudLoggedIn;
     private readonly DispatcherTimer _filenameSaveTimer;
 
     // Checkboxes
@@ -24,6 +31,8 @@ public partial class BackupSettingsView : UserControl, ISettingsSectionView
     private CheckBox BackupTimestampingCheckBoxControl => GetControl<CheckBox>("BackupTimestampingCheckBox");
 
     // Buttons
+    private Button LoginCloudButtonControl => GetControl<Button>("LoginCloudButton");
+    private Button LogoutCloudButtonControl => GetControl<Button>("LogoutCloudButton");
     private Button ChangeBackupDirButtonControl => GetControl<Button>("ChangeBackupDirButton");
     private Button ResetBackupDirButtonControl => GetControl<Button>("ResetBackupDirButton");
     private Button OpenBackupDirButtonControl => GetControl<Button>("OpenBackupDirButton");
@@ -49,6 +58,7 @@ public partial class BackupSettingsView : UserControl, ISettingsSectionView
     private TextBlock RestartDescriptionText => GetControl<TextBlock>("RestartDescriptionBlock");
     private TextBlock CloudSectionTitleText => GetControl<TextBlock>("CloudSectionTitleBlock");
     private TextBlock CloudNotAvailableDescriptionText => GetControl<TextBlock>("CloudNotAvailableDescriptionBlock");
+    private TextBlock CloudStatusText => GetControl<TextBlock>("CloudStatusBlock");
     private TextBlock LocalSectionTitleText => GetControl<TextBlock>("LocalSectionTitleBlock");
     private TextBlock LocalSectionDescriptionText => GetControl<TextBlock>("LocalSectionDescriptionBlock");
     private TextBlock DirectorySectionTitleText => GetControl<TextBlock>("DirectorySectionTitleBlock");
@@ -66,16 +76,28 @@ public partial class BackupSettingsView : UserControl, ISettingsSectionView
         InitializeComponent();
 
         EnableLocalBackupCheckBoxControl.Click += EnableLocalBackupCheckBox_OnClick;
+        EnableCloudBackupCheckBoxControl.Click += EnableCloudBackupCheckBox_OnClick;
         BackupTimestampingCheckBoxControl.Click += BackupTimestampingCheckBox_OnClick;
         ChangeBackupDirButtonControl.Click += ChangeBackupDir_OnClick;
         ResetBackupDirButtonControl.Click += ResetBackupDir_OnClick;
         OpenBackupDirButtonControl.Click += OpenBackupDir_OnClick;
+        LoginCloudButtonControl.Click += LoginCloudButton_OnClick;
+        LogoutCloudButtonControl.Click += LogoutCloudButton_OnClick;
+        BackupToCloudButtonControl.Click += BackupToCloudButton_OnClick;
+        RestoreFromCloudButtonControl.Click += RestoreFromCloudButton_OnClick;
 
         SectionTitle = CoreTools.Translate("Backup and Restore");
         SectionSubtitle = CoreTools.Translate("Configure automatic backups of your installed packages list.");
         SectionStatus = CoreTools.Translate("Live settings");
 
         ApplyLocalizedText();
+
+        if (Design.IsDesignMode)
+        {
+            LoadPreviewValues();
+            return;
+        }
+
         LoadStoredValues();
 
         // Subscribe after loading to avoid spurious saves at init
@@ -98,7 +120,10 @@ public partial class BackupSettingsView : UserControl, ISettingsSectionView
         RestartDescriptionText.Text = CoreTools.Translate("Changes to one or more settings on this page will take effect after restarting UniGetUI.");
 
         CloudSectionTitleText.Text = CoreTools.Translate("Cloud package backup");
-        CloudNotAvailableDescriptionText.Text = CoreTools.Translate("Cloud backup via GitHub Gist requires signing in with a GitHub account. This feature is not yet available.");
+        CloudNotAvailableDescriptionText.Text = CoreTools.Translate("Cloud backup uses GitHub Gist. Sign in using a GitHub personal access token with the gist scope.");
+        CloudStatusText.Text = CoreTools.Translate("Current status: Not logged in");
+        LoginCloudButtonControl.Content = CoreTools.Translate("Sign in with token");
+        LogoutCloudButtonControl.Content = CoreTools.Translate("Sign out");
         EnableCloudBackupCheckBoxControl.Content = CoreTools.Translate("Periodically perform a cloud backup of the installed packages");
         BackupToCloudButtonControl.Content = CoreTools.Translate("Backup");
         RestoreFromCloudButtonControl.Content = CoreTools.Translate("Select backup");
@@ -126,16 +151,35 @@ public partial class BackupSettingsView : UserControl, ISettingsSectionView
         _isLoading = true;
 
         bool localEnabled = Settings.Get(Settings.K.EnablePackageBackup_LOCAL);
+        bool cloudEnabled = Settings.Get(Settings.K.EnablePackageBackup_CLOUD);
         EnableLocalBackupCheckBoxControl.IsChecked = localEnabled;
+        EnableCloudBackupCheckBoxControl.IsChecked = cloudEnabled;
         BackupTimestampingCheckBoxControl.IsChecked = Settings.Get(Settings.K.EnableBackupTimestamping);
         BackupFilenameTextBoxControl.Text = Settings.GetValue(Settings.K.ChangeBackupFileName);
 
         UpdateDirectoryLabel();
         ApplyLocalBackupEnabledState(localEnabled);
         BackupNowButtonControl.IsEnabled = localEnabled;
+        UpdateCloudControlsEnabled();
 
         RestartNoticeCardControl.IsVisible = false;
         _isLoading = false;
+
+        _ = RefreshCloudStatusAsync();
+    }
+
+    private void LoadPreviewValues()
+    {
+        EnableLocalBackupCheckBoxControl.IsChecked = true;
+        EnableCloudBackupCheckBoxControl.IsChecked = true;
+        BackupTimestampingCheckBoxControl.IsChecked = true;
+        BackupFilenameTextBoxControl.Text = CoreTools.Translate("Workstation backup");
+        BackupDirCurrentLabelText.Text = CoreData.UniGetUI_DefaultBackupDirectory;
+        CloudStatusText.Text = CoreTools.Translate("You are logged in as {0} (@{1})", "Preview User", "preview-user");
+        _isCloudLoggedIn = true;
+        ApplyLocalBackupEnabledState(enabled: true);
+        UpdateCloudControlsEnabled();
+        RestartNoticeCardControl.IsVisible = true;
     }
 
     private void UpdateDirectoryLabel()
@@ -163,6 +207,57 @@ public partial class BackupSettingsView : UserControl, ISettingsSectionView
         BackupNowButtonControl.IsEnabled = enabled;
     }
 
+    private void UpdateCloudControlsEnabled()
+    {
+        LoginCloudButtonControl.IsEnabled = !_isCloudLoading && !_isCloudLoggedIn;
+        LogoutCloudButtonControl.IsEnabled = !_isCloudLoading && _isCloudLoggedIn;
+        EnableCloudBackupCheckBoxControl.IsEnabled = !_isCloudLoading && _isCloudLoggedIn;
+
+        bool cloudEnabled = _isCloudLoggedIn && EnableCloudBackupCheckBoxControl.IsChecked == true;
+        BackupToCloudButtonControl.IsEnabled = !_isCloudLoading && cloudEnabled;
+        RestoreFromCloudButtonControl.IsEnabled = !_isCloudLoading && _isCloudLoggedIn;
+    }
+
+    private async Task RefreshCloudStatusAsync()
+    {
+        if (_isCloudLoading)
+            return;
+
+        var client = GitHubCloudBackupService.CreateGitHubClient();
+        if (client is null)
+        {
+            _isCloudLoggedIn = false;
+            CloudStatusText.Text = CoreTools.Translate("Current status: Not logged in");
+            UpdateCloudControlsEnabled();
+            return;
+        }
+
+        try
+        {
+            var (userLogin, userName) = await GitHubCloudBackupService.GetCurrentUserAsync();
+            _isCloudLoggedIn = true;
+
+            Settings.SetValue(Settings.K.GitHubUserLogin, userLogin);
+
+            CloudStatusText.Text = CoreTools.Translate(
+                "You are logged in as {0} (@{1})",
+                userName,
+                userLogin
+            );
+        }
+        catch (Exception ex)
+        {
+            Logger.Warn("Cloud backup token validation failed.");
+            Logger.Warn(ex);
+            _isCloudLoggedIn = false;
+            SecureGHTokenManager.DeleteToken();
+            Settings.SetValue(Settings.K.GitHubUserLogin, string.Empty);
+            CloudStatusText.Text = CoreTools.Translate("Current status: Not logged in");
+        }
+
+        UpdateCloudControlsEnabled();
+    }
+
     // ── Click handlers ────────────────────────────────────────────────────
 
     private void EnableLocalBackupCheckBox_OnClick(object? sender, RoutedEventArgs e)
@@ -172,6 +267,14 @@ public partial class BackupSettingsView : UserControl, ISettingsSectionView
         Settings.Set(Settings.K.EnablePackageBackup_LOCAL, enabled);
         ApplyLocalBackupEnabledState(enabled);
         ShowRestartNotice();
+    }
+
+    private void EnableCloudBackupCheckBox_OnClick(object? sender, RoutedEventArgs e)
+    {
+        if (_isLoading) return;
+        Settings.Set(Settings.K.EnablePackageBackup_CLOUD, EnableCloudBackupCheckBoxControl.IsChecked == true);
+        ShowRestartNotice();
+        UpdateCloudControlsEnabled();
     }
 
     private void BackupTimestampingCheckBox_OnClick(object? sender, RoutedEventArgs e)
@@ -286,6 +389,299 @@ public partial class BackupSettingsView : UserControl, ISettingsSectionView
         {
             BackupNowButtonControl.IsEnabled = Settings.Get(Settings.K.EnablePackageBackup_LOCAL);
         }
+    }
+
+    private async void LoginCloudButton_OnClick(object? sender, RoutedEventArgs e)
+    {
+        string? token = await PromptForTokenAsync();
+        if (string.IsNullOrWhiteSpace(token))
+            return;
+
+        _isCloudLoading = true;
+        UpdateCloudControlsEnabled();
+
+        try
+        {
+            SecureGHTokenManager.StoreToken(token);
+
+            var (userLogin, _) = await GitHubCloudBackupService.GetCurrentUserAsync();
+            if (string.IsNullOrWhiteSpace(userLogin))
+                throw new InvalidOperationException("The GitHub token did not return a valid user.");
+
+            Settings.SetValue(Settings.K.GitHubUserLogin, userLogin);
+            await ShowInfoDialogAsync(
+                CoreTools.Translate("Done!"),
+                CoreTools.Translate("You are now signed in as @{0}", userLogin)
+            );
+        }
+        catch (Exception ex)
+        {
+            Logger.Error("Cloud backup sign-in failed");
+            Logger.Error(ex);
+            SecureGHTokenManager.DeleteToken();
+            Settings.SetValue(Settings.K.GitHubUserLogin, string.Empty);
+            await ShowInfoDialogAsync(
+                CoreTools.Translate("Sign-in failed"),
+                CoreTools.Translate("Could not sign in with the provided token: {0}", ex.Message)
+            );
+        }
+        finally
+        {
+            _isCloudLoading = false;
+            await RefreshCloudStatusAsync();
+        }
+    }
+
+    private async void LogoutCloudButton_OnClick(object? sender, RoutedEventArgs e)
+    {
+        SecureGHTokenManager.DeleteToken();
+        Settings.SetValue(Settings.K.GitHubUserLogin, string.Empty);
+        _isCloudLoggedIn = false;
+        await RefreshCloudStatusAsync();
+    }
+
+    private async void BackupToCloudButton_OnClick(object? sender, RoutedEventArgs e)
+    {
+        _isCloudLoading = true;
+        UpdateCloudControlsEnabled();
+
+        try
+        {
+            string contents = await BundlesPageView.CreateBundleStringAsync(InstalledPackagesLoader.Instance.Packages);
+            await GitHubCloudBackupService.UploadPackageBundleAsync(contents);
+            await ShowInfoDialogAsync(
+                CoreTools.Translate("Backup successful"),
+                CoreTools.Translate("The cloud backup completed successfully.")
+            );
+        }
+        catch (Exception ex)
+        {
+            Logger.Error("Could not back up packages to GitHub Gist");
+            Logger.Error(ex);
+            await ShowInfoDialogAsync(
+                CoreTools.Translate("Backup failed"),
+                CoreTools.Translate("Could not back up packages to GitHub Gist: {0}", ex.Message)
+            );
+        }
+        finally
+        {
+            _isCloudLoading = false;
+            UpdateCloudControlsEnabled();
+        }
+    }
+
+    private async void RestoreFromCloudButton_OnClick(object? sender, RoutedEventArgs e)
+    {
+        _isCloudLoading = true;
+        UpdateCloudControlsEnabled();
+
+        try
+        {
+            var backups = await GitHubCloudBackupService.GetAvailableBackupsAsync();
+            if (backups.Count == 0)
+            {
+                await ShowInfoDialogAsync(
+                    CoreTools.Translate("No backups found"),
+                    CoreTools.Translate("No cloud backups are available for this account.")
+                );
+                return;
+            }
+
+            string? selectedKey = await PromptForBackupSelectionAsync(backups);
+            if (string.IsNullOrWhiteSpace(selectedKey))
+                return;
+
+            string backupContents = await GitHubCloudBackupService.GetBackupContentsAsync(selectedKey);
+
+            string filePath = Path.Combine(
+                Path.GetTempPath(),
+                "UniGetUI-cloud-" + DateTime.UtcNow.ToString("yyyyMMddHHmmss") + ".ubundle"
+            );
+            await File.WriteAllTextAsync(filePath, backupContents);
+
+            var shell = this.FindAncestorOfType<MainShellView>();
+            if (shell is null)
+            {
+                await ShowInfoDialogAsync(
+                    CoreTools.Translate("Could not restore backup"),
+                    CoreTools.Translate("Could not access shell navigation to open the downloaded backup.")
+                );
+                return;
+            }
+
+            await shell.OpenBundleFromFileAsync(filePath);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error("An error occurred while restoring a cloud backup");
+            Logger.Error(ex);
+            await ShowInfoDialogAsync(
+                CoreTools.Translate("Could not restore backup"),
+                CoreTools.Translate("An error occurred while restoring the selected cloud backup: {0}", ex.Message)
+            );
+        }
+        finally
+        {
+            _isCloudLoading = false;
+            UpdateCloudControlsEnabled();
+        }
+    }
+
+    private async Task<string?> PromptForTokenAsync()
+    {
+        if (VisualRoot is not Window owner)
+            return null;
+
+        string? token = null;
+        var tokenBox = new TextBox
+        {
+            Watermark = CoreTools.Translate("Paste your GitHub personal access token"),
+            Width = 460,
+        };
+
+        var dialog = new Window
+        {
+            Width = 560,
+            Height = 220,
+            CanResize = false,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            Title = CoreTools.Translate("GitHub token"),
+        };
+
+        var saveBtn = new Button { Content = CoreTools.Translate("Sign in"), MinWidth = 100 };
+        var cancelBtn = new Button { Content = CoreTools.Translate("Cancel"), MinWidth = 100 };
+
+        saveBtn.Click += (_, _) =>
+        {
+            token = tokenBox.Text?.Trim();
+            dialog.Close();
+        };
+        cancelBtn.Click += (_, _) => dialog.Close();
+
+        dialog.Content = new StackPanel
+        {
+            Spacing = 12,
+            Margin = new Thickness(16),
+            Children =
+            {
+                new TextBlock
+                {
+                    Text = CoreTools.Translate("Enter a GitHub token with the gist scope to enable cloud backups."),
+                    TextWrapping = global::Avalonia.Media.TextWrapping.Wrap,
+                },
+                tokenBox,
+                new StackPanel
+                {
+                    Orientation = global::Avalonia.Layout.Orientation.Horizontal,
+                    Spacing = 8,
+                    HorizontalAlignment = global::Avalonia.Layout.HorizontalAlignment.Right,
+                    Children = { cancelBtn, saveBtn },
+                },
+            },
+        };
+
+        await dialog.ShowDialog(owner);
+
+        return string.IsNullOrWhiteSpace(token) ? null : token;
+    }
+
+    private async Task<string?> PromptForBackupSelectionAsync(IReadOnlyList<GitHubCloudBackupService.CloudBackupEntry> backups)
+    {
+        if (VisualRoot is not Window owner)
+            return null;
+
+        string? selectedKey = null;
+        var selector = new ComboBox
+        {
+            Width = 420,
+            ItemsSource = backups.Select(b => b.Display).ToArray(),
+            SelectedIndex = backups.Count > 0 ? 0 : -1,
+        };
+
+        var dialog = new Window
+        {
+            Width = 520,
+            Height = 210,
+            CanResize = false,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            Title = CoreTools.Translate("Select backup"),
+        };
+
+        var openBtn = new Button { Content = CoreTools.Translate("Open"), MinWidth = 100 };
+        var cancelBtn = new Button { Content = CoreTools.Translate("Cancel"), MinWidth = 100 };
+
+        openBtn.Click += (_, _) =>
+        {
+            if (selector.SelectedIndex >= 0 && selector.SelectedIndex < backups.Count)
+                selectedKey = backups[selector.SelectedIndex].Key;
+            dialog.Close();
+        };
+        cancelBtn.Click += (_, _) => dialog.Close();
+
+        dialog.Content = new StackPanel
+        {
+            Spacing = 12,
+            Margin = new Thickness(16),
+            Children =
+            {
+                new TextBlock
+                {
+                    Text = CoreTools.Translate("Select the backup to restore."),
+                    TextWrapping = global::Avalonia.Media.TextWrapping.Wrap,
+                },
+                selector,
+                new StackPanel
+                {
+                    Orientation = global::Avalonia.Layout.Orientation.Horizontal,
+                    Spacing = 8,
+                    HorizontalAlignment = global::Avalonia.Layout.HorizontalAlignment.Right,
+                    Children = { cancelBtn, openBtn },
+                },
+            },
+        };
+
+        await dialog.ShowDialog(owner);
+        return selectedKey;
+    }
+
+    private async Task ShowInfoDialogAsync(string title, string message)
+    {
+        if (VisualRoot is not Window owner)
+            return;
+
+        var dialog = new Window
+        {
+            Width = 520,
+            Height = 210,
+            CanResize = false,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            Title = title,
+        };
+
+        var okBtn = new Button
+        {
+            Content = CoreTools.Translate("OK"),
+            MinWidth = 100,
+            HorizontalAlignment = global::Avalonia.Layout.HorizontalAlignment.Right,
+        };
+        okBtn.Click += (_, _) => dialog.Close();
+
+        dialog.Content = new StackPanel
+        {
+            Spacing = 12,
+            Margin = new Thickness(16),
+            Children =
+            {
+                new TextBlock
+                {
+                    Text = message,
+                    TextWrapping = global::Avalonia.Media.TextWrapping.Wrap,
+                },
+                okBtn,
+            },
+        };
+
+        await dialog.ShowDialog(owner);
     }
 
     private void InitializeComponent()

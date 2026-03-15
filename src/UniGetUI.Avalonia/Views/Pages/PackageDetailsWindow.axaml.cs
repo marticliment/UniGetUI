@@ -1,8 +1,10 @@
+using Avalonia;
 using System.Diagnostics;
 using System.Net.Http;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
@@ -19,11 +21,16 @@ namespace UniGetUI.Avalonia.Views.Pages;
 
 public partial class PackageDetailsWindow : Window
 {
+    private const string ScreenshotsInfoUrl = "https://marticliment.com/unigetui/help/icons-and-screenshots/#about-icons";
+
     private readonly IPackage _package;
     private readonly PackagePageMode _pageMode;
+    private readonly InstallOptionsEditorView? _installOptionsEditorView;
     private Uri? _homepageUrl;
     private Uri? _releaseNotesUrl;
     private Uri? _manifestUrl;
+    private IReadOnlyList<Uri> _screenshotUris = [];
+    private int _selectedScreenshotIndex;
 
     private TextBlock PackageVersionLabelText => GetControl<TextBlock>("PackageVersionLabelBlock");
     private TextBlock PackageManagerLabelText => GetControl<TextBlock>("PackageManagerLabelBlock");
@@ -33,6 +40,19 @@ public partial class PackageDetailsWindow : Window
     private TextBlock PackageManagerText => GetControl<TextBlock>("PackageManagerBlock");
     private Border LoadingCardControl => GetControl<Border>("LoadingCard");
     private TextBlock LoadingStateText => GetControl<TextBlock>("LoadingStateBlock");
+    private Border ScreenshotsCardControl => GetControl<Border>("ScreenshotsCard");
+    private TextBlock ScreenshotsTitleText => GetControl<TextBlock>("ScreenshotsTitleBlock");
+    private TextBlock ScreenshotsPipsText => GetControl<TextBlock>("ScreenshotsPipsBlock");
+    private ProgressBar ScreenshotsLoadingBarControl => GetControl<ProgressBar>("ScreenshotsLoadingBar");
+    private Border ScreenshotsImageCardControl => GetControl<Border>("ScreenshotsImageCard");
+    private Image ScreenshotImageControl => GetControl<Image>("ScreenshotImage");
+    private Button PreviousScreenshotButtonControl => GetControl<Button>("PreviousScreenshotButton");
+    private Button NextScreenshotButtonControl => GetControl<Button>("NextScreenshotButton");
+    private Border ScreenshotsBannerCardControl => GetControl<Border>("ScreenshotsBannerCard");
+    private TextBlock ScreenshotsBannerText => GetControl<TextBlock>("ScreenshotsBannerTextBlock");
+    private Button ContributeScreenshotsButtonControl => GetControl<Button>("ContributeScreenshotsButton");
+    private Border TagsCardControl => GetControl<Border>("TagsCard");
+    private WrapPanel TagsPanelControl => GetControl<WrapPanel>("TagsPanel");
     private Border DescriptionCardControl => GetControl<Border>("DescriptionCard");
     private TextBlock DescriptionTitleText => GetControl<TextBlock>("DescriptionTitleBlock");
     private TextBlock DescriptionText => GetControl<TextBlock>("DescriptionBlock");
@@ -61,6 +81,12 @@ public partial class PackageDetailsWindow : Window
     private Border ReleaseNotesCardControl => GetControl<Border>("ReleaseNotesCard");
     private TextBlock ReleaseNotesTitleText => GetControl<TextBlock>("ReleaseNotesTitleBlock");
     private TextBlock ReleaseNotesText => GetControl<TextBlock>("ReleaseNotesBlock");
+    private Border InstallOptionsCardControl => GetControl<Border>("InstallOptionsCard");
+    private Expander InstallOptionsExpanderControl => GetControl<Expander>("InstallOptionsExpander");
+    private TextBlock InstallOptionsTitleText => GetControl<TextBlock>("InstallOptionsTitleBlock");
+    private ContentControl InstallOptionsHostControl => GetControl<ContentControl>("InstallOptionsHost");
+    private Button SaveInstallOptionsButtonControl => GetControl<Button>("SaveInstallOptionsButton");
+    private Button ShareButtonControl => GetControl<Button>("ShareButton");
     private Button CloseButtonControl => GetControl<Button>("CloseButton");
     private Button ActionButtonControl => GetControl<Button>("ActionButton");
     private Button ActionDropdownButtonControl => GetControl<Button>("ActionDropdownButton");
@@ -86,6 +112,10 @@ public partial class PackageDetailsWindow : Window
     {
         _package = package;
         _pageMode = pageMode;
+        if (pageMode != PackagePageMode.None)
+        {
+            _installOptionsEditorView = new InstallOptionsEditorView(package);
+        }
         InitializeComponent();
         ApplyStaticContent(package);
         _ = LoadDetailsAsync();
@@ -119,12 +149,19 @@ public partial class PackageDetailsWindow : Window
         }
 
         LoadingStateText.Text = CoreTools.Translate("Loading package details...");
+        ShareButtonControl.Content = CoreTools.Translate("Share this package");
         CloseButtonControl.Content = CoreTools.Translate("Close");
 
         DescriptionTitleText.Text = CoreTools.Translate("Description");
+        ScreenshotsTitleText.Text = CoreTools.Translate("Screenshots");
+        ScreenshotsBannerText.Text = CoreTools.Translate("This package has no screenshots or is missing the icon? Contrbute to WingetUI by adding the missing icons and screenshots to our open, public database.");
+        ContributeScreenshotsButtonControl.Content = CoreTools.Translate("Become a contributor");
         InfoTitleText.Text = CoreTools.Translate("Package Information");
         LinksTitleText.Text = CoreTools.Translate("Links");
         ReleaseNotesTitleText.Text = CoreTools.Translate("Release Notes");
+        InstallOptionsTitleText.Text = CoreTools.Translate("Installation options");
+        SaveInstallOptionsButtonControl.Content = CoreTools.Translate("Save");
+        SaveInstallOptionsButtonControl.IsEnabled = false;
 
         AuthorLabelText.Text = CoreTools.Translate("Author:");
         PublisherLabelText.Text = CoreTools.Translate("Publisher:");
@@ -147,6 +184,15 @@ public partial class PackageDetailsWindow : Window
 
         // Dependencies card
         DependenciesTitleText.Text = CoreTools.Translate("Dependencies");
+
+        if (_installOptionsEditorView is not null)
+        {
+            InstallOptionsHostControl.Content = _installOptionsEditorView;
+            InstallOptionsCardControl.IsVisible = true;
+            InstallOptionsExpanderControl.IsExpanded = false;
+            InstallOptionsExpanderControl.Expanded += InstallOptionsExpander_OnExpandedChanged;
+            InstallOptionsExpanderControl.Collapsed += InstallOptionsExpander_OnExpandedChanged;
+        }
 
         // Action dropdown flyout
         BuildActionFlyout();
@@ -175,11 +221,43 @@ public partial class PackageDetailsWindow : Window
         }
 
         _ = LoadIconAsync();
+        _ = LoadScreenshotsAsync();
     }
 
     private void PopulateDetails(IPackageDetails details)
     {
         LoadingCardControl.IsVisible = false;
+
+        var visibleTags = details.Tags
+            .Where(static tag => !string.IsNullOrWhiteSpace(tag))
+            .Select(static tag => tag.Trim())
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+
+        if (visibleTags.Length > 0)
+        {
+            TagsPanelControl.Children.Clear();
+            foreach (var tag in visibleTags)
+            {
+                TagsPanelControl.Children.Add(new Border
+                {
+                    Background = new SolidColorBrush(Color.Parse("#1F6A92B8")),
+                    BorderBrush = new SolidColorBrush(Color.Parse("#4F6A92B8")),
+                    BorderThickness = new Thickness(1),
+                    CornerRadius = new CornerRadius(999),
+                    Margin = new Thickness(0, 0, 8, 8),
+                    Padding = new Thickness(10, 4),
+                    Child = new TextBlock
+                    {
+                        Text = tag,
+                        FontSize = 12,
+                        FontWeight = FontWeight.SemiBold,
+                    },
+                });
+            }
+
+            TagsCardControl.IsVisible = true;
+        }
 
         if (!string.IsNullOrWhiteSpace(details.Description))
         {
@@ -326,11 +404,107 @@ public partial class PackageDetailsWindow : Window
     private void CloseButton_OnClick(object? sender, RoutedEventArgs e)
         => Close();
 
+    private void ContributeScreenshotsButton_OnClick(object? sender, RoutedEventArgs e)
+        => OpenUrl(ScreenshotsInfoUrl);
+
+    private async void PreviousScreenshotButton_OnClick(object? sender, RoutedEventArgs e)
+    {
+        if (_screenshotUris.Count <= 1)
+        {
+            return;
+        }
+
+        _selectedScreenshotIndex = (_selectedScreenshotIndex - 1 + _screenshotUris.Count) % _screenshotUris.Count;
+        await ShowSelectedScreenshotAsync();
+    }
+
+    private async void NextScreenshotButton_OnClick(object? sender, RoutedEventArgs e)
+    {
+        if (_screenshotUris.Count <= 1)
+        {
+            return;
+        }
+
+        _selectedScreenshotIndex = (_selectedScreenshotIndex + 1) % _screenshotUris.Count;
+        await ShowSelectedScreenshotAsync();
+    }
+
+    private void InstallOptionsExpander_OnExpandedChanged(object? sender, RoutedEventArgs e)
+    {
+        SaveInstallOptionsButtonControl.IsEnabled = InstallOptionsExpanderControl.IsExpanded;
+    }
+
+    private async void SaveInstallOptionsButton_OnClick(object? sender, RoutedEventArgs e)
+    {
+        if (_installOptionsEditorView is null)
+        {
+            return;
+        }
+
+        try
+        {
+            SaveInstallOptionsButtonControl.IsEnabled = false;
+            SaveInstallOptionsButtonControl.Content = CoreTools.Translate("Saving...");
+            await _installOptionsEditorView.SaveAsync();
+            SaveInstallOptionsButtonControl.Content = CoreTools.Translate("Saved");
+            global::UniGetUI.Avalonia.MainWindow.Instance?.ShowRuntimeNotification(
+                CoreTools.Translate("Installation options"),
+                CoreTools.Translate("Installation options saved"),
+                global::UniGetUI.Avalonia.MainWindow.RuntimeNotificationLevel.Success);
+            await Task.Delay(1200);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error("An error occurred while saving install options");
+            Logger.Error(ex);
+            global::UniGetUI.Avalonia.MainWindow.Instance?.ShowRuntimeNotification(
+                CoreTools.Translate("Installation options"),
+                CoreTools.Translate("Failed to save installation options"),
+                global::UniGetUI.Avalonia.MainWindow.RuntimeNotificationLevel.Error);
+        }
+        finally
+        {
+            SaveInstallOptionsButtonControl.Content = CoreTools.Translate("Save");
+            SaveInstallOptionsButtonControl.IsEnabled = InstallOptionsExpanderControl.IsExpanded;
+        }
+    }
+
+    private async void ShareButton_OnClick(object? sender, RoutedEventArgs e)
+    {
+        if (_package.Source.IsVirtualManager || _package is InvalidImportedPackage)
+        {
+            global::UniGetUI.Avalonia.MainWindow.Instance?.ShowRuntimeNotification(
+                CoreTools.Translate("Something went wrong"),
+                CoreTools.Translate("\"{0}\" is a local package and can't be shared", _package.Name),
+                global::UniGetUI.Avalonia.MainWindow.RuntimeNotificationLevel.Error);
+            return;
+        }
+
+        var clipboard = TopLevel.GetTopLevel(this)?.Clipboard;
+        if (clipboard is null)
+        {
+            return;
+        }
+
+        await clipboard.SetTextAsync(BuildShareUrl(_package));
+        global::UniGetUI.Avalonia.MainWindow.Instance?.ShowRuntimeNotification(
+            CoreTools.Translate("Share this package"),
+            CoreTools.Translate("Share link copied to clipboard"),
+            global::UniGetUI.Avalonia.MainWindow.RuntimeNotificationLevel.Success);
+    }
+
     private async void ActionButton_OnClick(object? sender, RoutedEventArgs e)
     {
         ActionButtonControl.IsEnabled = false;
         try
         {
+            if (_pageMode == PackagePageMode.Installed
+                && !await ConfirmUninstallAsync(_package))
+            {
+                ActionButtonControl.IsEnabled = true;
+                return;
+            }
+
             var options = await InstallOptionsFactory.LoadApplicableAsync(_package);
             AbstractOperation? operation = _pageMode switch
             {
@@ -379,6 +553,11 @@ public partial class PackageDetailsWindow : Window
         Close();
     }
 
+    private Task<bool> ConfirmUninstallAsync(IPackage package)
+    {
+        return UninstallConfirmationDialog.ConfirmAsync(this, package);
+    }
+
     private async Task LoadIconAsync()
     {
         try
@@ -405,6 +584,101 @@ public partial class PackageDetailsWindow : Window
         }
     }
 
+    private async Task LoadScreenshotsAsync()
+    {
+        try
+        {
+            var screenshots = await Task.Run(_package.GetScreenshots);
+            Dispatcher.UIThread.Post(() =>
+            {
+                _screenshotUris = screenshots;
+                _selectedScreenshotIndex = 0;
+                ScreenshotsCardControl.IsVisible = true;
+                ApplyScreenshotChrome();
+            });
+
+            if (screenshots.Count > 0)
+            {
+                await ShowSelectedScreenshotAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+            Dispatcher.UIThread.Post(() =>
+            {
+                _screenshotUris = [];
+                ScreenshotsCardControl.IsVisible = true;
+                ApplyScreenshotChrome();
+            });
+        }
+    }
+
+    private async Task ShowSelectedScreenshotAsync()
+    {
+        if (_screenshotUris.Count == 0)
+        {
+            Dispatcher.UIThread.Post(ApplyScreenshotChrome);
+            return;
+        }
+
+        Uri screenshotUri = _screenshotUris[_selectedScreenshotIndex];
+        Dispatcher.UIThread.Post(() =>
+        {
+            ScreenshotsLoadingBarControl.IsVisible = true;
+            PreviousScreenshotButtonControl.IsEnabled = false;
+            NextScreenshotButtonControl.IsEnabled = false;
+        });
+
+        try
+        {
+            using var client = new HttpClient();
+            client.Timeout = TimeSpan.FromSeconds(15);
+            var bytes = await client.GetByteArrayAsync(screenshotUri);
+            using var stream = new MemoryStream(bytes);
+            var bitmap = new Bitmap(stream);
+
+            Dispatcher.UIThread.Post(() =>
+            {
+                ScreenshotImageControl.Source = bitmap;
+                ApplyScreenshotChrome();
+            });
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+            Dispatcher.UIThread.Post(() =>
+            {
+                ScreenshotImageControl.Source = null;
+                ApplyScreenshotChrome();
+            });
+        }
+    }
+
+    private void ApplyScreenshotChrome()
+    {
+        bool hasScreenshots = _screenshotUris.Count > 0;
+
+        ScreenshotsCardControl.IsVisible = true;
+        ScreenshotsImageCardControl.IsVisible = hasScreenshots;
+        ScreenshotsBannerCardControl.IsVisible = true;
+        ScreenshotsLoadingBarControl.IsVisible = false;
+
+        if (!hasScreenshots)
+        {
+            ScreenshotsPipsText.Text = string.Empty;
+            PreviousScreenshotButtonControl.IsVisible = false;
+            NextScreenshotButtonControl.IsVisible = false;
+            return;
+        }
+
+        PreviousScreenshotButtonControl.IsVisible = _screenshotUris.Count > 1;
+        NextScreenshotButtonControl.IsVisible = _screenshotUris.Count > 1;
+        PreviousScreenshotButtonControl.IsEnabled = _screenshotUris.Count > 1;
+        NextScreenshotButtonControl.IsEnabled = _screenshotUris.Count > 1;
+        ScreenshotsPipsText.Text = $"{_selectedScreenshotIndex + 1} / {_screenshotUris.Count}";
+    }
+
     private void BuildActionFlyout()
     {
         if (_pageMode == PackagePageMode.None) return;
@@ -413,79 +687,95 @@ public partial class PackageDetailsWindow : Window
         var caps = _package.Manager.Capabilities;
 
         // Admin variant
-        if (caps.CanRunAsAdmin)
+        string adminLabel = _pageMode switch
         {
-            string label = _pageMode switch
+            PackagePageMode.Discover => CoreTools.Translate("Install as administrator"),
+            PackagePageMode.Updates => CoreTools.Translate("Update as administrator"),
+            PackagePageMode.Installed => CoreTools.Translate("Uninstall as administrator"),
+            _ => CoreTools.Translate("Run as administrator"),
+        };
+        var adminItem = new MenuItem { Header = adminLabel, IsEnabled = caps.CanRunAsAdmin };
+        adminItem.Click += async (_, _) =>
+        {
+            ActionButtonControl.IsEnabled = false;
+            ActionDropdownButtonControl.IsEnabled = false;
+            try
             {
-                PackagePageMode.Discover => CoreTools.Translate("Install as administrator"),
-                PackagePageMode.Updates => CoreTools.Translate("Update as administrator"),
-                PackagePageMode.Installed => CoreTools.Translate("Uninstall as administrator"),
-                _ => CoreTools.Translate("Run as administrator"),
-            };
-            var item = new MenuItem { Header = label };
-            item.Click += async (_, _) =>
-            {
-                ActionButtonControl.IsEnabled = false;
-                ActionDropdownButtonControl.IsEnabled = false;
-                try
+                if (_pageMode == PackagePageMode.Installed
+                    && !await ConfirmUninstallAsync(_package))
                 {
-                    var options = await InstallOptionsFactory.LoadApplicableAsync(_package);
-                    options.RunAsAdministrator = true;
-                    AbstractOperation? op = _pageMode switch
-                    {
-                        PackagePageMode.Discover => new InstallPackageOperation(_package, options),
-                        PackagePageMode.Updates => new UpdatePackageOperation(_package, options),
-                        PackagePageMode.Installed => new UninstallPackageOperation(_package, options),
-                        _ => null,
-                    };
-                    if (op is null) return;
-                    AvaloniaOperationRegistry.Add(op);
-                    _ = op.MainThread();
-                    Close();
+                    ActionButtonControl.IsEnabled = true;
+                    ActionDropdownButtonControl.IsEnabled = true;
+                    return;
                 }
-                catch (Exception ex) { Logger.Error(ex); ActionButtonControl.IsEnabled = true; ActionDropdownButtonControl.IsEnabled = true; }
-            };
-            flyout.Items.Add(item);
-        }
+
+                var options = await InstallOptionsFactory.LoadApplicableAsync(_package);
+                options.RunAsAdministrator = true;
+                AbstractOperation? op = _pageMode switch
+                {
+                    PackagePageMode.Discover => new InstallPackageOperation(_package, options),
+                    PackagePageMode.Updates => new UpdatePackageOperation(_package, options),
+                    PackagePageMode.Installed => new UninstallPackageOperation(_package, options),
+                    _ => null,
+                };
+                if (op is null) return;
+                AvaloniaOperationRegistry.Add(op);
+                _ = op.MainThread();
+                Close();
+            }
+            catch (Exception ex) { Logger.Error(ex); ActionButtonControl.IsEnabled = true; ActionDropdownButtonControl.IsEnabled = true; }
+        };
+        flyout.Items.Add(adminItem);
 
         // Interactive variant
-        if (caps.CanRunInteractively && _pageMode != PackagePageMode.Installed)
+        string interactiveLabel = _pageMode switch
         {
-            string label = _pageMode switch
+            PackagePageMode.Discover => CoreTools.Translate("Interactive installation"),
+            PackagePageMode.Updates => CoreTools.Translate("Interactive update"),
+            PackagePageMode.Installed => CoreTools.Translate("Interactive uninstall"),
+            _ => CoreTools.Translate("Interactive installation"),
+        };
+        var interactiveItem = new MenuItem { Header = interactiveLabel, IsEnabled = caps.CanRunInteractively };
+        interactiveItem.Click += async (_, _) =>
+        {
+            ActionButtonControl.IsEnabled = false;
+            ActionDropdownButtonControl.IsEnabled = false;
+            try
             {
-                PackagePageMode.Discover => CoreTools.Translate("Interactive installation"),
-                PackagePageMode.Updates => CoreTools.Translate("Interactive update"),
-                _ => CoreTools.Translate("Interactive installation"),
-            };
-            var item = new MenuItem { Header = label };
-            item.Click += async (_, _) =>
-            {
-                ActionButtonControl.IsEnabled = false;
-                ActionDropdownButtonControl.IsEnabled = false;
-                try
+                if (_pageMode == PackagePageMode.Installed
+                    && !await ConfirmUninstallAsync(_package))
                 {
-                    var options = await InstallOptionsFactory.LoadApplicableAsync(_package);
-                    options.InteractiveInstallation = true;
-                    AbstractOperation? op = _pageMode switch
-                    {
-                        PackagePageMode.Discover => new InstallPackageOperation(_package, options),
-                        PackagePageMode.Updates => new UpdatePackageOperation(_package, options),
-                        _ => null,
-                    };
-                    if (op is null) return;
-                    AvaloniaOperationRegistry.Add(op);
-                    _ = op.MainThread();
-                    Close();
+                    ActionButtonControl.IsEnabled = true;
+                    ActionDropdownButtonControl.IsEnabled = true;
+                    return;
                 }
-                catch (Exception ex) { Logger.Error(ex); ActionButtonControl.IsEnabled = true; ActionDropdownButtonControl.IsEnabled = true; }
-            };
-            flyout.Items.Add(item);
-        }
 
-        // Skip integrity checks (non-Installed pages)
-        if (caps.CanSkipIntegrityChecks && _pageMode != PackagePageMode.Installed)
+                var options = await InstallOptionsFactory.LoadApplicableAsync(_package);
+                options.InteractiveInstallation = true;
+                AbstractOperation? op = _pageMode switch
+                {
+                    PackagePageMode.Discover => new InstallPackageOperation(_package, options),
+                    PackagePageMode.Updates => new UpdatePackageOperation(_package, options),
+                    PackagePageMode.Installed => new UninstallPackageOperation(_package, options),
+                    _ => null,
+                };
+                if (op is null) return;
+                AvaloniaOperationRegistry.Add(op);
+                _ = op.MainThread();
+                Close();
+            }
+            catch (Exception ex) { Logger.Error(ex); ActionButtonControl.IsEnabled = true; ActionDropdownButtonControl.IsEnabled = true; }
+        };
+        flyout.Items.Add(interactiveItem);
+
+        // Skip hash check (non-Installed pages)
+        if (_pageMode != PackagePageMode.Installed)
         {
-            var item = new MenuItem { Header = CoreTools.Translate("Skip integrity checks") };
+            var item = new MenuItem
+            {
+                Header = CoreTools.Translate("Skip hash check"),
+                IsEnabled = caps.CanSkipIntegrityChecks,
+            };
             item.Click += async (_, _) =>
             {
                 ActionButtonControl.IsEnabled = false;
@@ -513,6 +803,30 @@ public partial class PackageDetailsWindow : Window
         // Cross-op actions
         if (_pageMode == PackagePageMode.Discover)
         {
+            var upgradable = _package.GetUpgradablePackage();
+            if (upgradable is not null)
+            {
+                if (flyout.Items.Count > 0) flyout.Items.Add(new Separator());
+                var updateItem = new MenuItem
+                {
+                    Header = CoreTools.Translate("Update to {0}", upgradable.NewVersionString)
+                };
+                updateItem.Click += async (_, _) =>
+                {
+                    ActionButtonControl.IsEnabled = false;
+                    try
+                    {
+                        var options = await InstallOptionsFactory.LoadApplicableAsync(upgradable);
+                        var op = new UpdatePackageOperation(upgradable, options);
+                        AvaloniaOperationRegistry.Add(op);
+                        _ = op.MainThread();
+                        Close();
+                    }
+                    catch (Exception ex) { Logger.Error(ex); ActionButtonControl.IsEnabled = true; }
+                };
+                flyout.Items.Add(updateItem);
+            }
+
             if (_package.GetInstalledPackages().Count > 0)
             {
                 if (flyout.Items.Count > 0) flyout.Items.Add(new Separator());
@@ -523,6 +837,12 @@ public partial class PackageDetailsWindow : Window
                     try
                     {
                         var installed = _package.GetInstalledPackages()[0];
+                        if (!await ConfirmUninstallAsync(installed))
+                        {
+                            ActionButtonControl.IsEnabled = true;
+                            return;
+                        }
+
                         var options = await InstallOptionsFactory.LoadApplicableAsync(installed);
                         var op = new UninstallPackageOperation(installed, options);
                         AvaloniaOperationRegistry.Add(op);
@@ -544,6 +864,12 @@ public partial class PackageDetailsWindow : Window
                 ActionButtonControl.IsEnabled = false;
                 try
                 {
+                    if (!await ConfirmUninstallAsync(_package))
+                    {
+                        ActionButtonControl.IsEnabled = true;
+                        return;
+                    }
+
                     var options = await InstallOptionsFactory.LoadApplicableAsync(_package);
                     var op = new UninstallPackageOperation(_package, options);
                     AvaloniaOperationRegistry.Add(op);
@@ -575,6 +901,35 @@ public partial class PackageDetailsWindow : Window
         }
         else if (_pageMode == PackagePageMode.Installed)
         {
+            var removeDataItem = new MenuItem
+            {
+                Header = CoreTools.Translate("Uninstall and remove data"),
+                IsEnabled = caps.CanRemoveDataOnUninstall,
+            };
+            removeDataItem.Click += async (_, _) =>
+            {
+                ActionButtonControl.IsEnabled = false;
+                ActionDropdownButtonControl.IsEnabled = false;
+                try
+                {
+                    if (!await ConfirmUninstallAsync(_package))
+                    {
+                        ActionButtonControl.IsEnabled = true;
+                        ActionDropdownButtonControl.IsEnabled = true;
+                        return;
+                    }
+
+                    var options = await InstallOptionsFactory.LoadApplicableAsync(_package);
+                    options.RemoveDataOnUninstall = true;
+                    var op = new UninstallPackageOperation(_package, options);
+                    AvaloniaOperationRegistry.Add(op);
+                    _ = op.MainThread();
+                    Close();
+                }
+                catch (Exception ex) { Logger.Error(ex); ActionButtonControl.IsEnabled = true; ActionDropdownButtonControl.IsEnabled = true; }
+            };
+            flyout.Items.Add(removeDataItem);
+
             var upgradable = _package.GetUpgradablePackage();
             if (upgradable is not null)
             {
@@ -638,6 +993,15 @@ public partial class PackageDetailsWindow : Window
         {
             // ignore — best effort
         }
+    }
+
+    private static string BuildShareUrl(IPackage package)
+    {
+        return "https://marticliment.com/unigetui/share?"
+            + "name=" + Uri.EscapeDataString(package.Name)
+            + "&id=" + Uri.EscapeDataString(package.Id)
+            + "&sourceName=" + Uri.EscapeDataString(package.Source.Name)
+            + "&managerName=" + Uri.EscapeDataString(package.Manager.DisplayName);
     }
 
     private void InitializeComponent()

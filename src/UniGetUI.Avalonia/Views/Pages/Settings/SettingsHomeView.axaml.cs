@@ -30,6 +30,11 @@ public partial class SettingsHomeView : UserControl, ISettingsSectionView
             CoreTools.Translate("Theme, startup page, navigation, and system tray settings.")
         );
         AddSectionButton(
+            SettingsSectionRoute.Managers,
+            CoreTools.Translate("Package manager preferences"),
+            CoreTools.Translate("Enable managers, inspect runtime status, and adjust manager-specific settings.")
+        );
+        AddSectionButton(
             SettingsSectionRoute.General,
             CoreTools.Translate("General preferences"),
             CoreTools.Translate("Language selection and appearance preferences.")
@@ -77,7 +82,7 @@ public partial class SettingsHomeView : UserControl, ISettingsSectionView
 
     public string SectionSubtitle => CoreTools.Translate("Choose a preferences category");
 
-    public string SectionStatus => CoreTools.Translate("9 sections");
+    public string SectionStatus => CoreTools.Translate("10 sections");
 
     private void AddSectionButton(SettingsSectionRoute route, string title, string description)
     {

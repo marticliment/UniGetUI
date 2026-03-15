@@ -1,0 +1,273 @@
+using System.Reflection;
+using UniGetUI.Core.Logging;
+using UniGetUI.Core.Tools;
+using UniGetUI.PackageOperations;
+
+namespace UniGetUI.Avalonia.Infrastructure;
+
+internal static class WindowsAppNotificationBridge
+{
+    private const string ScenarioDefault = "Default";
+    private const string ScenarioUrgent = "Urgent";
+
+    private static readonly object _registrationLock = new();
+    private static bool _registrationAttempted;
+    private static bool _isRegistered;
+    private static object? _managerDefault;
+    private static Type? _builderType;
+    private static Type? _scenarioType;
+    private static MethodInfo? _removeByTagAsyncMethod;
+    private static MethodInfo? _showMethod;
+
+    private static readonly string[] _assemblyCandidates =
+    {
+        "Microsoft.Windows.AppNotifications",
+        "Microsoft.WindowsAppSDK",
+    };
+
+    public static bool ShowProgress(AbstractOperation operation)
+    {
+        if (!EnsureRegistered())
+            return false;
+
+        try
+        {
+            string title = operation.Metadata.Title.Length > 0
+                ? operation.Metadata.Title
+                : CoreTools.Translate("Package operation");
+
+            string message = operation.Metadata.Status.Length > 0
+                ? operation.Metadata.Status
+                : CoreTools.Translate("Please wait...");
+
+            return ShowTextToast(
+                tag: operation.Metadata.Identifier + "progress",
+                scenario: ScenarioDefault,
+                title: title,
+                message: message,
+                suppressDisplay: true);
+        }
+        catch (Exception ex)
+        {
+            Logger.Warn("Windows toast progress notification failed");
+            Logger.Warn(ex);
+            return false;
+        }
+    }
+
+    public static bool ShowSuccess(AbstractOperation operation)
+    {
+        if (!EnsureRegistered())
+            return false;
+
+        try
+        {
+            string title = operation.Metadata.SuccessTitle.Length > 0
+                ? operation.Metadata.SuccessTitle
+                : CoreTools.Translate("Operation completed");
+
+            string message = operation.Metadata.SuccessMessage.Length > 0
+                ? operation.Metadata.SuccessMessage
+                : CoreTools.Translate("Completed successfully");
+
+            return ShowTextToast(
+                tag: operation.Metadata.Identifier,
+                scenario: ScenarioDefault,
+                title: title,
+                message: message,
+                suppressDisplay: false);
+        }
+        catch (Exception ex)
+        {
+            Logger.Warn("Windows toast success notification failed");
+            Logger.Warn(ex);
+            return false;
+        }
+    }
+
+    public static bool ShowError(AbstractOperation operation)
+    {
+        if (!EnsureRegistered())
+            return false;
+
+        try
+        {
+            string title = operation.Metadata.FailureTitle.Length > 0
+                ? operation.Metadata.FailureTitle
+                : CoreTools.Translate("Operation failed");
+
+            string message = operation.Metadata.FailureMessage.Length > 0
+                ? operation.Metadata.FailureMessage
+                : CoreTools.Translate("An error occurred while processing the operation.");
+
+            return ShowTextToast(
+                tag: operation.Metadata.Identifier,
+                scenario: ScenarioUrgent,
+                title: title,
+                message: message,
+                suppressDisplay: false);
+        }
+        catch (Exception ex)
+        {
+            Logger.Warn("Windows toast error notification failed");
+            Logger.Warn(ex);
+            return false;
+        }
+    }
+
+    public static void RemoveProgress(AbstractOperation operation)
+    {
+        if (!EnsureRegistered())
+            return;
+
+        try
+        {
+            _removeByTagAsyncMethod?.Invoke(_managerDefault, [operation.Metadata.Identifier + "progress"]);
+        }
+        catch (Exception ex)
+        {
+            Logger.Warn("Windows toast progress cleanup failed");
+            Logger.Warn(ex);
+        }
+    }
+
+    private static bool EnsureRegistered()
+    {
+        if (!OperatingSystem.IsWindows())
+            return false;
+
+        lock (_registrationLock)
+        {
+            if (_registrationAttempted)
+                return _isRegistered;
+
+            _registrationAttempted = true;
+            try
+            {
+                var managerType = ResolveType(
+                    "Microsoft.Windows.AppNotifications.AppNotificationManager",
+                    "Microsoft.Windows.AppNotifications.Builder.AppNotificationManager");
+                _builderType = ResolveType(
+                    "Microsoft.Windows.AppNotifications.Builder.AppNotificationBuilder");
+                _scenarioType = ResolveType(
+                    "Microsoft.Windows.AppNotifications.Builder.AppNotificationScenario");
+
+                if (managerType is null || _builderType is null || _scenarioType is null)
+                {
+                    _isRegistered = false;
+                    return _isRegistered;
+                }
+
+                _managerDefault = managerType.GetProperty("Default", BindingFlags.Public | BindingFlags.Static)
+                    ?.GetValue(null);
+
+                if (_managerDefault is null)
+                {
+                    _isRegistered = false;
+                    return _isRegistered;
+                }
+
+                managerType.GetMethod("Register", BindingFlags.Public | BindingFlags.Instance)
+                    ?.Invoke(_managerDefault, null);
+
+                _removeByTagAsyncMethod = managerType.GetMethod(
+                    "RemoveByTagAsync",
+                    BindingFlags.Public | BindingFlags.Instance,
+                    binder: null,
+                    types: [typeof(string)],
+                    modifiers: null);
+
+                _showMethod = managerType.GetMethod("Show", BindingFlags.Public | BindingFlags.Instance);
+
+                _isRegistered = _showMethod is not null;
+            }
+            catch (Exception ex)
+            {
+                Logger.Warn("Windows app notification registration failed in Avalonia host");
+                Logger.Warn(ex);
+                _isRegistered = false;
+            }
+
+            return _isRegistered;
+        }
+    }
+
+    private static bool ShowTextToast(
+        string tag,
+        string scenario,
+        string title,
+        string message,
+        bool suppressDisplay)
+    {
+        if (_managerDefault is null || _builderType is null || _scenarioType is null || _showMethod is null)
+            return false;
+
+        _removeByTagAsyncMethod?.Invoke(_managerDefault, [tag]);
+
+        object builder = Activator.CreateInstance(_builderType)
+            ?? throw new InvalidOperationException("Could not construct AppNotificationBuilder via reflection.");
+
+        object? scenarioValue = Enum.Parse(_scenarioType, scenario, ignoreCase: true);
+
+        builder = InvokeFluent(builder, "SetScenario", scenarioValue);
+        builder = InvokeFluent(builder, "SetTag", tag);
+        builder = InvokeFluent(builder, "AddText", title);
+        builder = InvokeFluent(builder, "AddText", message);
+
+        object? notification = builder
+            .GetType()
+            .GetMethod("BuildNotification", BindingFlags.Public | BindingFlags.Instance)
+            ?.Invoke(builder, null);
+
+        if (notification is null)
+            return false;
+
+        SetPropertyIfPresent(notification, "ExpiresOnReboot", true);
+        SetPropertyIfPresent(notification, "SuppressDisplay", suppressDisplay);
+        _showMethod.Invoke(_managerDefault, [notification]);
+        return true;
+    }
+
+    private static object InvokeFluent(object instance, string methodName, params object?[] args)
+    {
+        return instance.GetType().GetMethod(methodName, BindingFlags.Public | BindingFlags.Instance)
+            ?.Invoke(instance, args)
+            ?? instance;
+    }
+
+    private static void SetPropertyIfPresent(object instance, string propertyName, object value)
+    {
+        instance.GetType().GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance)
+            ?.SetValue(instance, value);
+    }
+
+    private static Type? ResolveType(params string[] possibleTypeNames)
+    {
+        foreach (var typeName in possibleTypeNames)
+        {
+            foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                var t = asm.GetType(typeName, throwOnError: false);
+                if (t is not null)
+                    return t;
+            }
+
+            foreach (var asmName in _assemblyCandidates)
+            {
+                try
+                {
+                    var asm = Assembly.Load(asmName);
+                    var t = asm.GetType(typeName, throwOnError: false);
+                    if (t is not null)
+                        return t;
+                }
+                catch
+                {
+                    // Keep probing candidates.
+                }
+            }
+        }
+
+        return null;
+    }
+}

@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Notifications;
 using Avalonia.Layout;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
@@ -25,6 +26,7 @@ public partial class MainWindow : Window
 
     private bool _initialized;
     private TrayIcon? _trayIcon;
+    private WindowNotificationManager? _notificationManager;
     private bool _isExplicitQuit;
     private CancellationTokenSource? _geometrySaveCts;
 
@@ -33,10 +35,20 @@ public partial class MainWindow : Window
         Instance = this;
         ApplyTheme();
         InitializeComponent();
+        InitializeNotificationManager();
         Title = BuildWindowTitle();
         Opened += OnOpened;
         SizeChanged += (_, _) => _ = SaveGeometryDebounced();
         PositionChanged += (_, _) => _ = SaveGeometryDebounced();
+    }
+
+    private void InitializeNotificationManager()
+    {
+        _notificationManager = new WindowNotificationManager(this)
+        {
+            Position = NotificationPosition.TopRight,
+            MaxItems = 4,
+        };
     }
 
     private async void OnOpened(object? sender, EventArgs e)
@@ -239,6 +251,27 @@ public partial class MainWindow : Window
         Show();
         Activate();
         WindowState = WindowState.Normal;
+    }
+
+    public void ShowRuntimeNotification(string title, string message, RuntimeNotificationLevel level)
+    {
+        if (_notificationManager is null)
+        {
+            return;
+        }
+
+        NotificationType type = level switch
+        {
+            RuntimeNotificationLevel.Success => NotificationType.Success,
+            RuntimeNotificationLevel.Error => NotificationType.Error,
+            _ => NotificationType.Information,
+        };
+
+        TimeSpan expiration = level == RuntimeNotificationLevel.Error
+            ? TimeSpan.FromSeconds(8)
+            : TimeSpan.FromSeconds(5);
+
+        _notificationManager.Show(new Notification(title, message, type, expiration));
     }
 
     public void QuitApplication()
@@ -477,5 +510,12 @@ public partial class MainWindow : Window
     private void InitializeComponent()
     {
         AvaloniaXamlLoader.Load(this);
+    }
+
+    public enum RuntimeNotificationLevel
+    {
+        Progress,
+        Success,
+        Error,
     }
 }

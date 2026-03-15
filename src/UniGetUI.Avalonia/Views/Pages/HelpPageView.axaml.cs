@@ -67,7 +67,7 @@ public partial class HelpPageView : UserControl, IShellPage
     public void UpdateSearchQuery(string query) { }
 
     private void OpenDocumentationButton_OnClick(object? sender, RoutedEventArgs e)
-        => OpenUrl("https://marticliment.com/unigetui/help/");
+        => OpenDocumentationWindow();
 
     private async void OpenChangelogButton_OnClick(object? sender, RoutedEventArgs e)
     {
@@ -92,6 +92,15 @@ public partial class HelpPageView : UserControl, IShellPage
         var win = new AboutPageWindow();
         if (VisualRoot is Window owner)
             win.ShowDialog(owner);
+        else
+            win.Show();
+    }
+
+    private async void OpenDocumentationWindow()
+    {
+        var win = new DocumentationBrowserWindow();
+        if (VisualRoot is Window owner)
+            await win.ShowDialog(owner);
         else
             win.Show();
     }

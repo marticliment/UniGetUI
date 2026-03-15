@@ -4,12 +4,15 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
+using Avalonia.VisualTree;
 using System.Diagnostics;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.SettingsEngine.SecureSettings;
 using UniGetUI.Core.Tools;
 using UniGetUI.Avalonia.Infrastructure;
+using UniGetUI.Avalonia.Models;
+using UniGetUI.Avalonia.Views;
 using UniGetUI.PackageEngine.Classes.Manager;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
@@ -24,6 +27,7 @@ public partial class ManagerDetailView : UserControl, IManagerSectionView
 {
     private bool _isLoading;
     private IPackageManager? _manager;
+    private string _currentExecutablePath = string.Empty;
 
     // Header card
     private TextBlock LeadTitleText => GetControl<TextBlock>("LeadTitleBlock");
@@ -35,6 +39,7 @@ public partial class ManagerDetailView : UserControl, IManagerSectionView
     private TextBlock StatusText => GetControl<TextBlock>("StatusTextBlock");
     private TextBlock VersionText => GetControl<TextBlock>("VersionBlock");
     private TextBlock ExecutablePathText => GetControl<TextBlock>("ExecutablePathBlock");
+    private Button CopyExecutablePathButtonControl => GetControl<Button>("CopyExecutablePathButton");
 
     // Enable/disable card
     private TextBlock EnableSectionTitleText => GetControl<TextBlock>("EnableSectionTitleBlock");
@@ -47,6 +52,7 @@ public partial class ManagerDetailView : UserControl, IManagerSectionView
     private ComboBox ExecutableComboBoxControl => GetControl<ComboBox>("ExecutableComboBox");
     private Border ExeWarningCard => GetControl<Border>("ExeWarningBorder");
     private TextBlock ExeWarningText => GetControl<TextBlock>("ExeWarningBlock");
+    private Button OpenAdminSettingsButtonControl => GetControl<Button>("OpenAdminSettingsButton");
 
     // Extra-settings host
     private StackPanel ExtraSettingsPanel => GetControl<StackPanel>("ExtraSettingsHost");
@@ -57,6 +63,8 @@ public partial class ManagerDetailView : UserControl, IManagerSectionView
         SectionTitle = CoreTools.Translate("Package manager");
         SectionSubtitle = CoreTools.Translate("Manager details");
         SectionStatus = CoreTools.Translate("Manager details");
+        OpenAdminSettingsButtonControl.Click += OpenAdminSettingsButton_OnClick;
+        CopyExecutablePathButtonControl.Click += CopyExecutablePathButton_OnClick;
     }
 
     public string SectionTitle { get; private set; }
@@ -82,9 +90,12 @@ public partial class ManagerDetailView : UserControl, IManagerSectionView
         VersionText.Text = string.IsNullOrWhiteSpace(manager.Status.Version)
             ? CoreTools.Translate("Version: unknown")
             : CoreTools.Translate("Version: {0}", manager.Status.Version);
+        _currentExecutablePath = manager.Status.ExecutablePath ?? string.Empty;
         ExecutablePathText.Text = string.IsNullOrWhiteSpace(manager.Status.ExecutablePath)
             ? CoreTools.Translate("Executable path: not detected")
             : CoreTools.Translate("Executable path: {0}", manager.Status.ExecutablePath);
+        CopyExecutablePathButtonControl.Content = CoreTools.Translate("Copy executable path");
+        CopyExecutablePathButtonControl.IsEnabled = !string.IsNullOrWhiteSpace(_currentExecutablePath);
 
         ApplyStatusBadgeClasses(manager);
 
@@ -103,6 +114,7 @@ public partial class ManagerDetailView : UserControl, IManagerSectionView
         bool customPathsAllowed = SecureSettings.Get(SecureSettings.K.AllowCustomManagerPaths);
         ExeWarningCard.IsVisible = !customPathsAllowed;
         ExeWarningText.Text = CoreTools.Translate("Custom executable paths are disabled. Enable them in the Administrator settings to change this.");
+        OpenAdminSettingsButtonControl.Content = CoreTools.Translate("Open administrator settings");
         ExecutableComboBoxControl.IsEnabled = customPathsAllowed;
 
         _isLoading = true;
@@ -145,9 +157,20 @@ public partial class ManagerDetailView : UserControl, IManagerSectionView
             if (_isLoading) return;
             Settings.SetDictionaryItem(Settings.K.DisabledPackageManagerNotifications, manager.Name, disableNotifCheck.IsChecked == true);
         };
+        var openLogsBtn = new Button
+        {
+            Content = CoreTools.Translate("View {0} logs", manager.DisplayName),
+            Margin = new Thickness(0, 4, 0, 0),
+        };
+        openLogsBtn.Click += (_, _) =>
+        {
+            var shell = this.FindAncestorOfType<MainShellView>();
+            shell?.OpenManagerLogs(manager);
+        };
         ((StackPanel)disableNotifSection.Child!).Children.Add(disableNotifTitle);
         ((StackPanel)disableNotifSection.Child!).Children.Add(disableNotifDesc);
         ((StackPanel)disableNotifSection.Child!).Children.Add(disableNotifCheck);
+        ((StackPanel)disableNotifSection.Child!).Children.Add(openLogsBtn);
         ExtraSettingsPanel.Children.Add(disableNotifSection);
 
         // WinGet-specific
@@ -798,10 +821,33 @@ public partial class ManagerDetailView : UserControl, IManagerSectionView
             VersionText.Text = string.IsNullOrWhiteSpace(_manager.Status.Version)
                 ? CoreTools.Translate("Version: unknown")
                 : CoreTools.Translate("Version: {0}", _manager.Status.Version);
+            _currentExecutablePath = _manager.Status.ExecutablePath ?? string.Empty;
             ExecutablePathText.Text = string.IsNullOrWhiteSpace(_manager.Status.ExecutablePath)
                 ? CoreTools.Translate("Executable path: not detected")
                 : CoreTools.Translate("Executable path: {0}", _manager.Status.ExecutablePath);
+            CopyExecutablePathButtonControl.IsEnabled = !string.IsNullOrWhiteSpace(_currentExecutablePath);
         }
+    }
+
+    private void OpenAdminSettingsButton_OnClick(object? sender, RoutedEventArgs e)
+    {
+        var shell = this.FindAncestorOfType<MainShellView>();
+        shell?.OpenSettingsSection(SettingsPages.SettingsSectionRoute.Administrator);
+    }
+
+    private async void CopyExecutablePathButton_OnClick(object? sender, RoutedEventArgs e)
+    {
+        if (string.IsNullOrWhiteSpace(_currentExecutablePath))
+            return;
+
+        var clipboard = TopLevel.GetTopLevel(this)?.Clipboard;
+        if (clipboard is null)
+            return;
+
+        await clipboard.SetTextAsync(_currentExecutablePath);
+        CopyExecutablePathButtonControl.Content = CoreTools.Translate("Copied");
+        await Task.Delay(1000);
+        CopyExecutablePathButtonControl.Content = CoreTools.Translate("Copy executable path");
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────

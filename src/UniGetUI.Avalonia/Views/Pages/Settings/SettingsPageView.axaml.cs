@@ -10,6 +10,7 @@ public partial class SettingsPageView : UserControl, IShellPage
     private readonly Dictionary<SettingsSectionRoute, Control> _sectionCache = [];
     private readonly List<SettingsSectionRoute> _history = [];
 
+    private ISettingsSectionStateNotifier? _sectionStateNotifier;
     private SettingsSectionRoute _currentSection;
 
     private Button SectionBackNavigationButton => GetControl<Button>("SectionBackButton");
@@ -48,6 +49,11 @@ public partial class SettingsPageView : UserControl, IShellPage
     {
     }
 
+    internal void OpenSection(SettingsSectionRoute route)
+    {
+        NavigateTo(route);
+    }
+
     private void NavigateTo(SettingsSectionRoute route, bool addToHistory = true)
     {
         if (_currentSection == route && SectionContentPresenter.Content is not null)
@@ -61,8 +67,25 @@ public partial class SettingsPageView : UserControl, IShellPage
         }
 
         _currentSection = route;
-        SectionContentPresenter.Content = GetSection(route);
+        SetSectionContent(GetSection(route));
         ApplySectionChrome();
+    }
+
+    private void SetSectionContent(Control section)
+    {
+        if (_sectionStateNotifier is not null)
+        {
+            _sectionStateNotifier.SectionStateChanged -= SectionStateNotifier_SectionStateChanged;
+            _sectionStateNotifier = null;
+        }
+
+        SectionContentPresenter.Content = section;
+
+        if (section is ISettingsSectionStateNotifier notifier)
+        {
+            _sectionStateNotifier = notifier;
+            _sectionStateNotifier.SectionStateChanged += SectionStateNotifier_SectionStateChanged;
+        }
     }
 
     private Control GetSection(SettingsSectionRoute route)
@@ -77,6 +100,7 @@ public partial class SettingsPageView : UserControl, IShellPage
             SettingsSectionRoute.Home => CreateHomeSection(),
             SettingsSectionRoute.Interface => new InterfaceSettingsView(),
             SettingsSectionRoute.General => new GeneralSettingsView(),
+            SettingsSectionRoute.Managers => new ManagersSettingsView(),
             SettingsSectionRoute.Updates => new UpdatesSettingsView(),
             SettingsSectionRoute.Notifications => new NotificationsSettingsView(),
             SettingsSectionRoute.Operations => new OperationsSettingsView(),
@@ -124,6 +148,11 @@ public partial class SettingsPageView : UserControl, IShellPage
     private void HomeSection_NavigationRequested(object? sender, SettingsSectionRoute route)
     {
         NavigateTo(route);
+    }
+
+    private void SectionStateNotifier_SectionStateChanged(object? sender, EventArgs e)
+    {
+        ApplySectionChrome();
     }
 
     private void SectionBackButton_OnClick(object? sender, RoutedEventArgs e)

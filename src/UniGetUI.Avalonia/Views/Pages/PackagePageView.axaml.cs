@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using Avalonia.Controls;
@@ -35,6 +36,7 @@ public partial class PackagePageView : UserControl, IShellPage
     private readonly ObservableCollection<PackageRowModel> _visibleRows = [];
 
     private enum SortColumn { Name, Id, Version, Status, Source }
+    private enum PackageListViewMode { List = 0, Grid = 1, Icons = 2 }
 
     private readonly AbstractPackageLoader? _loader;
     private CancellationTokenSource? _discoverSearchCancellationSource;
@@ -44,6 +46,20 @@ public partial class PackagePageView : UserControl, IShellPage
     private AbstractOperation? _lastOperation;
     private SortColumn _sortColumn = SortColumn.Name;
     private bool _sortDescending;
+    private string _typeQuery = string.Empty;
+    private int _lastTypeKeyDown;
+    private const int TypeQuerySeparationTimeMs = 1000;
+    private PackageListViewMode _viewMode = PackageListViewMode.List;
+    private bool _isUpdatingViewModeSelector;
+    private DateTime? _lastPackageLoadTime;
+
+    private sealed class SourceFilterEntry
+    {
+        public required string ManagerName { get; init; }
+        public required string ManagerDisplayName { get; init; }
+        public required string SourceDisplayName { get; init; }
+        public required string FilterKey { get; init; }
+    }
 
     // Tracks whether the one-time backup-on-load has run for the Installed page
     private static bool _hasBackedUp;
@@ -107,6 +123,8 @@ public partial class PackagePageView : UserControl, IShellPage
 
     private TextBlock ActionHeaderText => GetControl<TextBlock>("ActionHeaderBlock");
 
+    private Grid PackageColumnsHeader => GetControl<Grid>("PackageColumnsHeaderGrid");
+
     private TextBlock EmptyStateTitleText => GetControl<TextBlock>("EmptyStateTitleBlock");
 
     private TextBlock EmptyStateDescriptionText => GetControl<TextBlock>("EmptyStateDescriptionBlock");
@@ -122,7 +140,15 @@ public partial class PackagePageView : UserControl, IShellPage
 
     private CheckBox SelectAllCheckBoxControl => GetControl<CheckBox>("SelectAllCheckBox");
 
-    private ItemsControl PackageRowsItems => GetControl<ItemsControl>("PackageRowsItemsControl");
+    private TextBlock ViewModeLabelText => GetControl<TextBlock>("ViewModeLabelBlock");
+
+    private ComboBox ViewModeSelectorControl => GetControl<ComboBox>("ViewModeSelector");
+
+    private ItemsControl PackageRowsListItems => GetControl<ItemsControl>("PackageRowsListItemsControl");
+
+    private ItemsControl PackageRowsGridItems => GetControl<ItemsControl>("PackageRowsGridItemsControl");
+
+    private ItemsControl PackageRowsIconsItems => GetControl<ItemsControl>("PackageRowsIconsItemsControl");
 
     private ScrollViewer PackageRowsScrollHost => GetControl<ScrollViewer>("PackageRowsScrollViewer");
 
@@ -170,8 +196,21 @@ public partial class PackagePageView : UserControl, IShellPage
 
         InitializeComponent();
         ApplyStaticTranslations();
-        PackageRowsItems.ItemsSource = _visibleRows;
+        ViewModeSelectorControl.SelectionChanged += ViewModeSelector_OnSelectionChanged;
+        PackageRowsListItems.ItemsSource = _visibleRows;
+        PackageRowsGridItems.ItemsSource = _visibleRows;
+        PackageRowsIconsItems.ItemsSource = _visibleRows;
         AttachFilterEvents();
+
+        if (Design.IsDesignMode)
+        {
+            ViewModeSelectorControl.SelectedIndex = (int)PackageListViewMode.List;
+            ApplyViewMode(PackageListViewMode.List, persist: false);
+        }
+        else
+        {
+            InitializeViewModeSelector();
+        }
 
         PageTitleText.Text = title;
         PageSubtitleText.Text = subtitle;
@@ -189,7 +228,17 @@ public partial class PackagePageView : UserControl, IShellPage
         DetailsAction.Click += DetailsAction_OnClick;
         InstallOptionsAction.Click += InstallOptionsAction_OnClick;
         ShareAction.Click += ShareAction_OnClick;
-        PackageRowsItems.AddHandler(
+        PackageRowsListItems.AddHandler(
+            InputElement.PointerPressedEvent,
+            OnPackageRowsPointerPressed,
+            RoutingStrategies.Bubble
+        );
+        PackageRowsGridItems.AddHandler(
+            InputElement.PointerPressedEvent,
+            OnPackageRowsPointerPressed,
+            RoutingStrategies.Bubble
+        );
+        PackageRowsIconsItems.AddHandler(
             InputElement.PointerPressedEvent,
             OnPackageRowsPointerPressed,
             RoutingStrategies.Bubble
@@ -203,6 +252,16 @@ public partial class PackagePageView : UserControl, IShellPage
 
         if (pageMode is not PackagePageMode.None)
             ExportSelectionBtn.IsVisible = true;
+
+        if (Design.IsDesignMode)
+        {
+            SearchStateText.Text = CoreTools.Translate("Preview mode");
+            EmptyStateTitleText.Text = CoreTools.Translate("Search for packages");
+            EmptyStateDescriptionText.Text = CoreTools.Translate("Preview mode does not query package managers.");
+            PackageRowsScrollHost.IsVisible = false;
+            EmptyStateHost.IsVisible = true;
+            return;
+        }
 
         _loader = ResolveLoader(pageMode);
         UpdateSortIndicators();
@@ -221,7 +280,7 @@ public partial class PackagePageView : UserControl, IShellPage
 
     private void ApplyStaticTranslations()
     {
-        InstallOptionsAction.Content = CoreTools.Translate("Install options");
+        InstallOptionsAction.Content = GetInstallOptionsLabel();
         DetailsAction.Content = CoreTools.Translate("Details");
         ShareAction.Content = CoreTools.Translate("Share");
         IgnoreSelectedBtn.Content = CoreTools.Translate("Ignore selected");
@@ -239,12 +298,100 @@ public partial class PackagePageView : UserControl, IShellPage
         UpperLowerCaseOption.Content = CoreTools.Translate("Distinguish uppercase and lowercase");
         IgnoreSpecialCharsOption.Content = CoreTools.Translate("Ignore special characters");
         ReloadBtn.Content = CoreTools.Translate("Reload");
+        ViewModeLabelText.Text = CoreTools.Translate("View");
+
+        if (ViewModeSelectorControl.Items is IList<object> items && items.Count >= 3)
+        {
+            if (items[0] is ComboBoxItem listItem)
+                listItem.Content = CoreTools.Translate("List");
+            if (items[1] is ComboBoxItem gridItem)
+                gridItem.Content = CoreTools.Translate("Grid");
+            if (items[2] is ComboBoxItem iconsItem)
+                iconsItem.Content = CoreTools.Translate("Icons");
+        }
 
         WinGetWarningTitleText.Text = CoreTools.Translate("WinGet malfunction detected");
         WinGetWarningDescriptionText.Text = CoreTools.Translate(
             "It looks like WinGet is not working properly. Do you want to attempt to repair WinGet?"
         );
         RepairWinGetButtonControl.Content = CoreTools.Translate("Repair WinGet");
+    }
+
+    private void InitializeViewModeSelector()
+    {
+        int savedMode = Settings.GetDictionaryItem<string, int>(
+            Settings.K.PackageListViewMode,
+            GetPageSettingsKey()
+        );
+
+        var parsedMode = ParseViewMode(savedMode);
+
+        _isUpdatingViewModeSelector = true;
+        ViewModeSelectorControl.SelectedIndex = (int)parsedMode;
+        _isUpdatingViewModeSelector = false;
+
+        ApplyViewMode(parsedMode, persist: false);
+    }
+
+    private string GetPageSettingsKey()
+    {
+        return _pageMode switch
+        {
+            PackagePageMode.Discover => "Discover",
+            PackagePageMode.Updates => "Updates",
+            PackagePageMode.Installed => "Installed",
+            _ => "Discover",
+        };
+    }
+
+    private static PackageListViewMode ParseViewMode(int mode)
+    {
+        return Enum.IsDefined(typeof(PackageListViewMode), mode)
+            ? (PackageListViewMode)mode
+            : PackageListViewMode.List;
+    }
+
+    private ItemsControl ActivePackageRowsItems => _viewMode switch
+    {
+        PackageListViewMode.Grid => PackageRowsGridItems,
+        PackageListViewMode.Icons => PackageRowsIconsItems,
+        _ => PackageRowsListItems,
+    };
+
+    private void ApplyViewMode(PackageListViewMode mode, bool persist)
+    {
+        _viewMode = mode;
+
+        bool isList = mode == PackageListViewMode.List;
+        PackageRowsListItems.IsVisible = isList;
+        PackageRowsGridItems.IsVisible = mode == PackageListViewMode.Grid;
+        PackageRowsIconsItems.IsVisible = mode == PackageListViewMode.Icons;
+        PackageColumnsHeader.IsVisible = isList;
+
+        if (!_isUpdatingViewModeSelector && ViewModeSelectorControl.SelectedIndex != (int)mode)
+        {
+            _isUpdatingViewModeSelector = true;
+            ViewModeSelectorControl.SelectedIndex = (int)mode;
+            _isUpdatingViewModeSelector = false;
+        }
+
+        if (persist)
+        {
+            Settings.SetDictionaryItem(
+                Settings.K.PackageListViewMode,
+                GetPageSettingsKey(),
+                (int)mode
+            );
+        }
+    }
+
+    private void ViewModeSelector_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        if (_isUpdatingViewModeSelector)
+            return;
+
+        var mode = ParseViewMode(ViewModeSelectorControl.SelectedIndex);
+        ApplyViewMode(mode, persist: true);
     }
 
     public string Title { get; }
@@ -417,6 +564,12 @@ public partial class PackagePageView : UserControl, IShellPage
 
         if (packages.Length == 0) return;
 
+        if (_pageMode == PackagePageMode.Installed
+            && !await ConfirmUninstallAsync(packages))
+        {
+            return;
+        }
+
         int queuedCount = 0;
         foreach (var package in packages)
         {
@@ -505,6 +658,7 @@ public partial class PackagePageView : UserControl, IShellPage
         Dispatcher.UIThread.Post(() =>
         {
             LoadingProgressBarControl.IsVisible = false;
+            _lastPackageLoadTime = DateTime.Now;
             RefreshRows();
 
             if (_pageMode == PackagePageMode.Installed)
@@ -588,14 +742,37 @@ public partial class PackagePageView : UserControl, IShellPage
 
     private static async Task TriggerInstalledPageBackupAsync()
     {
+        bool shouldBackupLocal = Settings.Get(Settings.K.EnablePackageBackup_LOCAL);
+        bool shouldBackupCloud = Settings.Get(Settings.K.EnablePackageBackup_CLOUD);
+
+        if (!shouldBackupLocal && !shouldBackupCloud)
+            return;
+
+        string backupContents;
+
         try
         {
-            if (!Settings.Get(Settings.K.EnablePackageBackup_LOCAL))
-                return;
-
             var packages = InstalledPackagesLoader.Instance.Packages.ToArray();
-            string backupContents = await BundlesPageView.CreateBundleStringAsync(packages);
+            backupContents = await BundlesPageView.CreateBundleStringAsync(packages);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error("An error occurred while generating installed-page backup contents");
+            Logger.Error(ex);
+            return;
+        }
 
+        if (shouldBackupLocal)
+            await SaveInstalledPageBackupLocallyAsync(backupContents);
+
+        if (shouldBackupCloud)
+            await SaveInstalledPageBackupToCloudAsync(backupContents);
+    }
+
+    private static async Task SaveInstalledPageBackupLocallyAsync(string backupContents)
+    {
+        try
+        {
             string dirName = Settings.GetValue(Settings.K.ChangeBackupOutputDirectory);
             if (string.IsNullOrEmpty(dirName))
                 dirName = CoreData.UniGetUI_DefaultBackupDirectory;
@@ -620,6 +797,21 @@ public partial class PackagePageView : UserControl, IShellPage
         catch (Exception ex)
         {
             Logger.Error("An error occurred while performing a LOCAL backup");
+            Logger.Error(ex);
+        }
+    }
+
+    private static async Task SaveInstalledPageBackupToCloudAsync(string backupContents)
+    {
+        try
+        {
+            await CoreTools.WaitForInternetConnection();
+            await GitHubCloudBackupService.UploadPackageBundleAsync(backupContents);
+            Logger.ImportantInfo("Cloud backup succeeded");
+        }
+        catch (Exception ex)
+        {
+            Logger.Error("An error occurred while performing a CLOUD backup");
             Logger.Error(ex);
         }
     }
@@ -814,6 +1006,12 @@ public partial class PackagePageView : UserControl, IShellPage
             return false;
         }
 
+        if (_pageMode == PackagePageMode.Installed
+            && !await ConfirmUninstallAsync(package))
+        {
+            return false;
+        }
+
         try
         {
             var operation = await CreatePrimaryActionOperationAsync(package);
@@ -861,6 +1059,12 @@ public partial class PackagePageView : UserControl, IShellPage
         bool skipHash = false)
     {
         if (!CanRunPrimaryAction(package)) return;
+        if (_pageMode == PackagePageMode.Installed
+            && !await ConfirmUninstallAsync(package))
+        {
+            return;
+        }
+
         var opts = await InstallOptionsFactory.LoadApplicableAsync(package);
         if (elevated) opts.RunAsAdministrator = true;
         if (interactive) opts.InteractiveInstallation = true;
@@ -906,6 +1110,26 @@ public partial class PackagePageView : UserControl, IShellPage
         AvaloniaOperationRegistry.Add(op);
         _ = op.MainThread();
         OperationStateText.Text = CoreTools.Translate("Queued installer download for {0}", package.Name);
+    }
+
+    private async Task<bool> ConfirmUninstallAsync(IPackage package)
+    {
+        if (VisualRoot is not Window owner)
+        {
+            return true;
+        }
+
+        return await UninstallConfirmationDialog.ConfirmAsync(owner, package);
+    }
+
+    private async Task<bool> ConfirmUninstallAsync(IReadOnlyList<IPackage> packages)
+    {
+        if (packages.Count == 0 || VisualRoot is not Window owner)
+        {
+            return packages.Count > 0;
+        }
+
+        return await UninstallConfirmationDialog.ConfirmAsync(owner, packages);
     }
 
     private void AttachOperationEvents(AbstractOperation operation, IPackage package)
@@ -1137,15 +1361,151 @@ public partial class PackagePageView : UserControl, IShellPage
                 break;
             }
         }
+
+        if (e.Handled)
+            return;
+
+        if (TryHandleTypeToSelect(e))
+            e.Handled = true;
+    }
+
+    private bool TryHandleTypeToSelect(KeyEventArgs e)
+    {
+        if (e.KeyModifiers.HasFlag(KeyModifiers.Control)
+            || e.KeyModifiers.HasFlag(KeyModifiers.Alt)
+            || e.KeyModifiers.HasFlag(KeyModifiers.Meta))
+        {
+            return false;
+        }
+
+        if (!TryMapKeyToAlphaNumericChar(e.Key, out char typedChar))
+            return false;
+
+        typedChar = char.ToLowerInvariant(typedChar);
+
+        if (Environment.TickCount - _lastTypeKeyDown > TypeQuerySeparationTimeMs)
+            _typeQuery = typedChar.ToString();
+        else
+            _typeQuery += typedChar;
+
+        _lastTypeKeyDown = Environment.TickCount;
+
+        if (TrySelectByTypeQuery(_typeQuery))
+            return true;
+
+        return TrySelectByRepeatedCharacter(_typeQuery);
+    }
+
+    private bool TrySelectByTypeQuery(string query)
+    {
+        int idStartsWithIndex = -1;
+        int nameContainsIndex = -1;
+        int idContainsIndex = -1;
+
+        for (int i = 0; i < _visibleRows.Count; i++)
+        {
+            string name = _visibleRows[i].Name.ToLowerInvariant();
+            string id = _visibleRows[i].Id.ToLowerInvariant();
+
+            if (name.StartsWith(query, StringComparison.Ordinal))
+            {
+                OnRowSelected(_visibleRows[i]);
+                ScrollRowIntoView(i);
+                return true;
+            }
+
+            if (idStartsWithIndex == -1 && id.StartsWith(query, StringComparison.Ordinal))
+                idStartsWithIndex = i;
+
+            if (nameContainsIndex == -1 && name.Contains(query, StringComparison.Ordinal))
+                nameContainsIndex = i;
+
+            if (idContainsIndex == -1 && id.Contains(query, StringComparison.Ordinal))
+                idContainsIndex = i;
+        }
+
+        int fallbackIndex = idStartsWithIndex > -1
+            ? idStartsWithIndex
+            : (nameContainsIndex > -1 ? nameContainsIndex : idContainsIndex);
+
+        if (fallbackIndex > -1)
+        {
+            OnRowSelected(_visibleRows[fallbackIndex]);
+            ScrollRowIntoView(fallbackIndex);
+            return true;
+        }
+
+        return false;
+    }
+
+    private bool TrySelectByRepeatedCharacter(string query)
+    {
+        if (query.Length <= 1)
+            return false;
+
+        char first = query[0];
+        for (int i = 1; i < query.Length; i++)
+        {
+            if (query[i] != first)
+                return false;
+        }
+
+        int firstIndex = -1;
+        int lastIndex = -1;
+        for (int i = 0; i < _visibleRows.Count; i++)
+        {
+            if (_visibleRows[i].Name.Length > 0
+                && char.ToLowerInvariant(_visibleRows[i].Name[0]) == first)
+            {
+                if (firstIndex == -1)
+                    firstIndex = i;
+                lastIndex = i;
+            }
+            else if (firstIndex > -1)
+            {
+                break;
+            }
+        }
+
+        if (firstIndex == -1 || lastIndex == -1)
+            return false;
+
+        int range = lastIndex - firstIndex + 1;
+        int offset = (query.Length - 1) % range;
+        int target = firstIndex + offset;
+
+        OnRowSelected(_visibleRows[target]);
+        ScrollRowIntoView(target);
+        return true;
+    }
+
+    private static bool TryMapKeyToAlphaNumericChar(Key key, out char value)
+    {
+        if (key >= Key.A && key <= Key.Z)
+        {
+            value = (char)('a' + (key - Key.A));
+            return true;
+        }
+
+        if (key >= Key.D0 && key <= Key.D9)
+        {
+            value = (char)('0' + (key - Key.D0));
+            return true;
+        }
+
+        if (key >= Key.NumPad0 && key <= Key.NumPad9)
+        {
+            value = (char)('0' + (key - Key.NumPad0));
+            return true;
+        }
+
+        value = default;
+        return false;
     }
 
     private void ScrollRowIntoView(int index)
     {
-        // Best-effort: scroll the ItemsControl's container at the given index into view.
-        var itemsControl = PackageRowsScrollHost.GetVisualDescendants()
-            .OfType<ItemsControl>()
-            .FirstOrDefault();
-        if (itemsControl?.ContainerFromIndex(index) is Control container)
+        if (ActivePackageRowsItems.ContainerFromIndex(index) is Control container)
             container.BringIntoView();
     }
 
@@ -1231,6 +1591,44 @@ public partial class PackagePageView : UserControl, IShellPage
         menu.Open(ctrl);
     }
 
+    private string GetInstallOptionsLabel()
+    {
+        return _pageMode switch
+        {
+            PackagePageMode.Updates => CoreTools.Translate("Update options"),
+            PackagePageMode.Installed => CoreTools.Translate("Uninstall options"),
+            _ => CoreTools.Translate("Install options"),
+        };
+    }
+
+    private static object CreateMenuHeader(string label, string? accelerator = null)
+    {
+        if (string.IsNullOrWhiteSpace(accelerator))
+        {
+            return label;
+        }
+
+        var grid = new Grid
+        {
+            ColumnDefinitions = new ColumnDefinitions("*,Auto"),
+            ColumnSpacing = 16,
+            MinWidth = 220,
+        };
+
+        grid.Children.Add(new TextBlock { Text = label });
+
+        var acceleratorText = new TextBlock
+        {
+            Text = accelerator,
+            HorizontalAlignment = global::Avalonia.Layout.HorizontalAlignment.Right,
+            Opacity = 0.72,
+        };
+        Grid.SetColumn(acceleratorText, 1);
+        grid.Children.Add(acceleratorText);
+
+        return grid;
+    }
+
     private async Task<ContextMenu> BuildContextMenuAsync(PackageRowModel row)
     {
         var menu = new ContextMenu();
@@ -1246,7 +1644,7 @@ public partial class PackagePageView : UserControl, IShellPage
                 PackagePageMode.Installed => CoreTools.Translate("Uninstall"),
                 _ => CoreTools.Translate("Open"),
             };
-            var primaryItem = new MenuItem { Header = primaryLabel };
+            var primaryItem = new MenuItem { Header = CreateMenuHeader(primaryLabel, "Ctrl+Enter") };
             primaryItem.Click += async (_, _) => await QueuePrimaryActionAsync(package);
             menu.Items.Add(primaryItem);
 
@@ -1286,6 +1684,11 @@ public partial class PackagePageView : UserControl, IShellPage
                 var removeDataItem = new MenuItem { Header = CoreTools.Translate("Uninstall and remove data") };
                 removeDataItem.Click += async (_, _) =>
                 {
+                    if (!await ConfirmUninstallAsync(package))
+                    {
+                        return;
+                    }
+
                     var opts = await InstallOptionsFactory.LoadApplicableAsync(package);
                     opts.RemoveDataOnUninstall = true;
                     var op = new UninstallPackageOperation(package, opts);
@@ -1335,7 +1738,7 @@ public partial class PackagePageView : UserControl, IShellPage
         }
 
         // Details
-        var detailsItem = new MenuItem { Header = CoreTools.Translate("Details") };
+        var detailsItem = new MenuItem { Header = CreateMenuHeader(CoreTools.Translate("Details"), "Enter") };
         detailsItem.Click += async (_, _) =>
         {
             var window = new PackageDetailsWindow(package, _pageMode);
@@ -1345,7 +1748,7 @@ public partial class PackagePageView : UserControl, IShellPage
         menu.Items.Add(detailsItem);
 
         // Install options
-        var optionsItem = new MenuItem { Header = CoreTools.Translate("Install options") };
+        var optionsItem = new MenuItem { Header = CreateMenuHeader(GetInstallOptionsLabel(), "Alt+Enter") };
         optionsItem.Click += async (_, _) =>
         {
             var window = new InstallOptionsWindow(package, _pageMode);
@@ -1442,6 +1845,11 @@ public partial class PackagePageView : UserControl, IShellPage
                 var uninstallItem = new MenuItem { Header = CoreTools.Translate("Uninstall package") };
                 uninstallItem.Click += async (_, _) =>
                 {
+                    if (!await ConfirmUninstallAsync(package))
+                    {
+                        return;
+                    }
+
                     var opts = await InstallOptionsFactory.LoadApplicableAsync(package);
                     var op = new UninstallPackageOperation(package, opts);
                     AttachOperationEvents(op, package);
@@ -1595,10 +2003,20 @@ public partial class PackagePageView : UserControl, IShellPage
 
         if (_sourceFilter is not null)
         {
-            filtered = filtered.Where(p => _sourceFilter.Contains(p.Source.AsString_DisplayName));
+            filtered = filtered.Where(p => _sourceFilter.Contains(GetSourceFilterKey(p)));
         }
 
         return filtered.ToArray();
+    }
+
+    private static string GetSourceFilterKey(IPackage package)
+    {
+        return GetSourceFilterKey(package.Manager.Name, package.Source.AsString_DisplayName);
+    }
+
+    private static string GetSourceFilterKey(string managerName, string sourceDisplayName)
+    {
+        return managerName + "::" + sourceDisplayName;
     }
 
     private bool MatchesSearch(IPackage package, string query)
@@ -1654,17 +2072,25 @@ public partial class PackagePageView : UserControl, IShellPage
             allLoaderPackages = [];
         }
 
-        var allSources = allLoaderPackages
-            .Select(p => p.Source.AsString_DisplayName)
-            .Where(s => !string.IsNullOrWhiteSpace(s))
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .OrderBy(s => s, StringComparer.OrdinalIgnoreCase)
+        var allSourceEntries = allLoaderPackages
+            .Select(p => new SourceFilterEntry
+            {
+                ManagerName = p.Manager.Name,
+                ManagerDisplayName = p.Manager.DisplayName,
+                SourceDisplayName = p.Source.AsString_DisplayName,
+                FilterKey = GetSourceFilterKey(p),
+            })
+            .Where(e => !string.IsNullOrWhiteSpace(e.SourceDisplayName))
+            .GroupBy(e => e.FilterKey, StringComparer.OrdinalIgnoreCase)
+            .Select(g => g.First())
+            .OrderBy(e => e.ManagerDisplayName, StringComparer.OrdinalIgnoreCase)
+            .ThenBy(e => e.SourceDisplayName, StringComparer.OrdinalIgnoreCase)
             .ToArray();
 
-        SourcesEmptyStateText.IsVisible = allSources.Length == 0;
-        SourcesDescriptionText.IsVisible = allSources.Length > 0;
+        SourcesEmptyStateText.IsVisible = allSourceEntries.Length == 0;
+        SourcesDescriptionText.IsVisible = allSourceEntries.Length > 0;
 
-        if (allSources.Length == 0)
+        if (allSourceEntries.Length == 0)
         {
             SourcesEmptyStateText.Text = _pageMode == PackagePageMode.Discover && string.IsNullOrWhiteSpace(_searchQuery)
                 ? CoreTools.Translate("Type a package name to query available managers")
@@ -1674,28 +2100,41 @@ public partial class PackagePageView : UserControl, IShellPage
             return;
         }
 
-        // Build toggle buttons - one per source
-        var buttons = allSources.Select(source =>
-        {
-            bool isActive = _sourceFilter is null || _sourceFilter.Contains(source);
-            var btn = new Button
-            {
-                Content = source,
-                HorizontalAlignment = global::Avalonia.Layout.HorizontalAlignment.Stretch,
-                Tag = source,
-            };
-            btn.Classes.Add(isActive ? "toolbar-primary" : "toolbar-secondary");
-            btn.Click += SourceToggleButton_OnClick;
-            return btn;
-        }).ToArray();
+        var controls = new List<Control>();
 
-        SourceToggles.ItemsSource = buttons;
+        foreach (var managerGroup in allSourceEntries.GroupBy(e => e.ManagerDisplayName, StringComparer.OrdinalIgnoreCase))
+        {
+            controls.Add(new TextBlock
+            {
+                Text = managerGroup.Key,
+                FontSize = 12,
+                FontWeight = global::Avalonia.Media.FontWeight.SemiBold,
+                Opacity = 0.78,
+                Margin = new global::Avalonia.Thickness(0, controls.Count == 0 ? 0 : 10, 0, 2),
+            });
+
+            foreach (var entry in managerGroup)
+            {
+                bool isActive = _sourceFilter is null || _sourceFilter.Contains(entry.FilterKey);
+                var btn = new Button
+                {
+                    Content = entry.SourceDisplayName,
+                    HorizontalAlignment = global::Avalonia.Layout.HorizontalAlignment.Stretch,
+                    Tag = entry.FilterKey,
+                };
+                btn.Classes.Add(isActive ? "toolbar-primary" : "toolbar-secondary");
+                btn.Click += SourceToggleButton_OnClick;
+                controls.Add(btn);
+            }
+        }
+
+        SourceToggles.ItemsSource = controls;
         ClearFilterBtn.IsVisible = _sourceFilter is not null;
     }
 
     private void SourceToggleButton_OnClick(object? sender, RoutedEventArgs e)
     {
-        if (sender is not Button btn || btn.Tag is not string source)
+        if (sender is not Button btn || btn.Tag is not string sourceKey)
         {
             return;
         }
@@ -1705,15 +2144,15 @@ public partial class PackagePageView : UserControl, IShellPage
             // First exclusion: start a filter set with all sources except the clicked one
             var allLoaderPackages = _loader?.Packages.ToArray() ?? [];
             _sourceFilter = allLoaderPackages
-                .Select(p => p.Source.AsString_DisplayName)
+                .Select(GetSourceFilterKey)
                 .Where(s => !string.IsNullOrWhiteSpace(s))
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .ToHashSet(StringComparer.OrdinalIgnoreCase);
-            _sourceFilter.Remove(source);
+            _sourceFilter.Remove(sourceKey);
         }
-        else if (_sourceFilter.Contains(source))
+        else if (_sourceFilter.Contains(sourceKey))
         {
-            _sourceFilter.Remove(source);
+            _sourceFilter.Remove(sourceKey);
             if (_sourceFilter.Count == 0)
             {
                 _sourceFilter = null; // back to "show all"
@@ -1721,7 +2160,7 @@ public partial class PackagePageView : UserControl, IShellPage
         }
         else
         {
-            _sourceFilter.Add(source);
+            _sourceFilter.Add(sourceKey);
         }
 
         RefreshRows();
@@ -1816,6 +2255,14 @@ public partial class PackagePageView : UserControl, IShellPage
         if (selectedCount > 0)
         {
             SearchStateText.Text += " " + CoreTools.Translate("({0} selected)", selectedCount);
+        }
+
+        if (_pageMode == PackagePageMode.Updates && _lastPackageLoadTime is DateTime lastChecked)
+        {
+            SearchStateText.Text += " " + CoreTools.Translate(
+                "(Last checked: {0})",
+                lastChecked.ToString(CultureInfo.CurrentCulture)
+            );
         }
     }
 

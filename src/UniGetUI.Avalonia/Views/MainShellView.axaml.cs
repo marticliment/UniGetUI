@@ -21,6 +21,7 @@ using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.PackageLoader;
 using UniGetUI.PackageOperations;
+using UniGetUI.Interface.Telemetry;
 
 namespace UniGetUI.Avalonia.Views;
 
@@ -330,6 +331,49 @@ public partial class MainShellView : UserControl
     }
 
     internal void OpenPage(ShellPageType pageType) => NavigateTo(pageType);
+
+    internal void OpenSettingsSection(SettingsSectionRoute route)
+    {
+        NavigateTo(ShellPageType.Settings);
+        if (_pageCache.TryGetValue(ShellPageType.Settings, out var page)
+            && page is SettingsPageView settingsPage)
+        {
+            settingsPage.OpenSection(route);
+        }
+    }
+
+    internal void OpenManagerLogs(IPackageManager manager, bool verbose = false)
+    {
+        NavigateTo(ShellPageType.Logs);
+        if (_pageCache.TryGetValue(ShellPageType.Logs, out var page)
+            && page is LogsPageView logsPage)
+        {
+            logsPage.ShowManagerLogs(manager, verbose);
+        }
+    }
+
+    internal async Task OpenBundleFromFileAsync(string filePath)
+    {
+        NavigateTo(ShellPageType.Bundles);
+        if (_pageCache.TryGetValue(ShellPageType.Bundles, out var page)
+            && page is BundlesPageView bundlesPage)
+        {
+            await bundlesPage.OpenFromFileAsync(filePath);
+        }
+    }
+
+    internal void OpenSharedPackage(string id, string combinedSourceName)
+    {
+        string[] contents = combinedSourceName.Split(':', 2);
+        string managerName = contents[0];
+        string sourceName = contents.Length > 1 ? contents[1] : string.Empty;
+        _ = ShowSharedPackageAsync(id, managerName, sourceName, eventSource: "LEGACY_COMBINEDSOURCE");
+    }
+
+    internal void OpenSharedPackage(string id, string managerName, string sourceName)
+    {
+        _ = ShowSharedPackageAsync(id, managerName, sourceName, eventSource: "DEFAULT");
+    }
 
     private void ToggleNavigationButton_OnClick(object? sender, RoutedEventArgs e)
     {
@@ -818,15 +862,29 @@ public partial class MainShellView : UserControl
     {
         try
         {
-            string baseUrl = link["unigetui://".Length..];
+            string baseUrl = Uri.UnescapeDataString(link["unigetui://".Length..]);
 
             if (baseUrl.StartsWith("showPackage", StringComparison.OrdinalIgnoreCase))
             {
-                // Full ShowSharedPackage implementation requires async package search across managers;
-                // navigate to Discover page so the user can search manually.
-                string id = Regex.Match(baseUrl, "id=([^&]+)").Groups[1].Value;
-                Logger.Info($"Deep link showPackage: id={id}. Opening Discover page.");
-                NavigateTo(ShellPageType.Discover);
+                string id = TryGetDeepLinkParam(baseUrl, "id");
+                string combinedManagerName = TryGetDeepLinkParam(baseUrl, "combinedManagerName");
+                string managerName = TryGetDeepLinkParam(baseUrl, "managerName");
+                string sourceName = TryGetDeepLinkParam(baseUrl, "sourceName");
+
+                if (id.Length > 0 && combinedManagerName.Length > 0
+                    && managerName.Length == 0 && sourceName.Length == 0)
+                {
+                    Logger.Warn($"URI {link} follows old showPackage scheme");
+                    OpenSharedPackage(id, combinedManagerName);
+                }
+                else if (id.Length > 0 && managerName.Length > 0 && sourceName.Length > 0)
+                {
+                    OpenSharedPackage(id, managerName, sourceName);
+                }
+                else
+                {
+                    throw new UriFormatException($"Malformed showPackage deep link: {link}");
+                }
             }
             else if (baseUrl.StartsWith("showDiscoverPage", StringComparison.OrdinalIgnoreCase))
             {
@@ -850,6 +908,118 @@ public partial class MainShellView : UserControl
             Logger.Error($"Failed to handle deep link: {link}");
             Logger.Error(ex);
         }
+    }
+
+    private static string TryGetDeepLinkParam(string baseUrl, string parameterName)
+    {
+        var match = Regex.Match(
+            baseUrl,
+            parameterName + "=([^&]+)",
+            RegexOptions.IgnoreCase | RegexOptions.CultureInvariant
+        );
+
+        return match.Success ? Uri.UnescapeDataString(match.Groups[1].Value) : string.Empty;
+    }
+
+    private async Task ShowSharedPackageAsync(
+        string id,
+        string managerName,
+        string sourceName,
+        string eventSource
+    )
+    {
+        if (string.IsNullOrWhiteSpace(id) || string.IsNullOrWhiteSpace(managerName))
+        {
+            Logger.Warn("ShowSharedPackage requested with incomplete parameters.");
+            return;
+        }
+
+        try
+        {
+            NavigateTo(ShellPageType.Discover);
+            MainWindow.Instance?.ShowFromTray();
+
+            var findResult = await Task.Run(() =>
+                DiscoverablePackagesLoader.Instance.GetPackageFromIdAndManager(
+                    id,
+                    managerName,
+                    sourceName
+                )
+            );
+
+            if (findResult.Item1 is null)
+            {
+                throw new KeyNotFoundException(findResult.Item2 ?? CoreTools.Translate("Unknown error"));
+            }
+
+            TelemetryHandler.SharedPackage(findResult.Item1, eventSource);
+
+            var detailsWindow = new PackageDetailsWindow(findResult.Item1, PackagePageMode.Discover);
+            if (GetHostWindow() is { } owner)
+            {
+                await detailsWindow.ShowDialog(owner);
+            }
+            else
+            {
+                detailsWindow.Show();
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error($"An error occurred while attempting to show the package with id {id}");
+            Logger.Error(ex);
+
+            await ShowSimpleDialogAsync(
+                CoreTools.Translate("Package not found"),
+                CoreTools.Translate(
+                    "An error occurred when attempting to show the package with Id {0}",
+                    id
+                ) + "\n" + ex.Message
+            );
+        }
+    }
+
+    private async Task ShowSimpleDialogAsync(string title, string message)
+    {
+        if (GetHostWindow() is not { } owner)
+        {
+            return;
+        }
+
+        var dialog = new Window
+        {
+            Width = 520,
+            Height = 220,
+            CanResize = false,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            Title = title,
+            Content = new StackPanel
+            {
+                Spacing = 14,
+                Margin = new Thickness(18),
+                Children =
+                {
+                    new TextBlock
+                    {
+                        Text = message,
+                        TextWrapping = global::Avalonia.Media.TextWrapping.Wrap,
+                    },
+                    new Button
+                    {
+                        Content = CoreTools.Translate("OK"),
+                        HorizontalAlignment = global::Avalonia.Layout.HorizontalAlignment.Right,
+                        MinWidth = 100,
+                    },
+                },
+            },
+        };
+
+        if (dialog.Content is StackPanel sp && sp.Children.LastOrDefault() is Button okButton)
+        {
+            okButton.Click += (_, _) => dialog.Close();
+        }
+
+        await dialog.ShowDialog(owner);
     }
 
     private async Task ShowStartupDialogAsync(Window dialog)

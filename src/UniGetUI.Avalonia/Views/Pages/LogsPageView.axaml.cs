@@ -154,6 +154,24 @@ public partial class LogsPageView : global::Avalonia.Controls.UserControl, IShel
         }
     }
 
+    internal void ShowManagerLogs(IPackageManager manager, bool verbose = false)
+    {
+        string targetLabel = verbose
+            ? $"{manager.DisplayName} ({CoreTools.Translate("Verbose")})"
+            : manager.DisplayName;
+
+        for (int index = 0; index < ManagerCombo.ItemCount; index++)
+        {
+            if (string.Equals(ManagerCombo.Items[index]?.ToString(), targetLabel, StringComparison.Ordinal))
+            {
+                ManagerCombo.SelectedIndex = index;
+                break;
+            }
+        }
+
+        SwitchTab(2);
+    }
+
     // ── Log loaders ───────────────────────────────────────────────────────────
 
     private void LoadUniGetUILog()

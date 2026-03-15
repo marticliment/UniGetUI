@@ -1,5 +1,6 @@
 <Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:pages="clr-namespace:UniGetUI.Avalonia.Views.Pages"
         x:Class="UniGetUI.Avalonia.Views.Pages.PackageDetailsWindow"
         Width="680"
         Height="720"
@@ -83,7 +84,79 @@
         </StackPanel>
       </Border>
 
+      <Border x:Name="ScreenshotsCard"
+              Padding="18"
+              Classes="surface-card"
+              IsVisible="False">
+        <StackPanel Spacing="10">
+          <Grid ColumnDefinitions="Auto,*,Auto,Auto"
+                ColumnSpacing="8">
+            <TextBlock x:Name="ScreenshotsTitleBlock"
+                       VerticalAlignment="Center"
+                       FontSize="16"
+                       FontWeight="SemiBold" />
+            <TextBlock x:Name="ScreenshotsPipsBlock"
+                       Grid.Column="2"
+                       VerticalAlignment="Center"
+                       Opacity="0.68" />
+            <ProgressBar x:Name="ScreenshotsLoadingBar"
+                         Grid.Column="3"
+                         Width="18"
+                         Height="18"
+                         IsIndeterminate="True"
+                         IsVisible="False" />
+          </Grid>
+
+          <Border x:Name="ScreenshotsImageCard"
+                  Padding="12"
+                  Classes="surface-card subtle-panel"
+                  IsVisible="False">
+            <Grid ColumnDefinitions="Auto,*,Auto"
+                  ColumnSpacing="12">
+              <Button x:Name="PreviousScreenshotButton"
+                      VerticalAlignment="Center"
+                      Classes="toolbar-secondary"
+                      Content="◀"
+                      Click="PreviousScreenshotButton_OnClick" />
+              <Image x:Name="ScreenshotImage"
+                     Grid.Column="1"
+                     Height="240"
+                     Stretch="Uniform" />
+              <Button x:Name="NextScreenshotButton"
+                      Grid.Column="2"
+                      VerticalAlignment="Center"
+                      Classes="toolbar-secondary"
+                      Content="▶"
+                      Click="NextScreenshotButton_OnClick" />
+            </Grid>
+          </Border>
+
+          <Border x:Name="ScreenshotsBannerCard"
+                  Padding="12"
+                  Classes="surface-card subtle-panel">
+            <Grid ColumnDefinitions="*,Auto"
+                  ColumnSpacing="12">
+              <TextBlock x:Name="ScreenshotsBannerTextBlock"
+                         VerticalAlignment="Center"
+                         TextWrapping="Wrap" />
+              <Button x:Name="ContributeScreenshotsButton"
+                      Grid.Column="1"
+                      Classes="toolbar-secondary"
+                      VerticalAlignment="Center"
+                      Click="ContributeScreenshotsButton_OnClick" />
+            </Grid>
+          </Border>
+        </StackPanel>
+      </Border>
+
       <!-- Description -->
+      <Border x:Name="TagsCard"
+          Padding="18"
+          Classes="surface-card subtle-panel"
+          IsVisible="False">
+        <WrapPanel x:Name="TagsPanel" />
+      </Border>
+
       <Border x:Name="DescriptionCard"
               Padding="18"
               Classes="surface-card"
@@ -269,22 +342,54 @@
         </StackPanel>
       </Border>
 
+      <Border x:Name="InstallOptionsCard"
+              Padding="18"
+              Classes="surface-card"
+              IsVisible="False">
+        <Expander x:Name="InstallOptionsExpander"
+                  HorizontalAlignment="Stretch"
+                  HorizontalContentAlignment="Stretch">
+          <Expander.Header>
+            <Grid ColumnDefinitions="*,Auto"
+                  ColumnSpacing="12">
+              <TextBlock x:Name="InstallOptionsTitleBlock"
+                         VerticalAlignment="Center"
+                         FontSize="16"
+                         FontWeight="SemiBold" />
+              <Button x:Name="SaveInstallOptionsButton"
+                      Grid.Column="1"
+                      MinWidth="60"
+                      Height="34"
+                      Classes="toolbar-primary accent"
+                      Click="SaveInstallOptionsButton_OnClick" />
+            </Grid>
+          </Expander.Header>
+          <Border Padding="0,12,0,0">
+            <ContentControl x:Name="InstallOptionsHost" />
+          </Border>
+        </Expander>
+      </Border>
+
       <!-- Bottom actions -->
-      <Grid ColumnDefinitions="*,Auto,Auto,Auto"
+            <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto"
             ColumnSpacing="4">
+        <Button x:Name="ShareButton"
+          Grid.Column="0"
+          Classes="toolbar-secondary"
+          Click="ShareButton_OnClick" />
         <Button x:Name="ActionButton"
-                Grid.Column="1"
+          Grid.Column="2"
                 Classes="toolbar-primary accent"
                 IsVisible="False"
                 Click="ActionButton_OnClick" />
         <Button x:Name="ActionDropdownButton"
-                Grid.Column="2"
+          Grid.Column="3"
                 Classes="toolbar-primary accent"
                 Content="▾"
                 Padding="6,4"
                 IsVisible="False" />
         <Button x:Name="CloseButton"
-                Grid.Column="3"
+          Grid.Column="4"
                 Margin="8,0,0,0"
                 HorizontalAlignment="Right"
                 Classes="toolbar-secondary"
